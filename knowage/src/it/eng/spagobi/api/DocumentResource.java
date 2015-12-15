@@ -24,7 +24,9 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -33,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -55,6 +58,7 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -93,7 +97,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 					if (ObjectsAccessVerifier.canSee(obj, profile))
 						objects.add(obj);
 				}
-			}  
+			}
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
 			return Response.ok(toBeReturned).build();
@@ -307,6 +311,33 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@SuppressWarnings("unused")
+	@Path("/saveGeoReportTemplate")
+	@POST
+	public String saveTemplate(@Context HttpServletRequest req) throws IOException, JSONException {
+		JSONObject response = new JSONObject();
+		JSONObject geoTemplate = RestUtilities.readBodyAsJSONObject(req);
+		String layerLabel = geoTemplate.getJSONObject("executionContext").getString("DOCUMENT_LABEL");
+
+		ObjTemplate template = new ObjTemplate();
+		template.setName(geoTemplate.getJSONObject("executionContext").getString("DOCUMENT_LABEL") + "_Template.json");
+		template.setContent(geoTemplate.toString().getBytes());
+		template.setDimension(Long.toString(geoTemplate.toString().getBytes().length / 1000) + " KByte");
+		try {
+			IBIObjectDAO biObjectDao;
+			BIObject document;
+			biObjectDao = DAOFactory.getBIObjectDAO();
+			document = biObjectDao.loadBIObjectByLabel(layerLabel);
+			documentManager.saveDocument(document, template);
+		} catch (EMFUserError e) {
+			response.put("Status", "NON OK");
+			logger.error("Error saving JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+		response.put("Status", "OK");
+		return response.toString();
 	}
 
 	@POST

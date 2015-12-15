@@ -68,7 +68,7 @@
 					</div>
 					</md-toolbar>
 					
-					<md-content layout-padding class="ToolbarBox miniToolbar noBorder ">
+					<md-content  class="ToolbarBox miniToolbar noBorder ">
 						<angular-list layout-fill 
 						id='word' 
 						enable-drag=true
@@ -104,7 +104,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding class="ToolbarBox miniToolbar noBorder ">
+					<md-content  class="ToolbarBox miniToolbar noBorder ">
 						<angular-list layout-fill 
 						id='glossary' 
                 		ng-model=ctrl.glossary

@@ -28,8 +28,7 @@
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
 
-<script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+
 
 
 

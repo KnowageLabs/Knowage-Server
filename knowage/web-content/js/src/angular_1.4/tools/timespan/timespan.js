@@ -1,16 +1,12 @@
 var app = angular.module('timespanManager', [ 'ngMaterial',
-		'angular_rest', 'angular_list', 'angular_time_picker' ]);
+		'sbiModule', 'angular_list', 'angular_time_picker' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
 			'blue-grey');
 });
 
-app.service('translate', function() {
-	this.load = function(key) {
-		return messageResource.get(key, 'messages');
-	};
-});
+
 
 var emptyTs = {
 		name : "",
@@ -20,11 +16,11 @@ var emptyTs = {
 		isnew : true
 };
 
-app.controller('Controller', [ "translate", "restServices", "$scope", "$mdDialog", "$mdToast", behavior ]);
+app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", behavior ]);
 
-function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
+function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	ctrl = this;
-	$scope.translate = translate;
+	$scope.translate = sbiModule_translate;
 	
 	ctrl.tsList;
 	ctrl.tsCategory;
@@ -38,23 +34,23 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	ctrl.delay;
 	
 	ctrl.menuTs = [{
-		label : translate.load('sbi.generic.delete'),
+		label : sbiModule_translate.load('sbi.generic.delete'),
 		action : function(item) {
 			ctrl.deleteTimespan(item);
 		}
 	}];
 	
 	ctrl.tsType = [{
-		"label": translate.load('sbi.timespan.type.time'),
+		"label": sbiModule_translate.load('sbi.timespan.type.time'),
 		"value": "time"
 	},{
-		"label": translate.load('sbi.timespan.type.temporal'),
+		"label": sbiModule_translate.load('sbi.timespan.type.temporal'),
 		"value": "temporal"
 	}];
 	
 	
 	ctrl.loadTimespan = function(item) {
-		restServices.get("1.0/timespan", "loadTimespan", "ID="+item.id+"").success(
+		sbiModule_restServices.get("1.0/timespan", "loadTimespan", "ID="+item.id+"").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("error loading timespan");
@@ -79,9 +75,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				
 				if(f_date > t_date){
 					var alert = $mdDialog.alert()
-						.title(translate.load("sbi.generic.warning"))
-						.content(translate.load("sbi.timespan.temporal.viceversa.alert"))
-						.ok(translate.load("sbi.general.ok"));
+						.title(sbiModule_translate.load("sbi.generic.warning"))
+						.content(sbiModule_translate.load("sbi.timespan.temporal.viceversa.alert"))
+						.ok(sbiModule_translate.load("sbi.general.ok"));
 					$mdDialog.show( alert );
 					return false;
 				}
@@ -98,9 +94,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 					
 					if( f_date <= end && t_date >= start ){
 						var alert = $mdDialog.alert()
-							.title(translate.load("sbi.generic.warning"))
-							.content(translate.load("sbi.timespan.temporal.overlap.alert"))
-							.ok(translate.load("sbi.general.ok"));
+							.title(sbiModule_translate.load("sbi.generic.warning"))
+							.content(sbiModule_translate.load("sbi.timespan.temporal.overlap.alert"))
+							.ok(sbiModule_translate.load("sbi.general.ok"));
 						$mdDialog.show( alert );
 						return false;
 					}
@@ -119,9 +115,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				
 				if(f_time > t_time){
 					var alert = $mdDialog.alert()
-						.title(translate.load("sbi.generic.warning"))
-						.content(translate.load("sbi.timespan.time.viceversa.alert"))
-						.ok(translate.load("sbi.general.ok"));
+						.title(sbiModule_translate.load("sbi.generic.warning"))
+						.content(sbiModule_translate.load("sbi.timespan.time.viceversa.alert"))
+						.ok(sbiModule_translate.load("sbi.general.ok"));
 					$mdDialog.show( alert );
 					return false;
 				}
@@ -132,9 +128,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 					
 					if( f_time <= end && t_time >= start ){
 						var alert = $mdDialog.alert()
-							.title(translate.load("sbi.generic.warning"))
-							.content(translate.load("sbi.timespan.time.overlap.alert"))
-							.ok(translate.load("sbi.general.ok"));
+							.title(sbiModule_translate.load("sbi.generic.warning"))
+							.content(sbiModule_translate.load("sbi.timespan.time.overlap.alert"))
+							.ok(sbiModule_translate.load("sbi.general.ok"));
 						$mdDialog.show( alert );
 						return false;
 					}
@@ -155,11 +151,11 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	ctrl.cancel = function() {
 		var confirm = $mdDialog.confirm()
-		.title(translate.load("sbi.timespan"))
-		.content(translate.load("sbi.timespan.cancel.message"))
+		.title(sbiModule_translate.load("sbi.timespan"))
+		.content(sbiModule_translate.load("sbi.timespan.cancel.message"))
 		.ariaLabel('Lucky day')
-		.ok(translate.load("sbi.general.ok"))
-		.cancel( translate.load("sbi.ds.wizard.cancel")).targetEvent(event);
+		.ok(sbiModule_translate.load("sbi.general.ok"))
+		.cancel( sbiModule_translate.load("sbi.ds.wizard.cancel")).targetEvent(event);
 		
 		$mdDialog
 		.show( confirm )
@@ -181,14 +177,14 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	ctrl.saveTimespan = function() {
 		if(ctrl.selectedItem.definition.length==0){
 			var alert = $mdDialog.alert()
-				.title(translate.load("sbi.generic.warning"))
-				.content(translate.load("sbi.timespan.nointerval.alert"))
-				.ok(translate.load("sbi.general.ok"));
+				.title(sbiModule_translate.load("sbi.generic.warning"))
+				.content(sbiModule_translate.load("sbi.timespan.nointerval.alert"))
+				.ok(sbiModule_translate.load("sbi.general.ok"));
 			$mdDialog.show( alert );
 			
 		} else {	
 			
-		restServices
+		sbiModule_restServices
 		.post("1.0/timespan", "saveTimespan", ctrl.selectedItem).success(
 			function(data, status, headers, config){
 				if (data.hasOwnProperty("errors")) {
@@ -201,11 +197,11 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 					} else {
 						console.log("item updated "+data);
 					}
-					showToast(translate.load("sbi.timespan.save.success"));
+					showToast(sbiModule_translate.load("sbi.timespan.save.success"));
 					listTimespan();
 				}
 			}).error(function(data, status, headers, config) {
-				showToast(translate.load("sbi.timespan.save.error"));
+				showToast(sbiModule_translate.load("sbi.timespan.save.error"));
 			})
 		}
 	}
@@ -213,16 +209,16 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	ctrl.deleteTimespan = function(item) {
 		var confirm = $mdDialog.confirm()
-			.title(translate.load("sbi.timespan.delete"))
-			.content(translate.load("sbi.timespan.delete.message"))
+			.title(sbiModule_translate.load("sbi.timespan.delete"))
+			.content(sbiModule_translate.load("sbi.timespan.delete.message"))
 			.ariaLabel('Lucky day')
-			.ok(translate.load("sbi.generic.delete"))
-			.cancel( translate.load("sbi.ds.wizard.cancel"));
+			.ok(sbiModule_translate.load("sbi.generic.delete"))
+			.cancel( sbiModule_translate.load("sbi.ds.wizard.cancel"));
 
 		$mdDialog
 			.show( confirm )
 			.then(function() {
-				restServices
+				sbiModule_restServices
 				.remove("1.0/timespan",
 						"deleteTimespan",
 						"ID=" + item.id)
@@ -230,18 +226,18 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 						function( data, status, headers, config ) {
 							if (data.hasOwnProperty( "errors" )) { 
 								console.log( "delete error" );
-								showToast(translate.load("sbi.timespan.delete.error"));
+								showToast(sbiModule_translate.load("sbi.timespan.delete.error"));
 								
 							} else {
 								var index = ctrl.tsList.indexOf(item);
 								ctrl.tsList.splice(index, 1);
 								ctrl.activeTab = 'empty';
-								showToast(translate.load("sbi.timespan.delete.success"));
+								showToast(sbiModule_translate.load("sbi.timespan.delete.success"));
 							}
 						})
 				.error(function(data, status, headers, config) {
 					console.log("delete error "+status);
-					showToast(translate.load("sbi.timespan.delete.success"));
+					showToast(sbiModule_translate.load("sbi.timespan.delete.success"));
 				})
 			});
 	}
@@ -260,7 +256,7 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	
 	function listTimespan() {
-		restServices.get("1.0/timespan", "listDynTimespan").success(
+		sbiModule_restServices.get("1.0/timespan", "listDynTimespan").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("list error");
@@ -274,7 +270,7 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	}
 	
 	function loadCategories() {
-		restServices.get("domains", "listValueDescriptionByType",
+		sbiModule_restServices.get("domains", "listValueDescriptionByType",
 		"DOMAIN_TYPE=TIMESPAN_CATEGORY").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {

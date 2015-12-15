@@ -32,7 +32,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 </head>
 
 <body ng-app="EventDefinitionApp">
-	<div layout-padding flex layout-fill class="h100 " 
+	<div  flex layout-fill class="h100 " 
 		ng-controller="ActivityEventController as activityEventCtrl"
 		ng-init="activityEventCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=triggerName%>', '<%=triggerGroup%>');">
 

@@ -4,10 +4,28 @@
  */
 
 angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angularUtils.directives.dirPagination','sbiModule'])
+.filter('filterBySpecificColumns', function(){
+	return function(items,searchFastVal,itemName,localSearch) { 
+		if(localSearch==false || localSearch=="false" ){
+			return items;
+		}
+		if(searchFastVal==undefined || searchFastVal==""){
+			return items;
+		}
+		var filtered = [];
+		for(var item in items){
+			if (JSON.stringify(items[item][itemName]).toString().toUpperCase().indexOf(searchFastVal.toUpperCase()) !== -1) {
+					filtered.push(items[item]);
+				}
+			
+		};
+		return filtered;
+	}})
 .directive('angularList', function() {
 	return {
 		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/angular-list.html',
 		controller: ListControllerFunction,
+		replace:true,
 		scope: {
 			ngModel:'=',
 			itemName:"@",
@@ -72,7 +90,6 @@ function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$t
 	$scope.searchFastVal="";
 
 	$scope.searchItem=function(searchVal){
-
 		if($scope.localSearch){
 			$scope.searchFastVal=searchVal;
 		}else{
@@ -103,13 +120,13 @@ function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$t
 
 	// pagination word
 	function changeWordItemPP() {
-		var boxHeight = angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox'))[0].offsetHeight;
-		var searchBoxHeight= $scope.showSearchBar==true? angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox .searchBarList'))[0].offsetHeight : 0;
-		var paginBoxHeight= angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0] == undefined ? 18 : angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0].offsetHeight;
+		var boxHeight = angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate'))[0].offsetHeight;
+		var searchBoxHeight= $scope.showSearchBar==true? angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate .searchBarList'))[0].offsetHeight : 0;
+		var paginBoxHeight= angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate .box_pagination_list'))[0] == undefined ? 18 : angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate .box_pagination_list'))[0].offsetHeight;
 		paginBoxHeight=paginBoxHeight==0? 18:paginBoxHeight;
-		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox #listItemTemplate'))[0]==undefined? 27 : angular.element(document.querySelector('#angularListTemplate.'+$scope.id+'ItemBox #listItemTemplate'))[0].offsetHeight;
+		var listItemTemplBoxHeight = angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate #listItemTemplate'))[0]==undefined? 27 : angular.element(document.querySelector('#'+$scope.id+'.angularListTemplate #listItemTemplate'))[0].offsetHeight;
 
-		var nit = parseInt((boxHeight - searchBoxHeight - paginBoxHeight-3) / listItemTemplBoxHeight);
+		var nit = parseInt((boxHeight - searchBoxHeight - paginBoxHeight-3 ) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
 
 		if(firstLoad){
@@ -124,7 +141,7 @@ function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$t
 
 	$scope.$watch(
 			function() {
-				return angular.element(document.querySelector('#angularListTemplate'))[0].offsetHeight;
+				return angular.element(document.querySelector('.angularListTemplate .listItemContainer'))[0].offsetHeight;
 			}, function(newValue, oldValue) {
 
 				if (newValue != oldValue) {

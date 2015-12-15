@@ -3,11 +3,11 @@
 	visibility: hidden !important;
 }
 
-#angularListTemplate *:focus {
+.angularListTemplate *:focus {
 	outline: none;
 }
 
-#angularListTemplate {
+.angularListTemplate {
 	max-height: 100%;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 10pt;
@@ -15,42 +15,44 @@
 	color: black;
 }
 
-#angularListTemplate>md-content {
+.angularListTemplate {
 	overflow-x: hidden;
+	position: relative;
 }
 
-#angularListTemplate .searchBarList {
+.angularListTemplate .searchBarList {
 	padding: 0;
 	background-color: transparent;
-	margin-top: 3px;
+	margin: 0px;
 	height: 22px;
 }
 
-#angularListTemplate .searchBarList md-icon {
+.angularListTemplate .searchBarList md-icon {
 	color: rgb(177, 169, 174);
 	height: 100%;
 	top: 50%;
 	margin-top: -5px;
 }
 
-#angularListTemplate .searchBarList md-icon.filter-icon {
+.angularListTemplate .searchBarList md-icon.filter-icon {
 	left: 100%;
 	margin-left: -10px;
 	display: none;
 }
 
-#angularListTemplate .searchBarList md-icon.filter-icon.not_empty {
+.angularListTemplate .searchBarList md-icon.filter-icon.not_empty {
 	color: red;
 	display: block;
 }
 
-#angularListTemplate .searchBarList input {
-	margin: 0px;
-	margin-left: 15px;
-	height: 22px;
+.angularListTemplate .searchBarList input {
+	    margin: 0px;
+    /* margin-left: 15px; */
+    height: 22px;
+    padding-left: 18px;
 }
 
-#angularListTemplate md-progress-circular {
+.angularListTemplate md-progress-circular {
 	left: 50%;
 	margin-left: -25px;
 	position: absolute
@@ -64,63 +66,63 @@ i.dragged-item-icon {
 	margin-top: 4px;
 }
 
-#angularListTemplate .dropdown_menu_list md-list-item,
-	#angularListTemplate .dropdown_menu_list md-list-item button,
-	#angularListTemplate .dropdown_menu_list md-list-item .md-list-item-inner
+.angularListTemplate .dropdown_menu_list md-list-item,
+	.angularListTemplate .dropdown_menu_list md-list-item button,
+	.angularListTemplate .dropdown_menu_list md-list-item .md-list-item-inner
 	{
 	/* 	min-height: 15px !important; */
 	min-height: 22px !important;
 }
 
-#angularListTemplate .dropdown_menu_list md-list-item p {
+.angularListTemplate .dropdown_menu_list md-list-item p {
 	line-height: 20px;
 	margin: 3px;
 }
 
-#angularListTemplate button {
+.angularListTemplate button {
 	height: 22px !important;
 	padding: 0px;
 }
 
-#angularListTemplate md-list {
+.angularListTemplate md-list {
 	padding: 0;
 }
 
-#angularListTemplate  button p {
+.angularListTemplate  button p {
 	line-height: 25px;
 	padding: 0px 16px 0 0;
 	margin-left: 4px;
-	border-bottom: 1px solid rgb(176, 190, 197);
+	border-bottom: 2px solid rgb(176, 190, 197);
 }
 
-#angularListTemplate md-list md-list-item button.md-button:not ([disabled]
+.angularListTemplate md-list md-list-item button.md-button:not ([disabled]
 	):hover {
 	background-color: transparent;
 }
 
-#angularListTemplate md-list md-list-item button.md-button:not ([disabled]
+.angularListTemplate md-list md-list-item button.md-button:not ([disabled]
 	):hover {
 	background-color: transparent;
 }
 
-#angularListTemplate .angular-ui-tree-handle, #angularListTemplate .angular-ui-tree-handle:hover
+.angularListTemplate .angular-ui-tree-handle, .angularListTemplate .angular-ui-tree-handle:hover
 	{
 	cursor: pointer !important;
 }
 
 /* pagination */
-#angularListTemplate .box_pagination_list {
+.angularListTemplate .box_pagination_list {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	margin-bottom: 3px;
 }
 
-#angularListTemplate [layout-padding] .box_pagination_list {
+.angularListTemplate [layout-padding] .box_pagination_list {
 	margin-left: -8px !important;
 }
 
-#angularListTemplate .pagination>li, #angularListTemplate .pagination>li>span
+.angularListTemplate .pagination>li, .angularListTemplate .pagination>li>span
 	{
 	position: relative;
 	float: left;
@@ -135,21 +137,21 @@ i.dragged-item-icon {
 	line-height: 16px;
 }
 
-#angularListTemplate .pagination {
+.angularListTemplate .pagination {
 	margin: 0px !important;
 	padding: 0px !important;
 }
 
-#angularListTemplate .pagination>li>a {
+.angularListTemplate .pagination>li>a {
 	text-decoration: none !important;
 	width: 100%;
 	display: block;
 }
 
-#angularListTemplate .pagination>.active, #angularListTemplate .pagination>.active>a,
-	#angularListTemplate .pagination>.active>a:focus, #angularListTemplate .pagination>.active>a:hover,
-	#angularListTemplate .pagination>.active>span, #angularListTemplate .pagination>.active>span:focus,
-	#angularListTemplate .pagination>.active>span:hover {
+.angularListTemplate .pagination>.active, .angularListTemplate .pagination>.active>a,
+	.angularListTemplate .pagination>.active>a:focus, .angularListTemplate .pagination>.active>a:hover,
+	.angularListTemplate .pagination>.active>span, .angularListTemplate .pagination>.active>span:focus,
+	.angularListTemplate .pagination>.active>span:hover {
 	z-index: 2;
 	color: #000;
 	cursor: default;
@@ -157,10 +159,10 @@ i.dragged-item-icon {
 	border-color: rgb(232, 232, 232);
 }
 
-#angularListTemplate .pagination>.disabled>a, #angularListTemplate .pagination>.disabled>a:focus,
-	#angularListTemplate .pagination>.disabled>a:hover,
-	#angularListTemplate .pagination>.disabled>span, #angularListTemplate .pagination>.disabled>span:focus,
-	#angularListTemplate .pagination>.disabled>span:hover {
+.angularListTemplate .pagination>.disabled>a, .angularListTemplate .pagination>.disabled>a:focus,
+	.angularListTemplate .pagination>.disabled>a:hover,
+	.angularListTemplate .pagination>.disabled>span, .angularListTemplate .pagination>.disabled>span:focus,
+	.angularListTemplate .pagination>.disabled>span:hover {
 	color: #777;
 	cursor: not-allowed;
 	background-color: #fff;
@@ -168,13 +170,13 @@ i.dragged-item-icon {
 }
 
 /* dropdown */
-#angularListTemplate .dropdown_menu_list {
+.angularListTemplate .dropdown_menu_list {
 	margin-top: -25px;
 	position: fixed !important;
 	left: 10px !important;
 }
 
-#angularListTemplate .dropdown_menu_list md-list {
+.angularListTemplate .dropdown_menu_list md-list {
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -195,11 +197,11 @@ i.dragged-item-icon {
 	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 
-#angularListTemplate .dropdown_menu_list.open md-list {
+.angularListTemplate .dropdown_menu_list.open md-list {
 	display: block;
 }
 
-#angularListTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button
+.angularListTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button
 	{
 	border-bottom: 1px solid rgb(176, 190, 197);
 	padding: 0;
@@ -217,7 +219,7 @@ i.dragged-item-icon {
 	cursor: pointer;
 }
 
-#angularListTemplate .md-list-item-inner {
+.angularListTemplate .md-list-item-inner {
 	width: 100%;
 	height: 100%;
 }
@@ -255,20 +257,20 @@ p.wrapText {
 	overflow: hidden;
 }
 
-#angularListTemplate md-fab-speed-dial md-fab-trigger button,
-	#angularListTemplate button.singleActionButton {
+.angularListTemplate md-fab-speed-dial md-fab-trigger button,
+	.angularListTemplate button.singleActionButton {
 	height: 15px !important;
 	width: 15px !important;
 	min-height: 0;
 }
 
-#angularListTemplate button.singleActionButton {
+.angularListTemplate button.singleActionButton {
 	position: absolute;
 	right: -5px;
 	top: 0;
 }
 
-#angularListTemplate md-fab-speed-dial md-fab-actions button {
+.angularListTemplate md-fab-speed-dial md-fab-actions button {
 	height: 20px;
 	width: 20px;
 	min-height: 0;
@@ -276,11 +278,11 @@ p.wrapText {
 	background-color: #0094FF;
 }
 
-#angularListTemplate md-fab-speed-dial md-fab-actions button md-icon {
+.angularListTemplate md-fab-speed-dial md-fab-actions button md-icon {
 	margin-top: 2px;
 }
 
-#angularListTemplate md-fab-speed-dial {
+.angularListTemplate md-fab-speed-dial {
 	position: absolute;
 	right: -5px;
 	height: 100%;

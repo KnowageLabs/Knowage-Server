@@ -69,7 +69,7 @@
 										<%-- 
 										ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'"
 										--%>
-										ng-include="'<%=contextName%>/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'"
+										ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'"
 										class="noBorder"></li>
 							</ol>
 						</div>

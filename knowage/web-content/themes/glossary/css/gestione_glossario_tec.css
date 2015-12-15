@@ -63,14 +63,13 @@ li.selected_item{
 }
 
 .navig-tab-content .boxItemGlo md-list md-list-item button.md-secondary-container{
-  min-width: 0;
-  min-height: 0!important;
-  height: 100%;
-  width: 13px;
-  right: -6px;
-  background-color: transparent !important;
-  border: none;
-  top: 12px;
+     min-width: 0;
+    min-height: 0!important;
+    width: 13px;
+    right: -3px;
+    background-color: transparent !important;
+    border: none;
+    top: 15px;
       }
 
 .delete_select {
@@ -85,6 +84,7 @@ li.selected_item{
 }
 
 .navig-tab-content .searchBar input{
-	margin-right: 8px;
-	    height: 22px
+	    margin: 0;
+    height: 22px;
+    padding-left: 16px;
 }
