@@ -2,7 +2,9 @@
 
 	<div flex="" id='map'>
 		<div id="popup" class="ol-popup">
-			<!-- 			<a href="#" id="popup-closer" class="ol-popup-closer"></a> -->
+			 <md-button class="md-icon-button md-primary ol-popup-closer" aria-label="close" ng-click="closePopup()">
+        		<md-icon md-font-icon="fa fa-times"></md-icon>
+      		</md-button>
 			<div id="popup-content" class="ol-popup-content"></div>
 		</div>
 		<div layout="row" layout-wrap layout-align="end end"

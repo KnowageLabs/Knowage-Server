@@ -730,6 +730,11 @@ geoM.service(
 				 return deferredLayer.promise;
 
 			}
+			
+			this.removeSelectPopup=function(){
+				layerServ.overlay.setPosition(undefined);
+				select.getFeatures().clear();
+			}
 		});
 
 geoM.factory('geoModule_constant', function(sbiModule_translate) {

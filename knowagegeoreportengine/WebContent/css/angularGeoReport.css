@@ -258,6 +258,7 @@ geo-distance-calculator .calcBox .measureDisplay {
 	-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 	filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 	padding: 15px;
+	padding-right:0px;
 	border-radius: 10px;
 	border: 1px solid #cccccc;
 	bottom: 12px;
@@ -290,15 +291,12 @@ geo-distance-calculator .calcBox .measureDisplay {
 }
 
 .ol-popup-closer {
-	text-decoration: none;
-	position: absolute;
-	top: 2px;
-	right: 8px;
+	    position: absolute;
+    right: 0;
+    top: -7px;
 }
 
-.ol-popup-closer:after {
-	content: "✖";
-}
+
 
 .ol-popup-content {
 	height: 200px;
