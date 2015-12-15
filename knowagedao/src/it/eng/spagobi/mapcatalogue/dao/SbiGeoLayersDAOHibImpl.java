@@ -558,14 +558,18 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						for (int j = 0; j < content.length(); j++) {
 							JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
 							for (int k = 0; k < arr.length(); k++) {
+
 								JSONObject val = arr.getJSONObject(k);
-								Iterator it = val.keys();
-								while (it.hasNext()) {
-									String key = (String) it.next();
-									if (!keys.contains(key)) {
-										keys.add(key);
-									}
+								if (!keys.contains(val.get("name"))) {
+									keys.add(val.getString("name"));
 								}
+								// Iterator it = val.keys();
+								// while (it.hasNext()) {
+								// String key = (String) it.next();
+								// if (!keys.contains(key)) {
+								// keys.add(key);
+								// }
+								// }
 							}
 
 						}
