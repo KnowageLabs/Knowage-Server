@@ -446,7 +446,6 @@ author:
  							Ext.getBody().setStyle("position","absolute");
  							Ext.getBody().setStyle("top","50%");
  							Ext.getBody().setStyle("left","50%");
- 							Ext.getBody().setStyle("vertical-align","middle");
  							Ext.getBody().setStyle("transform","translate(-50%, -50%)");
 						} 											
 							

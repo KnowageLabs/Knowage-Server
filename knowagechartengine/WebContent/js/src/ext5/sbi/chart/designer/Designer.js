@@ -198,6 +198,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				applySeries: applySeries,
 			};
 			
+			console.log("== 1 ==");
+			console.log(baseTemplate);
+			console.log(jsonTemplate);
+			
 			/**
 			 * If we are creating completely new chart (new document) immediately on loading
 			 * the Designer page apply the default style.
@@ -207,6 +211,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			if (!jsonTemplate.CHART) 
 			{
+				console.log("== 2 (new chart) ==");
+				console.log(baseTemplate);
+				console.log(jsonTemplate);
+				
 			    var defaultStyleTemplate = this.getDefaultStyle();
 			    
 			    /**
@@ -1671,8 +1679,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            				var json = activeTab.getChartData(); 
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
+  		            			
+  		            			console.log(Sbi.chart.designer.Designer.exportAsJson());
+    							console.log(Sbi.chart.designer.Designer.exportAsJson(true));
+  		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
 
+  		            			
   		            			if (errorMessages == false) {
   		            				Ext.Msg.show({
   		            					title : LN('sbi.chartengine.designer.savetemplate.title'),
@@ -1685,12 +1698,15 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            						cancel : LN('sbi.generic.cancel')
   		            					},
   		            					fn : function(buttonValue, inputText, showConfig){
+  		            						
   		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
   		            							  		 		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            							//console.log(Sbi.chart.designer.Designer.exportAsJson());
-  		            							//console.log(exportedAsOriginalJson);
+  		            							
+//  		            							console.log(Sbi.chart.designer.Designer.exportAsJson());
+//  		            							console.log(exportedAsOriginalJson);
+  		            							
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   	  		            									docLabel: docLabel
@@ -2026,9 +2042,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						if (chartType == "SUNBURST" || chartType == "PARALLEL" ||
 								chartType == "WORDCLOUD" || chartType == "TREEMAP"
 									|| chartType == "CHORD" || chartType == "PIE" || chartType == "RADAR"
-										||chartType == "SCATTER" || chartType == "HEATMAP") {
+										||chartType == "SCATTER" || chartType == "HEATMAP" || chartType=="GAUGE") {
 							
-							if (chartType != "RADAR" && chartType != "HEATMAP" && chartType != "SCATTER")
+							if (chartType != "RADAR" && chartType != "HEATMAP" && chartType != "SCATTER" && chartType!="GAUGE")
 							{										
 								hideAxisTitleTextbox = true;
 								

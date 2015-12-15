@@ -1560,7 +1560,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 || Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'HEATMAP'
 			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'GAUGE';
+			.getChartType() == 'GAUGE'
+			|| Sbi.chart.designer.Designer.chartTypeSelector
+			.getChartType() == 'CHORD';
 		},
 
 		enableLegend : function () {
@@ -2316,7 +2318,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							if (axisTagSource[i].type=="Serie" && axisTagSource[i]["PLOTBANDS"]!=undefined)
 							{
 								/**
-								 * Apply PLTOBANDS tag on all Y-axis panel that the GAUGE chart (document) has.
+								 * Apply PLOTBANDS tag on all Y-axis panel that the GAUGE chart (document) has.
 								 */
 								for (j=0; j<axisTagTarget.length; j++)
 								{
