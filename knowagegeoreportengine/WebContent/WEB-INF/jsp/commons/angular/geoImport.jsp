@@ -10,6 +10,8 @@
    google.load('visualization', '1.0', {'packages':['corechart', 'bar']});
 </script>
 	    
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
+
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/Ellipsoid.js"></script>
 

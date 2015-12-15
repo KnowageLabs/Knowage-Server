@@ -28,16 +28,15 @@ function geoMapMenuControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.firstCallInteraction = true;
 	$scope.openRigthMenu = false;
-	
-	
-	//inizializzo il valore dell'indicator
+	$scope.measureInsert=0;
+	$scope.selectMisure="kilometers";
+		//inizializzo il valore dell'indicator
 	for(var i=0;i<geoModule_indicators.length;i++){
 		if(geoModule_indicators[i].header==geoModule_template.selectedIndicator.header){
 			geoModule_template.selectedIndicator=geoModule_indicators[i];
 			break;
 		}
 	}
-	
 	
 	
 	$scope.analysisTypeList = [
@@ -50,29 +49,53 @@ function geoMapMenuControllerFunction(
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
 	                             ];
 
-// {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},
+
 
 	$scope.filterTypes = [
-	                     	
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
+	
+	$scope.typeOfMisure = [
+	                       {label: "m",type:"miglia"},
+	                       {label: "km",type:"kilometers"},
+	                       
+	                       ];
+	
 	$scope.setSelectedFilterType = function(type) {
 		//cambio geo_interaction con layer service
 		//geo_interaction.selectedFilterType = type;
 		geo_interaction.selectedFilterType=type;
-		geoModule_layerServices.setInteraction();
-		
-		if ($scope.$root.$$phase != '$apply') {
-			$scope.$apply();
+		if(type=="near"){
+			
+		}else{
+			geoModule_layerServices.setInteraction();
+			
+			if ($scope.$root.$$phase != '$apply') {
+				$scope.$apply();
+			}
 		}
+		
 	};
+	$scope.save = function(select,num){
+		$scope.selectMisure=select;
+		$scope.measureInsert=2*num;
+		console.log($scope.selectMisure, $scope.measureInsert);
+		if($scope.selectMisure=="miglia"){
+			//conversione in km
+			$scope.measureInsert=$scope.measureInsert*1.60934;
+		}
+		
+		geoModule_layerServices.measure=$scope.measureInsert*500;
+		geoModule_layerServices.setInteraction();
+	}
 	$scope.setDefaultDraw = function(){
 		if($scope.firstCallInteraction){
 			geoModule_layerServices.setInteraction();
 			$scope.firstCallInteraction=false;
 		}
-		
+
 	}
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
@@ -152,7 +175,7 @@ function geoMapMenuControllerFunction(
 		return -1;
 	};  
 	
-	
+
 
 };
 

@@ -84,7 +84,7 @@ geoM.service(
 			this.loadedLayerOBJ = {};
 			this.templateLayer = {};
 			this.selectedFeatures = [];
-
+			this.measure;
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
@@ -180,7 +180,6 @@ geoM.service(
 				$map.addInteraction(select);
 				// layerServ.setInteraction('box');
 				select.on('select',	function(evt) {
-					console.log("select");
 					if (geo_interaction.type == "identify"
 						&& (evt.selected[0] == undefined || geo_interaction.distance_calculator)
 						&& geoModule_templateLayerData.type != "WMS") {
@@ -298,7 +297,7 @@ geoM.service(
 							if (geom[1] > extent[1]) {
 								if (geom[2] < extent[2]) {
 									if (geom[3] < extent[3]) {
-												// it is inside the polygon
+									// it is inside the polygon
 										sFeatures.push(feature);
 										selection.push(feature);
 									}
@@ -324,7 +323,85 @@ geoM.service(
 				});
 
 			}
+			this.spy = function() {
+				var element;
+				var key = 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3';
+				var sFeatures = select.getFeatures();
+				var imagery = new ol.layer.Tile({
+					source : new ol.source.BingMaps({
+						key : key,
+						imagerySet : 'Aerial'
+					}),
+					opacity : 0.001
+				});
 
+				var container = document.getElementById('map');
+				var coordinate;
+				$map.addLayer(imagery);
+				
+				var radius ;
+				var ray ;
+				
+				document.addEventListener('keydown', function(evt) {
+
+					if(evt.which === 17 && geo_interaction.selectedFilterType == "near"){
+						//se premo control seleziono le features
+						sFeatures.clear();
+						layerServ.near($map.getCoordinateFromPixel(coordinate), ray);
+						$map.removeLayer(imagery);
+					}
+				})
+			
+				// get the pixel position with every move
+				var mousePosition = null;
+
+				container.addEventListener('mousemove',function(event) {
+					
+					mousePosition = $map.getEventPixel(event);
+					$map.render();
+				});
+
+				container.addEventListener('mouseout', function() {
+					mousePosition = null;
+					$map.removeLayer(imagery);
+					$map.render();
+				});
+
+				// before rendering the layer, do some clipping
+				imagery.on('precompose', function(event) {
+					
+					var ctx = event.context;
+					var pixelRatio = event.frameState.pixelRatio;
+					ctx.save();
+					ctx.beginPath();
+					radius = layerServ.calculateRay(layerServ.measure);
+					ray = radius;
+					if (mousePosition) {
+						// only show a circle around the mouse 
+					
+						ctx.arc(mousePosition[0] * pixelRatio,mousePosition[1] * pixelRatio, radius *  pixelRatio, 0, 2 * Math.PI);
+						coordinate = [mousePosition[0], mousePosition[1]];
+						var endCoordinate = [coordinate[0]+radius*  pixelRatio,coordinate[1]+radius*  pixelRatio];
+						//ray = radius *  pixelRatio;
+						ray = layerServ.calculateDistance($map.getCoordinateFromPixel(coordinate),$map.getCoordinateFromPixel(endCoordinate));
+						
+						console.log("ray"+ray);
+						ctx.lineWidth = 5 * pixelRatio;
+						ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+						ctx.stroke();
+					}
+					ctx.clip();
+				});
+
+				// after rendering the layer, restore the canvas context
+				imagery.on('postcompose', function(event) {
+					var ctx = event.context;
+					ctx.restore();
+					
+				});
+
+
+			}
 			this.near = function(coordinate, ray) {
 				console.log("near");
 				console.log("ray :" + ray);
@@ -332,22 +409,19 @@ geoM.service(
 				var myCircle;
 				var sFeatures = select.getFeatures();
 
-
-				var selection = [];
-
+				
 				var features = layerServ.templateLayer.getSource().getFeatures();
 				if (features.length > 0) {
+					var selection = [];
 					features.forEach(function(feature) {
+		
 						var geom = feature.getGeometry().getCoordinates();
 						for (var i = 0; i < geom[0][0].length; i++) {
-							var pixel = $map.getPixelFromCoordinate(geom[0][0][i]);
-							var prova = $map.getCoordinateFromPixel(pixel);
-							console.log(geom[0][0][i]);
-							console.log(pixel);
-							console.log(prova);
-							var x=pixel[0];
-							var y = pixel[1] ;
+							var coordFeature = geom[0][0][i];							
+							var x=coordFeature[0];
+							var y = coordFeature[1] ;
 
+							
 							if (layerServ.findIntersect(x, y , coordinate, ray)) {
 								// ok
 								selection.push(feature);
@@ -361,7 +435,7 @@ geoM.service(
 
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-
+					
 					console.log("layerServ.selectedFeatures (near)-> ",layerServ.selectedFeatures);
 					console.log("geo_interaction.selectedFilterType -> ",geo_interaction.selectedFilterType);
 				}
@@ -369,7 +443,11 @@ geoM.service(
 
 
 			}
+			
+			
 			this.findIntersect = function(x, y, center, ray) {
+				//intersect inside a circle
+				
 				var x = Math.pow(x - center[0], 2);
 				var y = Math.pow(y - center[1], 2);
 				var difference = x + y;
@@ -379,143 +457,9 @@ geoM.service(
 					return false;
 				}
 			}
-			this.Render = function(features) {
-				var raster = new ol.layer.Tile({
-					source : new ol.source.Stamen({
-						layer : 'toner'
-					})
-				});
-				raster.setZindex = 1000;
-				$map.addLayer(raster);
+			
+		
 
-				var osm = this.createLayer(baseLayer.Default.OSM, false);
-
-				osm.setZindex = 1000001;
-				$map.addLayer(osm);
-
-				// A style for the geometry.
-				var fillStyle = new ol.style.Fill({
-					color : [ 0, 0, 0, 0 ]
-				});
-				var newArray = [ [ [] ] ];
-				var array = [];
-				var array2 = [];
-				var array3 = [];
-				var coordinates = [];
-
-				for (var i = 0; i < features.length; i++) {
-					for (var j = 0; j < features[i].getGeometry().getCoordinates().length; j++) {
-
-						for (var k = 0; k < features[i].getGeometry().getCoordinates()[j].length; k++) {
-
-							for (var m = 0; m < features[i].getGeometry().getCoordinates()[j][k].length; m++) {
-								newArray[0][0].push(features[i].getGeometry().getCoordinates()[j][k][m]);
-								// array.push(features[i].getGeometry().getCoordinates()[j][k][m]);
-							}
-
-						}
-
-					}
-				}
-
-				osm.on('precompose', function(event) {
-					var ctx = event.context;
-					var vecCtx = event.vectorContext;
-					ctx.save();
-
-					// Using a style is a hack to workaround a limitation in
-					// OpenLayers 3, where a geometry will not be draw if no style has been provided.
-					vecCtx.setFillStrokeStyle(fillStyle, null);
-
-					// var clipGeometry = new ol.geom.MultiPolygon(features[0].getGeometry().getCoordinates());
-					var clipGeometry = new ol.geom.MultiPolygon(
-							newArray);
-
-					vecCtx.drawMultiPolygonGeometry(clipGeometry);
-
-					/*
-					 * vecCtx.drawFeature(features[0],new ol.style.Style({ stroke: new ol.style.Stroke({
-					 * color: [0, 0, 0, 1], width: 2 }), fill: new ol.style.Fill({ color: "rgba(174, 206, 230, 0.78)" }) }));
-					 */
-
-					ctx.clip();
-					// $map.removeLayer(raster);
-
-				});
-
-				osm.on('postcompose', function(event) {
-					var ctx = event.context;
-					ctx.restore();
-				});
-			}
-
-			this.serp = function() {
-
-				var imageStyle = new ol.style.Circle({
-					radius : 5,
-					snapToPixel : false,
-					fill : new ol.style.Fill({
-						color : 'yellow'
-					}),
-					stroke : new ol.style.Stroke({
-						color : 'red',
-						width : 1
-					})
-				});
-
-				var headInnerImageStyle = new ol.style.Style({
-					image : new ol.style.Circle({
-						radius : 2,
-						snapToPixel : false,
-						fill : new ol.style.Fill({
-							color : 'blue'
-						})
-					})
-				});
-
-				var headOuterImageStyle = new ol.style.Circle({
-					radius : 5,
-					snapToPixel : false,
-					fill : new ol.style.Fill({
-						color : 'black'
-					})
-				});
-
-				var n = 200;
-				var omegaTheta = 30000; // Rotation period in ms
-				var R = 7e6;
-				var r = 2e6;
-				var p = 2e6;
-				$map.on('postcompose', function(event) {
-					var vectorContext = event.vectorContext;
-					var frameState = event.frameState;
-					var theta = 2 * Math.PI * frameState.time/ omegaTheta;
-					var coordinates = [];
-					var i;
-					for (i = 0; i < n; ++i) {
-						var t = theta + 2 * Math.PI * i / n;
-						var x = (R + r) * Math.cos(t) + p * Math.cos((R + r) * t / r);
-						var y = (R + r) * Math.sin(t) + p * Math.sin((R + r) * t / r);
-						coordinates.push([ x, y ]);
-					}
-
-					vectorContext.setImageStyle(imageStyle);
-					vectorContext.drawMultiPointGeometry(new ol.geom.MultiPoint(coordinates), null);
-
-					var headPoint = new ol.geom.Point(coordinates[coordinates.length - 1]);
-					var headFeature = new ol.Feature(headPoint);
-					
-					vectorContext.drawFeature(headFeature,headInnerImageStyle);
-
-					vectorContext.setImageStyle(headOuterImageStyle);
-					vectorContext.drawMultiPointGeometry(headPoint,null);
-				
-
-					$map.updateSize();$map.render();
-				});
-				$map.updateSize();$map.render();
-
-			}
 
 			this.setInteraction = function() {
 				var type = geo_interaction.selectedFilterType;
@@ -542,7 +486,7 @@ geoM.service(
 				}
 			}
 			this.doClickAction = function(evt, prop) {
-				console.log("doClickAction");
+			
 				layerServ.selectedFeatures = evt.target.getFeatures().getArray();
 				geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
@@ -568,6 +512,7 @@ geoM.service(
 				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "inside") {
 					layerServ.insideFeature();
 				} else if (geo_interaction.type == "cross") {
+					
 					layerServ.overlay.setPosition(undefined); // hides
 					// eventual messages present on the map
 
@@ -588,73 +533,30 @@ geoM.service(
 				}
 			}
 
-			this.spy = function() {
-				var element;
-				var key = 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3';
-
-				var imagery = new ol.layer.Tile({
-					source : new ol.source.BingMaps({
-						key : key,
-						imagerySet : 'Aerial'
-					}),
-					opacity : 0.1
-				});
-				var container = document.getElementById('map');
-				var coordinate;
-				$map.addLayer(imagery);
-				var radius = 75;
-				var ray = radius;
-
-				document.addEventListener('keydown', function(evt) {
-
-					if(evt.which === 17){
-						//se premo control seleziono le features
-						layerServ.near(coordinate, ray);
-						$map.removeLayer(imagery);
-					}
-				})
 			
-				// get the pixel position with every move
-				var mousePosition = null;
-
-				container.addEventListener('mousemove',function(event) {
-					mousePosition = $map.getEventPixel(event);
-					$map.updateSize();$map.render();
-				});
-
-				container.addEventListener('mouseout', function() {
-					mousePosition = null;
-					$map.removeLayer(imagery);
-					$map.updateSize();$map.render();
-				});
-
-				// before rendering the layer, do some clipping
-				imagery.on('precompose', function(event) {
-					var ctx = event.context;
-					var pixelRatio = event.frameState.pixelRatio;
-					ctx.save();
-					ctx.beginPath();
-					if (mousePosition) {
-						// only show a circle around the mouse 
-						ctx.arc(mousePosition[0] * pixelRatio,mousePosition[1] * pixelRatio, radius *  pixelRatio, 0, 2 * Math.PI);
-						coordinate = [mousePosition[0] * pixelRatio, mousePosition[1] * pixelRatio];
-						ray = radius *  pixelRatio;
-						console.log("coordinate: "+coordinate);
-						console.log("ray :" + ray);
-						ctx.lineWidth = 5 * pixelRatio;
-						ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-						ctx.stroke();
-					}
-					ctx.clip();
-				});
-
-				// after rendering the layer, restore the canvas context
-				imagery.on('postcompose', function(event) {
-					var ctx = event.context;
-					ctx.restore();
-				});
-
-
+			
+			this.calculateDistance = function(coord,endCoord){
+				//calcola il raggio in km
+				var wgs84Ellipsoid = new ol.Ellipsoid(6378137, 1 / 298.257223563);
+				var sourceProj = $map.getView().getProjection();
+				
+				var c1 = ol.proj.transform(coord, sourceProj, 'EPSG:4326');
+				var c2 = ol.proj.transform(endCoord, sourceProj, 'EPSG:4326');
+				
+				return wgs84Ellipsoid.vincentyDistance(c1,c2);
+			}
+			
+			this.calculateRay = function(distance){
+				//coordinate scelte randomicamente
+				var x = -12821852.872668605;
+				var y = 5021607.010222939;
+				var xF = x + distance;
+				var yF = y + distance;
+				
+				var coord = $map.getPixelFromCoordinate([x,y]);
+				var coordF =  $map.getPixelFromCoordinate([xF,yF]);
+				return layerServ.calculateDistance(coord,coordF);
+				
 			}
 			this.updateTemplateLayer = function(legendType) {
 				geoModule_thematizer.updateLegend(legendType);
@@ -786,13 +688,11 @@ geoM.service(
 				break;
 
 				}
-
 				if (isBase) {
 					tmpLayer.setZIndex(-1)
 				} else {
 
 				}
-
 				
 					return tmpLayer;
 			
