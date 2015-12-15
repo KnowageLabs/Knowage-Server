@@ -154,22 +154,12 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 	this.chart=function(dsValue){
-		var tempMin =0;
-		var tempMax=0;
+	
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
 		for(var key in dsValue){
 			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
 				tmtz.loadIndicatorMaxMinVal(key);
 			}
-			var minValue = cacheProportionalSymbolMinMax[key].minValue;
-			var maxValue = cacheProportionalSymbolMinMax[key].maxValue;
-			if(tempMin > minValue){
-				tempMin = Math.round(minValue);
-			}
-			if(tempMax<maxValue){
-				tempMax=Math.round(maxValue);
-			}
-
 		}
 
 		// Create the data table.

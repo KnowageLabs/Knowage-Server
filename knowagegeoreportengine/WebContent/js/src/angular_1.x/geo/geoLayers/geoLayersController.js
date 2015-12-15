@@ -162,6 +162,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	};
 
 	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant) {	
+		
 		$scope.title=sbiModule_translate.load("gisengine.info.message.selectFromCatalogue");
 		$scope.layerCatalogueList=[];
 		$scope.selectedLayerList=[];

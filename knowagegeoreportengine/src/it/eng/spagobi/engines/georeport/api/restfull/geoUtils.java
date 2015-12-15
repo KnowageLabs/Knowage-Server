@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ public class geoUtils {
 	public static final String LAYER_ID = "geoId";
 	public static final String LAYER_NAME = "layer";
 	public static final String LAYER_JOIN_COLUMNS = "layerJoinColumns";
+	public static final String LAYER_URL = "layerUrl";
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
 
@@ -71,6 +73,25 @@ public class geoUtils {
 		}
 
 		return toReturn;
+	}
+
+	public static String getFileLayerAction(String layerUrl) throws JSONException, IOException {
+		IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO("File");
+		FeatureCollection outputFeatureCollection = featuresProvider.getAllFeatures(layerUrl);
+		FeatureIterator it = outputFeatureCollection.features();
+		List<SimpleFeature> list = new ArrayList<SimpleFeature>();
+		while (it.hasNext()) {
+			SimpleFeature f = (SimpleFeature) it.next();
+			list.add(f);
+		}
+
+		FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities.collection(list);
+
+		Monitor.start("GetTargetLayerAction.flushResponse");
+		FeatureJSON featureJSON = new FeatureJSON();
+		String responseFeature = featureJSON.toString(filteredOutputFeatureCollection);
+
+		return responseFeature;
 	}
 
 	public static String targetLayerAction(JSONObject req) throws JSONException {

@@ -52,7 +52,7 @@
     <div class="md-toolbar-tools">
      {{title}}
 <md-button ng-click="updateChange()" style="right:8px;position:absolute;top:0;" >
-     X
+    CLOSE
     </md-button>
     </div>
  
@@ -70,6 +70,7 @@
 						selected-item=selectedLayerList
 						click-function="toggleLayerFromCatalogue(row)"
 						menu-option=menuItem
+
 		></angular-table>
   
   </div>

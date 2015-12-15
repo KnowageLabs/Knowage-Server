@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.georeport.api.restfull;
 
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.getDsFieldType;
+import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.getFileLayerAction;
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.targetLayerAction;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
@@ -174,6 +175,17 @@ public class GeoResource extends AbstractChartEngineResource {
 
 			return Response.ok(new ByteArrayInputStream(imageData)).build();
 		}
+	}
+
+	@Path("/getFileLayer")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getFileLayer(@Context HttpServletRequest req) throws IOException, JSONException {
+		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+		String layerUrl = requestVal.getString(geoUtils.LAYER_URL);
+		String result = getFileLayerAction(layerUrl);
+
+		return result;
 	}
 
 }

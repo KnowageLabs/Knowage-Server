@@ -5,13 +5,14 @@
 var scripts = document.getElementsByTagName("script")
 var currentScriptPath = scripts[scripts.length-1].src;
 
-angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagination','ng-context-menu'])
+angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagination','ng-context-menu','ui.tree'])
 .directive('angularTable',
 		function($compile) {
 	return {
 		templateUrl: currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'template/angular-table.html',
 		transclude : true,
 		controller : TableControllerFunction,
+		priority:1000,
 		scope : {
 			ngModel : '=',
 			id : "@",
@@ -29,133 +30,176 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			selectedItem : "=?", //optional to get the selected  item value
 			highlightsSelectedItem : "=?",
 			multiSelect : "=?",
-			scopeFunctions : "=?"
+			scopeFunctions : "=?",
+			dragEnabled: "=?",
+			dragDropOptions :"=?",
+			enableClone:"=?",
+			showEmptyPlaceholder :"=?",
+			noDropEnabled:"=?"
 		},
-		link: function(scope, element, attrs, ctrl, transclude) {
-			//TODO ngModel obbligatorio
+		compile: function (tElement, tAttrs, transclude) {
+			 return {
+			        pre: function preLink(scope, element, attrs, ctrl, transclud) { 
+			        	if( attrs.dragEnabled && (attrs.dragEnabled==true || attrs.dragEnabled=="true")){
+							var table=angular.element(element[0].querySelector("table"))
+							table.attr('ui-tree',"dragDropOptions");
+							table.attr('drag-delay',"600");
+							table.attr('data-clone-enabled',"enableClone");
+							table.attr('data-empty-placeholder-enabled',"showEmptyPlaceholder");
+							table.attr('data-nodrop-enabled',"noDropEnabled");
+						
+							
+							$compile(table)(scope)
+							var body=angular.element(table[0].querySelector("tbody"));
+							body.attr('ui-tree-nodes',"");
+							body.attr('ng-model',"ngModel");
+						}
+			        },
+			        post: function postLink(scope, element, attrs, ctrl, transclud) {
+
+						//TODO ngModel obbligatorio
 
 
-			var id="at";
-			if(attrs.id){
-				id=attrs.id;
-			}
-			var template=angular.element(element[0].querySelector("#angularTableTemplate"))
-			template.addClass(id+"ItemBox");
+						var id="at";
+						if(attrs.id){
+							id=attrs.id;
+						}
+						var template=angular.element(element[0].querySelector("#angularTableTemplate"))
+						template.addClass(id+"ItemBox");
 
 
-			var table= angular.element(template[0].querySelector("table"));
-			var thead= angular.element(table[0].querySelector("thead"));
-			var tbody= angular.element(table[0].querySelector("tbody"));
-			var footerBox= angular.element(template[0].querySelector("angular-table-footer"));
+						var table= angular.element(template[0].querySelector("table"));
+						var thead= angular.element(table[0].querySelector("thead"));
+						var tbody= angular.element(table[0].querySelector("tbody"));
+						var footerBox= angular.element(template[0].querySelector("angular-table-footer"));
 
-			//create the head
-			thead.attr('angular-table-head',"");
-			//create tbody
-			tbody.attr('angular-table-body',"");
+						//create the head
+						thead.attr('angular-table-head',"");
+						//create tbody
+						tbody.attr('angular-table-body',"");
 
-			//create the column of the table. If attrs.column is present load only this column, else load all the columns
-			scope.tableColumns=[];
-			if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
-				scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
-				thead.attr('multi-select',true);
-				tbody.attr('multi-select',true);
-			}
+						//create the column of the table. If attrs.column is present load only this column, else load all the columns
+						scope.tableColumns=[];
+						
+						
+						if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
+							scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
+							thead.attr('multi-select',true);
+							tbody.attr('multi-select',true);
+						}
+						
+						if(attrs.dragEnabled && (attrs.dragEnabled==true || attrs.dragEnabled=="true")){
+							scope.tableColumns.push({label:"",name:"--DRAG_AND_DROP--",size:"1px"});
+						}else{
+							tbody.attr('no-drag-and-drop',true);
+						}
+						if(attrs.columnsSearch){
+							var colSearch=scope.columnsSearch;
+							if(Object.prototype.toString.call(colSearch)=="[object String]"){
+								//if is a string, convert it to object
+								scope.columnsSearch=JSON.parse(colSearch);
+							}
+						}
+						
+						if(attrs.columns){
+							var col=scope.columns;
+							if(Object.prototype.toString.call(col)=="[object String]"){
+								//if is a string, convert it to object
+								col=JSON.parse(col);
+							}
+							 
+							for(var i=0;i<col.length;i++){
+								var tmpColData={};
+								if(Object.prototype.toString.call(col[i])=="[object Object]"){
+									//json of parameter like name, label,size
+									tmpColData.name=col[i].name || "---";
+									tmpColData.label=col[i].label || tmpColData.name;
+									tmpColData.size=col[i].size || "";
+								}else{
+									//only the col name
+									tmpColData.label=col[i];
+									tmpColData.name=col[i];
+									tmpColData.size="";
+								}
 
-			if(attrs.columnsSearch){
-				var colSearch=scope.columnsSearch;
-				if(Object.prototype.toString.call(colSearch)=="[object String]"){
-					//if is a string, convert it to object
-					scope.columnsSearch=JSON.parse(colSearch);
-				}
-			}
+								scope.tableColumns.push(tmpColData);
+							}
+						}else{
+							//load all
+							var firstValue=scope.ngModel[0];
+							if(firstValue!=undefined){
+								for(var key in firstValue){
+									var tmpColData={};
+									tmpColData.label=key;
+									tmpColData.name=key;
+									tmpColData.size="";
+									scope.tableColumns.push(tmpColData);
+								}
+							}
+						}
+						//add speed menu column at the end of the table
+						if(attrs.speedMenuOption ){
+							scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
+							thead.attr('speed-menu-option',true);
+							tbody.attr('speed-menu-option',true);
+						}
+
+						
+						
+						//check for pagination
+						if(!attrs.totalItemCount){
+							scope.currentPageNumber=undefined;
+							scope.totalItemCount=undefined;
+							var paginBox= angular.element(footerBox[0].querySelector("dir-pagination-controls")); 
+							paginBox.removeAttr("on-page-change");
+							tbody.attr('local-pagination',true);
+						}
+						if(attrs.noPagination){
+							scope.itemsPerPage=999;
+						}else{
+							scope.itemsPerPage=3;
+						}
+
+
+					
+
+
+						$compile(thead)(scope);
+						$compile(tbody)(scope);
+
+						//add search tab
+						if(!attrs.showSearchBar || attrs.showSearchBar==false || attrs.showSearchBar=="false"){
+							angular.element(template[0].querySelector(".tableSearchBar")).css("display","none");
+						}
+
+						var showAngularTableActions=false;
+						if (attrs.showSearchBar && (attrs.showSearchBar==true || attrs.showSearchBar=="true")) {
+							showAngularTableActions=true;
+							if (!attrs.searchFunction) {
+								scope.localSearch = true;
+							}
+						}
+
+						if (attrs.multiSelect) {
+							if (!attrs.selectedItem) {
+								scope.selectedItem = [];
+							}
+						}
+
+						if(!showAngularTableActions){
+							angular.element(template[0].querySelector("angular-table-actions")).css("display","none");
+						}
+						
+						
+
+
+					
+			        }
+			      }
 			
-			if(attrs.columns){
-				var col=scope.columns;
-				if(Object.prototype.toString.call(col)=="[object String]"){
-					//if is a string, convert it to object
-					col=JSON.parse(col);
-				}
-				 
-				for(var i=0;i<col.length;i++){
-					var tmpColData={};
-					if(Object.prototype.toString.call(col[i])=="[object Object]"){
-						//json of parameter like name, label,size
-						tmpColData.name=col[i].name || "---";
-						tmpColData.label=col[i].label || tmpColData.name;
-						tmpColData.size=col[i].size || "";
-					}else{
-						//only the col name
-						tmpColData.label=col[i];
-						tmpColData.name=col[i];
-						tmpColData.size="";
-					}
-
-					scope.tableColumns.push(tmpColData);
-				}
-			}else{
-				//load all
-				var firstValue=scope.ngModel[0];
-				if(firstValue!=undefined){
-					for(var key in firstValue){
-						var tmpColData={};
-						tmpColData.label=key;
-						tmpColData.name=key;
-						tmpColData.size="";
-						scope.tableColumns.push(tmpColData);
-					}
-				}
-			}
-			//add speed menu column at the end of the table
-			if(attrs.speedMenuOption ){
-				scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
-				thead.attr('speed-menu-option',true);
-				tbody.attr('speed-menu-option',true);
-			}
-
-			//check for pagination
-			if(!attrs.totalItemCount){
-				scope.currentPageNumber=undefined;
-				scope.totalItemCount=undefined;
-				var paginBox= angular.element(footerBox[0].querySelector("dir-pagination-controls")); 
-				paginBox.removeAttr("on-page-change");
-				tbody.attr('local-pagination',true);
-			}
-			if(attrs.noPagination){
-				scope.itemsPerPage=999;
-			}else{
-				scope.itemsPerPage=3;
-			}
-
-
-
-			$compile(thead)(scope);
-			$compile(tbody)(scope);
-
-			//add search tab
-			if(!attrs.showSearchBar || attrs.showSearchBar==false || attrs.showSearchBar=="false"){
-				angular.element(template[0].querySelector(".tableSearchBar")).css("display","none");
-			}
-
-			var showAngularTableActions=false;
-			if (attrs.showSearchBar && (attrs.showSearchBar==true || attrs.showSearchBar=="true")) {
-				showAngularTableActions=true;
-				if (!attrs.searchFunction) {
-					scope.localSearch = true;
-				}
-			}
-
-			if (attrs.multiSelect) {
-				if (!attrs.selectedItem) {
-					scope.selectedItem = [];
-				}
-			}
-
-			if(!showAngularTableActions){
-				angular.element(template[0].querySelector("angular-table-actions")).css("display","none");
-			}
-
-
-		}
+			
+		},
+		
 	}
 })
 .directive('angularTableHead',
@@ -183,8 +227,14 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 				angular.element(tElement.children()[0]).removeAttr('total-items');
 				angular.element(tElement.children()[0]).removeAttr('current-page');
 			}
+			
+			if( tAttrs.noDragAndDrop=="true" ){
+				angular.element(tElement.children()[0]).removeAttr('ui-tree-node');
+			}
+			
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
+			console.log("scope",scope)
 		}
 	}
 })
@@ -394,6 +444,7 @@ function TableHeaderControllerFunction($scope,$timeout){
 			$timeout(function() {
 				var checkCol=angular.element(rows[j].querySelector('td'));
 				j++;
+			
 				if(checkCol[0].querySelector('md-checkbox').checked!=$scope.multiSelectVal){
 					checkCol.triggerHandler('click');
 				}

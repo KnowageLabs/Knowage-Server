@@ -69,7 +69,7 @@ geoM.service(
 		function($http, baseLayer, sbiModule_logger, $map,
 				geoModule_thematizer, geo_interaction, crossNavigation,
 				sbiModule_config, geoModule_template,
-				sbiModule_restServices, geoModule_templateLayerData) {
+				sbiModule_restServices, geoModule_templateLayerData,$q) {
 
 			var layerServ = this;
 			var sFeatures;
@@ -511,9 +511,9 @@ geoM.service(
 					vectorContext.drawMultiPointGeometry(headPoint,null);
 				
 
-					$map.render();
+					$map.updateSize();$map.render();
 				});
-				$map.render();
+				$map.updateSize();$map.render();
 
 			}
 
@@ -619,13 +619,13 @@ geoM.service(
 
 				container.addEventListener('mousemove',function(event) {
 					mousePosition = $map.getEventPixel(event);
-					$map.render();
+					$map.updateSize();$map.render();
 				});
 
 				container.addEventListener('mouseout', function() {
 					mousePosition = null;
 					$map.removeLayer(imagery);
-					$map.render();
+					$map.updateSize();$map.render();
 				});
 
 				// before rendering the layer, do some clipping
@@ -688,7 +688,7 @@ geoM.service(
 						this.selectedBaseLayerOBJ = layerConf;
 					}
 					$map.addLayer(this.selectedBaseLayer);
-					$map.render();
+					$map.updateSize();$map.render();
 				}
 			};
 
@@ -699,17 +699,30 @@ geoM.service(
 					delete this.loadedLayerOBJ[layerConf.layerId];
 				} else {
 					var layer = this.createLayer(layerConf, false);
-					if (layer != undefined) {
-						this.loadedLayer[layerConf.layerId] = layer;
-						this.loadedLayerOBJ[layerConf.layerId] = layerConf;
-						$map.addLayer(layer);
-						$map.render();
+					if(layer.hasOwnProperty("$$state")){
+						layer.then(function(tmpLayer) {
+							layerServ.updateLayerLoaded(tmpLayer,layerConf)
+
+							});
+					}else{
+						layerServ.updateLayerLoaded(layer,layerConf)
 					}
+					
 				}
 			};
+			
+			this.updateLayerLoaded=function(layer,layerConf){
+				if (layer != undefined) {
+					this.loadedLayer[layerConf.layerId] = layer;
+					this.loadedLayerOBJ[layerConf.layerId] = layerConf;
+					$map.addLayer(layer);
+					$map.updateSize();$map.render();
+				}
+			}
 
 			this.createLayer = function(layerConf, isBase) {
 				var tmpLayer;
+				var asyncCall;
 
 				switch (layerConf.type) {
 				case 'WMS':
@@ -762,6 +775,12 @@ geoM.service(
 					});
 					break;
 
+				case 'File':
+					
+					tmpLayer= this.getLayerFromFile(layerConf);
+					
+					break;
+					
 				default:
 					console.error('Layer type [' + layerConf.type + '] not supported');
 				break;
@@ -774,8 +793,43 @@ geoM.service(
 
 				}
 
-				return tmpLayer;
+				
+					return tmpLayer;
+			
 			};
+			
+			this.getLayerFromFile=function(layerConf){
+				var deferredLayer = $q.defer();
+
+				sbiModule_restServices.post("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
+				.success(
+					function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							sbiModule_logger.log("file layer non Ottenuto");
+						} else {
+							sbiModule_logger.trace("file layer caricato",data);
+//			
+							var vectorSource = new ol.source.Vector(
+									{
+										features : (new ol.format.GeoJSON()).readFeatures(data,
+												{
+													featureProjection : 'EPSG:3857'
+												})
+									});
+
+							var tmpLayer= new ol.layer.Vector({
+								source : vectorSource
+							}); 
+							deferredLayer.resolve(tmpLayer);
+						}
+				})
+				.error(function(data, status, headers, config) {
+					sbiModule_logger.log("file layer non Ottenuto");
+				});
+				
+				 return deferredLayer.promise;
+
+			}
 		});
 
 geoM.factory('geoModule_constant', function(sbiModule_translate) {

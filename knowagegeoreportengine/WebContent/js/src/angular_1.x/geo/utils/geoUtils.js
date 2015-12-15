@@ -457,18 +457,42 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 });
 
 var geoReportPanel;
-geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_restServices,sbiModule_config) {	
+geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_restServices,sbiModule_config,$map,$mdDialog,sbiModule_translate) {	
 	geoReportPanel={};
 	geoReportPanel.validate=function(){
-			console.log("salvo il template",geoModule_template);
-			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-			sbiModule_restServices.post("1.0/documents", 'saveGeoReportTemplate',geoModule_template).success(
-					function(data, status, headers, config) {
-						console.log("TargetLayer  Ottenuto " + data);
-					}).error(function(data, status, headers, config) {
-						console.log("TargetLayer non Ottenuto " + status);
-					});
+		
+		//message to user for the save of current view
+		
+			    var confirm = $mdDialog.confirm()
+			          .title(sbiModule_translate.load("gisengine.info.message.save.progress"))
+			          .textContent(sbiModule_translate.load("gisengine.info.message.save.saveView"))
+			          .ariaLabel('Salva vista')
+			          .ok(sbiModule_translate.load("gisengine.info.message.yes"))
+			          .cancel(sbiModule_translate.load("gisengine.info.message.no"));
+			    
+			    $mdDialog.show(confirm).then(function() {
+			    	//alter current view of the map
+					geoModule_template.currentView.center=$map.getView().getCenter();
+					geoModule_template.currentView.zoom=$map.getView().getZoom();
+					geoReportPanel.save();
+			    }, function() {
+			     
+			    });
+		
+		
+		
 		
 	}
+	geoReportPanel.save=function(){
+		console.log("salvo il template",geoModule_template,$map);
+		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
+		sbiModule_restServices.post("1.0/documents", 'saveGeoReportTemplate',geoModule_template).success(
+				function(data, status, headers, config) {
+					console.log("TargetLayer  Ottenuto " + data);
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+	}
+	
 	return geoReportPanel;
 });

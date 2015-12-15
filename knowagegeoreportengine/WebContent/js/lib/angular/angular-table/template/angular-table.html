@@ -13,7 +13,7 @@
 
 <table flex>
 	<thead></thead>
-	<tbody></tbody>
+	<tbody   ></tbody>
 </table>
 
 
@@ -41,11 +41,15 @@
 
 <script type="text/ng-template" id="bodyTemplate.html">
 
-<tr dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}">
-	<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)"  context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'" dynamichtml="row[column.name]" ></span>
+
+<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)"  context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="row[column.name]" ></span>
+
+		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>
+
 		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,row[column.name],$event)" aria-label="selected item checked"> </md-checkbox>
 		
 		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length==1"  ng-click='$event.stopPropagation();speedMenuOption[0].action(row,$event); ' class="md-icon-button actionButton" aria-label="More" 
@@ -78,6 +82,7 @@
 			</md-list>
 		</div>	
 	</td>
+ 
 </tr>
 
 	
@@ -324,6 +329,17 @@ min-height: 22px !important;
 	margin-left: 8px;
 	margin-right: 8px;
 	border-radius: 0;
+}
+
+#angularTableTemplate md-checkbox {
+margin-bottom: 0px;
+}
+
+
+#angularTableTemplate .tableDragBar {
+padding: 0 !important;
+    text-align: center;
+    color: grey;
 }
 </style>
 
