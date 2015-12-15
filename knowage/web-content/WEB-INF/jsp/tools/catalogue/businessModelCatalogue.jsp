@@ -55,11 +55,20 @@
 						</md-button>
 					</div>
 				</md-toolbar>
+				<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmLoadingShow">
+     				<md-progress-circular 
+        	 			class=" md-hue-4"
+        				md-mode="indeterminate" 
+        				md-diameter="70"       
+        				style="height:100%;">
+      				</md-progress-circular>
+      			</div>
 				<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
 
 					<angular-table 
 						layout-fill
 						id="arsenije"
+						ng-show="!bmLoadingShow"
 						ng-model="businessModelList"
 						columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"}]' 
 						columns-search='["name","description"]'
@@ -155,16 +164,18 @@
      					</div>
      					
      					<div layout="row" layout-wrap>
-     						<div flex=3 style="line-height: 40px">
+     						<div flex=3 style="line-height: 40px; margin-top:17px" >
        							<label>{{translate.load("sbi.ds.file.upload.button")}}:</label>
       						</div>
       						
-      						<md-input-container class="small counter"> 
-       							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/>
-       									<!--  fileread="businessModelFile" accept="" class="md-raised md-ExtraMini "--> 
-      						</md-input-container>
+      						<!--  <md-input-container > 
+       							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
+       									
+       							  	
+      						</md-input-container>-->
+      						<file-upload style="height:20px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
       					</div>
-     					     					
+     					     				
      					<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
        							<label>{{translate.load("sbi.bm.isLocked")}}:</label>
@@ -206,8 +217,8 @@
       						</div>
      					</div>
      			
-     					<div style="height:40%; padding-top:20px">
-     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%; " ><!-- overflow:hidden; -->
+     					<div style="height:40%; padding-top:20px">     						
+     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;"><!-- overflow:hidden; -->
      							<md-toolbar class="md-blue minihead md-toolbar-tools">
      								<!-- <md-button 
     									ng-disabled=false
@@ -222,8 +233,17 @@
 									</md-button>  -->
      								{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
      							</md-toolbar>
+     							<div layout-align="space-around" layout="row" style="height:100%" ng-show="versionLoadingShow">
+     								<md-progress-circular 
+        	 							class=" md-hue-4"
+        								md-mode="indeterminate" 
+        								md-diameter="70"       
+        								style="height:100%;">
+      								</md-progress-circular>
+      							</div>
      							<md-radio-group ng-model="bmVersionsRadio" ng-change="checkChange()">
      							<angular-table
+     								ng-show="!versionLoadingShow"
 	     							style="background-color:red" 
 									layout-fill
 									id="arsenije1"

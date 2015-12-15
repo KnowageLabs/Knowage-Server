@@ -2,7 +2,7 @@
  * 
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col']);
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload']);
 
 app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", businessModelCatalogueFunction]);
 
@@ -24,7 +24,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmVersionsActive;
 	//$scope.businessModelFile = new FormData();
 	$scope.bmWithFile = {};
-	
+	$scope.fileObj ={};
+	$scope.versionLoadingShow;
+	$scope.bmLoadingShow;
 	angular.element(document).ready(function () {
         $scope.getData();
     });
@@ -52,7 +54,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.showMe = false;
 		$scope.isDirty = false;
 		$scope.selectedBusinessModel = {};
-		$scope.businessModelHistory=[];
+		$scope.bmVersions=[];
 	}
 	
 	$scope.unlockBusinessModel = function(){
@@ -163,9 +165,17 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			  				if (data.hasOwnProperty("errors")) {
 			  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 			  				} else {
-			  					for(var i = 0; i < data.length; i++){
-			  						$scope.businessModelList.push(data[i]);
-					  			}
+			  					$scope.bmLoadingShow = true;
+			  					$scope.businessModelList = [];
+			  					
+			  					setTimeout(function(){
+				  					for(var i = 0; i < data.length; i++){
+				  						$scope.businessModelList.push(data[i]);
+				  						
+				  						$scope.bmLoadingShow = false;
+				  						$scope.$apply();
+						  			}
+			  					},1000);	
 			  				}
 			  			})
 			  		
@@ -240,6 +250,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 
 	 //Calling service for file versions @GET
 	 $scope.getVersions = function (id){
+		 
 		 sbiModule_restServices
 		  	.get("2.0/businessmodels/"+id+"/versions","")
 		  	.success(
@@ -248,10 +259,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		  				if (data.hasOwnProperty("errors")) {
 		  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 		  				} else {
-		  					$scope.bmVersions = data;
-		  					//$scope.bmVersions[0].active = "&#10004;";
-		  					activeFlagStyle();
-		  					millisToDate($scope.bmVersions);
+		  					$scope.versionLoadingShow = true;
+		  					$scope.bmVersions = [];
+		  					
+		  					setTimeout(function(){
+		  						$scope.bmVersions = data;
+			  					activeFlagStyle();
+			  					millisToDate($scope.bmVersions);
+			  					
+			  					$scope.versionLoadingShow = false;
+			  					$scope.$apply();
+		  					 },600);	  					
+		  					
 		  				}
 		  				
 		  			})
@@ -260,10 +279,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		  			console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 		  		});
 		 
+		 //$scope.versionLoadingShow = false;
+		 
 	 }
 	 
 	 $scope.saveBusinessModelFile = function(){
-			multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.bmWithFile).success(
+			multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.fileObj).success(
 					
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){
@@ -276,8 +297,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
 							document.getElementById("businessModelFile").value = "";
 							$scope.isDirty = false;
-							$scope.bmWithFile = {};
-							//console.log($scope.selectedBusinessModel);
+							$scope.fileObj.fileName = "";
+							$scope.fileObj = {};
 							
 						}
 					}).error(function(data, status, headers, config) {
@@ -286,9 +307,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 }
 	 //calling service for saving BM @POST and @PUT
 	 $scope.saveBusinessModel = function(){
-		 	//$scope.bmWithFile = $scope.selectedBusinessModel;
-		 	
-		 	delete $scope.selectedBusinessModel.file;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 				console.log("Novi se cuva");
 
@@ -299,10 +317,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								$scope.selectedBusinessModel.id = data.id;
 								$scope.businessModelList.push(data);
 								$scope.selectedVersions=[];
-								$scope.isDirty = false;
+								$scope.isDirty = false;							
+								
+								if($scope.fileObj.fileName !== undefined)
+									$scope.saveBusinessModelFile();
+								
 								$scope.showActionOK("New Business Model saved successfully");
-
-								$scope.saveBusinessModelFile();
 							}
 							
 						);
@@ -314,7 +334,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 					.success(
 							function(){
-								$scope.saveBusinessModelFile();
+								if($scope.fileObj.fileName !== undefined)
+									$scope.saveBusinessModelFile();
 								
 								if($scope.bmVersions.length > 0 && $scope.bmVersionsActive != null){
 									sbiModule_restServices
@@ -518,12 +539,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		
 		//check if is name dirty 
 		$scope.checkChange = function(){
-			console.log($scope.bmVersionsRadio);
-			console.log($scope.bmVersionsRadioActive);
-			if($scope.selectedBusinessModel.name === null){
-				if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === null){
+			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === ""){
 					$scope.isDirty = false;
-				}
 			}
 			else{
 				$scope.isDirty = true;
@@ -603,21 +620,12 @@ app.service('multipartForm',['$http',function($http){
 			
 			var formData = new FormData();
 			
-			for(var key in data){
-				
-				if(key==="file"){
-					formData.append(key,data[key]);
-				}
-				
-					
-				
-				
-			}
+			formData.append("file",data.file);
 
-		return	$http.post(uploadUrl,formData,{
-				transformRequest:angular.identity,
-				headers:{'Content-Type': undefined}
-			})
+			return	$http.post(uploadUrl,formData,{
+					transformRequest:angular.identity,
+					headers:{'Content-Type': undefined}
+				})
 		}
 		
 	}])

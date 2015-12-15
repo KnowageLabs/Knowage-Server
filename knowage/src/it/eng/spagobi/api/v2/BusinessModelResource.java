@@ -158,6 +158,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
 
+		System.out.println();
 		Content content = new Content();
 		byte[] bytes = null;
 
@@ -418,6 +419,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				return finalFileName;
 			}
 		}
-		return "unknown";
+		return null;
 	}
 }
