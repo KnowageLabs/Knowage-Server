@@ -1,0 +1,13 @@
+.header {
+	background-color: #3b668c !important;
+  	color: #ffffff !important;
+}
+
+.toolbar-button-custom {
+	min-width: 50px;
+	width: 50px;
+}
+
+.selected-doc {
+	background-color: #E8EAF6;
+}
