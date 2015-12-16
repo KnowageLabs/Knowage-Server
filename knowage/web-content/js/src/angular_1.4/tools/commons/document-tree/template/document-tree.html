@@ -22,11 +22,28 @@
 			</li>
 		</ol>
 </script>
-<md-content layout-padding>
-		<div ui-tree data-drag-enabled="false" id="{{id}}">
-			<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-				<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
-				</li>
-			</ol>
-		</div>
-</md-content>
+<md-content ng-if="browser == 'firefox'" layout-padding>
+	<div ui-tree data-drag-enabled="false" id="{{id}}">
+		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
+			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			</li>
+		</ol>
+	</div>
+</md-content ng-if="browser == 'firefox'">
+<md-content ng-if="browser == 'chrome'" layout-fill>
+	<div ui-tree data-drag-enabled="false" id="{{id}}">
+		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
+			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			</li>
+		</ol>
+	</div>
+</md-content ng-if="browser == 'chrome'">
+
+<md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
+	<div ui-tree data-drag-enabled="false" id="{{id}}">
+		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
+			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			</li>
+		</ol>
+	</div>
+</md-content ng-if="browser != 'chrome' && browser != 'firefox'">

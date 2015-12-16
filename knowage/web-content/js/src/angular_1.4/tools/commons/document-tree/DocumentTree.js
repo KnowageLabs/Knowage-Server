@@ -84,9 +84,10 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 
 
 function DocumentTreeControllerFunction($scope,$timeout){
-	$scope.toogleSelected = function(element){
+	$scope.toogleSelected = function(element, parent){
 		if (element !== undefined && $scope.multiSelect){
-			element.checked = !element.checked; 
+			//check the element as the parent. If not the parent doesn't exist, toggle the element check
+			element.checked = parent === undefined ? !element.checked : parent.checked; 
 			//different insertion if is allowed the multi-selection
 			if ( element.checked ){ //if the element is just checked, insert into selectedItem, else remove it
 					$scope.selectedItem.push(element);
@@ -97,10 +98,10 @@ function DocumentTreeControllerFunction($scope,$timeout){
 		
 			if (element.type == "folder"){
 				for (var i =0 ; i < element.subfolders.length; i++){
-					$scope.toogleSelected(element.subfolders[i]);
+					$scope.toogleSelected(element.subfolders[i],element);
 				}
 				for (var j=0; element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
-					$scope.toogleSelected(element.biObjects[j]);
+					$scope.toogleSelected(element.biObjects[j],element);
 				}
 			}
 		}
@@ -128,4 +129,18 @@ function DocumentTreeControllerFunction($scope,$timeout){
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
     	});
+
+	$scope.detectBrowser = function(){
+        var userAgent = window.navigator.userAgent;
+        var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer/i};
+
+        for(var key in browsers) {
+            if (browsers[key].test(userAgent)) {
+            	return key;
+            }
+       };
+       return 'unknown';
+	}
+	
+	$scope.browser = $scope.detectBrowser();
 }
