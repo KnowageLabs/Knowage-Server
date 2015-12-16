@@ -175,34 +175,31 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		artifactDAO = DAOFactory.getArtifactsDAO();
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		for (String key : uploadForm.keySet()) {
 
-			List<InputPart> inputParts = uploadForm.get(key);
+		List<InputPart> fileNamePart = uploadForm.get("fileName");
+		List<InputPart> fileParts = uploadForm.get("file");
 
-			for (InputPart inputPart : inputParts) {
+		if (fileNamePart != null && fileParts != null) {
+			try {
 
-				try {
+				content.setFileName(fileNamePart.get(0).getBodyAsString());
 
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-						content.setFileName(getFileName(header));
+				// convert the uploaded file to input stream
+				InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
 
-						// convert the uploaded file to input stream
-						InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				bytes = IOUtils.toByteArray(inputStream);
+				content.setContent(bytes);
+				content.setCreationDate(new Date());
+				content.setCreationUser(getUserProfile().getUserName().toString());
 
-						bytes = IOUtils.toByteArray(inputStream);
-						content.setContent(bytes);
-						content.setCreationDate(new Date());
-						content.setCreationUser(getUserProfile().getUserName().toString());
+				artifactDAO.insertArtifactContent(artifactId, content);
 
-						artifactDAO.insertArtifactContent(artifactId, content);
-					}
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+
+		} else {
+			return Response.status(Status.BAD_REQUEST).build();
 
 		}
 

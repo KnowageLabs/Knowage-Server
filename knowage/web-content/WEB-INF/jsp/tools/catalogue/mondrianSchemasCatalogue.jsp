@@ -183,18 +183,12 @@
      				
 <!-- /////////////// INPUT FILE UPLOAD \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div flex=100>
-      				<md-input-container class="small counter"> 
+				<div layout="row" layout-wrap>
+				
+				 <file-upload ng-model="file" id="myId" ></file-upload>	
       				
-       					<input id="mondarianSchemaFile"
-       							type="file"
-       							file-model="file.file"
-       							> 
-       							
-       							
-     				 </md-input-container>
 
-     </div>
+     		</div>
      				
 <!-- /////////////// LOCK CHECKBOX \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
