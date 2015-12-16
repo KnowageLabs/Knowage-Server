@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.association;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,20 +28,10 @@ import java.util.Set;
  */
 public class AssociationGroup {
 	
-	private String id;
-	private Map<String, Association> associations;
+	Map<String, Association> associations;
 	
 	public AssociationGroup() {
-		this("");
-	}
-	
-	public AssociationGroup(String id) {
-		this.id = id;
-		this.associations = new HashMap<String, Association>();
-	}
-	
-	public String getId() {
-		return id;
+		associations = new HashMap<String, Association>();
 	}
 	
 	public Collection<Association> getAssociations() {
