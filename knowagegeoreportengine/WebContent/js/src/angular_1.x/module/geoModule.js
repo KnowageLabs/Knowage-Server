@@ -85,6 +85,7 @@ geoM.service(
 			this.templateLayer = {};
 			this.selectedFeatures = [];
 			this.measure;
+			this.filters=[];
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
@@ -595,6 +596,7 @@ geoM.service(
 			};
 
 			this.toggleLayer = function(layerConf) {
+				
 				if (this.loadedLayer[layerConf.layerId] != undefined) {
 					$map.removeLayer(this.loadedLayer[layerConf.layerId]);
 					delete this.loadedLayer[layerConf.layerId];
@@ -647,6 +649,7 @@ geoM.service(
 
 					tmpLayer = new ol.layer.Vector({
 						source : vectorSource,
+						style: this.applyFilter
 					});
 					break;
 
@@ -718,7 +721,8 @@ geoM.service(
 									});
 
 							var tmpLayer= new ol.layer.Vector({
-								source : vectorSource
+								source : vectorSource,
+								style: this.applyFilter
 							}); 
 							deferredLayer.resolve(tmpLayer);
 						}
@@ -730,13 +734,56 @@ geoM.service(
 				 return deferredLayer.promise;
 
 			}
-			
 			this.removeSelectPopup=function(){
 				layerServ.overlay.setPosition(undefined);
 				select.getFeatures().clear();
 			}
+			
+			this.applyFilter=function(feature, resolution){
+					
+					var styleTMP= [new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: "#3399cc",
+							width: 1
+						})
+					})];
+					var applFilter=false;
+						var propertiesFeature = feature.getProperties();
+						
+						for(var j=0;j<layerServ.filters.length;j++){
+							var value = propertiesFeature[layerServ.filters[j].filter];
+							if(layerServ.filters[j].model!=""){
+								applFilter=true;
+							}
+							var valuesInsert = layerServ.filters[j].model.split(",");
+							
+							for(var k=0;k<valuesInsert.length;k++){
+								if(value==valuesInsert[k]){
+									//se contiene il filtro selezionato 
+									return styleTMP;
+									
+								}
+							}
+							
+					
+						}
+					
+						if(applFilter){
+							return null;
+						}else{
+							
+							return styleTMP;
+						}
+					
+			}
+			
+			
+			this.setLayerFilter= function(layerConf,filters) {
+				layerServ.filters=filters;
+			}
+				
 		});
-
+	
 geoM.factory('geoModule_constant', function(sbiModule_translate) {
 	var cont = {
 			analysisLayer : sbiModule_translate.load("gisengine.constant.analysisLayer"),

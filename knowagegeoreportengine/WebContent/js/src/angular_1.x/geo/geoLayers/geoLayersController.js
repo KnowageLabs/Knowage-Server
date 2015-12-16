@@ -25,7 +25,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.openLayersMenu=false;
 	$scope.baseLayers=baseLayer;
 	$scope.translate=sbiModule_translate;
-
+	$scope.filters=[];
+	$scope.insertVal={};
+	$scope.layerSelected;
+	$scope.layerconf;
+	
 	$scope.loadLayerFromTemplate=function(){
 		//if geoModule_template has baseLayersConf, add them to layerlist
 		if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
@@ -146,7 +150,50 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		sbiModule_logger.log("toggleLayer");
 		geoModule_layerServices.toggleLayer(layerConf)
 	};
-
+	//inizio filtri
+	$scope.getFilter=function(val){
+		$scope.layerSelected = val;
+		$scope.filters=[];
+		var values = val.properties;
+		for(var i = 0;i<values.length;i++){
+			$scope.filters.push({
+				filter: values[i],
+				model:""
+			})
+		}
+		console.log($scope.filters);
+	}
+	$scope.selectFilters = function(ev,val){
+		$scope.getFilter(val);
+		
+		$scope.layerconf=val;
+		$mdDialog.show({
+			controller: $scope.layerFromCatalogueController,
+			templateUrl: 'filtersforLayerTemplate.html',
+			parent: angular.element(document.body),
+			targetEvent: ev,
+			openFrom: '#addLayer',
+			closeTo: '#map',
+			clickOutsideToClose:true,
+			preserveScope :true,
+			scope: $scope
+		});
+	}
+	$scope.applyFilter = function(){
+		$scope.toggleLayer($scope.layerconf);
+		if(geoModule_layerServices.layerIsLoaded($scope.layerconf)){
+			var layer = geoModule_layerServices.createLayer($scope.layerconf, false);
+			$map.removeLayer(layer);
+		}
+		
+		$scope.toggleLayer($scope.layerconf);
+		console.log("ok",$scope.filters);
+		$mdDialog.cancel();
+		geoModule_layerServices.filters = $scope.filters;
+		$map.render();
+		$map.updateSize();
+	}
+	//fine filtri
 	$scope.addLayerFromCatalogue = function(ev){
 		$mdDialog.show({
 			controller: $scope.layerFromCatalogueController,
