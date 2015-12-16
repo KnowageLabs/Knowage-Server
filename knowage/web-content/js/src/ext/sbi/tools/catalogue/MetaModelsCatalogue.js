@@ -132,7 +132,7 @@ Ext.extend(Sbi.tools.catalogue.MetaModelsCatalogue, Sbi.widgets.Catalogue, {
 			
 		var r ={
 				id : 0,
-				name : '',
+				name : '', 
 				description : '',
 				locker: '',
 				locked: ''
@@ -174,7 +174,7 @@ Ext.extend(Sbi.tools.catalogue.MetaModelsCatalogue, Sbi.widgets.Catalogue, {
 		
 		this.lockerField = new Ext.form.DisplayField({
 			maxLength : 500,
-			fieldLabel : 'Locked by',
+			fieldLabel : 'Locked by',//changedByMe
 			name : 'locker',
 			dataIndex : 'locker'
 		});
@@ -340,6 +340,7 @@ Ext.extend(Sbi.tools.catalogue.MetaModelsCatalogue, Sbi.widgets.Catalogue, {
 	}
 	
 	, addNewItem : function() {
+		//alert("adding new item");
 		this.superclass().addNewItem.call(this);
 		this.unlockButton.disable();
 		this.lockButton.disable();
