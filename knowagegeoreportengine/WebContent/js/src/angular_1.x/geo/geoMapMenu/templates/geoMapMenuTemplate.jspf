@@ -48,13 +48,13 @@
 					ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 
 			</div>
 			<div flex = 20 style="margin-top: -30px;margin-left:30px;">
-		  		<md-input-container  ng-show="selectModeInteraction.selectedFilterType=='near'">
+		  		<md-input-container  ng-show="selectModeInteraction.selectedFilterType=='near'" class="md-block">
       		 		<label>Insert</label>
        		 		<input required type="number" min="0" step="any" name="rate" ng-model="measureInsert"  ng-change="save(selectMisure,measureInsert)" />
   				</md-input-container>
 		 	</div>
 			<div flex=20 style="margin-top: -30px;margin-left:20px;">
-				<md-select selected="kilometers" ng-model="selectMisure" placeholder="Select a unite of misure" ng-show="selectModeInteraction.selectedFilterType=='near'"
+				<md-select class="md-block" selected="kilometers" ng-model="selectMisure" placeholder="Select a unite of misure" ng-show="selectModeInteraction.selectedFilterType=='near'"
 				 ng-change="save(selectMisure,measureInsert)">
 			 		<md-option ng-value="misure.type" ng-repeat="misure in typeOfMisure">{{ misure.label }}</md-option>
 	  				</md-select></div>

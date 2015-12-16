@@ -34,7 +34,7 @@
 		            </md-checkbox>
 	          </div>
 	        		  <div flex="10">
-	       				 <md-button style="margin-top:-5px" ng-click="selectFilters($event,val)">
+	       				 <md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)">
 				          	<md-icon md-font-icon="fa fa-filter" aria-label="Close dialog"></md-icon>
 				      	 </md-button>
 	   			     </div>
@@ -104,29 +104,30 @@
 
 
 <script  type="text/ng-template" id="filtersforLayerTemplate.html">
-<md-dialog aria-label="layer" style="weight:1800px;" ng-cloak  >
+<md-dialog aria-label="layer" ng-cloak  >
 <md-toolbar >
     <div class="md-toolbar-tools">
    Select Filters
-<md-button ng-click="updateChange()" style="right:8px;position:absolute;top:0;" >
-    X
-    </md-button>
     </div>
  	
   </md-toolbar>
+  <md-dialog-content>
+      <div class="md-dialog-content" style="    height: 50%;    padding: 0;">
+			<md-input-container style="margin-left:50px; margin-right:50px;" class="md-block" ng-repeat="val in filters" class="block">
+  				<label>{{val.filter}}</label>
 
-<md-input-container ng-repeat="val in filters">
-  <label>{{val.filter}}</label>
-  <input type="text" ng-model="val.model">
-</md-input-container>
+ 				<input type="text" ng-model="val.model">
+			</md-input-container>
+  		 </div>
+   </md-dialog-content>
 
-<div layout="row" layout-wrap flex >
-	 <div flex="50" >
+ <md-dialog-actions layout="row">
+  
+      <span flex></span>
 		<md-button ng-click="applyFilter()"  >Ok</md-button>
-	</div>
- 	<div flex="50" >
+	
 		<md-button ng-click="updateChange()"  >Cancel</md-button>
-	</div>
+	</md-dialog-actions>
 
 </md-dialog>
 </script>

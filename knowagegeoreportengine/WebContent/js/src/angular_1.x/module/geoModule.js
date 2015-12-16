@@ -653,7 +653,7 @@ geoM.service(
 
 					tmpLayer = new ol.layer.Vector({
 						source : vectorSource,
-						style: this.applyFilter
+						style: layerServ.applyFilter
 					});
 					break;
 
@@ -726,7 +726,7 @@ geoM.service(
 
 							var tmpLayer= new ol.layer.Vector({
 								source : vectorSource,
-								style: this.applyFilter
+								style: layerServ.applyFilter
 							}); 
 							deferredLayer.resolve(tmpLayer);
 						}
@@ -744,7 +744,7 @@ geoM.service(
 			}
 			
 			this.applyFilter=function(feature, resolution){
-					
+					console.log("Entrati");
 					var styleTMP= [new ol.style.Style({
 						stroke: new ol.style.Stroke({
 							color: "#3399cc",

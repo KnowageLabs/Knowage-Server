@@ -98,46 +98,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 						$scope.initBaseLayer();
 					});
 		}
-//		if(geoModule_template.hasOwnProperty("layersLoaded") && geoModule_template.layersLoaded.length!=0){
-//			//load from catalogue
-//			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-//			sbiModule_restServices.post("layers", 'getLayerFromList',{items: geoModule_template.layersLoaded}).success(
-//					function(data, status, headers, config) {
-//
-//						sbiModule_logger.trace("layer caricati",data);
-//						if (data.hasOwnProperty("errors")) {
-//							sbiModule_logger.log("layer non Ottenuti");
-//						} else {
-//							for(var i=0;i<data.root.length;i++){
-//								var tmp=data.root[i];
-////								if(tmp.category== null){
-////									tmp.category={valueNm: geoModule_constant.noCategory};
-////								}
-//								var categ=(tmp.hasOwnProperty("category") && tmp.category!=null)? tmp.category.valueNm : geoModule_constant.noCategory;
-//								
-//								if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
-//									//insert category if not present
-//									if(!$scope.baseLayers.hasOwnProperty(categ)){
-//										$scope.baseLayers[categ]={};
-//									}
-//									$scope.baseLayers[categ][tmp.label]=tmp;
-//								}else{
-//									//insert category if not present
-//									if(!$scope.layers.hasOwnProperty(categ)){
-//										$scope.layers[categ]={};
-//									}
-//									$scope.layers[categ][tmp.label]=tmp;
-//								}
-//							}
-//						}
-//
-//						$scope.initBaseLayer();
-//					}).error(function(data, status, headers, config) {
-//						console.log("layer non Ottenuti " + status);
-//						$scope.initBaseLayer();
-//					});
-//
-//		}
 	};
 
 	$scope.loadLayerFromTemplate();
@@ -222,18 +182,13 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		});
 	}
 	$scope.applyFilter = function(){
+
 		$scope.toggleLayer($scope.layerconf);
-		if(geoModule_layerServices.layerIsLoaded($scope.layerconf)){
-			var layer = geoModule_layerServices.createLayer($scope.layerconf, false);
-			$map.removeLayer(layer);
-		}
-		
 		$scope.toggleLayer($scope.layerconf);
 		console.log("ok",$scope.filters);
-		$mdDialog.cancel();
 		geoModule_layerServices.filters = $scope.filters;
-		$map.render();
-		$map.updateSize();
+		
+		$mdDialog.cancel();
 	}
 	//fine filtri
 	$scope.addLayerFromCatalogue = function(ev){
