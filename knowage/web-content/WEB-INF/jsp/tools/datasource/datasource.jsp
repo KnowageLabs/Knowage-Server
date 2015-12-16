@@ -35,7 +35,8 @@
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 											
-						<md-button 
+						<md-button
+							id="createNewDataSourceForm" 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
 							ng-click="createNewForm()"> 
@@ -48,7 +49,7 @@
 					</div>
 				</md-toolbar>
 				
-				<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
+				<md-content flex layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
 					<angular-table 
 						layout-fill
 						id="dataSourceList"
@@ -77,7 +78,7 @@
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 						<div style="position: absolute; right: 0px" class="h100">
 						
-							<md-button type="submit"
+							<md-button id="saveorUpdateDataSourceBtn" type="submit"
 								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-click="closeForm()">
@@ -103,7 +104,7 @@
 					</div>
 					</md-toolbar>
 					
-					<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+					<md-content flex style="margin-left:20px;" class="md-padding ToolbarBox miniToolbar noBorder">
 						
 						<div layout="row" layout-wrap>
 							<div flex=100>
@@ -185,20 +186,20 @@
 							
 						</div>
 						
-						<div layout="row" ng-init="type='JDBC'" layout-wrap>
+						<div layout="row" layout-wrap>
 							<md-radio-group ng-model="type"> Type:
-		      					<md-radio-button value="JDBC">JDBC</md-radio-button>
-		      					<md-radio-button value="JNDI">JNDI</md-radio-button>
+		      					<md-radio-button ng-class="{'md-checked':selectedDataSource.driver.length}" value="JDBC">JDBC</md-radio-button>
+		      					<md-radio-button ng-class="{'md-checked':selectedDataSource.jndi.length}" value="JNDI">JNDI</md-radio-button>
 		    				</md-radio-group>
 						</div>
 						
-						<div ng-hide= "type == 'JNDI' ">
+						<div ng-show= "type == 'JDBC' || selectedDataSource.driver.length ">
 											
 							<div layout="row" layout-wrap>
 								<div flex=100>
 									<md-input-container class="small counter">
 										<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
-										<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
+										<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" ng-required="type=='JDBC'"
 											ng-maxlength="500">
 										<div ng-messages="forms.dataSourceForm.urlConnection.$error" ng-show="!selectedDataSource.urlConnection">
 	          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -229,7 +230,7 @@
 								<div flex=100>
 									<md-input-container class="small counter">
 										<label>{{translate.load("sbi.datasource.driver")}}</label>
-										<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
+										<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" ng-required="type=='JDBC'"
 											ng-maxlength="160">
 										<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.driver">
 	          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -240,16 +241,15 @@
 							</div>
 						</div>
 						
-						<div ng-show= "type == 'JNDI' " layout="row" layout-wrap>
-							<div flex=100>
-								<md-input-container class="small counter"> 
+						<div flex=95 layout="row" ng-show= "type == 'JNDI' || selectedDataSource.jndi.length">
+							<md-input-container flex> 
 								<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
-								<input ng-model="selectedDataSource.jndi" > 
-								</md-input-container>
-							</div>
+								<input ng-model="selectedDataSource.jndi" ng-required="type=='JNDI'"> 
+							</md-input-container>
+							<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
 						</div>
-						
-					</md-content>
+
+			</md-content>
 				</div>
 			</form>
 		</right-col>

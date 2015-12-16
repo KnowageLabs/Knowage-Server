@@ -148,8 +148,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						console.log("[POST]: FAIL!"+status);
 					}					
 			);
-		}
-		
+		}		
 	};
 	
 	//REST
@@ -434,6 +433,17 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    	}
 	                     }
 	                    ];
+	
+	//INFO ABOUT THE JNDI INPUT FORM
+	$scope.showJdniInfo = function(ev){
+		$mdDialog.show(
+				$mdDialog.alert()
+					.clickOutsideToClose(true)
+					.content(sbiModule_translate.load("sbi.datasource.jndiname.info"))
+					.ok(sbiModule_translate.load("sbi.federationdefinition.template.button.close"))
+					.targetEvent(ev)
+		);
+	}
 
 	$scope.confirm = $mdDialog
 	.confirm()
