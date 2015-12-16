@@ -74,7 +74,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		    $mdDialog.show($scope.confirm).then(function(){
 		    $scope.isDirty=false;   
 		    $scope.selectedBusinessModel=angular.copy(item);
-		    $scope.getVersions(item.id);
 		    $scope.showMe=true;
 		    },
 		     function(){		       
@@ -295,6 +294,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							
 							console.log("[UPLOAD]: SUCCESS!");
 							$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
+							console.log($scope.bmVersions);
 							document.getElementById("businessModelFile").value = "";
 							$scope.isDirty = false;
 							$scope.fileObj.fileName = "";
@@ -381,7 +381,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		
 		//calling service method DELETE/{bmId}/versions/{vId} deleting single version of selected model
 		$scope.deleteItemVersion=function(item,event){
-			console.log(item.id);
+			
 			var bmId = $scope.selectedBusinessModel.id;
 			var id = item.id;
 			sbiModule_restServices
@@ -389,9 +389,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			.success(
 					function(){
 						removeFromBMs(id,"right");
-						//$scope.bmVersions=[];
+						$scope.getVersions(bmId);
 						$scope.showActionOK("Business Model Version deleted successfully");
 			});
+
 		}
 		
 	 	//calling service for deleting BM @DELETE
@@ -495,8 +496,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 
 			 if(table === "left")
 				 $scope.businessModelList = array;
-			 else
+			 else{
 				 $scope.bmVersions = array;
+			 }
+				 
 		}
 		 
 		//date/time format

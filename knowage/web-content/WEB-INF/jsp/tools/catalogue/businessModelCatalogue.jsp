@@ -86,7 +86,7 @@
 		</left-col>
 		
 		<right-col>
-			<div ng-show = "showMe">
+			<div ng-show = "showMe" style="overflow:hidden">
 				<form layout-fill class="detailBody md-whiteframe-z1">
 					<md-toolbar class="md-blue minihead">
 						<div class="md-toolbar-tools h100">
@@ -117,7 +117,7 @@
 						</div>
 					</md-toolbar>
 					
-					<md-content flex style="margin-left:20px;margin-right:20px;" class="ToolbarBox miniToolbar noBorder">
+					<md-content flex style="margin-left:20px;margin-right:20px;overflow:hidden" class="ToolbarBox miniToolbar noBorder" >
 					
 						<div layout="row" layout-wrap>
       						<div flex=100>
@@ -168,12 +168,10 @@
        							<label>{{translate.load("sbi.ds.file.upload.button")}}:</label>
       						</div>
       						
-      						<!--  <md-input-container > 
+      						<!--<md-input-container > 
        							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
-       									
-       							  	
       						</md-input-container>-->
-      						<file-upload style="height:20px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
+      						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
       					</div>
      					     				
      					<div layout="row" layout-wrap>
@@ -218,7 +216,7 @@
      					</div>
      			
      					<div style="height:40%; padding-top:20px">     						
-     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;"><!-- overflow:hidden; -->
+     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"><!-- overflow:hidden; -->
      							<md-toolbar class="md-blue minihead md-toolbar-tools">
      								<!-- <md-button 
     									ng-disabled=false
@@ -255,7 +253,7 @@
 										{"label":"Active","name":"ACTION"}
 										]'
 									columns-search='["creationUser","creationDate"]'
-									show-search-bar=true
+									show-search-bar=false
 									selected-item="selectedVersions"
 									highlights-selected-item=true
 									selected-item="bmVersions"
