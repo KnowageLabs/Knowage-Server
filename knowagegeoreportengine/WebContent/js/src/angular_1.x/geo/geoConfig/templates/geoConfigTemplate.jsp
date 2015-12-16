@@ -1,9 +1,9 @@
 <md-content>
-<expander-box id="legend" color="white" background-color="rgb(63,81,181)" title='translate.load("gisengine.info.message.legend.config")'> 
+<expander-box id="legend" expanded='true' color="white" background-color="rgb(63,81,181)" title='translate.load("gisengine.info.message.legend.config")'> 
 	<md-tabs md-dynamic-height="" >
       <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.choropleth")}}'>
         <md-content class="md-padding">
-          <md-input-container>
+          <md-input-container class="md-block">
 			   <label>{{translate.load("gisengine.info.message.legend.config.method")}}</label>
 			    <md-select ng-model="template.analysisConf.choropleth.method">
 			      <md-option ng-repeat="meth in choroplethMethodTypeList" value="{{meth.value}}">
@@ -12,7 +12,7 @@
 			    </md-select>
 			</md-input-container>
         
-			<md-input-container>
+			<md-input-container class="md-block">
 				<label>{{translate.load("gisengine.info.message.legend.config.nOfClasses")}}</label>
 				 <md-select ng-model="template.analysisConf.choropleth.classes">
 				   <md-option ng-repeat="n in [2,3,4,5,6,7]" value="{{n}}">

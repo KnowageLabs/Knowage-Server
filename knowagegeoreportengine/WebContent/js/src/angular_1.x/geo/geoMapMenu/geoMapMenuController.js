@@ -120,34 +120,7 @@ function geoMapMenuControllerFunction(
 		return angular.equals(geoModule_template.selectedIndicator, item);
 	};
 
-	$scope.openIndicatorFromCatalogue = function(ev){
-		$mdDialog.show({
-			controller: $scope.IndicatorFromCatalogueController,
-			templateUrl: 'indicatorFromCatalogueTemplate.html',
-			parent: angular.element(document.body),
-			targetEvent: ev,
-			clickOutsideToClose:true,
-			openFrom: '#indicatorCatalogue',
-			closeTo: '#indicatorCatalogue'
-		})
-		.then(function(answer) {
-			console.log("then ok")
-		}, function() {
-			console.log("then cancel")
-		});
-	};
 
-	$scope.IndicatorFromCatalogueController = function($scope, $mdDialog) {
-		$scope.hide = function() {
-			$mdDialog.hide();
-		};
-		$scope.cancel = function() {
-			$mdDialog.cancel();
-		};
-		$scope.answer = function(answer) {
-			$mdDialog.hide(answer);
-		};
-	};
 
 	$scope.toggleIndicator = function (item){
 		var index = $scope.indexInList(item, geoModule_template.selectedMultiIndicator);

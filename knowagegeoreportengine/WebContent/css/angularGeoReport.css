@@ -126,7 +126,7 @@ expander-box md-toolbar {
 expander-box md-content md-radio-button, expander-box md-content md-checkbox
 	{
 	/* 	    margin: 6px 4px 6px 16px; */
-	margin: 0px 4px 11px 16px;
+	margin: 0px 4px 11px 16px !important;
 }
 
 /* .itemboxGU>md-content { */
@@ -175,6 +175,10 @@ geo-distance-calculator md-input-container {
 	padding: 3px;
 }
 
+geo-distance-calculator .calcBox  md-input-container{
+	min-width: 120px;
+	}
+	
 geo-distance-calculator .calcBox {
 	background-color: white;
 	border-radius: 5px;
@@ -346,4 +350,10 @@ md-tabs.mini-tabs md-tab-item{
 
 md-tabs.mini-tabs  md-tabs-content-wrapper{
 	 top:24px !important;
+}
+
+expander-box md-checkbox{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }

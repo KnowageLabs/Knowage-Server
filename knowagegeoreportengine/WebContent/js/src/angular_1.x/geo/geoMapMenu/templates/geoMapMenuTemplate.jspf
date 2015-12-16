@@ -23,10 +23,7 @@
 				ng-click="toggleIndicator(ind)" class="md-primary"
 				ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
 		</div>
-		<md-button id="indicatorCatalogue" class="md-raised "
-				style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">
-			{{translate.load("gisengine.info.message.selectFromCatalogue")}}
-		</md-button> 
+		
 	</expander-box>
 
 
@@ -71,7 +68,7 @@
 
 
 	<expander-box id="selectMode" color="white" background-color="rgb(63,81,181)" expanded='false' title='translate.load("gisengine.info.message.filter")' >
-		<md-input-container ng-repeat="filter in filters"> 
+		<md-input-container class="md-block" ng-repeat="filter in filters"> 
 			<label>{{filter.label}}</label>
 			<md-select ng-model="template.selectedFilters[filter.name]" multiple=true>
 				<md-option ng-repeat="item in dataset.rows | unique: filter.name"
@@ -84,23 +81,3 @@
 	 
 </md-content>
 
-
-<!-- template -->
-
-<script type="text/ng-template" id="indicatorFromCatalogueTemplate.html">
-<md-dialog aria-label="Mango (Fruit)" ng-cloak>
-	<form>
-  		<md-toolbar>
-    		<div class="md-toolbar-tools">
-      			Select from Catalogue
-   			</div>
-  		</md-toolbar>
-  		<md-dialog-content >
-    		<div class="md-dialog-content">
-      			TODO
-    		</div>
-  		</md-dialog-content>
-  		<div class="md-actions" layout="row"></div>
-  	</form>
-</md-dialog>
-</script>

@@ -56,20 +56,20 @@
 <!-- template -->
 
 <script type="text/ng-template" id="layerFromCatalogueTemplate.html">
-   <md-dialog aria-label="layer"  style="height:80%;" ng-cloak  >
+<md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{title}}</h2>
+        <span flex></span>
+        
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" style="    height: 50%;    padding: 0;">
+        
 
-  <md-toolbar >
-    <div class="md-toolbar-tools">
-     {{title}}
-<md-button ng-click="updateChange()" style="right:8px;position:absolute;top:0;" >
-    CLOSE
-    </md-button>
-    </div>
- 
-  </md-toolbar>
-       <md-dialog-content  style="height:80%;">
-     	 <div class="md-dialog-content" style="padding:0px">
- 	  <angular-table 
+		<angular-table 
 						 id="layerCatalogue"
 						 ng-model=layerCatalogueList
  						 columns=columnList
@@ -82,11 +82,26 @@
 						menu-option=menuItem
 
 		></angular-table>
-  
-  </div>
+
+
+
+      </div>
     </md-dialog-content>
+    <md-dialog-actions layout="row">
+  
+      <span flex></span>
+      <md-button ng-click="cancel()">
+     Annulla
+      </md-button>
+      <md-button ng-click="updateChange()" style="margin-right:20px;" md-autofocus>
+        Salva
+      </md-button>
+    </md-dialog-actions>
+  </form>
 </md-dialog>
+
 </script>
+
 
 <script  type="text/ng-template" id="filtersforLayerTemplate.html">
 <md-dialog aria-label="layer" style="weight:1800px;" ng-cloak  >

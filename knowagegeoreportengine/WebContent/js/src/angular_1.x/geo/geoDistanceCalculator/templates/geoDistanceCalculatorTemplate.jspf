@@ -1,7 +1,7 @@
 
 <md-whiteframe class="md-whiteframe-3dp calcBox"   layout layout-align="center center" ng-if="showDC" >
     <div layout="column" layout-wrap> 
-	     <md-input-container>
+	     <md-input-container class="md-block">
 	        <label>{{translate.load("gisengine.geoDistanceCalculator.measureType")}}</label>
 	        <md-select ng-model="measureType" ng-change="changeMeasureType(measureType)" ng-disabled="disableButtons">
 	          <md-option ng-repeat="meas in measureList" value="{{meas.value}}">

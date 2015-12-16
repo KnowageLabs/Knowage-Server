@@ -595,12 +595,15 @@ geoM.service(
 				}
 			};
 
+			
+			
 			this.toggleLayer = function(layerConf) {
 				
 				if (this.loadedLayer[layerConf.layerId] != undefined) {
 					$map.removeLayer(this.loadedLayer[layerConf.layerId]);
 					delete this.loadedLayer[layerConf.layerId];
 					delete this.loadedLayerOBJ[layerConf.layerId];
+					geoModule_template.layersLoaded[layerConf.label]=false;
 				} else {
 					var layer = this.createLayer(layerConf, false);
 					if(layer.hasOwnProperty("$$state")){
@@ -620,6 +623,7 @@ geoM.service(
 					this.loadedLayer[layerConf.layerId] = layer;
 					this.loadedLayerOBJ[layerConf.layerId] = layerConf;
 					$map.addLayer(layer);
+					geoModule_template.layersLoaded[layerConf.label]=true;
 					$map.updateSize();$map.render();
 				}
 			}

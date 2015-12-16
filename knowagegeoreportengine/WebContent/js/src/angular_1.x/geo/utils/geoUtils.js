@@ -457,7 +457,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 });
 
 var geoReportPanel;
-geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_restServices,sbiModule_config,$map,$mdDialog,sbiModule_translate) {	
+geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_restServices,sbiModule_config,$map,$mdDialog,sbiModule_translate,$mdToast) {	
 	geoReportPanel={};
 	geoReportPanel.validate=function(){
 		
@@ -488,9 +488,19 @@ geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_res
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
 		sbiModule_restServices.post("1.0/documents", 'saveGeoReportTemplate',geoModule_template).success(
 				function(data, status, headers, config) {
-					console.log("TargetLayer  Ottenuto " + data);
+					 $mdToast.show(
+						      $mdToast.simple()
+						        .textContent(sbiModule_translate.load("sbi.generic.ok.msg"))
+						        .position('top')
+						        .hideDelay(3000)
+						    );
 				}).error(function(data, status, headers, config) {
-					console.log("TargetLayer non Ottenuto " + status);
+					 $mdToast.show(
+						      $mdToast.simple()
+						        .textContent(sbiModule_translate.load("sbi.generic.error.msg"))
+						        .position('top')
+						        .hideDelay(3000)
+						    );
 				});
 	}
 	

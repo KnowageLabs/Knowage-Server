@@ -55,22 +55,19 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			}
 		}
 
-
 		if(geoModule_template.hasOwnProperty("layersLoaded") && geoModule_template.layersLoaded.length!=0){
-			//load from catalogue
+			var layerList=[];
+			for(var key in geoModule_template.layersLoaded){
+				layerList.push(key);
+			}
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-			sbiModule_restServices.post("layers", 'getLayerFromList',{items: geoModule_template.layersLoaded}).success(
+			sbiModule_restServices.post("layers", 'getLayerFromList',{items: layerList}).success(
 					function(data, status, headers, config) {
-
-						sbiModule_logger.trace("layer caricati",data);
 						if (data.hasOwnProperty("errors")) {
 							sbiModule_logger.log("layer non Ottenuti");
 						} else {
 							for(var i=0;i<data.root.length;i++){
 								var tmp=data.root[i];
-//								if(tmp.category== null){
-//									tmp.category={valueNm: geoModule_constant.noCategory};
-//								}
 								var categ=(tmp.hasOwnProperty("category") && tmp.category!=null)? tmp.category.valueNm : geoModule_constant.noCategory;
 								
 								if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
@@ -85,6 +82,12 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 										$scope.layers[categ]={};
 									}
 									$scope.layers[categ][tmp.label]=tmp;
+									
+									//enable only the non base layer
+									if(geoModule_template.layersLoaded[tmp.label]==true){
+//										the layer is enabled
+										$scope.toggleLayer(tmp);
+									}
 								}
 							}
 						}
@@ -94,8 +97,47 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 						console.log("layer non Ottenuti " + status);
 						$scope.initBaseLayer();
 					});
-
 		}
+//		if(geoModule_template.hasOwnProperty("layersLoaded") && geoModule_template.layersLoaded.length!=0){
+//			//load from catalogue
+//			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
+//			sbiModule_restServices.post("layers", 'getLayerFromList',{items: geoModule_template.layersLoaded}).success(
+//					function(data, status, headers, config) {
+//
+//						sbiModule_logger.trace("layer caricati",data);
+//						if (data.hasOwnProperty("errors")) {
+//							sbiModule_logger.log("layer non Ottenuti");
+//						} else {
+//							for(var i=0;i<data.root.length;i++){
+//								var tmp=data.root[i];
+////								if(tmp.category== null){
+////									tmp.category={valueNm: geoModule_constant.noCategory};
+////								}
+//								var categ=(tmp.hasOwnProperty("category") && tmp.category!=null)? tmp.category.valueNm : geoModule_constant.noCategory;
+//								
+//								if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
+//									//insert category if not present
+//									if(!$scope.baseLayers.hasOwnProperty(categ)){
+//										$scope.baseLayers[categ]={};
+//									}
+//									$scope.baseLayers[categ][tmp.label]=tmp;
+//								}else{
+//									//insert category if not present
+//									if(!$scope.layers.hasOwnProperty(categ)){
+//										$scope.layers[categ]={};
+//									}
+//									$scope.layers[categ][tmp.label]=tmp;
+//								}
+//							}
+//						}
+//
+//						$scope.initBaseLayer();
+//					}).error(function(data, status, headers, config) {
+//						console.log("layer non Ottenuti " + status);
+//						$scope.initBaseLayer();
+//					});
+//
+//		}
 	};
 
 	$scope.loadLayerFromTemplate();
@@ -103,7 +145,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.initBaseLayer=function(){
 		var found=false;
 		if(geoModule_template.hasOwnProperty('selectedBaseLayer')){
-			if($scope.baseLayers[geoModule_constant.templateLayer].hasOwnProperty(geoModule_template.selectedBaseLayer)){
+			if($scope.baseLayers.hasOwnProperty("geoModule_constant.templateLayer") && $scope.baseLayers[geoModule_constant.templateLayer].hasOwnProperty(geoModule_template.selectedBaseLayer)){
 				//search if the selectedBaseLayer is in template layers prev loaded
 				geoModule_layerServices.alterBaseLayer($scope.baseLayers[geoModule_constant.templateLayer][geoModule_template.selectedBaseLayer]); 
 				found=true;
@@ -148,7 +190,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 	$scope.toggleLayer=function(layerConf){
 		sbiModule_logger.log("toggleLayer");
-		geoModule_layerServices.toggleLayer(layerConf)
+		geoModule_layerServices.toggleLayer(layerConf);
 	};
 	//inizio filtri
 	$scope.getFilter=function(val){
@@ -202,14 +244,20 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			targetEvent: ev,
 			openFrom: '#addLayer',
 			closeTo: '#map',
-			clickOutsideToClose:true,
+			clickOutsideToClose:false,
 			preserveScope :true,
 			scope: $scope
 		});
 	};
 
-	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant) {	
+	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant,geoModule_layerServices) {	
+		var addedLayer=[];
+		var removedLayer=[];
 		
+		var tmpLayerList=[];
+		var tmpBaseLayerList=[];
+		angular.copy($scope.layers, tmpLayerList);
+		angular.copy($scope.baseLayers, tmpBaseLayerList);
 		$scope.title=sbiModule_translate.load("gisengine.info.message.selectFromCatalogue");
 		$scope.layerCatalogueList=[];
 		$scope.selectedLayerList=[];
@@ -256,50 +304,114 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				});
 
 
+		function resetObject(elem){
+			for(var key in elem){
+				delete elem[key];
+			}
+		}
+		function copyObject(source,dest){
+			for(var key in source){
+				dest[key]=  source[key];
+			}
+		}
+		
 		$scope.updateChange=function(){
+			resetObject($scope.layers);
+			copyObject(tmpLayerList,$scope.layers);
+			resetObject($scope.baseLayers);
+			copyObject(tmpBaseLayerList,$scope.baseLayers);
+			
+			
+			for(var a=0;a<addedLayer.length;a++){
+				if(!geoModule_template.layersLoaded.hasOwnProperty(addedLayer[a].label)){
+					geoModule_template.layersLoaded[addedLayer[a].label]=false;
+				}
+			}
+			for(var r=0;r<removedLayer.length;r++){
+				if(geoModule_template.layersLoaded.hasOwnProperty(removedLayer[r].label)){
+					if(geoModule_template.layersLoaded[removedLayer[r].label]==true){
+						geoModule_layerServices.toggleLayer(removedLayer[r]);
+					}
+					delete geoModule_template.layersLoaded[removedLayer[r].label];
+				}
+			}
+			
+			//check for base layer
+			var baseLayerFinded=false;
+			for(var cat in $scope.baseLayers){
+				for(var lay in $scope.baseLayers[cat]){
+					if(angular.equals($scope.baseLayers[cat][lay],geoModule_layerServices.selectedBaseLayerOBJ)){
+						geoModule_layerServices.selectedBaseLayerOBJ=$scope.baseLayers[cat][lay];
+						baseLayerFinded=true;
+						break;		
+					}
+				}
+			}
+			if(!baseLayerFinded){
+				geoModule_layerServices.selectedBaseLayerOBJ=$scope.baseLayers.Default.OpenStreetMap;
+			}
+			
+			
+			$mdDialog.cancel();
+		};
+		
+		$scope.cancel=function(){
 			$mdDialog.cancel();
 		};
 
 		$scope.toggleLayerFromCatalogue=function(item){
 			var categ=(item.hasOwnProperty("category") && item.category!=null)? item.category.valueNm : geoModule_constant.noCategory;
-
+			var added=true;
 			if(item.baseLayer){
 				//insert category if not present
-				if(!$scope.baseLayers.hasOwnProperty(categ)){
-					$scope.baseLayers[categ]={};
+				if(!tmpBaseLayerList.hasOwnProperty(categ)){
+					tmpBaseLayerList[categ]={};
 				}
 
-				if(	$scope.baseLayers[categ].hasOwnProperty(item.label)){
+				if(	tmpBaseLayerList[categ].hasOwnProperty(item.label)){
 					//remove
-					delete $scope.baseLayers[categ][item.label];
+					delete tmpBaseLayerList[categ][item.label];
 				}else{
 					//add
-					$scope.baseLayers[categ][item.label]=item;
+					tmpBaseLayerList[categ][item.label]=item;
 				}
 
 				//remove category if empty
-				if(Object.keys($scope.baseLayers[categ]).length==0){
-					delete $scope.baseLayers[categ];
+				if(Object.keys(tmpBaseLayerList[categ]).length==0){
+					delete tmpBaseLayerList[categ];
 				}
 			}else{
 				//insert category if not present
-				if(!$scope.layers.hasOwnProperty(categ)){
-					$scope.layers[categ]={};
+				if(!tmpLayerList.hasOwnProperty(categ)){
+					tmpLayerList[categ]={};
 				}
 
-				if(	$scope.layers[categ].hasOwnProperty(item.label)){
+				if(	tmpLayerList[categ].hasOwnProperty(item.label)){
 					//remove
-					delete $scope.layers[categ][item.label];
+					delete tmpLayerList[categ][item.label];
+					added=false;
 				}else{
 					//add
-					$scope.layers[categ][item.label]=item;
+					tmpLayerList[categ][item.label]=item;
 				}
 
 				//remove category if empty
-				if(Object.keys($scope.layers[categ]).length==0){
-					delete $scope.layers[categ];
+				if(Object.keys(tmpLayerList[categ]).length==0){
+					delete tmpLayerList[categ];
 				}
 
+			}
+			
+			if(added){
+				if(removedLayer.indexOf(item)!=-1){
+				removedLayer.splice(removedLayer.indexOf(item),1);
+				}
+				addedLayer.push(item);
+			}else{
+				removedLayer.push(item);
+				if(addedLayer.indexOf(item)!=-1){
+				addedLayer.splice(addedLayer.indexOf(item),1);
+				}
 			}
 		};
 	};
