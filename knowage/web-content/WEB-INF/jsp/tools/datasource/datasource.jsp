@@ -20,10 +20,8 @@
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
 
-
-	
+<!-- JavaScript -->	
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/datasource/datasource.js"></script>
 
 </head>
@@ -186,14 +184,14 @@
 							
 						</div>
 						
-						<div layout="row" layout-wrap>
+						<div layout="row" ng-init="type='JDBC'" layout-wrap>
 							<md-radio-group ng-model="type"> Type:
-		      					<md-radio-button ng-class="{'md-checked':selectedDataSource.driver.length}" value="JDBC">JDBC</md-radio-button>
+		      					<md-radio-button ng-class="{'md-checked':!selectedDataSource.jndi.length}"  value="JDBC">JDBC</md-radio-button>
 		      					<md-radio-button ng-class="{'md-checked':selectedDataSource.jndi.length}" value="JNDI">JNDI</md-radio-button>
 		    				</md-radio-group>
 						</div>
 						
-						<div ng-show= "type == 'JDBC' || selectedDataSource.driver.length ">
+						<div ng-show= "type == 'JDBC'" ng-hide="selectedDataSource.jndi.length">
 											
 							<div layout="row" layout-wrap>
 								<div flex=100>
@@ -235,7 +233,6 @@
 										<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.driver">
 	          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 	        							</div>  
-									
 									</md-input-container>
 								</div>
 							</div>
@@ -244,7 +241,7 @@
 						<div flex=95 layout="row" ng-show= "type == 'JNDI' || selectedDataSource.jndi.length">
 							<md-input-container flex> 
 								<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
-								<input ng-model="selectedDataSource.jndi" ng-required="type=='JNDI'"> 
+								<input ng-model="selectedDataSource.jndi"> 
 							</md-input-container>
 							<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
 						</div>

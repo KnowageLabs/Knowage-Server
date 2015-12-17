@@ -1,3 +1,6 @@
+/**
+ * @author Simović Nikola (nikola.simovic@mht.net)
+ */
 var app = angular.module('federationDefinitionModule', ['ngMaterial','angular_list','sbiModule']);
 
 

@@ -202,9 +202,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.createNewForm = function () {
 		
 		if($scope.isDirty==false) {
-			
-			$scope.forms.dataSourceForm.$setPristine();
-			$scope.forms.dataSourceForm.$setUntouched();
 			$scope.showme=true;
 			$scope.selectedDataSource = {
 					label : "",
@@ -224,10 +221,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else {
 			
 			$mdDialog.show($scope.confirm).then(function() {
-				
-				
-				$scope.forms.dataSourceForm.$setPristine();
-				$scope.forms.dataSourceForm.$setUntouched();
 				$scope.showme=true;
 				$scope.selectedDataSource = {
 						label : "",
