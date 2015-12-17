@@ -690,14 +690,22 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 								alert('File save request made using msSaveOrOpenBlob() - note the two "Open" and "Save" buttons below.');
 								 */
 							} else{
-
-								text = JSON.stringify(data);		
+								
+								text = JSON.stringify(data);	
+								a = document.createElement('a');
+								document.body.appendChild(a);
+								a.download = item.label+".json";
+								a.href = 'data:text/json;charset=utf-8,' + encodeURI(text);
+								a.click();
+								
+								
+								/*text = JSON.stringify(data);		
 								var anchor = angular.element('<a/>');
 								anchor.attr({
 									href: 'data:text/json;charset=utf-8,' + encodeURI(text),
 									target: '_blank',
 									download: item.label+".json"
-								})[0].click();
+								})[0].click();*/
 							}
 						} else if($scope.typeWFS == 'kml'){
 							window.open(data.url,'_blank');
