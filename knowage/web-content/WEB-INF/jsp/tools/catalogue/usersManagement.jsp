@@ -48,7 +48,7 @@
 						id="usersList_id"
 						ng-model="usersList"
 						columns='[
-						         {"label":"User ID","name":"id"},
+						         {"label":"User ID","name":"userId"},
 						         {"label":"Full Name","name":"fullName"}
 						         ]'
 						show-search-bar=true
@@ -94,10 +94,10 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.userId")}}</label>
-							<input name="id" ng-model="selectedUser.id"  ng-required = "true"
+							<input name="id" ng-model="selectedUser.userId"  ng-required = "true"
 						    ng-maxlength="100" ng-change="setDirty()">
 						    
-						    <div  ng-messages="attributeForm.id.$error" ng-show="selectedUser.id== null">
+						    <div  ng-messages="attributeForm.id.$error" ng-show="selectedUser.userId== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						     </md-input-container>
@@ -133,12 +133,8 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.confPwd")}}</label>
-							<input type="password" name="cpwd" ng-model="tempPwd"  ng-required = "true"
+							<input type="password" name="cpwd" ng-model="tempPwdConfirm"  ng-required = "true"
 						    ng-maxlength="40" ng-change="setDirty()" ng-readonly="letUpdate">
-						    
-						    <div  ng-messages="attributeForm.cpwd.$error" ng-show="tempPwd== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
 						     </md-input-container>
 						</div>
 					</div>
@@ -173,17 +169,19 @@
       </md-tab>
       <md-tab label='{{translate.load("sbi.users.attributes");}}'>
         <md-content flex style="margin-left:20px; height:80%;" class="md-padding ToolbarBox miniToolbar noBorder">
-         <angular-table 
-						layout-fill
-						id="usersAttributes_id"
-						ng-model="usersAttributes"
-						columns ='[
-							{"label":"NAME","name":"attributeName","size":"50px"},
-							{"label":"VALUE","name":"attributeValue","size":"100px"},
-							 ]'
-							>					
-						 					
-					</angular-table>  
+        
+       <div layout="row" layout-wrap ng-repeat="a in tempAttributes">
+       <div flex=100>
+							<md-input-container class="small counter">
+							<label>{{a.name}}</label>
+							<input name="attr" ng-model="a.value"
+						    ng-maxlength="100" ng-change="setDirty()">
+						    
+						     </md-input-container>
+						</div>
+       
+       
+       </div>
         
         </md-content>
       </md-tab>
