@@ -590,6 +590,7 @@ geoM.service(
 					if (this.selectedBaseLayerOBJ == undefined) {
 						this.selectedBaseLayerOBJ = layerConf;
 					}
+					geoModule_template.selectedBaseLayer=layerConf.label;
 					$map.addLayer(this.selectedBaseLayer);
 					$map.updateSize();$map.render();
 				}
