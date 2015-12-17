@@ -31,16 +31,14 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 		return relationships;
 	}
 
-	public SbiFederationDefinition(String label, String name,
-			String description, String relationships,
-			Set<SbiDataSet> sourceDatasets, boolean degenerated) {
+	public SbiFederationDefinition(int federation_id, String label, String name,
+			String description, String relationships) {
 		super();
+		this.federation_id = federation_id;
 		this.label = label;
 		this.name = name;
 		this.description = description;
 		this.relationships = relationships;
-		this.sourceDatasets = sourceDatasets;
-		this.degenerated = degenerated;
 	}
 
 	public void setRelationships(String relationships) {
