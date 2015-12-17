@@ -26,7 +26,7 @@ var EmptyLayer = {
 
 
 
-app.controller('Controller', [ "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
 
 
 
@@ -49,7 +49,7 @@ app.directive("fileread", [function () {
 	}
 }]);
 
-function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	//variables
 	$scope.showme=false;
 	$scope.pathFileCheck = false;
@@ -57,6 +57,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.flagtype=true;
 	$scope.flag=false;
 	$scope.translate = sbiModule_translate;
+	$scope.download = sbiModule_download;
 	$scope.layerList = [];
 	$scope.object_temp={};
 	$scope.roles = [];
@@ -668,8 +669,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.getDownload=function(item){
 
-		var isIE = /*@cc_on!@*/false || !!document.documentMode;
-
 		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -678,39 +677,9 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						var text ;						
 
 						if($scope.typeWFS == 'geojson'){
-
-							if(isIE){
-								//nel caso di Internet explorer download non  permesso. Per cui faccio un tipo di chiamata a parte
-								var blobObject = new Blob([JSON.stringify(data)]); 
-								window.navigator.msSaveBlob(blobObject,  item.label+".json"); // The user only has the option of clicking the Save button.
-								/*	with the response ok of the user
-								 * var fileData = [JSON.stringify(data)];
-								blobObject = new Blob(fileData);
-								window.navigator.msSaveOrOpenBlob(blobObject,item.label+".json"); // Now the user will have the option of clicking the Save button and the Open button.
-								alert('File save request made using msSaveOrOpenBlob() - note the two "Open" and "Save" buttons below.');
-								 */
-							} else{
-								
-								text = JSON.stringify(data);	
-								a = document.createElement('a');
-								document.body.appendChild(a);
-								a.download = item.label+".json";
-								a.href = 'data:text/json;charset=utf-8,' + encodeURI(text);
-								a.click();
-								
-								
-								/*text = JSON.stringify(data);		
-								var anchor = angular.element('<a/>');
-								anchor.attr({
-									href: 'data:text/json;charset=utf-8,' + encodeURI(text),
-									target: '_blank',
-									download: item.label+".json"
-								})[0].click();*/
-							}
-						} else if($scope.typeWFS == 'kml'){
-							window.open(data.url,'_blank');
-						} else if($scope.typeWFS == 'shp'){
-							window.open(data.url,'_blank');
+							$scope.download.getBlob(data, item.label, 'text/json', 'json');
+						} else if($scope.typeWFS == 'kml' || $scope.typeWFS == 'shp'){
+							$scope.download.getLink(data.url);
 						}
 						$scope.closeFilter();
 					}
