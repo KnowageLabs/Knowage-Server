@@ -59,7 +59,7 @@ public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction
 			ISbiFederationDefinitionDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
 			federDsDao.setUserProfile(this.getUserProfile());
 
-			allFederatedDatasets = federDsDao.loadAllFederatedDataSets();
+			allFederatedDatasets = federDsDao.loadNotDegeneratedFederatedDataSets();
 			if (allFederatedDatasets == null) {
 				allFederatedDatasets = new ArrayList<FederationDefinition>();
 			}

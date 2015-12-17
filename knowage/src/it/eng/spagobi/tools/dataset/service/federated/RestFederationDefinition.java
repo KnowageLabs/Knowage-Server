@@ -194,6 +194,7 @@ public class RestFederationDefinition {
 		String label = (String) requestBodyJSON.opt("label");
 		String name = (String) requestBodyJSON.opt("name");
 		String description = (String) requestBodyJSON.opt("description");
+		Boolean degenerated = requestBodyJSON.optBoolean("degenerated");
 		JSONArray relationsJa = requestBodyJSON.optJSONArray("relationships");
 		String relationships = null;
 		if (relationsJa != null) {
@@ -206,7 +207,8 @@ public class RestFederationDefinition {
 		fds.setLabel(label);
 		fds.setName(name);
 		fds.setDescription(description);
-
+		fds.setDegenerated(degenerated);
+		
 		if (relationships != null && relationships.length() > 0) {
 			fds.setRelationships(relationships);
 			fds.setSourceDatasets(deserializeDatasets(relationships));

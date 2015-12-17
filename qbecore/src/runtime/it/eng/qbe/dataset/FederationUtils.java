@@ -105,7 +105,7 @@ public class FederationUtils {
 		logger.debug("The query for the dataset "+dataSet.getLabel()+" is "+query);
 
 		dataset.setLabel(cachedTable);		
-		dataset.setName(dataSet.getName());
+		dataset.setName(dataSet.getLabel());//the label because we need it for the joins
 		dataset.setDescription(dataSet.getDescription());
 		dataset.setQuery(query);
 		dataset.setPersisted(true);
@@ -122,7 +122,7 @@ public class FederationUtils {
 	 * @return
 	 */
 	public static String getDatasetFederationLabelSuffix(){
-		return "_fed_from_ds";
+		return "_from_ds_";
 	}
 	
 }

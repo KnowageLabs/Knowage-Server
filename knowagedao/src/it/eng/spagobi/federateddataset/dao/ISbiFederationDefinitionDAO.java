@@ -40,4 +40,6 @@ public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 	public void deleteFederatedDatasetById(Integer id) throws EMFUserError;
 
 	public Integer modifyFederation(SbiFederationDefinition sfds) throws EMFUserError;
+	
+	public List<FederationDefinition> loadNotDegeneratedFederatedDataSets() throws EMFUserError;
 }

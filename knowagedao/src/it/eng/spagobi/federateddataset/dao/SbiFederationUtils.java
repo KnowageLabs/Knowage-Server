@@ -6,7 +6,6 @@
 
 package it.eng.spagobi.federateddataset.dao;
 
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -56,6 +55,7 @@ public class SbiFederationUtils {
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
 			fd.setFederation_id(hibFd.getFederation_id());
+			fd.setDegenerated(hibFd.isDegenerated());
 
 		}else{
 			logger.debug("The federation is null");
@@ -79,6 +79,7 @@ public class SbiFederationUtils {
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
 			fd.setSourceDatasets(toSbiDataSet(hibFd.getSourceDatasets()));
+			fd.setDegenerated(hibFd.isDegenerated());
 
 		}else{
 			logger.debug("The federation is null");
@@ -90,9 +91,7 @@ public class SbiFederationUtils {
 	
 	public static Set<SbiDataSet> toSbiDataSet(Set<IDataSet> dataSets){
 		
-		JDBCDataSet ss = null;
-
-		
+	
 		Set<SbiDataSet> ds = new java.util.HashSet<SbiDataSet>();
 		for (IDataSet dataset : dataSets) {
 			int version = 1;

@@ -172,6 +172,7 @@ public class DataSetConstants {
 		name2Code.put("Qbe", DataSetConstants.DS_QBE);
 		name2Code.put("Custom", DataSetConstants.DS_CUSTOM);
 		name2Code.put("Flat", DataSetConstants.DS_FLAT);
+		name2Code.put("Federated", DataSetConstants.DS_FEDERATED);
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
 
 		// add all REST attributes
@@ -195,6 +196,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_QBE, "Qbe");
 		code2name.put(DataSetConstants.DS_CUSTOM, "Custom");
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
+		code2name.put( DataSetConstants.DS_FEDERATED,"Federated");
 		code2name.put(DS_REST_TYPE, DS_REST_NAME);
 	}
 	

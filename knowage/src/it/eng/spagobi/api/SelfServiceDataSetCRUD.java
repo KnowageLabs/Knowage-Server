@@ -52,6 +52,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
@@ -240,11 +241,15 @@ public class SelfServiceDataSetCRUD {
 				actions.put(worksheetAction);
 			}
 
-			if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
-					actions.put(qbeAction);
+			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
+			if(dsType==null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)){
+				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
+					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+						actions.put(qbeAction);
+					}
 				}
 			}
+
 
 			datasetJSON.put("actions", actions);
 			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {

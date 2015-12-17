@@ -26,6 +26,9 @@
 		<property name="relationships" type="string">
 			<column name="RELATIONSHIPS"/>
 		</property>
+		<property name="degenerated" type="boolean">
+			<column name="DEGENERATED"/>
+		</property>
 		<set name="sourceDatasets" table="SBI_DATA_SET_FEDERATION" lazy="true">
 			<key>
 				<column name="FEDERATION_ID"/>

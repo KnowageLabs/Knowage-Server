@@ -58,7 +58,7 @@ public class EngineConstants {
 	public static final Object ENV_DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";	
 	public static final Object ENV_DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";	
 	public static final Object ENV_IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
-	public static final String ENV_FEDERATED_ID = "FEDERATED_ID";
+	public static final String ENV_FEDERATION= "FEDERATION";
 	public static final String FEDERATED_DATASET = "Federated";
 	
 	public static final String SMART_FILTER_TAG = "SMART_FILTER";

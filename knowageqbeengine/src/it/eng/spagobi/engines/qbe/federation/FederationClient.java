@@ -55,7 +55,7 @@ public class FederationClient extends SimpleRestClient{
 		
 		JSONObject jo = new JSONObject(respString);
 		
-		toReturn.setFederation_id(jo.getInt("id"));
+		toReturn.setFederation_id(jo.optInt("id"));
 		toReturn.setLabel(jo.getString("label"));
 		toReturn.setName(jo.getString("name"));
 		toReturn.setDescription(jo.optString("description"));
@@ -110,7 +110,7 @@ public class FederationClient extends SimpleRestClient{
 			result.put("label", fd.getLabel());
 			result.put("name", fd.getName());
 			result.put("description", fd.getDescription());
-			
+			result.put("degenerated", fd.isDegenerated());
 			
 			JSONArray ja = new JSONArray();
 			Set<IDataSet> sourceDatasets = fd.getSourceDatasets();

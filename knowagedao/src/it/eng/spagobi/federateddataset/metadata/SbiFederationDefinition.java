@@ -13,6 +13,10 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 public class SbiFederationDefinition extends SbiHibernateModel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7110733029167618379L;
 	//fields
 	private int federation_id;
 	private String label;
@@ -20,20 +24,23 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 	private String description;
 	private String relationships;
 	private Set<SbiDataSet> sourceDatasets;
+	private Boolean degenerated; //true if the federation is degenerated.. When a user creates a derived dataset the system creates a federation that links the original dataste and the derived one
 	
 	//constructors
-	public SbiFederationDefinition(int federation_id, String label,
-			String name, String description, String relationships) {
-		
-		this.federation_id = federation_id;
+	public String getRelationships() {
+		return relationships;
+	}
+
+	public SbiFederationDefinition(String label, String name,
+			String description, String relationships,
+			Set<SbiDataSet> sourceDatasets, boolean degenerated) {
+		super();
 		this.label = label;
 		this.name = name;
 		this.description = description;
 		this.relationships = relationships;
-	}
-
-	public String getRelationships() {
-		return relationships;
+		this.sourceDatasets = sourceDatasets;
+		this.degenerated = degenerated;
 	}
 
 	public void setRelationships(String relationships) {
@@ -91,6 +98,17 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 
 	public void setSourceDatasets(Set<SbiDataSet> sourceDatasets) {
 		this.sourceDatasets = sourceDatasets;
+	}
+
+	public boolean isDegenerated() {
+		if(degenerated == null){
+			return false;
+		}
+		return degenerated;
+	}
+
+	public void setDegenerated(Boolean degenerated) {
+		this.degenerated = degenerated;
 	}
 	
 	

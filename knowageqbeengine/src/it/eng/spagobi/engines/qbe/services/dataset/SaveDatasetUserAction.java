@@ -150,21 +150,21 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 		// if its a federated dataset we've to add the dependent datasets
-		if (getEnv().get(EngineConstants.ENV_FEDERATED_ID) != null) {
+		if (getEnv().get(EngineConstants.ENV_FEDERATION) != null) {
 
-			FederationDefinition federation = new FederationDefinition();
-			Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
-			if (relations != null) {
-				federation.setRelationships(relations.toString());
-			} else {
-				logger.debug("No relation defined " + relations);
-			}
-
-			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
-			federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
+			FederationDefinition federation = (FederationDefinition)getEnv().get(EngineConstants.ENV_FEDERATION);
+//			Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
+//			if (relations != null) {
+//				federation.setRelationships(relations.toString());
+//			} else {
+//				logger.debug("No relation defined " + relations);
+//			}
+//
+//			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
+//			federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
 
 			newDataset = new FederatedDataSet(federation, (String)profile.getUserId());
-			((FederatedDataSet) newDataset).setDependentDataSets((List<IDataSet>) getEnv().get(EngineConstants.ENV_DATASETS));
+			//((FederatedDataSet) newDataset).setDependentDataSets(federation.getSourceDatasets());
 			newDataset.setDataSourceForWriting((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
 			newDataset.setDataSourceForReading((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
 		} else {

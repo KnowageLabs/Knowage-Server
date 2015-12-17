@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class FederationDefinition {
 
-	private int federation_id;
+	private int federation_id = -1;
 
 	private String name;
 
@@ -28,6 +28,8 @@ public class FederationDefinition {
 	private String relationships;
 
 	private Set<IDataSet> sourceDatasets;
+	
+	private boolean degenerated; //true if the federation is degenerated.. When a user creates a derived dataset the system creates a federation that links the original dataste and the derived one
 
 	public int getFederation_id() {
 		return federation_id;
@@ -113,5 +115,15 @@ public class FederationDefinition {
 	public void setSourceDatasets(Set<IDataSet> sourceDatasets) {
 		this.sourceDatasets = sourceDatasets;
 	}
+
+	public boolean isDegenerated() {
+		return degenerated;
+	}
+
+	public void setDegenerated(boolean degenerated) {
+		this.degenerated = degenerated;
+	}
+	
+	
 
 }

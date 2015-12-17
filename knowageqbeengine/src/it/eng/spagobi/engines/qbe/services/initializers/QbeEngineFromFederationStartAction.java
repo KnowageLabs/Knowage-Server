@@ -3,6 +3,7 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.federation.FederationClient;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -11,7 +12,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,8 +115,11 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 			logger.debug("Not Found a federated dataset on the request");
 			return addSimpleDataSetToEnv();
 		}
+		
+		//loading federation
+		FederationDefinition dsf = loadFederationDefinition(federatedDatasetId);
 		logger.debug("Found a federated dataset on the request");
-		return addFederatedDatasetsToEnv(federatedDatasetId, null);
+		return addFederatedDatasetsToEnv(dsf, null);
 	}
 
 	public Map addSimpleDataSetToEnv() {
@@ -128,22 +131,25 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		FederationDefinition federationDefinition = new FederationDefinition();
 		federationDefinition.setDescription(dataset.getDescription());
 		federationDefinition.setName(dataset.getName());
-		federationDefinition.setLabel(dataset.getLabel()+FederationUtils.getDatasetFederationLabelSuffix());
+		federationDefinition.setLabel(StringUtilities.left(FederationUtils.getDatasetFederationLabelSuffix()+((System.currentTimeMillis()%10000)),60));
+		federationDefinition.setDegenerated(true);
 		Set<IDataSet> sourceDatasets = new java.util.HashSet<IDataSet>();
+		dataset.setOrganization(getUserProfile().getOrganization());
 		sourceDatasets.add(dataset);
+		
 		federationDefinition.setSourceDatasets(sourceDatasets);
 
-		logger.debug("send request to server for the federation creation");
-		FederationClient fc = new FederationClient();
-		try {
-			federationDefinition = fc.addFederation(federationDefinition, getUserId());
-		} catch (Exception e) {
-			logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
-			throw new SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
-		}
-		logger.debug("Federation created");
-
-		return addFederatedDatasetsToEnv(federationDefinition.getFederation_id()+"", dataset);
+//		logger.debug("send request to server for the federation creation");
+//		FederationClient fc = new FederationClient();
+//		try {
+//			federationDefinition = fc.addFederation(federationDefinition, getUserId());
+//		} catch (Exception e) {
+//			logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+//			throw new SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+//		}
+//		logger.debug("Federation created");
+		
+		return addFederatedDatasetsToEnv(federationDefinition, dataset);
 	}
 
 	/**
@@ -161,9 +167,9 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		}
 	}
 
-	public Map addFederatedDatasetsToEnv(String federatedDatasetId, IDataSet dataset) {
+	public Map addFederatedDatasetsToEnv(FederationDefinition dsf , IDataSet dataset) {
 
-		Assert.assertNotNull(federatedDatasetId, "The federation id has to be not null");
+		Assert.assertNotNull(dsf, "The federation id has to be not null");
 
 		IDataSource cachedDataSource = getCacheDataSource();
 
@@ -174,8 +180,6 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		
 		Map env = super.getEnv();
 		
-		//loading federation
-		FederationDefinition dsf = loadFederationDefinition(federatedDatasetId);
 
 		// update parameters into the dataset
 		logger.debug("The dataset is federated");
@@ -249,7 +253,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
-		env.put(EngineConstants.ENV_FEDERATED_ID,federatedDatasetId);
+		env.put(EngineConstants.ENV_FEDERATION,dsf);
 		env.put(EngineConstants.ENV_DATASOURCE, cachedDataSource);
 
 		logger.debug(env);

@@ -56,6 +56,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		return saveSbiFederationDefinition(federationDefinition, true);
 	}
 
+	
+	
 	private int saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
@@ -63,14 +65,34 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		Transaction transaction = null;
 
 		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			transaction = session.beginTransaction();
+			int id =  saveSbiFederationDefinition(dataset, duplicated, session, transaction).getFederation_id();
+			transaction.commit();
+			return id;
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while saving model [" + dataset + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+	}
+	
+	public SbiFederationDefinition saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated, Session session, Transaction transaction) {
+		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
+
 			if (dataset == null) {
 				throw new IllegalArgumentException("Input parameter [dataset] cannot be null");
 			}
 
 			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 
 			} catch (Throwable t) {
@@ -85,8 +107,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 				if (sbiResult != null) {
 					logger.debug("The federation already exisists and the id is " + sbiResult.getFederation_id());
 					dataset.setFederation_id(sbiResult.getFederation_id());
-					transaction.commit();
-					return sbiResult.getFederation_id();
+					
+					return sbiResult;
 				}
 				logger.debug("The federation doesn't exist");
 			}
@@ -99,25 +121,11 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			hibFederatedDataset.setDescription(dataset.getDescription());
 			hibFederatedDataset.setRelationships(dataset.getRelationships());
 			hibFederatedDataset.setSourceDatasets(SbiFederationUtils.toSbiDataSet(dataset.getSourceDatasets()));
-
+			hibFederatedDataset.setDegenerated(dataset.isDegenerated());
+			
 			updateSbiCommonInfo4Insert(hibFederatedDataset);
 			session.save(hibFederatedDataset);
-
-			transaction.commit();
-
-			return dataset.setFederation_id(hibFederatedDataset.getFederation_id());
-
-		} catch (Throwable t) {
-			logException(t);
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model [" + dataset + "]", t);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-		}
+			return hibFederatedDataset;
 
 	}
 
@@ -185,6 +193,46 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiFederationDefinition");
+
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(SbiFederationUtils.toDatasetFederationNoDataset((SbiFederationDefinition) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error in loading all federated datasets", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+
+	}
+	
+	
+	@Override
+	public List<FederationDefinition> loadNotDegeneratedFederatedDataSets() throws EMFUserError {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List<FederationDefinition> realResult = new ArrayList<FederationDefinition>();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiFederationDefinition sfd where sfd.degenerated=false ");
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -382,32 +430,38 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		return dataSets;
 	}
 
-	@Override
+	public void deleteFederatedDatasetById(Integer id, Session aSession) throws Exception {
+		logger.debug("IN");
+		SbiFederationDefinition federationToDelete = (SbiFederationDefinition) aSession.load(SbiFederationDefinition.class, id);
+		aSession.delete(federationToDelete);
+	}
+	
 	public void deleteFederatedDatasetById(Integer id) throws EMFUserError {
 
 		logger.debug("IN");
-
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiFederationDefinition federationToDelete = (SbiFederationDefinition) aSession.load(SbiFederationDefinition.class, id);
-			aSession.delete(federationToDelete);
+			deleteFederatedDatasetById(id, aSession);
 			tx.commit();
-		} catch (HibernateException he) {
-			logger.error(he.getMessage(), he);
+		} catch (Exception he) {
+			logException(he);
+			logger.error("Error in loading datasets linked to federation", he);
 			if (tx != null)
 				tx.rollback();
+
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
 		} finally {
-			logger.debug("OUT");
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
 			}
 		}
 	}
+
 
 	@Override
 	public Integer modifyFederation(SbiFederationDefinition fds) throws EMFUserError {

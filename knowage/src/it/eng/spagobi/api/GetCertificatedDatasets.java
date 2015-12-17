@@ -26,6 +26,8 @@ import it.eng.spagobi.tools.dataset.ckan.Connection;
 import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
 import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
 import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -212,9 +214,12 @@ public class GetCertificatedDatasets {
 				actions.put(worksheetAction);
 			}
 
-			if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
-					actions.put(qbeAction);
+			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
+			if(dsType==null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)){
+				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
+					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+						actions.put(qbeAction);
+					}
 				}
 			}
 

@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -446,10 +447,25 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			// save teh federations
 			if (dataSet.getDatasetFederation() != null) {
-				SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
-				if (federationDefinition != null) {
-					hibDataSet.setFederation(federationDefinition);
+				SbiFederationDefinition federationDefinition;
+				if(dataSet.getDatasetFederation().getFederation_id()<0){
+					logger.debug("The federation is not saved.. Adding it");
+					//adding the tenant to the dataset... It has been lost because the service doesn't pass the value
+					dataSet.getDatasetFederation().getSourceDatasets().iterator().next().setOrganization(getTenant());;
+					
+					
+					SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl)DAOFactory.getFedetatedDatasetDAO();
+					federationDefinition = dao.saveSbiFederationDefinition(dataSet.getDatasetFederation(), false, session, transaction);
+					
+					dataSet.getDatasetFederation().setFederation_id(federationDefinition.getFederation_id());
+					logger.debug("New federation created with id "+federationDefinition.getFederation_id());
+					
+				}else{
+					federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+					
 				}
+				hibDataSet.setFederation(federationDefinition);
+
 			}
 
 			if (dataSet.getOwner() == null) {
@@ -1408,7 +1424,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public void deleteDataSet(Integer datasetId) {
 		Session session;
 		Transaction transaction;
-
+		Integer derivedFederationId = null;
 		logger.debug("IN");
 
 		session = null;
@@ -1449,11 +1465,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
 			List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(datasetId, session);
+			
+			
+			
 			if (!federationsAssociated.isEmpty()) {
-				for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
-					FederationDefinition fedDef = (FederationDefinition) iterator.next();
-					logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
-				}
+				
+				//check if its a derived dataset.. In this case delete also the federation..
+
+					for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
+						FederationDefinition fedDef = (FederationDefinition) iterator.next();
+						logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
+					}	
+				
+				
 			}
 
 			// boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
@@ -1491,10 +1515,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (sbiDataSet != null) {
 					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 					session.delete(sbiDataSet);
+					
+					FederationDefinition fd = toReturn.getDatasetFederation();
+					if(fd.isDegenerated()){
+						logger.debug("The datset is derived so there is a linked federation");
+						SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl)DAOFactory.getFedetatedDatasetDAO();
+						dao.deleteFederatedDatasetById(fd.getFederation_id(), session);
+						logger.debug("Deleted the linked federation with id"+derivedFederationId);
+					}
+					
+					
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
 			}
 
+
+			
 			transaction.commit();
 
 		}

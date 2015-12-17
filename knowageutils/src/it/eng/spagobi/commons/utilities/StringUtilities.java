@@ -79,6 +79,23 @@ public class StringUtilities {
 		return substituteParametersInString(str, UserProfileUtils.getProfileAttributes(profile), profileAttributeStartIndex);
 	}
 
+	
+	/**
+	 * returns the first index chars
+	 * @param str string to cut
+	 * @param index number of char to take
+	 * @return the left part of tre string
+	 */
+	public static String left(String str, int index){
+		
+		if(str!=null && str.length()>index){
+			return str.substring(0, index);
+		}
+		else return str;
+		
+		
+	}
+	
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with the correspondent value in the string passed at input.
 	 *
