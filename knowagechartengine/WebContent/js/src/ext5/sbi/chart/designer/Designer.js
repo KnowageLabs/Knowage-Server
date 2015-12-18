@@ -198,9 +198,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				applySeries: applySeries,
 			};
 			
-			console.log("== 1 ==");
-			console.log(baseTemplate);
-			console.log(jsonTemplate);
+			//console.log("== 1 ==");
+			//console.log(baseTemplate);
+			//console.log(jsonTemplate);
 			
 			/**
 			 * If we are creating completely new chart (new document) immediately on loading
@@ -211,9 +211,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			if (!jsonTemplate.CHART) 
 			{
-				console.log("== 2 (new chart) ==");
-				console.log(baseTemplate);
-				console.log(jsonTemplate);
+				//console.log("== 2 (new chart) ==");
+				//console.log(baseTemplate);
+				//console.log(jsonTemplate);
 				
 			    var defaultStyleTemplate = this.getDefaultStyle();
 			    
@@ -236,9 +236,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 */
 			    	var defaultStyleTemplateGeneric = 
 			    			Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(defaultStyleTemplate.generic);
+			    	//console.log(baseTemplate);
+			    	//console.log(defaultStyleTemplateGeneric); 
 			    	
-			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-			    			baseTemplate, defaultStyleTemplateGeneric, configApplyAxes);
+			    	/**
+			    	 * I think we don't need applying the current style to axis style configuration, neither to
+			    	 * serie style configuration since we are opening newly created (not yet completely (fully)
+			    	 * specified) chart document that does not have any serie and for which we are going yto have 
+			    	 * only one Y-axis panel.
+			    	 * 
+			    	 * Applying of current style to every single serie item that we are
+			    	 * going to drop in the initially empty Y-axis panel is going to be done on "drop" event.
+			    	 * 
+			    	 * Applying of current style to Y-axis configuration (axis style configuration) is going to
+			    	 * be done by this merging.
+			    	 * 
+			    	 * TODO: Check about this with Benedetto !!!! 
+			    	 */
+			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: false});
+			    	//console.log(jsonTemplate);
 			    }
 			    else
 			    {
@@ -274,6 +290,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * if the AXIS property (tag) is not in the form of an array (it is just one object
 				 * with some properties, put this object inside an array anyhow, so code could
 				 * process it.
+				 * 
 				 * (danristo :: danilo.ristovski@mht.net) 
 				 */
 				if (jsonTemplate.CHART.AXES_LIST.AXIS.length == undefined) {
@@ -284,10 +301,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 					jsonTemplate.CHART.AXES_LIST.AXIS = axisArray;
 					jsonTemplate.CHART.AXES_LIST.AXIS.push(axisTemp);
 				}		
-							
-				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);	
+					
+				//console.log(jsonTemplate);
 				
+				/**
+				 * I think that requiring for "applyAxes" and "applySeries" is not necessary.
+				 * 
+				 * "applyAxes" will not make any difference since we will in case that is enabled (true)
+				 * go through all already existing axes and apply them once again (redundant work). It will
+				 * simply overlap the base template. If enable, the GAUGE chart snaps - it cannot be opened.
+				 * 
+				 * *** NOTE: We can enable it if we expect that in future the base template is going to be specified 
+				 * as initial two Y-axes chart document.
+				 * 
+				 * "applySeries" will (if true) remove all items from serie panel in Designer.
+				 * 
+				 * !! We are not applying styles here !!
+				 * 
+				 * TODO: Check with Benedetto about this !!!
+				 */
+				
+				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate, {applyAxes: false, applySeries: false});	
+				
+				//console.log(jsonTemplate);
 			}
+			
+			
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
 			
@@ -629,6 +668,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * so we can be up-to-date with current structure of the document inside the Designer.
 					 */
 					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
+				
+					//console.log("========================");
+					//console.log("== RESET STEP 2 (start) ==");
+					
+//					console.log(jsonTemplateAdvancedEditor);
 					
 					/**
 			    	 * Remove unwanted properties from the JSON template that we are about to apply to
@@ -637,11 +681,35 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 * 
 			    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			    	 */
-					var configurationForStyleGeneric = 
-						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName).generic);	
+					
+					/**
+					 * If there is not a single item in the Y-axis panel then skip the VALUES tag
+					 * from the XML file of the selected style since we do not have any serie on
+					 * which we should apply the style and further more, this is the way in which 
+					 * we are skipping unwanted appending (adding) to the template of the document
+					 * something that is not even there - a serie item. If this is not done for this
+					 * case the ghost (empty, fake) serie item will appear in the Y-axis after changing
+					 */
+					var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
+					
+					var configurationForStyleGeneric = 	
+						
+						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+						(
+							Designer.getConfigurationForStyle(Designer.styleName).generic,
+							yAxisListIsEmpty
+						);	
 					
 					var configurationForStyleSpecific = 
-						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()]);	
+						
+						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+						(
+							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()],
+							yAxisListIsEmpty
+						);	
+					
+//					console.log(configurationForStyleGeneric);
+//					console.log(configurationForStyleSpecific);
 					
 					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					(
@@ -650,20 +718,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 						configApplyAxes
 					);
 					
+//					console.log(localJsonTemplate);
+					
 					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					(
 						localJsonTemplate, 
-						configurationForStyleSpecific, 
+						configurationForStyleSpecific,
 						configApplyAxes
 					);							
 					
-					jsonTemplate = localJsonTemplate;				
+//					console.log(localJsonTemplate);
 					
-					/**
-					 * Update (refresh) the main configuration panel (the one on the top of 
-					 * the Step 2 tab) after selecting the particular style.
-					 */
-		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
+					jsonTemplate = localJsonTemplate;				
 					
 					/**
 					 * When user selects (changes) chart type we should check if there are 
@@ -671,6 +737,27 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * mandatory fields.
 					 */
 					removeFlagsForMandatoryFields(currentChartType,jsonTemplate);
+										
+					/**
+					 * When changing the chart style, the one is going to be applied to the
+					 * current (new) template of the document. Hence, we need to send information
+					 * about the current number of color in the color palette (customizable by style 
+					 * files) towards the color palette panel (palette (color grid) container) in 
+					 * order to update its layout on the Configuration tab (prev. Step 2).
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */						
+					var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
+					Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
+					
+					/**
+					 * Update (refresh) the main configuration panel (the one on the top of 
+					 * the Step 2 tab) after selecting the particular style.
+					 */
+		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
+					
+					//console.log("== RESET STEP 2 (end) ==");
+					//console.log("========================");
 				}
 			);
 						
@@ -1147,6 +1234,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
 			    			}
 							
+				    		/**
+							 * When changing the chart type, the current style is going to be applied to the
+							 * current (new) template of the document. Hence, we need to send information
+							 * about the current number of color in the color palette (customizable by style 
+							 * files) towards the color palette panel (palette (color grid) container) in 
+							 * order to update its layout on the Configuration tab (prev. Step 2).
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */					
+							var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
+							Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged", numberOfColors);
+				    		
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
@@ -1681,8 +1780,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			
-  		            			console.log(Sbi.chart.designer.Designer.exportAsJson());
-    							console.log(Sbi.chart.designer.Designer.exportAsJson(true));
+  		            			//console.log(Sbi.chart.designer.Designer.exportAsJson());
+    							//console.log(Sbi.chart.designer.Designer.exportAsJson(true));
   		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
 
@@ -1820,6 +1919,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
 				    		
 				    		var json = Sbi.chart.designer.Designer.exportAsJson();
+				    		
+				    		//console.log(json);
 				    		
 							tab.setChartData(json);
 							
@@ -2264,6 +2365,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// resulted json from 1st, 2nd and 3rd designer steps (without properties catalogue)
 			var exportedDesignerSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
+			//console.log("-------------------");
+			//console.log("-- EXPORT AS JSON (start) --");
+//			console.log(exportedDesignerSteps);
 						
 			// default properties catalogue by used chart library, depending on selected chart type 
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -2271,16 +2375,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var library = this.chartLibNamesConfig[chartType];
 			var catalogue = propertiesCatalogue[library];
 			
+//			console.log("+++++++++");
+//			console.log(library);
+//			console.log(catalogue);
+//			console.log("+++++++++");
+			
 			// default properties catalogue by used chart library, depending on selected chart type 
 			var oldJsonChartType = Sbi.chart.designer.Designer.jsonTemplate.CHART.type;
 			oldJsonChartType = oldJsonChartType.toLowerCase();
 			var oldLibrary = this.chartLibNamesConfig[oldJsonChartType];
 			
+//			console.log(oldJsonChartType);
+//			console.log(oldLibrary);
+			
+//			console.log("+++++++++");
+			
 			// last json template in memory
 			var lastJsonTemplate = Sbi.chart.designer.Designer.jsonTemplate;
+//			console.log(lastJsonTemplate);
+//			
+//			console.log("+++++++++");
 			
 			// last json in memory with applied properties catalogue
 			var appliedPropertiesOnOldJson = Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, lastJsonTemplate);
+//			console.log(appliedPropertiesOnOldJson);
+//			
+//			console.log("+++++++++");
 			
 			// comparison and merge generated json template with the old one
 			var removeNotFoundItemsFlag = true;
@@ -2291,7 +2411,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						removeNotFoundItemsFlag: removeNotFoundItemsFlag
 					}
 				);
-			
+//			console.log("+++++++++");
+//			console.log(overwrittenJsonTemplate);
+//			console.log("+++++++++");
 			// add default catalogue properties in case there are new elements generated by designer
 			var newJsonTemplate = (library === oldLibrary)?
 				Sbi.chart.designer.ChartUtils.mergeObjects(
@@ -2308,9 +2430,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 						}
 					);
 			
+						//console.log("+++++++++");
+			//console.log(newJsonTemplate);
+			//console.log("+++++++++");
+			
 			if(finalJson == true) {
+				//console.log(Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate));
+				
+				//console.log("-- EXPORT AS JSON (end) --");
+				//console.log("-------------------");
 				return Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate);
 			} else {
+				//console.log("-- EXPORT AS JSON (end) --");
+				//console.log("-------------------");
 				return newJsonTemplate;
 			}
 		},

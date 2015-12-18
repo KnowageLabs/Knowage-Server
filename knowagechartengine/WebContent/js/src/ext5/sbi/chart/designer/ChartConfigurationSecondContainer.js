@@ -50,8 +50,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-    overflowX: "auto",
-	overflowY: "auto",
+//    	overflowX: "auto",
+//		overflowY: "auto",
     
     constructor: function(config) {
         this.callParent(config);
