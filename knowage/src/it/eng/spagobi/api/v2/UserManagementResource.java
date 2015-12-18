@@ -27,9 +27,11 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/2.0/users")
 @ManageAuthorization
@@ -145,6 +147,16 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 
 		ISbiUserDAO usersDao = null;
 		SbiUser user = body;
+		String password = user.getPassword();
+		if (password != null && password.length() > 0) {
+			try {
+				user.setPassword(Password.encriptPassword(password));
+			} catch (Exception e) {
+				logger.error("Impossible to encrypt Password", e);
+				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
+			}
+		}
+
 		try {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
@@ -165,7 +177,7 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 
 		ISbiUserDAO usersDao = null;
 		SbiUser user = body;
-
+		user.setId(id);
 		try {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());

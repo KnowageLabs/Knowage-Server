@@ -6,8 +6,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     //VARIABLES
 
     $scope.showme = false; // flag for showing right side 
-    $scope.tempPwd = "";
-    $scope.tempPwdConfirm = "";
+    $scope.tempPwdConfirm = null;
     $scope.dirtyForm = false; // flag to check for modification
     $scope.showUpdate = false;
     $scope.translate = sbiModule_translate;
@@ -87,12 +86,11 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             } else {
                 obj.value = "";
             }
-
             $scope.tempAttributes.push(obj);
         }
 
     }
-
+    
     $scope.setRoles = function () {
         $scope.role = [];
         for (var i = 0; i < $scope.usersRoles.length; i++) {
@@ -106,12 +104,11 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.formatUser = function () {
         var tmpR = [];
+        var tmpA = {};
         for (var i = 0; i < $scope.role.length; i++) {
             tmpR.push($scope.role[i].id);
         }
         $scope.selectedUser.sbiExtUserRoleses = tmpR;
-
-        var tmpA = {};
         for (var i = 0; i < $scope.tempAttributes.length; i++) {
             if ($scope.tempAttributes[i].hasOwnProperty("value") && $scope.tempAttributes[i].value != "") {
                 tmpA[$scope.tempAttributes[i].id] = {};
@@ -120,8 +117,9 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
         $scope.selectedUser.sbiUserAttributeses = tmpA;
     }
-
+    
     $scope.loadUser = function (item) { // this function is called when item from custom table is clicked
+    	console.log($scope.selectedUser.sbiUserAttributeses);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -129,13 +127,10 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.setRoles();
                 $scope.setAttributes();
                 $scope.showme = true;
-                $scope.showUpdate = true;
-                $scope.letUpdate = true;
+                $scope.tempPwdConfirm = $scope.selectedUser.password;
             }, function () {
-
                 $scope.showme = true;
-                $scope.showUpdate = true;
-                $scope.letUpdate = true;
+                $scope.tempPwdConfirm = $scope.selectedUser.password;
             });
 
         } else {
@@ -144,57 +139,99 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.setRoles();
             $scope.setAttributes();
             $scope.showme = true;
-            $scope.showUpdate = true;
-            $scope.letUpdate = true;
+            $scope.tempPwdConfirm = $scope.selectedUser.password;
         }
-        console.log($scope.selectedUser);
     }
 
     $scope.cancel = function () { // on cancel button
         $scope.selectedUser = {};
+        $scope.tempPwdConfirm = null;
         $scope.showme = false;
         $scope.dirtyForm = false;
-        $scope.showUpdate = false;
-        $scope.letUpdate = true;
         $scope.tempAttributes = [];
         $scope.role = [];
     }
 
-    $scope.updatePass = function () { // on update password button
-
-        $scope.letUpdate = false;
-    }
+    
 
     $scope.createUser = function () { // this function is called when clicking on plus button
         $scope.setAttributes();
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
-
+            	
+            	$scope.tempPwdConfirm = null;
                 $scope.dirtyForm = false;
                 $scope.selectedUser = {};
                 $scope.showme = true;
-                $scope.showUpdate = false;
                 $scope.setAttributes();
 
 
             }, function () {
-
+            	$$scope.tempPwdConfirm = null;
                 $scope.showme = true;
-                $scope.showUpdate = false;
+                
             });
 
         } else {
             $scope.selectedUser = {};
+            $scope.tempPwdConfirm = null;
             $scope.showme = true;
-            $scope.showUpdate = false;
             $scope.setAttributes();
         }
     }
 
     $scope.saveUser = function () { // this function is called when clicking on save button
-    	$scope.updatePass();
         $scope.formatUser();
         console.log($scope.selectedUser);
+        if($scope.selectedUser.hasOwnProperty("id")){ // if item already exists do update PUT
+			sbiModule_restServices
+		    .put("2.0/users",$scope.selectedUser.id,$scope.selectedUser).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+							console.log(data);
+						} else {
+							$scope.usersList=[];
+							$timeout(function(){								
+								$scope.getUsers();
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
+							$scope.selectedUser={};
+							$scope.showme=false;
+							$scope.dirtyForm=false;	
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+						console.log(data);
+					})	
+			
+		}else{ // create new item in database POST
+			sbiModule_restServices
+		    .post("2.0/users","",angular.toJson($scope.selectedUser)).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+							console.log(data);
+						} else {
+							$scope.usersList=[];
+							$scope.tempPwdConfirm = "";
+							$timeout(function(){								
+								$scope.getUsers();
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
+							$scope.selectedUser={};
+							$scope.showme=false;
+							$scope.dirtyForm=false;
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+						console.log(data);
+					})	
+			
+			
+		}
     }
 
     $scope.getUsers = function () { // service that gets list of users GET
@@ -261,3 +298,31 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         })
     }
 };
+
+app.directive('nxEqualEx', function() {
+    return {
+        require: 'ngModel',
+        link: function (scope, elem, attrs, model) {
+            if (!attrs.nxEqualEx) {
+                console.error('nxEqualEx expects a model as an argument!');
+                return;
+            }
+            scope.$watch(attrs.nxEqualEx, function (value) {
+                // Only compare values if the second ctrl has a value.
+                if (model.$viewValue !== undefined && model.$viewValue !== '') {
+                    model.$setValidity('nxEqualEx', value === model.$viewValue);
+                }
+            });
+            model.$parsers.push(function (value) {
+                // Mute the nxEqual error if the second ctrl is empty.
+                if (value === undefined || value === '') {
+                    model.$setValidity('nxEqualEx', true);
+                    return value;
+                }
+                var isValid = value === scope.$eval(attrs.nxEqualEx);
+                model.$setValidity('nxEqualEx', isValid);
+                return isValid ? value : undefined;
+            });
+        }
+    };
+});
