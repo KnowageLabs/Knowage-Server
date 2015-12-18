@@ -85,6 +85,7 @@
 							show-search-bar=true
 							speed-menu-option=ctrl.fdsSpeedMenuOptAD
 							click-function="ctrl.moveToListNew(item)"
+							style="overflow:hidden"	
 							>					
 							</angular-list>
 						</md-content>
@@ -103,7 +104,7 @@
 					</md-toolbar>
 				
 					<md-content layout-padding >
-						<angular-list  
+						<angular-list layout-fill 
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
 						item-name="label" 
@@ -138,21 +139,20 @@
 									<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
 								</div>
 								</md-toolbar>
-								<div  style=" height:85%;">
-								<div ng-show="true" layout-padding>
+								
+								<md-content ng-show="true" style=" height:85%;" layout="column">
 									<angular-list
-										layout-fill 
+										layout-fill
 										id='{{dataset.label}}'
 										ng-model="dataset.metadata.fieldsMeta" 
 										item-name="name"
 										highlights-selected-item=true
 										selected-item="ctrl.myselectedvariable[dataset.label]"
-										click-function="ctrl.selectDeselect(item, listId)"										
+										click-function="ctrl.selectDeselect(item, listId)"
+										class="noScrol"									
 									>
 									</angular-list>
-									
-								</div>
-								</div>
+								</md-content>
 							</div>
 						</div>
 					</md-content>

@@ -56,3 +56,6 @@ md-list-item.md-list-item-inner.relation {
 editedRelationButton {
 	backgtound-color: #009688 !important;
 }
+.noScrol {
+	overflow:hidden;
+}
