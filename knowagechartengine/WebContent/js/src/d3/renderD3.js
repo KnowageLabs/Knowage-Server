@@ -14,6 +14,36 @@ function cleanChart()
 }
 
 /**
+ * Convert RGB to HSL.
+ * 
+ * @param r
+ * @param g
+ * @param b
+ * @returns {Array}
+ */
+function rgbToHsl(r, g, b)
+{
+	r /= 255, g /= 255, b /= 255;
+	var max = Math.max(r, g, b), min = Math.min(r, g, b);
+	var h, s, l = (max + min) / 2;
+	
+	if(max == min){
+	    h = s = 0; // achromatic
+	}else{
+	    var d = max - min;
+	    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+	    switch(max){
+	        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+	        case g: h = (b - r) / d + 2; break;
+	        case b: h = (r - g) / d + 4; break;
+	    }
+	    h /= 6;
+	}
+	
+	return [h, s, l];
+}
+
+/**
  * Function for extracting the font size from the string value that contains
  * also the 'px' substring. Function is called whenever we need pure numeric
  * value of the size (especially for purposes of dynamic resizing of the chart).
@@ -596,6 +626,15 @@ function renderWordCloud(chartConf){
 		    		.style("text-decoration", subtitleTextDecoration)
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
+			      
+			 /* Previous:
+			 	
+			 	d3.select("#main")
+					.append("div").attr("id","chart")
+					.append("svg")
+					.attr("width", chartConf.chart.width)
+					...			 
+			  */
 			      
 			d3.select("#main")
 			.append("div").attr("id","chart")
@@ -1362,7 +1401,7 @@ function renderWordCloud(chartConf){
 		      .style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
 		      .style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
 		      .style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
-		      .style("text-shadow", "0px 0px 10px #FFFFFF")
+		      .style("text-shadow", "0px 0px 5px #FFFFFF")
 		      .text(function(d) { return d.name; });
 		
 		  // Set position for entering and updating nodes.
@@ -1700,6 +1739,7 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
+		
 		d3.select("body")
 			.append("div").attr("id","main")
 			.style("height",data.chart.height)
@@ -1905,16 +1945,55 @@ function renderWordCloud(chartConf){
 				
 				if(allTableData){
 
-					for (var i=0; i<allTableData.length; i++){
-						if(d[data.chart.tooltip] === allTableData[i][data.chart.tooltip]){
-
-				tooltip.transition().duration(50).style("opacity","1");
-				tooltip.style("background",myColors(d[groupcolumn]));
-				tooltip.text(d[data.chart.tooltip])				
-				.style("text-shadow", "0px 0px 10px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
-				.style("left", (d3.event.pageX) + "px")     
-				.style("top", (d3.event.pageY - 25) + "px");
-
+					for (var i=0; i<allTableData.length; i++)
+					{
+						if(d[data.chart.tooltip] === allTableData[i][data.chart.tooltip])
+						{				
+							/**
+							 * Convert the RGB background color of the tooltip to its HSL pair in order
+							 * to determine its darkness, i.e. its light level. If the color of the
+							 * background (that depends on the color of the line over which the mouse is
+							 * positioned) is too dark, we will put the white text of the tooltip. Otherwise,
+							 * the color of the text will be black. 
+							 * 
+							 * NOTE: The threshold can be changed. Value of 0.4 is set as an example and the
+							 * consequence of empirical approach.
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							var rgbColorForTooltipBckgnd = d3.rgb(myColors(d[groupcolumn]));
+							var hslColorForTooltipBckgnd = 
+								rgbToHsl(rgbColorForTooltipBckgnd.r, rgbColorForTooltipBckgnd.g, rgbColorForTooltipBckgnd.b);						
+							var degreeOfLightInColor = hslColorForTooltipBckgnd[2];
+							
+							var darknessThreshold = 0.4;
+							
+							var tooltipBckgndColor = null;
+							
+							if (degreeOfLightInColor < darknessThreshold)
+							{
+								tooltipBckgndColor = "#FFFFFF";
+							}
+							else
+							{
+								tooltipBckgndColor = "#000000";
+							}
+	
+							tooltip.transition().duration(50).style("opacity","1");
+							
+							tooltip.style("background", myColors(d[groupcolumn]));
+							
+							tooltip.text(d[data.chart.tooltip])	
+								/**
+								 * Set the color of the text, determined on the base of the level
+								 * of light (darkness) of the tooltip background color.
+								 * 
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								.style("color",tooltipBckgndColor)		
+								//.style("text-shadow", "1px 1px 2px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
+								.style("left", (d3.event.pageX) + "px")     
+								.style("top", (d3.event.pageY - 25) + "px");
 						}
 
 					}
@@ -2901,9 +2980,9 @@ function renderChordChart(jsonData)
 	function printTheResultWhenSelecting(i)
 	{
 		// With which columns is this (selected, clicked) row paired 
-		//console.log(columnsPairedWithRows[i]);
+		console.log(columnsPairedWithRows[i]);
 		// Which columns are paired with this (selected, clicked) row 
-	   //	console.log(rowsPairedWithColumns[i]);
+	   	console.log(rowsPairedWithColumns[i]);
 	}
 	
 
@@ -2917,6 +2996,7 @@ function renderChordChart(jsonData)
 
 	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
 	 * the chart (values on ticks) ??? */
+	// var emptySplitDivHeight = 10;
 	
 	var emptySplitDivHeight = 0;
 	
@@ -2931,15 +3011,15 @@ function renderChordChart(jsonData)
 	
 	if(jsonData.title.text!="" || jsonData.subtitle.text!=""){
 		emptySplitDivHeight=10;
-		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.13;
-		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))*1.13;
-		chartDivHeight-=emptySplitDivHeight;
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.2;
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))*1.2;
+		chartDivHeight-=emptySplitDivHeight*1.2;
 		
 	}
 	
 	var heightForChartSvg = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
 							 + Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
-							 +emptySplitDivHeight)*1.13;
+							 +emptySplitDivHeight)*1.2;
 	
 	
 	var innerRadius = Math.min(width, height) * .35;
@@ -2997,7 +3077,7 @@ function renderChordChart(jsonData)
 	 			.style("height",chartDivHeight)
 	 			.attr("align","center")
 				.append("svg:svg")
-				.attr("width",width)
+				.attr("width",width)				
 				.attr("height",heightForChartSvg)	
 				.attr("viewBox","-125 -125 "+(Number(width)+250)+" "+ (Number(heightForChartSvg)+250))
 				.attr( "preserveAspectRatio","xMidYMid meet")
@@ -3163,7 +3243,7 @@ function renderChordChart(jsonData)
 		 */
 		var literalLabelsFontCustom = jsonData.xAxis.labels.style;
 		
-		 ticks1.append("svg:text")
+		ticks1.append("svg:text")
 		  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
 		   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		  .attr("transform", function(d) {
@@ -3186,7 +3266,7 @@ function renderChordChart(jsonData)
 			.attr("x2", "5")
 			.attr("y2", "0")
 			.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
-       
+
 		/**
 		 * Customization for serie labels (ticks on arcs of the CHORD chart).
 		 * 
@@ -3207,7 +3287,7 @@ function renderChordChart(jsonData)
 			.style("font-weight",tickLabelsFontCustom.fontWeight)
 			.style("text-decoration",tickLabelsFontCustom.textDecoration)
 			.text(function(d) { return d.label; });
-		
+			
 		 //disegna le fasce da un'area ad un altra
 		 svg.append("svg:g")
 			.attr("class", "chord")
