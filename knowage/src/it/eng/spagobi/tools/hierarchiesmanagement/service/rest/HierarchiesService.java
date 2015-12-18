@@ -227,7 +227,7 @@ public class HierarchiesService {
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
+			String tableName = hierarchies.getHierarchyTableName(dimension);
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -243,8 +243,6 @@ public class HierarchiesService {
 			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
 
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
-
-			String tableName = "HIER_" + hierarchyPrefix;
 			IDataStore dataStore = dataSource
 					.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE " + typeColumn
 							+ "=\"MANUAL\" OR " + typeColumn + "=\"SEMIMANUAL\" OR " + typeColumn + "=\"TECHNICAL\" ORDER BY " + hierarchyCodeColumn, 0, 0);
