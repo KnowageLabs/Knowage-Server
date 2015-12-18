@@ -25,5 +25,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/knowage"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowagedao"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
