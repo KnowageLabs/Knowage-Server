@@ -4313,6 +4313,21 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
+				  //TODO insert message
+			    if(wordcloudMinAngleGUI>wordcloudMaxAngleGUI){
+			     errorMsg += Sbi.locale.sobstituteParams
+			     (
+			      LN("sbi.chartengine.validation.configuration.notGreater"),
+			      
+			      [
+			       LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+			       LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+			       LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+			      ]
+			     );
+			     
+			    }
+				
 				if (wordcloudMaxFontSizeGUI == null)
 				{
 					if (wordcloudMaxFontSizeCModel == null || wordcloudMaxFontSizeCModel=="")
