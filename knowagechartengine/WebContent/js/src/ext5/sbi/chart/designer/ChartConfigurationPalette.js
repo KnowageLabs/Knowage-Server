@@ -21,18 +21,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	 */
 	columnWidth: 1,
 	
-	/**
-     * A temporary solution for the height of the panel that holds color
-     * palette.
-     * 
-     * @author: danristo (danilo.ristovski@mht.net)
-     */
-	height: 285,
-	
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
 	items : [],
-	scrollable: 'y',
 
 	paletteGrid : {},
 	
@@ -40,10 +31,35 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 		idSeed: 0
 	},
 	
+	listeners:
+	{		
+		/**
+		 * This event will be fired when chart type or chart style is changed. 
+		 * It serves for re-rendering of the color palette on the Configuration 
+		 * tab of the Designer.
+		 * 
+		 * Explanation: The height takes the current number of colors in the 
+		 * color palette (defined by the style applied) (numberOfColors), to 
+		 * which we add the column header (+1). Then we multiply this sum with
+		 * the height of the one (single) color grid row (20) and add 65 as the
+		 * offset for the grid (in respect to the panel in which it lies). This
+		 * offset is defined basing on the empirical approach.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		chartTypeChanged: function(numberOfColors)
+		{
+			this.height = (numberOfColors+1)*20+65;
+			this.update();
+		}
+	},
+	
 	constructor: function(config) {
         this.callParent(config);
 
         var colorPalette = config.colorPalette;
+        
+        var globalScope = this;
         
         this.paletteGrid = Ext.create('Ext.grid.Panel', {
     	    store: Ext.create('Ext.data.ArrayStore', {
@@ -55,8 +71,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
              * Enables reordering of items (here, colors) in the grid.
              * 
              * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-             * 
-             * TODO: Check with Alberto if this is OK !!!
              */
             viewConfig: 
             {
@@ -71,7 +85,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     	    multiSelect: true,
     	    
     	    columns: [{
-    	        text     : LN('sbi.chartengine.configuration.color'),
+    	        text     : LN('sbi.chartengine.configuration.palette.header'),
     	        flex     : 1,
     	        sortable : false,
     	        dataIndex: 'value',
@@ -85,8 +99,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
         this.paletteGrid.store.loadData({});
 		// Load json colors
         this.paletteGrid.store.setData(colorPalette);
-		
-        var globalScope = this;
 		
         var grid = this.paletteGrid;
 		var item = [{
@@ -121,10 +133,34 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                            	name: 'addedColor_' + ChartConfigurationPalette.idSeed++,
 	                            	order: order,
 	                            	value: selColor
-	                            });	                        
+	                            });	
+	                        	
+	                        	/**
+	                    		 * When user click on the plus button, the color he picked will be added
+	                    		 * to the current grid (palette). Therefore we must extend its height in
+	                    		 * order to adapt to the height of the current grid (palette).
+	                    		 * 
+	                    		 * Explanation: The height takes the current height of the grid (palette).
+	                    		 * Then we add the height of the one (single) color grid row (20).
+	                    		 * 
+	                    		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                    		 */
+	                        	globalScope.height = globalScope.height + 20;
+	    	                	globalScope.update();
+	    	                	
+	    	                	/**
+	                    		 * Update the chart configuration panel on the Configuration tab of the 
+	                    		 * Designer (former Step 2). This panel servers as a container of the
+	                    		 * main configuration and second configuration panel on this tab. This
+	                    		 * is important, since the pallete panel changes its height dynamically,
+	                    		 * depending on user's action (clicking on the '+' or '-' button). 
+	                    		 * 
+	                    		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                    		 */
+	    	                	globalScope.ownerCt.ownerCt.update();
 	                        }
 	                    }
-	                }),                 
+	                })             
 	            },{
 	                xtype : 'button',
 	                text: '-',
@@ -135,12 +171,37 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    } else {
 	                        Ext.Msg.alert(LN('sbi.generic.msg'), LN('sbi.chartengine.configuration.palette.msg.remove'));
 	                    }
+	                    
+	                    /**
+                		 * When user click on the minus button, we will take care of the current 
+                		 * height of the palette (the one before this change - removal of color(s))
+                		 * and the number of colors (items) selected by the user for removal.  
+                		 * 
+                		 * Explanation: The height takes the current height of the grid (palette).
+                		 * Then we take away the number of items (colors) for removing picked by the 
+                		 * user. multiplied with the height of the single color grid row (20).
+                		 * 
+                		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+                		 */
+	                    globalScope.height = globalScope.height - selectedRows.length*20;	                    
+	                    globalScope.update();
+	                    
+	                    globalScope.ownerCt.ownerCt.update();
 	                }
 	            }]
 	        }]
 	    }
-	    ];
+	    ];		
 		
 		this.add(item);
+		
+		/**
+		 * Set the height of the color palette panel according to current
+		 * number of colors in the grid (palette).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		this.height = (colorPalette.length+1)*20+65;
+		this.update();		
 	}
 });
