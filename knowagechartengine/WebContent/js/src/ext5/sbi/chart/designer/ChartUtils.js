@@ -264,13 +264,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var axesList = "";
 
 				axesList += 'axisColNamePadd:'
-				 + ((chartModel.get('axisColNamePadd')) ? chartModel
-					.get('axisColNamePadd')
+				 + ((Number(chartModel.get('axisColNamePadd'))) ? Number(chartModel
+					.get('axisColNamePadd'))
 					 : '') + ';';
 
 				axesList += 'brushWidth:'
-				 + ((chartModel.get('brushWidth')) ? chartModel
-					.get('brushWidth')
+				 + (Number((chartModel.get('brushWidth'))) ? Number(chartModel
+					.get('brushWidth'))
 					 : '') + ';';
 
 				/**
@@ -910,7 +910,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * Parameter specific for the WORDCLOUD chart only
 			 * (danilo.ristovski@mht.net)
 			 */
-			if (chartType.toUpperCase() == "WORDCLOUD") {
+			if (chartType.toUpperCase() == "WORDCLOUD") 
+			{
 				CHART['sizeCriteria'] = (chartModel.get('sizeCriteria')) ? chartModel.get('sizeCriteria') : '';
 				CHART['maxWords'] = (Number(chartModel.get('maxWords'))) ? Number(chartModel.get('maxWords')) : 0;
 				CHART['maxAngle'] = (Number(chartModel.get('maxAngle'))) ? Number(chartModel.get('maxAngle')) : 0;
@@ -925,7 +926,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			if (chartType.toUpperCase() == "SUNBURST") {
 
-				CHART['opacMouseOver'] = (chartModel.get('opacMouseOver')) ? chartModel.get('opacMouseOver') : 100;
+				CHART['opacMouseOver'] = (Number(chartModel.get('opacMouseOver'))) ? Number(chartModel.get('opacMouseOver')) : 100;
 			}
 
 			
@@ -1267,20 +1268,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('toolbarPosition')
 					 : '') + ';';
 				toolbarStyle += 'height:'
-				 + ((chartModel.get('toolbarHeight')) ? chartModel
-					.get('toolbarHeight')
+				 + ((Number(chartModel.get('toolbarHeight'))) ? Number(chartModel
+					.get('toolbarHeight'))
 					 : '') + ';';
 				toolbarStyle += 'width:'
-				 + ((chartModel.get('toolbarWidth')) ? chartModel
-					.get('toolbarWidth')
+				 + (Number((chartModel.get('toolbarWidth'))) ? Number(chartModel
+					.get('toolbarWidth'))
 					 : '') + ';';
 				toolbarStyle += 'spacing:'
-				 + ((chartModel.get('toolbarSpacing')) ? chartModel
-					.get('toolbarSpacing')
+				 + (Number((chartModel.get('toolbarSpacing'))) ? Number(chartModel
+					.get('toolbarSpacing'))
 					 : '') + ';';
 				toolbarStyle += 'tail:'
-				 + ((chartModel.get('toolbarTail')) ? chartModel
-					.get('toolbarTail')
+				 + (Number((chartModel.get('toolbarTail'))) ? Number(chartModel
+					.get('toolbarTail'))
 					 : '') + ';';
 
 				/**
@@ -1424,8 +1425,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var limitStyle = '';
 
 				limitStyle += 'maxNumberOfLines:'
-				 + ((chartModel.get('maxNumberOfLines')) ? chartModel
-					.get('maxNumberOfLines')
+				 + (Number((chartModel.get('maxNumberOfLines'))) ? Number(chartModel
+					.get('maxNumberOfLines'))
 					 : '') + ';';
 				limitStyle += 'serieFilterColumn:'
 				 + ((chartModel.get('serieFilterColumn')) ? chartModel
@@ -1454,39 +1455,39 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('parallelTooltipFontSize')
 					 : '') + ';';
 				parallelTooltipStype += 'minWidth:'
-				 + ((chartModel
-						.get('parallelTooltipMinWidth')) ? chartModel
-					.get('parallelTooltipMinWidth')
+				 + (Number((chartModel
+						.get('parallelTooltipMinWidth'))) ? Number(chartModel
+					.get('parallelTooltipMinWidth'))
 					 : '') + ';';
 				parallelTooltipStype += 'maxWidth:'
-				 + ((chartModel
-						.get('parallelTooltipMaxWidth')) ? chartModel
-					.get('parallelTooltipMaxWidth')
+				 + ((Number(chartModel
+						.get('parallelTooltipMaxWidth'))) ? Number(chartModel
+					.get('parallelTooltipMaxWidth'))
 					 : '') + ';';
 				parallelTooltipStype += 'minHeight:'
-				 + ((chartModel
-						.get('parallelTooltipMinHeight')) ? chartModel
-					.get('parallelTooltipMinHeight')
+				 + ((Number(chartModel
+						.get('parallelTooltipMinHeight'))) ? Number(chartModel
+					.get('parallelTooltipMinHeight'))
 					 : '') + ';';
 				parallelTooltipStype += 'maxHeight:'
-				 + ((chartModel
-						.get('parallelTooltipMaxHeight')) ? chartModel
-					.get('parallelTooltipMaxHeight')
+				 + ((Number(chartModel
+						.get('parallelTooltipMaxHeight'))) ? Number(chartModel
+					.get('parallelTooltipMaxHeight'))
 					 : '') + ';';
 				parallelTooltipStype += 'padding:'
-				 + ((chartModel
-						.get('parallelTooltipPadding')) ? chartModel
-					.get('parallelTooltipPadding')
+				 + ((Number(chartModel
+						.get('parallelTooltipPadding'))) ? Number(chartModel
+					.get('parallelTooltipPadding'))
 					 : '') + ';';
 				parallelTooltipStype += 'border:'
-				 + ((chartModel
-						.get('parallelTooltipBorder')) ? chartModel
-					.get('parallelTooltipBorder')
+				 + ((Number(chartModel
+						.get('parallelTooltipBorder'))) ? Number(chartModel
+					.get('parallelTooltipBorder'))
 					 : '') + ';';
 				parallelTooltipStype += 'borderRadius:'
-				 + ((chartModel
-						.get('parallelTooltipBorderRadius')) ? chartModel
-					.get('parallelTooltipBorderRadius')
+				 + ((Number(chartModel
+						.get('parallelTooltipBorderRadius'))) ? Number(chartModel
+					.get('parallelTooltipBorderRadius'))
 					 : '') + ';';
 
 				PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
