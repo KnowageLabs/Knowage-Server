@@ -19,14 +19,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
-import com.lowagie.text.pdf.codec.Base64;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -138,6 +137,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		Content content = null;
 
+		businessModelsDAO.setUserProfile(getUserProfile());
+
 		try {
 			content = businessModelsDAO.loadMetaModelContentById(vId);
 
@@ -152,6 +153,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	/**
+	 * File upload
+	 **/
 	@POST
 	@Path("/{bmId}/versions")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
@@ -161,6 +165,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		System.out.println();
 		Content content = new Content();
 		byte[] bytes = null;
+
+		businessModelsDAO.setUserProfile(getUserProfile());
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		for (String key : uploadForm.keySet()) {
@@ -203,11 +209,12 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 * Get file from data base for download with specified id (in progress)
 	 **/
 	@GET
-	@Path("{bmId}/versions/{vId}/download")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Path("{bmId}/versions/{vId}/file")
+	@Produces("application/octet-stream")
 	public Response downloadFile(@PathParam("vId") Integer vId) {
 		Content c = null;
 		byte[] b = null;
+		businessModelsDAO.setUserProfile(getUserProfile());
 
 		logger.debug("IN");
 
@@ -215,12 +222,10 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			c = businessModelsDAO.loadMetaModelContentById(vId);
 			b = c.getContent();
 
-			StringBuilder sb = new StringBuilder();
-			sb.append(c.getFileName() + "+");
-			sb.append("data:application/octet-stream;base64,");
-			sb.append(Base64.encodeBytes(b));
+			ResponseBuilder response = Response.ok(b);
+			response.header("Content-Disposition", "attachment; filename=" + c.getFileName());
 
-			return Response.ok(sb.toString()).build();
+			return response.build();
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to download version with id:" + vId, e);
 			throw new SpagoBIRestServiceException("An error occurred while trying to download version with id:" + vId, buildLocaleFromSession(), e);
@@ -228,6 +233,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+
 	}
 
 	/**
@@ -240,6 +246,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public MetaModel insertNewBusinessModel(@Valid MetaModel body) {
 		logger.debug("IN");
 		MetaModel bm = body;
+		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
 			if (bm.getId() != null) {
@@ -275,9 +282,10 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
+			businessModelsDAO.lockMetaModel(bmId, (String) getUserProfile().getUserId());
+			bm.setModelLocker((String) getUserProfile().getUserName());
 			businessModelsDAO.modifyMetaModel(bm);
 			// businessModelsDAO.setActiveVersion(bm.getId(), bm.);
-
 			return bm;
 		} catch (Exception e) {
 			logger.error("An error occurred while updating business model with id:" + bmId, e);

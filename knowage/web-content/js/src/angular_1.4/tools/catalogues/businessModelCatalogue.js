@@ -4,29 +4,30 @@
 
 var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload']);
 
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download){
 	
 	//variables
 	///////////////////////////////////////////////////////////
 	$scope.isDirty = false;
-	$scope.showMe = false;				//boolean for visibility
+	$scope.showMe = false;				//boolean
+	$scope.versionLoadingShow;
+	$scope.bmLoadingShow;
+	$scope.lockButtonEnabled;
+	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];		//All Business Models list
 	$scope.listOfDatasources = [];		//Dropdown
 	$scope.listOfCategories=[];			//Dropdown
-	$scope.bmVersions=[];
+	$scope.bmVersions=[];				//All versions of BM list
 	$scope.selectedBusinessModels=[];	//Selected Business Models table multiselect
 	$scope.selectedVersions=[];			//Selected BM Versions table multiselect
 	$scope.selectedBusinessModel = {}; //Selected model for editing or new model data
 	$scope.bmVersionsRadio;
 	$scope.bmVersionsActive;
-	//$scope.businessModelFile = new FormData();
-	$scope.bmWithFile = {};
 	$scope.fileObj ={};
-	$scope.versionLoadingShow;
-	$scope.bmLoadingShow;
+
 	angular.element(document).ready(function () {
         $scope.getData();
     });
@@ -45,7 +46,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.createBusinessModel = function(){
 		$scope.selectedBusinessModel = {};
 		$scope.bmVersions=[];
-		$scope.showMe = true;		
+		$scope.showMe = true;
+		$scope.lockButtonEnabled = true;
 	}
 	
 	
@@ -57,9 +59,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.bmVersions=[];
 	}
 	
-	$scope.unlockBusinessModel = function(){
+	$scope.businessModelLock = function(){
 		//should also check if user is allowed to do this
-		$scope.selectedBusinessModel.modelLocked = false;
+		$scope.selectedBusinessModel.modelLocked = !$scope.selectedBusinessModel.modelLocked;
+		$scope.isDirty = true;
 		console.log($scope.selectedBusinessModel);
 	}
 	
@@ -70,11 +73,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
+		$scope.lockButtonEnabled = false;
 		if($scope.isDirty){
 		    $mdDialog.show($scope.confirm).then(function(){
-		    $scope.isDirty=false;   
-		    $scope.selectedBusinessModel=angular.copy(item);
-		    $scope.showMe=true;
+		    	$scope.isDirty=false;   
+		    	$scope.selectedBusinessModel=angular.copy(item);
+		    	$scope.showMe=true;
 		    },
 		     function(){		       
 		    	  $scope.showMe = true;
@@ -89,34 +93,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.downloadFile = function(item,ev){
-		sbiModule_restServices
-		.get("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/download","")
-		.success
-		(
-				function(data, status, headers, config){
-					var separator;
-					var b64;
-					var name;
-					
-					for(var i=0;i<data.length;i++){
-						if(data[i]=="+"){
-							separator = i;
-							break;
-						}
-					}
-					
-					name = data.substring(0,separator);
-					b64 = data.substring(separator+1,data.length)
-					
-					//window.location.href = b64;
-					var a = document.getElementById("test");
-					a.setAttribute("download",name);
-					a.setAttribute("href",b64);
-					
-					a.click();
-					//window.location = data;
-					//console.log(data);
-		});
+
+					window.location = "http://localhost:8080/knowage/restful-services/2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/file";
+
 	}
 	
 	 $scope.bmSpeedMenu= [
@@ -333,7 +312,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				sbiModule_restServices
 					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 					.success(
-							function(){
+							function(data,status,headers,config){
 								if($scope.fileObj.fileName !== undefined)
 									$scope.saveBusinessModelFile();
 								
@@ -351,6 +330,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								$scope.businessModelList=[];
 								$scope.getBusinessModels();
 								$scope.isDirty = false;
+								$scope.selectedBusinessModel.modelLocker = data.modelLocker;
 								$scope.showActionOK("Business Model edited successfully");
 								
 							}
@@ -631,4 +611,4 @@ app.service('multipartForm',['$http',function($http){
 				})
 		}
 		
-	}])
+	}]);

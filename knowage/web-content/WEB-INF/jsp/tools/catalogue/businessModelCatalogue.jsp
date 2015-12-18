@@ -17,6 +17,8 @@
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
 
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/businessModelCatalogue.js"></script>
@@ -28,7 +30,7 @@
 	<angular_2_col>
 		<left-col>
 			<div class="leftBox">
-				<md-toolbar class="md-blue minihead">
+				<md-toolbar class="header">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
 						
@@ -88,7 +90,7 @@
 		<right-col>
 			<div ng-show = "showMe" style="overflow:hidden">
 				<form layout-fill class="detailBody md-whiteframe-z1">
-					<md-toolbar class="md-blue minihead">
+					<md-toolbar class="header">
 						<div class="md-toolbar-tools h100">
 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
 								<div style="position: absolute; right: 0px" class="h100">
@@ -174,15 +176,12 @@
       						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
       					</div>
      					     				
-     					<div layout="row" layout-wrap>
+     					<!--<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
        							<label>{{translate.load("sbi.bm.isLocked")}}:</label>
       						</div>
  
       						<md-input-container class="small counter"> 
-      							<!--<md-checkbox
-       								ng-model="selectedBusinessModel.modelLocked" aria-label="Locked" disabled>
-      							</md-checkbox> -->
       							<md-icon md-font-icon="fa fa-lock fa-2x" ng-show="selectedBusinessModel.modelLocked" 
       								style="margin-top: 1px; color:#3b668c;">
       							</md-icon>
@@ -190,16 +189,42 @@
       								style="margin-top: 1px; color:#3b668c;">
       							</md-icon>  
       						</md-input-container>
-     					</div>
+     					</div>-->
      					
      					<div layout="row" layout-wrap>
+     						
+     						<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()" ng-disabled="lockButtonEnabled">
+       								<md-tooltip md-direction="right">
+       									{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
+       								</md-tooltip>
+       								<md-icon
+       									ng-show="selectedBusinessModel.modelLocked"
+										md-font-icon="fa fa-unlock-alt fa-lg" 
+										style="color: white; ">
+									</md-icon>
+									<md-icon
+										ng-show="!selectedBusinessModel.modelLocked"
+										md-font-icon="fa fa-lock fa-lg" 
+										style="color: white; ">
+									</md-icon>  
+       						</md-button>
+     						
       						<div flex=3 style="line-height: 40px">
-       							<label>{{translate.load("sbi.bm.lockedBy")}}:</label>
-      						</div>
- 							{{selectedBusinessModel.modelLocker}}
+      							<label ng-show="selectedBusinessModel.modelLocked">
+       								{{translate.load("sbi.bm.lockedBy")}}&nbsp
+       								{{selectedBusinessModel.modelLocker}}
+       								 to unlock click button
+       							</label>	
+      							
+      							<label ng-show="!selectedBusinessModel.modelLocked">
+       								Selected model is not locked, to lock click button
+       							</label>	
+					
+      						</div>      						
+ 
      					</div>
-     					
-     					<div layout="row" layout-wrap>
+
+     					<!--<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
        							<md-button type="button" class="md-raised " ng-disabled="selectedBusinessModel.modelLocked" ng-click="lockBusinessModel()" >
        								{{translate.load("sbi.bm.lockModel")}}
@@ -213,11 +238,31 @@
        								{{translate.load("sbi.bm.unlockModel")}}
        							</md-button>
       						</div>
-     					</div>
-     			
-     					<div style="height:40%; padding-top:20px">     						
+     					</div>  -->
+
+     					<!-- <div layout="row" layout-wrap>
+      						<div flex=3 style="line-height: 40px">
+       							<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()" ng-disabled="lockButtonEnabled">
+       									<md-tooltip md-direction="right">
+       										{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
+       									</md-tooltip>
+       									<md-icon
+       										ng-show="selectedBusinessModel.modelLocked"
+											md-font-icon="fa fa-unlock-alt fa-lg" 
+											style="color: white; ">
+										</md-icon>
+										<md-icon
+											ng-show="!selectedBusinessModel.modelLocked"
+											md-font-icon="fa fa-lock fa-lg" 
+											style="color: white; ">
+										</md-icon>  
+       							</md-button>
+      						</div>
+     					</div> -->
+     					 
+     					<div style="height:55%; padding-top:20px;">     						
      						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"><!-- overflow:hidden; -->
-     							<md-toolbar class="md-blue minihead md-toolbar-tools">
+     							<md-toolbar class="header md-toolbar-tools">
      								<!-- <md-button 
     									ng-disabled=false
     									class="md-fab md-ExtraMini"
