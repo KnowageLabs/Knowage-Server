@@ -4,16 +4,15 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.graph.EdgeGroup;
-import it.eng.spagobi.tools.graph.LabeledEdge;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -83,7 +82,7 @@ public class AssociativeLogicManager {
 							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
 							Statement stmt = dataSource.getConnection().createStatement();
 							ResultSet rs;
-							rs = stmt.executeQuery("SELECT DISTINCT " + StringUtils.join(group.getOrderedEdgeNames().iterator(), ",") + " FROM " + tableName);
+							rs = stmt.executeQuery("SELECT DISTINCT " + group.getColumnNames() + " FROM " + tableName);
 							Set<String> tuple = getTupleOfValues(rs);
 
 							if (!edgeGroupValues.containsKey(group)) {
@@ -115,25 +114,24 @@ public class AssociativeLogicManager {
 		// datasetAssociation.remove(fromAssociation);
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
-			String query = "SELECT DISTINCT " + StringUtils.join(group.getOrderedEdgeNames().iterator(), ",") + " FROM " + dataset + " WHERE " + filter;
-			Set<String> distinctValues = new HashSet<String>();
+			String query = "SELECT DISTINCT " + group.getColumnNames() + " FROM " + dataset + " WHERE " + filter;
 			ResultSet rs = dataSource.getConnection().createStatement().executeQuery(query);
-			ResultSetMetaData rsMetadata = rs.getMetaData();
-			// Set<String> tuple = getTupleOfValues(rs, columnNames);
+			// ResultSetMetaData rsMetadata = rs.getMetaData();
+			Set<String> distinctValues = getTupleOfValues(rs);
 
-			Map<String, Class> classes = new HashMap<String, Class>(group.getOrderedEdgeNames().size());
-			for (int i = 1; i < rsMetadata.getColumnCount(); i++) {
-				String columnName = rsMetadata.getColumnName(i);
-				Class columnClass = Class.forName(rsMetadata.getColumnClassName(i));
-				classes.put(columnName, columnClass);
-			}
+			// Map<String, Class> classes = new HashMap<String, Class>(group.getEdgeNames().size());
+			// for (int i = 1; i < rsMetadata.getColumnCount(); i++) {
+			// String columnName = rsMetadata.getColumnName(i);
+			// Class columnClass = Class.forName(rsMetadata.getColumnClassName(i));
+			// classes.put(columnName, columnClass);
+			// }
 
 			Set<String> baseSet = edgeGroupValues.get(group);
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
 			if (!intersection.equals(baseSet)) {
 				edgeGroupValues.put(group, intersection);
-				String inClauseValues = "'" + StringUtils.join(edgeGroupValues.get(group).iterator(), "','") + "'";
-				String f = StringUtils.join(group.getOrderedEdgeNames().iterator(), "','") + " IN (" + inClauseValues + ")";
+				String inClauseValues = StringUtils.join(edgeGroupValues.get(group).iterator(), "','");
+				String f = "(" + group.getColumnNames() + ") IN (" + inClauseValues + ")";
 				for (String datasetInvolved : edgeGroupToDataset.get(group)) {
 					if (!datasetInvolved.equals(dataset)) {
 						// it will skip the current dataset, from which the filter is fired
@@ -179,5 +177,4 @@ public class AssociativeLogicManager {
 		sb.append(tableName);
 		return connection.prepareStatement(sb.toString());
 	}
-
 }
