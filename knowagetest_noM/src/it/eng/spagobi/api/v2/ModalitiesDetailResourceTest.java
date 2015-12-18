@@ -106,7 +106,7 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 		check.setSecondValue(null);
 		check.setValueTypeCd("REGEXP");
 		check.setValueTypeId(valueId);
-		id = valueId;
+
 		
 	}
 }
