@@ -32,7 +32,7 @@ public class AssociationAnalyzerTest {
 		
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(associations);
 		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
-		UndirectedGraph<String, LabeledEdge> graph = analyzer.getGraph();
+		UndirectedGraph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 		
 		assertTrue(datasetAssociationColumnMap.containsKey(X));
 		assertTrue(datasetAssociationColumnMap.containsKey(Y));
@@ -66,7 +66,7 @@ public class AssociationAnalyzerTest {
 		
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(associations);
 		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
-		UndirectedGraph<String, LabeledEdge> graph = analyzer.getGraph();
+		UndirectedGraph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 		
 		assertTrue(datasetAssociationColumnMap.containsKey(K));
 		assertTrue(datasetAssociationColumnMap.containsKey(W));

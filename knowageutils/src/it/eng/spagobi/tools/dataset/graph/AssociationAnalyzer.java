@@ -13,18 +13,17 @@ import org.jgrapht.graph.Pseudograph;
 
 public class AssociationAnalyzer {
 	private Map<String, Map<String, String>> datasetAssociationColumnMap;
-	private Pseudograph<String, LabeledEdge> graph;
+	private Pseudograph<String, LabeledEdge<String>> graph;
 
 	public AssociationAnalyzer(Collection<Association> associations) {
 		this.datasetAssociationColumnMap = new HashMap<String, Map<String, String>>();
-		this.graph = new Pseudograph<String, LabeledEdge>(new ClassBasedEdgeFactory<String, LabeledEdge>(LabeledEdge.class));
-		
+		this.graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>)(Object)LabeledEdge.class));
 		calc(associations, datasetAssociationColumnMap, graph);
 	}
 
 	private void calc(Collection<Association> associations,
 			Map<String, Map<String, String>> datasetToAssociationColumns,
-			Pseudograph<String, LabeledEdge> graph) {
+			Pseudograph<String, LabeledEdge<String>> graph) {
 		
 		for (Association association : associations) {
 			String associationId = association.getId();
@@ -65,7 +64,7 @@ public class AssociationAnalyzer {
 		return datasetAssociationColumnMap;
 	}
 
-	public Pseudograph<String, LabeledEdge> getGraph() {
+	public Pseudograph<String, LabeledEdge<String>> getGraph() {
 		return graph;
 	}
 }
