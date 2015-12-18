@@ -12,6 +12,9 @@ import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -24,26 +27,15 @@ import com.jayway.restassured.response.Response;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
-
+	Check check = null;
 	List<Integer> ids;
-	Check check = new Check();
 	static int id;
 
 	@Before
 	public void setup() {
 		super.setup();
-
 		String json = get("/customChecks").asString();
 		ids = JsonPath.from(json).get("checkId");
-
-		check.setDescription("testJUnit");
-		check.setFirstValue(null);
-		check.setLabel("JUnit");
-		check.setName("Test");
-		check.setSecondValue(null);
-		check.setValueTypeCd("REGEXP");
-		check.setValueTypeId(454);
-
 	}
 
 	@Test
@@ -62,6 +54,7 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 
 	@Test
 	public void postTest() {
+		buildCheck();
 		Response response = given().contentType(ContentType.JSON).body(check).when().post("/customChecks").then().statusCode(201).extract().response();
 		id = Integer.parseInt(response.body().asString());
 		get("/customChecks/" + id).then().assertThat().body("checkId", equalTo(id));
@@ -69,14 +62,7 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 
 	@Test
 	public void putTest() {
-		check.setCheckId(id);
-		check.setDescription("testJUnit");
-		check.setFirstValue(null);
-		check.setLabel("JUnitEdited");
-		check.setName("Test");
-		check.setSecondValue(null);
-		check.setValueTypeCd("REGEXP");
-		check.setValueTypeId(454);
+		buildCheck();
 
 		get("/customChecks/" + id).then().assertThat().body("checkId", equalTo(check.getCheckId()));
 		get("/customChecks/" + id).then().assertThat().body("label", (not(equalTo(check.getLabel()))));
@@ -94,4 +80,33 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 
 	}
 
+	
+	private void buildCheck(){
+		check = new Check();
+		int valueId = 1;
+		Response response =  expect().statusCode(200).when().get("/domains");
+		try {
+			JSONArray domains = 	new JSONArray(response.body().asString());
+			for (int i=0; i<domains.length(); i++){
+				JSONObject aDomain =  domains.getJSONObject(i);
+				if(aDomain.getString("domainCode").equals("CHECK") && aDomain.getString("valueCd").equals("REGEXP")){
+					valueId = new Integer(aDomain.getString("valueId"));
+				}
+			}
+		} catch (JSONException e) {
+		
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		check.setDescription("testJUnit");
+		check.setFirstValue(null);
+		check.setLabel("JUnit");
+		check.setName("Test");
+		check.setSecondValue(null);
+		check.setValueTypeCd("REGEXP");
+		check.setValueTypeId(valueId);
+		id = valueId;
+		
+	}
 }
