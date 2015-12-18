@@ -26,11 +26,15 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,21 +46,46 @@ import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class Hierarchies {
 
 	public static transient Logger logger = Logger.getLogger(Hierarchies.class);
-	private static String HIERARCHIES_FILE_NAME = "hierarchies"; // for now is a
-																	// constant
+	private static String HIERARCHIES_FILE_NAME = "hierarchies"; // for now is a constant
 
 	// XML TAGS
+	// GENERALS
 	private static String DIMENSIONS = "DIMENSIONS";
 	private static String DIMENSION = "DIMENSION";
 	private static String NAME = "NAME";
-	private static String HIERARCHY_PREFIX = "HIERARCHY_PREFIX";
+	private static String LABEL = "LABEL";
+	private static String HIERARCHY_TABLE = "HIERARCHY_TABLE";
 	private static String HIERARCHY_FK = "HIERARCHY_FK";
 	private static String DATASOURCE = "DATASOURCE";
+
+	// CONFIGS SECTION
+	private static String CONFIGS = "CONFIGS";
+	private static String CONFIG = "CONFIG";
+	private static String NUM_LEVELS = "NUM_LEVELS";
+	private static String ALLOW_DUPLICATE = "ALLOW_DUPLICATE";
+	private static String NODE = "NODE";
+	private static String LEAF = "LEAF";
+
+	// DIM_FIELDS SECTION
+	private static String DIM_FIELDS = "DIM_FIELDS";
+	private static String FIELD = "FIELD";
+	private static String VISIBLE = "VISIBLE";
+	private static String EDITABLE = "EDITABLE";
+	private static String TYPE = "TYPE";
+
+	// HIER_FIELDS SECTIONS
+	private static String HIER_FIELDS = "HIER_FIELDS";
+	private static String GENERAL_FIELDS = "GENERAL_FIELDS";
+	private static String SINGLE_VALUE = "SINGLE_VALUE";
+	private static String REQUIRED = "REQUIRED";
+	private static String NODE_FIELDS = "NODE_FIELDS";
+	private static String LEAF_FIELDS = "LEAF_FIELDS";
+
 	private SourceBean template;
 
 	public Hierarchies() {
@@ -103,24 +132,25 @@ public class Hierarchies {
 	}
 
 	/**
-	 * Get the hierarchy table name prefix of the passed dimension
-	 * 
+	 * Get the hierarchy table name of the passed dimension
+	 *
 	 * @param dimension
 	 *            the dimension name
-	 * @return the prefix name of the table that contains hierarchies
+	 * @return the name of the table that contains hierarchies
 	 */
-	public String getHierarchyTablePrefixName(String dimension) {
+	public String getHierarchyTableName(String dimension) {
 		SourceBean sb = getTemplate();
 		SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
 
 		List lst = dimensions.getAttributeAsList(DIMENSION);
 		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 			SourceBean sbRow = (SourceBean) iterator.next();
-			String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-			if (dimensionName.equalsIgnoreCase(dimension)) {
-				SourceBean sbHierarchyPrefix = (SourceBean) sbRow.getAttribute(HIERARCHY_PREFIX);
-				String hierarchyPrefix = sbHierarchyPrefix.getAttribute(NAME) != null ? sbHierarchyPrefix.getAttribute(NAME).toString() : null;
-				return hierarchyPrefix;
+			// String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			String dimensionLabel = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
+				SourceBean sbHierarchy = (SourceBean) sbRow.getAttribute(HIERARCHY_TABLE);
+				String hierarchyName = sbHierarchy.getAttribute(NAME) != null ? sbHierarchy.getAttribute(NAME).toString() : null;
+				return hierarchyName;
 			}
 		}
 		return null;
@@ -128,7 +158,7 @@ public class Hierarchies {
 
 	/**
 	 * Get the hierarchy table foreign key name of the passed dimension
-	 * 
+	 *
 	 * @param dimension
 	 *            the dimension name
 	 * @return the foreign key name of the table that contains hierarchies
@@ -140,19 +170,132 @@ public class Hierarchies {
 		List lst = dimensions.getAttributeAsList(DIMENSION);
 		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 			SourceBean sbRow = (SourceBean) iterator.next();
-			String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-			if (dimensionName.equalsIgnoreCase(dimension)) {
+			// String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			String dimensionLabel = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
 				SourceBean sbHierarchyPrefix = (SourceBean) sbRow.getAttribute(HIERARCHY_FK);
-				String hierarchyPrefix = sbHierarchyPrefix.getAttribute(NAME) != null ? sbHierarchyPrefix.getAttribute(NAME).toString() : null;
-				return hierarchyPrefix;
+				String hierarchyName = sbHierarchyPrefix.getAttribute(NAME) != null ? sbHierarchyPrefix.getAttribute(NAME).toString() : null;
+				return hierarchyName;
 			}
 		}
 		return null;
 	}
 
 	/**
+	 * Get the dimension properties of the passed dimension
+	 *
+	 * @param dimension
+	 *            the dimension name
+	 * @return the dimension object with all attributes
+	 */
+	public Dimension getDimension(String dimension) {
+		Dimension toReturn = new Dimension(dimension);
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			SourceBean sbRow = (SourceBean) iterator.next();
+			String dimensionLabel = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
+				toReturn.setName(sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null);
+				List lstFields = sbRow.getAttributeAsList(DIM_FIELDS + "." + FIELD);
+				ArrayList<Field> metadataDimension = new ArrayList<Field>();
+				for (Iterator iter = lstFields.iterator(); iter.hasNext();) {
+					SourceBean sbField = (SourceBean) iter.next();
+					String fieldName = sbField.getAttribute(NAME) != null ? sbField.getAttribute(NAME).toString() : null;
+					String fieldType = sbField.getAttribute(TYPE) != null ? sbField.getAttribute(TYPE).toString() : null;
+					boolean fieldIsVisible = sbField.getAttribute(VISIBLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(VISIBLE)) : false;
+					boolean fieldIsEditable = sbField.getAttribute(EDITABLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(EDITABLE)) : false;
+					boolean fieldIsRequired = sbField.getAttribute(REQUIRED) != null ? Boolean.parseBoolean((String) sbField.getAttribute(REQUIRED)) : false;
+					boolean fieldIsSingleValue = sbField.getAttribute(SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(SINGLE_VALUE))
+							: false;
+
+					Field field = new Field(fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					metadataDimension.add(field);
+				}
+				toReturn.setMetadataFields(metadataDimension);
+			}
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Get the hierarchy properties of the passed dimension
+	 *
+	 * @param dimension
+	 *            the dimension name
+	 * @return the hierarchy object linked to the input dimension with all attributes
+	 */
+	public Hierarchy getHierarchy(String dimension) {
+		Hierarchy toReturn = new Hierarchy(dimension);
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			SourceBean sbRow = (SourceBean) iterator.next();
+			String dimensionLabel = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
+				// GENERAL_FIELDS
+				List lstGeneralFields = sbRow.getAttributeAsList(HIER_FIELDS + "." + GENERAL_FIELDS + "." + FIELD);
+				ArrayList<Field> metadataGeneralHierarchy = new ArrayList<Field>();
+				for (Iterator iter = lstGeneralFields.iterator(); iter.hasNext();) {
+					SourceBean sbField = (SourceBean) iter.next();
+					String fieldName = sbField.getAttribute(NAME) != null ? sbField.getAttribute(NAME).toString() : null;
+					String fieldType = sbField.getAttribute(TYPE) != null ? sbField.getAttribute(TYPE).toString() : null;
+					boolean fieldIsVisible = sbField.getAttribute(VISIBLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(VISIBLE)) : false;
+					boolean fieldIsEditable = sbField.getAttribute(EDITABLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(EDITABLE)) : false;
+					boolean fieldIsRequired = sbField.getAttribute(REQUIRED) != null ? Boolean.parseBoolean((String) sbField.getAttribute(REQUIRED)) : false;
+					boolean fieldIsSingleValue = sbField.getAttribute(SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(SINGLE_VALUE))
+							: false;
+
+					Field field = new Field(fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					metadataGeneralHierarchy.add(field);
+				}
+				toReturn.setMetadataGeneralFields(metadataGeneralHierarchy);
+				// NODE_FIELDS
+				List lstNodeFields = sbRow.getAttributeAsList(HIER_FIELDS + "." + NODE_FIELDS + "." + FIELD);
+				ArrayList<Field> metadataNodeHierarchy = new ArrayList<Field>();
+				for (Iterator iter = lstNodeFields.iterator(); iter.hasNext();) {
+					SourceBean sbField = (SourceBean) iter.next();
+					String fieldName = sbField.getAttribute(NAME) != null ? sbField.getAttribute(NAME).toString() : null;
+					String fieldType = sbField.getAttribute(TYPE) != null ? sbField.getAttribute(TYPE).toString() : null;
+					boolean fieldIsVisible = sbField.getAttribute(VISIBLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(VISIBLE)) : false;
+					boolean fieldIsEditable = sbField.getAttribute(EDITABLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(EDITABLE)) : false;
+					boolean fieldIsRequired = sbField.getAttribute(REQUIRED) != null ? Boolean.parseBoolean((String) sbField.getAttribute(REQUIRED)) : false;
+					boolean fieldIsSingleValue = sbField.getAttribute(SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(SINGLE_VALUE))
+							: false;
+
+					Field field = new Field(fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					metadataNodeHierarchy.add(field);
+				}
+				toReturn.setMetadataNodeFields(metadataNodeHierarchy);
+				// LEAF_FIELDS
+				List lstLeafFields = sbRow.getAttributeAsList(HIER_FIELDS + "." + LEAF_FIELDS + "." + FIELD);
+				ArrayList<Field> metadataLeafHierarchy = new ArrayList<Field>();
+				for (Iterator iter = lstLeafFields.iterator(); iter.hasNext();) {
+					SourceBean sbField = (SourceBean) iter.next();
+					String fieldName = sbField.getAttribute(NAME) != null ? sbField.getAttribute(NAME).toString() : null;
+					String fieldType = sbField.getAttribute(TYPE) != null ? sbField.getAttribute(TYPE).toString() : null;
+					boolean fieldIsVisible = sbField.getAttribute(VISIBLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(VISIBLE)) : false;
+					boolean fieldIsEditable = sbField.getAttribute(EDITABLE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(EDITABLE)) : false;
+					boolean fieldIsRequired = sbField.getAttribute(REQUIRED) != null ? Boolean.parseBoolean((String) sbField.getAttribute(REQUIRED)) : false;
+					boolean fieldIsSingleValue = sbField.getAttribute(SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField.getAttribute(SINGLE_VALUE))
+							: false;
+
+					Field field = new Field(fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					metadataLeafHierarchy.add(field);
+				}
+				toReturn.setMetadataNodeFields(metadataLeafHierarchy);
+			}
+		}
+		return toReturn;
+	}
+
+	/**
 	 * Get the corresponding datasource name for the dimension
-	 * 
+	 *
 	 * @param dimension
 	 *            the dimension name
 	 * @return the datasource name
@@ -166,8 +309,9 @@ public class Hierarchies {
 		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 			JSONObject hierarchy = new JSONObject();
 			SourceBean sbRow = (SourceBean) iterator.next();
-			String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-			if (name.equalsIgnoreCase(dimension)) {
+			// String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			String label = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+			if (label.equalsIgnoreCase(dimension)) {
 				String datasource = sbRow.getAttribute(DATASOURCE) != null ? sbRow.getAttribute(DATASOURCE).toString() : null;
 				return datasource;
 			}
@@ -182,7 +326,7 @@ public class Hierarchies {
 
 	/**
 	 * Gets the path to the model with the hierarchies
-	 * 
+	 *
 	 * @return
 	 */
 

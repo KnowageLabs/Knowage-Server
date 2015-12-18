@@ -27,6 +27,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement.metadata;
  */
 public class Field {
 
+	String name;
 	String type;
 	boolean isVisible;
 	boolean isEditable;
@@ -50,8 +51,6 @@ public class Field {
 		this.isEditable = isEditable;
 		this.isSingleValue = isSingleValue;
 	}
-
-	String name;
 
 	public String getName() {
 		return name;

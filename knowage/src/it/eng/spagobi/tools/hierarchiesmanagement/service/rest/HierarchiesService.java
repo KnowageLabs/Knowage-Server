@@ -79,6 +79,7 @@ public class HierarchiesService {
 	private static String DIMENSIONS = "DIMENSIONS";
 	private static String DIMENSION = "DIMENSION";
 	private static String NAME = "NAME";
+	private static String LABEL = "LABEL";
 	private static String DATASOURCE = "DATASOURCE";
 	// dialects for correct definition of date's functions
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
@@ -114,12 +115,14 @@ public class HierarchiesService {
 			for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 				JSONObject dimension = new JSONObject();
 				SourceBean sbRow = (SourceBean) iterator.next();
-				String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-				dimension.put("DIMENSION_NM", name);
+				// String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+				String label = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+				dimension.put("DIMENSION_NM", label);
 				String datasource = sbRow.getAttribute(DATASOURCE) != null ? sbRow.getAttribute(DATASOURCE).toString() : null;
 				dimension.put("DIMENSION_DS", datasource);
 				dimesionsJSONArray.put(dimension);
 			}
+
 			return dimesionsJSONArray.toString();
 
 		} catch (Throwable t) {
@@ -137,10 +140,9 @@ public class HierarchiesService {
 		JSONArray hierarchiesJSONArray = new JSONArray();
 
 		try {
-
-			// 1 - get hierarchy table postfix(ex: _CDC)
+			// 1 - get hierarchy table
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String tableName = hierarchies.getHierarchyTableName(dimension);
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -148,11 +150,11 @@ public class HierarchiesService {
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
+
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 
-			String tableName = "HIER_" + hierarchyPrefix;
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
 					+ "=\"AUTO\"", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
@@ -191,7 +193,7 @@ public class HierarchiesService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 			// 2 -get hierarchy table postfix
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 			// 3 - execute query to get hierarchies leafs
 			String queryText = this.createQueryAutomaticHierarchy(dataSource, hierarchyFK, hierarchyPrefix, hierarchy, dateHierarchy);
@@ -225,7 +227,7 @@ public class HierarchiesService {
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -296,7 +298,7 @@ public class HierarchiesService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 			// 2 -get hierarchy table postfix
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 
 			// 3 - execute query to get hierarchies leafs
@@ -345,7 +347,7 @@ public class HierarchiesService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 			// 2 -get hierarchy table postfix
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 
 			// 3 - execute query to get hierarchies leafs
@@ -475,7 +477,7 @@ public class HierarchiesService {
 			// Information for persistence
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -510,7 +512,7 @@ public class HierarchiesService {
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTablePrefixName(dimension);
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);

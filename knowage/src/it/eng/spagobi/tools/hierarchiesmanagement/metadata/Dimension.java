@@ -30,6 +30,7 @@ import java.util.ArrayList;
 public class Dimension {
 
 	String name;
+	String label;
 	String datasource;
 	String hierarchyTable;
 	String fkName;
@@ -39,12 +40,13 @@ public class Dimension {
 	 * @param nodeCode
 	 * @param nodeName
 	 */
-	public Dimension(String name) {
-		this(name, "", "", "", new ArrayList<Field>());
+	public Dimension(String label) {
+		this(label, "", "", "", "", new ArrayList<Field>());
 	}
 
-	public Dimension(String name, String datasource, String hierarchyTable, String fkName, ArrayList<Field> metadataFields) {
+	public Dimension(String label, String name, String datasource, String hierarchyTable, String fkName, ArrayList<Field> metadataFields) {
 		super();
+		this.label = label;
 		this.name = name;
 		this.datasource = datasource;
 		this.hierarchyTable = hierarchyTable;
@@ -65,6 +67,21 @@ public class Dimension {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @param label
+	 *            the label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	/**
