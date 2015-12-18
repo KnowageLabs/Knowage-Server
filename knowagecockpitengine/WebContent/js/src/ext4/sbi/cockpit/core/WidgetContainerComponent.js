@@ -32,6 +32,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , shadow: false
 	    , plain : true
 	    , constrain: true
+	   // , constrainTo: config.containerParentId.toString()
 	    , layout: {
 	        type: 'vbox',
 	        align : 'stretch'

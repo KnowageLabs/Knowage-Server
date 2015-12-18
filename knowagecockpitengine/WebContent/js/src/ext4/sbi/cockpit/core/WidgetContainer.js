@@ -862,6 +862,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.addComponent]: the new component will be added to region: [" + Sbi.toSource(layoutConf.region) + "]");
 
     	Ext.apply(componentConf, layoutConf);
+    	componentConf.containerParentId = this.id;
     	var component = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
 
     	component.on('move', this.onComponentMove, this);

@@ -145,7 +145,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 				sheet.id = this.sheetId; //conf[j].sheetId;
 				sheet.title= conf[j].sheetTitle;
 				sheet.index = this.index;
-		        sheet.closable=  (Sbi.config.documentMode === 'EDIT');
+		        sheet.closable=  ((Sbi.config.environment === 'MYANALYSIS' && Sbi.user.userId == Sbi.config.docAuthor) || (Sbi.config.documentMode === 'EDIT'));
 		        sheet.bodyCls= this.bodyCls;   
 		        // adds the newest widgetContainer into the global list
 		        this.widgetContainerList.push(sheet);
@@ -169,7 +169,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			sheet.id = this.sheetId;
 			sheet.title= 'Sheet ' + this.sheetId;
 			sheet.index = this.index;
-	        sheet.closable= (Sbi.config.documentMode === 'EDIT');
+	        sheet.closable= ((Sbi.config.environment === 'MYANALYSIS' && Sbi.user.userId == Sbi.config.docAuthor) || (Sbi.config.documentMode === 'EDIT'));
 	        sheet.bodyCls= this.bodyCls; 
 	        // adds the newest widgetContainer into the global list
 	        this.widgetContainerList.push(sheet);
@@ -180,7 +180,8 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	        if (!isFirstTab && tab.id == 1) isFirstTab = true;
 		}
         
-	    if (Sbi.config.documentMode === 'EDIT'){
+		//In MyAnalysis the default behaviour is to open the document as editable if the user is the author
+	    if ((Sbi.config.environment === 'MYANALYSIS' && Sbi.user.userId == Sbi.config.docAuthor) || (Sbi.config.documentMode === 'EDIT')){
 	    	this.add(addPanel);   
 	    }
 
@@ -267,15 +268,17 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			for (var j=0; j<tabWindows.length; j++){
 				var w = tabWindows[j];
 				//check x, y coordinates before showing widget:
-				if (Sbi.isValorized(w.getWidgetConfiguration()) && 
-						Sbi.isValorized(w.getWidgetConfiguration().wlayout)){
-					var wl = w.getWidgetConfiguration().wlayout.region;
+				var widgetConfiguration = w.getWidgetConfiguration();
+				if (Sbi.isValorized(widgetConfiguration) && 
+						Sbi.isValorized(widgetConfiguration.wlayout)){
+					var wl = widgetConfiguration.wlayout.region;
 					if (w.x== 0 && Sbi.isValorized(wl.x) && typeof wl.x == 'string')					
 						w.setX( tab.convertToAbsoluteY(wl.x));
 					if (w.y== 0 && Sbi.isValorized(wl.y) && typeof wl.y == 'string')
 						w.setY( tab.convertToAbsoluteY(wl.y));
-				}				
+				}		
 				w.show();
+
 			}
 		}
 	}
