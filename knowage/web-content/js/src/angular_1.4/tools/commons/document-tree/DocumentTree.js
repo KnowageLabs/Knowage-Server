@@ -23,26 +23,30 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
+	    	//Customize the keys to use different JSON 
+	    	var elementId = attrs.keys !== undefined && attrs.keys.id !==undefined && attrs.keys.id.length > 0 ? attrs.keys.id : 'id' ;
+	    	var parentId = attrs.keys !== undefined && attrs.keys.parentId !==undefined && attrs.keys.parentId.length > 0 ? attrs.keys.parentId : 'parentId' ;
+	    	var subfolders = attrs.keys !== undefined && attrs.keys[subfolders] !==undefined && attrs.keys[subfolders].length > 0 ? attrs.keys[subfolders] : 'subfolders' ;
 	    	
 	    	scope.createTreeStructure = function (folders){
 	    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
-		    		if (folders !== undefined && folders.length > 0 && folders[0].subfolders === undefined){
+		    		if (folders !== undefined && folders.length > 0 && folders[0][subfolders] === undefined){
 			    		var mapFolder = {};	
 						
 						for (var i = 0 ; i < folders.length; i ++ ){
-							folders[i].subfolders = [];
-							mapFolder[folders[i].id] = folders[i]; 
+							folders[i][subfolders] = [];
+							mapFolder[folders[i][elementId]] = folders[i]; 
 						}
 						
 						var treeFolders = [];
 						for (var i = 0 ; i < folders.length; i ++ ){
 							//if folder has not father, is a root folder
-							if (folders[i].parentId == null || folders[i].parentId == "null"){
+							if (folders[i][parentId] == null || folders[i][parentId] == "null"){
 								treeFolders.push(folders[i]);
 							}
 							else{
 								//search parent folder with hasmap and attach the son
-								mapFolder[folders[i].parentId].subfolders.push(folders[i]);
+								mapFolder[folders[i][parentId]][subfolders].push(folders[i]);
 							}
 							//update linear structure with tree structure
 						}
@@ -97,8 +101,8 @@ function DocumentTreeControllerFunction($scope,$timeout){
 			}
 		
 			if (element.type == "folder"){
-				for (var i =0 ; i < element.subfolders.length; i++){
-					$scope.toogleSelected(element.subfolders[i],element);
+				for (var i =0 ; i < element[subfolders].length; i++){
+					$scope.toogleSelected(element[subfolders][i],element);
 				}
 				for (var j=0; element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
 					$scope.toogleSelected(element.biObjects[j],element);

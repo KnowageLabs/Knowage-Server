@@ -2,14 +2,14 @@
 		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
 			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
 			<md-button ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}"  ng-click="openFolder(folder)" class="docs">
-				<md-icon ng-if="!folder.isOpen" md-font-icon="fa fa-folder" style="color: black;"></md-icon>				
-				<md-icon ng-if="folder.isOpen" md-font-icon="fa fa-folder-open" style="color: black;"></md-icon>
+				<md-icon ng-if="!folder.isOpen && folder.subfolders.lenght != 0 && folder.biObjects.lenght != 0" md-font-icon="fa fa-folder" style="color: black;"></md-icon>				
+				<md-icon ng-if="folder.isOpen || folder.subfolders.lenght == 0 || folder.biObjects.lenght == 0" md-font-icon="fa fa-folder-open" style="color: black;"></md-icon>
 				&nbsp;{{folder.name}}
 			</md-button>
 		</div>
 
 		<ol ui-tree-nodes="" ng-model="folder.subfolders" ng-show="folder.isOpen">
-			<li layout="row"  layout-align="start center"  ng-repeat="folder in folder.subfolders" ui-tree-node ng-include="'folders_renderer.html'">
+			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder.subfolders" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 			<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ui-tree-node>
 				<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
@@ -25,7 +25,7 @@
 <md-content ng-if="browser == 'firefox'" layout-padding>
 	<div ui-tree data-drag-enabled="false" id="{{id}}">
 		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 		</ol>
 	</div>
@@ -33,7 +33,7 @@
 <md-content ng-if="browser == 'chrome'" layout-fill>
 	<div ui-tree data-drag-enabled="false" id="{{id}}">
 		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 		</ol>
 	</div>
@@ -42,7 +42,7 @@
 <md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
 	<div ui-tree data-drag-enabled="false" id="{{id}}">
 		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-			<li layout="row"  layout-align="start center" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
+			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 		</ol>
 	</div>
