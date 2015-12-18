@@ -1,8 +1,15 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     alternateClassName: ['ChartConfigurationPalette'],
     id: "chartColorPallete",
+    
+    /**
+     * Extend the JS file with the common configuration for panels that are
+     * set on the Configuration tab of the Designer (formerly known as Step 2).
+     * 
+     * @author: danristo (danilo.ristovski@mht.net)
+     */
 	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
-	
+		
 	/**
 	 * NOTE: 
 	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
@@ -12,14 +19,21 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-//	columnWidth: 0.3,
 	columnWidth: 1,
-//	width: 270,
+	
+	/**
+     * A temporary solution for the height of the panel that holds color
+     * palette.
+     * 
+     * @author: danristo (danilo.ristovski@mht.net)
+     */
+	height: 285,
 	
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
 	items : [],
 	scrollable: 'y',
+
 	paletteGrid : {},
 	
 	statics: {
@@ -33,14 +47,29 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
         
         this.paletteGrid = Ext.create('Ext.grid.Panel', {
     	    store: Ext.create('Ext.data.ArrayStore', {
-            	storeId: 'chartConfigurationPaletteStore',
-            	
+            	storeId: 'chartConfigurationPaletteStore',            	
             	fields: ['id', 'gradient','name','order','value']
             }),
-    	    
+            
+            /**
+             * Enables reordering of items (here, colors) in the grid.
+             * 
+             * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+             * 
+             * TODO: Check with Alberto if this is OK !!!
+             */
+            viewConfig: 
+            {
+                plugins: 
+                {
+                    ptype: 'gridviewdragdrop'
+                }
+            },
+           
     	    width: 180,
     	    margin:'0 10 0 0',
     	    multiSelect: true,
+    	    
     	    columns: [{
     	        text     : LN('sbi.chartengine.configuration.color'),
     	        flex     : 1,
@@ -57,6 +86,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 		// Load json colors
         this.paletteGrid.store.setData(colorPalette);
 		
+        var globalScope = this;
 		
         var grid = this.paletteGrid;
 		var item = [{
@@ -91,7 +121,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                            	name: 'addedColor_' + ChartConfigurationPalette.idSeed++,
 	                            	order: order,
 	                            	value: selColor
-	                            });
+	                            });	                        
 	                        }
 	                    }
 	                }),                 
@@ -112,8 +142,5 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	    ];
 		
 		this.add(item);
-	},
-	
-    
-    
+	}
 });
