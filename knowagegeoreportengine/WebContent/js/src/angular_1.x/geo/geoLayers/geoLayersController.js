@@ -28,7 +28,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.filters=[];
 	$scope.insertVal={};
 	$scope.layerSelected;
-	$scope.layerconf;
+	$scope.multipleFilters=[];
+	$scope.listCheckedfilter=[];
+	$scope.oneTime=true;
 	
 	$scope.loadLayerFromTemplate=function(){
 		//if geoModule_template has baseLayersConf, add them to layerlist
@@ -146,29 +148,73 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.showBaseLayer=function(layerConf){
 		sbiModule_logger.log("show base layer")
 		geoModule_layerServices.alterBaseLayer(layerConf)
+		
 	};
 
-	$scope.toggleLayer=function(layerConf){
+	$scope.toggleLayer = function(layerConf){
 		sbiModule_logger.log("toggleLayer");
+		$scope.listCheckedfilter=geoModule_layerServices.filters;
+	
+			
+		if(geoModule_layerServices.filters[layerConf.layerId]){
+				//lo contiene già quindi si sta rimuovendo CHECK OFF
+				$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
+
+		}else{
+			//check on 
+			if($scope.multipleFilters[layerConf.layerId]){
+				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
+			}
+			
+		}
+		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
+		
+		$timeout(function() {
+			$map.updateSize();
+		}, 500);
+		
 	};
-	//inizio filtri
-	$scope.getFilter=function(val){
+	//start code for filters 
+	$scope.removefromList=function(arr,k){
+		var arr_tmp=[];
+		for(var key in arr){
+			if(key == k){
+				
+			}else{
+				arr_tmp[key]=arr[key];
+			}
+		}
+		return arr_tmp;
+	}
+	$scope.getFilter = function(val){
+		
 		$scope.layerSelected = val;
 		$scope.filters=[];
 		var values = val.properties;
-		for(var i = 0;i<values.length;i++){
-			$scope.filters.push({
-				filter: values[i],
-				model:""
-			})
+		if($scope.multipleFilters[val.layerId]){
+			//se è stato gia filtrato riprendi i valori
+			$scope.filters = $scope.multipleFilters[val.layerId];
+		
+		}else{
+			//altrimenti inserisci i filtri per il layer selezionato
+			for(var i = 0;i<values.length;i++){
+				$scope.filters.push({
+					filter: values[i],
+					model:"",
+					id:val.layerId
+				})
+			}
+			$scope.multipleFilters[val.layerId]=$scope.filters;
 		}
-		console.log($scope.filters);
+		
+
 	}
+	
+	
 	$scope.selectFilters = function(ev,val){
 		$scope.getFilter(val);
-		
-		$scope.layerconf=val;
+		$scope.layerSelected = val;
 		$mdDialog.show({
 			controller: $scope.layerFromCatalogueController,
 			templateUrl: 'filtersforLayerTemplate.html',
@@ -182,15 +228,36 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		});
 	}
 	$scope.applyFilter = function(){
-
-		$scope.toggleLayer($scope.layerconf);
-		$scope.toggleLayer($scope.layerconf);
-		console.log("ok",$scope.filters);
-		geoModule_layerServices.filters = $scope.filters;
-		
 		$mdDialog.cancel();
+		var flag=false;
+		
+		if(geoModule_layerServices.layerIsLoaded($scope.layerSelected)){
+			$scope.listCheckedfilter[$scope.filters[0].id]= $scope.multipleFilters[$scope.filters[0].id];
+			geoModule_layerServices.filters =$scope.listCheckedfilter;
+		}
+			for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){
+				//se tutti i campi sono null
+				if($scope.multipleFilters[$scope.layerSelected.layerId][i].model!=""){
+					flag=true;
+				}
+				
+			}
+			if(!flag){
+				//rimuovi layer da multiFilters
+				$scope.multipleFilters = $scope.removefromList($scope.multipleFilters ,$scope.layerSelected.layerId);
+			}
+	
+		
 	}
-	//fine filtri
+	
+	$scope.filterOFF =function(val){
+		if($scope.multipleFilters[val.layerId]){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	//end code for filters
 	$scope.addLayerFromCatalogue = function(ev){
 		$mdDialog.show({
 			controller: $scope.layerFromCatalogueController,

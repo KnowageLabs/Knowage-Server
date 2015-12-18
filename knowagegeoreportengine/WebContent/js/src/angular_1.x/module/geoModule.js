@@ -86,6 +86,7 @@ geoM.service(
 			this.selectedFeatures = [];
 			this.measure;
 			this.filters=[];
+			
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
@@ -288,8 +289,7 @@ geoM.service(
 
 				dragBox.on('boxend',function(e) {
 					var selection = [];
-					var extent = dragBox.getGeometry()
-					.getExtent();
+					var extent = dragBox.getGeometry().getExtent();
 
 					var vectorSource = layerServ.templateLayer.getSource();
 					vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
@@ -383,10 +383,9 @@ geoM.service(
 						ctx.arc(mousePosition[0] * pixelRatio,mousePosition[1] * pixelRatio, radius *  pixelRatio, 0, 2 * Math.PI);
 						coordinate = [mousePosition[0], mousePosition[1]];
 						var endCoordinate = [coordinate[0]+radius*  pixelRatio,coordinate[1]+radius*  pixelRatio];
-						//ray = radius *  pixelRatio;
+
 						ray = layerServ.calculateDistance($map.getCoordinateFromPixel(coordinate),$map.getCoordinateFromPixel(endCoordinate));
-						
-						console.log("ray"+ray);
+
 						ctx.lineWidth = 5 * pixelRatio;
 						ctx.strokeStyle = 'rgba(0,0,0,0.5)';
 						ctx.stroke();
@@ -404,8 +403,7 @@ geoM.service(
 
 			}
 			this.near = function(coordinate, ray) {
-				console.log("near");
-				console.log("ray :" + ray);
+
 				var circleGeometry;
 				var myCircle;
 				var sFeatures = select.getFeatures();
@@ -432,7 +430,7 @@ geoM.service(
 						}
 
 					})
-					console.log(selection);
+
 
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
@@ -605,6 +603,7 @@ geoM.service(
 					delete this.loadedLayer[layerConf.layerId];
 					delete this.loadedLayerOBJ[layerConf.layerId];
 					geoModule_template.layersLoaded[layerConf.label]=false;
+					//layerServ.removeFromSelectedFilter(layerConf);
 				} else {
 					var layer = this.createLayer(layerConf, false);
 					if(layer.hasOwnProperty("$$state")){
@@ -618,7 +617,7 @@ geoM.service(
 					
 				}
 			};
-			
+
 			this.updateLayerLoaded=function(layer,layerConf){
 				if (layer != undefined) {
 					this.loadedLayer[layerConf.layerId] = layer;
@@ -627,6 +626,18 @@ geoM.service(
 					geoModule_template.layersLoaded[layerConf.label]=true;
 					$map.updateSize();$map.render();
 				}
+			}
+			this.removeFromSelectedFilter = function(layerConf){
+				//rimuovo dai filtri selezionati che applico al layer quelli del layer rimosso
+				var arr_tmp=[];
+				for(var key in layerServ.filters){
+					if(key==layerConf.layerId){
+			
+					}else{
+						arr_tmp[key]=layerServ.filters[key];
+					}
+				}
+				layerServ.filters = arr_tmp;
 			}
 
 			this.createLayer = function(layerConf, isBase) {
@@ -744,8 +755,7 @@ geoM.service(
 				select.getFeatures().clear();
 			}
 			
-			this.applyFilter=function(feature, resolution){
-					console.log("Entrati");
+			this.applyFilter = function(feature, resolution){
 					var styleTMP= [new ol.style.Style({
 						stroke: new ol.style.Stroke({
 							color: "#3399cc",
@@ -756,21 +766,26 @@ geoM.service(
 						var propertiesFeature = feature.getProperties();
 						
 						for(var j=0;j<layerServ.filters.length;j++){
-							var value = propertiesFeature[layerServ.filters[j].filter];
-							if(layerServ.filters[j].model!=""){
-								applFilter=true;
-							}
-							var valuesInsert = layerServ.filters[j].model.split(",");
-							
-							for(var k=0;k<valuesInsert.length;k++){
-								if(value==valuesInsert[k]){
-									//se contiene il filtro selezionato 
-									return styleTMP;
+						
+							for(var key in layerServ.filters){
+								
+								for(var i =0;i<layerServ.filters[key].length;i++){
+									var value = propertiesFeature[layerServ.filters[key][i].filter];
+									if(layerServ.filters[key][i].model!=""){
+										applFilter=true;
+									}
+									var valuesInsert = layerServ.filters[key][i].model.split(",");
 									
+									for(var k=0;k<valuesInsert.length;k++){
+										if(value==valuesInsert[k]){
+											//se contiene il filtro selezionato 
+											return styleTMP;
+											
+										}
+									}
 								}
-							}
-							
-					
+
+						}
 						}
 					
 						if(applFilter){
@@ -786,6 +801,8 @@ geoM.service(
 			this.setLayerFilter= function(layerConf,filters) {
 				layerServ.filters=filters;
 			}
+	
+	
 				
 		});
 	

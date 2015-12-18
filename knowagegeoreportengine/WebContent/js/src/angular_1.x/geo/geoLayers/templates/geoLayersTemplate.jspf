@@ -29,13 +29,14 @@
 				
 	            <div  layout="row" layout-wrap  ng-repeat="(key,val) in CatVal">
 		           <div flex="60">
-		            <md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)"   ng-click="toggleLayer(val)" class="md-primary" >
+		            <md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)" ng-click="toggleLayer(val)" class="md-primary" >
 		            	{{val.label}}
 		            </md-checkbox>
-	          </div>
-	        		  <div flex="10">
-	       				 <md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)">
-				          	<md-icon md-font-icon="fa fa-filter" aria-label="Close dialog"></md-icon>
+	       		  	</div>
+	        		<div flex="10">
+	       				 <md-button class="md-icon-button" style="margin-top:-5px" ng-click="selectFilters($event,val)" ng-switch on="filterOFF(val)">
+				          	<md-icon md-font-icon="fa fa-filter"  ng-switch-when="false" aria-label="Close dialog"></md-icon>
+				          	<md-icon md-font-icon="fa fa-filter" ng-switch-when="true" style="color:red"  aria-label="Close dialog"></md-icon>
 				      	 </md-button>
 	   			     </div>
 	        
@@ -106,13 +107,14 @@
 <script  type="text/ng-template" id="filtersforLayerTemplate.html">
 <md-dialog aria-label="layer" ng-cloak  >
 <md-toolbar >
-    <div class="md-toolbar-tools">
-   Select Filters
-    </div>
- 	
+    	<div  class="md-toolbar-tools">
+   		Select Filters
+   		 </div>
+
   </md-toolbar>
+
   <md-dialog-content>
-      <div class="md-dialog-content" style="    height: 50%;    padding: 0;">
+      <div class="md-dialog-content" style="height: 50%;padding: 0;">
 			<md-input-container style="margin-left:50px; margin-right:50px;" class="md-block" ng-repeat="val in filters" class="block">
   				<label>{{val.filter}}</label>
 
