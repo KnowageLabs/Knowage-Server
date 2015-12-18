@@ -912,11 +912,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			if (chartType.toUpperCase() == "WORDCLOUD") {
 				CHART['sizeCriteria'] = (chartModel.get('sizeCriteria')) ? chartModel.get('sizeCriteria') : '';
-				CHART['maxWords'] = (chartModel.get('maxWords')) ? chartModel.get('maxWords') : '';
-				CHART['maxAngle'] = (chartModel.get('maxAngle')) ? chartModel.get('maxAngle') : '';
-				CHART['minAngle'] = (chartModel.get('minAngle')) ? chartModel.get('minAngle') : '';
-				CHART['maxFontSize'] = (chartModel.get('maxFontSize')) ? chartModel.get('maxFontSize') : '';
-				CHART['wordPadding'] = (chartModel.get('wordPadding')) ? chartModel.get('wordPadding') : '';
+				CHART['maxWords'] = (Number(chartModel.get('maxWords'))) ? Number(chartModel.get('maxWords')) : 0;
+				CHART['maxAngle'] = (Number(chartModel.get('maxAngle'))) ? Number(chartModel.get('maxAngle')) : 0;
+				CHART['minAngle'] = (Number(chartModel.get('minAngle'))) ? Number(chartModel.get('minAngle')) : 0;
+				CHART['maxFontSize'] = (Number(chartModel.get('maxFontSize'))) ? Number(chartModel.get('maxFontSize')) : 0;
+				CHART['wordPadding'] = (Number(chartModel.get('wordPadding'))) ? Number(chartModel.get('wordPadding')) : 0;
 			}
 
 			/**
@@ -2203,8 +2203,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 			return temp;
 		},
-
-		/**
+/**
 		 * Static function that provides removing of all properties that are unwanted and that are 
 		 * specified in static variable "unwantedStyleProps". The function removes those unwanted 
 		 * properties from the JSON object representation of the XML file of the style applied to 
