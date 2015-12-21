@@ -14,6 +14,36 @@ function cleanChart()
 }
 
 /**
+ * Convert RGB to HSL.
+ * 
+ * @param r
+ * @param g
+ * @param b
+ * @returns {Array}
+ */
+function rgbToHsl(r, g, b)
+{
+	r /= 255, g /= 255, b /= 255;
+	var max = Math.max(r, g, b), min = Math.min(r, g, b);
+	var h, s, l = (max + min) / 2;
+	
+	if(max == min){
+	    h = s = 0; // achromatic
+	}else{
+	    var d = max - min;
+	    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+	    switch(max){
+	        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+	        case g: h = (b - r) / d + 2; break;
+	        case b: h = (r - g) / d + 4; break;
+	    }
+	    h /= 6;
+	}
+	
+	return [h, s, l];
+}
+
+/**
  * Function for extracting the font size from the string value that contains
  * also the 'px' substring. Function is called whenever we need pure numeric
  * value of the size (especially for purposes of dynamic resizing of the chart).
@@ -468,6 +498,9 @@ function renderWordCloud(chartConf){
 		}))
 		.padding(chartConf.chart.wordPadding)
 		.rotate(function() {
+			if(chartConf.chart.minAngle==chartConf.chart.maxAngle){
+				return chartConf.chart.minAngle;
+			}
 			var angle = (Math.random() * 2) * 90;
 			while ((angle < chartConf.chart.minAngle || angle > chartConf.chart.maxAngle)){
 				angle = (Math.random() * 2) * 90;
@@ -596,7 +629,7 @@ function renderWordCloud(chartConf){
 		    		.style("text-decoration", subtitleTextDecoration)
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
-			      
+
 			d3.select("#main")
 			.append("div").attr("id","chart")
 			.append("svg")
@@ -1362,7 +1395,7 @@ function renderWordCloud(chartConf){
 		      .style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
 		      .style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
 		      .style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
-		      .style("text-shadow", "0px 0px 10px #FFFFFF")
+		      .style("text-shadow", "0px 0px 5px #FFFFFF")
 		      .text(function(d) { return d.name; });
 		
 		  // Set position for entering and updating nodes.
@@ -1793,8 +1826,9 @@ function renderWordCloud(chartConf){
 		         .style("width",legendWidth)
 		         // "...-180" for table height plus pagination height (150+30)
 		         // "...-20" for bottom padding of the pagination 
-		         .style("height",data.chart.height-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2- 180-20)
+		         .style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
 		         .style("overflow","auto")
+		       
 		         .append("svg:svg")
 		         //.style("font-size",10)
 		         // "...-180" for table height plus pagination height (150+30)
@@ -1905,16 +1939,55 @@ function renderWordCloud(chartConf){
 				
 				if(allTableData){
 
-					for (var i=0; i<allTableData.length; i++){
-						if(d[data.chart.tooltip] === allTableData[i][data.chart.tooltip]){
-
-				tooltip.transition().duration(50).style("opacity","1");
-				tooltip.style("background",myColors(d[groupcolumn]));
-				tooltip.text(d[data.chart.tooltip])				
-				.style("text-shadow", "0px 0px 10px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
-				.style("left", (d3.event.pageX) + "px")     
-				.style("top", (d3.event.pageY - 25) + "px");
-
+					for (var i=0; i<allTableData.length; i++)
+					{
+						if(d[data.chart.tooltip] === allTableData[i][data.chart.tooltip])
+						{				
+							/**
+							 * Convert the RGB background color of the tooltip to its HSL pair in order
+							 * to determine its darkness, i.e. its light level. If the color of the
+							 * background (that depends on the color of the line over which the mouse is
+							 * positioned) is too dark, we will put the white text of the tooltip. Otherwise,
+							 * the color of the text will be black. 
+							 * 
+							 * NOTE: The threshold can be changed. Value of 0.4 is set as an example and the
+							 * consequence of empirical approach.
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							var rgbColorForTooltipBckgnd = d3.rgb(myColors(d[groupcolumn]));
+							var hslColorForTooltipBckgnd = 
+								rgbToHsl(rgbColorForTooltipBckgnd.r, rgbColorForTooltipBckgnd.g, rgbColorForTooltipBckgnd.b);						
+							var degreeOfLightInColor = hslColorForTooltipBckgnd[2];
+							
+							var darknessThreshold = 0.4;
+							
+							var tooltipBckgndColor = null;
+							
+							if (degreeOfLightInColor < darknessThreshold)
+							{
+								tooltipBckgndColor = "#FFFFFF";
+							}
+							else
+							{
+								tooltipBckgndColor = "#000000";
+							}
+	
+							tooltip.transition().duration(50).style("opacity","1");
+							
+							tooltip.style("background", myColors(d[groupcolumn]));
+							
+							tooltip.text(d[data.chart.tooltip])	
+								/**
+								 * Set the color of the text, determined on the base of the level
+								 * of light (darkness) of the tooltip background color.
+								 * 
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								.style("color",tooltipBckgndColor)		
+								//.style("text-shadow", "1px 1px 2px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
+								.style("left", (d3.event.pageX) + "px")     
+								.style("top", (d3.event.pageY - 25) + "px");
 						}
 
 					}
@@ -2066,16 +2139,16 @@ function renderWordCloud(chartConf){
 		lastDisplayed=allTableData.length;
 	}
 
-	var tableDiv = d3.select("#chart")
+	var tableDiv = d3.select("#main")
 						.append("div").attr("id","tableDiv")
-						.style("width",data.chart.width-legendWidth)						
+						.style("width",data.chart.width)						
 						.style("padding-bottom",10)
 						.style("padding-top",20);
 	
 	var table = tableDiv.append("div").attr("id","tDiv").attr("align","center")
-	                .attr("width", data.chart.width-legendWidth)
+	                .attr("width", data.chart.width)
 	                .append("table")
-					.style("width", data.chart.width-legendWidth)
+					.style("width", data.chart.width)
 					
 					/**
 					 * The next style parameter setting allow us to reset font stylization provided 
@@ -2094,12 +2167,12 @@ function renderWordCloud(chartConf){
 					 * 
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
-					.style("font-family", data.legend.element.style.fontFamily)
-					.style("font-size", data.legend.element.style.fontSize)
-					.style("font-style", data.legend.element.style.fontStyle)
-					.style("font-weight", data.legend.element.style.fontWeight)
-					.style("text-decoration", data.legend.element.style.textDecoration)
-					.style("padding-right",m[1])
+					.style("font-family", data.chart.style.fontFamily)
+					.style("font-size", data.chart.style.fontSize)
+					.style("font-style", data.chart.style.fontStyle)
+					.style("font-weight", data.chart.style.fontWeight)
+					.style("text-decoration", data.chart.style.textDecoration)
+					.style("padding-right",25)
 					.style("padding-left",m[3]);
 	
 	var paginationBar = tableDiv.append("div").attr("id","pBar")
@@ -2107,7 +2180,7 @@ function renderWordCloud(chartConf){
 							//.style("padding-left",w/2+m[3]/2-150)
 							.style("padding-top",10)
 	                        .style("padding-left",m[3])
-	                        .style("padding-right",m[1]);
+	                        .style("padding-right",25);
 	
 	var prevButton = paginationBar.append("button")
 						.text("<< Prev")
@@ -2723,7 +2796,22 @@ function renderChordChart(jsonData)
 				svg.selectAll(".chord path")
 				 	.filter(function(d) { return d.source.index != i && d.target.index != i; })
 				 	.transition()
-				 	.style("opacity", opacityMouseOver);				
+				 	.style("opacity", opacityMouseOver);
+				
+				
+				var tool=printTheResultWhenSelecting(i);
+				
+				tooltip.
+			   // attr("hidden","false").
+				transition().duration(50).style("opacity","1");
+				//tooltip.style("background",myColors(d[groupcolumn]));
+				tooltip.html(tool)
+				.style("left", (d3.event.pageX) + "px")     
+				.style("top", (d3.event.pageY- 25) + "px");
+				
+	
+
+				
 			}
 		}
 	}
@@ -2740,6 +2828,13 @@ function renderChordChart(jsonData)
 				 	.filter(function(d) { return d.source.index != i && d.target.index != i; })
 				 	.transition()
 				 	.style("opacity", opacityMouseOutAndDefault);
+				
+				tooltip.
+				   // attr("hidden","false").
+					transition().duration(50).style("opacity","0");
+					//tooltip.style("background",myColors(d[groupcolumn]));
+				
+				
 			}			
 		};
 	}
@@ -2769,6 +2864,8 @@ function renderChordChart(jsonData)
 			 	.transition()
 			 	.style("opacity", opacityMouseOver);
 		    
+			tooltip.transition().duration(50).style("opacity","0");
+			
 			if(jsonData.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
 				var navigParams={
@@ -2842,7 +2939,7 @@ function renderChordChart(jsonData)
 				 * 		Temporary function for printing out the items (source and target) that are the
 				 * 		result of the selection (clicking) operation on the chart's item.
 				 */
-				printTheResultWhenSelecting(i);
+				//printTheResultWhenSelecting(i);
 			}
 			/**
 			 * Some item is already selected (the chart is still freeze).
@@ -2869,7 +2966,7 @@ function renderChordChart(jsonData)
 					enableMouseOut = false;	
 					indexOfSelectedItem = i;	
 					
-					printTheResultWhenSelecting(i);
+					//printTheResultWhenSelecting(i);
 				}
 			}
 		}
@@ -2904,6 +3001,16 @@ function renderChordChart(jsonData)
 		//console.log(columnsPairedWithRows[i]);
 		// Which columns are paired with this (selected, clicked) row 
 	   //	console.log(rowsPairedWithColumns[i]);
+	   	var ttp=columnsPairedWithRows[i].row + "<br/>";
+	   	for(j=0;j<columnsPairedWithRows[i].pairedWith.length;j++){
+	   		ttp+=columnsPairedWithRows[i].pairedWith[j].column;
+	   		ttp+="&nbsp : &nbsp";
+	   		ttp+=columnsPairedWithRows[i].pairedWith[j].value;
+	   		ttp+="<br>"
+	   		
+	   	}
+	   	
+	   	return ttp;
 	}
 	
 
@@ -2928,18 +3035,21 @@ function renderChordChart(jsonData)
 	
 	var chartDivWidth=width;
 	var chartDivHeight=height;
+	var heightForChartSvg = height;
+	
 	
 	if(jsonData.title.text!="" || jsonData.subtitle.text!=""){
 		emptySplitDivHeight=10;
-		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.13;
-		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))*1.13;
-		chartDivHeight-=emptySplitDivHeight;
-		
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.2;
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))*1.2;
+		chartDivHeight-=emptySplitDivHeight*1.2;
+		heightForChartSvg = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
+				 + Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
+				 +emptySplitDivHeight)*1.2;
+	
 	}
 	
-	var heightForChartSvg = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
-							 + Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
-							 +emptySplitDivHeight)*1.13;
+	
 	
 	
 	var innerRadius = Math.min(width, height) * .35;
@@ -3004,6 +3114,34 @@ function renderChordChart(jsonData)
 				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
 				.attr("transform", "translate(" + width / 2 + "," + ((Number(heightForChartSvg)) / 2) + ")");
+	
+	var tooltip=d3.select("#chartD3")
+	.append("div")
+	.attr("class","tooltip")
+	.style("opacity","0");
+	
+	d3.selectAll(".tooltip")
+	.style("position","absolute")
+	.style("text-align","center")
+	.style("min-width",20)
+	.style("max-width",400)
+	.style("min-height",20)
+	.style("max-height",200)
+	.style("padding",10)
+	.style("background-color",jsonData.chart.style.backgroundColor)
+	.style("font-size",jsonData.chart.style.fontSize)
+	.style("font-family",jsonData.chart.style.fontFamily)
+	.style("border","2px solid black")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
+	.style("border-radius","4px")
+	.style("pointer-events","none")
+	.style("left","50%")
+	.style("top","50%")
+	.style("transform","translate(-50%, -50%)");
+	
+	
+	
+	
+	
 	
 	/**
 	 * [START] Data processing part
