@@ -115,8 +115,20 @@
     	## @modifiedBy: danristo (danilo.ristovski@mht.net)
     	
     	#if ($chart.type.toUpperCase() != 'RADAR')
-			#foreach($color in $chart.COLORPALETTE.COLOR)
-				'$color.value', 
+    		#if ($chart.COLORPALETTE.COLOR && $chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+				
+				#foreach($color in $chart.COLORPALETTE.COLOR)
+					'$color.value', 
+				#end	
+						
+			#else		
+				
+				#if ($chart.COLORPALETTE.COLOR)
+					'$chart.COLORPALETTE.COLOR.value'
+				#else
+					'#518BC6'
+				#end
+				
 			#end
 		#else
 			#*
