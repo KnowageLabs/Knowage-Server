@@ -21,12 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.hierarchiesmanagement.metadata;
 
+
 /**
  * @author Antonella Giachino (giachino.antonella@eng.it)
  *
  */
 public class Field {
 
+	String id;
 	String name;
 	String type;
 	boolean isVisible;
@@ -38,18 +40,27 @@ public class Field {
 	 * @param name
 	 * @param type
 	 */
-	public Field(String name, String type) {
-		this(name, type, false, false, false, false);
+	public Field(String id, String name, String type) {
+		this(id, name, type, false, false, false, false);
 	}
 
-	public Field(String name, String type, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue) {
+	public Field(String id, String name, String type, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue) {
 		super();
+		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.isVisible = isVisible;
 		this.isEditable = isEditable;
 		this.isEditable = isEditable;
 		this.isSingleValue = isSingleValue;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
