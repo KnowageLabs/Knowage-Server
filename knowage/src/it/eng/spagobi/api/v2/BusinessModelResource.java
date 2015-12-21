@@ -258,6 +258,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			businessModelsDAO.insertMetaModel(bm);
 			MetaModel insertedBM = businessModelsDAO.loadMetaModelByName(bm.getName());
 
+			if (insertedBM.getModelLocked()) {
+				businessModelsDAO.lockMetaModel(insertedBM.getId(), (String) getUserProfile().getUserId());
+			}
 			return insertedBM;
 		} catch (Exception e) {
 			logger.error("An error occurred while inserting new business model in database", e);
@@ -279,11 +282,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		MetaModel bm = body;
+		boolean isLockedInDB = businessModelsDAO.loadMetaModelById(bmId).getModelLocked();
 		businessModelsDAO.setUserProfile(getUserProfile());
-
 		try {
-			businessModelsDAO.lockMetaModel(bmId, (String) getUserProfile().getUserId());
-			bm.setModelLocker((String) getUserProfile().getUserName());
+			if (bm.getModelLocked() && !isLockedInDB) {
+				businessModelsDAO.lockMetaModel(bmId, (String) getUserProfile().getUserId());
+			} else if (isLockedInDB) {
+				businessModelsDAO.unlockMetaModel(bmId, (String) getUserProfile().getUserId());
+			}
 			businessModelsDAO.modifyMetaModel(bm);
 			// businessModelsDAO.setActiveVersion(bm.getId(), bm.);
 			return bm;

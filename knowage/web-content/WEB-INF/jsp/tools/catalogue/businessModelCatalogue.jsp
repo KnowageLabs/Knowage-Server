@@ -1,4 +1,8 @@
-<%@ page language="java" pageEncoding="utf-8" session="true"%>
+
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
+<%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -22,6 +26,19 @@
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/businessModelCatalogue.js"></script>
+
+		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
+		<%
+			String user = "";
+			if(userName!=null){
+				user = userName;
+			}
+		%>
+		
+		<!-- Making lisOfDSL and relString avaliable for use in federatedDataset.js -->
+		<script>
+			var valueUser = '<%= user  %>';
+		</script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
@@ -191,10 +208,10 @@
       						</md-input-container>
      					</div>-->
      					
-     					<div layout="row" layout-wrap>
+     					<div layout="row" layout-wrap >
      						
-     						<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()" ng-disabled="lockButtonEnabled">
-       								<md-tooltip md-direction="right">
+     						<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()">
+       								<md-tooltip md-direction="bottom">
        									{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
        								</md-tooltip>
        								<md-icon
@@ -284,7 +301,7 @@
         								style="height:100%;">
       								</md-progress-circular>
       							</div>
-     							<md-radio-group ng-model="bmVersionsRadio" ng-change="checkChange()">
+     							<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
      							<angular-table
      								ng-show="!versionLoadingShow"
 	     							style="background-color:red" 
@@ -301,7 +318,6 @@
 									show-search-bar=false
 									selected-item="selectedVersions"
 									highlights-selected-item=true
-									selected-item="bmVersions"
 									speed-menu-option="bmSpeedMenu2"	
 									no-pagination=false	
 									click-function="clickRightTable(item)"								

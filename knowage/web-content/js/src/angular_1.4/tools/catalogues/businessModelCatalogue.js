@@ -14,7 +14,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.showMe = false;				//boolean
 	$scope.versionLoadingShow;
 	$scope.bmLoadingShow;
-	$scope.lockButtonEnabled;
+	$scope.isNew;
 	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];		//All Business Models list
@@ -46,8 +46,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.createBusinessModel = function(){
 		$scope.selectedBusinessModel = {};
 		$scope.bmVersions=[];
+		$scope.isNew = true;
 		$scope.showMe = true;
-		$scope.lockButtonEnabled = true;
 	}
 	
 	
@@ -62,8 +62,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.businessModelLock = function(){
 		//should also check if user is allowed to do this
 		$scope.selectedBusinessModel.modelLocked = !$scope.selectedBusinessModel.modelLocked;
-		$scope.isDirty = true;
-		console.log($scope.selectedBusinessModel);
+		if($scope.selectedBusinessModel.modelLocked){
+			$scope.selectedBusinessModel.modelLocker = valueUser;
+		}
+		else{
+			$scope.selectedBusinessModel.modelLocker = "";
+		}
+		$scope.checkChange();
 	}
 	
 	$scope.lockBusinessModel = function(){
@@ -73,7 +78,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
-		$scope.lockButtonEnabled = false;
+		$scope.isNew = false;
 		if($scope.isDirty){
 		    $mdDialog.show($scope.confirm).then(function(){
 		    	$scope.isDirty=false;   
@@ -86,6 +91,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		      
 		     }else{		    
 		    	 $scope.selectedBusinessModel=angular.copy(item);
+		    	 console.log("selecetd bm:");
+		    	 console.log($scope.selectedBusinessModel);
 		    	 $scope.getVersions(item.id);
 		    	 $scope.showMe=true;
 		     }
@@ -286,6 +293,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 }
 	 //calling service for saving BM @POST and @PUT
 	 $scope.saveBusinessModel = function(){
+		 	if($scope.selectedBusinessModel.modelLocked === undefined)
+		 		$scope.selectedBusinessModel.modelLocked = false;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 				console.log("Novi se cuva");
 
@@ -316,7 +325,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								if($scope.fileObj.fileName !== undefined)
 									$scope.saveBusinessModelFile();
 								
-								if($scope.bmVersions.length > 0 && $scope.bmVersionsActive != null){
+								if($scope.bmVersionsActive != null){
 									sbiModule_restServices
 									.put("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
 									.success(
@@ -559,17 +568,17 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                              sbiModule_translate.load("sbi.general.cancel"));
 		
 		 activeFlagStyle = function(){
-			 for(var i=0; i<$scope.bmVersions.length;i++){
-				 $scope.bmVersions[i]["ACTION"] = '<md-radio-button value="'+$scope.bmVersions[i].id+'"></md-radio-button>';
-				 if($scope.bmVersions[i].active){
-					 $scope.bmVersionsRadio = $scope.bmVersions[i].id;
-					 $scope.bmVersionsActive = $scope.bmVersions[i].id;
+				 for(var i=0; i<$scope.bmVersions.length;i++){
+					 $scope.bmVersions[i]["ACTION"] = '<md-radio-button value="'+$scope.bmVersions[i].id+'"></md-radio-button>';
+					 if($scope.bmVersions[i].active){
+						 $scope.bmVersionsRadio = $scope.bmVersions[i].id;
+						 $scope.bmVersionsActive = $scope.bmVersions[i].id;
+					 }
 				 }
-			 }
 		 }
 		 
 		 $scope.clickRightTable = function(item){
-			 $scope.bmVersionsActive= item.id;
+			 $scope.bmVersionsActive = item.id;
 		 }
 
 };
