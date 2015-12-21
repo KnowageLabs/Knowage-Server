@@ -1,7 +1,13 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.List;
 
@@ -65,7 +71,7 @@ public class HierarchyUtils {
 
 	/**
 	 * This method creates a JSON from a list of fields with the specified name as key
-	 * 
+	 *
 	 * @param fields
 	 *            List of Fields read from hierarchies config
 	 * @param name
@@ -90,6 +96,30 @@ public class HierarchyUtils {
 
 		logger.debug("END");
 		return result;
+
+	}
+
+	/**
+	 * Returns the datasource object referenced to the dimension in input
+	 * 
+	 * @param dimension
+	 * @return
+	 * @throws SpagoBIServiceException
+	 */
+	public IDataSource getDataSource(String dimension) throws SpagoBIServiceException {
+		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+		String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+		try {
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+			return dataSource;
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving hierarchy datasource informations");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy datasource informations", t);
+		}
 
 	}
 
