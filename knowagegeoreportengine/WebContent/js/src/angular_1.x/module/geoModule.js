@@ -85,8 +85,9 @@ geoM.service(
 			this.templateLayer = {};
 			this.selectedFeatures = [];
 			this.measure;
-			this.filters=[];
-			
+			this.filters={};
+			this.filtersTemp={};
+
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
@@ -762,42 +763,54 @@ geoM.service(
 							width: 1
 						})
 					})];
-					var applFilter=false;
-						var propertiesFeature = feature.getProperties();
-						
-						for(var j=0;j<layerServ.filters.length;j++){
-						
-							for(var key in layerServ.filters){
-								
-								for(var i =0;i<layerServ.filters[key].length;i++){
-									var value = propertiesFeature[layerServ.filters[key][i].filter];
-									if(layerServ.filters[key][i].model!=""){
-										applFilter=true;
-									}
-									var valuesInsert = layerServ.filters[key][i].model.split(",");
-									
-									for(var k=0;k<valuesInsert.length;k++){
-										if(value==valuesInsert[k]){
-											//se contiene il filtro selezionato 
-											return styleTMP;
-											
-										}
-									}
-								}
+					
+					
+					
+				var applFilter=false;
+//					var flag=false;
+					//cerco se c'è un solo layer che non ha filtri
 
-						}
-						}
+
 					
-						if(applFilter){
-							return null;
-						}else{
-							
-							return styleTMP;
+
+					var propertiesFeature = feature.getProperties();
+
+
+
+					for(var key in layerServ.filters){
+				
+						for(var i =0;i<layerServ.filters[key].length;i++){
+
+							var value = propertiesFeature[layerServ.filters[key][i].filter];
+							if(layerServ.filters[key][i].model!=""){
+
+								applFilter=true;
+							}
+							var valuesInsert = layerServ.filters[key][i].model.split(",");
+
+							for(var k=0;k<valuesInsert.length;k++){
+								if(value==valuesInsert[k]){
+									//se contiene il filtro selezionato 
+									return styleTMP;
+
+								}
+							}
 						}
+					}
 					
+
+				if(applFilter){
+					console.log("true");
+					return null;
+					}else{
+						console.log("false");
+						return styleTMP;
+					}
+
+
 			}
-			
-			
+
+
 			this.setLayerFilter= function(layerConf,filters) {
 				layerServ.filters=filters;
 			}
@@ -815,4 +828,5 @@ geoM.factory('geoModule_constant', function(sbiModule_translate) {
 	}
 	return cont;
 });
+
 

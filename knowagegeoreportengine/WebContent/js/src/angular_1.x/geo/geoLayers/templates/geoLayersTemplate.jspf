@@ -115,10 +115,10 @@
 
   <md-dialog-content>
       <div class="md-dialog-content" style="height: 50%;padding: 0;">
-			<md-input-container style="margin-left:50px; margin-right:50px;" class="md-block" ng-repeat="val in filters" class="block">
-  				<label>{{val.filter}}</label>
+			<md-input-container style="margin-left:50px; margin-right:50px;" class="md-block" ng-repeat="filterObj in filters" class="block">
+  				<label>{{filterObj.filter}}</label>
 
- 				<input type="text" ng-model="val.model">
+ 				<input type="text" ng-model="filterObj.model">
 			</md-input-container>
   		 </div>
    </md-dialog-content>
@@ -128,7 +128,7 @@
       <span flex></span>
 		<md-button ng-click="applyFilter()"  >Ok</md-button>
 	
-		<md-button ng-click="updateChange()"  >Cancel</md-button>
+		<md-button ng-click="cancelFilter()"  >Cancel</md-button>
 	</md-dialog-actions>
 
 </md-dialog>

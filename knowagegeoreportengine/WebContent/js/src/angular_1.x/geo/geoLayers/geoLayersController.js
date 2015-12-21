@@ -25,11 +25,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.openLayersMenu=false;
 	$scope.baseLayers=baseLayer;
 	$scope.translate=sbiModule_translate;
-	$scope.filters=[];
+	$scope.filters={};
 	$scope.insertVal={};
 	$scope.layerSelected;
-	$scope.multipleFilters=[];
-	$scope.listCheckedfilter=[];
+	$scope.multipleFilters={};
+	$scope.listCheckedfilter={};
 	$scope.oneTime=true;
 	
 	$scope.loadLayerFromTemplate=function(){
@@ -153,25 +153,35 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 	$scope.toggleLayer = function(layerConf){
 		sbiModule_logger.log("toggleLayer");
-		$scope.listCheckedfilter=geoModule_layerServices.filters;
-	
+		/*if(geoModule_template.hasOwnProperty('filtersApplied')){
+			$scope.listCheckedfilter=geoModule_template.filtersApplied;
+			$scope.multipleFilters=geoModule_template.filtersApplied;
+			//geoModule_layerServices.filters=geoModule_template.filtersApplied;
+		}*/
+		
+		//$scope.listCheckedfilter=geoModule_layerServices.filters;
+		//geoModule_template.filtersApplied=$scope.listCheckedfilter;
 			
 		if(geoModule_layerServices.filters[layerConf.layerId]){
 				//lo contiene già quindi si sta rimuovendo CHECK OFF
 				$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
-
+				
 		}else{
 			//check on 
 			if($scope.multipleFilters[layerConf.layerId]){
 				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
 			}
+
+
 			
 		}
 		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
 		
+
 		$timeout(function() {
 			$map.updateSize();
+			$map.render();
 		}, 500);
 		
 	};
@@ -187,25 +197,25 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 		return arr_tmp;
 	}
-	$scope.getFilter = function(val){
+	$scope.getFilter = function(selectedLayer){
 		
-		$scope.layerSelected = val;
+		$scope.layerSelected = selectedLayer;
 		$scope.filters=[];
-		var values = val.properties;
-		if($scope.multipleFilters[val.layerId]){
+		var selectedLayerProperties = selectedLayer.properties;
+		if($scope.multipleFilters[selectedLayer.layerId]){
 			//se è stato gia filtrato riprendi i valori
-			$scope.filters = $scope.multipleFilters[val.layerId];
+			$scope.filters = angular.copy($scope.multipleFilters[selectedLayer.layerId]);
 		
 		}else{
 			//altrimenti inserisci i filtri per il layer selezionato
-			for(var i = 0;i<values.length;i++){
+			for(var i = 0;i<selectedLayerProperties.length;i++){
 				$scope.filters.push({
-					filter: values[i],
+					filter: selectedLayerProperties[i],
 					model:"",
-					id:val.layerId
+					id:selectedLayer.layerId
 				})
 			}
-			$scope.multipleFilters[val.layerId]=$scope.filters;
+			
 		}
 		
 
@@ -228,26 +238,42 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		});
 	}
 	$scope.applyFilter = function(){
+		$scope.multipleFilters[$scope.layerSelected.layerId] = angular.copy($scope.filters);
 		$mdDialog.cancel();
 		var flag=false;
 		
 		if(geoModule_layerServices.layerIsLoaded($scope.layerSelected)){
 			$scope.listCheckedfilter[$scope.filters[0].id]= $scope.multipleFilters[$scope.filters[0].id];
 			geoModule_layerServices.filters =$scope.listCheckedfilter;
+			var layer = geoModule_layerServices.createLayer($scope.layerSelected, false);
+			$map.removeLayer(geoModule_layerServices.loadedLayer[$scope.layerSelected.layerId]);
+			if(layer.hasOwnProperty("$$state")){
+				layer.then(function(tmpLayer) {
+					geoModule_layerServices.updateLayerLoaded(tmpLayer,$scope.layerSelected)
+
+				});
+			}
 		}
-			for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){
-				//se tutti i campi sono null
-				if($scope.multipleFilters[$scope.layerSelected.layerId][i].model!=""){
-					flag=true;
-				}
-				
+		for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){
+			//se tutti i campi sono null
+			if($scope.multipleFilters[$scope.layerSelected.layerId][i].model!=""){
+				flag=true;
 			}
-			if(!flag){
-				//rimuovi layer da multiFilters
-				$scope.multipleFilters = $scope.removefromList($scope.multipleFilters ,$scope.layerSelected.layerId);
-			}
-	
+
+		}
+		if(!flag){
+			//rimuovi layer da multiFilters
+			$scope.multipleFilters = $scope.removefromList($scope.multipleFilters ,$scope.layerSelected.layerId);
+		}
+
+
 		
+
+		$timeout(function() {
+			$map.updateSize();
+			//$map.redraw();
+		}, 500);
+			
 	}
 	
 	$scope.filterOFF =function(val){
@@ -256,6 +282,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}else{
 			return false;
 		}
+	}
+	
+	$scope.cancelFilter = function(){
+		$scope.filters = angular.copy($scope.multipleFilters[$scope.layerSelected.layerId]);
+		$scope.updateChange();
 	}
 	//end code for filters
 	$scope.addLayerFromCatalogue = function(ev){

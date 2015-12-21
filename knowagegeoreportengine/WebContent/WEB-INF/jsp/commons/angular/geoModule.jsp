@@ -68,7 +68,9 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     	template.analysisConf.chart={indicator_1:"red",indicator_2:"green",indicator_3:"blue"};
     }
     
-    
+    if(!template.hasOwnProperty("filtersApplied")){
+    	template.filtersApplied={};
+    }
     return template;
 });
 

@@ -56,9 +56,9 @@ function geoMapMenuControllerFunction(
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
-	
+   // {label: "m",type:"miglia"},
 	$scope.typeOfMisure = [
-	                       {label: "m",type:"miglia"},
+	                   
 	                       {label: "km",type:"kilometers"},
 	                       
 	                       ];
