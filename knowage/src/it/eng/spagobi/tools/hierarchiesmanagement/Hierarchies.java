@@ -288,7 +288,7 @@ public class Hierarchies {
 					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
 					metadataLeafHierarchy.add(field);
 				}
-				toReturn.setMetadataNodeFields(metadataLeafHierarchy);
+				toReturn.setMetadataLeafFields(metadataLeafHierarchy);
 			}
 		}
 		return toReturn;

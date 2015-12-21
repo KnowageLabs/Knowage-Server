@@ -52,4 +52,10 @@ public class HierarchyConstants {
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 
+	// CONDITIONS FIELDS (mandatory)
+	public final static String HIER_NM = "HIER_NM";
+	public final static String HIER_TP = "HIER_TP";
+	public final static String BEGIN_DT = "BEGIN_DT";
+	public final static String END_DT = "END_DT";
+
 }
