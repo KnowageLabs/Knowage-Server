@@ -30,8 +30,9 @@ public class DimensionService {
 
 	static private Logger logger = Logger.getLogger(DimensionService.class);
 
+	// get dimensions available (defined into the configurations)
 	@GET
-	// @Path("/dimensions")
+	@Path("/getDimensions")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDimensions(@Context HttpServletRequest req) {
 
@@ -64,6 +65,7 @@ public class DimensionService {
 
 	}
 
+	// Get metadata of dimension
 	@GET
 	@Path("/dimensionMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

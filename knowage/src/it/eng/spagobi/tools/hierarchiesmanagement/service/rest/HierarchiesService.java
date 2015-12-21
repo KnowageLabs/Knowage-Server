@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
@@ -75,20 +76,6 @@ import org.json.JSONObject;
 public class HierarchiesService {
 
 	static private Logger logger = Logger.getLogger(HierarchiesService.class);
-	private static String DIMENSIONS = "DIMENSIONS";
-	private static String DIMENSION = "DIMENSION";
-	private static String NAME = "NAME";
-	private static String LABEL = "LABEL";
-	private static String DATASOURCE = "DATASOURCE";
-	// dialects for correct definition of date's functions
-	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
-	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
-	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
-	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
-	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
-	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
-	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -97,39 +84,6 @@ public class HierarchiesService {
 
 		return "{\"response\":\"ok\"}";
 	}
-
-	// @GET
-	// @Path("/dimensions")
-	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// public String getDimensions(@Context HttpServletRequest req) {
-	//
-	// Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-	// SourceBean sb = hierarchies.getTemplate();
-	// JSONArray dimesionsJSONArray = new JSONArray();
-	//
-	// try {
-	// SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
-	//
-	// List lst = dimensions.getAttributeAsList(DIMENSION);
-	// for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
-	// JSONObject dimension = new JSONObject();
-	// SourceBean sbRow = (SourceBean) iterator.next();
-	// // String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-	// String label = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
-	// dimension.put("DIMENSION_NM", label);
-	// String datasource = sbRow.getAttribute(DATASOURCE) != null ? sbRow.getAttribute(DATASOURCE).toString() : null;
-	// dimension.put("DIMENSION_DS", datasource);
-	// dimesionsJSONArray.put(dimension);
-	// }
-	//
-	// return dimesionsJSONArray.toString();
-	//
-	// } catch (Throwable t) {
-	// logger.error("An unexpected error occured while retriving dimensions names");
-	// throw new SpagoBIServiceException("An unexpected error occured while retriving dimensions names", t);
-	// }
-	//
-	// }
 
 	// get hierarchies names of a dimension
 	@GET
@@ -860,20 +814,20 @@ public class HierarchiesService {
 		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 		String fnc = "";
 		String actualDialect = dataSource.getHibDialectClass();
-		if (DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
 			fnc = "STR_TO_DATE('" + dateHierarchy + "','" + format + "')";
-		} else if (DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
 			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
-		} else if (DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
 			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
-		} else if (DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
 			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
-		} else if (DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
 			fnc = "TO_DATE('" + dateHierarchy + "','" + format + "')";
-		} else if (DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
 			// fnc = "DATE('" + dateHierarchy + "','" + format + "')";
 			fnc = "DATE('" + dateHierarchy + "')";
-		} else if (DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+		} else if (HierarchyConstants.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
 			fnc = "'" + dateHierarchy + "',AS DATE FORMAT '" + format + "')";
 		}
 

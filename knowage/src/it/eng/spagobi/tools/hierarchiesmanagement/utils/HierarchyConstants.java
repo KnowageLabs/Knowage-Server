@@ -42,4 +42,14 @@ public class HierarchyConstants {
 	public final static String FIELD_SINGLE_VALUE = "SINGLE_VALUE";
 	public final static String FIELD_REQUIRED = "REQUIRED";
 
+	// dialects for correct definition of date's functions
+	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
+	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
+	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
+	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
+	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+
 }
