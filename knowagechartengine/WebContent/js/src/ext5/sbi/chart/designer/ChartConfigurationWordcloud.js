@@ -123,7 +123,7 @@ Ext.define
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width : 280,
 						maxValue : '360',
-						minValue : '60',
+						minValue : '0',
 						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxWordAngle.emptyText"),
 						
 						listeners:
@@ -148,7 +148,7 @@ Ext.define
 						id: "wordcloudMinAngle",
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width : 280,
-						maxValue : '270',
+						maxValue : '360',
 						minValue : '0',
 						emptyText: LN("sbi.chartengine.configuration.wordcloudMinWordAngle.emptyText"),
 						
