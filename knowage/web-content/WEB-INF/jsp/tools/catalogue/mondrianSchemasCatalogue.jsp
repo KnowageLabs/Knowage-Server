@@ -44,8 +44,8 @@
 				<div>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue")}}</div>
 <!-- /////////////// ADD(PLUS) BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
 				<md-button 	class="md-fab md-ExtraMini addButton"
-							style="position:absolute; right:11px; top:0px;"
-							ng-click="createDragan()"> 
+							style="position:absolute; right:25px; top:0px;"
+							ng-click="createMondrianSchema()"> 
 						
 						<md-icon 	md-font-icon="fa fa-plus" 
 									style=" margin-top: 6px ;
@@ -54,6 +54,8 @@
 						</md-icon>
 						 
 				</md-button>
+				
+
 			
 			</div>
 			
@@ -135,7 +137,9 @@
 						<md-button 	ng-click="saveMondrianCatalogue()"
 									aria-label="save layer"
 									class="md-raised md-ExtraMini " 
-									style=" margin-top: 2px;">
+									style=" margin-top: 2px;"
+									ng-disabled = "selectedMondrianSchema.modelLocked"
+									>
 									{{translate.load("sbi.browser.defaultRole.save");}} 
 					
 						</md-button>
@@ -158,7 +162,7 @@
 								<input 	ng-model="selectedMondrianSchema.name" 
 										required
 										ng-maxlength="100" 
-
+										ng-disabled = "selectedMondrianSchema.modelLocker"
 										> 
 							</md-input-container> 
 						</div>
@@ -167,7 +171,7 @@
 				
 <!-- /////////////// INPUT FIELD DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap >
       				<div flex=100>				
 							<md-input-container class="small counter"> 
 				
@@ -175,6 +179,7 @@
 					
 								<input 	ng-model="selectedMondrianSchema.description" 
 										ng-maxlength="100" 
+										ng-disabled = "selectedMondrianSchema.modelLocker"
 										> 
 							
 								</md-input-container>
@@ -183,52 +188,61 @@
      				
 <!-- /////////////// INPUT FILE UPLOAD \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div layout="row" layout-wrap>
 				
-				 <file-upload ng-model="file" id="myId" ></file-upload>	
+							
+						
+       						
+       					<file-upload ng-model="file" id="myId"  disabled></file-upload>
+      					
       				
-
-     		</div>
+					 		
+      				
+					
+     			
      				
-<!-- /////////////// LOCK CHECKBOX \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
+<!-- /////////////// LOCK UNLOCK BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<label>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.locked")}}:</label>
+				<div  layout-wrap >
+
+      							<div  	style="line-height: 40px;margin: 2px;" 
+      									ng-hide="selectedMondrianSchema.modelLocked">
+      									
+      								<md-button 	class="md-fab md-Mini "style="
+											background-color: #2196F3;"
+      									
+										> 
+						
+										<md-icon 	md-font-icon="fa fa-unlock fa-lg" 
+											style=" margin-top: 6px ;
+											color: white;">
+						
+										</md-icon>
+						 
+								</md-button>
+       							
       						</div>
- 
-      						<md-input-container class="small counter"> 
-      							<md-checkbox
-       								ng-model="selectedMondrianSchema.currentContentId" 
-       								aria-label="Locked"
-       								disabled>
-      							</md-checkbox> 
-      						</md-input-container>
+      							
+      							
+      							<div  style="line-height: 40px;margin: 2px;" ng-show="selectedMondrianSchema.modelLocked">
+      								<md-button 	class="md-fab md-Mini 
+      								"style="background-color: #2196F3;"
+      									
+										ng-click="unlockModel()"> 
+						
+										<md-icon 	md-font-icon="fa fa-lock fa-lg" 
+											style=" margin-top: 6px ;
+											color: white;">
+						
+										</md-icon>
+						 
+								</md-button>
+       							<label>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.lockedBy")}}:</label>
+       							<label>{{selectedMondrianSchema.modelLocker}}</label>
+      						</div>
+      						
      					</div>
      					
-     					<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<label>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.lockedBy")}}:</label>
-      						</div>
- 							<!-- Input label for locker -->
-     					</div>
-     				
-
-     				
-<!-- /////////////// UNLOCK BUTTON  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-
-				<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised " ng-click="print()">
-       								{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.unlockModel")}}
-       							</md-button>
-      						</div>
-     					</div> 
-     				
-     				<div>
-     				
-     				
-     				</div>				
+	
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 							
 				<md-toolbar class="md-blue minihead md-toolbar-tools" >
@@ -256,7 +270,7 @@
 					</div>
 			
 <!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-					<md-radio-group ng-model="selectedMondrianSchema.currentContentId"  >
+					<md-radio-group ng-model="selectedMondrianSchema.currentContentId" >
 						<angular-table 	layout-fill
 										id="versions" 
 										ng-model="fileList"
