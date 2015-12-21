@@ -101,12 +101,12 @@ public class HierarchyUtils {
 
 	/**
 	 * Returns the datasource object referenced to the dimension in input
-	 * 
+	 *
 	 * @param dimension
 	 * @return
 	 * @throws SpagoBIServiceException
 	 */
-	public IDataSource getDataSource(String dimension) throws SpagoBIServiceException {
+	public static IDataSource getDataSource(String dimension) throws SpagoBIServiceException {
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 		String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 		try {
