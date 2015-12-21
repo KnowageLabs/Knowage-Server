@@ -73,12 +73,12 @@
 				</div>
 			</div>
 			</md-toolbar>
-			<md-content flex style="margin-left:20px;display:inline !important;"
+			<md-content flex style="margin-left:20px;"
 				class="ToolbarBox miniToolbar noBorder"> <md-tabs
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
-			<md-content flex style="margin-left:20px; height:80%;"
-				class="md-padding ToolbarBox miniToolbar noBorder">
+			<md-content flex style="margin-left:20px; overflow:hidden"
+				class="md-padding ToolbarBox noBorder">
 
 			<div layout="row" layout-wrap>
 				<div flex=100>
@@ -135,8 +135,8 @@
 				</div>
 			</div>
 			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.users.roles");}}'> <md-content
-				flex style="margin-left:20px; height:80%;"
-				class="md-padding ToolbarBox miniToolbar noBorder"> <angular-table
+				flex style="margin-left:20px; overflow:hidden"
+				class="md-padding ToolbarBox noBorder"> <angular-table
 				layout-fill id="usersRoles_id" ng-model="usersRoles"
 				columns='[
 							{"label":"NAME","name":"name","size":"50px"},
@@ -145,8 +145,8 @@
 				selected-item="role" highlights-selected-item=true
 				multi-select="true"> </angular-table> </md-content> </md-tab> <md-tab
 				label='{{translate.load("sbi.users.attributes");}}'> <md-content
-				flex style="margin-left:20px; height:80%;"
-				class="md-padding ToolbarBox miniToolbar noBorder">
+				flex style="margin-left:20px; overflow:hidden"
+				class="md-padding ToolbarBox noBorder">
 
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
 				<div flex=100>

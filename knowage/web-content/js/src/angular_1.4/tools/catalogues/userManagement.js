@@ -8,7 +8,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.showme = false; // flag for showing right side 
     $scope.tempPwdConfirm = null;
     $scope.dirtyForm = false; // flag to check for modification
-    $scope.showUpdate = false;
     $scope.translate = sbiModule_translate;
     $scope.selectedUser = {}; // main item
     $scope.usersList = []; // array that hold list of users
@@ -119,7 +118,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     }
     
     $scope.loadUser = function (item) { // this function is called when item from custom table is clicked
-    	console.log($scope.selectedUser.sbiUserAttributeses);
+    	console.log($scope.selectedUser);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -128,9 +127,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.setAttributes();
                 $scope.showme = true;
                 $scope.tempPwdConfirm = $scope.selectedUser.password;
+             
+                
             }, function () {
                 $scope.showme = true;
                 $scope.tempPwdConfirm = $scope.selectedUser.password;
+              
+                
             });
 
         } else {
@@ -140,6 +143,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.setAttributes();
             $scope.showme = true;
             $scope.tempPwdConfirm = $scope.selectedUser.password;
+          
         }
     }
 
@@ -182,7 +186,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.saveUser = function () { // this function is called when clicking on save button
         $scope.formatUser();
-        console.log($scope.selectedUser);
         if($scope.selectedUser.hasOwnProperty("id")){ // if item already exists do update PUT
 			sbiModule_restServices
 		    .put("2.0/users",$scope.selectedUser.id,$scope.selectedUser).success(
@@ -190,7 +193,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-							console.log(data);
 						} else {
 							$scope.usersList=[];
 							$timeout(function(){								
@@ -200,6 +202,8 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;	
+							$scope.tempPwdConfirm = null;
+							
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -208,15 +212,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			
 		}else{ // create new item in database POST
 			sbiModule_restServices
-		    .post("2.0/users","",angular.toJson($scope.selectedUser)).success(
+		    .post("2.0/users","",angular.toJson($scope.selectedUser, true)).success(
 					function(data, status, headers, config) {
 						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-							console.log(data);
 						} else {
 							$scope.usersList=[];
-							$scope.tempPwdConfirm = "";
 							$timeout(function(){								
 								$scope.getUsers();
 							}, 1000);
@@ -224,6 +226,8 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;
+							$scope.tempPwdConfirm = null;
+							
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -291,6 +295,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                     $scope.selectedUser = {};
                     $scope.showme = false;
                     $scope.dirtyForm = false;
+                    $scope.tempPwdConfirm = null;
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));

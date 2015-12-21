@@ -7,8 +7,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
-import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 
 import java.util.List;
 
@@ -24,13 +22,16 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 
+import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
+import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
+public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase {
 	Check check = null;
 	List<Integer> ids;
 	static int id;
 
+	@Override
 	@Before
 	public void setup() {
 		super.setup();
@@ -62,8 +63,10 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 
 	@Test
 	public void putTest() {
-		buildCheck();
 
+		buildCheck();
+		check.setCheckId(id);
+		check.setLabel("JUnitEdited");
 		get("/customChecks/" + id).then().assertThat().body("checkId", equalTo(check.getCheckId()));
 		get("/customChecks/" + id).then().assertThat().body("label", (not(equalTo(check.getLabel()))));
 		given().contentType("application/json").and().body(check).when().put("/customChecks/" + id).then().statusCode(201);
@@ -80,25 +83,24 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 
 	}
 
-	
-	private void buildCheck(){
+	private void buildCheck() {
 		check = new Check();
 		int valueId = 1;
-		Response response =  expect().statusCode(200).when().get("/domains");
+		Response response = expect().statusCode(200).when().get("/domains");
 		try {
-			JSONArray domains = 	new JSONArray(response.body().asString());
-			for (int i=0; i<domains.length(); i++){
-				JSONObject aDomain =  domains.getJSONObject(i);
-				if(aDomain.getString("domainCode").equals("CHECK") && aDomain.getString("valueCd").equals("REGEXP")){
+			JSONArray domains = new JSONArray(response.body().asString());
+			for (int i = 0; i < domains.length(); i++) {
+				JSONObject aDomain = domains.getJSONObject(i);
+				if (aDomain.getString("domainCode").equals("CHECK") && aDomain.getString("valueCd").equals("REGEXP")) {
 					valueId = new Integer(aDomain.getString("valueId"));
 				}
 			}
 		} catch (JSONException e) {
-		
+
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		check.setDescription("testJUnit");
 		check.setFirstValue(null);
 		check.setLabel("JUnit");
@@ -107,6 +109,5 @@ public class ModalitiesDetailResourceTest extends AbstractV2BasicAuthTestCase{
 		check.setValueTypeCd("REGEXP");
 		check.setValueTypeId(valueId);
 
-		
 	}
 }

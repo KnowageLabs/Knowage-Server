@@ -3,7 +3,11 @@ package it.eng.spagobi.api.v2;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -25,6 +29,7 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
@@ -143,14 +148,46 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUser(@Valid SbiUser body) {
+	public Response insertUser(@Valid UserBO body) {
 
 		ISbiUserDAO usersDao = null;
-		SbiUser user = body;
-		String password = user.getPassword();
+
+		UserBO user = body;
+		SbiUser sbiUser = new SbiUser();
+		sbiUser.setUserId(user.getUserId());
+		sbiUser.setFullName(user.getFullName());
+		sbiUser.setPassword(user.getPassword());
+
+		List<Integer> list = user.getSbiExtUserRoleses();
+		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		for (Integer id : list) {
+			SbiExtRoles role = new SbiExtRoles();
+			role.setExtRoleId(id);
+			roles.add(role);
+		}
+		sbiUser.setSbiExtUserRoleses(roles);
+
+		HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+
+		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
+			SbiUserAttributes attribute = new SbiUserAttributes();
+			SbiUserAttributesId attid = new SbiUserAttributesId();
+			attid.setAttributeId(entry.getKey());
+			attribute.setId(attid);
+			for (Entry<String, String> value : entry.getValue().entrySet()) {
+
+				attribute.setAttributeValue(value.getValue());
+
+			}
+			attributes.add(attribute);
+		}
+		sbiUser.setSbiUserAttributeses(attributes);
+
+		String password = sbiUser.getPassword();
 		if (password != null && password.length() > 0) {
 			try {
-				user.setPassword(Password.encriptPassword(password));
+				sbiUser.setPassword(Password.encriptPassword(password));
 			} catch (Exception e) {
 				logger.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
@@ -160,7 +197,7 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 		try {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
-			Integer id = usersDao.fullSaveOrUpdateSbiUser(user);
+			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
 			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
@@ -173,20 +210,61 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("id") Integer id, @Valid SbiUser body) {
+	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO body) {
 
 		ISbiUserDAO usersDao = null;
-		SbiUser user = body;
-		user.setId(id);
+		UserBO user = body;
+		SbiUser sbiUser = new SbiUser();
+		sbiUser.setId(id);
+		sbiUser.setUserId(user.getUserId());
+		sbiUser.setFullName(user.getFullName());
+		sbiUser.setPassword(user.getPassword());
+
+		List<Integer> list = user.getSbiExtUserRoleses();
+		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		for (Integer i : list) {
+			SbiExtRoles role = new SbiExtRoles();
+			role.setExtRoleId(i);
+			roles.add(role);
+		}
+		sbiUser.setSbiExtUserRoleses(roles);
+
+		HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+
+		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
+			SbiUserAttributes attribute = new SbiUserAttributes();
+			SbiUserAttributesId attid = new SbiUserAttributesId();
+			attid.setAttributeId(entry.getKey());
+			attribute.setId(attid);
+			for (Entry<String, String> value : entry.getValue().entrySet()) {
+
+				attribute.setAttributeValue(value.getValue());
+
+			}
+			attributes.add(attribute);
+		}
+		sbiUser.setSbiUserAttributeses(attributes);
+
+		String password = sbiUser.getPassword();
+		if (password != null && password.length() > 0) {
+			try {
+				sbiUser.setPassword(Password.encriptPassword(password));
+			} catch (Exception e) {
+				logger.error("Impossible to encrypt Password", e);
+				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
+			}
+		}
+
 		try {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
-			usersDao.fullSaveOrUpdateSbiUser(user);
-			String encodedUser = URLEncoder.encode("" + user.getId(), "UTF-8");
-			return Response.created(new URI("2.0/customChecks/" + encodedUser)).entity(encodedUser).build();
+			Integer idToReturn = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+			String encodedUser = URLEncoder.encode("" + idToReturn, "UTF-8");
+			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource" + id, e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
 		}
 	}
 

@@ -199,6 +199,13 @@
 				</div>
 				
 				<div ng-show="showpred">
+				
+				<md-toolbar class="header"> 
+					<div class="md-toolbar-tools h100">
+					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
+					
+				</div>
+				</md-toolbar>
 			
 			<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
 					<div layout="row" layout-wrap>
