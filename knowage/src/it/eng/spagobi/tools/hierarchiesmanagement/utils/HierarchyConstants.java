@@ -21,6 +21,7 @@ public class HierarchyConstants {
 	public final static String ALLOW_DUPLICATE = "ALLOW_DUPLICATE";
 	public final static String NODE = "NODE";
 	public final static String LEAF = "LEAF";
+	public final static String ORIG_NODE = "ORIG_NODE";
 
 	// DIM_FIELDS SECTION
 	public final static String DIM_FIELDS = "DIM_FIELDS";

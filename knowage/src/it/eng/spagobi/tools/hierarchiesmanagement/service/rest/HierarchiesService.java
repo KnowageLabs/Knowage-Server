@@ -150,7 +150,6 @@ public class HierarchiesService {
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
-
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);

@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -309,7 +310,6 @@ public class Hierarchies {
 		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
 			JSONObject hierarchy = new JSONObject();
 			SourceBean sbRow = (SourceBean) iterator.next();
-			// String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 			String label = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
 			if (label.equalsIgnoreCase(dimension)) {
 				String datasource = sbRow.getAttribute(HierarchyConstants.DATASOURCE) != null ? sbRow.getAttribute(HierarchyConstants.DATASOURCE).toString()
@@ -319,6 +319,47 @@ public class Hierarchies {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the corresponding general config for the dimension's hierarchy
+	 *
+	 * @param dimension
+	 *            the dimension name
+	 * @return the hashmap config
+	 */
+	public HashMap getConfig(String dimension) {
+		HashMap toReturn = new HashMap();
+
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(HierarchyConstants.DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(HierarchyConstants.DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			JSONObject hierarchy = new JSONObject();
+			SourceBean sbRow = (SourceBean) iterator.next();
+			String label = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
+			if (label.equalsIgnoreCase(dimension)) {
+
+				List lstConfigFields = sbRow.getAttributeAsList(HierarchyConstants.CONFIGS + "." + HierarchyConstants.CONFIG);
+				for (Iterator iter = lstConfigFields.iterator(); iter.hasNext();) {
+					SourceBean sbConfig = (SourceBean) iter.next();
+					if (null != sbConfig.getAttribute(HierarchyConstants.NUM_LEVELS))
+						toReturn.put(HierarchyConstants.NUM_LEVELS, sbConfig.getAttribute(HierarchyConstants.NUM_LEVELS));
+					if (null != sbConfig.getAttribute(HierarchyConstants.ALLOW_DUPLICATE))
+						toReturn.put(HierarchyConstants.ALLOW_DUPLICATE, sbConfig.getAttribute(HierarchyConstants.ALLOW_DUPLICATE));
+					if (null != sbConfig.getAttribute(HierarchyConstants.NODE))
+						toReturn.put(HierarchyConstants.NODE, sbConfig.getAttribute(HierarchyConstants.NODE));
+					if (null != sbConfig.getAttribute(HierarchyConstants.LEAF))
+						toReturn.put(HierarchyConstants.LEAF, sbConfig.getAttribute(HierarchyConstants.LEAF));
+					if (null != sbConfig.getAttribute(HierarchyConstants.ORIG_NODE))
+						toReturn.put(HierarchyConstants.ORIG_NODE, sbConfig.getAttribute(HierarchyConstants.ORIG_NODE));
+
+				}
+			}
+		}
+
+		return toReturn;
 	}
 
 	// *************************************************
