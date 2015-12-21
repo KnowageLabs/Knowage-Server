@@ -12,17 +12,32 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
+import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -37,7 +52,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mongodb.util.JSON;
@@ -125,7 +142,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		SbiDataSet dataset = dsDAO.loadSbiDataSetByLabel(label);
-		
+
 		if (dataset != null)
 			return JsonConverter.objectToJson(dataset, SbiDataSet.class);
 		else
@@ -190,7 +207,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 		return Response.ok().build();
 	}
-	
+
 	@GET
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -224,5 +241,110 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/restrictions")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getRestrictions(@QueryParam("associationGroup") String associationGroup, @QueryParam("sourceDataset") String sourceDataset,
+			@QueryParam("sourceColumn") String sourceColumn, @QueryParam("sourceValue") String sourceValue) {
+		logger.debug("IN");
+
+		if (sourceDataset == null || sourceDataset.isEmpty()) {
+			throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [sourceDataset] cannot be null or empty");
+		}
+
+		if (sourceColumn == null || sourceColumn.isEmpty()) {
+			throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [sourceColumn] cannot be null or empty");
+		}
+
+		if (sourceValue == null || sourceValue.isEmpty()) {
+			throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [sourceValue] cannot be null or empty");
+		}
+
+		AssociationGroup associationGroupObject = null;
+		if (associationGroup == null) {
+			throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
+		}
+		try {
+			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+			associationGroupObject = serializer.deserialize(new JSONObject(associationGroup));
+		} catch (JSONException e) {
+			throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] is not a valid JSON object", e);
+		}
+
+		AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroupObject.getAssociations());
+		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
+		Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
+
+		// add datasets to the map
+		IDataSetDAO dataSetDAO;
+		try {
+			dataSetDAO = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Unable to get DataSetDAO", e);
+		}
+		Map<String, IDataSet> datasets = new HashMap<String, IDataSet>();
+		for (String datasetLabel : graph.vertexSet()) {
+			datasets.put(datasetLabel, dataSetDAO.loadDataSetByLabel(datasetLabel));
+		}
+		if (!datasets.containsKey(sourceDataset)) {
+			datasets.put(sourceDataset, dataSetDAO.loadDataSetByLabel(sourceDataset));
+		}
+		if (datasets.containsValue(null)) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "A dataset doesn't exist");
+		}
+
+		// FIXME uncomment
+		// AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasets, map, sourceDataset, sourceColumn);
+		// Map<EdgeGroup, Set<String>> result;
+		// try {
+		// result = manager.process();
+		// } catch (Exception e) {
+		// throw new SpagoBIServiceException(this.request.getPathInfo(), "Unable to process associations", e);
+		// }
+
+		// FIXME delete
+		Set<LabeledEdge<String>> edgeSet = new HashSet<LabeledEdge<String>>();
+		edgeSet.add(new LabeledEdge<String>("x", "y", "A1"));
+		edgeSet.add(new LabeledEdge<String>("x", "y", "A5"));
+		EdgeGroup resultEdgeGroup = new EdgeGroup(edgeSet);
+		Set<String> resultValues = new HashSet<String>();
+		resultValues.add("('744','2275')");
+		resultValues.add("('744','10226')");
+		Map<EdgeGroup, Set<String>> egdeGroupValuesMap = new HashMap<EdgeGroup, Set<String>>();
+		egdeGroupValuesMap.put(resultEdgeGroup, resultValues);
+
+		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, egdeGroupValuesMap);
+
+		String stringFeed = JsonConverter.objectToJson(selections, Map.class);
+		logger.debug("OUT");
+		return stringFeed;
+	}
+
+	@Override
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
+		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
+
+		JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
+		Iterator<String> it = datasetSelectionObject.keys();
+		while (it.hasNext()) {
+			String columns = it.next();
+
+			JSONArray values = datasetSelectionObject.getJSONArray(columns);
+			if (values.length() == 0)
+				continue;
+			List<String> valuesList = new ArrayList<String>();
+			for (int i = 0; i < values.length(); i++) {
+				valuesList.add(values.getString(i));
+			}
+
+			Operand leftOperand = new Operand(columns);
+			Operand rightOperand = new Operand(valuesList);
+			FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+			filterCriterias.add(filterCriteria);
+		}
+
+		return filterCriterias;
 	}
 }

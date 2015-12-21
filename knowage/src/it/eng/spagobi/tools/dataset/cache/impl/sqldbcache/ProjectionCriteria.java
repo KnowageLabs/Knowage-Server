@@ -28,7 +28,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 public class ProjectionCriteria {
 
 	// Projection for the SELECT clause
-	String dataset; // the column name
+	String dataset; // the dataset name
 	String columnName; // the column name
 	String aggregateFunction; // optional aggregate function like SUM, AVG, etc...
 	String aliasName; // alias for the column

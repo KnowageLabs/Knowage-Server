@@ -545,7 +545,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return groupCriterias;
 	}
 
-	private List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
