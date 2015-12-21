@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
@@ -99,38 +98,38 @@ public class HierarchiesService {
 		return "{\"response\":\"ok\"}";
 	}
 
-	@GET
-	@Path("/dimensions")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDimensions(@Context HttpServletRequest req) {
-
-		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-		SourceBean sb = hierarchies.getTemplate();
-		JSONArray dimesionsJSONArray = new JSONArray();
-
-		try {
-			SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
-
-			List lst = dimensions.getAttributeAsList(DIMENSION);
-			for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
-				JSONObject dimension = new JSONObject();
-				SourceBean sbRow = (SourceBean) iterator.next();
-				// String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
-				String label = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
-				dimension.put("DIMENSION_NM", label);
-				String datasource = sbRow.getAttribute(DATASOURCE) != null ? sbRow.getAttribute(DATASOURCE).toString() : null;
-				dimension.put("DIMENSION_DS", datasource);
-				dimesionsJSONArray.put(dimension);
-			}
-
-			return dimesionsJSONArray.toString();
-
-		} catch (Throwable t) {
-			logger.error("An unexpected error occured while retriving dimensions names");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving dimensions names", t);
-		}
-
-	}
+	// @GET
+	// @Path("/dimensions")
+	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// public String getDimensions(@Context HttpServletRequest req) {
+	//
+	// Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+	// SourceBean sb = hierarchies.getTemplate();
+	// JSONArray dimesionsJSONArray = new JSONArray();
+	//
+	// try {
+	// SourceBean dimensions = (SourceBean) sb.getAttribute(DIMENSIONS);
+	//
+	// List lst = dimensions.getAttributeAsList(DIMENSION);
+	// for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+	// JSONObject dimension = new JSONObject();
+	// SourceBean sbRow = (SourceBean) iterator.next();
+	// // String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+	// String label = sbRow.getAttribute(LABEL) != null ? sbRow.getAttribute(LABEL).toString() : null;
+	// dimension.put("DIMENSION_NM", label);
+	// String datasource = sbRow.getAttribute(DATASOURCE) != null ? sbRow.getAttribute(DATASOURCE).toString() : null;
+	// dimension.put("DIMENSION_DS", datasource);
+	// dimesionsJSONArray.put(dimension);
+	// }
+	//
+	// return dimesionsJSONArray.toString();
+	//
+	// } catch (Throwable t) {
+	// logger.error("An unexpected error occured while retriving dimensions names");
+	// throw new SpagoBIServiceException("An unexpected error occured while retriving dimensions names", t);
+	// }
+	//
+	// }
 
 	// get hierarchies names of a dimension
 	@GET
