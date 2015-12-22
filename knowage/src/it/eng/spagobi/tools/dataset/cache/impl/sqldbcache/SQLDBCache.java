@@ -549,7 +549,7 @@ public class SQLDBCache implements ICache {
 				String leftOperand = null;
 				if (operator.equalsIgnoreCase("IN")) {
 					String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-					leftOperand = "(";
+					leftOperand = "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -576,15 +576,14 @@ public class SQLDBCache implements ICache {
 					if (filter.getRightOperand().isMultivalue()) {
 						rightOperand = "(";
 						String separator = "";
-						String stringDelimiter = null;
-						if (operator.equalsIgnoreCase("IN")) {
-							stringDelimiter = "";
-						} else {
-							stringDelimiter = "'";
-						}
+						String stringDelimiter = "'";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (String value : values) {
-							rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							if (operator.equalsIgnoreCase("IN")) {
+								rightOperand += separator + "(1," + value.substring(1);
+							} else {
+								rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							}
 							separator = ",";
 						}
 						rightOperand += ")";
