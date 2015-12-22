@@ -42,8 +42,8 @@ angular.module('file_upload', [ 'ngMaterial'])
 function FileUploadControllerFunction($scope,$timeout){
 	$scope.setFile = function (element){
 		$scope.ngModel.file = element.files[0];
-		$scope.fileName = element.files[0].name;
-		$scope.ngModel.fileName = element.files[0].name;
+		$scope.fileName = element.files[0] !== undefined ? element.files[0].name : '';
+		$scope.ngModel.fileName = element.files[0] !== undefined ? element.files[0].name : '';
 		$scope.$apply();
 	}
 	
