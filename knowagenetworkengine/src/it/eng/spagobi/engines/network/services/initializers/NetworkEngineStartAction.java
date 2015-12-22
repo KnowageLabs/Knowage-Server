@@ -17,6 +17,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -68,9 +69,9 @@ public class NetworkEngineStartAction extends AbstractEngineStartAction {
 			}
 
 			logger.debug("Creating engine instance ...");
-
+			Map env = getEnv();
 			try {
-				networkEngineInstance = NetworkEngine.createInstance(getTemplateAsString(), getEnv());
+				networkEngineInstance = NetworkEngine.createInstance(getTemplateAsString(), env);
 			} catch (Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -86,6 +87,7 @@ public class NetworkEngineStartAction extends AbstractEngineStartAction {
 			}
 
 			IDataSet dataset = getDataSet();
+			dataset.setParamsMap(env);
 			INetwork net = NetworkBuilder.buildNetwork(dataset, networkEngineInstance.getTemplate());
 			networkEngineInstance.setNet(net);
 
