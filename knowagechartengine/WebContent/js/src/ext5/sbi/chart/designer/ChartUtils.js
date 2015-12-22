@@ -2020,63 +2020,62 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		convertJsonToTreeFormat : function (data, level) {
-			function isValue(data) {
-				return (data != null && (typeof data === 'boolean'
-						 || typeof data === 'string' || typeof data === 'number'));
-			}
+			function isValue(element) {
+				return (element != null && (typeof element === 'boolean'
+						 || typeof element === 'string' || typeof element === 'number'));
+			};
 
 			var nivel = (level != undefined && typeof level === 'number') ? level
 			 : 0;
 			var treeData = [];
 			
 			// TODO: danristo (for GAUGE: Step 1 -> Step 4 error of undefined)
-			if (data)
-			{			
-			var keys = Object.keys(data);
-
-			for (index in keys) {
-				var key = keys[index];
-				if (Array.isArray(data[key])) {
-					var array = data[key];
-
-					for (var i = 0; i < array.length; i++) {
+			if (data) {			
+				var keys = Object.keys(data);
+	
+				for (index in keys) {
+					var key = keys[index];
+					if (Array.isArray(data[key])) {
+						var array = data[key];
+	
+						for (var i = 0; i < array.length; i++) {
+							treeData.push({
+								key : key,
+								expanded : (nivel < 1),
+								isArray : 1,
+								children : ChartUtils.convertJsonToTreeFormat(
+									array[i],
+									nivel + 1),
+							});
+						}
+					} else if (isValue(data[key])) {
+						var type = 'object';
+						if (typeof data[key] === 'boolean')
+							type = 'boolean';
+						if (typeof data[key] === 'string')
+							type = 'string';
+						if (typeof data[key] === 'number')
+							type = 'number';
+	
+						treeData.push({
+							key : key,
+							value : data[key],
+							type : type,
+							isArray : 0,
+							leaf : true
+						});
+					} else {
 						treeData.push({
 							key : key,
 							expanded : (nivel < 1),
-							isArray : 1,
-							children : ChartUtils.convertJsonToTreeFormat(
-								array[i],
-								nivel + 1),
+							isArray : 0,
+							children : ChartUtils
+							.convertJsonToTreeFormat(
+								data[key], nivel + 1)
 						});
 					}
-				} else if (isValue(data[key])) {
-					var type = 'object';
-					if (typeof data[key] === 'boolean')
-						type = 'boolean';
-					if (typeof data[key] === 'string')
-						type = 'string';
-					if (typeof data[key] === 'number')
-						type = 'number';
-
-					treeData.push({
-						key : key,
-						value : data[key],
-						type : type,
-						isArray : 0,
-						leaf : true
-					});
-				} else {
-					treeData.push({
-						key : key,
-						expanded : (nivel < 1),
-						isArray : 0,
-						children : ChartUtils
-						.convertJsonToTreeFormat(
-							data[key], nivel + 1)
-					});
 				}
 			}
-		}
 
 			if (nivel == 0) {
 				var treeFormattedJson = {
@@ -2090,24 +2089,27 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		convertTreeFormatToJson : function (data, isWrapper) {
-
 			function areThereDifferentChildren(children) {
 				if (children.length == 0) {
 					return false;
 				}
 				var firstIsArray = children[0].isArray;
+				var firstElementKey = children[0].key;
+				
 				for (i in children) {
 					var isArray = children[i].isArray;
-					if (firstIsArray != isArray) {
+					var elementKey = children[i].key;
+					
+					if (firstIsArray != isArray || firstElementKey != elementKey) {
 						return true;
 					}
 				}
 				return false;
-			}
+			};
 
 			if (isWrapper && isWrapper == true) {
-				var root = ChartUtils
-					.convertTreeFormatToJson(data.children[0]);
+				var root = ChartUtils.convertTreeFormatToJson(data.children[0]);
+				
 				var rootKey = data.children[0].key;
 
 				var result = {};
@@ -2117,44 +2119,30 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			if (data.leaf) {
 				return data.value;
-			} else if (data.children
-				 && areThereDifferentChildren(data.children)) {
+			} else if (data.children && areThereDifferentChildren(data.children)) {
 				var result = {};
 				for (i in data.children) {
 					var datum = data.children[i];
-					if (result[datum.key] != undefined) { // Se
-						// già
-						// è
-						// presente
-						// un
-						// nodo
-						// conlo
-						// stesso
-						// nome
+					if (result[datum.key] != undefined) { // If it is present a node with the same name
 						var tempDatum = result[datum.key];
 						if (Array.isArray(tempDatum)) {
 							var newDatumKeyArray = [];
+							
 							for (j in tempDatum) {
-								newDatumKeyArray
-								.push(tempDatum[j]);
+								newDatumKeyArray.push(tempDatum[j]);
 							}
-							newDatumKeyArray
-							.push(ChartUtils
-								.convertTreeFormatToJson(datum));
+							newDatumKeyArray.push(ChartUtils.convertTreeFormatToJson(datum));
+							
 							result[datum.key] = newDatumKeyArray;
 						} else {
 							var newDatumKeyArray = [];
 							newDatumKeyArray.push(tempDatum);
-							newDatumKeyArray
-							.push(ChartUtils
-								.convertTreeFormatToJson(datum));
+							newDatumKeyArray.push(ChartUtils.convertTreeFormatToJson(datum));
 							result[datum.key] = newDatumKeyArray;
 						}
 					} else {
-						result[datum.key] = datum.isArray == 0 ? ChartUtils
-							.convertTreeFormatToJson(datum)
-							 : [ChartUtils
-								.convertTreeFormatToJson(datum)];
+						result[datum.key] = datum.isArray == 0 ? 
+								ChartUtils.convertTreeFormatToJson(datum) : [ChartUtils.convertTreeFormatToJson(datum)];
 					}
 				}
 				return result;
@@ -2175,8 +2163,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				for (i in data.children) {
 					var datum = data.children[i];
-					array.push(ChartUtils
-						.convertTreeFormatToJson(datum));
+					array.push(ChartUtils.convertTreeFormatToJson(datum));
 				}
 				var result = {};
 				result[data.children[0].key] = array;
@@ -2196,15 +2183,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var temp = objToClone.constructor();
 
 			for (var key in objToClone) {
-				if (Object.prototype.hasOwnProperty.call(
-						objToClone, key)) {
-					temp[key] = ChartUtils
-						.clone(objToClone[key]);
+				if (Object.prototype.hasOwnProperty.call(objToClone, key)) {
+					temp[key] = ChartUtils.clone(objToClone[key]);
 				}
 			}
 			return temp;
 		},
-/**
+		
+		/**
 		 * Static function that provides removing of all properties that are unwanted and that are 
 		 * specified in static variable "unwantedStyleProps". The function removes those unwanted 
 		 * properties from the JSON object representation of the XML file of the style applied to 

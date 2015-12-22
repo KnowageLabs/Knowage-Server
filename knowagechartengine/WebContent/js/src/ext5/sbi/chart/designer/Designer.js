@@ -1774,17 +1774,16 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            		element: 'el',
   		            		fn: function(){
   		            			
-  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-  		            			if (activeTab.getId() == 'advancedEditor') {  	
-  		            				var json = activeTab.getChartData(); 
-  		            				Sbi.chart.designer.Designer.update(json);
-  		            			}
+//  		            		var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+//  		            		if (activeTab.getId() == 'advancedEditor') {  	
+//  		            			var json = activeTab.getChartData(); 
+//  		            			Sbi.chart.designer.Designer.update(json);
+//  		            		}
   		            			
   		            			//console.log(Sbi.chart.designer.Designer.exportAsJson());
     							//console.log(Sbi.chart.designer.Designer.exportAsJson(true));
   		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
-
   		            			
   		            			if (errorMessages == false) {
   		            				Ext.Msg.show({
