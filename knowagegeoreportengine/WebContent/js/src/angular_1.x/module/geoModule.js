@@ -80,7 +80,7 @@ geoM.service(
 			};
 			this.selectedBaseLayer; // the selected base layer
 			this.selectedBaseLayerOBJ;
-			this.layerWithoutFilter=false;
+			this.layerWithoutFilter=true;
 			this.loadedLayer = {};
 			this.loadedLayerOBJ = {};
 			this.templateLayer = {};
@@ -182,7 +182,7 @@ geoM.service(
 					style : selectStyle
 				});
 				$map.addInteraction(select);
-				// layerServ.setInteraction('box');
+				
 				select.on('select',	function(evt) {
 					if (geo_interaction.type == "identify"
 						&& (evt.selected[0] == undefined || geo_interaction.distance_calculator)
@@ -241,6 +241,7 @@ geoM.service(
 							condition : ol.events.condition.platformModifierKeyOnly,
 							style : selectStyle
 						});
+				currentInteraction.type = "intersect";
 				currentInteraction.obj = dragBox;
 				$map.addInteraction(dragBox);
 
@@ -287,6 +288,7 @@ geoM.service(
 							style : selectStyle
 						});
 				currentInteraction.obj = dragBox;
+				currentInteraction.type = "inside";
 				$map.addInteraction(dragBox);
 
 				dragBox.on('boxend',function(e) {
@@ -474,14 +476,17 @@ geoM.service(
 
 				currentInteraction.type = type;
 				if (type == 'near') {
+				
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.spy();
 
 				} else if (type == 'intersect') {
+					layerServ.setInteraction('intersect');
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.intersectFeature();
 
 				} else if (type == 'inside') {
+					layerServ.setInteraction('inside');
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.insideFeature();
 				}
