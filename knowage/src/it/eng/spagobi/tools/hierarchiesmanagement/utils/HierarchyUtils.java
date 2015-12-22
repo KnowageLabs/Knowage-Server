@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -139,6 +140,40 @@ public class HierarchyUtils {
 
 		logger.debug("END");
 		return result;
+	}
+
+	/**
+	 * This method converts a date in a correct format for the datasource
+	 *
+	 * @param dateToConvert
+	 * @param dataSource
+	 * @return the converted date
+	 */
+	public static String getConvertedDate(String dateToConvert, IDataSource dataSource) {
+		logger.debug("START");
+
+		// defining date conversion
+		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String convertedDate = "";
+		String actualDialect = dataSource.getHibDialectClass();
+		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "STR_TO_DATE('" + dateToConvert + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "DATE('" + dateToConvert + "')";
+		} else if (HierarchyConstants.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+			convertedDate = "'" + dateToConvert + "',AS DATE FORMAT '" + format + "')";
+		}
+
+		logger.debug("END");
+		return convertedDate;
 	}
 
 }

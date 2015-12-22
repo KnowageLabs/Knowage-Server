@@ -1,11 +1,11 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
@@ -17,10 +17,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -110,7 +108,7 @@ public class DimensionService {
 	@Path("/dimensionData")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDimensionData(@QueryParam("dimensionLabel") String dimensionLabel, @QueryParam("validityDate") String validityDate,
-			@QueryParam("filterDate") String filterDate) {
+			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy) {
 
 		logger.debug("START");
 
@@ -136,13 +134,16 @@ public class DimensionService {
 			}
 
 			// 2 - execute query to get dimension data
-			Map<Integer, String> columnIndexes = new HashMap<Integer, String>();
-			String queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, columnIndexes);
+			String queryText = "";
+
+			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
+
+			queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy, hierTableName);
+
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 3 - Create JSON for Dimension data from datastore
-			JSONArray rootArray = this.createRootDimensionData(dataStore, columnIndexes);
-
+			JSONArray rootArray = this.createRootDimensionData(dataStore);
 			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(metadataFields, false);
 			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(metadataFields);
 
@@ -170,8 +171,8 @@ public class DimensionService {
 
 	}
 
-	private String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
-			Map<Integer, String> columnIndexes) {
+	private String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate, String filterDate,
+			String filterHierarchy, String hierTableName) {
 
 		logger.debug("START");
 
@@ -184,7 +185,6 @@ public class DimensionService {
 		for (int i = 0; i < fieldsSize; i++) {
 			Field tmpField = metadataFields.get(i);
 			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
-			columnIndexes.put(i, tmpField.getId());
 
 			if (i == fieldsSize - 1) {
 				sep = " ";
@@ -200,39 +200,44 @@ public class DimensionService {
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 
-		// defining date conversion cmd for filters on dates
-		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-		String fnc = "";
-		String actualDialect = dataSource.getHibDialectClass();
-		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
-			fnc = "STR_TO_DATE('" + validityDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
-			// fnc = "DATE('" + dateHierarchy + "','" + format + "')";
-			fnc = "DATE('" + validityDate + "')";
-		} else if (HierarchyConstants.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
-			fnc = "'" + validityDate + "',AS DATE FORMAT '" + format + "')";
+		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
+
+		String vDateWhereClause = vDateConverted + " >= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
+
+		if (filterDate != null) {
+
+			logger.debug("Filter date is [" + filterDate + "]");
+
+			String fDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+
+			query.append(" AND " + beginDtColumn + " >= " + fDateConverted);
 		}
 
-		String query = "SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + fnc + " >= " + beginDtColumn + " AND " + fnc + " <= " + endDtColumn;
+		if (filterHierarchy != null) {
+			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
+
+			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIM_FILTER_FIELD, dataSource);
+			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.SELECT_HIER_FILTER_FIELD, dataSource);
+			String whereFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.WHERE_HIER_FILTER_FIELD, dataSource);
+
+			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + hierTableName);
+			query.append(" WHERE " + whereFilterField + " = \"" + filterHierarchy + "\" AND " + vDateWhereClause + " )");
+		}
 
 		logger.debug("Query for dimension data is: " + query);
 		logger.debug("END");
-		return query;
+		return query.toString();
 	}
 
-	private JSONArray createRootDimensionData(IDataStore dataStore, Map<Integer, String> columnIndexes) throws JSONException {
+	private JSONArray createRootDimensionData(IDataStore dataStore) throws JSONException {
 
 		logger.debug("START");
 
 		JSONArray rootArray = new JSONArray();
+
+		IMetaData columnsMetaData = dataStore.getMetaData();
 
 		Iterator iterator = dataStore.iterator();
 
@@ -247,7 +252,7 @@ public class DimensionService {
 
 				IField tmpField = recordFields.get(i);
 
-				String tmpKey = columnIndexes.get(i);
+				String tmpKey = columnsMetaData.getFieldName(i);
 				tmpJSON.put(tmpKey, tmpField.getValue());
 			}
 
