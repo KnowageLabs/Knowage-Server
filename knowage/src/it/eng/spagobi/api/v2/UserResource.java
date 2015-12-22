@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/2.0/users")
 @ManageAuthorization
-public class UserManagementResource extends AbstractSpagoBIResource {
+public class UserResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET

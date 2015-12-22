@@ -20,14 +20,13 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/roles")
 @ManageAuthorization
-public class RolesManagementResource extends AbstractSpagoBIResource {
+public class RolesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
@@ -64,27 +63,6 @@ public class RolesManagementResource extends AbstractSpagoBIResource {
 			rolesDao.setUserProfile(getUserProfile());
 			role = rolesDao.loadByID(id);
 			return role;
-		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
-		}
-
-	}
-
-	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
-	@Path("/authorizations")
-	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List<SbiAuthorizations> getAuthorizations() {
-		IRoleDAO rolesDao = null;
-		List<SbiAuthorizations> fullList = null;
-
-		try {
-
-			rolesDao = DAOFactory.getRoleDAO();
-			rolesDao.setUserProfile(getUserProfile());
-			fullList = rolesDao.loadAllAuthorizations();
-			return fullList;
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);

@@ -70,7 +70,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     
     
     $scope.loadRole = function (item) { // this function is called when item from custom table is clicked
-    	console.log(selectedRole);
+    	console.log($scope.selectedRole);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -206,7 +206,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
     
     $scope.getAuthorizations = function(){ // service that gets domain types for dropdown GET
-		sbiModule_restServices.get("2.0/roles", "authorizations").success(
+		sbiModule_restServices.get("2.0/authorizations").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
