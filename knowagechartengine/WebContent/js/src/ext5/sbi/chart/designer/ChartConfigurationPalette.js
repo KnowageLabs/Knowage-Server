@@ -20,6 +20,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 	columnWidth: 1,
+	//scrollable: "y",
 	
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,

@@ -12,7 +12,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 	columnWidth: 1,
-	height: 120,
+	height: 290,
 	
 //	header:
 //	{
@@ -41,6 +41,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	bodyPadding : 10,
 	items : [],
 	stylePanelLegend : {},
+	
 	bind:{
 		disabled:'{!configModel.showLegend}'
 	},
@@ -70,7 +71,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 labelWidth : '100%',
                     		 margin:'0 20 10 0'
                     	 },
-                    	 items: [{
+                    	 items: [
+                    	 
+            	         // Commented by Danilo Ristovski (21.12) - old implementation       
+            	         /*{
                     		 xtype : 'combo',
                     		 queryMode : 'local',
                     		 value : 'bottom',
@@ -95,33 +99,82 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     				 value : 'middle'
                     			 } ]
                     		 }
-                    	 } , {
-                    		 xtype : 'combo',
-                    		 queryMode : 'local',
-                    		 value : 'horizontal',
-                    		 triggerAction : 'all',
-                    		 forceSelection : true,
-                    		 editable : false,
-                    		 fieldLabel : LN('sbi.chartengine.configuration.layout'),
-                    		 bind : '{configModel.legendLayout}',
-                    		 displayField : 'name',
-                    		 valueField : 'value',
-                    		 emptyText: LN("sbi.chartengine.configuration.legend.layout.emptyText"),
-                    		 store : {
-                    			 fields : [ 'name', 'value' ],
-                    			 data : [ {
-                    				 name : LN('sbi.chartengine.configuration.orientation.v'),
-                    				 value : 'vertical'
-                    			 }, {
-                    				 name : LN('sbi.chartengine.configuration.orientation.h'),
-                    				 value : 'horizontal'
-                    			 } ]
+                    	 }, */
+            	         
+            	         // New implementation (Danilo Ristovski, 21.12)
+            	         {
+                    		 xtype: 'combo',
+                    		 queryMode: 'local',
+                    		 value: 'bottom',
+                    		 triggerAction: 'all',
+                    		 forceSelection: true,
+                    		 editable: false,
+                    		 fieldLabel: LN('sbi.chartengine.configuration.position'),
+                    		 bind: '{configModel.legendPosition}',
+                    		 displayField: 'name',
+                    		 valueField: 'value',
+                    		 emptyText: LN("sbi.chartengine.configuration.legend.position.emptyText"),
+                    		
+                    		 store : 
+                    		 {
+                    			 fields: ['name', 'value'],
+                    			 
+	                			 data: 
+	            				 [ 
+            				   		{
+            				   			name: LN("sbi.chartengine.configuration.legend.position.top"),	
+            				   			value: 'top'
+            				   		}, 
+                				   
+            				   		{
+            				   			name: LN("sbi.chartengine.configuration.legend.position.bottom"),	
+            				   			value: 'bottom'
+            				   		}, 
+                				   
+            				   		{
+            				   			name: LN("sbi.chartengine.configuration.legend.position.left"),
+            				   			value: 'left'
+            				   		},
+                				   
+            				   		{
+            				   			name: LN("sbi.chartengine.configuration.legend.position.right"),	
+            				   			value: 'right'
+            				   		}
+        				   		]
                     		 }
-                    	 }]
+                    	 }, 
+                    	 
+                    	 // Commented by Danilo Ristovski (21.12) - old implementation
+                    	 /*
+                    	 {
+	                		 xtype : 'combo',
+	                		 queryMode : 'local',
+	                		 value : 'horizontal',
+	                		 triggerAction : 'all',
+	                		 forceSelection : true,
+	                		 editable : false,
+	                		 fieldLabel : LN('sbi.chartengine.configuration.layout'),
+	                		 bind : '{configModel.legendLayout}',
+	                		 displayField : 'name',
+	                		 valueField : 'value',
+	                		 emptyText: LN("sbi.chartengine.configuration.legend.layout.emptyText"),
+	                		 store : {
+	                			 fields : [ 'name', 'value' ],
+	                			 data : [ {
+	                				 name : LN('sbi.chartengine.configuration.orientation.v'),
+	                				 value : 'vertical'
+	                			 }, {
+	                				 name : LN('sbi.chartengine.configuration.orientation.h'),
+	                				 value : 'horizontal'
+	                			 } ]
+	                		 }
+                    	 }
+                    	 */
+                	 ]
 
                      },  {            
                     	 xtype : 'fieldcontainer',
-                    	 layout : 'hbox',
+                    	 layout : {type: 'hbox',align:"center"},
                     	 defaults : {
                     		 labelWidth : '100%',
                     		 margin:'0 30 0 0'
@@ -132,29 +185,46 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 id: 'floating',
                     		 labelSeparator: '',
                     		 fieldLabel: LN('sbi.chartengine.configuration.floating')
-                    	 },{
+                    	 },
+                    	 
+                    	 // Commented by Danilo Ristovski (21.12) - old implementation
+                    	 /*
+                    	 {
                     		 xtype : 'numberfield',
                     		 bind : '{configModel.legendX}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.x'),
                     		 maxWidth: 280,
                     		 emptyText: LN("sbi.chartengine.configuration.legend.xOffset.emptyText")
-                    	 },{
+                    	 },
+                    	 
+                    	 {
                     		 xtype : 'numberfield',
                     		 bind : '{configModel.legendY}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.y'),
                     		 maxWidth: 280,
                     		 emptyText: LN("sbi.chartengine.configuration.legend.yOffset.emptyText")
-                    	 },{
+                    	 },
+                    	 
+                    	 {
                     		 xtype : 'button',
                     		 text: LN('sbi.chartengine.configuration.stylebutton'),
                     		 handler: function(){
                     			 stylePanelLegend.show();
                     		 }
-                    	 }]
+                    	 }
+                    	 
+                    	 */
+                    	 
+                    	 ]
                      }
+                     
+                     
                      ]; 
-
+        
         this.add(item);
+        
+        // Danilo Ristovski (21.12)
+        this.add(this.stylePanelLegend.items.items)
 	}
 
 });

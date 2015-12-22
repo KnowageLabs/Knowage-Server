@@ -126,7 +126,29 @@ Ext.define
 			 * If it is, we can access its data (e.g. yAxisPool) and we will not have an error in the code.
 			 */
 	    	dataLoaded: false,
-	    	chartType: null
+	    	chartType: null,
+	    	
+	    	/**
+			 * Lookup for checking the compatibility of the chart types when we are determining
+			 * should all the data that exists in the current chart within the X and Y panels
+			 * be removed (cleared). 
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */
+			compatibilityAddDataLookup:
+			{
+				bar: 		['line','radar','scatter'],
+				line: 		['bar','radar','scatter'],
+				pie: 		[],
+				sunburst: 	[],
+				wordcloud: 	[],
+				treemap: 	[],
+				parallel: 	[],
+				radar: 		['bar','line','scatter'],
+				scatter:	['bar','line','radar'],
+				heatmap:	[],
+				chord: 		[],
+				gauge:		[]
+			}
     	},
 	    
 	    getChartType: function() {
@@ -185,6 +207,8 @@ Ext.define
 			this.plusLeftAxis.show();				
 			this.titleTextfield.show();	
 			
+			//console.log(leftContainerId);
+			
 			this.actionColumnLeftAxis.items[0].iconCls = "";
 		},
 		
@@ -198,8 +222,9 @@ Ext.define
 			var iconsPath = this.getChartTypesIcons();
 			
 			/**
-			 * Set the icon next to the text (the name of the selected
-			 * chart type) in the combo box.
+			 * Remove the icon in the chart type combo box when changing between two types
+			 * since there is an answer that user should provide and on which it will be
+			 * determined if the current chart type should be changed.
 			 */
 			this.inputEl.setStyle
             (
@@ -220,21 +245,7 @@ Ext.define
 			 * be removed (cleared). 
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
-			var compatibilityAddDataLookup = 
-			{
-				bar: 		['line','radar','scatter'],
-				line: 		['bar','radar','scatter'],
-				pie: 		[],
-				sunburst: 	[],
-				wordcloud: 	[],
-				treemap: 	[],
-				parallel: 	[],
-				radar: 		['bar','line','scatter'],
-				scatter:	['bar','line','radar'],
-				heatmap:	[],
-				chord: 		[],
-				gauge:		[]
-			};	
+			var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
 			
 			/**
 			 * With this foreach-loop check if the previous and the newly chosen chart type 
@@ -257,31 +268,35 @@ Ext.define
 			 */
 			if(!compatibleTypes) 
 			{							
-				Ext.Msg.show
-				(
-					{
-						title : '',
-						message : LN('sbi.chartengine.designer.charttype.changetype'),
-						icon : Ext.Msg.QUESTION,
-						closable : false,
-						buttons : Ext.Msg.OKCANCEL,
-					
-						buttonText : 
-						{
-							ok : LN('sbi.chartengine.generic.ok'),
-							cancel : LN('sbi.generic.cancel')
-						},
-					
-						fn : function(buttonValue, inputText, showConfig)
-						{							
-							if (buttonValue == 'ok') 
-							{								
+//				Ext.Msg.show
+//				(
+//					{
+//						title : '',
+//						message : LN('sbi.chartengine.designer.charttype.changetype.lossOfSeriesAndCategories'),
+//						icon : Ext.Msg.QUESTION,
+//						closable : false,
+//						buttons : Ext.Msg.OKCANCEL,
+//					
+//						buttonText : 
+//						{
+//							ok : LN('sbi.chartengine.generic.ok'),
+//							cancel : LN('sbi.generic.cancel')
+//						},
+//					
+//						fn : function(buttonValue, inputText, showConfig)
+//						{							
+//							if (buttonValue == 'ok') 
+//							{								
 								Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+								//console.log("PPP");
+								//console.log(Sbi.chart.designer.Designer.exportAsJson());
 								
 								/**
 								 * Cleaning of axis panels since previous and current chart types are not compatible.
 								 */
-								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();	
+								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();
+								
+								//console.log(Sbi.chart.designer.Designer.exportAsJson());
 								
 								globalScope.fireEvent("chartTypeChanged");	
 								
@@ -290,7 +305,7 @@ Ext.define
 								 * Step 1 and Step 2 of the Designer. 
 								 */
 								globalScope.resetStep1();
-								
+								//console.log(Sbi.chart.designer.Designer.exportAsJson());
 								/**
 								 * Inform the Designer that it should take care of GUI elements on the Step 2 of the
 								 * Designer. It should hide excess GUI elements on the Step 2 and show those necessary
@@ -367,25 +382,25 @@ Ext.define
 									globalScope.plusLeftAxis.hide();
 								}
 								//return true;
-							} 									
-							else if (buttonValue == 'cancel') 
-							{
-								
-								Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
-								// danristo
-								// Suspend "change" event that will definitely happen when changing the active combo item (previous chart type)
-								globalScope.suspendEvents(false);
-								
-								// Set previous chart type
-								globalScope.setValue(previousChartType);
-																
-								// Resume events
-								globalScope.resumeEvents();	
-								
-								globalScope.fireEvent("cancel");
-							}
-						}
-				});
+//							} 									
+//							else if (buttonValue == 'cancel') 
+//							{
+//								
+//								Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+//								// danristo
+//								// Suspend "change" event that will definitely happen when changing the active combo item (previous chart type)
+//								globalScope.suspendEvents(false);
+//								
+//								// Set previous chart type
+//								globalScope.setValue(previousChartType);
+//																
+//								// Resume events
+//								globalScope.resumeEvents();	
+//								
+//								globalScope.fireEvent("cancel");
+//							}
+//						}
+//				});
 			}	
 			/**
 			 * If previous and current chart types are compatible.
@@ -405,7 +420,7 @@ Ext.define
 //					(
 //						{
 //							title : '',
-//							message : LN("sbi.chartengine.designer.charttype.changetypeCategories"), 
+//							message : LN("sbi.chartengine.designer.charttype.changetype.lossOfCategories"), 
 //							icon : Ext.Msg.QUESTION,
 //							closable : false,
 //							buttons : Ext.Msg.OKCANCEL,
@@ -470,7 +485,7 @@ Ext.define
 						
 						Ext.Msg.show ({
 							title : '',
-							message : LN("sbi.chartengine.designer.charttype.changetypeCategories"), 
+							message : LN("sbi.chartengine.designer.charttype.changetype.lossOfCategories"), 
 							icon : Ext.Msg.QUESTION,
 							closable : false,
 							buttons : Ext.Msg.OKCANCEL,
@@ -562,6 +577,7 @@ Ext.define
 				 */
 				else 
 				{
+					//console.log("BAR/LINE");
 					globalScope.resetStep1();
 					Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 					globalScope.fireEvent("resetStep2");
@@ -620,87 +636,179 @@ Ext.define
 			},
 				
 			change: function(comboBox,currentOrNewChartType,previousChartType)
-			{		
+			{	
 				/**
-				 * If currentOrNewChartType is not null - if user did not click-down on the
-				 * chart type and then move mouse on some other chart type and make a click-up
-				 * we can proceed with change of the chart type. Otherwise (without this ckeck)
-				 * the error will appear.
+				 * Scope of the chart type selector.
+				 * @commentBy: danristo (danilo.ristovski@mht.net)
 				 */
-				if (currentOrNewChartType!=null)
+				var globalScope = this;
+				
+				if (previousChartType!=null)
 				{
 					/**
-					 * When Designer renders for the first time (when opening the chart in it for the first
-					 * time) second input parameters of this function (event) will be equal to the actual chart
-					 * type (document). The third input parameter will be null. 
+					 * Remove the icon in the chart type combo box when changing between two types
+					 * since there is an answer that user should provide and on which it will be
+					 * determined if the current chart type should be changed.
+					 */
+					this.inputEl.setStyle
+		            (
+		        		{
+			                "height": "35px",
+		        			'background-image': 	'',
+			                'background-repeat': 	'no-repeat',
+			                'background-position': 	'left 2px center',
+			                'padding-left': 		'40px', 
+			                'background-size': 		"30px 30px",
+			                'display': 'none'
+		        		}
+		    		);
+					
+					var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
+					
+					/**
+					 * With this foreach-loop check if the previous and the newly chosen chart type 
+					 * are compatible (in a manner of their quantity and quality criteria for the
+					 * serie and category items). If not compatible, 'compatibleTypes' variable is
+					 * going to be 'false'.
 					 * 
-					 * When we change the chart type inside the Designer the second parameter will contain newly
-					 * selected chart type, while the third parameter will contain value of the chart type that 
-					 * was previously selected.
-					 * 
-					 * @commentBy: danristo (danilo.ristovski@mht.net)
-					 */				
-					
-					/**
-					 * The chart type that is actually picked (clicked). Newly selected chart type.
-					 * @commentBy: danristo (danilo.ristovski@mht.net)
-					 */
-					var newlySelectedType = currentOrNewChartType.toLowerCase();	
-					
-					/**
-					 * Scope of the chart type selector.
-					 * @commentBy: danristo (danilo.ristovski@mht.net)
-					 */
-					var globalScope = this;
-					
-					/**
-					 * If the Designer is loaded for the first time, i.e. document is just opened. This will
-					 * help us to determine if we should call customization function for Designer's Step 1
-					 * and Step 2. If it is just loaded, we do not need customization.
-					 */
-					var designerJustLoaded = false;
-					(previousChartType != null) ? designerJustLoaded = false : designerJustLoaded = true;
-					
-					/**
-					 * The chart type that has been already chosen (defined) - the one we had just before
-					 * we picked a new one from the chart type selector.
-					 * @commentBy: danristo (danilo.ristovski@mht.net)
-					 */
-					var previousChartType = (previousChartType != null) ? previousChartType.toLowerCase() : newlySelectedType;
-											
-					/**
-					 * If newly clicked (selected) chart type ('selectedType') in ChartTypeSelector is 
-					 * of the same type as the chart that we have in Designer (the one that has already
-					 * been chosen or defined by the loading of the already existing chart document, 
-					 * 'previousChartType'), do not take any action.
-					 *  
 					 * @author: danristo (danilo.ristovski@mht.net)
-					 */				
-					if (newlySelectedType != previousChartType)
-					{						
-						globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);										
-					}
-					/**
-					 * Previous and current chart type are the same: (1) the same chart type is chosen twice or
-					 * (2) we are just loading the Designer page for the first time
 					 */
-					else
+					var compatibleTypes = false;
+					
+					for(i in compatibilityAddDataLookup[currentOrNewChartType]) 
 					{
-						globalScope.on
-						(
-							"axesSet",function() 
-							{
-								Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
-								
-	//							if(Sbi.chart.designer.ChartTypeSelector_2.dataLoaded)
-	//							{	
-	//								//globalScope.resetStep1();
-	//								//globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
-	//							}
-							}
-						);					
+						var compatibleChart = compatibilityAddDataLookup[currentOrNewChartType][i];
+						compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
 					}
-				}
+					
+					var messageTxt = (compatibleTypes) ? 
+							LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConf") : 
+								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");										
+					
+					/**
+					 * Warn user that he is about to lose all axis style ceonfiguration and
+					 * serie style configuration customization changes that he potentially
+					 * made.
+					 */
+					Ext.Msg.show
+					(
+						{
+							title: LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesAndSeriesStyleConfigCustomization.title"),
+							
+							message: messageTxt,
+										
+							icon: Ext.Msg.QUESTION,
+							closable: false,
+							buttons: Ext.Msg.OKCANCEL,
+							
+							buttonText: 
+							{
+								ok: LN('sbi.chartengine.generic.ok'),
+								cancel: LN('sbi.generic.cancel')
+							},
+							
+							fn: function(buttonValue, inputText, showConfig)
+							{
+								if (buttonValue == 'ok') 
+								{									
+									/**
+									 * If currentOrNewChartType is not null - if user did not click-down on the
+									 * chart type and then move mouse on some other chart type and make a click-up
+									 * we can proceed with change of the chart type. Otherwise (without this ckeck)
+									 * the error will appear.
+									 */
+									if (currentOrNewChartType!=null)
+									{
+										/**
+										 * When Designer renders for the first time (when opening the chart in it for the first
+										 * time) second input parameters of this function (event) will be equal to the actual chart
+										 * type (document). The third input parameter will be null. 
+										 * 
+										 * When we change the chart type inside the Designer the second parameter will contain newly
+										 * selected chart type, while the third parameter will contain value of the chart type that 
+										 * was previously selected.
+										 * 
+										 * @commentBy: danristo (danilo.ristovski@mht.net)
+										 */				
+										
+										/**
+										 * The chart type that is actually picked (clicked). Newly selected chart type.
+										 * @commentBy: danristo (danilo.ristovski@mht.net)
+										 */
+										var newlySelectedType = currentOrNewChartType.toLowerCase();	
+										
+//										/**
+//										 * If the Designer is loaded for the first time, i.e. document is just opened. This will
+//										 * help us to determine if we should call customization function for Designer's Step 1
+//										 * and Step 2. If it is just loaded, we do not need customization.
+//										 */
+//										var designerJustLoaded = false;
+//										(previousChartType != null) ? designerJustLoaded = false : designerJustLoaded = true;
+										
+//										/**
+//										 * The chart type that has been already chosen (defined) - the one we had just before
+//										 * we picked a new one from the chart type selector.
+//										 * @commentBy: danristo (danilo.ristovski@mht.net)
+//										 */
+//										var previousChartType = (previousChartType != null) ? previousChartType.toLowerCase() : newlySelectedType;
+										
+										/**
+										 * If newly clicked (selected) chart type ('selectedType') in ChartTypeSelector is 
+										 * of the same type as the chart that we have in Designer (the one that has already
+										 * been chosen or defined by the loading of the already existing chart document, 
+										 * 'previousChartType'), do not take any action.
+										 *  
+										 * @author: danristo (danilo.ristovski@mht.net)
+										 */				
+										if (newlySelectedType != previousChartType)
+										{						
+											globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);										
+										}
+										/**
+										 * Previous and current chart type are the same: (1) the same chart type is chosen twice or
+										 * (2) we are just loading the Designer page for the first time
+										 */
+										else
+										{
+											globalScope.on
+											(
+												"axesSet",function() 
+												{
+													Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
+													
+						//							if(Sbi.chart.designer.ChartTypeSelector_2.dataLoaded)
+						//							{	
+						//								//globalScope.resetStep1();
+						//								//globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
+						//							}
+												}
+											);					
+										}			
+									}
+								}
+								else
+								{
+									/**
+									 * If user does not want to change the current chart type and the axes/serie style configuration
+									 * customization made until the moment, we will cancel its change and keep current data.
+									 */
+									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+									
+									globalScope.suspendEvents(false);
+									
+									// Set previous chart type
+									globalScope.setValue(Sbi.chart.designer.ChartTypeSelector_2.chartType);
+																		
+									// Resume events
+									globalScope.resumeEvents();	
+									
+									globalScope.fireEvent("cancel");
+								}
+							}
+						}
+					);
+					
+				}				
 			}
 		}
 	}
