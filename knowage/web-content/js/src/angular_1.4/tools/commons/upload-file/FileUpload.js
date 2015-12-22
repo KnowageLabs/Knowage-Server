@@ -45,4 +45,11 @@ function FileUploadControllerFunction($scope,$timeout){
 		$scope.ngModel.fileName = element.files[0].name;
 		$scope.$apply();
 	}
+	
+	$scope.$watch('ngModel.file', function(newVal, oldVal){
+		if ($scope.ngModel){
+			$scope.ngModel.file = newVal;
+			$scope.fileName = newVal !== undefined ? newVal.name : '';
+		}
+	});
 }
