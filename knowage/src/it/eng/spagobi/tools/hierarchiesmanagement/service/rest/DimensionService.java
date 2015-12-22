@@ -1,17 +1,26 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -23,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/dimensions")
@@ -69,21 +79,22 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDimensionFields(@QueryParam("dimension") String dimensionName) {
+	public String getDimensionFields(@QueryParam("dimensionLabel") String dimensionLabel) {
 
 		logger.debug("START");
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
-		Dimension dimension = hierarchies.getDimension(dimensionName);
+		Dimension dimension = hierarchies.getDimension(dimensionLabel);
 
 		List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 
-		JSONObject jsonDimension = new JSONObject();
+		JSONObject result = new JSONObject();
 
 		try {
 
-			jsonDimension = HierarchyUtils.createJSONObjectFromFieldsList(metadataFields, HierarchyConstants.DIM_FIELDS, false);
+			JSONArray jsonDimension = HierarchyUtils.createJSONArrayFromFieldsList(metadataFields, false);
+			result.put(HierarchyConstants.DIM_FIELDS, jsonDimension);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while creating dimensions json");
@@ -91,8 +102,160 @@ public class DimensionService {
 		}
 
 		logger.debug("END");
-		return jsonDimension.toString();
+		return result.toString();
 
+	}
+
+	@GET
+	@Path("/dimensionData")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDimensionData(@QueryParam("dimensionLabel") String dimensionLabel, @QueryParam("validityDate") String validityDate,
+			@QueryParam("filterDate") String filterDate) {
+
+		logger.debug("START");
+
+		JSONObject result = new JSONObject();
+
+		try {
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
+
+			Dimension dimension = hierarchies.getDimension(dimensionLabel);
+			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
+
+			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
+
+			String dimensionName = dimension.getName();
+
+			// 1 - get datasource label name
+			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
+
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+
+			// 2 - execute query to get dimension data
+			Map<Integer, String> columnIndexes = new HashMap<Integer, String>();
+			String queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, columnIndexes);
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+
+			// 3 - Create JSON for Dimension data from datastore
+			JSONArray rootArray = this.createRootDimensionData(dataStore, columnIndexes);
+
+			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(metadataFields, false);
+			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(metadataFields);
+
+			if (rootArray == null || columnsArray == null || columnsSearchArray == null) {
+				return null;
+			}
+
+			logger.debug("Root array is [" + rootArray.toString() + "]");
+			result.put(HierarchyConstants.ROOT, rootArray);
+
+			logger.debug("Columns array is [" + columnsArray.toString() + "]");
+			result.put(HierarchyConstants.COLUMNS, columnsArray);
+
+			logger.debug("Columns Search array is [" + columnsSearchArray.toString() + "]");
+			result.put(HierarchyConstants.COLUMNS_SEARCH, columnsSearchArray);
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving hierarchy structure");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy structure", t);
+		}
+
+		logger.debug("JSON for dimension data is [" + result.toString() + "]");
+		logger.debug("END");
+		return result.toString();
+
+	}
+
+	private String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
+			Map<Integer, String> columnIndexes) {
+
+		logger.debug("START");
+
+		// select
+		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String sep = ",";
+
+		int fieldsSize = metadataFields.size();
+
+		for (int i = 0; i < fieldsSize; i++) {
+			Field tmpField = metadataFields.get(i);
+			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
+			columnIndexes.put(i, tmpField.getId());
+
+			if (i == fieldsSize - 1) {
+				sep = " ";
+			}
+
+			selectClauseBuffer.append(column + sep);
+		}
+
+		String selectClause = selectClauseBuffer.toString();
+
+		// where
+
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+
+		// defining date conversion cmd for filters on dates
+		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String fnc = "";
+		String actualDialect = dataSource.getHibDialectClass();
+		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+			fnc = "STR_TO_DATE('" + validityDate + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+			fnc = "TO_DATE('" + validityDate + "','" + format + "')";
+		} else if (HierarchyConstants.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+			// fnc = "DATE('" + dateHierarchy + "','" + format + "')";
+			fnc = "DATE('" + validityDate + "')";
+		} else if (HierarchyConstants.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+			fnc = "'" + validityDate + "',AS DATE FORMAT '" + format + "')";
+		}
+
+		String query = "SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + fnc + " >= " + beginDtColumn + " AND " + fnc + " <= " + endDtColumn;
+
+		logger.debug("Query for dimension data is: " + query);
+		logger.debug("END");
+		return query;
+	}
+
+	private JSONArray createRootDimensionData(IDataStore dataStore, Map<Integer, String> columnIndexes) throws JSONException {
+
+		logger.debug("START");
+
+		JSONArray rootArray = new JSONArray();
+
+		Iterator iterator = dataStore.iterator();
+
+		while (iterator.hasNext()) {
+
+			IRecord record = (IRecord) iterator.next();
+			List<IField> recordFields = record.getFields();
+
+			JSONObject tmpJSON = new JSONObject();
+
+			for (int i = 0; i < recordFields.size(); i++) {
+
+				IField tmpField = recordFields.get(i);
+
+				String tmpKey = columnIndexes.get(i);
+				tmpJSON.put(tmpKey, tmpField.getValue());
+			}
+
+			rootArray.put(tmpJSON);
+		}
+
+		logger.debug("END");
+		return rootArray;
 	}
 
 }

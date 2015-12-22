@@ -34,11 +34,11 @@ public class HierarchyService {
 
 		logger.debug("START");
 
-		JSONArray result = new JSONArray();
+		JSONObject result = new JSONObject();
 
 		try {
 
-			result = createHierarchyJSONArray(dimensionName, false);
+			result = createHierarchyJSON(dimensionName, false);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while creating dimensions json");
@@ -56,11 +56,11 @@ public class HierarchyService {
 
 		logger.debug("START");
 
-		JSONArray result = new JSONArray();
+		JSONObject result = new JSONObject();
 
 		try {
 
-			result = createHierarchyJSONArray(dimensionName, excludeLeaf);
+			result = createHierarchyJSON(dimensionName, excludeLeaf);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while creating dimensions json");
@@ -81,11 +81,11 @@ public class HierarchyService {
 	 * @return the JSON with fields in hierarchy section
 	 * @throws JSONException
 	 */
-	private JSONArray createHierarchyJSONArray(String dimensionName, boolean excludeLeaf) throws JSONException {
+	private JSONObject createHierarchyJSON(String dimensionName, boolean excludeLeaf) throws JSONException {
 
 		logger.debug("START");
 
-		JSONArray result = new JSONArray();
+		JSONObject result = new JSONObject();
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 		Assert.assertNotNull(hierarchies, "Impossible to find valid hierarchies config");
@@ -95,19 +95,18 @@ public class HierarchyService {
 
 		List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
 
-		JSONObject nodeFieldsJSONObject = HierarchyUtils.createJSONObjectFromFieldsList(nodeMetadataFields, HierarchyConstants.NODE_FIELDS, true);
-		result.put(nodeFieldsJSONObject);
+		JSONArray nodeFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(nodeMetadataFields, true);
+		result.put(HierarchyConstants.LEAF_FIELDS, nodeFieldsJSONArray);
 
 		if (!excludeLeaf) { // add leaf fields
 			List<Field> leafMetadataFields = new ArrayList<Field>(hierarchy.getMetadataLeafFields());
 
-			JSONObject leafFieldsJSONObject = HierarchyUtils.createJSONObjectFromFieldsList(leafMetadataFields, HierarchyConstants.LEAF_FIELDS, true);
-			result.put(leafFieldsJSONObject);
+			JSONArray leafFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(leafMetadataFields, true);
+			result.put(HierarchyConstants.LEAF_FIELDS, leafFieldsJSONArray);
 		}
 
 		logger.debug("END");
 		return result;
 
 	}
-
 }

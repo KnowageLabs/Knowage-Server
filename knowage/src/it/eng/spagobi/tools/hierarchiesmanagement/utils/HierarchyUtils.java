@@ -70,29 +70,24 @@ public class HierarchyUtils {
 	}
 
 	/**
-	 * This method creates a JSON from a list of fields with the specified name as key
+	 * This method creates a JSON array from a list of fields
 	 *
 	 * @param fields
 	 *            List of Fields read from hierarchies config
-	 * @param name
-	 *            the key for the JSON related to the fields list
 	 * @param hierarchyFields
 	 *            to manage differences between dimensions and hierarchies fields
-	 * @return a JSON that represents fields
+	 * @return a JSON array that represents fields
 	 * @throws JSONException
 	 */
-	public static JSONObject createJSONObjectFromFieldsList(List<Field> fields, String name, boolean hierarchyFields) throws JSONException {
+	public static JSONArray createJSONArrayFromFieldsList(List<Field> fields, boolean hierarchyFields) throws JSONException {
 
 		logger.debug("START");
 
-		JSONObject result = new JSONObject();
-		JSONArray jsonFieldsArray = new JSONArray();
+		JSONArray result = new JSONArray();
 
 		for (Field tmpField : fields) {
-			jsonFieldsArray.put(createJSONObjectFromField(tmpField, hierarchyFields));
+			result.put(createJSONObjectFromField(tmpField, hierarchyFields));
 		}
-
-		result.put(name, jsonFieldsArray);
 
 		logger.debug("END");
 		return result;
@@ -121,6 +116,29 @@ public class HierarchyUtils {
 			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy datasource informations", t);
 		}
 
+	}
+
+	/**
+	 * This method creates a JSON array with ids of all visible fields
+	 *
+	 * @param fields
+	 * @return a JSON array with ids of all visible fields
+	 * @throws JSONException
+	 */
+	public static JSONArray createColumnsSearch(List<Field> fields) throws JSONException {
+
+		logger.debug("START");
+
+		JSONArray result = new JSONArray();
+
+		for (Field tmpField : fields) {
+			if (tmpField.isVisible()) {
+				result.put(tmpField.getId());
+			}
+		}
+
+		logger.debug("END");
+		return result;
 	}
 
 }

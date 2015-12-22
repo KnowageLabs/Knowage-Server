@@ -58,4 +58,9 @@ public class HierarchyConstants {
 	public final static String BEGIN_DT = "BEGIN_DT";
 	public final static String END_DT = "END_DT";
 
+	// DIMENSION DATA
+	public final static String ROOT = "root";
+	public final static String COLUMNS = "columns";
+	public final static String COLUMNS_SEARCH = "columns_search";
+
 }
