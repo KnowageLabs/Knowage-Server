@@ -56,9 +56,9 @@ function geoMapMenuControllerFunction(
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
-   // {label: "m",type:"miglia"},
+   // 
 	$scope.typeOfMisure = [
-	                   
+	                       {label: "m",type:"miglia"},
 	                       {label: "km",type:"kilometers"},
 	                       
 	                       ];
@@ -84,7 +84,7 @@ function geoMapMenuControllerFunction(
 		console.log($scope.selectMisure, $scope.measureInsert);
 		if($scope.selectMisure=="miglia"){
 			//conversione in km
-			$scope.measureInsert=$scope.measureInsert*1.60934;
+			$scope.measureInsert=$scope.measureInsert*1.8;
 		}
 		
 		geoModule_layerServices.measure=$scope.measureInsert*500;
