@@ -15,7 +15,8 @@ angular.module('file_upload', [ 'ngMaterial'])
 			scope: {
 				ngModel : '='
 				, id : "@"
-				, label : '='
+				, label : '=?'
+				, ngDisabled : '=?'
 			},
 	    controller: FileUploadControllerFunction,
 	    controllerAs: 'ctrl',
@@ -30,7 +31,7 @@ angular.module('file_upload', [ 'ngMaterial'])
 	    	if (attrs.label){
 	    		scope.textButton = attrs.label;
 	    	}
-	    	if(!scope.ngModel){
+	    	if(!attrs.ngModel){
 	    		scope.ngModel = {};
 	    	}
 	    }

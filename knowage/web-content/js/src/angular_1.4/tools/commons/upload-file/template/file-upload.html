@@ -1,10 +1,10 @@
-<md-content layout="row" layout-align="space-around center" layout-padding>
+<md-content layout="row" layout-align="center center" layout-padding>
 	<!-- Simulate button and link the click event with the input type='file' -->
-	<label id="{{id}}" class="md-button md-raised md-ExtraMini" md-ink-ripple for="{{id}}_input">
+	<label ng-disabled='ngDisabled' id="{{id}}" class="md-button md-raised md-ExtraMini" md-ink-ripple for="{{id}}_input">
 		<span >{{textButton}}</span>
 	</label>
-	<input id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
-	<md-input-container flex='65' style="height : 30px;bottom : 0px;">
+	<input  ng-disabled='true' id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
+	<md-input-container flex='ngDisabled' style="height : 30px;bottom : 0px;">
 		<input type='text' disabled ng-model="fileName" aria-label="file name"/>
 	</md-input-container>
 </md-content>
