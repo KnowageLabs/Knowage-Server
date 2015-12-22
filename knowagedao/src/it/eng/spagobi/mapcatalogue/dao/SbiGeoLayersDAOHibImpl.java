@@ -525,13 +525,16 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						Iterator it = obj.keys();
 						while (it.hasNext()) {
 							String key = (String) it.next();
-							if (!keys.contains(key)) {
-								keys.add(key);
+							if (obj.get(key).getClass().equals(key.getClass())) {
+								if (!keys.contains(key)) {
+									keys.add(key);
+								}
 							}
 						}
 					}
 				} while (c != null);
 			}
+
 			// se dobbiamo prendere le properties di un wfs
 			if (!layerDef.get("layer_url").equals(null)) {
 				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
@@ -560,16 +563,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 							for (int k = 0; k < arr.length(); k++) {
 
 								JSONObject val = arr.getJSONObject(k);
-								if (!keys.contains(val.get("name"))) {
+								if (!keys.contains(val.get("name")) && "string".equals(val.optString("localType"))) {
 									keys.add(val.getString("name"));
 								}
-								// Iterator it = val.keys();
-								// while (it.hasNext()) {
-								// String key = (String) it.next();
-								// if (!keys.contains(key)) {
-								// keys.add(key);
-								// }
-								// }
+
 							}
 
 						}

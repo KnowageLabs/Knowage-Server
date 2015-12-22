@@ -597,7 +597,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
-		.content('Layer saved corretly...')
+		.content('Layer saved correctly...')
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
