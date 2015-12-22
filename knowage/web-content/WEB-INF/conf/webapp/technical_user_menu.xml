@@ -51,10 +51,14 @@
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
-			<ITEM	title="#menu.Roles"
+			<ITEM	title="Roles Management Old"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ROLES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />
+			<ITEM	title="#menu.Roles"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />		
 			<ITEM	title="Users Management Old"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
