@@ -4,23 +4,26 @@ import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.Pseudograph;
 
 public class AssociationAnalyzer {
 	private Collection<Association> associations;
-	private Map<String, Map<String, String>> datasetAssociationColumnMap;
+	private Map<String, Map<String, String>> datasetToAssociationToColumnMap;
 	private Pseudograph<String, LabeledEdge<String>> graph;
 
 	public AssociationAnalyzer(Collection<Association> associations) {
 		this.associations = associations;
-		this.datasetAssociationColumnMap = new HashMap<String, Map<String, String>>();
+		this.datasetToAssociationToColumnMap = new HashMap<String, Map<String, String>>();
 		this.graph = new Pseudograph<String, LabeledEdge<String>>(new ClassBasedEdgeFactory<String, LabeledEdge<String>>(
 				(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 	}
@@ -40,14 +43,14 @@ public class AssociationAnalyzer {
 				}
 
 				// add column of association to the map
-				Map<String, String> associationToColumns = null;
-				if (datasetAssociationColumnMap.containsKey(datasetLabel)) {
-					associationToColumns = datasetAssociationColumnMap.get(datasetLabel);
+				Map<String, String> associationToColumnMap = null;
+				if (datasetToAssociationToColumnMap.containsKey(datasetLabel)) {
+					associationToColumnMap = datasetToAssociationToColumnMap.get(datasetLabel);
 				} else {
-					associationToColumns = new HashMap<String, String>();
-					datasetAssociationColumnMap.put(datasetLabel, associationToColumns);
+					associationToColumnMap = new HashMap<String, String>();
+					datasetToAssociationToColumnMap.put(datasetLabel, associationToColumnMap);
 				}
-				associationToColumns.put(associationId, field.getFieldName());
+				associationToColumnMap.put(associationId, field.getFieldName());
 			}
 
 			// add edges to the graph
@@ -62,51 +65,91 @@ public class AssociationAnalyzer {
 		}
 	}
 
-	public Map<String, Map<String, String>> getDatasetAssociationColumnMap() {
-		return datasetAssociationColumnMap;
+	public Map<String, Map<String, String>> getDatasetToAssociationToColumnMap() {
+		return datasetToAssociationToColumnMap;
 	}
 
 	public Pseudograph<String, LabeledEdge<String>> getGraph() {
 		return graph;
 	}
 
-	public static Map<String, Map<String, Set<String>>> getSelections(AssociationGroup associationGroup, Map<EdgeGroup, Set<String>> egdeGroupValuesMap) {
-		Map<String, Map<String, Set<String>>> selections = new HashMap<String, Map<String, Set<String>>>();
+	public static Map<String, Map<String, Set<String>>> getSelections(AssociationGroup associationGroup, Pseudograph<String, LabeledEdge<String>> graph,
+			Map<EdgeGroup, Set<String>> egdegroupToValues) {
 
-		for (EdgeGroup edgeGroup : egdeGroupValuesMap.keySet()) {
-			Set<String> valuesSet = egdeGroupValuesMap.get(edgeGroup);
-			String[] associationIds = edgeGroup.getColumnNames().split(",");
+		Map<Set<String>, Set<String>> associationsToValuesMap = new HashMap<Set<String>, Set<String>>();
+		for (EdgeGroup edgeGroup : egdegroupToValues.keySet()) {
+			Set<String> associations = new TreeSet<String>();
+			String associationString = edgeGroup.getColumnNames();
+			associations.addAll(Arrays.asList(associationString.split(",")));
+			Set<String> values = egdegroupToValues.get(edgeGroup);
+			associationsToValuesMap.put(associations, values);
+		}
 
-			Map<String, String> dataSetColumnsMap = new HashMap<String, String>();
-			for (String associationId : associationIds) {
-				Association association = associationGroup.getAssociation(associationId);
+		Map<String, Set<String>> datasetToAssociationsMap = new HashMap<String, Set<String>>();
+		for (String dataset : graph.vertexSet()) {
+			Set<String> associations = new TreeSet<String>();
+			for (LabeledEdge<String> labeledEdge : graph.edgesOf(dataset)) {
+				associations.add(labeledEdge.getLabel());
+			}
+			datasetToAssociationsMap.put(dataset, associations);
+		}
 
-				for (Field field : association.getFields()) {
-					String dataSet = field.getDataSetLabel();
-					String column = field.getFieldName();
+		Map<String, Map<Set<String>, Set<String>>> datasetToAssociationsToValuesMap = new HashMap<String, Map<Set<String>, Set<String>>>();
+		for (String dataset : datasetToAssociationsMap.keySet()) {
+			Map<Set<String>, Set<String>> currentAssociationsToValuesMap = null;
+			if (datasetToAssociationsToValuesMap.containsKey(dataset)) {
+				currentAssociationsToValuesMap = datasetToAssociationsToValuesMap.get(dataset);
+			} else {
+				currentAssociationsToValuesMap = new HashMap<Set<String>, Set<String>>();
+				datasetToAssociationsToValuesMap.put(dataset, currentAssociationsToValuesMap);
+			}
 
-					if (dataSetColumnsMap.containsKey(dataSet)) {
-						String columns = dataSetColumnsMap.get(dataSet);
-						dataSetColumnsMap.put(dataSet, columns + "," + column);
+			Set<String> graphAssociations = datasetToAssociationsMap.get(dataset);
+			for (Set<String> newAssociations : associationsToValuesMap.keySet()) {
+				if (graphAssociations.containsAll(newAssociations)) {
+					Set<String> values = associationsToValuesMap.get(newAssociations);
+					if (currentAssociationsToValuesMap.isEmpty()) {
+						currentAssociationsToValuesMap.put(newAssociations, values);
 					} else {
-						dataSetColumnsMap.put(dataSet, column);
+						boolean insert = true;
+						for (Iterator<Set<String>> it = currentAssociationsToValuesMap.keySet().iterator(); it.hasNext();) {
+							Set<String> currentAssociations = it.next();
+							if (newAssociations.containsAll(currentAssociations)) {
+								it.remove();
+							} else if (currentAssociations.containsAll(newAssociations)) {
+								insert = false;
+								break;
+							}
+						}
+						if (insert) {
+							currentAssociationsToValuesMap.put(newAssociations, values);
+						}
 					}
 				}
 			}
+		}
 
-			for (String dataSet : dataSetColumnsMap.keySet()) {
-				String columns = dataSetColumnsMap.get(dataSet);
+		// transform associations to columns
+		Map<String, Map<String, Set<String>>> selections = new HashMap<String, Map<String, Set<String>>>();
+		for (String dataset : datasetToAssociationsToValuesMap.keySet()) {
+			Map<Set<String>, Set<String>> datasetAssociationsToValuesMap = datasetToAssociationsToValuesMap.get(dataset);
+			Map<String, Set<String>> columnsToValuesMap = new HashMap<String, Set<String>>();
 
-				Map<String, Set<String>> columnsValuesMap = null;
-				if (selections.containsKey(dataSet)) {
-					columnsValuesMap = selections.get(dataSet);
-				} else {
-					columnsValuesMap = new HashMap<String, Set<String>>();
-					selections.put(dataSet, columnsValuesMap);
+			for (Set<String> associations : datasetAssociationsToValuesMap.keySet()) {
+				String columns = "";
+				for (String associationId : associations) {
+					Association association = associationGroup.getAssociation(associationId);
+					String column = association.getField(dataset).getFieldName();
+					if (columns.isEmpty()) {
+						columns = column;
+					} else {
+						columns += "," + column;
+					}
 				}
-
-				columnsValuesMap.put(columns, valuesSet);
+				Set<String> values = datasetAssociationsToValuesMap.get(associations);
+				columnsToValuesMap.put(columns, values);
 			}
+			selections.put(dataset, columnsToValuesMap);
 		}
 
 		return selections;

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.Pseudograph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,21 +49,21 @@ public class AssociationAnalyzerTest {
 	public void testProcessOneAssociation() {
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(oneAssociationMap.values());
 		analyzer.process();
-		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
+		Map<String, Map<String, String>> datasetToAssociationToColumnsMap = analyzer.getDatasetToAssociationToColumnMap();
 		UndirectedGraph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
-		assertTrue(datasetAssociationColumnMap.containsKey(X));
-		assertTrue(datasetAssociationColumnMap.containsKey(Y));
+		assertTrue(datasetToAssociationToColumnsMap.containsKey(X));
+		assertTrue(datasetToAssociationToColumnsMap.containsKey(Y));
 
-		Map<String, String> map = null;
+		Map<String, String> associationToColumnsMap = null;
 
-		map = datasetAssociationColumnMap.get(X);
-		assertTrue(map.containsKey(A1));
-		assertEquals(buildColumnLabel(X, A1), map.get(A1));
+		associationToColumnsMap = datasetToAssociationToColumnsMap.get(X);
+		assertTrue(associationToColumnsMap.containsKey(A1));
+		assertEquals(buildColumnLabel(X, A1), associationToColumnsMap.get(A1));
 
-		map = datasetAssociationColumnMap.get(Y);
-		assertTrue(map.containsKey(A1));
-		assertEquals(buildColumnLabel(Y, A1), map.get(A1));
+		associationToColumnsMap = datasetToAssociationToColumnsMap.get(Y);
+		assertTrue(associationToColumnsMap.containsKey(A1));
+		assertEquals(buildColumnLabel(Y, A1), associationToColumnsMap.get(A1));
 
 		assertEquals(2, graph.vertexSet().size());
 		assertTrue(graph.containsVertex(X));
@@ -76,48 +77,48 @@ public class AssociationAnalyzerTest {
 	public void testProcessFiveAssociations() {
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(fiveAssociationsMap.values());
 		analyzer.process();
-		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
-		UndirectedGraph<String, LabeledEdge<String>> graph = analyzer.getGraph();
+		Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
+		Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
-		assertTrue(datasetAssociationColumnMap.containsKey(K));
-		assertTrue(datasetAssociationColumnMap.containsKey(W));
-		assertTrue(datasetAssociationColumnMap.containsKey(X));
-		assertTrue(datasetAssociationColumnMap.containsKey(Y));
-		assertTrue(datasetAssociationColumnMap.containsKey(Z));
+		assertTrue(datasetToAssociationToColumnMap.containsKey(K));
+		assertTrue(datasetToAssociationToColumnMap.containsKey(W));
+		assertTrue(datasetToAssociationToColumnMap.containsKey(X));
+		assertTrue(datasetToAssociationToColumnMap.containsKey(Y));
+		assertTrue(datasetToAssociationToColumnMap.containsKey(Z));
 
-		Map<String, String> map = null;
+		Map<String, String> associationToColumnMap = null;
 
-		map = datasetAssociationColumnMap.get(K);
-		assertTrue(map.containsKey(A3));
-		assertEquals(buildColumnLabel(K, A3), map.get(A3));
+		associationToColumnMap = datasetToAssociationToColumnMap.get(K);
+		assertTrue(associationToColumnMap.containsKey(A3));
+		assertEquals(buildColumnLabel(K, A3), associationToColumnMap.get(A3));
 
-		map = datasetAssociationColumnMap.get(W);
-		assertTrue(map.containsKey(A4));
-		assertEquals(buildColumnLabel(W, A4), map.get(A4));
+		associationToColumnMap = datasetToAssociationToColumnMap.get(W);
+		assertTrue(associationToColumnMap.containsKey(A4));
+		assertEquals(buildColumnLabel(W, A4), associationToColumnMap.get(A4));
 
-		map = datasetAssociationColumnMap.get(X);
-		assertTrue(map.containsKey(A1));
-		assertEquals(buildColumnLabel(X, A1), map.get(A1));
-		assertTrue(map.containsKey(A5));
-		assertEquals(buildColumnLabel(X, A5), map.get(A5));
-		assertTrue(map.containsKey(A6));
-		assertEquals(buildColumnLabel(X, A6), map.get(A6));
+		associationToColumnMap = datasetToAssociationToColumnMap.get(X);
+		assertTrue(associationToColumnMap.containsKey(A1));
+		assertEquals(buildColumnLabel(X, A1), associationToColumnMap.get(A1));
+		assertTrue(associationToColumnMap.containsKey(A5));
+		assertEquals(buildColumnLabel(X, A5), associationToColumnMap.get(A5));
+		assertTrue(associationToColumnMap.containsKey(A6));
+		assertEquals(buildColumnLabel(X, A6), associationToColumnMap.get(A6));
 
-		map = datasetAssociationColumnMap.get(Y);
-		assertTrue(map.containsKey(A1));
-		assertEquals(buildColumnLabel(Y, A1), map.get(A1));
-		assertTrue(map.containsKey(A4));
-		assertEquals(buildColumnLabel(Y, A4), map.get(A4));
-		assertTrue(map.containsKey(A5));
-		assertEquals(buildColumnLabel(Y, A5), map.get(A5));
+		associationToColumnMap = datasetToAssociationToColumnMap.get(Y);
+		assertTrue(associationToColumnMap.containsKey(A1));
+		assertEquals(buildColumnLabel(Y, A1), associationToColumnMap.get(A1));
+		assertTrue(associationToColumnMap.containsKey(A4));
+		assertEquals(buildColumnLabel(Y, A4), associationToColumnMap.get(A4));
+		assertTrue(associationToColumnMap.containsKey(A5));
+		assertEquals(buildColumnLabel(Y, A5), associationToColumnMap.get(A5));
 
-		map = datasetAssociationColumnMap.get(Z);
-		assertTrue(map.containsKey(A1));
-		assertEquals(buildColumnLabel(Z, A1), map.get(A1));
-		assertTrue(map.containsKey(A5));
-		assertEquals(buildColumnLabel(Z, A5), map.get(A5));
-		assertTrue(map.containsKey(A6));
-		assertEquals(buildColumnLabel(Z, A6), map.get(A6));
+		associationToColumnMap = datasetToAssociationToColumnMap.get(Z);
+		assertTrue(associationToColumnMap.containsKey(A1));
+		assertEquals(buildColumnLabel(Z, A1), associationToColumnMap.get(A1));
+		assertTrue(associationToColumnMap.containsKey(A5));
+		assertEquals(buildColumnLabel(Z, A5), associationToColumnMap.get(A5));
+		assertTrue(associationToColumnMap.containsKey(A6));
+		assertEquals(buildColumnLabel(Z, A6), associationToColumnMap.get(A6));
 
 		assertEquals(5, graph.vertexSet().size());
 		assertTrue(graph.containsVertex(K));
@@ -139,35 +140,91 @@ public class AssociationAnalyzerTest {
 	}
 
 	@Test
-	public void testGetOneSelection() {
-		Set<LabeledEdge<String>> edgeSet = new HashSet<LabeledEdge<String>>();
-		edgeSet.add(new LabeledEdge<String>(X, Y, A1));
-		edgeSet.add(new LabeledEdge<String>(X, Y, A5));
-		EdgeGroup resultEdgeGroup = new EdgeGroup(edgeSet);
-		Set<String> resultValues = new HashSet<String>();
-		resultValues.add("('744','2275')");
-		resultValues.add("('744','10226')");
-		Map<EdgeGroup, Set<String>> egdeGroupValuesMap = new HashMap<EdgeGroup, Set<String>>();
-		egdeGroupValuesMap.put(resultEdgeGroup, resultValues);
+	public void testGetSelections() {
+		Set<String> valuesA1A5 = new HashSet<String>();
+		valuesA1A5.add("('744','2275')");
+
+		Set<String> valuesA1A5A6 = new HashSet<String>();
+		valuesA1A5A6.add("('744','2275','0')");
+
+		Set<String> valuesA3 = new HashSet<String>();
+		valuesA3.add("('1')");
+
+		Set<String> valuesA4 = new HashSet<String>();
+		valuesA4.add("('11')");
+
+		Set<LabeledEdge<String>> edgesA1A5 = new HashSet<LabeledEdge<String>>();
+		edgesA1A5.add(new LabeledEdge<String>(X, Y, A1));
+		edgesA1A5.add(new LabeledEdge<String>(Y, X, A5));
+
+		Set<LabeledEdge<String>> edgesA1A5A6 = new HashSet<LabeledEdge<String>>();
+		edgesA1A5A6.add(new LabeledEdge<String>(X, Z, A1));
+		edgesA1A5A6.add(new LabeledEdge<String>(Z, X, A5));
+		edgesA1A5A6.add(new LabeledEdge<String>(X, Z, A6));
+
+		Set<LabeledEdge<String>> edgesA3 = new HashSet<LabeledEdge<String>>();
+		edgesA3.add(new LabeledEdge<String>(Z, K, A3));
+
+		Set<LabeledEdge<String>> edgesA4 = new HashSet<LabeledEdge<String>>();
+		edgesA4.add(new LabeledEdge<String>(Y, W, A4));
+
+		EdgeGroup edgeGroupA1A5 = new EdgeGroup(edgesA1A5);
+		EdgeGroup edgeGroupA1A5A6 = new EdgeGroup(edgesA1A5A6);
+		EdgeGroup edgeGroupA3 = new EdgeGroup(edgesA3);
+		EdgeGroup edgeGroupA4 = new EdgeGroup(edgesA4);
+
+		Map<EdgeGroup, Set<String>> egdegroupToValuesMap = new HashMap<EdgeGroup, Set<String>>();
+		egdegroupToValuesMap.put(edgeGroupA1A5, valuesA1A5);
+		egdegroupToValuesMap.put(edgeGroupA1A5A6, valuesA1A5A6);
+		egdegroupToValuesMap.put(edgeGroupA3, valuesA3);
+		egdegroupToValuesMap.put(edgeGroupA4, valuesA4);
+
+		AssociationAnalyzer analyzer = new AssociationAnalyzer(fiveAssociationsMap.values());
+		analyzer.process();
+		Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
 		AssociationGroup associationGroup = new AssociationGroup();
 		associationGroup.addAssociations(fiveAssociationsMap.values());
-		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, egdeGroupValuesMap);
+		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, egdegroupToValuesMap);
 
-		Map<String, Set<String>> map = null;
+		Map<String, Set<String>> columnsToValuesMap = null;
 		String columns = null;
 
+		assertTrue(selections.containsKey(K));
+		columnsToValuesMap = selections.get(K);
+		columns = buildColumnLabel(K, A3);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA3));
+
+		assertTrue(selections.containsKey(W));
+		columnsToValuesMap = selections.get(W);
+		columns = buildColumnLabel(W, A4);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA4));
+
 		assertTrue(selections.containsKey(X));
-		map = selections.get(X);
-		columns = buildColumnLabel(X, A1) + "," + buildColumnLabel(X, A5);
-		assertTrue(map.containsKey(columns));
-		assertTrue(map.get(columns).equals(resultValues));
+		columnsToValuesMap = selections.get(X);
+		columns = buildColumnLabel(X, A1) + "," + buildColumnLabel(X, A5) + "," + buildColumnLabel(X, A6);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA1A5A6));
 
 		assertTrue(selections.containsKey(Y));
-		map = selections.get(Y);
+		columnsToValuesMap = selections.get(Y);
 		columns = buildColumnLabel(Y, A1) + "," + buildColumnLabel(Y, A5);
-		assertTrue(map.containsKey(columns));
-		assertTrue(map.get(columns).equals(resultValues));
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA1A5));
+		columns = buildColumnLabel(Y, A4);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA4));
+
+		assertTrue(selections.containsKey(Z));
+		columnsToValuesMap = selections.get(Z);
+		columns = buildColumnLabel(Z, A1) + "," + buildColumnLabel(Z, A5) + "," + buildColumnLabel(Z, A6);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA1A5A6));
+		columns = buildColumnLabel(Z, A3);
+		assertTrue(columnsToValuesMap.containsKey(columns));
+		assertTrue(columnsToValuesMap.get(columns).equals(valuesA3));
 	}
 
 	private Association buildAssociation(String associationId, String[] datasets) {
