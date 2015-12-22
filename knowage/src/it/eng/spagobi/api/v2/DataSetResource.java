@@ -244,9 +244,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@GET
-	@Path("/restrictions")
+	@Path("/listAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getRestrictions(@QueryParam("associationGroup") String associationGroup, @QueryParam("sourceDataset") String sourceDataset,
+	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroup, @QueryParam("sourceDataset") String sourceDataset,
 			@QueryParam("sourceColumn") String sourceColumn, @QueryParam("sourceValue") String sourceValue) {
 		logger.debug("IN");
 
