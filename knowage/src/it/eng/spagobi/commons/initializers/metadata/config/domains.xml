@@ -129,12 +129,15 @@
 		valueDs="sbidomains.ds.combobox" />
 	<DOMAIN valueCd="-1" valueNm="sbidomains.nm.default" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.default" />
-	<DOMAIN valueCd="org.hibernatespatial.oracle.CustomOracleSpatialDialect" valueNm="sbidomains.nm.oracle"
+	<DOMAIN valueCd="org.hibernate.dialect.OracleDialect" valueNm="sbidomains.nm.oracle"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.oracle" />
 	<DOMAIN valueCd="org.hibernate.dialect.Oracle9Dialect" valueNm="sbidomains.nm.oracle_9i10g"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.oracle_9i10g" />
+	<DOMAIN valueCd="org.hibernatespatial.oracle.CustomOracleSpatialDialect" valueNm="sbidomains.nm.oracle_spatial"
+		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
+		valueDs="sbidomains.ds.oracle_spatial" />
 	<DOMAIN valueCd="org.hibernate.dialect.SQLServerDialect"
 		valueNm="sbidomains.nm.sqlserver" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sqlserver" />
