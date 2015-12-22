@@ -12,10 +12,9 @@ Ext.namespace('it.eng.spagobi.engines.qbe.temporalfilterwizard');
 // create module
 it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
   // do NOT access DOM from here; elements don't exist yet
- 
+	
   // private variables
   var win = undefined;
-  
   // true only after the first time the window get rendered (used for lazy initialization)
   var active = false;
   
@@ -38,23 +37,50 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 	           'definition'
 	           ]
 	      );
-	  var serviceurl = Sbi.config.contextName+'/restful-services/1.0/timespan/listTimespan';
+	  
+	  var tree = qbe.queryEditorPanel.currentDataMartStructurePanel.tree.root.childNodes;
+	  var n;
+	  var hierachiesColumnTypes = "";
+	  for (n in tree){
+		  if (tree[n].attributes.iconCls && tree[n].attributes.iconCls == 'temporal_dimension'){
+			  var temporalDimension = tree[n];
+			  
+			  for(var i in temporalDimension.attributes.children) {
+				  var hierarchy = temporalDimension.attributes.children[i];
+				  if(hierarchy.cls == 'default_hierarchies') {
+					  for (j in hierarchy.children) {
+						  if(hierarchy.children[j].alias) {
+							  hierachiesColumnTypes += (""!=hierachiesColumnTypes?",":"") + hierarchy.children[j].type;
+						  }
+					  }
+				  }
+			  }
+			  
+			  break;
+		  }
+	  }
+	  
 	  var timeStore = new Ext.data.Store({
 		  storeId:'tsDataStore',
-		  url: serviceurl,
 		  reader: timeReader
 	  });
-	  timeStore.load();
 	  
-//	  var tree = qbe.queryEditorPanel.currentDataMartStructurePanel.tree.root.childNodes;
-//	  var n;
-//	  var tempNode;
-//	  for (n in tree){
-//		  if (tree[n].attributes.iconCls && tree[n].attributes.iconCls == 'temporal_dimension'){
-//			  tempNode = tree[n];
-//			  break;
-//		  }
-//	  }
+	  var params = {
+			  types: hierachiesColumnTypes
+	  };
+
+	  var serviceurl = Sbi.config.contextName+'/restful-services/1.0/timespan/listTimespan';
+	  Ext.Ajax.request({
+          url: serviceurl,
+          method: "GET",
+          timeout: 60,
+          disableCaching: false,
+          params: params,
+          success: function(response) {
+        	  setTimeout(function(){
+        			 timeStore.loadData(Ext.util.JSON.decode(response.responseText));}, 100);
+          }
+      });
 	  
 	  var temporalfiltersgrid = new Ext.grid.GridPanel({
 		    store: timeStore,
@@ -126,7 +152,7 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 		  });
 	  }
     return win;
-  };    
+  };
   
      
   var getExpression = function() {

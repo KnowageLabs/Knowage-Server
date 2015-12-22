@@ -125,6 +125,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, inLineCalculatedFieldWizard : null
 	, slotWizard : null
 	, menu: null
+	, temporalEntity: false
 	
 	// --------------------------------------------------------------------------------
 	// public methods
@@ -152,7 +153,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
 		
-
+		
 		//edit slot forbidden
 		if(fieldNode.attributes.attributes.formState.slots !== undefined 
 			&& fieldNode.attributes.attributes.formState.slots !== null
@@ -199,7 +200,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		} else 	if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 			
 			if(this.calculatedFieldWizard === null || this.inLineCalculatedFieldWizard === null) {
-				this.initWizards();
+				this.initWizards(); 
 			}			
 			
 			var parentEtityNode = fieldNode.parentNode;
@@ -298,7 +299,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			}
 			slotCalculatedFieldsPanel.setExpItems('fields', fields);
 			slotCalculatedFieldsPanel.setTargetNode(entityNode);
-		
+			
 			
 			this.slotWizard.mainPanel.doLayout();
 			this.slotWizard.show();
@@ -334,11 +335,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		var selectNode;
 		
+		
 		if(!entityNode) return;
 		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
 		var text = entityNode.text || entityNode.attributes.text;
 		
-		if(type === Sbi.constants.qbe.NODE_TYPE_ENTITY) {			
+		if(type === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 			Ext.Msg.show({
 			   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
 			   msg:  LN('sbi.qbe.bands.wizard.invalid.node'),
@@ -400,10 +402,10 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
  				this.slotWizard.mainPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)}; 		
  			}
 			this.slotWizard.setExpItems('fields', fields);
-						
+			
 			this.slotWizard.setTargetNode(entityNode);
 			this.slotWizard.mainPanel.doLayout();
-			this.slotWizard.show(); 	
+			this.slotWizard.show();
 
 		}else {
 			Ext.Msg.show({
@@ -411,8 +413,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				   msg: LN('sbi.qbe.bands.wizard.invalid.node'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
-			});		
-		}	
+			});
+		}
 
 	}
 	
@@ -1158,6 +1160,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	
 	, oonLoad: function(treeLoader, node, response) {
 		this.rootNode = this.tree.root;
+		
+		for(var n in this.rootNode.childNodes){
+			if(this.rootNode.childNodes[n].attributes && this.rootNode.childNodes[n].attributes.iconCls=='temporal_dimension'){
+				this.temporalEntity=true;
+			}
+		}
+		
 		this.fireEvent('load', this, treeLoader, node, response);
 	}
 	

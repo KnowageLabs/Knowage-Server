@@ -9,6 +9,8 @@ import it.eng.spagobi.tools.timespan.util.Util;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -56,7 +59,9 @@ public class TimespanService {
 	@Path("/listTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
 //	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
-	public String listAllTimespan(@Context HttpServletRequest req) {
+	public String listAllTimespan(
+			@QueryParam("types") String types ,
+			@Context HttpServletRequest req) {
 		try {
 			ITimespanDAO dao = DAOFactory.getTimespanDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -64,9 +69,20 @@ public class TimespanService {
 
 			List<SbiTimespan> lst = dao.listTimespan();
 			JSONArray ja = new JSONArray();
+			List<String> tlist = new ArrayList<String>();
+			if(types!=null && !types.isEmpty()){
+				tlist = Arrays.asList(types.split(","));
+			}
 			if (lst != null) {
 				for (Iterator<SbiTimespan> iterator = lst.iterator(); iterator.hasNext();) {
 					SbiTimespan sbiTimespan = iterator.next();
+					if(sbiTimespan.getType().equals("temporal") &&
+							sbiTimespan.getStaticFilter()){
+						JSONObject desc = new JSONObject(sbiTimespan.getDefinition());
+						if(!tlist.isEmpty() && !tlist.contains(desc.getString("leftOperandDescription"))){
+							continue;
+						}
+					}
 					ja.put(Util.getAsJSON(sbiTimespan));
 				}
 			}
