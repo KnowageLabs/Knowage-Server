@@ -161,7 +161,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		
 		//$scope.listCheckedfilter=geoModule_layerServices.filters;
 		//geoModule_template.filtersApplied=$scope.listCheckedfilter;
-			
+		
+		$scope.checkLayerWithoutFilter(layerConf);
+		
 		if(geoModule_layerServices.filters[layerConf.layerId]){
 				//lo contiene già quindi si sta rimuovendo CHECK OFF
 				$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
@@ -186,6 +188,54 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		
 	};
 	//start code for filters 
+	$scope.checkLayerWithoutFilter = function(layerConf){
+		geoModule_layerServices.layerWithoutFilter=true;
+		if(!geoModule_layerServices.filters[layerConf.layerId]){
+			//si sta aggiungendo un layer alla mappa
+			if(!$scope.multipleFilters[layerConf.layerId]){
+				//vuol dire che il layer non ha filtri!
+				geoModule_layerServices.layerWithoutFilter=true;
+				console.log("Layer senza filtri");
+			}else{
+				//verifico che nel form non siastato inserito niente
+				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer();
+				
+				if(Object.getOwnPropertyNames(geoModule_layerServices.filters).length>0){
+					//verifico che non è gia caricato un layer senza filtri
+					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded();
+				}
+				
+	
+			}
+		}else{
+			geoModule_layerServices.layerWithoutFilter=false;
+		}
+	}
+	
+	$scope.checkFilterInthisLayer = function(){
+		for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){
+			//se tutti i campi sono null
+			if($scope.multipleFilters[$scope.layerSelected.layerId][i].model!=""){
+				console.log("Naaaaaa");
+				return false;
+			}
+
+		}
+		return true;
+	}
+	
+	
+	$scope.checkFilterInLayersLoaded = function(){
+		for(var obj in geoModule_layerServices.filters){
+			for(var j=0;j<geoModule_layerServices.filters[obj].length;j++){
+				if(geoModule_layerServices.filters[obj][j].model!=""){
+					
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	$scope.removefromList=function(arr,k){
 		var arr_tmp=[];
 		for(var key in arr){
@@ -239,6 +289,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	}
 	$scope.applyFilter = function(){
 		$scope.multipleFilters[$scope.layerSelected.layerId] = angular.copy($scope.filters);
+		$scope.checkLayerWithoutFilter($scope.layerSelected);
 		$mdDialog.cancel();
 		var flag=false;
 		

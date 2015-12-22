@@ -80,6 +80,7 @@ geoM.service(
 			};
 			this.selectedBaseLayer; // the selected base layer
 			this.selectedBaseLayerOBJ;
+			this.layerWithoutFilter=false;
 			this.loadedLayer = {};
 			this.loadedLayerOBJ = {};
 			this.templateLayer = {};
@@ -728,7 +729,7 @@ geoM.service(
 							sbiModule_logger.log("file layer non Ottenuto");
 						} else {
 							sbiModule_logger.trace("file layer caricato",data);
-//			
+		
 							var vectorSource = new ol.source.Vector(
 									{
 										features : (new ol.format.GeoJSON()).readFeatures(data,
@@ -765,20 +766,17 @@ geoM.service(
 					})];
 					
 					
-					
+				if(layerServ.layerWithoutFilter){
+					console.log("Ohi Ohi Ohi");
+					return styleTMP;
+				}	
 				var applFilter=false;
-//					var flag=false;
-					//cerco se c'è un solo layer che non ha filtri
-
-
-					
 
 					var propertiesFeature = feature.getProperties();
 
 
 
 					for(var key in layerServ.filters){
-				
 						for(var i =0;i<layerServ.filters[key].length;i++){
 
 							var value = propertiesFeature[layerServ.filters[key][i].filter];
@@ -800,10 +798,10 @@ geoM.service(
 					
 
 				if(applFilter){
-					console.log("true");
+				
 					return null;
 					}else{
-						console.log("false");
+						
 						return styleTMP;
 					}
 
