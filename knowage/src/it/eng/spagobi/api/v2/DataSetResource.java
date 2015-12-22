@@ -10,6 +10,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
@@ -33,7 +34,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -274,7 +274,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroupObject.getAssociations());
-		Map<String, Map<String, String>> datasetAssociationColumnMap = analyzer.getDatasetAssociationColumnMap();
+		Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
 		Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
 		// add datasets to the map
@@ -295,27 +295,15 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "A dataset doesn't exist");
 		}
 
-		// FIXME uncomment
-		// AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasets, map, sourceDataset, sourceColumn);
-		// Map<EdgeGroup, Set<String>> result;
-		// try {
-		// result = manager.process();
-		// } catch (Exception e) {
-		// throw new SpagoBIServiceException(this.request.getPathInfo(), "Unable to process associations", e);
-		// }
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasets, datasetToAssociationToColumnMap, sourceDataset, sourceColumn);
+		Map<EdgeGroup, Set<String>> egdegroupToValuesMap;
+		try {
+			egdegroupToValuesMap = manager.process();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Unable to process associations", e);
+		}
 
-		// FIXME delete
-		Set<LabeledEdge<String>> edgeSet = new HashSet<LabeledEdge<String>>();
-		edgeSet.add(new LabeledEdge<String>("x", "y", "A1"));
-		edgeSet.add(new LabeledEdge<String>("x", "y", "A5"));
-		EdgeGroup resultEdgeGroup = new EdgeGroup(edgeSet);
-		Set<String> resultValues = new HashSet<String>();
-		resultValues.add("('744','2275')");
-		resultValues.add("('744','10226')");
-		Map<EdgeGroup, Set<String>> egdeGroupValuesMap = new HashMap<EdgeGroup, Set<String>>();
-		egdeGroupValuesMap.put(resultEdgeGroup, resultValues);
-
-		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, egdeGroupValuesMap);
+		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, graph, egdegroupToValuesMap);
 
 		String stringFeed = JsonConverter.objectToJson(selections, Map.class);
 		logger.debug("OUT");
