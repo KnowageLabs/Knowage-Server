@@ -3,7 +3,7 @@
 	<label ng-disabled='ngDisabled' id="{{id}}" class="md-button md-raised md-ExtraMini" md-ink-ripple for="{{id}}_input">
 		<span >{{textButton}}</span>
 	</label>
-	<input  ng-disabled='true' id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
+	<input  ng-disabled='ngDisabled' id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
 	<md-input-container flex='ngDisabled' style="height : 30px;bottom : 0px;">
 		<input type='text' disabled ng-model="fileName" aria-label="file name"/>
 	</md-input-container>
