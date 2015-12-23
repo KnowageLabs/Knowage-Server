@@ -771,7 +771,6 @@ geoM.service(
 					
 					
 				if(layerServ.layerWithoutFilter){
-					console.log("Ohi Ohi Ohi");
 					return styleTMP;
 				}	
 				var applFilter=false;

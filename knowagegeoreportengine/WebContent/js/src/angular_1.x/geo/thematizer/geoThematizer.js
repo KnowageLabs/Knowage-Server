@@ -153,8 +153,10 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		})];
 	}
 
-	this.chart=function(dsValue){
 	
+				
+				
+	this.chart =function(dsValue){
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
 		for(var key in dsValue){
 			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
@@ -162,88 +164,91 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}
 		}
 
-		// Create the data table.
-		var data = new google.visualization.DataTable();
-		var string=[] ;
-		var asseV ={};
+		var valuesChart = [];
+		var label=[];
 		var maxV=[];
-
-		var objContent=[];
-		var vAxes={};
-		var i=0;
-		data.addColumn('string', 'Style');
-		string.push('N');
+		var colors=[];
+		var rgba="";
 		var indicatorIndex=0;
 		for(var key in dsValue){
 			indicatorIndex++;
-			data.addColumn('number', 'Population');
-		//	data.addColumn({type: 'number', role: 'annotation'});
-			data.addColumn({ type: 'string',role: 'style' })
-			string.push(Math.round(dsValue[key].value));
-		//	string.push(Math.round(dsValue[key].value));
+		
+			valuesChart.push(Math.round(dsValue[key].value));
 			var color = tinycolor(geoModule_template.analysisConf.chart["indicator_"+indicatorIndex]);
-			string.push('color:'+color.toHexString()+";opacity:"+color.getAlpha()+";")
-
+			console.log("color "+color+" "+color.toHexString());
 			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
-			if(i==0){
-				var obj={};
-				obj.viewWindowMode='explicit';
-				obj.viewWindow={max:maxV[i],min:0};
-				obj.gridlines={};
-				obj.gridlines.color = 'transparent';
-				obj.textPosition= 'none';
-				vAxes[i] = obj;
-
-			}else{
-				var obj={};
-				obj.viewWindow={};
-				obj.viewWindow={max:maxV[i],min:0};
-				obj.gridlines={};
-				obj.gridlines.color = 'transparent';
-				obj.textPosition= 'none';
-				vAxes[i] = obj;
-			}
-
-			i=i+1;
-
+			rgba = "rgba("+color.toRgb().r+","+color.toRgb().g+","+color.toRgb().b+","+color.toRgb().a+")";
+			colors.push(rgba);
 		}
-
-		data.addRows([string]);
-		var view = new google.visualization.DataView(data);
-
-		// Set chart options 
-		var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
-		//setta minvalue come min del min e max come max del max di 
+		var size_img = 20 + 6*Math.pow(2,$map.getView().getZoom()-1);
+		
 		var options = {
-				'width':size_img,
-				'height':size_img,
-				'legend': {'position': 'none'},
-				'backgroundColor': { 'fill':'transparent' },
-				'hAxis': { 'textPosition': 'none'},
-				/*
-				 * 
-				 * 
-				annotations: {
-					alwaysOutside: true,
-					textStyle: {
-						fontSize: 14,
-						color: '#000',
-						auraColor: 'none'
-					}
-				},
-				 * 
-				 */
-				vAxes:vAxes,
-				series: {0: {targetAxisIndex:0},
-					1:{targetAxisIndex:1},
-					2:{targetAxisIndex:2}
-				}
-		};
+			    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+			    scaleBeginAtZero : true,
 
-		// Instantiate and draw our chart, passing in some options.
-		//var chart=new google.visualization.PieChart(chartElement);
-		var chart=new google.visualization.ColumnChart(document.createElement('div'));
-		chart.draw(view, options);
+			    //Boolean - Whether grid lines are shown across the chart
+			    scaleSteps : 10,
+		        scaleStepWidth :Math.max(maxV)/10,
+		        scaleStartValue : 0, 
+			    scaleShowGridLines : false,
+			    scaleShowLabels: false,
+			    //String - Colour of the grid lines
+			    scaleGridLineColor : "rgba(0,0,0,.05)",
+
+			    //Number - Width of the grid lines
+			    scaleGridLineWidth : 1,
+
+			    //Boolean - Whether to show horizontal lines (except X axis)
+			    scaleShowHorizontalLines: false,
+
+			    //Boolean - Whether to show vertical lines (except Y axis)
+			    scaleShowVerticalLines: false,
+
+			    //Boolean - If there is a stroke on each bar
+			    barShowStroke : false,
+			 
+			    //Number - Pixel width of the bar stroke
+			    barStrokeWidth : 2,
+
+			    //Number - Spacing between each of the X value sets
+			    barValueSpacing : 1,
+
+			    //Number - Spacing between data sets within X values
+			    barDatasetSpacing : 1,
+
+			    //String - A legend template
+			    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+
+			};
+		var label =[];
+		for(var i=0;i<valuesChart.length;i++){
+			label.push("")
+		}
+		var data = {
+			    labels: label,
+			    datasets: [
+			        {
+			            label: "My First dataset",
+			            fillColor: colors,
+			            strokeColor: "rgba(220,220,220,0.8)",
+			            highlightFill: "rgba(220,220,220,0.75)",
+			            highlightStroke: "rgba(220,220,220,1)",
+			            data: valuesChart
+			        }
+			        ]
+		}
+		
+	//	console.log(data,data2);
+		var canvas = document.createElement("canvas");
+		document.body.appendChild(canvas);
+		canvas.width = size_img;
+		canvas.height = size_img;
+		var myBarChart  = new Chart(canvas.getContext("2d")).Bar(data,options);
+		myBarChart.draw();
+		var urlImg = canvas.toDataURL();
+		
+		
+		document.body.removeChild(canvas);
 		var x=  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: borderColor,
@@ -254,14 +259,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 		new ol.style.Style({
 			image: new ol.style.Icon ({
-				/*anchor: [0.5, 46],
-				anchorXUnits: 'fraction',
-				anchorYUnits: 'pixels',
-				fill: new ol.style.Fill({
-					color: radius.color
-				}),
-				 */
-				src:chart.getImageURI()
+				
+				src:urlImg
 			}),		  
 			geometry: function(feature) {
 				// return the coordinates of the first ring of the polygon
@@ -270,12 +269,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}
 		})];
 		return x;
-		//  }
-		//fine creazione istogramma
-
-
-	}
-
+				}
+	
 	this.loadIndicatorMaxMinVal=function(key){
 		var minV;
 		var maxV;

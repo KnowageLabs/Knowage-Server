@@ -3,15 +3,13 @@
 <link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
 <script src="http://openlayers.org/en/v3.10.1/build/ol.js" type="text/javascript"></script>
 
+<script src="${pageContext.request.contextPath}/js/lib/chartjs/Chart.js"></script>
 
-
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<!--  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
    google.load('visualization', '1.0', {'packages':['corechart', 'bar']});
 </script>
-	    
-<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
-
+-->
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/Ellipsoid.js"></script>
 
