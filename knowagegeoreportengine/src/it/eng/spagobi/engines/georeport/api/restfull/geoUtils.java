@@ -1,12 +1,11 @@
 package it.eng.spagobi.engines.georeport.api.restfull;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.georeport.api.page.PageResource;
-import it.eng.spagobi.engines.georeport.features.provider.FeaturesProviderDAOFactory;
-import it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
+import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -48,7 +47,7 @@ public class geoUtils {
 	public static final String LAYER_JOIN_COLUMNS = "layerJoinColumns";
 	public static final String LAYER_URL = "layerUrl";
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	static private Logger logger = Logger.getLogger(geoUtils.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
 		FieldType toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
@@ -75,24 +74,6 @@ public class geoUtils {
 		return toReturn;
 	}
 
-	public static String getFileLayerAction(String layerUrl) throws JSONException, IOException {
-		IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO("File");
-		FeatureCollection outputFeatureCollection = featuresProvider.getAllFeatures(layerUrl);
-		FeatureIterator it = outputFeatureCollection.features();
-		List<SimpleFeature> list = new ArrayList<SimpleFeature>();
-		while (it.hasNext()) {
-			SimpleFeature f = (SimpleFeature) it.next();
-			list.add(f);
-		}
-
-		FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities.collection(list);
-
-		Monitor.start("GetTargetLayerAction.flushResponse");
-		FeatureJSON featureJSON = new FeatureJSON();
-		String responseFeature = featureJSON.toString(filteredOutputFeatureCollection);
-
-		return responseFeature;
-	}
 
 	public static String targetLayerAction(JSONObject req) throws JSONException {
 		String layerName = req.getString(LAYER_NAME);
@@ -112,10 +93,15 @@ public class geoUtils {
 					ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 					GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(layerName);
 					// TODO check if geolayer is not null
-					IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO(geoLayer.getType());
+
 					JSONObject layerDef = new JSONObject(new String(geoLayer.getLayerDef()));
 					String source = geoLayer.getType().equals("File") ? layerDef.getString("layer_file") : layerDef.getString("layer_url");
-					outputFeatureCollection = featuresProvider.getAllFeatures(source);
+
+					if (geoLayer.getType().equals("File")) {
+						outputFeatureCollection = DAOFactory.getFeaturesProviderFileDAO().getAllFeatures(source);
+					} else {
+						outputFeatureCollection = DAOFactory.getFeaturesProviderWFSDAO().getAllFeatures(source);
+					}
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
 					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeature"));
 
@@ -132,7 +118,10 @@ public class geoUtils {
 
 					// servletIOManager.writeBackToClient(500, message,
 					// true ,"service-response", "text/plain");
-					return "{status:'non ok', errors:" + message + "}";
+					JSONObject resObj = new JSONObject();
+					resObj.put("status", "non ok");
+					resObj.put("errors", message);
+					return resObj.toString();
 				}
 			} else {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is in cache");

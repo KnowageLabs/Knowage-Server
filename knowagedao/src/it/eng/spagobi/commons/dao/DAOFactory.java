@@ -35,6 +35,8 @@ import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
+import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
+import it.eng.spagobi.georeport.dao.IFeaturesProviderWFSDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.images.dao.IImagesDAO;
@@ -917,4 +919,28 @@ public class DAOFactory {
 		return (ITimespanDAO) createDAOInstance("TimespanDAO");
 	}
 
+	/**
+	 * Gets the IFeaturesProviderFileDAO dao.
+	 *
+	 * @return the IFeaturesProviderFileDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static IFeaturesProviderFileDAO getFeaturesProviderFileDAO() throws EMFUserError {
+		return (IFeaturesProviderFileDAO) createDAOInstance("IFeaturesProviderFileDAO");
+
+	}
+
+	/**
+	 * Gets the IFeaturesProviderWFSDAO dao.
+	 *
+	 * @return the IFeaturesProviderWFSDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() throws EMFUserError {
+		return (IFeaturesProviderWFSDAO) createDAOInstance("IFeaturesProviderWFSDAO");
+	}
 }

@@ -3,9 +3,9 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package it.eng.spagobi.engines.georeport.features.provider;
+package it.eng.spagobi.georeport.dao;
 
-import it.eng.spagobi.engines.georeport.utils.Monitor;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -25,7 +25,7 @@ import org.opengis.feature.simple.SimpleFeature;
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
  */
-public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
+public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements IFeaturesProviderWFSDAO {
 
 	public static final String LAYER_NAME = "layerName";
 	public static final String GEOID_PNAME = "geoIdPName";
@@ -68,7 +68,7 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO#getAllFeatures(java.lang.Object)
 	 */
 	@Override
@@ -124,13 +124,10 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 
 			// wfs call
 			url = new URL(wfsUrl);
-			Monitor.start("FeaturesProviderDAOWFSImpl.openConnection");
 			logger.debug("Opening connection with url [" + wfsUrl + "]...");
 			connection = url.openConnection();
-			logger.debug("Conncetion succesfully opened in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.openConnection") + "] ms");
 
 			// Get the response
-			Monitor.start("FeaturesProviderDAOWFSImpl.loadingLayer");
 			logger.debug("Loading layer ...");
 			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			StringBuffer sb = new StringBuffer();
@@ -140,14 +137,11 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 			}
 			rd.close();
 			result = sb.toString();
-			logger.debug("Layer succesfully loaded in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.loadingLayer") + "] ms");
 
-			Monitor.start("FeaturesProviderDAOWFSImpl.parsingResponse");
 			logger.debug("Parseing response ...");
 			Reader reader = new StringReader(result);
 			FeatureJSON featureJSON = new FeatureJSON();
 			featureCollection = featureJSON.readFeatureCollection(reader);
-			logger.debug("Response succesfully parsed in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.parsingResponse") + "] ms");
 
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);

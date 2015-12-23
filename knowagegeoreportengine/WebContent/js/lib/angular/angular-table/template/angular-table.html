@@ -68,7 +68,7 @@
 		          <div class="md-fab-action-item" ng-repeat=" menuItem in speedMenuOption" >
 				        <md-button ng-click='$event.stopPropagation();menuItem.action(row,$event);' aria-label="{{menuItem.label}}" class="md-fab md-raised actionButton" action-background-color={{menuItem.backgroundColor}}>
 							 <md-tooltip md-direction="top">{{menuItem.label}}</md-tooltip>										           
-							 <md-icon action-color={{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
+							 <md-icon action-color="{{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
 				         </md-button>
 			        </div>
 		       	</md-fab-actions>

@@ -119,6 +119,10 @@
 		<DAO name="FederationDefinitionDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl" />
 
         <DAO name="BIObjDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl" />
+        
+        <DAO name="IFeaturesProviderWFSDAO" implementation="it.eng.spagobi.georeport.dao.FeaturesProviderDAOWFSImpll" />
+        
+        <DAO name="IFeaturesProviderFileDAO" implementation="it.eng.spagobi.georeport.dao.FeaturesProviderDAOFileImpl" />
 
 	</DAO-CONF>
 

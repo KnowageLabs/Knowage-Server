@@ -149,9 +149,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 		};
 
 		params.featureIds=getFeatureIdsFromStore();
-
-		sbiModule_restServices
-		.post("1.0/geo", 'getTargetLayer',params)
+		sbiModule_restServices.post("1.0/geo", 'getTargetLayer',params)
 		.success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {

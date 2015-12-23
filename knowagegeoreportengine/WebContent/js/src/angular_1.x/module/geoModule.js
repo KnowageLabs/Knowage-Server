@@ -103,14 +103,13 @@ geoM.service(
 					params.LAYERS = geoModule_templateLayerData.layerName;
 					// var params={};
 					params.SLD_BODY = sldBody;
-
+					
 					layerServ.templateLayer = new ol.layer.Tile(
 							{
 								source : new ol.source.TileWMS(
 										/** @type {olx.source.TileWMSOptions} */
 										{
-											url : sbiModule_config.contextName
-											+ "/api/1.0/geo/getWMSlayer?layerURL="
+											url : sbiModule_config.externalBasePath+"restful-services/1.0/geo/getWMSlayer?layerURL="
 											+ geoModule_templateLayerData.layerURL,
 											params : params,
 											options : JSON
@@ -726,7 +725,7 @@ geoM.service(
 			
 			this.getLayerFromFile=function(layerConf){
 				var deferredLayer = $q.defer();
-
+				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
 				sbiModule_restServices.post("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
 				.success(
 					function(data, status, headers, config) {

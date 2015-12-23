@@ -1,10 +1,10 @@
-package it.eng.spagobi.engines.georeport.api.restfull;
+package it.eng.spagobi.engines.georeport;
 
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.getDsFieldType;
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.targetLayerAction;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
 import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
+import it.eng.spagobi.engines.georeport.api.restfull.geoUtils;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;

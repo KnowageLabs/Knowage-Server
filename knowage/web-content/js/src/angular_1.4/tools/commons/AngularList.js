@@ -139,14 +139,20 @@ function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$t
 		changeWordItemPP();
 	},0)
 
+	$scope.tmpOffsetHeight=0;
 	$scope.$watch(
 			function() {
 				return angular.element(document.querySelector('.angularListTemplate .listItemContainer'))[0].offsetHeight;
 			}, function(newValue, oldValue) {
-
 				if (newValue != oldValue) {
-					changeWordItemPP();
+					$scope.tmpOffsetHeight=newValue;
+					$timeout(function() {
+						if($scope.tmpOffsetHeight==newValue){
+							changeWordItemPP();
+						}
+					},500)
 				}
+				
 			}, true
 	);
 
