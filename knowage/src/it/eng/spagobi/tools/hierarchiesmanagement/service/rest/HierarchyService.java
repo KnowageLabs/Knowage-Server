@@ -705,7 +705,7 @@ public class HierarchyService {
 				Statement stmt = databaseConnection.createStatement();
 				PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 
-			preparedStatement.setString(1, hierarchyName + "_" + timestamp);
+			preparedStatement.setString(1, hierarchyName + HierarchyConstants.BKP_LABEL + timestamp);
 			preparedStatement.setString(2, hierarchyType);
 			preparedStatement.setDate(3, vDateConverted);
 			preparedStatement.setDate(4, vDateConverted);
