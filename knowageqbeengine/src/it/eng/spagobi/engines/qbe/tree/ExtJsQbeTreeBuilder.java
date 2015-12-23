@@ -65,11 +65,6 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
 
-	// the value that will be seen as a geometry field
-	// TODO change this when the metamodel will report the correct value
-	public static final String GEOMETRY_MAPPING_TYPE = "com.vividsolutions.jts.geom";
-	public static final String NODE_TYPE_GEOMETRY_FIELD = "geometry";
-
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 *
@@ -352,7 +347,6 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
 			nodeAttributes.put("longDescription", longDescription);
-			nodeAttributes.put("fieldType", GEOMETRY_MAPPING_TYPE.equals(field.getType())?NODE_TYPE_GEOMETRY_FIELD:field.getType());
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
 			e.printStackTrace();
