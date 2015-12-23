@@ -1,5 +1,5 @@
 var geoM = angular.module('geoModule', [ 'ngMaterial', 'ngAnimate',
-                                         'angular_table', 'sbiModule', 'mdColorPicker', "expander-box" ]);
+                                         'angular_table', 'sbiModule', 'color.picker', "expander-box" ]);
 
 geoM.factory('geoModule_dataset', function() {
 	var ds = {};
