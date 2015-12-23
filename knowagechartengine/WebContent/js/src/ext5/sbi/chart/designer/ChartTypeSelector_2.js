@@ -298,7 +298,9 @@ Ext.define
 								
 								//console.log(Sbi.chart.designer.Designer.exportAsJson());
 								
-								globalScope.fireEvent("chartTypeChanged");	
+								/* TODO: Commented because we are already firing this event when handling the 
+								 * "resetStep2" in Designer with input param. that is missing here */
+								//globalScope.fireEvent("chartTypeChanged");	
 								
 								/**
 								 * Since we approved changing of the chart type, we need to reset the GUI elements on

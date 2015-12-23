@@ -259,11 +259,12 @@
     	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     *#
     #if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
-	    
+	     
 	    #if ($chart.LEGEND.position == "")      
 		 	
 		 	legend: 
 		 	{
+		        enabled: true,
 		        align: 'center', 
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
@@ -276,6 +277,7 @@
 	  
 		    legend: 
 		    {
+	            enabled: true,
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
@@ -379,6 +381,7 @@
 				 	
 	 		legend: 
 		    {
+	          	enabled: true,
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
@@ -392,6 +395,7 @@
 		 	
 		 	legend: 
 		 	{
+		 		enabled: true,
 		        align: '$chart.LEGEND.position', 
 		        verticalAlign: 'middle',
 		        layout: 'vertical',
@@ -426,6 +430,18 @@
 		        }
 		        
         	},
+	    
+	#else
+		
+		#* 
+			If legend is disabled this JSON property ('enabled') should be false.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
+		*#
+		legend:
+		{
+			enabled: false,
+		},
 	    
     #end
     
