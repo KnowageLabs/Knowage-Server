@@ -95,7 +95,7 @@ public class BusinessModelResourceTest {
 	}
 
 	/**
-	 * Tests for busines model versions
+	 * Tests for business model versions
 	 **/
 	@Test
 	public void getVersionsOfBusinnesModel() {
