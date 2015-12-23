@@ -138,10 +138,25 @@ author:
 	    
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
-	    Sbi.chart.designer.Styles= '<%=styles%>';
+	
+		/* 
+			Mask the body when data necessary for Designer page is loading.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*/
+		Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading');
 	    
- 		Ext.onReady(function(){
+		Sbi.chart.designer.Styles= '<%=styles%>';	
+ 		
+	    Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
+ 			
+ 			/* 
+				Unmask the body when data necessary for Designer page is loaded.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+ 			Ext.getBody().unmask();
  			
  			/**
  				Getting back from the end of the current URL path for 3 steps in order
@@ -192,14 +207,13 @@ author:
  					mainContextName,
  					exporterContextName
  					);
-
+ 			
  		  });
  		
  		</script>
  		
  		<script language="javascript" type="text/javascript">
 			function saveFromCockpit(){
-				
 				Sbi.trace("[Chart.saveFromCockpit]: IN");
 				var result = false;
 				var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
