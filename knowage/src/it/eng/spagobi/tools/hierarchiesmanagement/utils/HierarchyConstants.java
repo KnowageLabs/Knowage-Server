@@ -63,7 +63,7 @@ public class HierarchyConstants {
 	public final static String ROOT = "root";
 	public final static String COLUMNS = "columns";
 	public final static String COLUMNS_SEARCH = "columns_search";
-	public final static String DIM_FILTER_FIELD = "CDC_CD";
-	public final static String SELECT_HIER_FILTER_FIELD = "CDC_CD_LEAF";
+	public final static String DIM_FILTER_FIELD = "_CD";
+	public final static String SELECT_HIER_FILTER_FIELD = "_CD_LEAF";
 
 }
