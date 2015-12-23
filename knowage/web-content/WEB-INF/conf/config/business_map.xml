@@ -97,15 +97,19 @@
 		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionData" businessProcess="HierarchiesManagement" />
 		
 		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchiesOfDimension" businessProcess="HierarchiesManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/nodeMetadata" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchyMetadata" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesMaster" businessProcess="HierarchiesManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesTechnical" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyTree" businessProcess="HierarchiesManagement" />
-			
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchies" businessProcess="HierarchiesManagement" />	
+		<!-- 			
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />			
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="HierarchiesManagement" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />
+		 -->
+		 				 						 						
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
 		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
 			
