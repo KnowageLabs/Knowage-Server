@@ -24,6 +24,11 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 			, orderBy : '=?' //field on which order the array
 			, menuOption : "=?" //menu to open with right click
 			, keys : '=?' //object of the keys 
+			, dragEnabled: "=?"
+			, dragDropOptions :"=?"
+			, enableClone:"=?"
+			, showEmptyPlaceholder :"=?"
+			, noDropEnabled:"=?"
 		},
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',

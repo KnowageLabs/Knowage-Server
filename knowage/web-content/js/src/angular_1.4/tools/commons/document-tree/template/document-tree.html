@@ -1,24 +1,14 @@
-<!-- <md-list style="padding:0px;" > 
-		<md-list-item 
-			ng-repeat="fold in folders" context-menu
-			data-target="{{id}}ContextMenu-{{ $parent.$index }}" 
-			ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-			{{ fold.name}}
-		</md-list-item> 
-</md-list>
- -->
-
+<!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="folders_renderer.html">
-		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
-			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
-			<md-icon ng-if="!folder.expanded || folder[subfoldersId].length == 0 || folder.biObjects.length == 0" md-font-icon="fa fa-folder"></md-icon>				
+		<div layout = "row" layout-align="start center"  class="customTreeNode" ui-tree-handle>
+			<md-icon ng-if="!folder.expanded || folder[subfoldersId].length == 0 || folder.biObjects.length == 0"  md-font-icon="fa fa-folder"></md-icon>				
 			<md-icon ng-if="folder.expanded  && folder[subfoldersId].length != 0 && folder.biObjects.length != 0 " md-font-icon="fa fa-folder-open"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
-			<md-button ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}"  ng-click="openFolder(folder)" class="docs">
-				&nbsp;{{folder[label]}}
+			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
+			<md-button ng-click='openFolder(folder)' ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}" class="docs">
+					&nbsp;{{folder[label]}}
 			</md-button>
-			
 		</div>		
 
 		<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}" )>
@@ -45,36 +35,31 @@
 		</ol>
 </script>
 
-<md-content ng-if="browser == 'firefox'" layout-padding>
-	<div ui-tree data-drag-enabled="false" id="{{id}}">
-		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"  
-				context-menu data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-			</li>
-		</ol>
-	</div>
-</md-content ng-if="browser == 'firefox'">
-<md-content ng-if="browser == 'chrome'" layout-fill>
-	<div ui-tree data-drag-enabled="false" id="{{id}}">
+<!-- create the tree structure -->
+<script type="text/ng-template" id="tree_renderer.html">
+	<div ui-tree data-drag-enabled="dragEnabled == true" data-clone-enabled="enableClone" data-drag-delay='500' data-empty-placeholder-enabled="true" id="{{id}}">
 		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
 			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
 				context-menu data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 			</li>
 		</ol>
 	</div>
+</script>
+
+<!-- change layout basing on browser -->
+<md-content ng-if="browser == 'firefox'" layout-padding>
+	<ng-include src="'tree_renderer.html'"></ng-include>
+</md-content ng-if="browser == 'firefox'">
+
+<md-content ng-if="browser == 'chrome'" layout-fill>
+	<ng-include src="'tree_renderer.html'"></ng-include>
 </md-content ng-if="browser == 'chrome'">
 
 <md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
-	<div ui-tree data-drag-enabled="false" id="{{id}}">
-		<ol ui-tree-nodes="" ng-model="folders" id="tree-root">
-			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
-				context-menu data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-			</li>
-		</ol>
-	</div>
+	<ng-include src="'tree_renderer.html'"></ng-include>	
 </md-content ng-if="browser != 'chrome' && browser != 'firefox'">
+
 <style>
-	
 	.fa-folder, .fa-folder-open{
 		padding-right: 4px;
 		color: black;
