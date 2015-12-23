@@ -161,8 +161,8 @@ public class DimensionService {
 			result.put(HierarchyConstants.COLUMNS_SEARCH, columnsSearchArray);
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while retriving hierarchy structure");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy structure", t);
+			logger.error("An unexpected error occured while retriving dimension data");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
 		}
 
 		logger.debug("JSON for dimension data is [" + result.toString() + "]");
@@ -220,7 +220,7 @@ public class DimensionService {
 
 			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIM_FILTER_FIELD, dataSource);
 			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.SELECT_HIER_FILTER_FIELD, dataSource);
-			String whereFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.WHERE_HIER_FILTER_FIELD, dataSource);
+			String whereFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
 			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + hierTableName);
 			query.append(" WHERE " + whereFilterField + " = \"" + filterHierarchy + "\" AND " + vDateWhereClause + " )");
