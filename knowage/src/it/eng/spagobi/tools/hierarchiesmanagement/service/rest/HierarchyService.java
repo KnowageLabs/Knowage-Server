@@ -93,8 +93,11 @@ public class HierarchyService {
 		Hierarchy hierarchy = hierarchies.getHierarchy(dimensionName);
 		Assert.assertNotNull(hierarchy, "Impossible to find a hierarchy for the dimension called [" + dimensionName + "]");
 
-		List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
+		List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+		JSONArray generalFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(generalMetadataFields, true);
+		result.put(HierarchyConstants.GENERAL_FIELDS, generalFieldsJSONArray);
 
+		List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
 		JSONArray nodeFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(nodeMetadataFields, true);
 		result.put(HierarchyConstants.LEAF_FIELDS, nodeFieldsJSONArray);
 
