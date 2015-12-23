@@ -9,9 +9,9 @@
 				</div>
 			</md-toolbar>
 			
-			<md-content layout-padding layout='column' layout-align='space-around stretch'>
+			<md-content id='hierarchiesSrc' layout-padding layout='column' layout-align='space-around stretch'>
 				<md-datepicker ng-model="dateFilterSrc" ng-change="getTreeSrc()"></md-datepicker>
-				<md-content layout='row' layout-fill layout-align='space-around center' flex='100' layout-sm='column' layout-align-sm='space-around stretch' >
+				<md-content id='hierarchiesSrcSelection' layout='row' layout-padding layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' >
 					<md-input-container flex='30' flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
 			        	<md-select type='text' ng-model='dimSrc' ng-disabled='!dateFilterSrc' md-on-close='getHierarchies()'>
@@ -36,11 +36,11 @@
 					<md-icon ng-if="!seeFilter" class="fa fa-filter" ng-click="toogleSeeFilter()"></md-icon>
 					<md-icon ng-if="seeFilter" class="fa fa-times" ng-click="toogleSeeFilter()"></md-icon>
 				</md-content>
-				<md-content ng-show='seeFilter' layout-fill>
+				<md-content id='hierarchiesSrcFilters' ng-show='seeFilter' layout-padding>
 					<fieldset class="standard" >
 				        <legend>Filters</legend>
 				        <div layout="column" layout-wrap flex layou-alig="space-around stretch">
-					        <md-content layout='row' layout-fill layout-align='space-around center' flex='100'>
+					        <md-content layout='row' layout-padding layout-align='space-around center'>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
 						        	<input type='text' ng-model='filterBySrc'></input>
