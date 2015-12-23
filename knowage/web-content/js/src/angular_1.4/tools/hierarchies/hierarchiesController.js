@@ -1,4 +1,4 @@
-var app = angular.module('hierManager', ['ngMaterial','ui.tree','ng-context-menu','angular_table', 'angular_2_col','sbiModule']);
+var app = angular.module('hierManager', ['ngMaterial','ng-context-menu','angular_table', 'angular_2_col','sbiModule','document_tree']);
 
 app.factory('glDimension',function(){
 	 var dimensione = {};

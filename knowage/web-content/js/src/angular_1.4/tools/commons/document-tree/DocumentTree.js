@@ -5,36 +5,45 @@
 var scripts = document.getElementsByTagName("script")
 var currentScriptPathDocumentTree = scripts[scripts.length-1].src;
 
-angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
+angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 .directive('documentTree',
 		function($compile) {
 	return {
 		templateUrl: currentScriptPathDocumentTree.substring(0, currentScriptPathDocumentTree.lastIndexOf('/') + 1) + 'template/document-tree.html',
 		transclude : true,
-			scope: {
-				ngModel : '='
-				, id : "@"
-				, createTree:"=?" //if true, the ngModel data will be parsed, if not the JSON is already in correct form
-				, clickFunction : "&" //function to call when click into element list
-				, selectedItem : "=?" //optional to get the selected  item value
-				, showFiles : '=?'
-				, multiSelect : "=?"
-			},
+		scope: {
+			ngModel : '='
+			, id : "@"
+			, createTree:"=?" //if true, the ngModel data will be parsed, if not the JSON is already in correct form
+			, clickFunction : "&" //function to call when click into element list
+			, selectedItem : "=?" //optional to get the selected  item value
+			, showFiles : '=?' //boolean value
+			, multiSelect : "=?" //boolean value
+			, textSearch : "=?" //text to search
+			, fieldsSearch : '=?' //array of the fields on which apply the filter
+			, orderBy : '=?' //field on which order the array
+			, menuOption : "=?" //menu to open with right click
+			, keys : '=?' //object of the keys 
+		},
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
 	    	//Customize the keys to use different JSON 
-	    	var elementId = attrs.keys !== undefined && attrs.keys.id !==undefined && attrs.keys.id.length > 0 ? attrs.keys.id : 'id' ;
-	    	var parentId = attrs.keys !== undefined && attrs.keys.parentId !==undefined && attrs.keys.parentId.length > 0 ? attrs.keys.parentId : 'parentId' ;
-	    	var subfolders = attrs.keys !== undefined && attrs.keys[subfolders] !==undefined && attrs.keys[subfolders].length > 0 ? attrs.keys[subfolders] : 'subfolders' ;
+	    	var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
+	    	var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
+	    	var subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
+	    	var label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
+	    	
+	    	scope.label = label;
+	    	scope.subfoldersId = subfoldersId;
 	    	
 	    	scope.createTreeStructure = function (folders){
 	    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
-		    		if (folders !== undefined && folders.length > 0 && folders[0][subfolders] === undefined){
+		    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
 			    		var mapFolder = {};	
 						
 						for (var i = 0 ; i < folders.length; i ++ ){
-							folders[i][subfolders] = [];
+							folders[i][subfoldersId] = [];
 							mapFolder[folders[i][elementId]] = folders[i]; 
 						}
 						
@@ -46,7 +55,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 							}
 							else{
 								//search parent folder with hasmap and attach the son
-								mapFolder[folders[i][parentId]][subfolders].push(folders[i]);
+								mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
 							}
 							//update linear structure with tree structure
 						}
@@ -56,19 +65,30 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 	    		return folders;
 	    	}
 	    	
-	    	scope.initializeFolders = function (folders){
+	    	scope.initializeFolders = function (folders, parent){
 	    		for (var i = 0 ; i < folders.length; i ++ ){
 					folders[i].checked = false;
-					folders[i].isOpen = false;
+					folders[i].expanded = false;
 					folders[i].type = "folder";
+					folders[i].visible = true;
+					folders[i].$parent = parent;
+					
+					if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
+						scope.initializeFolders(folders[i][subfoldersId], folders[i]);
+						if (attrs.orderBy){
+							folders[i].sortDirection = "desc";
+						}
+					}
 					for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
 						 folders[i].biObjects[j].type = "biObject";
 						 folders[i].biObjects[j].checked = false;
+						 folders[i].biObjects[j].visible = true;
+						 folders[i].biObjects[j].$parent = this;
 					}
 				}
 	    	}
 
-	    	scope.initializeFolders(scope.ngModel);
+	    	scope.initializeFolders(scope.ngModel, null);
 	    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
 			scope.folders=scope.ngModel;
 	    	
@@ -101,8 +121,8 @@ function DocumentTreeControllerFunction($scope,$timeout){
 			}
 		
 			if (element.type == "folder"){
-				for (var i =0 ; i < element[subfolders].length; i++){
-					$scope.toogleSelected(element[subfolders][i],element);
+				for (var i =0 ; i < element[$scope.subfoldersId].length; i++){
+					$scope.toogleSelected(element[$scope.subfoldersId][i],element);
 				}
 				for (var j=0; element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
 					$scope.toogleSelected(element.biObjects[j],element);
@@ -112,7 +132,7 @@ function DocumentTreeControllerFunction($scope,$timeout){
 	}
 	
 	$scope.openFolder = function (folder){
-		folder.isOpen = !folder.isOpen;
+		folder.expanded = !folder.expanded;
 		$scope.setSelected(folder);
 	}
 	
@@ -129,12 +149,95 @@ function DocumentTreeControllerFunction($scope,$timeout){
 	$scope.$watchCollection( 
 			'ngModel'
     	, function(){
-			$scope.initializeFolders($scope.ngModel);
+			$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
     	});
-
-	$scope.detectBrowser = function(){
+	
+	$scope.toogleSort = function(element){
+		if(element.sortDirection && element[$scope.subfoldersId]){
+				element.sortDirection = element.sortDirection == 'asc' ? 'desc' : 'asc';
+			var field = $scope.orderBy;
+			element[$scope.subfoldersId].sort($scope.orderFunction(field,element.sortDirection));
+		}
+	}
+	
+	$scope.orderFunction = function(key,direction){
+			return function(a,b){
+					var x = a[key]; var y = b[key];
+					var val = ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			        return direction =='asc' ? val : -val;
+					};
+	}
+	
+	//call each time that the orederBy value change 
+	$scope.$watch('orderBy', function (){
+		if ($scope.orderBy !== undefined && $scope.orderBy.length > 0){
+			var field = $scope.orderBy;
+			if ($scope.selectedItem !== undefined){
+				//take the parent
+				$scope.toogleSort($scope.selectedItem.$parent);
+			}else{
+				$scope.toogleSort($scope.ngModel);
+			}
+		}
+	});
+	
+	$scope.$watch('textSearch',
+		function(){
+			if ($scope.textSearch !== undefined && $scope.textSearch.length > 0){
+	    		for (var i = 0; i < $scope.ngModel.length; i++){
+	    			$scope.filterString($scope.ngModel[i]);
+	    		}
+			}
+			if ($scope.textSearch !== undefined && $scope.textSearch.length == 0){
+				for (var i = 0; i < $scope.ngModel.length; i++){
+	    			$scope.resetVisible($scope.ngModel[i]);
+	    		}
+			};
+	});
+	
+	
+	$scope.resetVisible = function(element){
+		element.visible = true;
+		if (element[$scope.subfoldersId] !== undefined){
+			for (var i =0 ;i < element[$scope.subfoldersId].length; i++){
+				$scope.resetVisible(element[$scope.subfoldersId][i]);
+			}
+			for (var j=0;element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
+				$scope.resetVisible(element.biObjects[j]);
+			}
+		}
+	}
+	
+	$scope.filterString = function (element) {
+		var visible = true;
+		if ($scope.textSearch && $scope.fieldsSearch){
+			//if the filters is empty, visible = true, else start with visible = false
+		    visible = $scope.fieldsSearch.length == 0 || $scope.textSearch.length == 0; 
+		    //search the text filter in each fields specify in filterBy object, until visible == false
+		    for (var i =0; visible == false && i < $scope.fieldsSearch.length;i++){
+		    	visible =  element[$scope.fieldsSearch[i]].toUpperCase().indexOf($scope.textSearch.toUpperCase()) > -1;
+		    }
+		    
+		    if (element.type == "folder" && element[$scope.subfoldersId] !==undefined ){
+				for (var i =0 ; i < element[$scope.subfoldersId].length; i++){
+					if ($scope.filterString(element[$scope.subfoldersId][i]) == true ){
+						visible = true;
+					}
+				}
+				for (var j=0; element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
+					if ($scope.filterString(element.biObjects[j]) == true){
+						visible = true;
+					}
+				}
+			}
+		}
+		element.visible=visible;
+		return visible;
+    };
+	
+    $scope.detectBrowser = function(){
         var userAgent = window.navigator.userAgent;
         var browsers = {chrome: /chrome/i, safari: /safari/i, firefox: /firefox/i, ie: /internet explorer/i};
 
@@ -145,6 +248,7 @@ function DocumentTreeControllerFunction($scope,$timeout){
        };
        return 'unknown';
 	}
-	
+
 	$scope.browser = $scope.detectBrowser();
+
 }

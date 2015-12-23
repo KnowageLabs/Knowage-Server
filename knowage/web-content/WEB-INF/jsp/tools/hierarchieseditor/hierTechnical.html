@@ -1,0 +1,78 @@
+<div ng-controller = "hierTechnController">
+	<md-content layout="row" layout-sm="column" layout-wrap>
+		<div class="div-container" flex flex-sm="100" style="margin-right: 20px;" >
+			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;" ng-click='debug()'>
+				<div class="md-toolbar-tools">
+					<i class="fa fa-list"></i>
+					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.hierarchies.hierarchies");}} {{translate.load("sbi.hierarchies.source");}}</h2>
+					<span flex=""></span>					
+				</div>
+			</md-toolbar>
+			
+			<md-content layout-padding layout='column' layout-align='space-around stretch'>
+				<md-datepicker ng-model="dateFilterSrc" ng-change="getTreeSrc()"></md-datepicker>
+				<md-content layout='row' layout-fill layout-align='space-around center' flex='100' layout-sm='column' layout-align-sm='space-around stretch' >
+					<md-input-container flex='30' flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
+			        	<md-select type='text' ng-model='dimSrc' ng-disabled='!dateFilterSrc' md-on-close='getHierarchies()'>
+			        		<md-option ng-value="dimSrc" ng-repeat="dimSrc in dimensionSrc">{{ dimSrc.DIMENSION_NM }}</md-option>
+			        	</md-select>
+					</md-input-container>
+					<md-input-container flex='30' flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}} {{translate.load("sbi.generic.type");}}</label>
+			        	<md-select type='text' ng-model='hierTypeSrc' ng-disabled='!dateFilterSrc' md-on-close='getHierarchies()'>
+			        		<md-option ng-value="hierTypeSrc" ng-repeat="hierTypeSrc in hierarchiesTypeSrc">{{ hierTypeSrc }}</md-option>
+			        	</md-select>
+					</md-input-container>
+					<md-input-container flex='30' flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
+			        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
+			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTreeSrc()' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
+			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIERARCHY_NM	}}</md-option>
+			        	</md-select>
+					</md-input-container>
+				</md-content>
+				<md-content layout='row' layout-align='start start'>
+					<md-icon ng-if="!seeFilter" class="fa fa-filter" ng-click="toogleSeeFilter()"></md-icon>
+					<md-icon ng-if="seeFilter" class="fa fa-times" ng-click="toogleSeeFilter()"></md-icon>
+				</md-content>
+				<md-content ng-show='seeFilter' layout-fill>
+					<fieldset class="standard" >
+				        <legend>Filters</legend>
+				        <div layout="column" layout-wrap flex layou-alig="space-around stretch">
+					        <md-content layout='row' layout-fill layout-align='space-around center' flex='100'>
+						        <md-input-container flex='40'>
+						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
+						        	<input type='text' ng-model='filterBySrc'></input>
+					      		</md-input-container>
+						        <md-input-container flex='40'>
+						        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
+						        	<md-select type='text' ng-model='orderBySrc'>
+						        		<md-option ng-value="orderBySrc" ng-repeat="orderBySrc in orderByFields">{{ orderBySrc }}</md-option>
+						        	</md-select>
+						        </md-input-container>
+						        <md-icon class="fa fa-check" ng-click="applyFilter()"></md-icon>
+						        <md-icon class="fa fa-trash" ng-click="removeFilter()"></md-icon>
+					        </md-content>
+			        	</div>
+			        </fieldset>
+				</md-content>
+			<md-content layout='row' layout-fill>
+				<document-tree id="left" ng-model="hierTreeSrc" create-tree="false" multi-select='false' keys='keys' text-search='filterBySrcTrigger' fields-search='["name"]' order-by='orderBySrcTrigger' menu-option='menuOptionSrc'></document-tree>
+			</md-content>
+			</md-content>
+		</div>
+		<div  class="div-container" flex flex-sm="100">
+			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;" >
+				<div class="md-toolbar-tools">
+					<i class="fa fa-list"></i>
+					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.hierarchies.hierarchies");}}  {{translate.load("sbi.modelinstances.target");}}</h2>
+					<span flex=""></span>					
+				</div>
+			</md-toolbar>
+			<md-content>
+				<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys'></document-tree>
+			</md-content>	
+		</div>
+	</md-content>
+</div>

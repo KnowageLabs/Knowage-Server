@@ -166,6 +166,7 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			document.body.appendChild(link);
 			link.download = nameFile + '.'  + extensionFile;
 			link.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(url);
+			link.target = '_blank';
 			link.click();
 		}
 	}
