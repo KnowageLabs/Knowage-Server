@@ -396,6 +396,9 @@ author:
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(
  					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId);
  			
+ 			
+ 			var parameters={};
+ 			
  			if(<%=isCockpit%>) {
  				
  	 			Sbi.chart.viewer.ChartTemplateContainer.aggregations = '<%=aggregations %>';
@@ -411,11 +414,12 @@ author:
 				};
 				//console.log(Sbi.chart.viewer.ChartTemplateContainer.metaData);
 				//console.log(<%=driverParams%>);
-				chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+				
+				/*chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 					var chartConf = Ext.JSON.decode(response.responseText, true);
 					renderChart(chartConf);
 					Ext.getBody().unmask();
-				});
+				});*/
  				
  			}else { 				
  				
@@ -423,7 +427,7 @@ author:
  						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
  						driverParams: '<%=driverParams%>'
  					};
- 				
+ 			}	
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
  						 			 						
  						var chartConf = Ext.JSON.decode(response.responseText, true);	
@@ -520,7 +524,7 @@ author:
  						Ext.getBody().unmask();
  					});
  				
- 			} 
+ 			 
  			
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
