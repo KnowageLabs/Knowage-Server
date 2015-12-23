@@ -12,6 +12,12 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	displayField : 'name',
 	valueField : 'value',
 	emptyText: LN("sbi.chartengine.configuration.orientation.emptyText"),
+	
+	/**
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	width: Sbi.settings.chart.configurationStep.widthOfFields,
+	
 	store : {
 		fields : [ 'name', 'value' ],
 		data : [ {

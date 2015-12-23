@@ -40,15 +40,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	
 	font : Ext.create('Sbi.chart.designer.FontCombo',{
 		bind : '{configModel.font}',
-		fieldLabel : LN("sbi.chartengine.configuration.fontFamily")
+		fieldLabel : LN("sbi.chartengine.configuration.fontFamily"),
+		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
 	}),
 	
    	fontSize : Ext.create('Sbi.chart.designer.FontDimCombo',{
-   		bind : '{configModel.fontDimension}'
+   		bind : '{configModel.fontDimension}',
+   		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
    	}),
    	
    	fontStyle : Ext.create('Sbi.chart.designer.FontStyleCombo',{
-   		bind : '{configModel.fontWeight}'
+   		bind : '{configModel.fontWeight}',
+   		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
    	}),
    	
    	
@@ -71,8 +74,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		xtype : 'numberfield',
     		id: "chartHeightNumberfield", 	// added by: Danilo Ristovski (for the validation)
     		minValue: 0,					// added by: Danilo Ristovski (for the validation)
-    		width: 280,
-    		emptyText: LN("sbi.chartengine.configuration.height.emptyText"),
+//    		width: 280,
+    		width: Sbi.settings.chart.configurationStep.widthOfFields,			// Danilo Ristovski
+    		padding: Sbi.settings.chart.configurationStep.paddingOfTopFields,	// Danilo Ristovski
+    		emptyText: LN("sbi.chartengine.configuration.height.emptyText"),    		
     		bind : '{configModel.height}',
     		fieldLabel : LN('sbi.chartengine.configuration.height')
     	};
@@ -81,7 +86,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		xtype : 'numberfield',
     		id: "chartWidthNumberfield",
     		minValue: 0,					// added by: Danilo Ristovski (for the validation)
-    		width: 280,
+//    		width: 280,	// Old width (Danilo Ristovski)
+    		width: Sbi.settings.chart.configurationStep.widthOfFields,			// Danilo Ristovski
+    		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields,	// Danilo Ristovski
     		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),    		
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
@@ -90,8 +97,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
-    		bind : '{configModel.orientation}',
-    		hidden: ChartUtils.disableChartOrientation()
+    		bind : '{configModel.orientation}',    		
+    		hidden: ChartUtils.disableChartOrientation(),
+    		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
     	});
         
         var font = this.font;
@@ -101,7 +109,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
     		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-       		fieldBind: '{configModel.backgroundColor}'
+       		fieldBind: '{configModel.backgroundColor}',
+       		//margin: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
        	});
         
         var colorPickerContainer = this.colorPickerContainer;       
@@ -140,47 +149,84 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var stylePanelTitle = this.stylePanelTitle;
         var stylePanelNoData = this.stylePanelNoData;
         
-        var item = [ {
-			xtype : 'fieldcontainer',
-			layout : 'hbox',
-			id: "fieldContainer1",
-			defaults : {
-				margin: '10 20 10 0'
-			},
-			items : [
-			    this.height, 
+        var item = 
+        	[ 
+//             {
+//				xtype : 'fieldcontainer',
+//				layout : 'hbox',
+//				id: "fieldContainer1",
+//				defaults : {
+//					margin: '10 20 10 0'
+//				},
+//				items : [
+//				    this.height, 
+//				    this.width,
+//				    this.chartOrientation
+//				    ]
+//             }, 
+
+				// Danilo Ristovski 
+				this.height, 
 			    this.width,
-			    this.chartOrientation
-			    ]
-		}, {
-			xtype : 'fieldcontainer',
-			layout : 'hbox',
-			defaults : {
-	            margin: '0 20 10 0'
-			},
-			items : [ 
-				font,
+			    this.chartOrientation,
+		
+//		{
+//			xtype : 'fieldcontainer',
+//			layout : 'hbox',
+//			defaults : {
+//	            margin: '0 20 10 0'
+//			},
+//			items : [ 
+//				font,
+//				fontSize,
+//				fontStyle
+//			]
+//		}, 
+			    
+			    // Danilo Ristovski 
+			    font,
 				fontSize,
-				fontStyle
-			]
-		}, 
-			colorPickerContainer,
+				fontStyle,
+				
+				colorPickerContainer,
+			
 		{
 			xtype : 'fieldcontainer',
-			layout : 'hbox',
-			defaults : {
-	            margin: '10 0 10 0'
+			
+			/**
+			 * Take the default layout for fields in the main panel. It is applied
+			 * also in other fields in this file.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+			
+			defaults : 
+			{				
+				/**
+				 * Old implementation (margin) and the new one (padding). It is applied
+				 * also in other fields in this file.
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+//	            margin: '10 0 10 0'
+				margin: Sbi.settings.chart.configurationStep.marginOfTopFieldset					
 			},
+			
 			items : [ {
 	            xtype : 'textfield',
-	            width: 280,
+//	            width: 280,
+	            width: Sbi.settings.chart.configurationStep.widthOfFields,
 	            emptyText : LN("sbi.chartengine.configuration.title.emptyText"),
 	            bind : '{configModel.title}',
 	            fieldLabel : LN('sbi.chartengine.configuration.title')
 	        },{
 				xtype : 'button',
+				
 				// top, right, bottom, left
-				margin: "10 0 0 10",
+//	            margin: "10 0 0 10",
+				margin: Sbi.settings.chart.configurationStep.marginOfTopFieldsetButtons,					
+				
 	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelTitle.show();
@@ -188,21 +234,30 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			}]
 	    }, {
 	        xtype : 'fieldcontainer',
-	        layout : 'hbox',
-	        defaults : {
-	            margin: '0 0 10 0'
+	        layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+	        
+	        defaults : 
+	        {	   
+				// top, right, bottom, left
+//	            margin: '0 0 10 0'
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
 	        },
+	        
 	        items : [ {
 	            xtype : 'textfield',
-	            width: 280,
+//	            width: 280,
+	            width: Sbi.settings.chart.configurationStep.widthOfFields,
 	            emptyText: LN("sbi.chartengine.configuration.subtitle.emptyText"),
 	            bind : '{configModel.subtitle}',
 	            fieldLabel : LN('sbi.chartengine.configuration.subtitle'),
 	            maxWidth:'500'
 	        }, {
 	            xtype : 'button',
-	            // top, right, bottom, left
-				margin: "0 0 0 10",
+	            
+				// top, right, bottom, left
+//	            margin: "0 0 0 10",
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldsetButtons,	
+				
 	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelSubtitle.show();
@@ -210,19 +265,37 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        }]
 	    }, {
 	        xtype : 'fieldcontainer',
-	        layout : 'hbox',
+	        
+	        defaults : 
+	        {	   
+				// top, right, bottom, left
+//	            margin: '0 0 10 0'
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+	        },
+	        
+	        /**
+	         * Align items in the hbox vertically in the center of the hbox.
+	         * 
+	         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	         */
+	        layout:  Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+    		
 	        items : [{
 	        	id: 'nodata',
 	            xtype : 'textfield',
-	            width: 280,
+//	            width: 280,
+	            width: Sbi.settings.chart.configurationStep.widthOfFields,
 	            emptyText: LN("sbi.chartengine.configuration.noData.emptyText"),
 	            bind : '{configModel.nodata}',
-	            fieldLabel : LN('sbi.chartengine.configuration.nodata') ,
-	            labelWidth : '100%'
+	            fieldLabel : LN('sbi.chartengine.configuration.nodata'),
+	            //labelWidth : '100%'
 	        },{
 	            xtype : 'button',
-	            // top, right, bottom, left
-				margin: "0 0 0 10",
+	            
+				// top, right, bottom, left
+//	            margin: "0 0 0 10",
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldsetButtons,
+				
 	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelNoData.show();
@@ -236,29 +309,38 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
          * Toolbar opacity mouse over number field that is needed for the
          * SUNBURST chart type (danilo.ristovski@mht.net)
          */
-    	var toolbarOpacMouseOver = Ext.create({
- 			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */
-                        
-			xtype : 'fieldcontainer',
-			layout : 'hbox',
-			id: "opacityMouseOver",
-
-			defaults : {
-				//labelWidth : '100%',
-				margin:'5 30 0 0'
-			},
-
-			items: [{
-				xtype: 'numberfield',
-				width: 280,
-				emptyText: LN("sbi.chartengine.configuration.opacityOnMouseOver.emptyText"),
-				bind: '{configModel.opacMouseOver}',		
-				fieldLabel: LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
-				width: "200",
-				maxValue: '100', 	// opacity: 100%
-				minValue: '1',		// opacity: 1%
-			}]		                     
-        });
+    	var toolbarOpacMouseOver = Ext.create
+    	(
+			{
+	 			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */                        
+				xtype : 'fieldcontainer',
+				id: "opacityMouseOver",
+	
+				defaults : 
+				{
+					//labelWidth : '100%',	// Commented by Danilo Ristovski
+					
+					// top, right, bottom, left
+	//	            margin:'5 30 0 0'
+					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+					layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+				},
+	
+				items: 
+				[
+					 {
+						xtype: 'numberfield',
+		//				width: 280,
+						width: Sbi.settings.chart.configurationStep.widthOfFields,
+						emptyText: LN("sbi.chartengine.configuration.opacityOnMouseOver.emptyText"),
+						bind: '{configModel.opacMouseOver}',		
+						fieldLabel: LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
+						maxValue: '100', 	// opacity: 100%
+						minValue: '1',		// opacity: 1%
+					}
+				 ]		                     
+			}
+		);
  	    
  	    this.add(toolbarOpacMouseOver);
      	
@@ -271,7 +353,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			id: 'showLegend',
 			bind : '{configModel.showLegend}',
 			hidden: ChartUtils.disableShowLegendCheck(),	// danristo (danilo.ristovski@mht.net)
-			margin: '20 0 0 0',
+				
+			// top, right, bottom, left
+//	        margin: '20 0 0 0',	
+			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+			layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+			
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 		});

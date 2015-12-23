@@ -1960,7 +1960,7 @@ function renderWordCloud(chartConf){
 								rgbToHsl(rgbColorForTooltipBckgnd.r, rgbColorForTooltipBckgnd.g, rgbColorForTooltipBckgnd.b);						
 							var degreeOfLightInColor = hslColorForTooltipBckgnd[2];
 							
-							var darknessThreshold = 0.4;
+							var darknessThreshold = Sbi.settings.chart.parallel.tooltip.darknessThreshold;
 							
 							var tooltipBckgndColor = null;
 							
@@ -2665,8 +2665,7 @@ function renderWordCloud(chartConf){
 				.style("font-size",data.legend.element.style.fontSize)
 				.style("font-style",data.legend.element.style.fontStyle)
 				.style("font-weight",data.legend.element.style.fontWeight)
-				.style("text-decoration",data.legend.element.style.textDecoration);
-		
+				.style("text-decoration",data.legend.element.style.textDecoration);		
 		
 		updateTable();	
 

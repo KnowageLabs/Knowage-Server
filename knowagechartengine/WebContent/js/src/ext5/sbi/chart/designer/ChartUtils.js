@@ -204,8 +204,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			result['id'] = ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX
 				 + ChartColumnsContainerManager.instanceIdFeed;
+			/* Increment the axis instance ID counter for the next one (Danilo Ristovski) */
 			result['alias'] = ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX
-				 + ChartColumnsContainerManager.instanceIdFeed;
+				 + ChartColumnsContainerManager.instanceIdFeed++;
 			result['axisType'] = isCategory ? 'Category'
 				 : 'Serie';
 			result['position'] = isCategory ? 'bottom'
@@ -2031,51 +2032,51 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			
 			// TODO: danristo (for GAUGE: Step 1 -> Step 4 error of undefined)
 			if (data) {			
-				var keys = Object.keys(data);
-	
-				for (index in keys) {
-					var key = keys[index];
-					if (Array.isArray(data[key])) {
-						var array = data[key];
-	
-						for (var i = 0; i < array.length; i++) {
-							treeData.push({
-								key : key,
-								expanded : (nivel < 1),
-								isArray : 1,
-								children : ChartUtils.convertJsonToTreeFormat(
-									array[i],
-									nivel + 1),
-							});
-						}
-					} else if (isValue(data[key])) {
-						var type = 'object';
-						if (typeof data[key] === 'boolean')
-							type = 'boolean';
-						if (typeof data[key] === 'string')
-							type = 'string';
-						if (typeof data[key] === 'number')
-							type = 'number';
-	
-						treeData.push({
-							key : key,
-							value : data[key],
-							type : type,
-							isArray : 0,
-							leaf : true
-						});
-					} else {
+			var keys = Object.keys(data);
+
+			for (index in keys) {
+				var key = keys[index];
+				if (Array.isArray(data[key])) {
+					var array = data[key];
+
+					for (var i = 0; i < array.length; i++) {
 						treeData.push({
 							key : key,
 							expanded : (nivel < 1),
-							isArray : 0,
-							children : ChartUtils
-							.convertJsonToTreeFormat(
-								data[key], nivel + 1)
+							isArray : 1,
+							children : ChartUtils.convertJsonToTreeFormat(
+								array[i],
+								nivel + 1),
 						});
 					}
+				} else if (isValue(data[key])) {
+					var type = 'object';
+					if (typeof data[key] === 'boolean')
+						type = 'boolean';
+					if (typeof data[key] === 'string')
+						type = 'string';
+					if (typeof data[key] === 'number')
+						type = 'number';
+
+					treeData.push({
+						key : key,
+						value : data[key],
+						type : type,
+						isArray : 0,
+						leaf : true
+					});
+				} else {
+					treeData.push({
+						key : key,
+						expanded : (nivel < 1),
+						isArray : 0,
+						children : ChartUtils
+						.convertJsonToTreeFormat(
+							data[key], nivel + 1)
+					});
 				}
 			}
+		}
 
 			if (nivel == 0) {
 				var treeFormattedJson = {
@@ -2089,6 +2090,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		convertTreeFormatToJson : function (data, isWrapper) {
+
 			function areThereDifferentChildren(children) {
 				if (children.length == 0) {
 					return false;
@@ -2127,7 +2129,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						var tempDatum = result[datum.key];
 						if (Array.isArray(tempDatum)) {
 							var newDatumKeyArray = [];
-							
 							for (j in tempDatum) {
 								newDatumKeyArray.push(tempDatum[j]);
 							}
@@ -2189,7 +2190,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 			return temp;
 		},
-		
+
 		/**
 		 * Static function that provides removing of all properties that are unwanted and that are 
 		 * specified in static variable "unwantedStyleProps". The function removes those unwanted 
@@ -2202,17 +2203,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * style we want to apply to our document (chart) from which we want to remove all unwanted 
 		 * properties specified in the static variable "unwantedStyleProps".
 		 * 
+		 * @param isYAxisEmpty - Tells this method if there are no series inside of the Y-axis panel
+		 * so we can skip mergin of the source SERIE item that is an OBJECT (not an empty array) to 
+		 * the target configuration that does not posses this tag at all. Otherwise, we will have an 
+		 * SERIE object inside of the final configuration that will create fake (ghost) serie item 
+		 * in the Y-axis panel of the newly created chart.
+		 * 
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		removeUnwantedPropsFromJsonStyle: function(obj)
-		{
+		removeUnwantedPropsFromJsonStyle: function(obj,isYAxisEmpty)
+		{			
 			if (obj)
 	    	{
 		    	for (var key in obj) 
 		    	{
 		            if (typeof obj[key] == "object")
 	            	{
-		            	ChartUtils.removeUnwantedPropsFromJsonStyle(obj[key]);
+		            	ChartUtils.removeUnwantedPropsFromJsonStyle(obj[key],booleanS);
 	            	}			               
 		            else if (typeof obj[key] != "function")
 	            	{
@@ -2220,9 +2227,21 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 	            		{
 		            		if (key == ChartUtils.unwantedStyleProps[i])
 		            		{
+		            			//console.log(key);
 			            		delete obj[key];
 		            		}
-	            		}		            				            		
+	            		}	
+		            	
+		            	if (isYAxisEmpty == true)
+	            		{
+		            		/**
+		            		 * Remove this tag since it contains the SERIE sub-tag that
+		            		 * is in this case an object (not an empty array, as we are
+		            		 * expecting to be), so to skip appereance of the ghost serie
+		            		 * item in the Y-axis (that should however be empty).
+		            		 */
+		            		delete obj["VALUES"];
+	            		}
 	            	}			                
 		        }	
 	    	}			        
@@ -2242,14 +2261,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * 		- removeNotFoundItemsFlag boolean - tells the mergeObjects method to remove id properties from each node and subnode
 		 * 		- applyAxes boolean - makes a special apply to CHART.AXES_LIST.AXIS nodes of the source json obj and target json obj
 		 */
+		/**
+		 * @param addNewAxis - 	If we add new Y-axis panel, skip applying current style
+		 * 						to all Y-axis panel (to already existing ones as well 
+		 * 						as on the one that we actually just added) and apply it
+		 * 						just to the newly added one. 
+		 */
 		//		mergeObjects : function (target, source, removeNotFoundItemsFlag) {
-		mergeObjects : function (target, source, config) {
+		mergeObjects : function (target, source, config, addNewAxis) {
 			function isArray(o) {
 				return Object.prototype.toString.call(o) == "[object Array]";
 			}
 
 			config = config || {};
+			
 			var removeNotFoundItemsFlag = config.removeNotFoundItemsFlag || false;
+			
 			var applyAxes = config.applyAxes || false;
 			var applySeries = config.applySeries || false;
 
@@ -2268,19 +2295,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var newTarget = ChartUtils.clone(target);
 
+			
 			// Assume both are objects and don't care about
 			// inherited properties
 			for (var prop in source) {
-				
+
 				// Daniele (commented part)
 //				if (applyAxes && prop == 'AXIS') {
 				if (applyAxes && prop == 'AXES_LIST') {
-
+					
 					var axisTagSource = source[prop]['AXIS'];
 					var axisTagTarget = target[prop]['AXIS'];
 					
 					if (axisTagSource!=undefined)
-						newTarget[prop]['AXIS'] = ChartUtils.applyAxes(axisTagTarget, axisTagSource);
+						newTarget[prop]['AXIS'] = ChartUtils.applyAxes(axisTagTarget, axisTagSource, addNewAxis);
 					
 					/**
 					 * Characteristic for PARALLEL chart
@@ -2321,12 +2349,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				}
 				
 				if (applySeries && prop == 'SERIE') {
-					newTarget[prop] = ChartUtils.applySeries(target[prop], source[prop]);
-					
+					newTarget[prop] = ChartUtils.applySeries(target[prop], source[prop], addNewAxis);
 					continue;
 				}
 
-				item = source[prop];				
+				item = source[prop];
 				
 				if (typeof item == 'object' && item !== null) {
 					if (isArray(item)) {
@@ -2340,6 +2367,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							// if target doesn't have a similar
 							// property, just reference it
 							tItem = newTarget[prop];
+							
 							if (!tItem) {
 								newTarget[prop] = item;
 
@@ -2376,7 +2404,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									// array
 									for (var itemIndex in item) {
 										var mixedMergedObj =
-											ChartUtils.mergeObjects(tItem, item[itemIndex], config);
+											ChartUtils.mergeObjects(tItem, item[itemIndex], config, addNewAxis);
 										forcedTItemArray.push(mixedMergedObj);
 									}
 
@@ -2405,7 +2433,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									var idxItem = idx[itemL.id];
 
 									if (idxItem != undefined) {
-										tItem.push(ChartUtils.mergeObjects(idxItem, itemL, config));
+										tItem.push(ChartUtils.mergeObjects(idxItem, itemL, config, addNewAxis));
 									} else {
 										tItem.push(itemL);
 									}
@@ -2420,7 +2448,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						if (!tItem || (isArray(tItem) && tItem.length == 0)) {
 							newTarget[prop] = item;
 						} else {
-							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, config);
+							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, config, addNewAxis);
 						}
 					}
 
@@ -2439,7 +2467,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		/** Patch for axes merging */
-		applyAxes : function (target, source) {
+		applyAxes : function (target, source, addNewAxis) {
+						
 			var styleSerieAxis,
 			styleCategoryAxis;
 
@@ -2463,7 +2492,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * 'styleCategoryAxis' - 	properties that are common for the AXIS tag of the
 				 * 							axis for the CATEGORY items.
 				 * @comment by: danristo (danilo.ristovski@mht.net)
-				 */
+				 */				
 				if (axis.type.toLowerCase() == 'serie') {
 					styleSerieAxis = axis;
 				} else if (axis.type.toLowerCase() == 'category') {
@@ -2477,11 +2506,55 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var appliedStyledAxis = {};
 				var targetAxis = target[i];
 
-				if (targetAxis.type.toLowerCase() == 'serie') {
-					appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
-				} else if (targetAxis.type.toLowerCase() == 'category') {
-					appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleCategoryAxis);
+				/**
+				 * If we specify "addNewAxis" input parameter that should hold alias and ID
+				 * of newly added Y-axis panel (when calling merging from handler that handles
+				 * clicking action on the PLUS button on the Y-axis), then we should apply 
+				 * current style only to Y-axis panel that is just added, not to others also.
+				 * We will distinguish whether the current, i-th Y-axis panel is the one that
+				 * is just added, basing on the fact that aliases and IDs of current Y-axis 
+				 * pane (i-th) must match with the one that is forwarded from PLUS button clicking
+				 * handler. In the case we call merging from this function, "addNewAxis" parameter
+				 * will be defined, so we will skip merging of other panels (those that are not 
+				 * the new one) and just forward them as they are. 
+				 * 
+				 * TODO: Check with Benedetto if this is OK !!!
+				 */
+				
+				/**
+				 * If merging is called from the PLUS button clicking handler (the one for adding new Y-axis).
+				 */
+				if (addNewAxis)
+				{
+					/**
+					 * If we are deling with the newly added Y-axis panel, merge it with the
+					 * current style...
+					 */
+					if (addNewAxis.alias==targetAxis.alias && addNewAxis.id==targetAxis.id)
+					{
+						if (targetAxis.type.toLowerCase() == 'serie') {
+							appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
+						}
+					}
+					/**
+					 * ... otherwise, leave axis as it is (do not apply current style to it).
+					 */
+					else
+					{
+						appliedStyledAxis = targetAxis;
+					}					
 				}
+				/**
+				 * If merging is called from some other place (not the PLUS sign clicking handler).
+				 */
+				else
+				{					
+					if (targetAxis.type.toLowerCase() == 'serie') {
+						appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
+					} else if (targetAxis.type.toLowerCase() == 'category') {
+						appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleCategoryAxis);
+					}
+				}				
 
 				finalAxisArray.push(appliedStyledAxis);
 			}
@@ -2489,7 +2562,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return finalAxisArray;
 		},
 		
-		applySeries: function(target, source) {
+		applySeries: function(target, source, addNewAxis) {
+									
 			var finalSerieArray = [];
 			
 			var newTarget = [];
@@ -2504,8 +2578,38 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			
 			for(var i = 0; i < target.length; i++) {
 				var targetItem = target[i];
+				var newTargetItem = {};
+										
+				/** 
+				 * TODO: Check with Benedetto if this is OK !!!
+				 */
 				
-				var newTargetItem = ChartUtils.mergeObjects(targetItem, source);
+				/**
+				 * If merging is called from the PLUS button clicking handler (the one for adding new Y-axis).
+				 */
+				if (addNewAxis)
+				{
+					/**
+					 * If we are deling with the newly added Y-axis panel, merge it with the
+					 * current style...
+					 */
+					if (addNewAxis.alias==targetItem.alias && addNewAxis.id==targetItem.id)
+					{
+						newTargetItem = ChartUtils.mergeObjects(targetItem, source);
+					}
+					/**
+					 * ... otherwise, leave axis as it is (do not apply current style to it).
+					 */
+					else
+					{
+						newTargetItem = targetItem;
+					}					
+				}
+				else
+				{
+					newTargetItem = ChartUtils.mergeObjects(targetItem, source);
+				}
+				
 				newTarget.push(newTargetItem);
 			}
 			

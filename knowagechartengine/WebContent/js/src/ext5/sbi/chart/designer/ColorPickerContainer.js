@@ -36,7 +36,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 				fieldStyle : 'background-image: none; background-color: ' + this.config.fieldBind,
 			},
 			
-			width:275,
+//			width: 275,
+			width: Sbi.settings.chart.configurationStep.widthOfFields-5,
 			
 			listeners:
 			{				

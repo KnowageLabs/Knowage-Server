@@ -28,7 +28,9 @@ Ext.define('Sbi.chart.designer.FontStyleCombo', {
     
     /**
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-     */
+     */    
+    width: Sbi.settings.chart.configurationStep.widthOfFields,
+    
     listeners: 
 	{
     	change: function(sender, newValue, oldValue, opts)

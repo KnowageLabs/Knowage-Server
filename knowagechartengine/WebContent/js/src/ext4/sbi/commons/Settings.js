@@ -14,16 +14,67 @@ Sbi.settings.cockpit = {
 };
 
 /**
- * Added property for sign that will prepresent mandatory fields on
- * the Designer.
+ * Configurations for the Designer.
  * 
- * @author: danristo (danilo.ristovski@mht.net)
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
 Sbi.settings.chart = 
 {
+		
 	configurationStep:
 	{
-		htmlForMandatoryFields: "<span style='color: rgb(255, 0, 0);'> [&#9873]</span>"
+		/**
+		 * Property for the sign that will represent mandatory fields on
+		 * the Designer.
+		 */
+		htmlForMandatoryFields: "<span style='color: rgb(255, 0, 0);'> [&#9873]</span>",
+		/**
+		 * All GUI fields that appear inside the Designer (in its panels 
+		 * and popups) should take this width.
+		 */
+		widthOfFields: 280,
+		
+		/**
+		 * Padding for fields that are out of fieldsets and that are lying
+		 * on three different positions: on the top, in the middle (inner)
+		 * or at the end of the panel. 
+		 */
+		paddingOfTopFields: "0 0 5 0",			
+		paddingOfInnerFields: "5 0 5 0",		
+		paddingOfBottomFields: "5 0 0 0",
+		
+		/**
+		 * Margin for fields that are inside of fieldsets and that are lying
+		 * on three different positions.
+		 */		
+		marginOfTopFieldset: '5 0 5 0',
+		marginOfTopFieldsetButtons: "5 0 0 10",
+		
+		marginOfInnerFieldset:  '0 0 5 0',		
+		marginOfInnerFieldsetButtons: "0 0 0 10",
+		
+		/**
+		 * Layout that all fields in the same panel should follow.
+		 */
+		layoutFieldsInMainPanel: 
+    	{
+        	type:'hbox',
+        	align:"center"
+		},
+	},
+	
+	parallel:
+	{
+		tooltip:
+		{
+			/**
+			 * This parameter is used for the threshold that is used for
+			 * determining if the text on the PARALLEL's tooltip is going
+			 * to be black (when the tooltip's background is lighter color)
+			 * or white (when the background is too dark).
+			 */
+			darknessThreshold: 0.7
+		}
 	}
 };
 

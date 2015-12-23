@@ -242,7 +242,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	/**
 			    	 * I think we don't need applying the current style to axis style configuration, neither to
 			    	 * serie style configuration since we are opening newly created (not yet completely (fully)
-			    	 * specified) chart document that does not have any serie and for which we are going yto have 
+			    	 * specified) chart document that does not have any serie and for which we are going to have 
 			    	 * only one Y-axis panel.
 			    	 * 
 			    	 * Applying of current style to every single serie item that we are
@@ -253,12 +253,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 * 
 			    	 * TODO: Check about this with Benedetto !!!! 
 			    	 */
-			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: false});
+			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: true});
 			    	//console.log(jsonTemplate);
 			    }
 			    else
 			    {
-			    	jsonTemplate=baseTemplate;
+			    	jsonTemplate = baseTemplate;
 			    }
 			    
 			    newChart = true; 
@@ -325,8 +325,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				//console.log(jsonTemplate);
 			}
-			
-			
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
 			
@@ -446,8 +444,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);					
 					
 					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
-					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
-					var chartWidth = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");	
+//					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
+//					var chartWidth = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");	
+					var chartOrientation = mainConfigurationPanel.getComponent("chartOrientationCombo");
+					var chartWidth = mainConfigurationPanel.getComponent("chartWidthNumberfield");	
 					
 					/**
 					 * The main configuration panel element (opacity on mouse over) to show
@@ -692,6 +692,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
 					
+					/**
+					 * Since we are dealing with the newly created chart which does not posses any 
+					 * serie item, in order to skip mergin the OBJECT (not an empty array!) in the 
+					 * SERIE tag of the source parameter with the target that does not have it 
+					 * (SERIE tag), we will remove the VALUES tag that contains mentioned one so we 
+					 * skip appearance of the ghost serie item after mergin. Parameter that tells 
+					 * the method that is called that we should remove this tag is "yAxisListIsEmpty".
+					 */
 					var configurationForStyleGeneric = 	
 						
 						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
@@ -1198,8 +1206,26 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    	 */
 							
-							var configurationForStyleGeneric = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr).generic);	
-							var configurationForStyleSpecific = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase]);	
+							var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
+							
+							var configurationForStyleGeneric = 	
+								
+								Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+								(
+									Designer.getConfigurationForStyle(k.data.styleAbbr).generic,
+									yAxisListIsEmpty
+								);
+							
+							var configurationForStyleSpecific = 	
+								
+								Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+								(
+									Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase],
+									yAxisListIsEmpty
+								);
+							
+//							var configurationForStyleGeneric = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr).generic);	
+//							var configurationForStyleSpecific = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase]);	
 							
 							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 							(
@@ -1774,16 +1800,21 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            		element: 'el',
   		            		fn: function(){
   		            			
-//  		            		var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-//  		            		if (activeTab.getId() == 'advancedEditor') {  	
-//  		            			var json = activeTab.getChartData(); 
-//  		            			Sbi.chart.designer.Designer.update(json);
-//  		            		}
+  		            			/**
+  		            			 * NOTE: Commented by Benedetto Milazzo and Danilo Ristovski: problem when saving chart
+  		            			 * (document) while inside the Advanced editor tab
+  		            			 */
+//  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+//  		            			if (activeTab.getId() == 'advancedEditor') {  	
+//  		            				var json = activeTab.getChartData(); 
+//  		            				Sbi.chart.designer.Designer.update(json);
+//  		            			}
   		            			
   		            			//console.log(Sbi.chart.designer.Designer.exportAsJson());
     							//console.log(Sbi.chart.designer.Designer.exportAsJson(true));
   		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
+
   		            			
   		            			if (errorMessages == false) {
   		            				Ext.Msg.show({
@@ -2584,7 +2615,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * ********************************************************************
 			 */		
 			
-			var heightField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartHeightNumberfield");
+//			var heightField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartHeightNumberfield");
+			var heightField = mainConfigurationPanel.getComponent("chartHeightNumberfield");
 			var heightFieldValue = heightField.value;
 			var heightViewModelValue = this.cViewModel.data.configModel.data.height;
 						
@@ -2629,9 +2661,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Validate chart's width in the Generic configuration panel on Step 2
 			 * ********************************************************************
 			 */
-			if (!mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield").hidden)
+			var widthField = mainConfigurationPanel.getComponent("chartWidthNumberfield");
+			
+			if (!widthField.hidden)
 			{
-				var widthField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
+//				var widthField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
+				
 				var widthFieldValue = widthField.value;
 				var widthViewModelValue = this.cViewModel.data.configModel.data.width;
 							
