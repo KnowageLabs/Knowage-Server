@@ -137,8 +137,11 @@ public class DimensionService {
 			String queryText = "";
 
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
+			String dimFilterField = hierarchies.getPrefix(dimensionLabel) + HierarchyConstants.DIM_FILTER_FIELD;
+			String hierFilterField = hierarchies.getPrefix(dimensionLabel) + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
 
-			queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy, hierTableName);
+			queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy, hierTableName,
+					dimFilterField, hierFilterField);
 
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -172,7 +175,7 @@ public class DimensionService {
 	}
 
 	private String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate, String filterDate,
-			String filterHierarchy, String hierTableName) {
+			String filterHierarchy, String hierTableName, String dimFilterField, String hierFilterField) {
 
 		logger.debug("START");
 
@@ -218,11 +221,11 @@ public class DimensionService {
 		if (filterHierarchy != null) {
 			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
 
-			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIM_FILTER_FIELD, dataSource);
-			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.SELECT_HIER_FILTER_FIELD, dataSource);
+			String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
+			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
 			String whereFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
-			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + hierTableName);
+			query.append(" AND " + dimFilterFieldCol + " NOT IN (SELECT " + selectFilterField + "FROM " + hierTableName);
 			query.append(" WHERE " + whereFilterField + " = \"" + filterHierarchy + "\" AND " + vDateWhereClause + " )");
 		}
 
