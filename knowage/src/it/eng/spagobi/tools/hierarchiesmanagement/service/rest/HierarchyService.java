@@ -20,8 +20,12 @@ import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -675,4 +679,47 @@ public class HierarchyService {
 		}
 
 	}
+
+	private void updateHierarchyForBackup(IDataSource dataSource, String hierarchyType, String hierarchyName, String validityDate, String hierTableName) {
+
+		logger.debug("START");
+
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(calendar.getTime());
+		long timestamp = calendar.getTimeInMillis();
+
+		Date vDateConverted = Date.valueOf(validityDate);
+
+		String vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
+
+		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "=? WHERE " + hierTypeColumn + "=? AND " + vDateWhereClause;
+
+		logger.debug("The update query is [" + updateQuery + "]");
+
+		try (Connection databaseConnection = dataSource.getConnection();
+				Statement stmt = databaseConnection.createStatement();
+				PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
+
+			preparedStatement.setString(1, hierarchyName + "_" + timestamp);
+			preparedStatement.setString(2, hierarchyType);
+			preparedStatement.setDate(3, vDateConverted);
+			preparedStatement.setDate(4, vDateConverted);
+
+			preparedStatement.executeUpdate();
+
+			logger.debug("Update query successfully executed");
+			logger.debug("END");
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while updating hierarchy for backup");
+			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t);
+		}
+
+	}
+
 }
