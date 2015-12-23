@@ -10,6 +10,7 @@ public class HierarchyConstants {
 	public final static String DIMENSION = "DIMENSION";
 	public final static String NAME = "NAME";
 	public final static String LABEL = "LABEL";
+	public final static String PREFIX = "PREFIX";
 	public final static String HIERARCHY_TABLE = "HIERARCHY_TABLE";
 	public final static String HIERARCHY_FK = "HIERARCHY_FK";
 	public final static String DATASOURCE = "DATASOURCE";

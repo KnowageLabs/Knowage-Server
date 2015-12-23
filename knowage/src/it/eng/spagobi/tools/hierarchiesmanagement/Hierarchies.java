@@ -126,6 +126,30 @@ public class Hierarchies {
 	}
 
 	/**
+	 * Get the prefix for the passed dimension
+	 *
+	 * @param dimension
+	 *            the dimension name
+	 * @return the prefix of the tables and columns
+	 */
+	public String getPrefix(String dimension) {
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(HierarchyConstants.DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(HierarchyConstants.DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			SourceBean sbRow = (SourceBean) iterator.next();
+			// String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			String dimensionLabel = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
+				String prefix = sbRow.getAttribute(HierarchyConstants.PREFIX) != null ? sbRow.getAttribute(HierarchyConstants.PREFIX).toString() : null;
+				return prefix;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get the hierarchy table foreign key name of the passed dimension
 	 *
 	 * @param dimension

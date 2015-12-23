@@ -22,9 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.hierarchiesmanagement;
 
 import java.sql.Date;
+import java.util.HashMap;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
+ * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public class HierarchyTreeNodeData {
@@ -38,6 +40,7 @@ public class HierarchyTreeNodeData {
 	String depth;
 	Date beginDt;
 	Date endDt;
+	HashMap attributes;
 
 	/**
 	 * @param nodeCode
@@ -190,6 +193,21 @@ public class HierarchyTreeNodeData {
 	 */
 	public void setEndDt(Date endDt) {
 		this.endDt = endDt;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public HashMap getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes
+	 *            the attributes to set
+	 */
+	public void setAttributes(HashMap attributes) {
+		this.attributes = attributes;
 	}
 
 }

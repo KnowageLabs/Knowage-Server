@@ -1,6 +1,5 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -157,7 +156,8 @@ public class HierarchyService {
 	@Path("/getHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
-			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate) {
+			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
+			@QueryParam("filterDimension") String filterDimension) {
 		logger.debug("START");
 
 		HierarchyTreeNode hierarchyTree;
@@ -173,7 +173,7 @@ public class HierarchyService {
 
 			// 2 - execute query to get hierarchies leafs
 			IMetaData metadata = null;
-			String queryText = this.createQueryHierarchy(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate);
+			String queryText = this.createQueryHierarchy(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDimension);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
@@ -282,13 +282,16 @@ public class HierarchyService {
 	/**
 	 * Create query for extracting automatic hierarchy rows
 	 */
-	private String createQueryHierarchy(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate) {
+	private String createQueryHierarchy(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate,
+			String filterDimension) {
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
 		// 1 -get hierarchy informations
 		String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
 		String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
+		String dimensionName = (hierarchies.getDimension(dimension).getName());
+		String prefix = hierarchies.getPrefix(dimension);
 		Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
 		Assert.assertNotNull(hierarchyFields, "Impossible to find a hierarchy configurations for the dimension called [" + dimension + "]");
 		HashMap hierConfig = hierarchies.getConfig(dimension);
@@ -355,33 +358,23 @@ public class HierarchyService {
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 		String hierDateBeginColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String hierDateEndColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+		String vDateConverted = HierarchyUtils.getConvertedDate(hierarchyDate, dataSource);
 
-		// defining date conversion cmd for filters on dates
-		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-		String fnc = "";
-		String actualDialect = dataSource.getHibDialectClass();
-		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
-			fnc = "STR_TO_DATE('" + hierarchyDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + hierarchyDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_ORACLE.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + hierarchyDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_HSQL.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + hierarchyDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
-			fnc = "TO_DATE('" + hierarchyDate + "','" + format + "')";
-		} else if (HierarchyConstants.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
-			// fnc = "DATE('" + dateHierarchy + "','" + format + "')";
-			fnc = "DATE('" + hierarchyDate + "')";
-		} else if (HierarchyConstants.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
-			fnc = "'" + hierarchyDate + "',AS DATE FORMAT '" + format + "')";
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = \"" + hierarchyName
+				+ "\" AND " + hierTypeColumn + " = \"" + hierarchyType + "\" AND " + vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted
+				+ " <= " + hierDateEndColumn);
+
+		if (filterDimension != null) {
+			logger.debug("Filter dimension is [" + filterDimension + "]");
+
+			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
+			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD", dataSource);
+
+			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + dimensionName);
+			query.append(" WHERE " + vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn);
 		}
-
-		String query = "SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = \"" + hierarchyName + "\" AND " + hierTypeColumn
-				+ " = \"" + hierarchyType + "\" AND " + fnc + " >= " + hierDateBeginColumn + " AND " + fnc + " <= " + hierDateEndColumn;
-
 		logger.debug("Query for get hierarchies: " + query);
-		return query;
+		return query.toString();
 	}
 
 	private int getTotalNodeFieldsNumber(int totalLevels, List<Field> nodeMetadataFields) {
@@ -411,6 +404,7 @@ public class HierarchyService {
 		metadata = dataStore.getMetaData(); // saving metadata for next using
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+		String prefix = hierarchies.getPrefix(dimension);
 		HashMap hierConfig = hierarchies.getConfig(dimension);
 		int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
 		// contains the code of the last level node (not null) inserted in the
@@ -437,8 +431,8 @@ public class HierarchyService {
 			int currentLevel = 0;
 
 			for (int i = 1, l = numLevels; i <= l; i++) {
-				IField codeField = record.getFieldAt(dsMeta.getFieldIndex(dimension + "_CD_LEV" + i)); // NODE CODE
-				IField nameField = record.getFieldAt(dsMeta.getFieldIndex(dimension + "_NM_LEV" + i)); // NAME CODE
+				IField codeField = record.getFieldAt(dsMeta.getFieldIndex(prefix + "_CD_LEV" + i)); // NODE CODE
+				IField nameField = record.getFieldAt(dsMeta.getFieldIndex(prefix + "_NM_LEV" + i)); // NAME CODE
 
 				if ((currentLevel == maxDepth) || (codeField.getValue() == null) || (codeField.getValue().equals(""))) {
 					currentLevel++;
@@ -461,10 +455,10 @@ public class HierarchyService {
 						lastLevelFound = nodeCode;
 					} else {
 						// check if its a leaf
-						IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex(dimension + "_CD_LEAF")); // LEAF CODE
+						IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex(prefix + "_CD_LEAF")); // LEAF CODE
 						String leafCode = (String) codeLeafField.getValue();
 						if (leafCode.equals(nodeCode)) {
-							data = setDataValues(dimension, nodeCode, data, record, i, metadata);
+							data = setDataValues(dimension, nodeCode, data, record, metadata);
 							attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 							lastLevelFound = nodeCode;
 						} else if (!root.getChildrensKeys().contains(nodeCode)) {
@@ -532,7 +526,7 @@ public class HierarchyService {
 	/**
 	 * Sets records' value to the tree structure (leaf informations, date and strings)
 	 */
-	private HierarchyTreeNodeData setDataValues(String dimension, String nodeCode, HierarchyTreeNodeData data, IRecord record, int i, IMetaData metadata) {
+	private HierarchyTreeNodeData setDataValues(String dimension, String nodeCode, HierarchyTreeNodeData data, IRecord record, IMetaData metadata) {
 		// inject leafID into node
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -547,12 +541,14 @@ public class HierarchyService {
 			leafIdString = String.valueOf(leafId);
 		}
 		data.setLeafId(leafIdString);
+
 		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex("LEAF_PARENT_CD"));
 		String leafParentCodeString = (String) leafParentCodeField.getValue();
 		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
 		nodeCode = leafParentCodeString + "_" + nodeCode;
 		data.setLeafParentCode(leafParentCodeString);
 		data.setLeafOriginalParentCode(leafParentCodeString); // backup code
+
 		IField leafParentNameField = record.getFieldAt(metadata.getFieldIndex("LEAF_PARENT_NM"));
 		String leafParentNameString = (String) leafParentNameField.getValue();
 		data.setLeafParentName(leafParentNameString);
@@ -564,6 +560,8 @@ public class HierarchyService {
 		IField endDtField = record.getFieldAt(metadata.getFieldIndex("END_DT"));
 		Date endDtDate = (Date) endDtField.getValue();
 		data.setEndDt(endDtDate);
+
+		// add node and field attributes
 
 		return data;
 	}
