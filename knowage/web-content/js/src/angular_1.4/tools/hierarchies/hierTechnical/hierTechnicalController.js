@@ -55,7 +55,7 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 			var type = $scope.hierTypeSrc;
 			var dimName = $scope.dimSrc.DIMENSION_NM;
 			var keyMap = type+'_'+dimName; 
-			var serviceName = type.toUpperCase() == 'AUTO' ? 'hierarchiesOfDimension' : 'getCustomHierarchies';
+			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'getHierarchiesMaster' : 'getHierarchiesTechnical';
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if ($scope.hierarchiesSrcMap[keyMap] === undefined){
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
@@ -79,7 +79,12 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 	
 	$scope.getTreeSrc = function(){
 		if ($scope.dateFilterSrc && $scope.dimSrc && $scope.hierTypeSrc && $scope.hierSrc){
-			$scope.restService.get()
+			var type = $scope.hierSrc.HIERARCHY_TP;
+			var dimName = $scope.dimSrc.DIMENSION_NM;
+			var hierName = $scope.hierSrc.HIERARCHY_NM;
+			$scope.restService.get("hierarchies",
+									"getHierarchyTree",
+									"dimension="+dimName+"&filterType="+type+"&filterHierarchy="+hierName+"&validityDate=2015-12-21")
 				.success(
 					function(data, status, headers, config) {
 						if (data.errors === undefined){

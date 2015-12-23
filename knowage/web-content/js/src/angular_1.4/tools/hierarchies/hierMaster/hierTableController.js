@@ -17,8 +17,8 @@ function dimensionTableFunction(sbiModule_translate, $scope, $mdDialog, sbiModul
 		
 		sbiModule_restServices
 				.get(
-						"hierarchies",
-						"dimensions")
+						"dimensions",
+						"getDimensions")
 				.success(
 						function(data, status, headers, config) {
 							$scope.dimensions = data;

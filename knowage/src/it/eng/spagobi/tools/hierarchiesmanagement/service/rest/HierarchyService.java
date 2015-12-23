@@ -47,9 +47,9 @@ public class HierarchyService {
 
 	// get hierarchies names of a dimension
 	@GET
-	@Path("/hierarchiesOfDimension")
+	@Path("/getHierarchiesMaster")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getHierarchiesOfDimensions(@QueryParam("dimension") String dimension) {
+	public String getHierarchiesMaster(@QueryParam("dimension") String dimension) {
 		JSONArray hierarchiesJSONArray = new JSONArray();
 		logger.debug("START");
 
@@ -69,7 +69,7 @@ public class HierarchyService {
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
 
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
-					+ "=\"AUTO\"", 0, 0);
+					+ "=\"MASTER\"", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
@@ -90,9 +90,9 @@ public class HierarchyService {
 
 	// get custom hierarchies names --> diventerà getMasterHierarchies ??
 	@GET
-	@Path("/getCustomHierarchies")
+	@Path("/getHierarchiesTechnical")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCustomHierarchies(@QueryParam("dimension") String dimension) {
+	public String getHierarchiesTechnical(@QueryParam("dimension") String dimension) {
 		JSONArray hierarchiesJSONArray = new JSONArray();
 
 		logger.debug("START");
@@ -156,8 +156,8 @@ public class HierarchyService {
 	@GET
 	@Path("/getHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("hierarchyType") String hierarchyType,
-			@QueryParam("hierarchyName") String hierarchyName, @QueryParam("hierarchyDate") String hierarchyDate) {
+	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
+			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate) {
 		logger.debug("START");
 
 		HierarchyTreeNode hierarchyTree;

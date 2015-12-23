@@ -18,18 +18,19 @@ function hierarchyTreeFunction(sbiModule_translate, $scope, $mdDialog, $mdToast,
 			sbiModule_restServices
 					.get(
 							"hierarchies",
-							"getCustomHierarchies",
+							"getHierarchiesTechnical",
 							"dimension="+glDimension.DIMENSION_NM)
 					.success(
 							function(data, status, headers, config) {
 								$scope.hierarchies = data;
 					});
 	  }
-	  if (hierType == 'AUTO'){
+//	  if (hierType == 'MASTER'){
+	  if (hierType == 'AUTO' || hierType == 'MASTER'){
 			sbiModule_restServices
 					.get(
 							"hierarchies",
-							"hierarchiesOfDimension",
+							"getHierarchiesMaster",
 							"dimension="+glDimension.DIMENSION_NM)
 					.success(
 							function(data, status, headers, config) {
@@ -165,14 +166,27 @@ function hierarchyTreeFunction(sbiModule_translate, $scope, $mdDialog, $mdToast,
   }
   
   $scope.loadTree = function(hierName){
-	  $scope.data={"root":[
-	                     	{"name":"C - Current Assets","id":"G1.3","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":"",
-	                 		 "children":[{"name":"Cash and cash eqivalents","id":"G1.3.5","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}]},
-	                 		{"name":"A - Non-current Assets","id":"G1.1","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":"",
-	                 		"children":[{"name":"Intangible assets","id":"G1.1.2","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}]},
-	                 		{"name":"B - Non-current Assets held for sale","id":"G1.2","leafId":"z","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}
-	                     	],
-	                     	"hierName":hierName};
+//	  $scope.data={"root":[
+//	                     	{"name":"C - Current Assets","id":"G1.3","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":"",
+//	                 		 "children":[{"name":"Cash and cash eqivalents","id":"G1.3.5","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}]},
+//	                 		{"name":"A - Non-current Assets","id":"G1.1","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":"",
+//	                 		"children":[{"name":"Intangible assets","id":"G1.1.2","leafId":"","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}]},
+//	                 		{"name":"B - Non-current Assets held for sale","id":"G1.2","leafId":"z","leafParentCode":"","originalLeafParentCode":"","leafParentName":""}
+//	                     	],
+//	                     	"hierName":hierName};
+	  
+	  sbiModule_restServices
+		.get(
+				"hierarchies",
+				"getHierarchyTree",
+				"dimension="+glDimension.DIMENSION_NM+
+				"&filterType=TECHNICAL&filterHierarchy="+hierName+"&filterDate=2015-12-21")
+				//"&hierarchyType=TECHNICAL&hierarchyName="+hierName+"&hierarchyDate=2015-12-21")
+		.success(
+				function(data, status, headers, config) {
+					 $scope.data = data;
+		});
+	  
 	  //update structureNode with the first element
 	  for(d in $scope.data.root[0]){
 		  if (typeof $scope.data.root[0][d] !== 'object'){

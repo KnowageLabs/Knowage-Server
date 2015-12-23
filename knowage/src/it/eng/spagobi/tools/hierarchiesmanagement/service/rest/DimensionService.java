@@ -77,7 +77,7 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDimensionFields(@QueryParam("dimensionLabel") String dimensionLabel) {
+	public String getDimensionFields(@QueryParam("dimension") String dimensionLabel) {
 
 		logger.debug("START");
 
@@ -107,7 +107,7 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionData")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDimensionData(@QueryParam("dimensionLabel") String dimensionLabel, @QueryParam("validityDate") String validityDate,
+	public String getDimensionData(@QueryParam("dimension") String dimensionLabel, @QueryParam("validityDate") String validityDate,
 			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy) {
 
 		logger.debug("START");
