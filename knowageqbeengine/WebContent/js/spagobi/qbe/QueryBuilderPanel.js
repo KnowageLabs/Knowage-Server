@@ -389,6 +389,10 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 					this.selectGridPanel.showTemporalColumns();
 					this.filterGridPanel.showTemporalBtn();
 				}
+				if(aDataMartStructurePanel.geographicEntity==true){
+					this.filterGridPanel.showSpatialOperators(); 
+					this.selectGridPanel.showSpatialFunctions();
+				}
 			}, this);
 			aDataMartStructurePanel.on('nodeclick', function(panel, node) {
 				this.onNodeClick(node);

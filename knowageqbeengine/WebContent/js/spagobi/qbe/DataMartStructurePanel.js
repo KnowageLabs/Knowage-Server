@@ -126,6 +126,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, slotWizard : null
 	, menu: null
 	, temporalEntity: false
+	, geographicEntity: false
 	
 	// --------------------------------------------------------------------------------
 	// public methods
@@ -1162,8 +1163,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.rootNode = this.tree.root;
 		
 		for(var n in this.rootNode.childNodes){
-			if(this.rootNode.childNodes[n].attributes && this.rootNode.childNodes[n].attributes.iconCls=='temporal_dimension'){
-				this.temporalEntity=true;
+			if(this.rootNode.childNodes[n].attributes){
+				var iconCls = this.rootNode.childNodes[n].attributes.iconCls; 
+				if(iconCls=='temporal_dimension'){
+					this.temporalEntity=true;
+				}else if(iconCls=='geographic_dimension'){
+					this.geographicEntity=true;
+				}
+				if(this.temporalEntity && this.geographicEntity)break;
 			}
 		}
 		

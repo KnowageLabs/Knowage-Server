@@ -109,6 +109,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	, dropTarget: null
 	, calculatedFieldWizard : null
 	, inLineCalculatedFieldWizard : null
+	, enableSpatialFunctions: false
 	
 	, type: 'selectgrid'
 	
@@ -712,7 +713,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		    {name:'arithmeticFunctions', text:  LN('sbi.qbe.calculatedFields.functions.arithmentic')},
     		    {name:'aggregationFunctions', text:  LN('sbi.qbe.calculatedFields.aggrfunctions')},
     		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')},
-    		    {name:'spatialFunctions', text: 'Spatial Functions'}
+    		    {name:'spatialFunctions', text: 'Spatial Functions', hidden: this.enableSpatialFunctions==false}
     		],
     		fields: fields,
     		arithmeticFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
@@ -981,6 +982,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		this.cm.setHidden(this.cm.getIndexById( 'temporalOperandParameter' ), false);
 	}
 	
+	, showSpatialFunctions: function() {
+		this.enableSpatialFunctions = true;
+	}
 	
 	, populateTemporalOperandStore: function(items) {
 		for(i in items){

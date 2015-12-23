@@ -562,15 +562,17 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 		if(this.expItemGroups) {
 			this.groupRootNodes = new Object();
 			for(var i = 0, l = this.expItemGroups.length; i < l; i++) {
-				var groupName = this.expItemGroups[i].name;
-				if(this.expItemGroups[i].loader === undefined) {
-					this.groupRootNodes[groupName] = new Ext.tree.TreeNode(Ext.apply({}, {leaf: false}, this.expItemGroups[i]));
-				} else {
-					this.groupRootNodes[groupName] = new Ext.tree.AsyncTreeNode(Ext.apply({}, {leaf: false}, this.expItemGroups[i]));
-				}
-				this.expItemsTreeRootNode.appendChild( this.groupRootNodes[groupName] );
-				if(this[groupName] != null) {
-					this.setExpItems(groupName, this[groupName]);
+				if(!this.expItemGroups[i].hidden){
+					var groupName = this.expItemGroups[i].name;
+					if(this.expItemGroups[i].loader === undefined) {
+						this.groupRootNodes[groupName] = new Ext.tree.TreeNode(Ext.apply({}, {leaf: false}, this.expItemGroups[i]));
+					} else {
+						this.groupRootNodes[groupName] = new Ext.tree.AsyncTreeNode(Ext.apply({}, {leaf: false}, this.expItemGroups[i]));
+					}
+					this.expItemsTreeRootNode.appendChild( this.groupRootNodes[groupName] );
+					if(this[groupName] != null) {
+						this.setExpItems(groupName, this[groupName]);
+					}
 				}
 			}
 		}

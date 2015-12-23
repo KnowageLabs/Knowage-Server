@@ -116,8 +116,9 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
     })
 
 	, filterOptStore: new Ext.data.SimpleStore({
-	    fields: ['funzione', 'nome', 'descrizione'],
+	    fields: ['funzione', 'nome', 'descrizione', 'tipo'],
 	    data: Sbi.constants.qbe.WHERE_CLAUSE_COMPARISON_FUNCTIONS,
+	    showSpatialFields: false
 	    /*
 	    data : [
 	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
@@ -656,7 +657,24 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	              forceSelection: true, // True to restrict the selected value to one of the values in the list
 	              triggerAction: 'all',
 	              emptyText: LN('sbi.qbe.filtergridpanel.foperators.editor.emptymsg'),
-	              selectOnFocus: true //True to select any existing text in the field immediately on focus
+	              selectOnFocus: true, //True to select any existing text in the field immediately on focus
+	              // this is a trick to filter combo list 'cause store events seems not working here
+	              listeners: {
+	            	  beforequery: function(qe) {
+	            		  if(this.getStore().showSpatialFields==false){
+	                          qe.combo.allQuery = '';
+	                          qe.combo.lastQuery = '';
+	                          qe.combo.filter_list();
+	            		  }
+                      },
+                      afterrender: function(combo) { combo.doQuery(); },
+                      select: function(combo, record, index) {}
+                  },
+                  filter_list: function() {
+            		  this.getStore().filterBy(function(record,id){
+            			  return record.data['tipo']!='geometry';
+            		  });
+                  }
 	        });
 
 		   
@@ -1243,5 +1261,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				this.toolbar.items.items[item].show();
 			}
 		}
+	}
+	, showSpatialOperators: function(){
+		this.filterOptStore.showSpatialFields = true;
 	}
 });
