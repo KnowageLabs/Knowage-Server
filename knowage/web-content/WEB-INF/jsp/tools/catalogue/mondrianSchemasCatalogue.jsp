@@ -18,7 +18,8 @@
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"
 	href="/knowage/themes/glossary/css/generalStyle.css">
-
+<link rel="stylesheet" type="text/css"
+ href="/knowage/themes/catalogue/css/catalogue.css">
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
@@ -37,7 +38,7 @@
 	
 	<div class="leftBox">
 	
-		<md-toolbar class="md-blue minihead">
+		<md-toolbar class=" header">
 <!-- /////////////// LEFT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
 			<div class="md-toolbar-tools">
 		
@@ -154,7 +155,7 @@
 				
 <!-- /////////////// INPUT FIELD NAME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
 					<div layout="row" layout-wrap>
-      					<div flex=100>
+      					<div flex>
 		
 				 			<md-input-container class="small counter"> 
 				 
@@ -172,7 +173,7 @@
 <!-- /////////////// INPUT FIELD DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
 				<div layout="row" layout-wrap >
-      				<div flex=100>				
+      				<div flex>				
 							<md-input-container class="small counter"> 
 				
 								<label>{{translate.load("sbi.ds.description");}}</label>
@@ -190,10 +191,19 @@
 
 				
 							
-						
-       						
-       					<file-upload ng-model="file" id="myId"  disabled></file-upload>
+						<div layout="row" layout-wrap  >
+							
+								<div style="margin-top: 15px">
+								<label >{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload");}}</label>	
+							</div>
+							<div flex style="margin-right: 32px">	
+       						<file-upload ng-model="file" id="myId" label='browse' ng-disabled = "selectedMondrianSchema.modelLocker" ></file-upload>
       					
+							
+							</div>
+							
+						</div>
+       					
       				
 					 		
       				
@@ -245,7 +255,7 @@
 	
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 							
-				<md-toolbar class="md-blue minihead md-toolbar-tools" >
+				<md-toolbar class="header" >
 					
 					<label>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</label>
 						

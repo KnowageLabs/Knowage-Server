@@ -165,11 +165,6 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return Response.status(Status.BAD_REQUEST).entity("Error ").build();
 	}
 
-	private String createLink() {
-
-		return "nesto";
-	}
-
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
@@ -320,22 +315,22 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	/*
 	 * Multiple delete artifacts
-	 * 
+	 *
 	 * @DELETE
-	 * 
+	 *
 	 * @Path("/")
-	 * 
+	 *
 	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
-	 * 
+	 *
 	 * @Consumes(MediaType.APPLICATION_JSON) public Response
 	 * deleteSelectedArtifacts(Integer[] selectedIds) {
-	 * 
+	 *
 	 * try { for (Integer selectedId : selectedIds) { delete(selectedId); }
-	 * 
+	 *
 	 * return Response.ok().build(); } catch (Exception e) {
 	 * logger.error("Error while deleting url of the new resource", e); throw
 	 * new SpagoBIRestServiceException(getLocale(), e); }
-	 * 
+	 *
 	 * }
 	 */
 
@@ -372,25 +367,25 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	/*
 	 * Multiple delete versions
-	 * 
+	 *
 	 * @DELETE
-	 * 
+	 *
 	 * @Path("/{ID}/versions")
-	 * 
+	 *
 	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
-	 * 
+	 *
 	 * @Consumes(MediaType.APPLICATION_JSON) public Response
 	 * deleteSelectedVersions(@PathParam("ID") int id, Integer[] selectedIds) {
-	 * 
+	 *
 	 * try { for (Integer selectedId : selectedIds) { deleteContent(id,
 	 * selectedId); }
-	 * 
+	 *
 	 * return Response.ok().build(); } catch (Exception e) {
 	 * logger.error("Error while deleting url of the new resource", e); throw
 	 * new
 	 * SpagoBIRuntimeException("Error while deleting url of the new resource",
 	 * e); }
-	 * 
+	 *
 	 * }
 	 */
 

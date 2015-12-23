@@ -39,11 +39,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					
 				}else{
 					
-					console.log(data);
-					console.log(headers());
-					//var blob = new Blob([data], {type: headers()['content-type']});
-					//console.log(sbiModule_restServices.get)
-					window.open("http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/74/versions/812/file",'_blank') ;
+					
+					window.location="http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/74/versions/"+item.id+"/file" ;
 					
 	
 				}
@@ -154,14 +151,26 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		console.log("saving Schema...");
 		
 		if(!isNaN($scope.selectedMondrianSchema.id)){
-			
+				
 				console.log("updating...");
 				$scope.modifyMondrianSchema();
 				
 		}else{
 			
-			console.log("adding new...");
-			$scope.addNewMondrianSchema();
+			if($scope.selectedMondrianSchema.name===undefined){
+				
+					console.log("name is required");
+					console.log($scope.selectedMondrianSchema.name);
+					$scope.showActionOK("Name is required");
+					
+				}else{
+					
+					console.log("adding new...");
+					$scope.addNewMondrianSchema();
+					
+				}
+			
+			
 			
 		}
 
