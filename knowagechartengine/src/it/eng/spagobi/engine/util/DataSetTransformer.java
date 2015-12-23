@@ -213,13 +213,26 @@ public class DataSetTransformer {
 			if (!availableDataMapOfMaps.containsKey(currentRow)) {
 
 				HashMap<String, Float> submapWithNewColumn = new HashMap<String, Float>(); // old name: aaa
-				submapWithNewColumn.put((String) record.get(rawColumnNameColumn), Float.parseFloat((String) record.get(columnsMapper.get(serie + "_SUM"))));
+
+				if (record.get(columnsMapper.get(serie + "_SUM")).getClass().toString().equals("class java.lang.Integer")) {
+					submapWithNewColumn.put((String) record.get(rawColumnNameColumn),
+							Float.parseFloat(Integer.toString((int) record.get(columnsMapper.get(serie + "_SUM")))));
+				} else {
+					submapWithNewColumn.put((String) record.get(rawColumnNameColumn),
+							Float.parseFloat((String) (record.get(columnsMapper.get(serie + "_SUM")))));
+				}
+
 				availableDataMapOfMaps.put(currentRow, submapWithNewColumn);
 
 			} else {
 
-				availableDataMapOfMaps.get(currentRow).put((String) record.get(rawColumnNameColumn),
-						Float.parseFloat((String) record.get(columnsMapper.get(serie + "_SUM"))));
+				if (record.get(columnsMapper.get(serie + "_SUM")).getClass().toString().equals("class java.lang.Integer")) {
+					availableDataMapOfMaps.get(currentRow).put((String) record.get(rawColumnNameColumn),
+							Float.parseFloat(Integer.toString((int) record.get(columnsMapper.get(serie + "_SUM")))));
+				} else {
+					availableDataMapOfMaps.get(currentRow).put((String) record.get(rawColumnNameColumn),
+							Float.parseFloat((String) record.get(columnsMapper.get(serie + "_SUM"))));
+				}
 
 			}
 

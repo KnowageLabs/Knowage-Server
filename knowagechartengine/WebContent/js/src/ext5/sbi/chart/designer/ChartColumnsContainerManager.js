@@ -151,7 +151,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
-				
+					
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -167,10 +167,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			    }),
 			    
 			    listeners: {
-			    	
 			    	updateAxisTitleValue: function(textValue) {
 			        	this.axisData.titleText = textValue;
-			        	
+
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
 			    		
 			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);			        	
@@ -205,7 +204,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   										|| newlySelectedType == 'parallel'
   											|| newlySelectedType == 'sunburst'
   												|| newlySelectedType == 'chord'
-  					);  					
+  					);
   					
   					if(!isAxesTitleFieldAbsentFlag) {
   						this.fireEvent('updateAxisTitleValue', axisData.titleText);
@@ -496,13 +495,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    						    	
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    	
-					    	/**
-					    	 * JSON template of current document (current structure of
-					    	 * the document).
-					    	 * 
-					    	 * @author: danristo (danilo.ristovski@mht.net)
-					    	 */
-					    	var tempFinal = Sbi.chart.designer.Designer.exportAsJson();
+//					    	/**
+//					    	 * JSON template of current document (current structure of
+//					    	 * the document).
+//					    	 * 
+//					    	 * @author: danristo (danilo.ristovski@mht.net)
+//					    	 */
+//					    	var tempFinal = Sbi.chart.designer.Designer.exportAsJson();
 					    	
 					    	if(chartType.toUpperCase() != 'PIE') {
 					    		if (!panelWhereAddSeries.isVisible()) {
@@ -527,40 +526,85 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	{
 								applyAxes: true,
 								applySeries: true,
-							};						    	
+							};	
 					    	
-					    	var configurationForStyleGeneric = 
-					    		Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName).generic);
+					    	var configurationForStyleGeneric = 	
+								
+								Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+								(
+									Designer.getConfigurationForStyle(Designer.styleName).generic,
+									false
+								);	
 					    	
-					    	var configurationForStyleSpecific = 
-					    		Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName)[chartType.toLowerCase()]);	
-					    						    	
+					    	var configurationForStyleSpecific = 	
+								
+								Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+								(
+									Designer.getConfigurationForStyle(Designer.styleName)[chartType.toLowerCase()],
+									false
+								);						    	
+					    	
+					    	/**
+					    	 * When we are adding new Y-axis to the chart document we should apply 
+					    	 * current style only to that one (new axis). Other axes should be 
+					    	 * excluded from this process, in order to avoid the reset of already 
+					    	 * saved (defined) parameters for already existing axes.  
+					    	 * 
+					    	 * TODO: Check with Benedetto if this is OK !!! 
+					    	 */
+					    	
+					    	/**
+					    	 * Current JSON structure of the chart document.
+					    	 */
+					    	var currentJson = Sbi.chart.designer.Designer.exportAsJson();
+					    	/**
+					    	 * All axes of the current chart document (including the newly added one).
+					    	 */
+					    	var currentJsonAxes = currentJson.CHART.AXES_LIST.AXIS;
+					    	/**
+					    	 * Take just the one that we added (since we have some number of Y-axes
+					    	 * that is followed by single X-axis panel, we can take the next-to-last
+					    	 * (second from behind) axis) in order to get its alias and ID.
+					    	 */
+					    	var currentJsonAddedAxis = currentJsonAxes[currentJsonAxes.length-2];
+					    						 
+					    	/**
+					    	 * Forward alias and ID of the newly added Y-axis panel to the mergeObjects()
+					    	 * method in order to skip applying styles to all Y-axes. The current style 
+					    	 * should be applied just to the one that is added. Otherwise, we will reset
+					    	 * parameters for axis style configuration and serie style configuration of
+					    	 * already existing axes that will lead to canceling of any change made before
+					    	 * adding new Y-axis. Via alias and ID of the newly added Y-axis we will 
+					    	 * distinguish old Y-axis from the new one when applying style.
+					    	 */
 					    	var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					    	(
-				    			Sbi.chart.designer.Designer.exportAsJson(),
+				    			currentJson,
 				    			configurationForStyleGeneric, 
-				    			configApplyAxesStyles
+				    			configApplyAxesStyles,
+				    			{alias: currentJsonAddedAxis.alias, id: currentJsonAddedAxis.id}
 			    			);
-							
+					    	
 							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 							(
 								localJsonTemplate, 
 								configurationForStyleSpecific, 
-								configApplyAxesStyles
+								configApplyAxesStyles,
+				    			{alias: currentJsonAddedAxis.alias, id: currentJsonAddedAxis.id}
 							);
+					
+//							localJsonTemplateAxisTag = localJsonTemplate.CHART.AXES_LIST.AXIS;
+
+//							/**
+//							 * Take just the newly added Y-axis panel configuration and append it
+//							 * to the current JSON template. This way we will apply current style 
+//							 * only to that newly created Y-axis panel, instead of resetting the
+//							 * axis configuration of already existing Y-axis panels.
+//							 * 
+//							 * @author: danristo (danilo.ristovski@mht.net)
+//							 */
+//							tempFinal.CHART.AXES_LIST.AXIS.push(localJsonTemplateAxisTag[localJsonTemplateAxisTag.length-1]);
 							
-							//localJsonTemplateAxisTag = localJsonTemplate.CHART.AXES_LIST.AXIS;
-							
-							/**
-							 * Take just the newly added Y-axis panel configuration and append it
-							 * to the current JSON template. This way we will apply current style 
-							 * only to that newly created Y-axis panel, instead of resetting the
-							 * axis configuration of already existing Y-axis panels.
-							 * 
-							 * @author: danristo (danilo.ristovski@mht.net)
-							 */
-							//tempFinal.CHART.AXES_LIST.AXIS.push(localJsonTemplateAxisTag[localJsonTemplateAxisTag.length-1]);
-							//console.log(tempFinal);
 							Sbi.chart.designer.Designer.update(localJsonTemplate);
 					    }
 						

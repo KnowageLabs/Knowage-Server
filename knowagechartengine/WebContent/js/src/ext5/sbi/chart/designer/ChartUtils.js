@@ -2219,7 +2219,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		    	{
 		            if (typeof obj[key] == "object")
 	            	{
-		            	ChartUtils.removeUnwantedPropsFromJsonStyle(obj[key],booleanS);
+		            	ChartUtils.removeUnwantedPropsFromJsonStyle(obj[key],isYAxisEmpty);
 	            	}			               
 		            else if (typeof obj[key] != "function")
 	            	{
