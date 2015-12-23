@@ -1,6 +1,6 @@
 
 var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                                     'sbiModule', 'angular_list']);
+                                                     'sbiModule']);
 
 app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageDomainFucntion ]);
 

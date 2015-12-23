@@ -1,6 +1,6 @@
 
 var app = angular.module('tenantManagementApp',['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                                'sbiModule', 'angular_list','angular_2_col']);
+                                                'sbiModule','angular_2_col']);
 		
 app.controller('Controller', ['sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
 
@@ -50,7 +50,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.datasources= data.root;
 			for (var i=0;i<$scope.datasources.length;i++){
-				$scope.datasources[i].checkbox = '<md-checkbox ng-model=\"datasources[' + i+ ']\"  aria-label=\"datasources	[' + i+ '].CHECKED\" ng-init=\"'+$scope.datasources[i].CHECKED+'\"></md-checkbox>';
+				$scope.datasources[i].checkbox = '<md-checkbox ng-model=\"datasources[' + i+ '].CHECKED\"  aria-label=\"datasources	[' + i+ '].CHECKED\" ng-init=\"'+$scope.datasources[i].CHECKED+'\"></md-checkbox>';
 			}
 			$scope.datasourcesDefault= angular.fromJson(angular.toJson($scope.datasources));
 		}
@@ -60,7 +60,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.productTypes = data.root;
 			for (var i=0;i<$scope.productTypes.length;i++){
-				$scope.productTypes[i].checkbox = '<md-checkbox ng-model=\"productTypes[' + i+ ']\"  aria-label=\"productTypes[' + i+ '].CHECKED\" ng-init=\"'+$scope.productTypes[i].CHECKED+'\"></md-checkbox>';
+				$scope.productTypes[i].checkbox = '<md-checkbox ng-model=\"productTypes[' + i+ '].CHECKED\"  aria-label=\"productTypes[' + i+ '].CHECKED\" ng-init=\"'+$scope.productTypes[i].CHECKED+'\"></md-checkbox>';
 			}
 			$scope.productTypesDefault = angular.fromJson(angular.toJson($scope.productTypes));
 		}
