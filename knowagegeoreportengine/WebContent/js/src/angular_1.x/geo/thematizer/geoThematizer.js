@@ -175,7 +175,6 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		
 			valuesChart.push(Math.round(dsValue[key].value));
 			var color = tinycolor(geoModule_template.analysisConf.chart["indicator_"+indicatorIndex]);
-			console.log("color "+color+" "+color.toHexString());
 			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
 			rgba = "rgba("+color.toRgb().r+","+color.toRgb().g+","+color.toRgb().b+","+color.toRgb().a+")";
 			colors.push(rgba);
@@ -238,12 +237,15 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			        ]
 		}
 		
-	//	console.log(data,data2);
 		var canvas = document.createElement("canvas");
 		document.body.appendChild(canvas);
 		canvas.width = size_img;
 		canvas.height = size_img;
 		var myBarChart  = new Chart(canvas.getContext("2d")).Bar(data,options);
+		myBarChart.eachBars(function(bar, barIndex){
+			bar.fillColor = colors[barIndex];
+		});
+		
 		myBarChart.draw();
 		var urlImg = canvas.toDataURL();
 		
