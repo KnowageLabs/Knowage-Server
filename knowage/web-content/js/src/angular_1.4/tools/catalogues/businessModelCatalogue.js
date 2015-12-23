@@ -120,7 +120,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       {
 		                       label:'download',
 		                       icon:'fa fa-download',
-		                       color:'#153E7E',
+		                       color:'#3CB371',
 		                       action:function(item,event){
 		                    	   $scope.downloadFile(item,event);
 		                       }
@@ -129,7 +129,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       {
 		                    	  label:'delete',
 		                    	  icon:'fa fa-trash',
-		                    	  color:'#153E7E',
+		                    	  color:'#DC143C',
 		                    	  action:function(item,event){
 		                    		  $scope.deleteItemVersion(item,event);
 		                    	  }
