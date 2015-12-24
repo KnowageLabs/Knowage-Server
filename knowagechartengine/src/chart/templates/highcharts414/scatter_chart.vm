@@ -309,6 +309,18 @@
 		        }
 		        
         	},
+	   
+  	#else
+		
+		#* 
+			If legend is disabled this JSON property ('enabled') should be false.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
+		*#
+		legend:
+		{
+			enabled: false,
+		},
 	    
     #end
     
