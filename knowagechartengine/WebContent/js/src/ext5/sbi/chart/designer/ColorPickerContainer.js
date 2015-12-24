@@ -1,8 +1,15 @@
 Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 	extend : 'Ext.container.Container',
 	name: 'backgroundColor',
-	layout : 'hbox',
-	margin: '5 0',
+	
+	layout : 
+	{
+		type:'hbox',
+		align:"center"	// Danilo
+	},
+	
+	//margin: '5 0',	// Commented: Danilo
+	
 	items : [ ],
 	config:{
 		customLabel : null,
@@ -16,6 +23,9 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		Ext.apply(this.config,config);
 		
 		var globalScope = this;
+		
+		// Danilo Ristovski
+		this.padding = config.padding;
 		
 		this.viewModel = config.viewModel;
 		
@@ -36,7 +46,6 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 				fieldStyle : 'background-image: none; background-color: ' + this.config.fieldBind,
 			},
 			
-//			width: 275,
 			width: Sbi.settings.chart.configurationStep.widthOfFields-5,
 			
 			listeners:

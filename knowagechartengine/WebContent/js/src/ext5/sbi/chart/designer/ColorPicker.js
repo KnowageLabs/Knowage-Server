@@ -1,7 +1,9 @@
 Ext.define('Sbi.chart.designer.ColorPicker',{
-	extend : 'Ext.button.Button',
-	margin : '0 0 0 -15',
-	padding : '1 0',
+	extend : 'Ext.button.Button',	
+	
+	//padding : '1 0 5 0',	// Danilo
+	height: 20,				// Danilo (button should be the same height of the color field)
+	margin : '0 0 0 -20',	// Danilo
 	
 	constructor : function(config) {
 		this.callParent(config);

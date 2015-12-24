@@ -20,7 +20,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		isFontStyleMandatory: false,
 		isBorderWidthMandatory: false,
 		isFontColorMandatory: false,
-		isBackgroundColorMandatory: false
+		isBackgroundColorMandatory: false,
+		
+		paddingFontElements: null,
+		layoutFontElements: null
 	},
 	
 	items : [],
@@ -38,6 +41,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         		viewModel: this.viewModel,
         		bind : this.config.bindFontAlign,
         		
+        		padding: this.config.paddingFontElements ? this.config.paddingFontElements : null,
+				layout: this.config.layoutFontElements ? this.config.layoutFontElements : null, 
+						
         		/**
     			 * If this is mandatory for certain chart type, this flag ('isFontAlignMandatory' 
     			 * boolean should be raised up. According to that we will determine if the label 
@@ -59,6 +65,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			viewModel: this.viewModel,
 			bind : this.config.bindFont,
 			
+			padding: this.config.paddingFontElements ? this.config.paddingFontElements : null,
+			layout: this.config.layoutFontElements ? this.config.layoutFontElements : null, 
+					
 			/**
 			 * If this is mandatory for certain chart type, this flag ('isFontFamilyMandatory' 
 			 * boolean should be raised up. According to that we will determine if the label 
@@ -76,6 +85,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontDim,
+        	
+        	padding: this.config.paddingFontElements ? this.config.paddingFontElements : null,
+			layout: this.config.layoutFontElements ? this.config.layoutFontElements : null, 
         	
         	/**
 			 * If this is mandatory for certain chart type, this flag ('isFontSizeMandatory' 
@@ -98,6 +110,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontStyle,
+        	
+        	padding: this.config.paddingFontElements ? this.config.paddingFontElements : null,
+			layout: this.config.layoutFontElements ? this.config.layoutFontElements : null, 
         	
         	/**
 			 * If this is mandatory for certain chart type, this flag ('isFontStyleMandatory' 
@@ -123,6 +138,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 				bind:  this.config.bindBorderWidth,
 				emptyText: LN("sbi.chartengine.configuration.legend.borderWith.emptyText"),
 				
+				padding: this.config.paddingFontElements ? this.config.paddingFontElements : null,
+				layout: this.config.layoutFontElements ? this.config.layoutFontElements : null, 
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
+						
 				/**
 				 * If this is mandatory for certain chart type, this flag ('isBorderWidthMandatory' 
 				 * boolean should be raised up. According to that we will determine if the label 
@@ -143,6 +162,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			fieldBind : this.config.bindColor,
 			bind : this.config.bindColor,
 			
+			padding: Sbi.settings.chart.configurationStep.paddingOfTopFields,
+			
 			/**
 			 * If this is mandatory for certain chart type, this flag ('isFontColorMandatory' 
 			 * boolean should be raised up. According to that we will determine if the label 
@@ -159,6 +180,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 				viewModel: this.viewModel,
 				fieldBind : this.config.bindBackgroundColor,
+				
+				padding: Sbi.settings.chart.configurationStep.paddingOfBottomFields,
 				
 				/**
 				 * If this is mandatory for certain chart type, this flag ('isBackgroundColorMandatory' 

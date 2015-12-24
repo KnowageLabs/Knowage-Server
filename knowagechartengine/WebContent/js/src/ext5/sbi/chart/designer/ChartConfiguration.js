@@ -16,7 +16,7 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-    overflowX: "auto", 
+    //overflowX: "auto", 
     overflowY: "auto",
     
     requires: [

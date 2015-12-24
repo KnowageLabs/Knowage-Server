@@ -47,12 +47,14 @@ Sbi.settings.chart =
 		 * Margin for fields that are inside of fieldsets and that are lying
 		 * on three different positions.
 		 */		
-		marginOfTopFieldset: '5 0 5 0',
-		marginOfTopFieldsetButtons: "5 0 0 10",
+		marginOfTopFieldset: '5 0 2.5 0',
+		marginOfTopFieldsetButtons: "5 0 5 10",
 		
-		marginOfInnerFieldset:  '0 0 5 0',		
-		marginOfInnerFieldsetButtons: "0 0 0 10",
+		marginOfInnerFieldset:  '2.5 0 2.5 0',		
+		marginOfInnerFieldsetButtons: "0 0 5 10",
 		
+		marginOfBottomFieldset:  '2.5 0 5 0',
+			
 		/**
 		 * Layout that all fields in the same panel should follow.
 		 */

@@ -24,6 +24,11 @@ Ext.define('Sbi.chart.designer.FontAlignCombo', {
     /**
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
+    width: Sbi.settings.chart.configurationStep.widthOfFields,
+    
+    /**
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
     listeners: 
 	{
     	change: function(sender, newValue, oldValue, opts)
