@@ -241,7 +241,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		exportAsJson : function (chartModel) {
 			var result = {};
 			var CHART = {};
-
+//console.log("exportAsJson (START)");
 			CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType();
 
@@ -340,12 +340,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 //			console.log("-- After saving the chart: --");
 			//console.log(result);
-
+			//console.log("exportAsJson (END)");
 			return result;
 		},
 
 		getAxesDataAsOriginalJson : function () {
 			var result = [];
+			//console.log("getAxesDataAsOriginalJson (START)");
+			
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType().toUpperCase();
 
@@ -593,13 +595,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result.push(axisAsJson);
 				/* END Chart bottom axis data */
 			}
-
+			//console.log("getAxesDataAsOriginalJson (END)");
 			return result;
 		},
 
 		getSeriesDataAsOriginalJson : function () {
 			var result = [];
-
+			//console.log("getSeriesDataAsOriginalJson (START)");
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
 
 			for (storeIndex in serieStores) {
@@ -726,11 +728,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					result.push(serie);
 				}
 			}
-
+			console.log("getSeriesDataAsOriginalJson (END)");
 			return result;
 		},
 
-		getCategoriesDataAsOriginalJson : function () {
+		getCategoriesDataAsOriginalJson : function () {//console.log("getCategoriesDataAsOriginalJson (START)");
 			var categoriesStore = Ext.data.StoreManager
 				.lookup('categoriesStore');
 
@@ -873,13 +875,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result['groupbyNames'] = groupbyNames.replace(
 						/\,$/, ''); ;
 			}
-
+			//console.log("getCategoriesDataAsOriginalJson (END)");
 			return result;
 		},
 
 		getChartDataAsOriginaJson : function (chartModel) {
 			var CHART = {};
-
+			//console.log("getChartDataAsOriginaJson (START)");
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
 			CHART['height'] = (chartModel.get('height') != undefined) ? chartModel
@@ -922,14 +924,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			/**
-			 * Parameter specific for the SUNBURST chart only
-			 * (danilo.ristovski@mht.net)
+			 * Parameter specific for the SUNBURST chart only.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST") {
 
 				CHART['opacMouseOver'] = (Number(chartModel.get('opacMouseOver'))) ? Number(chartModel.get('opacMouseOver')) : 100;
 			}
 
+			/**
+			 * Parameter specific for the PARALLEL chart only.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if (chartType.toUpperCase() == "PARALLEL")
+			{
+				CHART['showTableParallel'] = chartModel.get('showTableParallel') ? chartModel.get('showTableParallel') : false;	
+			}
 			
 			if (chartModel.get('orientation') != undefined) {
 				CHART['orientation'] = (chartType.toUpperCase() != 'PIE') ? chartModel
@@ -1494,7 +1504,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
 				CHART['PARALLEL_TOOLTIP'] = PARALLEL_TOOLTIP;
 			}
-
+			//console.log("getChartDataAsOriginaJson (END)");
 			return CHART;
 		},
 
@@ -1551,6 +1561,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		disableShowLegendCheck : function () {
+			//console.log("disableShowLegendCheck (START)");
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'SUNBURST'
 			 || Sbi.chart.designer.Designer.chartTypeSelector
@@ -1565,9 +1576,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			.getChartType() == 'GAUGE'
 			|| Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'CHORD';
+			//console.log("disableShowLegendCheck (END)");
 		},
 
 		enableLegend : function () {
+			//console.log("enableLegend (START)");
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'SUNBURST'
 			 && Sbi.chart.designer.Designer.chartTypeSelector
@@ -1582,6 +1595,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			.getChartType() != 'GAUGE'
 			&& Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'CHORD';
+			//console.log("enableLegend (END)");
 		},
 
 		disableXBottomContainer : function () {
@@ -1895,10 +1909,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					sizeCriteria : jsonTemplate.CHART.sizeCriteria,
 
 					/**
-					 * Added for the SUNBURST chart
-					 * (danilo.ristovski@mht.net)
+					 * Added for the SUNBURST chart.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					opacMouseOver : jsonTemplate.CHART.opacMouseOver,
+					
+					/**
+					 * Added for the PARALLEL chart.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					showTableParallel: jsonTemplate.CHART.showTableParallel,
 
 					toolbarPosition : jsonToolbarStyle.position,
 					toolbarHeight : jsonToolbarStyle.height,
@@ -2268,13 +2288,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * 						just to the newly added one. 
 		 */
 		//		mergeObjects : function (target, source, removeNotFoundItemsFlag) {
-		mergeObjects : function (target, source, config, addNewAxis) {
+		mergeObjects: function (target, source, config, addNewAxis) {
 			function isArray(o) {
 				return Object.prototype.toString.call(o) == "[object Array]";
 			}
 
 			config = config || {};
-			
+			//console.log("== marge objects (START) ==");
 			var removeNotFoundItemsFlag = config.removeNotFoundItemsFlag || false;
 			
 			var applyAxes = config.applyAxes || false;
@@ -2462,7 +2482,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (removeNotFoundItemsFlag) {
 				newTarget = ChartUtils.removeNotFoundItems(newTarget, source);
 			}
-
+			//console.log("== marge objects (END) ==");
 			return newTarget;
 		},
 

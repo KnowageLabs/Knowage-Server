@@ -270,7 +270,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
  
         /***
          * Toolbar opacity mouse over number field that is needed for the
-         * SUNBURST chart type (danilo.ristovski@mht.net)
+         * SUNBURST chart type.  
+         *        
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
     	var toolbarOpacMouseOver = Ext.create
     	(
@@ -319,7 +321,34 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 		});
         	    
-    	this.add(showLegend);    	    	
+    	this.add(showLegend);   
+    	
+    	/**
+    	 * The checkbox field for showing/hiding the PARALLEL table.
+    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */
+    	var checkboxShowTableParallel = Ext.create
+    	(
+			{
+				xtype: 'checkboxfield',
+				id: 'showTableParallel',
+				bind : '{configModel.showTableParallel}',
+				hidden: !ChartUtils.enableParallelPanel(),	
+					
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+				
+				labelSeparator: '',
+				fieldLabel: LN("sbi.chartengine.configuration.parallel.showTable"),	// TODO: LN()
+			}	
+    	);
+    	
+    	this.add(checkboxShowTableParallel);  
+    	
+    	if (!ChartUtils.enableParallelPanel())
+		{
+    		this.getComponent("showTableParallel").hide();
+		}
 	},
 	
 	items : []

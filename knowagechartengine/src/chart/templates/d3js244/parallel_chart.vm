@@ -122,6 +122,14 @@
   		
   		colors: '$colorsPal',
   		
+  		#*
+  			If user wants to see the table of the PARALLEL chart
+  			this parameter will be true.
+  			
+  			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		*#
+  		showTableParallel: $chart.showTableParallel,
+  		
   		style:
 		{
 			fontFamily: '$chart.style.fontFamily',

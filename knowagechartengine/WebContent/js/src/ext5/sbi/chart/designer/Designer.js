@@ -425,6 +425,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.chartTypeSelector.on("chartTypeChanged", function() {
 				Sbi.chart.designer.Designer.chartTypeChanged = true;
 			});
+
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
@@ -435,13 +436,34 @@ Ext.define('Sbi.chart.designer.Designer', {
 				"resetStep2",
 				
 				function() 
-				{			
+				{	
 					/**
 					 * Get the main configuration panel (the one on the top of the Step 2 tab of the Designer page)
 					 * and the second configuration panel (everything under the main panel).
 					 */					
 					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
-					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);					
+					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);	
+					
+					/*console.log(globalThis.stepsTabPanel.getComponent(1).getComponent(0));
+					console.log(globalThis.stepsTabPanel.getComponent(1).getComponent(1));
+					console.log(mainConfigurationPanel.getComponent("showLegend"));
+					console.log( mainConfigurationPanel.getComponent("chartOrientationCombo"));
+					console.log(mainConfigurationPanel.getComponent("chartWidthNumberfield"));
+					console.log(mainConfigurationPanel.getComponent("opacityMouseOver"));
+					console.log(secondConfigurationPanel.getComponent("chartColorPallete"));
+					console.log(secondConfigurationPanel.getComponent("chartLegend"));
+					console.log(secondConfigurationPanel.getComponent("chartToolbar"));
+					console.log(secondConfigurationPanel.getComponent("chartTip"));
+					console.log(secondConfigurationPanel.getComponent("wordcloudConfiguration"));
+					console.log(secondConfigurationPanel.getComponent("chartParallelLimit"));
+					console.log(secondConfigurationPanel.getComponent("chartParallelAxesLines"));
+					console.log(secondConfigurationPanel.getComponent("chartParallelTooltip"));
+					console.log(secondConfigurationPanel.getComponent("chartParallelLegendTitle"));
+					console.log(secondConfigurationPanel.getComponent("chartParallelLegendElement"));
+					console.log(secondConfigurationPanel.getComponent("chartScatterConfiguration"));
+					console.log(secondConfigurationPanel.getComponent("chartHeatmapLegend"));
+					console.log(secondConfigurationPanel.getComponent("chartHeatmapTooltip"));
+					console.log(secondConfigurationPanel.getComponent("gaugePaneConfiguration"));*/
 					
 					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
 //					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
@@ -454,6 +476,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * on the Step 2 main configuration panel when the SUNBURST is selected.
 					 */
 					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
+					
+					/**
+					 * "Show table" checkbox for the PARALLEL chart serves as a indicator of
+					 * whether the PARALLEL table should be shown when rendering the chart.
+					 * This checkbox is positioned in the Generic configuration panel on the
+					 * Cofiguration tab of the Designer.
+					 */
+					var showTableParallel = mainConfigurationPanel.getComponent("showTableParallel");
 					
 					/**
 					 * The additional second configuration panel elements to show when the SUNBURST is selected.
@@ -494,7 +524,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * The additional second configuration panel element to show when the GAUGE is selected.
 					 */
 					var gaugePanePanel = secondConfigurationPanel.getComponent("gaugePaneConfiguration");
-					
+									
 					/**
 					 * Determine which is the newly chosen chart type in order to show/hide
 					 * suitable GUI elements on the Step 2 (and Step 1, only for the GAUGE
@@ -549,8 +579,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 							|| isChartParallel || isChartHeatmap || isChartGauge 
 								|| isChartChord || isChartPie || isChartRadar 
 									|| isChartScatter) {
+						//console.log(chartOrientation);
 						chartOrientation.hide();
 					} else {
+						//console.log(chartOrientation);
 						chartOrientation.show();
 					}
 					
@@ -559,8 +591,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * panel on the Step 2 tab of the Designer page.
 					 */
 					if (isChartSunburst) {
+						//console.log(chartWidth);
 						chartWidth.hide();
 					} else {
+						//console.log(chartWidth);
 						chartWidth.show();
 					}
 					
@@ -570,8 +604,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * of the Designer page.
 					 */
 					if (isChartSunburst) {
+						//console.log(opacityOnMouseOver);
 						opacityOnMouseOver.show();
 					} else {
+						//console.log(opacityOnMouseOver);
 						opacityOnMouseOver.hide();
 					}
 					
@@ -580,8 +616,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Step 2 tab of the Designer page.
 					 */					
 					if (isChartWordCloud || isChartGauge) {	
+						//console.log(colorPallete);
 						colorPallete.hide();
 					} else {
+						//console.log(colorPallete);
 						colorPallete.show();
 					}
 					
@@ -617,12 +655,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelTooltipPanel.show();
 						parallelLegendTitlePanel.show();
 						parallelLegendElementPanel.show();
+						showTableParallel.show();
 					} else {
 						parallelLimitPanel.hide();
 						parallelAxesLinesPanel.hide();
 						parallelTooltipPanel.hide();
 						parallelLegendTitlePanel.hide();
 						parallelLegendElementPanel.hide();
+						showTableParallel.hide();
 					}
 					
 					/**
@@ -756,7 +796,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */						
 					var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
-					Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
+					//Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
+					
+					Ext.getCmp("chartColorPallete").height = (numberOfColors+1)*20+65;
+					Ext.getCmp("chartColorPallete").update();
 					
 					/**
 					 * Update (refresh) the main configuration panel (the one on the top of 
@@ -1268,10 +1311,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * order to update its layout on the Configuration tab (prev. Step 2).
 							 * 
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-							 */					
+							 */	
 							var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
 							Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged", numberOfColors);
-				    		
+							Ext.getCmp("chartColorPallete").height = (numberOfColors+1)*20+65;
+														
+							Ext.getCmp("chartColorPallete").update();
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
@@ -1855,7 +1900,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  		            							 * @author: danristo (danilo.ristovski@mht.net)
   	  		            							 */
   	  		            							jsonTemplate =  Sbi.chart.designer.Designer.exportAsJson();
-  	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false;
+//  	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false;
   		            							}
   		            					}
   		            				});
@@ -1919,7 +1964,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 
   		            							});
   		            							
-  		            							Sbi.chart.designer.Designer.chartTypeChanged = false; // danristo (19.10)
+//  		            							Sbi.chart.designer.Designer.chartTypeChanged = false; // danristo (19.10)
   		            						}
   		            					}
   		            				});
@@ -1945,24 +1990,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 				listeners: {
 				    tabchange: function(tabPanel, tab){
 				    	
-				    	if(tab.getId() == 'advancedEditor') {
+//				    	console.log("=============");
+//				    	console.log("=== Tab change (START) ===");
+//				    	console.log("=============");
+				    	
+				    	if(tab.getId() == 'advancedEditor') { console.log("-- 1-1 --");
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
-				    		
+//				    		console.log("-- 2-1 --");
 				    		var json = Sbi.chart.designer.Designer.exportAsJson();
-				    		
+//				    		console.log("-- 3-1 --");
 				    		//console.log(json);
-				    		
+//				    		console.log("-- 4-1 --");
 							tab.setChartData(json);
 							
-						} else if(tabPanel.previousTabId == 'advancedEditor') {
+						} else if(tabPanel.previousTabId == 'advancedEditor') { console.log("-- 1-2 --");
 							Sbi.chart.designer.Designer.chartTypeColumnSelector.enable();
-							
-							var advancedEditor = Ext.getCmp('advancedEditor');
+//							console.log("-- 2-2 --");
+							var advancedEditor = Ext.getCmp('advancedEditor'); console.log("-- 3-2 --");
 							if(advancedEditor.dataChanged == true) {
-								var newJson = advancedEditor.getChartData();
+//								console.log("-- 4-2-1 --");
+								var newJson = advancedEditor.getChartData();console.log("-- 4-2-2 --");
 								var oldJson = Sbi.chart.designer.Designer.exportAsJson();
-								
-								var tabChangeChecksMsgs = Sbi.chart.designer.Designer.tabChangeChecksMessages(oldJson, newJson);
+//								console.log("-- 4-2-3 --");
+								var tabChangeChecksMsgs = Sbi.chart.designer.Designer.tabChangeChecksMessages(oldJson, newJson);console.log("-- 4-2-4 --");
 								if(Sbi.chart.designer.Designer.tabChangeChecksFlag && tabChangeChecksMsgs) {
 										Ext.Msg.show({
 											title : LN('sbi.chartengine.designer.tabchange.title'),
@@ -1974,15 +2024,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 												ok : LN('sbi.chartengine.generic.ok'),
 											}
 										});
-								
-									tabPanel.setActiveTab('advancedEditor');
+//										console.log("-- 4-2-4-1 --");
+									tabPanel.setActiveTab('advancedEditor');console.log("-- 4-2-6 --");
 									return false;
-			    				} else {
+			    				} else {//console.log("-- 4-2-4-2 --");
 			    					Sbi.chart.designer.Designer.update(newJson);
 			    				}
 							}
-						}
+						}//console.log("-- 5 --");
 						tabPanel.previousTabId = tab.getId();
+						
+//						console.log("=============");
+//				    	console.log("=== Tab change (END) ===");
+//				    	console.log("=============");
 					}
 				},  
   				items: [
