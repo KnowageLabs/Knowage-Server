@@ -1613,7 +1613,7 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-	
+
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1706,11 +1706,25 @@ function renderWordCloud(chartConf){
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var legendWidth = data.legend.width;
+		
+		
+		var legendWidth = data.chart.width*0.2;
+		if(data.chart.width < 1000){
+			legendWidth=data.chart.width*0.25;
+		}
+		
 		var tableRowElements = data.table.numberOfRows;
 		var tablePaginationHeight = data.table.heightPageNavigator;
 		var divHeightAfterTable = data.table.afterTableDivHeight;	
-
+		
+		var showTable= data.chart.showTableParallel;
+        var tableHeight=0;
+        
+        if(showTable){
+        	tableHeight=200;
+        }
+        
+        
 		/**
 		 * This is the part when we set the width of the chart itself (the width between axes
 		 * on edges of the chart).
@@ -1765,7 +1779,8 @@ function renderWordCloud(chartConf){
 		.style("text-decoration",data.subtitle.style.textDecoration)
 		.style("font-size",data.subtitle.style.fontSize)
 		.text(data.subtitle.text);
-
+        
+		
 		var groupsHeight=groups.length*20+60;
 		var svgHeight;
 		if(groupsHeight > (h + m[0] + m[2])){
@@ -1774,7 +1789,8 @@ function renderWordCloud(chartConf){
 			svgHeight=h + m[0] + m[2];
 		}
 		
-		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20);
+		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight);
+		d3.select("#chart").append("div").attr("id","clearButton").style("padding-left",m[3]).append("button").text("clear selection").on("click",function(){return clearSelection();});
 		
 		var heightTotal = h + m[0] + m[2];
 		
@@ -1784,13 +1800,13 @@ function renderWordCloud(chartConf){
 			.style("width",data.chart.width-legendWidth)
 			// "...-180" for table height plus pagination height (150+30)
 			// "...-20" for bottom padding of the pagination  
-			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
-		.append("svg:svg")
+			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight)
+			.append("svg:svg")
 		//.style("font-size",18)
 			.style("width", data.chart.width-legendWidth)
 			// "...-180" for table height plus pagination height (150+30)
 			// "...-20" for bottom padding of the pagination  
-			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
+			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight)
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
@@ -1808,7 +1824,7 @@ function renderWordCloud(chartConf){
 			// "...-m[0]" for translation of the chart from the top downwards
 			// "...-20" for bottom padding of the pagination 
 			// "...-20" for enabling text on labels (serie values) to be visible
-			.range([data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4- 180-20-m[0]-20, 0]);
+			.range([data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4- tableHeight-m[0], 0]);
 
 			y[d].brush = d3.svg.brush()
 			.y(y[d])
@@ -1826,7 +1842,7 @@ function renderWordCloud(chartConf){
 		         .style("width",legendWidth)
 		         // "...-180" for table height plus pagination height (150+30)
 		         // "...-20" for bottom padding of the pagination 
-		         .style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
+		         .style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight)
 		         .style("overflow","auto")
 		       
 		         .append("svg:svg")
@@ -2064,6 +2080,7 @@ function renderWordCloud(chartConf){
 
 		// Add a brush for each axis.
 		g.append("svg:g")
+		 .attr("class","brush")
 		.style({"fill-opacity":" .3","stroke":data.axis.brushColor,"shape-rendering":" crispEdges"})
 		.each(function(d) { d3.select(this).call(y[d].brush); })
 		.selectAll("rect")
@@ -2126,154 +2143,159 @@ function renderWordCloud(chartConf){
 	}
 
 	// TABLE
-	var initialTableData=records;
-
-	var allTableData=initialTableData; // all records or filtered records
-	var currentTableData=allTableData.slice(0,5); // up to 5 recoords
-	var firstDisplayed=1;
-	var lastDisplayed=0;
 	
-	if(allTableData.length > 5){
-		lastDisplayed=5;
-	}else{
-		lastDisplayed=allTableData.length;
+	if(showTable){
+		
+		var initialTableData=records;
+	
+		var allTableData=initialTableData; // all records or filtered records
+		var currentTableData=allTableData.slice(0,5); // up to 5 recoords
+		var firstDisplayed=1;
+		var lastDisplayed=0;
+		
+		if(allTableData.length > 5){
+			lastDisplayed=5;
+		}else{
+			lastDisplayed=allTableData.length;
+		}
+	
+		var tableDiv = d3.select("#main")
+							.append("div").attr("id","tableDiv")
+							.style("width",data.chart.width)						
+							.style("padding-bottom",10)
+							.style("padding-top",30);
+		
+		var table = tableDiv.append("div").attr("id","tDiv").attr("align","center")
+		                .attr("width", data.chart.width)
+		                .append("table")
+						.style("width", data.chart.width)
+						
+						/**
+						 * The next style parameter setting allow us to reset font stylization provided 
+						 * for the whole chart (independency of the table element over whole chart). 
+						 * This way we can e.g. reset the text decoration (that the whole chart has) and
+						 * provide that table does not have the one. This is important since (for now)
+						 * table gets font customization from the legend's elements.
+						 * 
+						 * @author: danristo (danilo.ristovski@mht.net)
+						 */ 
+						//.style("display", "block") 
+						
+						/**
+						 * For now, table text elements will use the font customization provided for
+						 * legend's elements.
+						 * 
+						 * @author: danristo (danilo.ristovski@mht.net)
+						 */
+						.style("font-family", data.chart.style.fontFamily)
+						.style("font-size", data.chart.style.fontSize)
+						.style("font-style", data.chart.style.fontStyle)
+						.style("font-weight", data.chart.style.fontWeight)
+						.style("text-decoration", data.chart.style.textDecoration)
+						.style("padding-right",25)
+						.style("padding-left",m[3]);
+		
+		var paginationBar = tableDiv.append("div").attr("id","pBar")
+		                        .attr("align","center")
+								//.style("padding-left",w/2+m[3]/2-150)
+								.style("padding-top",10)
+		                        .style("padding-left",m[3])
+		                        .style("padding-right",25);
+		
+		var prevButton = paginationBar.append("button")
+							.text("<< Prev")
+							.on("click", function(){ return showPrev(); });
+		
+		var paginationText = paginationBar.append("label")
+								.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+								/**
+								 * The next style parameter setting allow us to reset font stylization provided 
+								 * for the whole chart (independency of the table element over whole chart). 
+								 * This way we can e.g. reset the text decoration (that the whole chart has) and
+								 * provide that table does not have the one. This is important since (for now)
+								 * table gets font customization from the legend's elements.
+								 * 
+								 * @author: danristo (danilo.ristovski@mht.net)
+								 */ 
+								.style("display", "inline-block") 
+								
+								/**
+								 * For now, table text elements will use the font customization provided for
+								 * legend's elements.
+								 * 
+								 * @author: danristo (danilo.ristovski@mht.net)
+								 */
+								.style("font-family",data.legend.element.style.fontFamily)
+								.style("font-size",data.legend.element.style.fontSize)
+								.style("font-style",data.legend.element.style.fontStyle)
+								.style("font-weight",data.legend.element.style.fontWeight)
+								.style("text-decoration",data.legend.element.style.textDecoration);
+		
+		var nextButton = paginationBar.append("button")
+							.text("Next >>")
+							.on("click", function(){ return showNext(); });
+	
+		if(firstDisplayed===1){
+			prevButton.attr("disabled","true");	
+		}
+	
+		if(lastDisplayed===allTableData.length){
+			nextButton.attr("disabled","true");
+		}
+	
+		//columns for table
+		var tableColumns=[];
+		tableColumns.push(groupcolumn);
+		tableColumns.push(data.chart.tooltip);
+		tableColumns=tableColumns.concat(columns);
+	
+		
+		//table header
+		table.append("thead")
+		      .style("background-color","silver") 
+		      .style("border","1px solid black")
+		      .attr("border-collapse","collapse")
+		     .append("tr")
+		     .style("width", data.chart.width-legendWidth)
+		     .style("height","30px")
+		     .selectAll("th")
+		     .data(tableColumns).enter()
+		     .append("th")
+		     .text(function(d){return d;});
+		
+		//table body
+		table.append("tbody")
+		     .selectAll("tr")
+		.data(currentTableData)
+		     .enter()
+		     .append("tr")
+		     .style("width", data.chart.width-legendWidth)
+		     .style("background-color",function(d,i){
+		    	 if(i%2==1)return "lightgray";
+		     })
+		     .attr("class","tdata")
+		.on("mouseover",function(d){
+			d3.select(this).style("outline","solid dimgray");
+			return selectSingleLine(d);})
+		     .on("mouseout",function(d){
+			d3.select(this).style("outline","none");
+		    	foreground.style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+		 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
+	           })
+		     .selectAll("td")
+		     .data(function(row){
+		    	 return tableColumns.map(function(column) {
+		                return {column: column, value: row[column]};
+		            });
+		     }).enter()
+		       .append("td")
+		.on("click",function(d){return filterTable(d,allTableData);})
+		       .text(function(d){return d.value})
+		       .style("text-align","center");
+		       
 	}
-
-	var tableDiv = d3.select("#main")
-						.append("div").attr("id","tableDiv")
-						.style("width",data.chart.width)						
-						.style("padding-bottom",10)
-						.style("padding-top",20);
 	
-	var table = tableDiv.append("div").attr("id","tDiv").attr("align","center")
-	                .attr("width", data.chart.width)
-	                .append("table")
-					.style("width", data.chart.width)
-					
-					/**
-					 * The next style parameter setting allow us to reset font stylization provided 
-					 * for the whole chart (independency of the table element over whole chart). 
-					 * This way we can e.g. reset the text decoration (that the whole chart has) and
-					 * provide that table does not have the one. This is important since (for now)
-					 * table gets font customization from the legend's elements.
-					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
-					 */ 
-					//.style("display", "block") 
-					
-					/**
-					 * For now, table text elements will use the font customization provided for
-					 * legend's elements.
-					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
-					 */
-					.style("font-family", data.chart.style.fontFamily)
-					.style("font-size", data.chart.style.fontSize)
-					.style("font-style", data.chart.style.fontStyle)
-					.style("font-weight", data.chart.style.fontWeight)
-					.style("text-decoration", data.chart.style.textDecoration)
-					.style("padding-right",25)
-					.style("padding-left",m[3]);
 	
-	var paginationBar = tableDiv.append("div").attr("id","pBar")
-	                        .attr("align","center")
-							//.style("padding-left",w/2+m[3]/2-150)
-							.style("padding-top",10)
-	                        .style("padding-left",m[3])
-	                        .style("padding-right",25);
-	
-	var prevButton = paginationBar.append("button")
-						.text("<< Prev")
-						.on("click", function(){ return showPrev(); });
-	
-	var paginationText = paginationBar.append("label")
-							.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
-							/**
-							 * The next style parameter setting allow us to reset font stylization provided 
-							 * for the whole chart (independency of the table element over whole chart). 
-							 * This way we can e.g. reset the text decoration (that the whole chart has) and
-							 * provide that table does not have the one. This is important since (for now)
-							 * table gets font customization from the legend's elements.
-							 * 
-							 * @author: danristo (danilo.ristovski@mht.net)
-							 */ 
-							.style("display", "inline-block") 
-							
-							/**
-							 * For now, table text elements will use the font customization provided for
-							 * legend's elements.
-							 * 
-							 * @author: danristo (danilo.ristovski@mht.net)
-							 */
-							.style("font-family",data.legend.element.style.fontFamily)
-							.style("font-size",data.legend.element.style.fontSize)
-							.style("font-style",data.legend.element.style.fontStyle)
-							.style("font-weight",data.legend.element.style.fontWeight)
-							.style("text-decoration",data.legend.element.style.textDecoration);
-	
-	var nextButton = paginationBar.append("button")
-						.text("Next >>")
-						.on("click", function(){ return showNext(); });
-
-	if(firstDisplayed===1){
-		prevButton.attr("disabled","true");	
-	}
-
-	if(lastDisplayed===allTableData.length){
-		nextButton.attr("disabled","true");
-	}
-
-	//columns for table
-	var tableColumns=[];
-	tableColumns.push(groupcolumn);
-	tableColumns.push(data.chart.tooltip);
-	tableColumns=tableColumns.concat(columns);
-
-	
-	//table header
-	table.append("thead")
-	      .style("background-color","silver") 
-	      .style("border","1px solid black")
-	      .attr("border-collapse","collapse")
-	     .append("tr")
-	     .style("width", data.chart.width-legendWidth)
-	     .style("height","30px")
-	     .selectAll("th")
-	     .data(tableColumns).enter()
-	     .append("th")
-	     .text(function(d){return d;});
-	
-	//table body
-	table.append("tbody")
-	     .selectAll("tr")
-	.data(currentTableData)
-	     .enter()
-	     .append("tr")
-	     .style("width", data.chart.width-legendWidth)
-	     .style("background-color",function(d,i){
-	    	 if(i%2==1)return "lightgray";
-	     })
-	     .attr("class","tdata")
-	.on("mouseover",function(d){
-		d3.select(this).style("outline","solid dimgray");
-		return selectSingleLine(d);})
-	     .on("mouseout",function(d){
-		d3.select(this).style("outline","none");
-	    	foreground.style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
-	 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
-           })
-	     .selectAll("td")
-	     .data(function(row){
-	    	 return tableColumns.map(function(column) {
-	                return {column: column, value: row[column]};
-	            });
-	     }).enter()
-	       .append("td")
-	.on("click",function(d){return filterTable(d,allTableData);})
-	       .text(function(d){return d.value})
-	       .style("text-align","center");
-	       
-
 	function dragstart(d) {
 		i = columns.indexOf(d);
 	}
@@ -2328,9 +2350,11 @@ function renderWordCloud(chartConf){
 			});
 		});
 		
+		if(showTable){
 		nextButton.attr("disabled",null);
 		prevButton.attr("disabled",null);
-
+		
+		
 		allTableData=filteredRows;
 		
 		currentTableData=allTableData.slice(0,5);
@@ -2405,13 +2429,13 @@ function renderWordCloud(chartConf){
 		.on("click",function(d){return filterTable(d,filteredRows);})
 	       .text(function(d){return d.value})
 		   .style("text-align","center");
-		 
+		}
 		
 		d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
 		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 
-
+		
 	}
 
 	function selectSingleLine(selectedRow){
@@ -2669,6 +2693,18 @@ function renderWordCloud(chartConf){
 		
 		updateTable();	
 
+	}
+	
+	
+	function clearSelection(){
+		columns.filter(function(p) { return y[p].brush.clear(); });
+		brush();
+		g.selectAll(".brush")
+		.style({"fill-opacity":" .3","stroke":data.axis.brushColor,"shape-rendering":" crispEdges"})
+		.each(function(d) { d3.select(this).call(y[d].brush); })
+		.selectAll("rect")
+		.attr("x", brushx)
+		.attr("width", brushWidth);
 	}
 }
 	
