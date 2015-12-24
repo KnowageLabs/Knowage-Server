@@ -196,10 +196,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			{
 		        xtype : 'fieldcontainer',
 		        
+		        layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+		        
 		        defaults : 
 		        {	   
-					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,
-					layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,					
 		        },
 		        
 		        items : 
@@ -231,10 +232,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			{
 		        xtype : 'fieldcontainer',
 		        
+		        layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+		        
 		        defaults : 
 		        {	   
-					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,	
-					layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,						
 		        },
 	    		
 		        items : 
