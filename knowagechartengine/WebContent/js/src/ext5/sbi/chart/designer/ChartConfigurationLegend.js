@@ -15,14 +15,40 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	
 	bind:
 	{
-		disabled:'{!configModel.showLegend}'
+//		disabled:  '{!configModel.showLegend}'
+		
+		/**
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		collapsed: '{!configModel.showLegend}'
+	},
+	
+	/**
+	 * Listening for showing the Legend panel. When this event fires
+	 * that means we have a legend that should be shown ("show legend"
+	 * parameter is set to true), hence expand the legend by assigning
+	 * the "bottom" value to the "collapsed" property of the Legend 
+	 * panel.
+	 * 
+	 * NOTE: This seems like the only solution, since I tried also with
+	 * setting the false value to this property, calling the expand() and
+	 * toggleCollapse() functions on this element (the panel).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	listeners:
+	{		
+		show: function()
+		{		
+			this.collapsed = "bottom";
+		}
 	},
 	
 	constructor: function(config) 
 	{
         this.callParent(config);
         this.viewModel = config.viewModel;
-        
+       
         this.stylePanelLegend = Ext.create
         (
     		'Sbi.chart.designer.StylePopup', 
