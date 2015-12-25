@@ -1334,7 +1334,10 @@ Ext.define('Sbi.chart.designer.Designer', {
   				stylePickerCombo: this.stylePickerCombo,
   				styleLabel: this.styleLabel,
   				categoriesPicker: this.categoriesPicker,
-  				region: 'west'
+  				region: 'west',
+  				//border: true,
+  		    	//bodyBorder: false,
+  		    	//resizable:true, 
   			});			
 
 			
@@ -1648,6 +1651,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							type: "deleteAllItemsFromAxisPanel",
 							padding: "3 0 0 0",
 							height: 22,
+							hidden: false,
 							
 							handler: function()
 							{
@@ -1747,24 +1751,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Hiding the bottom (X) axis title textbox and gear tool
 			 * if the already existing (saved) chart (document) is one of the 
 			 * specified chart types.
-			 * (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var typeOfChart = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
+			/**
+			 * The order of GUI elements on the header of the bottom panel:
+			 * 		[0] - Text field for axis title
+			 * 		[1] - "Remove all items" icon (recycle bin)
+			 * 		[2] - Gear button - axes style configuration popup for categories
+			 */
 			
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
 						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
+				
 				/**
-				 * Hide the bottom (X) axis title textbox	
+				 * Hide the bottom (X) axis title textbox.
 				 */
 				Ext.getCmp("chartBottomCategoriesContainer").tools[0].hidden = true;
 				
 				/**
-				 * Hide the gear icon on the bottom (X) axis panel	
+				 * Hide the gear icon on the bottom (X) axis panel.
 				 */
 				if (typeOfChart != "CHORD" && typeOfChart != "PARALLEL")
 				{
-					Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;	
+					Ext.getCmp("chartBottomCategoriesContainer").tools[2].hidden = true;	
 				}
 			}
 			

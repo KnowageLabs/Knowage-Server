@@ -1173,8 +1173,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					id: "plotsContainer",
 					store: plotbandsStore, 
 					
-					emptyText: "ASDASDASD",
-					
 					title: LN("sbi.chartengine.configuration.gauge.axisStylePopup.plotbands.title"),
 									
 					tools:
