@@ -1465,7 +1465,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						.get('parallelTooltipFontSize')) ? chartModel
 					.get('parallelTooltipFontSize')
 					 : '') + ';';
-				parallelTooltipStype += 'minWidth:'
+				/*parallelTooltipStype += 'minWidth:'
 				 + (Number((chartModel
 						.get('parallelTooltipMinWidth'))) ? Number(chartModel
 					.get('parallelTooltipMinWidth'))
@@ -1489,7 +1489,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 + ((Number(chartModel
 						.get('parallelTooltipPadding'))) ? Number(chartModel
 					.get('parallelTooltipPadding'))
-					 : '') + ';';
+					 : '') + ';'; */
 				parallelTooltipStype += 'border:'
 				 + ((Number(chartModel
 						.get('parallelTooltipBorder'))) ? Number(chartModel

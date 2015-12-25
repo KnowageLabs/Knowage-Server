@@ -18,7 +18,7 @@ Ext.define
 		 */
 		columnWidth: 1,
 //		width: 500,
-		height: 230,
+		height: 170,
 		
 		title: LN("sbi.chartengine.configuration.parallel.tooltip.title"), 
 		bodyPadding: 10,
@@ -31,7 +31,7 @@ Ext.define
 		
 		layout: 
 		{
-		    type: 'vbox'
+		     type: 'vbox'
 		},
 		
 		constructor: function(config) 
@@ -41,11 +41,11 @@ Ext.define
 			
 			this.tooltipFontFamily = null;
 			this.tooltipFontSize = null;
-			this.tooltipMinWidth = null;
-			this.tooltipMaxWidth = null;
-			this.tooltipMinHeight = null;
-			this.tooltipMaxHeight = null;
-			this.tooltipPadding = null;
+		//	this.tooltipMinWidth = null;
+		//	this.tooltipMaxWidth = null;
+		//	this.tooltipMinHeight = null;
+		//	this.tooltipMaxHeight = null;
+		//	this.tooltipPadding = null;
 			this.tooltipBorder = null;
 			this.tooltipBorderRadius = null;
 			
@@ -96,7 +96,7 @@ Ext.define
     			}
 			);
 			
-			this.tooltipMinWidth = Ext.create
+		/*	this.tooltipMinWidth = Ext.create
 			(
 				{
 					 xtype: 'numberfield',
@@ -303,7 +303,7 @@ Ext.define
 					 }
 				}
 			 );
-			
+			*/
 			this.tooltipBorder = Ext.create
 			(
 				{
@@ -314,9 +314,10 @@ Ext.define
 					 width: 280,
 //					 value: "0",
 					 maxValue: '10',
+					 columnWidth: 1,
 					 minValue: '0',
-					 labelWidth: 120,
-					 labelPad: 10,
+					//labelWidth: 100,
+					// labelPad: 10,
 					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipBorderWidth.emptyText"),
 					 
 					 listeners:
@@ -348,8 +349,8 @@ Ext.define
 //					 value: "5",
 					 maxValue: '20',
 					 minValue: '0',
-					 labelWidth: 120,
-					 labelPad: 10,
+					// labelWidth: 100,
+					// labelPad: 10,
 					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipBorderRadius.emptyText"),
 					 
 					 listeners:
@@ -374,13 +375,20 @@ Ext.define
 			[			 
 				{            
 					 xtype : 'fieldcontainer',
-					 layout : 'hbox',
-					 
-					 defaults : 
+					 layout: {                        
+					        type: 'vbox',
+					        align: 'center'
+					    },
+					// bodyPadding: 10,
+					 fieldDefaults: 
+					    {
+					        anchor: '100%'
+						},
+					/* defaults : 
 					 {
-				//		 labelWidth : '100%',
-						 margin:'0 30 0 0'
-					 },
+						// labelWidth : '100%',
+						
+					 },*/
 				       	 
 					 items: 
 					 [				 
@@ -392,9 +400,9 @@ Ext.define
 						
 			this.add(this.tooltipFontFamily);
 			this.add(this.tooltipFontSize);
-			this.add(tooltipWidth);
-			this.add(tooltipHeight);
-			this.add(this.tooltipPadding);
+			//this.add(tooltipWidth);
+			//this.add(tooltipHeight);
+			//this.add(this.tooltipPadding);
 			this.add(tooltipBorder);
 		}
 });

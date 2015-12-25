@@ -1765,7 +1765,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
 						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
-				
 				/**
 				 * Hide the bottom (X) axis title textbox.
 				 */
@@ -2941,7 +2940,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					tooltip:
 					{
-						minWidth:
+						/*minWidth:
 						{
 							minValue: Ext.getCmp("parallelTooltipMinWidth").minValue,
 							maxValue: Ext.getCmp("parallelTooltipMinWidth").maxValue
@@ -2970,7 +2969,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							minValue: Ext.getCmp("parallelTooltipPadding").minValue,
 							maxValue: Ext.getCmp("parallelTooltipPadding").maxValue
 						},
-						
+						*/
 						borderWidth:
 						{
 							minValue: Ext.getCmp("parallelTooltipBorder").minValue,
@@ -3194,11 +3193,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var parallelAxesLinesAxisColNamePaddGUI = parallelAxesLines.axisColNamePadd.value;
 				var parallelAxesLinesBrushWidthGUI = parallelAxesLines.brushWidth.value;
 				// == Tooltip panel ==
-				var parallelTooltipMinWidthGUI = parallelTooltip.tooltipMinWidth.value;
-				var parallelTooltipMaxWidthGUI = parallelTooltip.tooltipMaxWidth.value;
-				var parallelTooltipMinHeighGUI = parallelTooltip.tooltipMinHeight.value;
-				var parallelTooltipMaxHeightGUI = parallelTooltip.tooltipMaxHeight.value;
-				var parallelTooltipPaddingGUI = parallelTooltip.tooltipPadding.value;
+//				var parallelTooltipMinWidthGUI = parallelTooltip.tooltipMinWidth.value;
+//				var parallelTooltipMaxWidthGUI = parallelTooltip.tooltipMaxWidth.value;
+//				var parallelTooltipMinHeighGUI = parallelTooltip.tooltipMinHeight.value;
+//				var parallelTooltipMaxHeightGUI = parallelTooltip.tooltipMaxHeight.value;
+//				var parallelTooltipPaddingGUI = parallelTooltip.tooltipPadding.value;
 				var parallelTooltipBorderGUI = parallelTooltip.tooltipBorder.value;
 				var parallelTooltipBorderRadiusGUI = parallelTooltip.tooltipBorderRadius.value;
 						
@@ -3443,7 +3442,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						) : errorMsg;
 				
-				if (parallelTooltipMinWidthGUI == null)
+				/*/if (parallelTooltipMinWidthGUI == null)
 				{
 					if (parallelTooltipMinWidthCModel == null || parallelTooltipMinWidthCModel=="")
 					{
@@ -3460,7 +3459,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				else 
 				{					
-					if (parallelTooltipMinWidthGUI < checkParamValuesForCharts.parallel.tooltip.minWidth.minValue)
+					/*if (parallelTooltipMinWidthGUI < checkParamValuesForCharts.parallel.tooltip.minWidth.minValue)
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
@@ -3485,10 +3484,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.parallel.tooltip.title")
 							]
 						);
-					}
-				}
+					} */
+				//} 
 				
-				if (parallelTooltipMaxWidthGUI == null)
+				/*if (parallelTooltipMaxWidthGUI == null)
 				{
 					if (parallelTooltipMaxWidthCModel == null || parallelTooltipMaxWidthCModel=="")
 					{						
@@ -3531,9 +3530,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
-				}
+				} */
 				
-				if (parallelTooltipMinHeighGUI == null)
+				/*if (parallelTooltipMinHeighGUI == null)
 				{
 					if (parallelTooltipMinHeightCModel == null || parallelTooltipMinHeightCModel=="")
 					{
@@ -3576,9 +3575,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
-				}
+				}*/
 				
-				if (parallelTooltipMaxHeightGUI == null)
+				/*if (parallelTooltipMaxHeightGUI == null)
 				{
 					if (parallelTooltipMaxHeightCModel == null || parallelTooltipMaxHeightCModel=="")
 					{
@@ -3621,9 +3620,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
-				}
+				}*/
 				
-				if (parallelTooltipPaddingGUI == null)
+				/*if (parallelTooltipPaddingGUI == null)
 				{
 					if (parallelTooltipPaddingCModel == null || parallelTooltipPaddingCModel=="")
 					{
@@ -3666,7 +3665,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
-				}
+				}*/
 					
 				if (parallelTooltipBorderGUI == null)
 				{

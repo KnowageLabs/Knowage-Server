@@ -259,11 +259,11 @@
  	{
 		fontFamily: '$chart.PARALLEL_TOOLTIP.style.fontFamily',
 		fontSize: '$chart.PARALLEL_TOOLTIP.style.fontSize',
-		minWidth: '$chart.PARALLEL_TOOLTIP.style.minWidth',
-		maxWidth: '$chart.PARALLEL_TOOLTIP.style.maxWidth',
-		minHeight: '$chart.PARALLEL_TOOLTIP.style.minHeight',
-		maxHeight: '$chart.PARALLEL_TOOLTIP.style.maxHeight',
-		padding: '$chart.PARALLEL_TOOLTIP.style.padding',
+ 		##minWidth: '$chart.PARALLEL_TOOLTIP.style.minWidth',
+		##maxWidth: '$chart.PARALLEL_TOOLTIP.style.maxWidth',
+		##minHeight: '$chart.PARALLEL_TOOLTIP.style.minHeight',
+		##maxHeight: '$chart.PARALLEL_TOOLTIP.style.maxHeight',
+		##padding: '$chart.PARALLEL_TOOLTIP.style.padding',
 		border: '$chart.PARALLEL_TOOLTIP.style.border',
 	 	borderRadius: '$chart.PARALLEL_TOOLTIP.style.borderRadius'
  	},
