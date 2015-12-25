@@ -1718,12 +1718,17 @@ function renderWordCloud(chartConf){
 		var divHeightAfterTable = data.table.afterTableDivHeight;	
 		
 		var showTable= data.chart.showTableParallel;
-        var tableHeight=0;
         
-        if(showTable){
-        	tableHeight=200;
+		/**
+		 * Variable that take value of 10 as bottom padding of the 
+		 * chart itself (axes) when there is no need for the table.
+		 */
+		var tableHeight=10;
+        
+        if(showTable)
+        {
+        	tableHeight=210;
         }
-        
         
 		/**
 		 * This is the part when we set the width of the chart itself (the width between axes
@@ -1778,8 +1783,7 @@ function renderWordCloud(chartConf){
 		.style("font-weight",data.subtitle.style.fontWeight)
 		.style("text-decoration",data.subtitle.style.textDecoration)
 		.style("font-size",data.subtitle.style.fontSize)
-		.text(data.subtitle.text);
-        
+		.text(data.subtitle.text);        
 		
 		var groupsHeight=groups.length*20+60;
 		var svgHeight;
@@ -1789,26 +1793,43 @@ function renderWordCloud(chartConf){
 			svgHeight=h + m[0] + m[2];
 		}
 		
-		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight);
-		d3.select("#chart").append("div").attr("id","clearButton").style("padding-left",m[3]).append("button").text("clear selection").on("click",function(){return clearSelection();});
+		/**
+		 * Height of the button for clearing brush selections is determined
+		 * by an empirical approach.
+		 * @author Ana Tomic
+		 */
+		var buttonHeight = 20;
 		
-		var heightTotal = h + m[0] + m[2];
+		/**
+		 * Height of the DIV that holds the chart itself (axes).
+		 * @author Ana Tomic
+		 */
+		var chartDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight - buttonHeight;
+		
+		/**
+		 * Add brush clearing selections button to the main DIV.
+		 * @author Ana Tomic
+		 */
+		d3.select("#main").append("div").attr("id","clearButton").style("padding-left",m[3]).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
+		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",chartDivHeight);
+			
+		var axesDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight;
 		
 		var svg = d3.select("#chart")
-		.append("div")
-		.style("float","left")
-			.style("width",data.chart.width-legendWidth)
-			// "...-180" for table height plus pagination height (150+30)
-			// "...-20" for bottom padding of the pagination  
-			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight)
-			.append("svg:svg")
-		//.style("font-size",18)
-			.style("width", data.chart.width-legendWidth)
-			// "...-180" for table height plus pagination height (150+30)
-			// "...-20" for bottom padding of the pagination  
-			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight)
-		.append("svg:g")
-		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+			.append("div")
+				.style("float","left")
+				.style("width",data.chart.width-legendWidth)
+				// "...-180" for table height plus pagination height (150+30)
+				// "...-20" for bottom padding of the pagination  
+				.style("height", chartDivHeight)
+				.append("svg:svg")
+			//.style("font-size",18)
+				.style("width", data.chart.width-legendWidth)
+				// "...-180" for table height plus pagination height (150+30)
+				// "...-20" for bottom padding of the pagination  
+				.style("height", chartDivHeight)
+			.append("svg:g")
+			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 		columns.forEach(function(d){
 			records.forEach(function(p) {p[d] = +p[d]; });
@@ -1824,7 +1845,7 @@ function renderWordCloud(chartConf){
 			// "...-m[0]" for translation of the chart from the top downwards
 			// "...-20" for bottom padding of the pagination 
 			// "...-20" for enabling text on labels (serie values) to be visible
-			.range([data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4- tableHeight-m[0], 0]);
+			.range([axesDivHeight - m[0], 0]);
 
 			y[d].brush = d3.svg.brush()
 			.y(y[d])
@@ -1835,14 +1856,13 @@ function renderWordCloud(chartConf){
 		var gr=JSON.parse(data.chart.groups);
 		
 		var svgHeight=Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+8+gr.length*(Number(removePixelsFromFontSize(data.legend.element.style.fontSize))+8)+30;
-	
-   
+	   
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
 		         .style("width",legendWidth)
 		         // "...-180" for table height plus pagination height (150+30)
 		         // "...-20" for bottom padding of the pagination 
-		         .style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight)
+		         .style("height", axesDivHeight)
 		         .style("overflow","auto")
 		       
 		         .append("svg:svg")
@@ -2141,7 +2161,7 @@ function renderWordCloud(chartConf){
 				   
 				   return params;
 	}
-
+	
 	// TABLE
 	
 	if(showTable){
@@ -2203,6 +2223,8 @@ function renderWordCloud(chartConf){
 		                        .style("padding-right",25);
 		
 		var prevButton = paginationBar.append("button")
+							.style("border-radius","5px")
+							.style("background-color","")
 							.text("<< Prev")
 							.on("click", function(){ return showPrev(); });
 		
@@ -2232,6 +2254,8 @@ function renderWordCloud(chartConf){
 								.style("text-decoration",data.legend.element.style.textDecoration);
 		
 		var nextButton = paginationBar.append("button")
+							.style("border-radius","5px")
+							.style("background-color","")
 							.text("Next >>")
 							.on("click", function(){ return showNext(); });
 	
@@ -2293,8 +2317,7 @@ function renderWordCloud(chartConf){
 		       .text(function(d){return d.value})
 		       .style("text-align","center");
 		       
-	}
-	
+	}	
 	
 	function dragstart(d) {
 		i = columns.indexOf(d);
