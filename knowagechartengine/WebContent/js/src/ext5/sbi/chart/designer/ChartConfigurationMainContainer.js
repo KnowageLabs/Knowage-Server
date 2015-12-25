@@ -1,5 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
+	
 	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
+	
 	requires : [
 	            'Sbi.chart.designer.ChartOrientationCombo',
 	            'Sbi.chart.designer.ColorPickerContainer',
@@ -7,8 +9,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            'Sbi.chart.designer.FontDimCombo',
 	            'Sbi.chart.designer.FontStyleCombo',
 	            'Sbi.chart.designer.StylePopup'
-	            
 	            ],
+	            
 	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
 
@@ -19,7 +21,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		
 //	height: null,
 //	width: null,
-	margin: "0 0 5 0",	// overrides the margin set in the ChartConfigurationRoot.js
+	
+	/**
+	 * Overrides the margin set in the ChartConfigurationRoot.js.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	margin: "0 10 5 0",	
 	
 //	overflowX: "auto",
 //	overflowY: "auto",
