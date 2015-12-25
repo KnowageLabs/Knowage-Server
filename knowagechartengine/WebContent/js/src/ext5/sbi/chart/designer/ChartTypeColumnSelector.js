@@ -1,9 +1,9 @@
 Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     extend: 'Ext.panel.Panel',
-    xtype: 'layout-border',
-    requires: [
-        'Ext.layout.container.Border'
-    ],
+//    xtype: 'layout-border',
+//    requires: [
+//        'Ext.layout.container.Border'
+//    ],
    // id: "idchartss", // danristo
     config: {
     	region: 'west',
@@ -37,20 +37,23 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         }
     },
     
-    width: 225,
+    width: 235,
     
-    collapsible: false,
+//    collapsible: false,
     
     /**
      * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
 //    scrollable: true,
     overflowY: "auto",
+    
+   // border: true,
+	//resizable:true, 
 	
-    bodyBorder: false,
-    defaults: {
-        split: false,
-    },
+//    bodyBorder: false,
+//    defaults: {
+//        split: false,
+//    },
     
     constructor: function(config) {
         this.callParent(config);

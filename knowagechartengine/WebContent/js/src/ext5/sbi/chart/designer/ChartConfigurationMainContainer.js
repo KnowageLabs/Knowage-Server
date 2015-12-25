@@ -320,7 +320,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 		});
-        	    
+        	
     	this.add(showLegend);   
     	
     	/**
@@ -339,7 +339,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
 				
 				labelSeparator: '',
-				fieldLabel: LN("sbi.chartengine.configuration.parallel.showTable"),	// TODO: LN()
+				fieldLabel: LN("sbi.chartengine.configuration.parallel.showTable"),
 			}	
     	);
     	
