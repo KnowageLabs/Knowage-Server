@@ -352,27 +352,34 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		this.axisFieldSet.add(this.styleFontSizeComboBox);
 		
 		/**
-		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type 
-		 * and for the Y-axis exclusively.
+		 * NOTE: The Opposite option is disabled completely from every chart (also for the SCATTER
+		 * chart) since the behavior of the parameter in combination with other axis parameters was 
+		 * providing more troubles than bringing advantages.
 		 * 
-		 * @author: danristo (danilo.ristovski@mht.net)
-		 */	
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER"
-			 && this.axisData.axisType.toLowerCase() != "category")
-		{
-			this.styleOpposite = Ext.create
-	    	(
-				{
-			        xtype: 'checkboxfield',
-			        id: 'oppositeAxis',
-			        value: this.axisData.styleOpposite,
-			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite")+":", 
-			    }	
-	    	);
-			
-			this.axisFieldSet.add(this.styleOpposite);
-		}		
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+//		/**
+//		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type 
+//		 * and for the Y-axis exclusively.
+//		 * 
+//		 * @author: danristo (danilo.ristovski@mht.net)
+//		 */	
+//		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER"
+//			 && this.axisData.axisType.toLowerCase() != "category")
+//		{
+//			this.styleOpposite = Ext.create
+//	    	(
+//				{
+//			        xtype: 'checkboxfield',
+//			        id: 'oppositeAxis',
+//			        value: this.axisData.styleOpposite,
+//			        labelSeparator: '',
+//			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite")+":", 
+//			    }	
+//	    	);
+//			
+//			this.axisFieldSet.add(this.styleOpposite);
+//		}		
 		
 		if(isYAxis) {
 			var majorgridInterval = '' + this.axisData.majorgridInterval;

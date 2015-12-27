@@ -268,8 +268,6 @@
 		        align: 'center', 
 		        verticalAlign: 'bottom',
 		        layout: 'horizontal',
-		        ##x: 0,
-		       	## y: 100
 		    
 	    #end
 	    
@@ -281,9 +279,6 @@
 	            align: 'center',
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
-	          	##y: $totalDistanceLegend
-	           	## x: 0,
-	           	## y: 100
 		    
 	 	#end
 	 	
@@ -386,8 +381,6 @@
 	            verticalAlign: '$chart.LEGEND.position', 
 	            layout: 'horizontal',
 	          	y: $totalDistanceLegend,
-	           	## x: 0,
-	           	## y: 100
 		    
 	 	#end
 	        
@@ -399,11 +392,25 @@
 		        align: '$chart.LEGEND.position', 
 		        verticalAlign: 'middle',
 		        layout: 'vertical',
-		        ##x: 0,
-		       	## y: 100
 		    
 	    #end
-	    
+	    		
+	    		#if ($chart.LEGEND.floating != '')
+		        	floating: $chart.LEGEND.floating,
+		        #end
+		        
+		    	#if($chart.LEGEND.floating == 'true')
+		    	
+			        #if($chart.LEGEND.x != '')
+			        	x: $chart.LEGEND.x,
+				    #end
+			        
+			        #if($chart.LEGEND.y != '')
+			        	y: $chart.LEGEND.y,
+			    	#end
+		    	
+		    	#end
+	    		
 			    #if($chart.LEGEND.style.backgroundColor != '')
 		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
 			    #end
@@ -419,6 +426,10 @@
 		        	color: '$chart.LEGEND.style.color', 
 		        	
 		        	fontSize: '$chart.LEGEND.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.style.fontFamily',
+		        	#end
 		        	
 		        	#if ($chart.LEGEND.style.fontWeight == 'italic')
 		        		fontStyle: 'italic',

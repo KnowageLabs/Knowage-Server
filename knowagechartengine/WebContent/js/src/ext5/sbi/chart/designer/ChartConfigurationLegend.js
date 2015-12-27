@@ -55,7 +55,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
     		{
 	    	    title:LN('sbi.chartengine.configuration.legendstyle'),
 	    	    viewModel: this.viewModel,
-	    	    bindFontAlign:'{configModel.legendAlign}',
+	    	    /**
+	    	     * TODO: Text alignment of Legend items is removed since there is 
+	    	     * no simple way to provide this feature. 
+	    	     * 
+	    	     * Danilo Ristovski
+	    	     */
+//	    	    bindFontAlign:'{configModel.legendAlign}',
 	    	    bindFont:'{configModel.legendFont}',
 	    	    bindFontDim:'{configModel.legendDimension}',
 	    	    bindFontStyle:'{configModel.legendStyle}',
@@ -165,7 +171,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
     			  		fieldLabel: LN('sbi.chartengine.configuration.floating')
     			  	}            	 
             	 ]
-             }                     
+             },
+             
+             
          ]; 
         
         this.add(item);

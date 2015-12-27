@@ -65,7 +65,13 @@ function renderTreemap(chartConf) {
     				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
     				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
     				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-    			}
+    			},
+    			
+    			/**
+    			 * Leave some ebough space for the "Back" button for drill up.
+    			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    			 */
+    			marginBottom: chartConf.chart.marginBottom
 		};
     	
     	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
@@ -87,16 +93,62 @@ function renderTreemap(chartConf) {
 				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
 				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
 				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-			}
+			},
+			
+			marginBottom: chartConf.chart.marginBottom
 		};
     	
     	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
     		chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
+     
+    /**
+	 * Take drill up button (the "Back" button) setting from the VM.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+    var drillUpButtonSettings = chartConf.series[0].drillUpButton;
         
 	var chart = new Highcharts.Chart({
 		chart: chartObject,
-		series: [{
+		series: 
+		[
+         	{
+         		/**
+         		 * Customization of the "Back" button on the TREEMAP chart.
+         		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+         		 */
+				drillUpButton: 
+				{
+	                position: 
+	                {
+	                    align: drillUpButtonSettings.position.align,
+//	                    x: drillUpButtonSettings.position.x,
+	                    verticalAlign: drillUpButtonSettings.position.verticalAlign,
+	                    y: drillUpButtonSettings.position.y
+	                },
+	                
+	                theme: 
+	                {
+	                    fill: drillUpButtonSettings.theme.fill,
+	                    'stroke-width': drillUpButtonSettings.theme.strokeWidth,
+	                    stroke: drillUpButtonSettings.theme.stroke,
+	                    r: drillUpButtonSettings.theme.r,
+	                    
+	                    style:
+	                    {
+	                    	fontSize: drillUpButtonSettings.theme.style.fontSize
+                    	},
+	                    
+	                    states: 
+	                    {
+	                        hover: 
+	                        {
+	                            //fill: drillUpButtonSettings.theme.states.hover.fill
+	                        }
+	                    }
+	                }	
+	            },
+	            
 			type: "treemap",
 			layoutAlgorithm: 'squarified',
 			allowDrillToNode: true,

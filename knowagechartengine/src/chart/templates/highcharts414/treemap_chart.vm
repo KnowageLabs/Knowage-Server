@@ -37,6 +37,9 @@
   	type: '$chartType',
   	height: '$chart.height',
   	width: '$chart.width',
+  	
+  		## Danilo Ristovski 27.12 (space for the 'Back' button)
+  		marginBottom: 40,
   
 	## I think this is necessary when title and subtitle are not provided (danristo)
 	#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
@@ -165,6 +168,62 @@
 						],
 						#end
     },
+	
+	#*
+		Customization (settings) for the "Back" button that appears when drilling
+		down on the HEATMAP, needed for drilling up (returning back on the previous
+		level). There is need to place it somewhere where it will not overlap the 
+		chart and title/subtitle. 
+		
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+	series:
+	[
+		{
+			drillUpButton: 
+			{
+				#*
+					Button will be placed on the center of the whole chart, at its bottom
+					where it will not overlap the chart and title/subtitle. Position will
+					be fixed.
+				*#
+                position: 
+                {
+                    align: "center",
+                    verticalAlign: "bottom",
+                    ##x: -10,
+                    y: 8
+                },
+                
+                #*
+					Customization of style of the button.
+				*#
+                theme: 
+                {
+                    fill: 'white',
+                    strokeWidth: 1,
+                    stroke: 'silver',
+                    r: 2,
+                    
+                    #* 
+                    	Style of the text within the button (font size, font color, etc.) 
+                    *#
+                    style:
+                    {
+                    	fontSize: "12px"
+                    },
+                    
+                    states: 
+                    {
+                        hover: 
+                        {
+                            fill: '#b3b3b3'
+                        }
+                    }
+                }	
+            },
+		}
+	],
 	
 	plotOptions:
 	{

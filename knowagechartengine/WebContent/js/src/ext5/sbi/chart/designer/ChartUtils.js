@@ -95,7 +95,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['styleFontWeigh'] = axisStyleAsMap.fontWeight && axisStyleAsMap.fontWeight != '' ? axisStyleAsMap.fontWeight : '';
 			result['styleFontSize'] = axisStyleAsMap.fontSize && axisStyleAsMap.fontSize != '' ? axisStyleAsMap.fontSize : '';
 
-			result['styleOpposite'] = axisStyleAsMap.opposite;
+			/**
+			 * NOTE: The Opposite option is disabled completely from every chart (also for the SCATTER
+			 * chart) since the behavior of the parameter in combination with other axis parameters was 
+			 * providing more troubles than bringing advantages.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+//			result['styleOpposite'] = axisStyleAsMap.opposite;
 
 			if (axis.MAJORGRID) {
 				result['majorgridInterval'] = axis.MAJORGRID.interval && axis.MAJORGRID.interval != '' ? axis.MAJORGRID.interval : '';
@@ -417,11 +424,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 : '') + ';';
 
 					/**
-					 * (added by: danilo.ristovski@mht.net)
+					 * NOTE: The Opposite option is disabled completely from every chart (also for the SCATTER
+					 * chart) since the behavior of the parameter in combination with other axis parameters was 
+					 * providing more troubles than bringing advantages.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					style += 'opposite:'
-					 + ((axisData.styleOpposite != undefined) ? axisData.styleOpposite
-						 : 'false') + ';';
+//					/**
+//					 * (added by: danilo.ristovski@mht.net)
+//					 */
+//					style += 'opposite:'
+//					 + ((axisData.styleOpposite != undefined) ? axisData.styleOpposite
+//						 : 'false') + ';';
 
 					axisAsJson['style'] = style;
 
@@ -1201,6 +1215,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('legendFloating') != undefined) ? chartModel
 				.get('legendFloating')
 				 : '';
+				
 				LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel
 				.get('legendX')
 				 : '';
