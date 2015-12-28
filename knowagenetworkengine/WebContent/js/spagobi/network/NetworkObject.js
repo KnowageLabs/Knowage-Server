@@ -234,7 +234,64 @@ Ext.define('Sbi.network.NetworkObject', {
 
 	
 	, exportNetwork : function(mimeType) {
-		this.networkSwf.exportNetwork(mimeType, this.services['exportNetwork']+'&type='+mimeType);
+	
+	    var saveData = (function () {
+	        var a = document.createElement("a");
+	        
+	        document.body.appendChild(a);
+	        a.style = "display: none";
+	        
+	        return function (file, fileName) {
+	    		var blob;
+	    		
+	        	if(mimeType=="graphml"){
+    	        	blob = new Blob([file], {
+    	                type: "text/xml;charset=utf-8;"
+    	            });
+    	        }else{
+    	        	var image_data = atob(file);
+    	    	    // Use typed arrays to convert the binary data to a Blob
+    	    	    var arraybuffer = new ArrayBuffer(image_data.length);
+    	    	    var view = new Uint8Array(arraybuffer);
+    	    	    for (var i=0; i<image_data.length; i++) {
+    	    	        view[i] = image_data.charCodeAt(i) & 0xff;
+    	    	    }
+    	    	    try {
+    	    	        // This is the recommended method:
+    	    	        blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
+    	    	    } catch (e) {
+    	    	        // The BlobBuilder API has been deprecated in favour of Blob, but older
+    	    	        // browsers don't know about the Blob constructor
+    	    	        // IE10 also supports BlobBuilder, but since the `Blob` constructor
+    	    	        //  also works, there's no need to add `MSBlobBuilder`.
+    	    	        var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+    	    	        bb.append(arraybuffer);
+    	    	        blob = bb.getBlob('application/octet-stream'); // <-- Here's the Blob
+    	    	    }
+    	        }
+
+	    	    var url = (window.webkitURL || window.URL).createObjectURL(blob);
+	            a.href = url;
+	            a.download = fileName;
+	            a.click();
+	            window.URL.revokeObjectURL(url);
+	        };
+	    }());
+	    var d = new Date();
+	    var file;
+	    
+	    if(mimeType=="pdf"){
+	    	file = this.networkSwf.pdf();
+	    }else if(mimeType=="graphml"){
+	    	file = this.networkSwf.graphml();
+	    } else {
+	    	mimeType = "png";
+	    	file = this.networkSwf.png();
+	    }
+	    
+	    var fileName = "network-export-"+d.getFullYear()+d.getMonth()+d.getDate()+d.getHours()+d.getMinutes()+d.getSeconds()+"."+mimeType;
+	    saveData(file, fileName);
+	
 	}
 	
 });
