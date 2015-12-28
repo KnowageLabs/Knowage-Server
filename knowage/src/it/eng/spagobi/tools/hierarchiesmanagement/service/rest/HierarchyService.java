@@ -260,19 +260,17 @@ public class HierarchyService {
 			String hierarchyDescription = req.getParameter("description");
 			String hierarchyScope = req.getParameter("scope");
 			String hierarchyType = req.getParameter("type");
+			String validityDate = req.getParameter("dateValidity");
 
 			String dimension = req.getParameter("dimension");
-
-			if (!isInsert || customTreeInMemorySaved) {
-				deleteHierarchy(req);
-			}
 
 			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject);
 
 			// Information for persistence
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
+			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
+			String hierarchyPrefix = hierarchies.getPrefix(dimension);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 
 			// 2 - get datasource label name
@@ -281,6 +279,11 @@ public class HierarchyService {
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy", "No datasource found for saving hierarchy");
+			}
+
+			if (!isInsert || customTreeInMemorySaved) {
+				// deleteHierarchy(req);
+				updateHierarchyForBackup(dataSource, hierarchyType, hierarchyName, validityDate, hierarchyTable);
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
@@ -356,7 +359,7 @@ public class HierarchyService {
 				throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", "wrong request parameters");
 			}
 			// rename old hierarchy (as backup)
-			deleteHierarchy(req);
+			// deleteHierarchy(req);
 			saveHierarchy(req);
 
 		} catch (Throwable t) {
