@@ -1,8 +1,8 @@
 var app = angular.module('hierManager');
 
-app.controller('hierTechnController', ["sbiModule_translate",'sbiModule_restServices','sbiModule_logger',"$scope", hierarchyTechFunction ]);
+app.controller('hierTechnController', ['sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyTechFunction ]);
 
-function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope){
+function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -30,15 +30,44 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 	
 	$scope.menuOptionSrc = [{
 		label:'add',
-		action : function(item,event){
-			var data='';
-		}
-	},{
+		action : function(item,parent,event){
+			 var parentEl = angular.element(document.body);
+			 $mdDialog.show({
+					templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
+					parent: angular.element(document.body),
+					locals: {
+						   translate: $scope.translate,
+				           item:  item,
+				           parent : parent
+				         },
+					preserveScope : true,
+					clickOutsideToClose:false,
+					controller: DialogController 
+				})
+				.then(function(item) {
+					
+				}, function() {
+					//form was cancelled, nothing to do 
+				});
+			 
+			 	function DialogController($scope, $mdDialog, translate, item, parent) {
+			        $scope.translate = translate;
+	 				$scope.item = item;
+			        $scope.parent = parent;
+			        $scope.closeDialog = function() {
+			        	$mdDialog.cancel();
+			        }
+			        $scope.saveHier = function(){
+			        	$mdDialog.hide();
+			        }
+				 }
+			}
+		},{
 		label:'remove',
 		action : function(item,event){
 			var data='';
 		}
-	}]
+	}];
 	
 	$scope.restService.get("dimensions","getDimensions")
 		.success(
@@ -56,6 +85,7 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 			var dimName = $scope.dimSrc.DIMENSION_NM;
 			var keyMap = type+'_'+dimName; 
 			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'getHierarchiesMaster' : 'getHierarchiesTechnical';
+			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if ($scope.hierarchiesSrcMap[keyMap] === undefined){
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
@@ -79,15 +109,21 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 	
 	$scope.getTreeSrc = function(){
 		if ($scope.dateFilterSrc && $scope.dimSrc && $scope.hierTypeSrc && $scope.hierSrc){
-			var type = $scope.hierSrc.HIERARCHY_TP;
-			var dimName = $scope.dimSrc.DIMENSION_NM;
-			var hierName = $scope.hierSrc.HIERARCHY_NM;
-			$scope.restService.get("hierarchies",
-									"getHierarchyTree",
-									"dimension="+dimName+"&filterType="+type+"&filterHierarchy="+hierName+"&validityDate=2015-12-21")
+			var dateFormatted =$scope.dateFilterSrc.getFullYear() + '-' + $scope.dateFilterSrc.getMonth()+'-'+$scope.dateFilterSrc.getDate();
+			var config = {};
+			config.params = {
+				dimension: $scope.dimSrc.DIMENSION_NM,
+				filterType : $scope.hierSrc.HIERARCHY_TP,
+				filterHierarchy : $scope.hierSrc.HIERARCHY_NM,
+				validityDate : dateFormatted
+			};
+			$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 				.success(
 					function(data, status, headers, config) {
-						if (data.errors === undefined){
+						if (data !== undefined && data.errors === undefined){
+							if (typeof data =='object'){
+								data = [data];
+							}
 							$scope.hierTreeSrc = data;
 						}else{
 							var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIERARCHY_NM;
@@ -98,7 +134,7 @@ function hierarchyTechFunction(sbiModule_translate,sbiModule_restServices, sbiMo
 					var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIERARCHY_NM;
 					$scope.log.log('GET tree source error with parameters' + params + ' with status: "' + status+ '"');
 				});
-		}
+		}	
 	}
 	
 	$scope.applyFilter = function(){

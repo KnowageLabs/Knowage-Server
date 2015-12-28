@@ -1,0 +1,27 @@
+<md-dialog aria-label="Mango (Fruit)" ng-cloak style="max-width:900px;max-height:1000px;"> 
+	<md-toolbar class="md-blue minihead">
+		<div class="md-toolbar-tools">
+			  <h2 class="md-flex">Modify Hierarchies</h2>
+		</div>
+	</md-toolbar> 
+	<md-dialog-content layout="column">
+		<form name="hierForm">
+			<div flex layout-margin>
+				<md-input-container>
+					<input type='text'> Codice </input>
+				</md-input-container>
+				<md-input-container>
+					<input type='text'> Nome </input>
+				</md-input-container>
+				<md-input-container>
+					<input type='text'> Descrizione </input>
+				</md-input-container>
+				
+				<div layout="row" layout-align="space-around center">
+					<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier(domain)" ng-disabled="domainForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
+					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
+				</div>
+		</form>
+	</md-dialog-content> 
+</md-dialog>
+
