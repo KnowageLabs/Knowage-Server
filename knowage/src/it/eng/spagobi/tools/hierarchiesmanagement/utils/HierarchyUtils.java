@@ -10,6 +10,8 @@ import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -88,6 +90,37 @@ public class HierarchyUtils {
 
 		for (Field tmpField : fields) {
 			result.put(createJSONObjectFromField(tmpField, hierarchyFields));
+		}
+
+		logger.debug("END");
+		return result;
+
+	}
+
+	/**
+	 * This method creates a JSON array from a list of fields
+	 *
+	 * @param fields
+	 *            List of Fields read from hierarchies config
+	 * @param hierarchyFields
+	 *            to manage differences between dimensions and hierarchies fields
+	 * @return a JSON array that represents fields
+	 * @throws JSONException
+	 */
+	public static JSONObject createJSONArrayFromHashMap(HashMap values) throws JSONException {
+
+		logger.debug("START");
+
+		JSONObject result = new JSONObject();
+
+		Iterator iter = values.keySet().iterator();
+
+		while (iter.hasNext()) {
+			String key = (String) iter.next();
+			String value = (String) values.get(key);
+			if (key != null && value != null)
+				result.put(key, value);
+			logger.debug("Field [" + key + "] is " + value);
 		}
 
 		logger.debug("END");

@@ -390,6 +390,9 @@ public class HierarchyService {
 		Hierarchy hierarchy = hierarchies.getHierarchy(dimensionName);
 		Assert.assertNotNull(hierarchy, "Impossible to find a hierarchy for the dimension called [" + dimensionName + "]");
 
+		JSONObject configs = HierarchyUtils.createJSONArrayFromHashMap(hierarchies.getConfig(dimensionName));
+		result.put(HierarchyConstants.CONFIGS, configs);
+
 		List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
 		JSONArray generalFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(generalMetadataFields, true);
 		result.put(HierarchyConstants.GENERAL_FIELDS, generalFieldsJSONArray);
@@ -531,7 +534,7 @@ public class HierarchyService {
 
 		HierarchyTreeNode root = null;
 		// ONLY FOR DEBUG
-		Set<String> allNodeCodes = new HashSet<String>();
+		// Set<String> allNodeCodes = new HashSet<String>();
 
 		metadata = dataStore.getMetaData(); // saving metadata for next using
 
@@ -578,12 +581,12 @@ public class HierarchyService {
 					// first level
 					if (root == null) {
 						root = new HierarchyTreeNode(data, nodeCode);
-						// ONLY FOR DEBUG
-						if (allNodeCodes.contains(nodeCode)) {
-							logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-						} else {
-							allNodeCodes.add(nodeCode);
-						}
+						// // ONLY FOR DEBUG
+						// if (allNodeCodes.contains(nodeCode)) {
+						// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
+						// } else {
+						// allNodeCodes.add(nodeCode);
+						// }
 						// ------------------------
 						lastLevelFound = nodeCode;
 					} else {
@@ -592,19 +595,21 @@ public class HierarchyService {
 						String leafCode = (String) codeLeafField.getValue();
 						if (leafCode.equals(nodeCode)) {
 							data = setDataValues(dimension, nodeCode, data, record, metadata);
-							attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							// attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
 							lastLevelFound = nodeCode;
 						} else if (!root.getChildrensKeys().contains(nodeCode)) {
 							// node not already attached to the root
 							// HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 							// root.add(aNode, nodeCode);
-							attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							// attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
 							// ONLY FOR DEBUG
-							if (allNodeCodes.contains(nodeCode)) {
-								logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-							} else {
-								allNodeCodes.add(nodeCode);
-							}
+							// if (allNodeCodes.contains(nodeCode)) {
+							// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
+							// } else {
+							// allNodeCodes.add(nodeCode);
+							// }
 							// ------------------------
 						}
 						lastLevelFound = nodeCode;
@@ -644,11 +649,11 @@ public class HierarchyService {
 			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 
 			// ONLY FOR DEBUG
-			if (allNodeCodes.contains(nodeCode)) {
-				logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-			} else {
-				allNodeCodes.add(nodeCode);
-			}
+			// if (allNodeCodes.contains(nodeCode)) {
+			// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
+			// } else {
+			// allNodeCodes.add(nodeCode);
+			// }
 
 			// ------------------------
 
