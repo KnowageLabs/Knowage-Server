@@ -84,7 +84,7 @@ public class HierarchyService {
 				IField field = record.getFieldAt(0);
 				String hierarchyName = (String) field.getValue();
 				JSONObject hierarchy = new JSONObject();
-				hierarchy.put("HIERARCHY_NM", hierarchyName);
+				hierarchy.put(HierarchyConstants.HIER_NM, hierarchyName);
 				hierarchiesJSONArray.put(hierarchy);
 
 			}
@@ -117,11 +117,11 @@ public class HierarchyService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 			// 3- execute query to get hierarchies names
-			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
-			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
-			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
-			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_DS", dataSource);
-			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName("SCOPE", dataSource);
+			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+			String typeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS, dataSource);
+			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_SCOPE, dataSource);
 
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
@@ -139,11 +139,11 @@ public class HierarchyService {
 				field = record.getFieldAt(4);
 				String hierarchyScope = (String) field.getValue();
 				JSONObject hierarchy = new JSONObject();
-				hierarchy.put("HIERARCHY_CD", hierarchyCode);
-				hierarchy.put("HIERARCHY_NM", hierarchyName);
-				hierarchy.put("HIERARCHY_TP", hierarchyType);
-				hierarchy.put("HIERARCHY_DS", hierarchyDescription);
-				hierarchy.put("HIERARCHY_SC", hierarchyScope);
+				hierarchy.put(HierarchyConstants.HIER_CD, hierarchyCode);
+				hierarchy.put(HierarchyConstants.HIER_NM, hierarchyName);
+				hierarchy.put(HierarchyConstants.HIER_TP, hierarchyType);
+				hierarchy.put(HierarchyConstants.HIER_DS, hierarchyDescription);
+				hierarchy.put(HierarchyConstants.HIER_SCOPE, hierarchyScope);
 				hierarchiesJSONArray.put(hierarchy);
 
 			}
@@ -570,8 +570,6 @@ public class HierarchyService {
 				IField nameField = record.getFieldAt(dsMeta.getFieldIndex(prefix + "_NM_LEV" + i)); // NAME CODE
 
 				if ((currentLevel == maxDepth) || (codeField.getValue() == null) || (codeField.getValue().equals(""))) {
-					// currentLevel++;
-					// continue; // skip to next iteration
 					break; // skip to next iteration
 				} else {
 					String nodeCode = (String) codeField.getValue();

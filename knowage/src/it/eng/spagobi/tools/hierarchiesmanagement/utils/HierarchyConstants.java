@@ -55,7 +55,10 @@ public class HierarchyConstants {
 
 	// CONDITIONS FIELDS (mandatory)
 	public final static String HIER_NM = "HIER_NM";
+	public final static String HIER_CD = "HIER_CD";
 	public final static String HIER_TP = "HIER_TP";
+	public final static String HIER_DS = "HIER_DS";
+	public final static String HIER_SCOPE = "HIER_SCOPE";
 	public final static String BEGIN_DT = "BEGIN_DT";
 	public final static String END_DT = "END_DT";
 
