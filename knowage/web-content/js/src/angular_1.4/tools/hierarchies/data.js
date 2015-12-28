@@ -23,7 +23,7 @@ var dataJson = {
 		              "leafParentCode": "",
 		              "originalLeafParentCode": "",
 		              "leafParentName": "",
-		              "leaf": false,
+		              "leaf": true,
 		              "children": [],
 		              "expanded": false
 		            },
@@ -35,7 +35,7 @@ var dataJson = {
 		              "originalLeafParentCode": "",
 		              "leafParentName": "",
 		              "children": [],
-		              "leaf": false,
+		              "leaf": true,
 		              "expanded": false
 		            },
 		            {
@@ -46,7 +46,7 @@ var dataJson = {
 		              "originalLeafParentCode": "",
 		              "leafParentName": "",
 		              "children": [],
-		              "leaf": false,
+		              "leaf": true,
 		              "expanded": false
 		            },
 		            {"name":"TIACOMUNEDIPEDARA-CT","id":"ATT_CO_DL_B_C5PV2000","leafId":"1842","leafParentCode":"ATT_CO_DL_B","originalLeafParentCode":"ATT_CO_DL_B","leafParentName":"Banche","leaf":true,"beginDt":"2014-02-01","endDt":"9999-12-31","signLev1":1,"signLev2":1,"signLev3":1,"signLev4":1,"signLev5":1,"signLev6":1,"signLev7":1,"signLev8":1,"signLev9":1,"signLev10":1,"signLev11":1,"signLev12":1,"signLev13":1,"signLev14":1,"signLev15":1}

@@ -17,8 +17,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.dimensionSrc = [];
 	$scope.hierarchiesSrc=[];
 	$scope.hierTreeSrc = [];
+	$scope.metadataMap = {};
 	$scope.seeFilter=false;
-	
+
 	$scope.keys = {'subfolders' : 'children'};
 	
 	$scope.hierTreeSrc.push(angular.copy(dataJson));
@@ -27,47 +28,6 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.toogleSeeFilter= function(){
 		$scope.seeFilter = !$scope.seeFilter;
 	}
-	
-	$scope.menuOptionSrc = [{
-		label:'add',
-		action : function(item,parent,event){
-			 var parentEl = angular.element(document.body);
-			 $mdDialog.show({
-					templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
-					parent: angular.element(document.body),
-					locals: {
-						   translate: $scope.translate,
-				           item:  item,
-				           parent : parent
-				         },
-					preserveScope : true,
-					clickOutsideToClose:false,
-					controller: DialogController 
-				})
-				.then(function(item) {
-					
-				}, function() {
-					//form was cancelled, nothing to do 
-				});
-			 
-			 	function DialogController($scope, $mdDialog, translate, item, parent) {
-			        $scope.translate = translate;
-	 				$scope.item = item;
-			        $scope.parent = parent;
-			        $scope.closeDialog = function() {
-			        	$mdDialog.cancel();
-			        }
-			        $scope.saveHier = function(){
-			        	$mdDialog.hide();
-			        }
-				 }
-			}
-		},{
-		label:'remove',
-		action : function(item,event){
-			var data='';
-		}
-	}];
 	
 	$scope.restService.get("dimensions","getDimensions")
 		.success(
@@ -105,6 +65,22 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				$scope.hierarchiesSrc = angular.copy($scope.hierarchiesSrcMap[keyMap]);
 			}
 		}
+		//get the metadata for the dimension
+		var dimName = $scope.dimSrc.DIMENSION_NM;
+		if ($scope.metadataMap !== undefined && $scope.metadataMap[dimName] == undefined){
+			$scope.restService.get("hierarchies","nodeMetadata","dimension="+dimName+"&excludeLeaf=false")
+			.success(
+				function(data, status, headers, config) {
+					if (data.errors === undefined){
+						$scope.metadataMap[dimName] = data;
+					}else{
+						$scope.log.log('GET hierarchies error of ' + data + ' with message : "' + data.errors[0].message + '"');
+					}
+			})
+			.error(function(data, status){
+				$scope.log.log('GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status);
+			});
+		}
 	}
 	
 	$scope.getTreeSrc = function(){
@@ -137,6 +113,91 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}	
 	}
 	
+	 $scope.editNode = function(item,parent){
+		 var parentEl = angular.element(document.body);
+		 var metTmp =  $scope.metadataMap[$scope.dimSrc.DIMENSION_NM];
+		 var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
+		 metadata == undefined ? metadata =  metTmp.GENERAL_FIELDS : metadata = metadata;
+		 $mdDialog.show({
+			templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
+			parent: angular.element(document.body),
+			locals: {
+				   translate: $scope.translate,
+		           hier:  item,
+		           metadata : metadata
+		         },
+			preserveScope : true,
+			clickOutsideToClose:false,
+			controller: DialogController 
+		})
+		.then(function(item) {
+			return item;
+		}, function() {
+			return null; 
+		});
+	 
+	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
+	 		$scope.translate = translate;
+			$scope.hier = hier;
+			$scope.metadata = metadata;
+	        $scope.closeDialog = function() {
+	        	$mdDialog.cancel();
+	        }
+	        $scope.saveHier = function(){
+	        	$mdDialog.hide(hier);
+	        }
+		 }
+	 }
+	
+	$scope.addHier =  function(item,parent,event){
+		var newItem = $scope.editNode({},parent);
+		if (newItem !== null && newItem !== undefined){
+			item.children.push(newItem);
+		}
+	}
+	
+	$scope.modifyHier =  function(item,parent,event){
+		var newItem = $scope.editNode(item,parent);
+		if (newItem !== null && newItem !== undefined){
+			item = newItem;
+		}
+	}
+	
+	$scope.duplicateLeaf =  function(item,parent,event){
+		var newItem = angular.copy(item);
+		if ( $scope.metadataMap[$scope.dimSrc.DIMENSION_NM].ALLOW_DUPLICATE == false){
+			//must modify the dates of validity
+			newItem = $scope.editNode(newItem,parent);
+		}
+	}
+	
+	$scope.deleteHier =  function(item,parent,event){
+		
+	}
+	 
+	$scope.menuOptionSrc = [{
+			label: $scope.translate.load('sbi.hierarchies.node.add'),
+			showItem : function(item,event){
+				//visible if it is NOT a leaf
+				return item !== undefined && (item.leaf === undefined || item.leaf == false);
+				},
+			action: $scope.addHier
+		},{
+			label: 'Duplicate',
+			showItem : function(item,event){
+				//visible if it IS a leaf
+				return item !== undefined && item.leaf !== undefined && item.leaf == true;
+				},
+			action : $scope.duplicateLeaf
+		},{
+			label: $scope.translate.load('sbi.hierarchies.node.edit'),
+			action : $scope.modifyHier
+		},{
+			label: $scope.translate.load('sbi.hierarchies.node.delete'),
+			action: $scope.deleteHier
+		}
+	];
+	 
 	$scope.applyFilter = function(){
 		//use to apply the filter only when is clicked the icon
 		$scope.filterBySrcTrigger = angular.copy($scope.filterBySrc);

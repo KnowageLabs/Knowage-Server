@@ -14,7 +14,7 @@
 
 		<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}TableContextMenu-{{folder[label]}}-{{$index}}" )>
 			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined"> 
-				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)' tabindex='{{$index}}' >
+				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)' ng-if='menuItem.showItem === undefined || menuItem.showItem(folder,$event)' tabindex='{{$index}}' >
 					{{menuItem.label}}
 				</md-list-item>
 			</md-list>
@@ -54,7 +54,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 	<ng-include src="'tree_renderer.html'"></ng-include>
 </md-content ng-if="browser == 'firefox'">
 
-<md-content ng-if="browser == 'chrome'" layout-fill>
+<md-content ng-if="browser == 'chrome'" layout-padding>
 	<ng-include src="'tree_renderer.html'"></ng-include>
 </md-content ng-if="browser == 'chrome'">
 

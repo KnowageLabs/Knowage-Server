@@ -428,3 +428,7 @@ md-input-container.small{
 md-input-container.small.counter textarea,md-input-container.small.counter input {
 	 margin-right: 50px;
 }
+
+.tenantItemBox {
+	max-height: 80%;
+}
