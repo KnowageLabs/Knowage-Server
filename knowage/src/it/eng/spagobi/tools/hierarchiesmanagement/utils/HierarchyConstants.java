@@ -59,6 +59,9 @@ public class HierarchyConstants {
 	public final static String HIER_TP = "HIER_TP";
 	public final static String HIER_DS = "HIER_DS";
 	public final static String HIER_SCOPE = "SCOPE";
+	public final static String LEAF_PARENT_CD = "LEAF_PARENT_CD";
+	public final static String LEAF_ORIG_PARENT_CD = "LEAF_ORIG_PARENT_CD";
+	public final static String LEAF_PARENT_NM = "LEAF_PARENT_NM";
 	public final static String BEGIN_DT = "BEGIN_DT";
 	public final static String END_DT = "END_DT";
 

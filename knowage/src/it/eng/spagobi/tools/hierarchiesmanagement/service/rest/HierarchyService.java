@@ -171,6 +171,9 @@ public class HierarchyService {
 		HierarchyTreeNode hierarchyTree;
 		JSONObject treeJSONObject;
 		try {
+			// Check input parameters
+			// Assert.assertNotNull(hierarchies, "Impossible to find valid hierarchies config");
+
 			IDataSource dataSource = null;
 			// 1 - get datasource label name
 			try {
@@ -683,22 +686,22 @@ public class HierarchyService {
 		}
 		data.setLeafId(leafIdString);
 
-		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex("LEAF_PARENT_CD"));
+		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_CD));
 		String leafParentCodeString = (String) leafParentCodeField.getValue();
 		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
 		nodeCode = leafParentCodeString + "_" + nodeCode;
 		data.setLeafParentCode(leafParentCodeString);
 		data.setLeafOriginalParentCode(leafParentCodeString); // backup code
 
-		IField leafParentNameField = record.getFieldAt(metadata.getFieldIndex("LEAF_PARENT_NM"));
+		IField leafParentNameField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_NM));
 		String leafParentNameString = (String) leafParentNameField.getValue();
 		data.setLeafParentName(leafParentNameString);
 
-		IField beginDtField = record.getFieldAt(metadata.getFieldIndex("BEGIN_DT"));
+		IField beginDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.BEGIN_DT));
 		Date beginDtDate = (Date) beginDtField.getValue();
 		data.setBeginDt(beginDtDate);
 
-		IField endDtField = record.getFieldAt(metadata.getFieldIndex("END_DT"));
+		IField endDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.END_DT));
 		Date endDtDate = (Date) endDtField.getValue();
 		data.setEndDt(endDtDate);
 
@@ -763,10 +766,10 @@ public class HierarchyService {
 				HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) node.getObject();
 				nodeJSONObject.put("name", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
-				nodeJSONObject.put("leafId", nodeData.getLeafId());
-				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
-				nodeJSONObject.put("originalLeafParentCode", nodeData.getLeafOriginalParentCode());
-				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
+				nodeJSONObject.put("LEAF_ID", nodeData.getLeafId());
+				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_CD, nodeData.getLeafParentCode());
+				nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
+				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_NM, nodeData.getLeafParentName());
 
 				JSONArray childrenJSONArray = new JSONArray();
 
@@ -788,10 +791,10 @@ public class HierarchyService {
 
 				nodeJSONObject.put("name", nodeData.getNodeName());
 				nodeJSONObject.put("id", nodeData.getNodeCode());
-				nodeJSONObject.put("leafId", nodeData.getLeafId());
-				nodeJSONObject.put("leafParentCode", nodeData.getLeafParentCode());
-				nodeJSONObject.put("originalLeafParentCode", nodeData.getLeafOriginalParentCode());
-				nodeJSONObject.put("leafParentName", nodeData.getLeafParentName());
+				nodeJSONObject.put("LEAF_ID", nodeData.getLeafId());
+				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_CD, nodeData.getLeafParentCode());
+				nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
+				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_NM, nodeData.getLeafParentName());
 				nodeJSONObject.put("leaf", true);
 
 				nodeJSONObject = setDetailsInfo(nodeJSONObject, nodeData);
@@ -808,8 +811,8 @@ public class HierarchyService {
 		try {
 			JSONObject toReturn = nodeJSONObject;
 
-			toReturn.put("beginDt", nodeData.getBeginDt());
-			toReturn.put("endDt", nodeData.getEndDt());
+			toReturn.put("BEGIN_DT", nodeData.getBeginDt());
+			toReturn.put("END_DT", nodeData.getEndDt());
 			return toReturn;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy details structure to JSON", t);

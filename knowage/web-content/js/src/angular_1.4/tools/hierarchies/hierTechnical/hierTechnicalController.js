@@ -89,8 +89,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			var config = {};
 			config.params = {
 				dimension: $scope.dimSrc.DIMENSION_NM,
-				filterType : $scope.hierSrc.HIERARCHY_TP,
-				filterHierarchy : $scope.hierSrc.HIERARCHY_NM,
+				filterType : $scope.hierSrc.HIER_TP,
+				filterHierarchy : $scope.hierSrc.HIER_NM,
 				validityDate : dateFormatted
 			};
 			$scope.restService.get("hierarchies","getHierarchyTree",null,config)
@@ -102,12 +102,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 							}
 							$scope.hierTreeSrc = data;
 						}else{
-							var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIERARCHY_NM;
+							var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIER_NM;
 							$scope.log.log('GET tree source error with parameters' + params + ' with message : "' + data.errors[0].message + '"');
 						}
 					})
 				.error(function(data, status){
-					var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIERARCHY_NM;
+					var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIER_NM;
 					$scope.log.log('GET tree source error with parameters' + params + ' with status: "' + status+ '"');
 				});
 		}	
