@@ -1455,18 +1455,81 @@ Ext.define('Sbi.chart.designer.Designer', {
   				storeId: 'categoriesStore'	
 			});
 			
+			/** 
+			 * The height of the single category item dropped in the X-axis
+			 * (bottom) panel on the Designer. This number is get by the 
+			 * empirical approach, i.e. inspecting of the element.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */			
+			var heightOfSingleItem = 20;
+			
+			/**
+			 * Work in progress...
+			 * 
+			 * TODO: This is needed for managing dynamic empty message in the X-axes panel
+			 * when it is empty.
+			 */
+			var emptyTextForAttributes = LN('sbi.chartengine.designer.emptytext.dragdropattributes');
+			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
+			/**
+			 * How many items is the edge when the bottom of the X-axis
+			 * panel should reserve enough space for one more item.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			var numberOfMaxItems = null;
+			
+			if (currentChartType == "HEATMAP")
+			{
+				emptyTextForAttributes = "Drag here exactly two categories, among which the first one " +
+						"must be of the DATE (Timestamp) type";
+			}
+			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
-  				viewConfig: {
+  				viewConfig: {	
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute
   					},
-  					listeners: {  						
+  					listeners: {  	
+  						
+  						/**
+  						 * Listen for dropping event of the category item into the
+  						 * Categories container - the bottom axis panel. Take care
+  						 * that there is enough empty space in the bottom panel for
+  						 * dropping new item.
+  						 * 
+  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  						 */
+  						drop: function(node, data, dropRec, dropPosition)
+  						{					  							
+  							var numCategItemsInContainer = this.store.data.length;
+  							var containersInitHieght = this.ownerCt.minHeight;  
+  							
+  							/**
+  							 * How many items is the edge when the bottom of the X-axis
+  							 * panel should reserve enough space for one more item. This 
+  							 * will initialize on the very beginning of the dropping
+  							 * items into the X-axis (bottom) panel.
+  							 */
+  							if (numberOfMaxItems == null)
+							{
+  								numberOfMaxItems = Math.round(this.getHeight()/heightOfSingleItem);
+							}
+  							
+  							if (numCategItemsInContainer >= numberOfMaxItems)
+							{
+  								this.ownerCt.setHeight(containersInitHieght + (numCategItemsInContainer-numberOfMaxItems+1)*heightOfSingleItem);
+							}
+  						},
+  						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  						
-  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();  	  						
   	  						
   	  						/**
   	  						 * Taking care of the order of the categories (based on their type) for the 
@@ -1596,7 +1659,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				},
   				
-  				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
+  				emptyText: LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
   				store: this.categoriesStore,
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
   				
@@ -1619,7 +1682,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    },
 
 				title: {
-					hidden: true 
+					hidden: true
 				}, 
 				tools:[
 				    
@@ -1656,6 +1719,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 							handler: function()
 							{
 								Sbi.chart.designer.Designer.cleanCategoriesAxis();
+								
+								/**
+								 * When removing all items from the category container (the bottom
+								 * X-axis panel), reset the height of it to the initial one - the 
+								 * minimum height that panel can take.
+								 * 
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								this.ownerCt.ownerCt.setHeight(this.ownerCt.ownerCt.minHeight);
 							}
 						}
 					),
@@ -1685,12 +1757,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				],
 			    
 				hideHeaders: true,
-  				columns: [{
+  				columns: [
+  				          {
 					text: LN('sbi.chartengine.designer.columnname'), 
 					dataIndex: 'categoryColumn',
 					sortable: false,
 					flex: 10
-				}, {
+				}, 
+				{
 					text: LN('sbi.chartengine.designer.columnalias'), 
 					dataIndex: 'axisName',
 					sortable: false,
@@ -1730,13 +1804,30 @@ Ext.define('Sbi.chart.designer.Designer', {
             					fn : function(buttonValue, inputText, showConfig){
             						if (buttonValue == 'ok') {
             							var rec = store.removeAt(rowIndex);
+            							
+            							/**
+            							 * When removing category item from the bottom axis panel
+            							 * take care that height of the container panel follows the
+            							 * current number of items in it (dynamic behaviour - expansion
+            							 * and contraction of the panel).
+            							 * 
+            							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+            							 */            							
+            							var numCategItemsInContainer = grid.store.data.length;
+              							var heightOfGrid = grid.getHeight();
+              							var heightOfAllCategoryItems = numCategItemsInContainer*heightOfSingleItem;
+              							
+              							if(heightOfGrid - heightOfAllCategoryItems >= heightOfSingleItem)
+          								{
+              								grid.ownerCt.setHeight(grid.ownerCt.getHeight()-heightOfSingleItem);
+          								}
             						}
             					}
             				});
 						}
 					}]
 				}],
-  				
+  								
   				setAxisData: function(axisData) {
   					this.axisData = axisData;
   					this.fireEvent('updateAxisTitleValue', axisData.titleText);
@@ -1745,7 +1836,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   					return this.axisData;
   				}
   				
-  			});			
+  			});	
+			
 			
 			/**
 			 * Hiding the bottom (X) axis title textbox and gear tool
@@ -1765,6 +1857,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
 						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
+				
 				/**
 				 * Hide the bottom (X) axis title textbox.
 				 */
@@ -1857,6 +1950,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            		fn: function(){
   		            			
   		            			/**
+  		            			 * TODO: Check if this part affects somehow the functioning of the application.
+  		            			 * 
   		            			 * NOTE: Commented by Benedetto Milazzo and Danilo Ristovski: problem when saving chart
   		            			 * (document) while inside the Advanced editor tab
   		            			 */
@@ -1890,8 +1985,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            							  		 		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            							
-//  		            							console.log(Sbi.chart.designer.Designer.exportAsJson());
-//  		            							console.log(exportedAsOriginalJson);
+  		            							//console.log(Sbi.chart.designer.Designer.exportAsJson(false));
+  		            							//console.log(exportedAsOriginalJson);
   		            							
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
@@ -4676,7 +4771,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanAxesSeriesAndCategories: function() {
 			//Reset Series and Categories
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
-			 
+
 			this.categoriesStore.removeAll();
 			
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
