@@ -570,7 +570,7 @@ public class HierarchyService {
 				IField nameField = record.getFieldAt(dsMeta.getFieldIndex(prefix + "_NM_LEV" + i)); // NAME CODE
 
 				if ((currentLevel == maxDepth) || (codeField.getValue() == null) || (codeField.getValue().equals(""))) {
-					currentLevel++;
+					// currentLevel++;
 					// continue; // skip to next iteration
 					break; // skip to next iteration
 				} else {
@@ -598,7 +598,8 @@ public class HierarchyService {
 							// attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
 							lastLevelFound = nodeCode;
-						} else if (!root.getChildrensKeys().contains(nodeCode)) {
+							break;
+						} else if (!root.getKey().contains(nodeCode) && !root.getChildrensKeys().contains(nodeCode)) {
 							// node not already attached to the root
 							// HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 							// root.add(aNode, nodeCode);
