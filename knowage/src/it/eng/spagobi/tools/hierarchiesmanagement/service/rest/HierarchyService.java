@@ -568,18 +568,19 @@ public class HierarchyService {
 
 				if ((currentLevel == maxDepth) || (codeField.getValue() == null) || (codeField.getValue().equals(""))) {
 					currentLevel++;
-					continue; // skip to next iteration
+					// continue; // skip to next iteration
+					break; // skip to next iteration
 				} else {
 					String nodeCode = (String) codeField.getValue();
 					String nodeName = (String) nameField.getValue();
 					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
 
-					// first level (root)
+					// first level
 					if (root == null) {
 						root = new HierarchyTreeNode(data, nodeCode);
 						// ONLY FOR DEBUG
 						if (allNodeCodes.contains(nodeCode)) {
-							logger.error("COLLISION DETECTED ON: " + nodeCode);
+							logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
 						} else {
 							allNodeCodes.add(nodeCode);
 						}
@@ -595,11 +596,12 @@ public class HierarchyService {
 							lastLevelFound = nodeCode;
 						} else if (!root.getChildrensKeys().contains(nodeCode)) {
 							// node not already attached to the root
-							HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-							root.add(aNode, nodeCode);
+							// HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+							// root.add(aNode, nodeCode);
+							attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
 							// ONLY FOR DEBUG
 							if (allNodeCodes.contains(nodeCode)) {
-								logger.error("COLLISION DETECTED ON: " + nodeCode);
+								logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
 							} else {
 								allNodeCodes.add(nodeCode);
 							}
@@ -643,7 +645,7 @@ public class HierarchyService {
 
 			// ONLY FOR DEBUG
 			if (allNodeCodes.contains(nodeCode)) {
-				logger.error("COLLISION DETECTED ON: " + nodeCode);
+				logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
 			} else {
 				allNodeCodes.add(nodeCode);
 			}
