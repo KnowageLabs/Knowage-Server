@@ -102,12 +102,12 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesMaster" businessProcess="HierarchiesManagement" />	
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesTechnical" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyTree" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyHierarchy" businessProcess="HierarchiesManagement" />		
 		<!-- 			
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />			
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="HierarchiesManagement" />				 						 								
 		 -->
 		 				 						 						
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
