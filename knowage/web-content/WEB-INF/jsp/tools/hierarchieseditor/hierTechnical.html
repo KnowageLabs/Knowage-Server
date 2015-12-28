@@ -28,7 +28,7 @@
 			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
 			        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
 			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTreeSrc()' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
-			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIERARCHY_NM	}}</md-option>
+			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIER_NM	}}</md-option>
 			        	</md-select>
 					</md-input-container>
 				</md-content>
