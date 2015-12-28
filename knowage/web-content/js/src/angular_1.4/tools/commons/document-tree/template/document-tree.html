@@ -54,7 +54,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 	<ng-include src="'tree_renderer.html'"></ng-include>
 </md-content ng-if="browser == 'firefox'">
 
-<md-content ng-if="browser == 'chrome'" layout-padding>
+<md-content ng-if="browser == 'chrome'" layout-fill>
 	<ng-include src="'tree_renderer.html'"></ng-include>
 </md-content ng-if="browser == 'chrome'">
 
