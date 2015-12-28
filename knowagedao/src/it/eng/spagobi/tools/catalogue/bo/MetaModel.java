@@ -93,7 +93,10 @@ public class MetaModel {
 	 * @return the modelLocked
 	 */
 	public Boolean getModelLocked() {
-		return modelLocked;
+		if (modelLocked == null)
+			return false;
+		else
+			return modelLocked;
 	}
 
 	/**
