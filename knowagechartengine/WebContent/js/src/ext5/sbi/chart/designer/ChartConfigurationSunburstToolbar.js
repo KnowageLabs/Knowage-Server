@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 300,
+		height: 350,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 		bodyPadding: 10,
@@ -38,7 +38,10 @@ Ext.define
 		    type: 'vbox',
 		    //align: 'center'
 		},
-		
+		defaults : 
+		 {	
+			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+		},
 		constructor: function(config) 
 		{
 			this.callParent(config);
@@ -55,9 +58,9 @@ Ext.define
              		
              		defaults : 
              		{
-             			labelWidth: '100%',
+             			//labelWidth: '100%',
              			// (top, right, bottom, left)
-             			margin: '0 20 10 0'
+             			//margin: '0 20 10 0'
              		},
 	                    	 
 		        	 items: 
@@ -68,6 +71,7 @@ Ext.define
         	         		queryMode : 'local',
         	         		triggerAction : 'all',
         	         		forceSelection : true,
+        	         		width:'280',
         	         		editable : false,
         	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
         	         		bind : '{configModel.toolbarPosition}',
@@ -124,15 +128,16 @@ Ext.define
          			/* Horizontal line with two number fields - SPACING and TAIL */
                      {            
  	                   	 xtype : 'fieldcontainer',
- 	                   	 layout : 'hbox',
- 	                   	 
- 	                   	 defaults : 
- 	                   	 {
- 	                   		 labelWidth : '100%',
- 	                   		 // (top, right, bottom, left)
- 	                   		 margin:'0 30 0 0'
- 	                   	 },
- 	   	                    	 
+ 	                   	 layout : 'vbox',
+ 	                   	defaults : 
+ 	  				 {	
+ 	      				//margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+ 	  				 },
+ 	                    fieldDefaults: 
+ 	           	    {
+ 	           	        anchor: '100%'
+ 	           		},
+ 	   	                width:'280',     	 
  	                   	 items: 
  	               		 [		                    	         
  	           	         	{
@@ -140,9 +145,10 @@ Ext.define
  	           	         		bind : '{configModel.toolbarSpacing}',	
  	           	         		id: "sunburstToolbarSpacing",
  	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	       	         			maxWidth: '120',
+ 	       	         			//maxWidth: '120',
  	       	         			maxValue: '50',
  	       	         			minValue: '1',
+ 	       	         			width:'280',
  	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText"),
  	       	         			
  	       	         			/**       				     
@@ -169,7 +175,8 @@ Ext.define
  	   	                		 bind : '{configModel.toolbarTail}',
  	   	                		 id: "sunburstToolbarTail",
  	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	   	                		 maxWidth: '120',
+ 	   	                		 width: '280',
+ 	   	                		// maxWidth: '120',
  	   	                		 maxValue: '100',
  	   	                		 minValue: '10',
  	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipTail.emptyText"),
@@ -206,14 +213,16 @@ Ext.define
          			/* Horizontal line with two number fields - HEIGHT and WIDTH */
                      {            
  	                   	 xtype : 'fieldcontainer',
- 	                   	 layout : 'hbox',
- 	                   	 
- 	                   	 defaults : 
- 	                   	 {
- 	                   		 labelWidth : '100%',
- 	                   		 margin:'5 30 0 0'
- 	                   	 },
- 	   	                    	 
+ 	                   	 layout : 'vbox',
+ 	                  
+ 	                   	defaults : 
+ 	  				 {	
+ 	      				//margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+ 	  				 },
+ 	                    fieldDefaults: 
+ 	           	      {
+ 	           	        anchor: '100%'
+ 	           		  },   	 
  	                   	 items: 
  	               		 [		                    	         
  	           	         	{
@@ -221,9 +230,10 @@ Ext.define
  	           	         		bind : '{configModel.toolbarHeight}',	
  	           	         		id: "sunburstToolbarHeight",
  	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	           	         		maxWidth: '120',
+ 	           	         		//maxWidth: '120',
  	           	         		maxValue: '100',
  	           	         		minValue: '10',
+ 	           	         		width:'280',
  	           	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipHeight.emptyText"),
  	           	         		
  	           	         		/**       				     
@@ -250,9 +260,10 @@ Ext.define
  	   	                		 bind : '{configModel.toolbarWidth}',	
  	   	                		 id: "sunburstToolbarWidth",
  	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	   	                		 maxWidth: '120',
+ 	   	                		// maxWidth: '120',
  	   	                		 maxValue: '200',
  	   	                		 minValue: '10',
+                                 width:'280',
  	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipWidth.emptyText"),
  	   	                		 
  	   	                		 /**       				     
@@ -290,7 +301,8 @@ Ext.define
         			isColorMandatory: true,
         			customLabel: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
         			fieldBind: '{configModel.toolbarPercFontColor}',
-        			initiator: "sunburstPercentageColor"
+        			initiator: "sunburstPercentageColor",
+        			//bodyPadding:10
         		}
     		);		 
 	        

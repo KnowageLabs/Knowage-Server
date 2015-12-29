@@ -54,7 +54,7 @@ Ext.define
         			fieldLabel: LN("sbi.chartengine.configuration.title.verticalAlignCombo") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
         			bind : '{configModel.legendAlign}',
         			emptyText: LN("sbi.chartengine.configuration.heatmapLegendVertAlign.emptyText"),
-        			
+        			width: 280,
         			listeners:
 					{
         				verticAlignPicked: function()
@@ -78,7 +78,7 @@ Ext.define
 	        		id: "heatmapLegendSymbolHeight",
            		 	bind : '{configModel.symbolHeight}',	
            		 	fieldLabel: LN("sbi.chartengine.configuration.heatmap.symbolHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-           		 	width: 200,
+           		 	width: 280,
            		 	maxValue: '800',
            		 	minValue: '50',
            		 	emptyText: LN("sbi.chartengine.configuration.heatmapSymbolHeight.emptyText"),

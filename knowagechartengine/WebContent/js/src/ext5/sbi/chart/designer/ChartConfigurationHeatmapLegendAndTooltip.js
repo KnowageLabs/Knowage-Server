@@ -89,9 +89,12 @@ Ext.define
 			 		{
 			 			//labelWidth : '100%',
 			 			// (top, right, bottom, left)
-			 			margin:'5 0 5 0'
+			 			//margin:'5 0 5 0'
 			 		},
-			 		
+			 		 fieldDefaults: 
+			 	    {
+			 	        anchor: '100%'
+			 		},
 			 		items:
 		 			[
 						{
@@ -121,9 +124,13 @@ Ext.define
 					
 					defaults : 
 					{
-						labelWidth : '100%',
+						//labelWidth : '100%',
 						margin: '0 0 5 0'
 					},
+					 fieldDefaults: 
+					    {
+					        anchor: '100%'
+						},
 					
 					items:
 					[

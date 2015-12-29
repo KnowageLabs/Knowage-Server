@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 300,
+		height: 320,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 		bodyPadding: 10,
@@ -38,6 +38,10 @@ Ext.define
 		    type: 'vbox',
 		    //align: 'center'
 		},
+		defaults : 
+		 {	
+			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+		 },
 		
 		constructor: function(config) 
 		{
@@ -86,6 +90,7 @@ Ext.define
         			viewModel: this.viewModel,
         			width: 280,
         			fieldBind: '{configModel.tipColor}',
+        			bodyPadding:10,
         			isColorMandatory: true,
         			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"),
 					initiator: "sunburstTooltipColor"
@@ -253,8 +258,8 @@ Ext.define
             		        name: 'tipText',
             		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
             		        //anchor: '100%',
-            		        width: 400,
-            		        height: 100,
+            		        width: 280,
+            		        height: 120,
             		  		bind: '{configModel.tipText}',
             		  		emptyText: LN("sbi.chartengine.configuration.sunburstTipText.emptyText"),
             		  		

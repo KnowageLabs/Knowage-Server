@@ -22,7 +22,10 @@ Ext.define
 		title: LN("sbi.chartengine.configuration.parallel.axesLines.title"), 
 		bodyPadding: 10,
 		items: [],
-	
+		defaults : 
+		 {	
+			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
+		 },
 	    fieldDefaults: 
 	    {
 	        anchor: '100%'
@@ -94,7 +97,8 @@ Ext.define
         			isColorMandatory: true, 
         			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
         			fieldBind: '{configModel.brushColor}',	
-        			initiator: "colorPickerBrushColor"
+        			initiator: "colorPickerBrushColor",
+        			
         		}
     		);
 	        
