@@ -7,12 +7,12 @@
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
 			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
 			<md-button ng-click='openFolder(folder)' ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}" class="docs"
-				context-menu data-target='{{id}}TableContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+				context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 					&nbsp;{{folder[label]}} 
 			</md-button>
 		</div>		
 
-		<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}TableContextMenu-{{folder[label]}}-{{$index}}" )>
+		<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}" )>
 			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined"> 
 				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)' ng-if='menuItem.showItem === undefined || menuItem.showItem(folder,$event)' tabindex='{{$index}}' >
 					{{menuItem.label}}
@@ -43,7 +43,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}">	
 		<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
-				context-menu data-target='{{id}}TableContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+				context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 			</li>
 		</ol>
 	</div>
@@ -76,7 +76,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 	.dropdown_menu_list {
 		margin-top: -25px;
 		position: fixed !important;
-		left: 10px !important;
+		left: 10px;
 	}
 	.dropdown_menu_list.open:before {
    	  content: '';
