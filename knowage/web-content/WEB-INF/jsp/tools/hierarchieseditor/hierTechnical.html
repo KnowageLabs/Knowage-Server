@@ -10,7 +10,7 @@
 			</md-toolbar>
 			
 			<md-content id='hierarchiesSrc' layout-padding layout='column' layout-align='space-around stretch'>
-				<md-datepicker ng-model="dateFilterSrc" ng-change="getTreeSrc()"></md-datepicker>
+				<md-datepicker ng-model="dateFilterSrc" ng-change="getTree('src')"></md-datepicker>
 				<md-content id='hierarchiesSrcSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
@@ -27,7 +27,7 @@
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
 			        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTreeSrc()' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
+			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTree("src")' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
 			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIER_NM	}}</md-option>
 			        	</md-select>
 					</md-input-container>
@@ -72,7 +72,7 @@
 				</div>
 			</md-toolbar>
 			<md-content id='hierarchiesTarget' layout-padding layout='column' layout-align='space-around stretch'>
-				<md-datepicker ng-model="dateFilterTarget" ng-change="getTreeTarget()"></md-datepicker>
+				<md-datepicker ng-model="dateFilterTarget" ng-change="getTree('target')"></md-datepicker>
 					<md-content id='hierarchiesTargetSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 						<md-input-container flex flex-sm='90'>
 				        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
@@ -83,7 +83,7 @@
 						<md-input-container flex flex-sm='90'>
 				        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
 				        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-				        	<md-select type='text' ng-model='hierTarget'  md-on-close='getTreeTarget()' ng-disabled='!dimTarget || hierarchiesTarget.length==0'>
+				        	<md-select type='text' ng-model='hierTarget'  md-on-close='getTree("target")' ng-disabled='!dimTarget || hierarchiesTarget.length==0'>
 				        		<md-option ng-value="hierTarget" ng-repeat="hierTarget in hierarchiesTarget">{{ hierTarget.HIER_NM	}}</md-option>
 				        	</md-select>
 						</md-input-container>

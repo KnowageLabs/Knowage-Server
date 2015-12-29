@@ -111,14 +111,18 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}
 	}
 	
-	$scope.getTreeSrc = function(){
-		if ($scope.dateFilterSrc && $scope.dimSrc && $scope.hierTypeSrc && $scope.hierSrc){
-			var dateFormatted =$scope.dateFilterSrc.getFullYear() + '-' + $scope.dateFilterSrc.getMonth()+'-'+$scope.dateFilterSrc.getDate();
+	$scope.getTree = function(choose){
+		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
+		var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
+		var date = choose == 'src' ? $scope.dateFilterSrc : $scope.dateFilterTarget;
+		var hier = choose == 'src' ?  $scope.hierSrc : $scope.hierTarget
+		if (type && dim && hier && date){
+			var dateFormatted =date.getFullYear() + '-' + date.getMonth()+'-'+date.getDate();
 			var config = {};
 			config.params = {
-				dimension: $scope.dimSrc.DIMENSION_NM,
-				filterType : $scope.hierSrc.HIER_TP,
-				filterHierarchy : $scope.hierSrc.HIER_NM,
+				dimension: dim.DIMENSION_NM,
+				filterType : hier.HIER_TP,
+				filterHierarchy : hier.HIER_NM,
 				validityDate : dateFormatted
 			};
 			$scope.restService.get("hierarchies","getHierarchyTree",null,config)
@@ -128,14 +132,14 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 							if (typeof data =='object'){
 								data = [data];
 							}
-							$scope.hierTreeSrc = data;
+							choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
 						}else{
-							var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIER_NM;
+							var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 							$scope.log.log('GET tree source error with parameters' + params + ' with message : "' + data.errors[0].message + '"');
 						}
 					})
 				.error(function(data, status){
-					var params = 'date = ' + $scope.dateFilterSrc + ' dimension = ' + $scope.dimSrc.DIMENSION_NM + ' type = ' +  $scope.hierTypeSrc + ' hierachies = ' + $scope.hierSrc.HIER_NM;
+					var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 					$scope.log.log('GET tree source error with parameters' + params + ' with status: "' + status+ '"');
 				});
 		}	
