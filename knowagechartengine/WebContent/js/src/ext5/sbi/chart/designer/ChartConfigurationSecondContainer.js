@@ -292,7 +292,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		{
 			this.getComponent("chartParallelLimit").show();
 			this.getComponent("chartParallelAxesLines").show();
-			this.getComponent("chartParallelTooltip").show();
+			//this.getComponent("chartParallelTooltip").show();
 			this.getComponent("chartParallelLegendTitle").show();	
 			this.getComponent("chartParallelLegendElement").show();	
 		}
@@ -300,9 +300,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		{
 			this.getComponent("chartParallelLimit").hide();
 			this.getComponent("chartParallelAxesLines").hide();
-			this.getComponent("chartParallelTooltip").hide();
+			//this.getComponent("chartParallelTooltip").hide();
 			this.getComponent("chartParallelLegendTitle").hide();	
 			this.getComponent("chartParallelLegendElement").hide();	
+		}
+		
+		if(ChartUtils.enableTooltipPanel()){
+			this.getComponent("chartParallelTooltip").show();
+		}else{
+			this.getComponent("chartParallelTooltip").hide();
 		}
 		
 		if (ChartUtils.enableHeatmapLegendAndTooltip())

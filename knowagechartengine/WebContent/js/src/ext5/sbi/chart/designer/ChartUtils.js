@@ -1519,6 +1519,38 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
 				CHART['PARALLEL_TOOLTIP'] = PARALLEL_TOOLTIP;
 			}
+			
+			if(chartType.toUpperCase() == "CHORD"){
+				var TOOLTIP = {};
+				var parallelTooltipStype = "";
+
+				parallelTooltipStype += 'fontFamily:'
+				 + ((chartModel
+						.get('parallelTooltipFontFamily')) ? chartModel
+					.get('parallelTooltipFontFamily')
+					 : '') + ';';
+				parallelTooltipStype += 'fontSize:'
+				 + ((chartModel
+						.get('parallelTooltipFontSize')) ? chartModel
+					.get('parallelTooltipFontSize')
+					 : '') + ';';
+				
+				parallelTooltipStype += 'border:'
+				 + ((Number(chartModel
+						.get('parallelTooltipBorder'))) ? Number(chartModel
+					.get('parallelTooltipBorder'))
+					 : '') + ';';
+				parallelTooltipStype += 'borderRadius:'
+				 + ((Number(chartModel
+						.get('parallelTooltipBorderRadius'))) ? Number(chartModel
+					.get('parallelTooltipBorderRadius'))
+					 : '') + ';';
+
+				TOOLTIP['style'] = parallelTooltipStype;
+				CHART['TOOLTIP'] = TOOLTIP;
+				
+			}
+			
 			//console.log("getChartDataAsOriginaJson (END)");
 			return CHART;
 		},
@@ -1672,7 +1704,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'GAUGE';
 		},
-
+        
+		enableTooltipPanel: function(){
+			return Sbi.chart.designer.Designer.chartTypeSelector
+			.getChartType() == 'PARALLEL' || Sbi.chart.designer.Designer.chartTypeSelector
+			.getChartType() == 'CHORD';
+		},
 		createChartConfigurationModelFromJson : function (
 			jsonTemplate) {
 
@@ -1762,6 +1799,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ? Sbi.chart.designer.ChartUtils
 					.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : "";
+			}
+			
+			if (Sbi.chart.designer.Designer.chartTypeSelector
+					.getChartType() == 'CHORD') {
+				
+				jsonParallelTooltipStyle = jsonTemplate.CHART.TOOLTIP ? Sbi.chart.designer.ChartUtils
+						.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style)
+						 : '';
 			}
 
 			/**

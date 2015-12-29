@@ -43,7 +43,7 @@
 			#elseif($chart.style.fontWeight == 'bold')		        			
     			fontWeight: '$chart.style.fontWeight',
     		#end
-		},
+		}
 		
 		
 	},
@@ -259,6 +259,14 @@
 			
 		#end
     ],	
+    
+    tooltip:
+ 	{
+		fontFamily: '$chart.TOOLTIP.style.fontFamily',
+		fontSize: '$chart.TOOLTIP.style.fontSize',
+		border: '$chart.TOOLTIP.style.border',
+	 	borderRadius: '$chart.TOOLTIP.style.borderRadius'
+ 	},
 	crossNavigation:
 	{
 	   #if($crossNavigation != '') 

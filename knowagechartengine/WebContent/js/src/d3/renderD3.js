@@ -68,7 +68,7 @@ function removePixelsFromFontSize(fontSize)
 }
 
 function renderWordCloud(chartConf){
-    console.log(chartConf);
+    
 	var maxic = 0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
@@ -1615,7 +1615,7 @@ function renderWordCloud(chartConf){
 	function renderParallelChart(data){
 
 	var records = data.data[0];
-
+    console.log(records);
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){
@@ -2737,7 +2737,7 @@ function renderWordCloud(chartConf){
  */
 function renderChordChart(jsonData)
 {
-	console.log(jsonData);
+
 	/**
 	 *  'opacityMouseOver' - value for the opacity of the item (row) that is covered by the mouse pointer and all the items 
 	 *  that are linked (connected) to that row (item)
@@ -3173,6 +3173,10 @@ function renderChordChart(jsonData)
 				.append("svg:g")
 				.attr("transform", "translate(" + width / 2 + "," + ((Number(heightForChartSvg)) / 2) + ")");
 	
+	/**
+	 * @author: Ana Tomic (atomic ana.tomic@mht.net)
+	 */
+	
 	var tooltip=d3.select("#chartD3")
 	.append("div")
 	.attr("class","tooltip")
@@ -3184,13 +3188,13 @@ function renderChordChart(jsonData)
 	.style("min-width",20)
 	.style("max-width",400)
 	.style("min-height",20)
-	.style("max-height",200)
+	.style("max-height",400)
 	.style("padding",10)
 	.style("background-color",jsonData.chart.style.backgroundColor)
-	.style("font-size",jsonData.chart.style.fontSize)
-	.style("font-family",jsonData.chart.style.fontFamily)
-	.style("border","2px solid black")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
-	.style("border-radius","4px")
+	.style("font-size",jsonData.tooltip.fontSize)
+	.style("font-family",jsonData.tooltip.fontFamily)
+	.style("border",jsonData.tooltip.border+"px solid black")
+	.style("border-radius",jsonData.tooltip.borderRadius+"px")
 	.style("pointer-events","none")
 	.style("left","50%")
 	.style("top","50%")

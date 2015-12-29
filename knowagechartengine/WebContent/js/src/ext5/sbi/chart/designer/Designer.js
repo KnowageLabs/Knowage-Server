@@ -664,6 +664,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelLegendElementPanel.hide();
 						showTableParallel.hide();
 					}
+					/**
+					 * CHORD chart uses parallel tooltip panel
+					 */
+					if(isChartChord){
+						parallelTooltipPanel.show();
+					}
 					
 					/**
 					 * Show/hide the SCATTER configuration panel on the second 
@@ -701,6 +707,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 						globalThis.bottomXAxisesPanel.show();
 						gaugePanePanel.hide();
 					}
+					
+					
 
 					// TODO: uncomment this to apply chosen style to any chart type we select (choose) 
 					/**
@@ -1489,7 +1497,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
-  				viewConfig: {	
+  				viewConfig: {
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
@@ -1659,7 +1667,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				},
   				
-  				emptyText: LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
+  				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
   				store: this.categoriesStore,
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
   				
@@ -1682,7 +1690,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    },
 
 				title: {
-					hidden: true
+					hidden: true 
 				}, 
 				tools:[
 				    
@@ -1827,7 +1835,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						}
 					}]
 				}],
-  								
+  				
   				setAxisData: function(axisData) {
   					this.axisData = axisData;
   					this.fireEvent('updateAxisTitleValue', axisData.titleText);
@@ -1836,8 +1844,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					return this.axisData;
   				}
   				
-  			});	
-			
+  			});			
 			
 			/**
 			 * Hiding the bottom (X) axis title textbox and gear tool
@@ -1857,7 +1864,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
 						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
-				
 				/**
 				 * Hide the bottom (X) axis title textbox.
 				 */
@@ -1986,7 +1992,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            							
   		            							//console.log(Sbi.chart.designer.Designer.exportAsJson(false));
-  		            							//console.log(exportedAsOriginalJson);
+//  		            							console.log(exportedAsOriginalJson);
   		            							
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
@@ -3079,6 +3085,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				},
 				
+				chord:{
+					tooltip:
+					{
+						borderWidth:
+						{
+							minValue: Ext.getCmp("parallelTooltipBorder").minValue,
+							maxValue: Ext.getCmp("parallelTooltipBorder").maxValue
+						},
+						
+						borderRadius:
+						{
+							minValue: Ext.getCmp("parallelTooltipBorderRadius").minValue,
+							maxValue: Ext.getCmp("parallelTooltipBorderRadius").maxValue
+						}
+					}
+				},
+				
 				sunburst:
 				{
 					toolbar:
@@ -3311,11 +3334,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				// == Tooltip panel ==
 				var parallelTooltipFontFamilyCModel = chartViewModelData.parallelTooltipFontFamily;
 				var parallelTooltipFontSizeCModel = chartViewModelData.parallelTooltipFontSize;
-				var parallelTooltipMinWidthCModel = chartViewModelData.parallelTooltipMinWidth;
-				var parallelTooltipMaxWidthCModel = chartViewModelData.parallelTooltipMaxWidth;
-				var parallelTooltipMinHeightCModel = chartViewModelData.parallelTooltipMinHeight;
-				var parallelTooltipMaxHeightCModel = chartViewModelData.parallelTooltipMaxHeight;
-				var parallelTooltipPaddingCModel = chartViewModelData.parallelTooltipPadding;
+				//var parallelTooltipMinWidthCModel = chartViewModelData.parallelTooltipMinWidth;
+				//var parallelTooltipMaxWidthCModel = chartViewModelData.parallelTooltipMaxWidth;
+				//var parallelTooltipMinHeightCModel = chartViewModelData.parallelTooltipMinHeight;
+				//var parallelTooltipMaxHeightCModel = chartViewModelData.parallelTooltipMaxHeight;
+				//var parallelTooltipPaddingCModel = chartViewModelData.parallelTooltipPadding;
 				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
 				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
 				// == Legend title configuration panel ==
@@ -3930,6 +3953,110 @@ Ext.define('Sbi.chart.designer.Designer', {
 //				
 //				(itemsIncolorPalette < 2) ? 
 //						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	
+			}
+			else if(chartType=="CHORD"){
+				var parallelTooltip = Ext.getCmp("chartParallelTooltip");
+				
+				//=====
+				var parallelTooltipBorderGUI = parallelTooltip.tooltipBorder.value;
+				var parallelTooltipBorderRadiusGUI = parallelTooltip.tooltipBorderRadius.value;
+				//==========
+				var parallelTooltipFontFamilyCModel = chartViewModelData.parallelTooltipFontFamily;
+				var parallelTooltipFontSizeCModel = chartViewModelData.parallelTooltipFontSize;
+				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
+				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
+				
+				if (parallelTooltipBorderGUI == null)
+				{
+					if (parallelTooltipBorderCModel == null || parallelTooltipBorderCModel=="")
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipBorderGUI < checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}
+					else if (parallelTooltipBorderGUI > checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}
+				}
+				
+				if (parallelTooltipBorderRadiusGUI == null)
+				{
+					if (parallelTooltipBorderRadiusCModel == null || parallelTooltipBorderRadiusCModel=="")
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipBorderRadiusGUI < checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}
+					else if (parallelTooltipBorderRadiusGUI > checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
+					}
+				}	
+			
+			
 			}
 			
 			else if (chartType == "SUNBURST") {
@@ -4771,7 +4898,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanAxesSeriesAndCategories: function() {
 			//Reset Series and Categories
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
-
+			 
 			this.categoriesStore.removeAll();
 			
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
