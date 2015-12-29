@@ -222,8 +222,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				}
 			}, function() {});
 	}
-	 
 	$scope.menuOptionSrc = [{
+		label : 'No action',
+		action : function(){}
+	}]; 
+	
+	$scope.menuOptionTarget = [{
 			label: $scope.translate.load('sbi.hierarchies.node.add'),
 			showItem : function(item,event){
 				//visible if it is NOT a leaf

@@ -114,7 +114,8 @@
 				        </fieldset>
 					</md-content>
 				<md-content>
-					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' drag-enabled='true' no-drop-enabled='false' enable-clone='true' show-empty-placeholder='true'></document-tree>
+					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
+				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='true' no-drop-enabled='true' enable-clone='true'></document-tree>
 				</md-content>
 			</md-content>	
 		</div>
