@@ -168,6 +168,11 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				    title: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.selectDoc'),
 				    height: 400,
 				    width: 600,
+				    /**
+				     *next line is inserted because of bug that can be triggered with two clicks on 'Look up' button in cockpit editor [Add analytical]
+				     *author:Arsenije Djujic e-mail:arsenije.dujic@mht.net
+				     **/
+				    modal:true,
 				    overflowY: 'auto',
 				    items: [
 				    {layout:'column',
