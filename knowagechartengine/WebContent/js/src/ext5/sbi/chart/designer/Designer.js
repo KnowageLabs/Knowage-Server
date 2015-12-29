@@ -707,8 +707,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						globalThis.bottomXAxisesPanel.show();
 						gaugePanePanel.hide();
 					}
-					
-					
 
 					// TODO: uncomment this to apply chosen style to any chart type we select (choose) 
 					/**
@@ -1497,7 +1495,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
-  				viewConfig: {
+  				viewConfig: {	
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
@@ -1514,9 +1512,12 @@ Ext.define('Sbi.chart.designer.Designer', {
   						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   						 */
   						drop: function(node, data, dropRec, dropPosition)
-  						{					  							
+  						{					  	
   							var numCategItemsInContainer = this.store.data.length;
-  							var containersInitHieght = this.ownerCt.minHeight;  
+  							var containersInitHeight = this.ownerCt.minHeight;  
+  							
+  							// Old implementation: var gridInitHeight = this.getHeight();
+  							var gridInitHeight = this.ownerCt.minHeight - this.ownerCt.header.getHeight();
   							
   							/**
   							 * How many items is the edge when the bottom of the X-axis
@@ -1526,12 +1527,12 @@ Ext.define('Sbi.chart.designer.Designer', {
   							 */
   							if (numberOfMaxItems == null)
 							{
-  								numberOfMaxItems = Math.round(this.getHeight()/heightOfSingleItem);
+  								numberOfMaxItems = Math.round(gridInitHeight/heightOfSingleItem);
 							}
   							
   							if (numCategItemsInContainer >= numberOfMaxItems)
 							{
-  								this.ownerCt.setHeight(containersInitHieght + (numCategItemsInContainer-numberOfMaxItems+1)*heightOfSingleItem);
+  								this.ownerCt.setHeight(containersInitHeight + (numCategItemsInContainer-numberOfMaxItems+1)*heightOfSingleItem);
 							}
   						},
   						
@@ -1667,7 +1668,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				},
   				
-  				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
+  				emptyText: LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
   				store: this.categoriesStore,
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
   				
@@ -1690,7 +1691,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    },
 
 				title: {
-					hidden: true 
+					hidden: true
 				}, 
 				tools:[
 				    
@@ -1835,7 +1836,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						}
 					}]
 				}],
-  				
+  								
   				setAxisData: function(axisData) {
   					this.axisData = axisData;
   					this.fireEvent('updateAxisTitleValue', axisData.titleText);
@@ -1844,7 +1845,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   					return this.axisData;
   				}
   				
-  			});			
+  			});	
+			
 			
 			/**
 			 * Hiding the bottom (X) axis title textbox and gear tool
@@ -1864,6 +1866,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
 						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
+				
 				/**
 				 * Hide the bottom (X) axis title textbox.
 				 */
@@ -1992,7 +1995,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            							
   		            							//console.log(Sbi.chart.designer.Designer.exportAsJson(false));
-//  		            							console.log(exportedAsOriginalJson);
+  		            							//console.log(exportedAsOriginalJson);
   		            							
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
@@ -4898,7 +4901,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanAxesSeriesAndCategories: function() {
 			//Reset Series and Categories
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
-			 
+
 			this.categoriesStore.removeAll();
 			
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;

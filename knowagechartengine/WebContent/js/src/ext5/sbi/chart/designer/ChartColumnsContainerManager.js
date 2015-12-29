@@ -152,11 +152,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
 					
+			var emptyTextForMeasures = LN('sbi.chartengine.designer.emptytext.dragdropmeasures');
+			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
+//			if (currentChartType == "HEATMAP")
+//			{
+//				emptyTextForMeasures = "AAA";
+//			}
+					
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
 				axisData: axisData,
-				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropmeasures'),	
+				emptyText: emptyTextForMeasures,	
 				
 				store: chartColumnsContainerStore,
 				
@@ -225,6 +233,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					},
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
+							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
 							 * not provided, error appears
@@ -235,7 +244,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								(chartType != 'SUNBURST' 
 									&& chartType != 'WORDCLOUD' 
 										&& chartType != 'TREEMAP' 
-											&& chartType != 'HEATMAP' );													
+											&& chartType != 'HEATMAP' 
+												&& chartType != "CHORD");													
 														
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
@@ -243,7 +253,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   	  						 * @author: danristo (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
-									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
+									chartType == 'TREEMAP' || chartType == 'HEATMAP' || chartType == "CHORD")) {
   	  							return false;
   							} 
   	  					
