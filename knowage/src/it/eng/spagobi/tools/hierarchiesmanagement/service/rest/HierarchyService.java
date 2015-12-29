@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -396,7 +395,7 @@ public class HierarchyService {
 		Hierarchy hierarchy = hierarchies.getHierarchy(dimensionName);
 		Assert.assertNotNull(hierarchy, "Impossible to find a hierarchy for the dimension called [" + dimensionName + "]");
 
-		JSONObject configs = HierarchyUtils.createJSONArrayFromHashMap(hierarchies.getConfig(dimensionName));
+		JSONObject configs = HierarchyUtils.createJSONArrayFromHashMap(hierarchies.getConfig(dimensionName), null);
 		result.put(HierarchyConstants.CONFIGS, configs);
 
 		List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
@@ -581,17 +580,14 @@ public class HierarchyService {
 					String nodeCode = (String) codeField.getValue();
 					String nodeName = (String) nameField.getValue();
 					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
+					// update LEVEL information
+					HashMap mapAttrs = data.getAttributes();
+					mapAttrs.put(HierarchyConstants.LEVEL, i);
+					data.setAttributes(mapAttrs);
 
 					// first level
 					if (root == null) {
 						root = new HierarchyTreeNode(data, nodeCode);
-						// // ONLY FOR DEBUG
-						// if (allNodeCodes.contains(nodeCode)) {
-						// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-						// } else {
-						// allNodeCodes.add(nodeCode);
-						// }
-						// ------------------------
 						lastLevelFound = nodeCode;
 					} else {
 						// check if its a leaf
@@ -599,23 +595,25 @@ public class HierarchyService {
 						String leafCode = (String) codeLeafField.getValue();
 						if (leafCode.equals(nodeCode)) {
 							data = setDataValues(dimension, nodeCode, data, record, metadata);
-							// attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							// update LEVEL information
+							mapAttrs = data.getAttributes();
+							mapAttrs.put(HierarchyConstants.LEVEL, i);
+							data.setAttributes(mapAttrs);
 							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
 							lastLevelFound = nodeCode;
 							break;
 						} else if (!root.getKey().contains(nodeCode) && !root.getChildrensKeys().contains(nodeCode)) {
-							// node not already attached to the root
-							// HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-							// root.add(aNode, nodeCode);
-							// attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
+							// get nodes attribute for automatic edit node GUI
+							ArrayList<Field> nodeFields = hierarchies.getHierarchy(dimension).getMetadataNodeFields();
+							for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
+								Field fld = nodeFields.get(f);
+								if (fld.isVisible() || fld.isEditable()) {
+									IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
+									mapAttrs.put(fld.getId(), fldValue.getValue());
+								}
+							}
+							data.setAttributes(mapAttrs);
 							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
-							// ONLY FOR DEBUG
-							// if (allNodeCodes.contains(nodeCode)) {
-							// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-							// } else {
-							// allNodeCodes.add(nodeCode);
-							// }
-							// ------------------------
 						}
 						lastLevelFound = nodeCode;
 					}
@@ -636,7 +634,7 @@ public class HierarchyService {
 	 * Attach a node as a child of another node (with key lastLevelFound)
 	 */
 	// TODO: remove allNodeCodes from signature
-	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data, Set<String> allNodeCodes) {
+	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data, String dimension) {
 		HierarchyTreeNode treeNode = null;
 		// first search parent node
 		for (Iterator<HierarchyTreeNode> treeIterator = root.iterator(); treeIterator.hasNext();) {
@@ -650,17 +648,7 @@ public class HierarchyService {
 
 		if (!treeNode.getChildrensKeys().contains(nodeCode)) {
 			// node not already attached to the level
-
 			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-
-			// ONLY FOR DEBUG
-			// if (allNodeCodes.contains(nodeCode)) {
-			// logger.error("ADDED DUPLICATE NODE ON: " + nodeCode);
-			// } else {
-			// allNodeCodes.add(nodeCode);
-			// }
-
-			// ------------------------
 
 			treeNode.add(aNode, nodeCode);
 
@@ -705,7 +693,27 @@ public class HierarchyService {
 		Date endDtDate = (Date) endDtField.getValue();
 		data.setEndDt(endDtDate);
 
-		// add node and field attributes
+		// add field attributes for automatic edit field GUI
+		HashMap mapAttrs = new HashMap();
+		int numLevels = Integer.valueOf((String) hierarchies.getConfig(dimension).get(HierarchyConstants.NUM_LEVELS));
+		ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
+		for (int f = 0, lf = leafFields.size(); f < lf; f++) {
+			Field fld = leafFields.get(f);
+			if (fld.isVisible() || fld.isEditable()) {
+				String idFld = fld.getId();
+				if (!fld.isSingleValue()) {
+					for (int idx = 1; idx <= numLevels; idx++) {
+						IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld + idx));
+						mapAttrs.put(idFld + idx, fldValue.getValue());
+					}
+				} else {
+					IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld));
+					mapAttrs.put(idFld, fldValue.getValue());
+				}
+
+			}
+		}
+		data.setAttributes(mapAttrs);
 
 		return data;
 	}
@@ -721,6 +729,7 @@ public class HierarchyService {
 			rootJSONObject.put("name", rootData.getNodeName());
 			rootJSONObject.put("id", rootData.getNodeCode());
 			rootJSONObject.put("leaf", false);
+			rootJSONObject.put(HierarchyConstants.LEVEL, 1);
 
 			JSONArray childrenJSONArray = new JSONArray();
 
@@ -737,7 +746,7 @@ public class HierarchyService {
 			JSONArray arRootJSONObject = new JSONArray();
 			arRootJSONObject.put(rootJSONObject);
 			mainObject.put("name", hierName);
-			mainObject.put("id", hierName);
+			mainObject.put("id", "root");
 			mainObject.put("root", true);
 			// mainObject.put("children", rootJSONObject);
 			mainObject.put("children", arRootJSONObject);
@@ -813,6 +822,10 @@ public class HierarchyService {
 
 			toReturn.put("BEGIN_DT", nodeData.getBeginDt());
 			toReturn.put("END_DT", nodeData.getEndDt());
+
+			HashMap mapAttrs = nodeData.getAttributes();
+			HierarchyUtils.createJSONArrayFromHashMap(mapAttrs, toReturn);
+
 			return toReturn;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy details structure to JSON", t);
@@ -991,7 +1004,7 @@ public class HierarchyService {
 			String nodeCode = node.getString("id");
 
 			String nodeLeafId = node.getString("leafId");
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "");
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "", new HashMap());
 
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");

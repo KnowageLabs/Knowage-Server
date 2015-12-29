@@ -25,9 +25,9 @@ import org.apache.log4j.Logger;
 
 /**
  * This class is a singleton that contains the Hierarchies object
- * 
+ *
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class HierarchiesSingleton {
 
@@ -37,9 +37,9 @@ public class HierarchiesSingleton {
 	public synchronized static Hierarchies getInstance() {
 		logger.debug("IN");
 
-		try {
-			if (instance == null)
-				instance = new Hierarchies();
+		try {// temporarly creates always the instance (for environment test)
+		// if (instance == null)
+			instance = new Hierarchies();
 		} catch (Exception e) {
 			logger.error("Impossible to create the Hierarchies object", e);
 		}

@@ -47,10 +47,11 @@ public class HierarchyTreeNodeData {
 	 * @param nodeName
 	 */
 	public HierarchyTreeNodeData(String nodeCode, String nodeName) {
-		this(nodeCode, nodeName, "", "", "", "");
+		this(nodeCode, nodeName, "", "", "", "", new HashMap());
 	}
 
-	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode, String leafParentName, String leafOriginalParentCode) {
+	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode, String leafParentName, String leafOriginalParentCode,
+			HashMap attributes) {
 		super();
 		this.nodeCode = nodeCode;
 		this.nodeName = nodeName;
@@ -58,6 +59,7 @@ public class HierarchyTreeNodeData {
 		this.leafParentCode = leafParentCode;
 		this.leafParentName = leafParentName;
 		this.leafOriginalParentCode = leafOriginalParentCode;
+		this.attributes = attributes;
 	}
 
 	/**

@@ -107,17 +107,18 @@ public class HierarchyUtils {
 	 * @return a JSON array that represents fields
 	 * @throws JSONException
 	 */
-	public static JSONObject createJSONArrayFromHashMap(HashMap values) throws JSONException {
+	public static JSONObject createJSONArrayFromHashMap(HashMap values, JSONObject result) throws JSONException {
 
 		logger.debug("START");
 
-		JSONObject result = new JSONObject();
+		if (result == null)
+			result = new JSONObject();
 
 		Iterator iter = values.keySet().iterator();
 
 		while (iter.hasNext()) {
 			String key = (String) iter.next();
-			String value = (String) values.get(key);
+			Object value = values.get(key);
 			if (key != null && value != null)
 				result.put(key, value);
 			logger.debug("Field [" + key + "] is " + value);
