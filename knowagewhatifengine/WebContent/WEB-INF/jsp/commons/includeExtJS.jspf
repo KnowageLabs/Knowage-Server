@@ -1,0 +1,41 @@
+<!-- SpagoBI, the Open Source Business Intelligence suite
+
+ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ 
+ 
+ <!-- Include Ext and app-specific scripts:
+<script type="text/javascript" src='../js/lib/extjs-4/ext.js'/></script> -->
+<script type="text/javascript" src='../js/lib/extjs-4/ext-all-debug.js'/></script>
+
+
+
+
+<!-- Include the extensions here -->
+<script type="text/javascript" src='../js/lib/extjs-4/ux/BoxReorderer.js'/></script>  
+    
+<!-- Include Ext stylesheets here: -->
+<link id="extall" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all-gray.css" type="text/css" />
+<!-- <link id="theme-neptune" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-neptune.css" type="text/css" />  -->
+
+
+<%
+	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
+%>
+	<script type="text/javascript" src='../js/lib/extjs-4/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
+	<link id="theme-access" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />
+<%
+	}
+%>
+
+<script type="text/javascript">
+	Ext.Ajax.timeout = 300000;
+	Ext.BLANK_IMAGE_URL = '../js/lib/extjs-4/resources/themes/images/default/tree/s.gif';
+</script>
+
+<link id="theme-overrides" rel="styleSheet" href ="../js/lib/overrides/overrides.css" type="text/css" />
+<script type="text/javascript" src='../js/lib/overrides/overrides.js'/></script>
+
+	      

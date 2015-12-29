@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	
+	<!-- WHATIF_ENGINE Initializations -->
+	<ACTION name="WHATIF_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.whatif.services.initializers.WhatIfEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

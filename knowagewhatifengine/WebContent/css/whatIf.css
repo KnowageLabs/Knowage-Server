@@ -1,0 +1,307 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+/*******************************************************************************************************
+ * Actions
+ ********************************************************************************************************/
+.x-pivot-header {
+	position: relative !important;
+	border-top-width: 1px !important;
+	border-right-width: 1px !important;
+}
+
+.x-pivot-cell {
+	border-top-width: 1px !important;
+	border-right-width: 1px !important;
+	text-align: right;
+	padding: 2px;
+	vertical-align: middle;
+	border-top-color: #d0d0d0;
+}
+
+.x-pivot-table {
+	border-bottom-width: 1px !important;
+	border-left-width: 1px !important;
+	border-right-width: 0px !important;
+	border-top-width: 0px !important;
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.rotate span {
+	height: auto !important;
+	-moz-transform: rotate(90.0deg); /* FF3.5+ */
+	-o-transform: rotate(90.0deg); /* Opera 10.5 */
+	-webkit-transform: rotate(90.0deg); /* Saf3.1+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);
+	/* IE6,IE7 */
+	-ms-filter:
+		"progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)";
+	/* IE8 */
+}
+
+.x-pressed-drill.drill-btn-left,
+.x-pressed-drill.drill-btn-center,
+.x-pressed-drill.drill-btn-right{
+	background-color: #d0d0d0 !important;
+}
+
+.drill-btn-left{
+	border: none !important;
+	margin: 0px !important;
+	margin-right: -2px !important; 
+	right: 2px !important;
+	border-radius: 0px !important;
+	background-color: #e3e4e6 !important;
+}
+.drill-btn-center{
+	border: none !important;
+	margin: 0px !important;
+	border-radius: 0px !important;
+	border-left: 1px solid #d0d0d0 !important; 
+	border-right: 1px solid #d0d0d0 !important;
+	background-color: #e3e4e6 !important;
+}
+.drill-btn-right {
+	border: none !important;
+	margin: 0px !important; 
+	margin-left: -2px !important;
+	left: 2px !important;
+	border-radius: 0px !important;
+	background-color: #e3e4e6 !important;
+}
+.swap-column-panel {
+	background-image: url(../img/swap-column-panel2.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	margin: 2px;
+}
+
+.swap-row-panel {
+	background-image: url(../img/swap-row-panel.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	margin: 2px;
+}
+
+
+
+/*------------------*/
+/*expandable members*/
+/*------------------*/
+
+.expanded{
+   		vertical-align:middle;
+   		text-align: left;
+    	background-color: -webkit-linear-gradient(top,#f9f9f9,#e3e4e6);
+}
+.collapsed{
+   		vertical-align:middle;
+   		text-align: left;
+    	background-color: -webkit-linear-gradient(top,#f9f9f9,#e3e4e6);
+}
+.expanded img,
+.collapsed img{
+    position: relative;
+    left: 0px;
+    text-align: left;
+    vertical-align: top;
+    padding: 3px;
+}
+td[contenteditable="true"]:focus {
+    border: 1px solid aqua;
+    cursor: text;
+}
+
+.odd-row td{
+	background-color: #F6F6F7 !important;
+}
+.even-row td{
+	background-color: #FFF !important;
+}
+
+.odd-column{
+	background-color: transparent;
+}
+.even-column{
+	background-color: transparent;
+}
+
+.x-pivot-table thead tr:first-child {
+
+    background-color: #FFF;
+} 
+
+.dimension-title{
+	border-top: 1px solid #D0D0D0;
+	border-right: 1px solid #D0D0D0;
+	font: bold 11px/13px tahoma,arial,verdana,sans-serif;
+	text-align: left;
+	padding-left: 5px;
+	padding-right: 5px;
+	vertical-align: middle;
+}
+.dimension-title img{
+    position: relative;
+    left: 0px;
+    text-align: left;
+    vertical-align: middle;
+    padding: 3px;
+}
+.swapaxes {
+	background-image: url(../img/double-arrow.png);
+	background-color: transparent !important;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+/*------------------*/
+/* filter panel*/
+/*------------------*/
+.filter-title {
+	background-color: transparent; 
+	border-top: 0px !important; 
+	border-left: 0px !important; 
+	border-right: 0px !important;  
+	padding: 4px; 
+	text-align: center;
+}
+
+.filter-value {
+	font-style:italic;
+	background-color: transparent;
+	padding: 4px; 
+	text-align: center;
+}
+
+.filter-funnel-image {
+	background-image: url(../img/filter_3.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	width: "90%";
+	height: "90%";
+}
+
+.filter-funnel-body{
+	background-color: transparent; 
+	border-top: 0px !important; 
+	border-bottom: 0px !important; 
+	border-right: 0px !important;  
+	padding: 4px;
+}
+
+.filter-column {
+	background-image: url(../img/filter_10.png);
+	background-color: transparent; 
+	border-top: 0px !important;
+	border-bottom: 0px !important;  
+	border-right: 0px !important; 
+	margin-left: 4px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	text-align: center;
+}
+
+.filter-row {
+	background-image: url(../img/filter_10.png);
+	background-color: transparent; 
+	border-bottom: 0px !important;
+	border-right: 0px !important;  
+	border-left: 0px !important; 
+	margin-top: 4px; 
+	padding-top: 10px;  
+	text-align: center;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+/*------------------*/
+/* toolbar */
+/*------------------*/
+/* .drill-mode{
+	background-image: url(../img/drill.png);
+} */
+.BUTTON_MDX{
+	background-image: url(../img/mdx.png);
+}
+.BUTTON_EDIT_MDX{
+	background-image: url(../img/edit_mdx.png);
+}
+.BUTTON_UNDO{
+	background-image: url(../img/undo.png);
+}
+.BUTTON_FATHER_MEMBERS{
+	background-image: url(../img/show_parent_members.png);
+}
+.BUTTON_HIDE_SPANS{
+	background-image: url(../img/hide_spans.png);
+}
+.BUTTON_SHOW_PROPERTIES{
+	background-image: url(../img/show_props.png);
+}
+.BUTTON_HIDE_EMPTY{
+	background-image: url(../img/empty_rows.png);
+}
+.BUTTON_SAVE{
+	background-image: url(../img/save16.png);
+}
+.BUTTON_SAVE_NEW{
+	background-image: url(../img/save-version16.png);
+}
+.BUTTON_FLUSH_CACHE{
+	background-image: url(../img/reload16.png);
+}
+.lock-icon{
+    background-image: url(../img/locked_green.png);
+}
+.unlock-icon{
+    background-image: url(../img/unlocked_green.png);
+}
+.lock-other-icon{
+    background-image: url(../img/locked_other_green.png);
+}
+.BUTTON_VERSION_MANAGER{
+	background-image: url(../img/delete-versions16.png);
+}
+.BUTTON_EXPORT_OUTPUT{
+	background-image: url(../img/toolbar-export.png);
+}
+.context-menu-icon{
+    background-image: url(../img/menu16.png);
+}
+.BUTTON_CALCULATED_MEMBERS{
+background-image: url(../img/cubesmall.png);
+}
+.BUTTON_EXPORT_XLS{
+background-image: url(../img/xls16.png);
+}
+
+/*------------------*/
+/* Multi hierarchy */
+/*------------------*/
+.multihierarchy-font{
+	font-size: 11 !important;
+}
+
+
+.multi-hierarchy {
+	background-image: url(../img/multi_hierarchy_2.png);
+	background-position: left;
+	background-repeat: no-repeat;
+	background-size: 12px 12px;
+}
+
+/*------------------*/
+/* headers */
+/*------------------*/
+.internal-row-header {
+	margin-top: 1px !important;
+}
+
+.internal-column-header {
+	margin-left: 1px !important;
+}

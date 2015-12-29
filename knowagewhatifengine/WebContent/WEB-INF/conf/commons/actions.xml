@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- WhatIf BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>
+	
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+</ACTIONS>

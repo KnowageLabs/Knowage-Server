@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ENGINE-CONFIGURATION>
+
+	<!-- ====================================================================================== -->
+	<!--  GENERAL SETTINGS 																        --> 
+	<!-- ====================================================================================== -->
+	
+	
+
+	<!-- ====================================================================================== -->
+	<!--  INTERNAL SETTINGS 																    --> 
+	<!-- ====================================================================================== -->
+	
+	<!--  SSO settings  -->
+	<INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
+	<FILTER_RECEIPT>/proxyReceptor</FILTER_RECEIPT>	
+	<PASS>PASS</PASS>	
+	
+	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
+	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
+	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/spagobi_service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
+	
+	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
+	<RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
+		
+	<!--  BACKEND SERVICES -->
+	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>
+	<SchedulerServiceProxy_URL>/services/SchedulerService</SchedulerServiceProxy_URL>
+	<EventServiceProxy_URL>/services/EventService</EventServiceProxy_URL>
+	<ContentServiceProxy_URL>/services/ContentService</ContentServiceProxy_URL>
+	<AuditServiceProxy_URL>/services/AuditService</AuditServiceProxy_URL>
+	<DataSourceServiceProxy_URL>/services/DataSourceService</DataSourceServiceProxy_URL>
+	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
+	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
+	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
+    <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
+	
+	<TEMPLATE>\WEB-INF\resources\tpl.xml</TEMPLATE>
+	
+	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in">
+		<ALGORITHMS>
+			<ALGORITHM name="Proportional" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm" default="true"/>
+			<ALGORITHM name="Equal partition on leafs" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.EqualPartitioningOnLeafsAllocationAlgorithm"/>
+			<ALGORITHM name="Fix values" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.FakeAllocatyionAlg"/>
+		</ALGORITHMS>
+	</WRITEBACK>
+
+</ENGINE-CONFIGURATION>

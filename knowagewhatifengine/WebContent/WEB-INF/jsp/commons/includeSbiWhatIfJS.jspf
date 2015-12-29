@@ -1,0 +1,96 @@
+<!-- SpagoBI, the Open Source Business Intelligence suite
+
+ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include WHATIF stylesheets -->
+<link rel="styleSheet" href ="../css/whatIf.css" type="text/css" />
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+
+<!-- START-DEBUG -->
+
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/RestService.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Log.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/widgets/Help.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/model/DimensionModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/HierarchyModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/VersionModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/AllocationAlgorithmModel.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsChart.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsTable.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsToolbar.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsContainer.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptions.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/OlapToolbar.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/VersionManagerWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/ExportWizardWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/SaveAsWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/EditMdxWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/CalculatedMembersWindow.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilterTree.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionDimension.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionAxisDimension.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilter.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumn.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionDimensions.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumns.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilters.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRows.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionTable.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionPivot.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/chart/OlapExecutionChart.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/OlapExecutionPanel.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewCubeSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewMeasuresSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDimensionsSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDefinitionTools.js'></script>
+
+
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersWizard.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedOperationPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersLeftSide.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersRightSide.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedDataPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedOperatorsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedAggregatorsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedDimensionsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedMembersFunctionsPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/calculatedmembers/CalculatedSetFunctionsPanel.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/control/Controller.js'/></script>
+<script type="text/javascript" src='../js/spagobi/olap/control/EventManager.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/OlapPanel.js'></script>
+
+
+<!-- END-DEBUG -->
+ 
+<!-- START-PRODUCTION 
+<script type="text/javascript" src='../js/spagobi/whatif-all-5.1.0.js'></script>
+   END-PRODUCTION -->
