@@ -171,7 +171,10 @@ public class HierarchyService {
 		JSONObject treeJSONObject;
 		try {
 			// Check input parameters
-			// Assert.assertNotNull(hierarchies, "Impossible to find valid hierarchies config");
+			Assert.assertNotNull(dimension, "Request parameter dimension is null");
+			Assert.assertNotNull(hierarchyType, "Request parameter hierarchyType is null");
+			Assert.assertNotNull(hierarchyName, "Request parameter hierarchyName is null");
+			Assert.assertNotNull(hierarchyDate, "Request parameter hierarchyDate is null");
 
 			IDataSource dataSource = null;
 			// 1 - get datasource label name
