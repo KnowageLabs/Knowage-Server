@@ -50,7 +50,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 </script>
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
-<div ng-show='seeTree'>
+<div ng-show='seeTree === true'>
 	<!-- change layout basing on browser -->
 	<md-content ng-if="browser == 'firefox'" layout-padding>
 		<ng-include src="'tree_renderer.html'"></ng-include>
@@ -65,7 +65,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 	</md-content ng-if="browser != 'chrome' && browser != 'firefox'">
 </div>
 
-<md-content class='waitingContainer' ng-show='!seeTree' layout='row' layout-padding layout-align ='space-around center'>
+<md-content class='waitingContainer' ng-show='seeTree === false' layout='row' layout-padding layout-align ='space-around center'>
 	<i id='waitingIcon' class='fa fa-spinner fa-spin fa-5x'> </i>
 	<h4>Please wait...</h4>
 </md-content>

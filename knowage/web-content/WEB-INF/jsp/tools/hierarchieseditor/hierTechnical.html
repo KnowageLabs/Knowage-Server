@@ -72,47 +72,51 @@
 				</div>
 			</md-toolbar>
 			<md-content id='hierarchiesTarget' layout-padding layout='column' layout-align='space-around stretch'>
-				<md-datepicker ng-model="dateFilterTarget" ng-change="getTree('target')"></md-datepicker>
-					<md-content id='hierarchiesTargetSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
-						<md-input-container flex flex-sm='90'>
-				        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
-				        	<md-select type='text' ng-model='dimTarget' ng-disabled='!dateFilterTarget' md-on-close='getHierarchies("target")'>
-				        		<md-option ng-value="dimTarget" ng-repeat="dimTarget in dimensionTarget">{{ dimTarget.DIMENSION_NM }}</md-option>
-				        	</md-select>
-						</md-input-container>
-						<md-input-container flex flex-sm='90'>
-				        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-				        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-				        	<md-select type='text' ng-model='hierTarget'  md-on-close='getTree("target")' ng-disabled='!dimTarget || hierarchiesTarget.length==0'>
-				        		<md-option ng-value="hierTarget" ng-repeat="hierTarget in hierarchiesTarget">{{ hierTarget.HIER_NM	}}</md-option>
-				        	</md-select>
-						</md-input-container>
-					</md-content>
-					<md-content layout='row' layout-align='start start'>
-						<md-icon ng-if="!seeFilterTarget" class="fa fa-filter" ng-click="toogleSeeFilter('target')"></md-icon>
-						<md-icon ng-if="seeFilterTarget" class="fa fa-times" ng-click="toogleSeeFilter('target')"></md-icon>
-					</md-content>
-					<md-content id='hierarchiesTargetFilters' ng-show='seeFilterTarget' layout-padding>
-						<fieldset class="standard" >
-					        <legend>Filters</legend>
-					        <div layout="column" layout-wrap flex layout-align="space-around stretch">
-						        <md-content layout='row' layout-padding layout-align='space-around center'>
-							        <md-input-container flex='40'>
-							        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
-							        	<input type='text' ng-model='filterByTarget'></input>
-						      		</md-input-container>
-							        <md-input-container flex='40'>
-							        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
-							        	<md-select type='text' ng-model='orderByTarget'>
-							        		<md-option ng-value="orderByTarget" ng-repeat="orderByTarget in orderByFields">{{ orderByTarget }}</md-option>
-							        	</md-select>
-							        </md-input-container>
-							        <md-icon class="fa fa-check" ng-click="applyFilter('target')"></md-icon>
-							        <md-icon class="fa fa-trash" ng-click="removeFilter('target')"></md-icon>
-						        </md-content>
-				        	</div>
-				        </fieldset>
-					</md-content>
+				<md-content layout='row' layout-xs='column' layout-padding layout-align='space-around center'>
+					<md-datepicker ng-model="dateFilterTarget" ng-change="getTree('target')"></md-datepicker>
+					<md-button ng-click='createTree()' ng-disabled='!dimTarget || !hierTarget || !dateFilterTarget' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
+					<md-button ng-click='saveTree()' ng-disabled='!treeTargetDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
+				</md-content>
+				<md-content id='hierarchiesTargetSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
+					<md-input-container flex flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
+			        	<md-select type='text' ng-model='dimTarget' ng-disabled='!dateFilterTarget' md-on-close='getHierarchies("target")'>
+			        		<md-option ng-value="dimTarget" ng-repeat="dimTarget in dimensionTarget">{{ dimTarget.DIMENSION_NM }}</md-option>
+			        	</md-select>
+					</md-input-container>
+					<md-input-container flex flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
+			        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
+			        	<md-select type='text' ng-model='hierTarget'  md-on-close='getTree("target")' ng-disabled='!dimTarget || hierarchiesTarget.length==0'>
+			        		<md-option ng-value="hierTarget" ng-repeat="hierTarget in hierarchiesTarget">{{ hierTarget.HIER_NM	}}</md-option>
+			        	</md-select>
+					</md-input-container>
+				</md-content>
+				<md-content layout='row' layout-align='start start'>
+					<md-icon ng-if="!seeFilterTarget" class="fa fa-filter" ng-click="toogleSeeFilter('target')"></md-icon>
+					<md-icon ng-if="seeFilterTarget" class="fa fa-times" ng-click="toogleSeeFilter('target')"></md-icon>
+				</md-content>
+				<md-content id='hierarchiesTargetFilters' ng-show='seeFilterTarget' layout-padding>
+					<fieldset class="standard" >
+				        <legend>Filters</legend>
+				        <div layout="column" layout-wrap flex layout-align="space-around stretch">
+					        <md-content layout='row' layout-padding layout-align='space-around center'>
+						        <md-input-container flex='40'>
+						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
+						        	<input type='text' ng-model='filterByTarget'></input>
+					      		</md-input-container>
+						        <md-input-container flex='40'>
+						        	<label>sbi.generic.update</label>
+						        	<md-select type='text' ng-model='orderByTarget'>
+						        		<md-option ng-value="orderByTarget" ng-repeat="orderByTarget in orderByFields">{{ orderByTarget }}</md-option>
+						        	</md-select>
+						        </md-input-container>
+						        <md-icon class="fa fa-check" ng-click="applyFilter('target')"></md-icon>
+						        <md-icon class="fa fa-trash" ng-click="removeFilter('target')"></md-icon>
+					        </md-content>
+			        	</div>
+			        </fieldset>
+				</md-content>
 				<md-content>
 					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
 				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='true' no-drop-enabled='true' enable-clone='true'></document-tree>

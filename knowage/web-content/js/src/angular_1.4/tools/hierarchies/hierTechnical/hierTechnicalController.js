@@ -2,6 +2,14 @@ var app = angular.module('hierManager');
 
 app.controller('hierTechnController', ['sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyTechFunction ]);
 
+var rootStructure = {
+		name:'root',
+		id:'root',
+		root: true,
+		children: [],
+		leaf:false
+		};
+
 function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
 	
 	$scope.translate = sbiModule_translate;
@@ -28,7 +36,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.hierarchiesTarget = [];
 	$scope.metadataMap = {};
 	$scope.seeFilterTarget=false;
-
+	$scope.treeTargetDirty=false;
+	$scope.targetIsNew = false; //flag, if is true, the tree create from user, else is get from server
+	
 	$scope.keys = {'subfolders' : 'children'};
 	
 	$scope.hierTreeSrc.push(angular.copy(dataJson));
@@ -126,7 +136,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			var config = {};
 			config.params = {
 				dimension: dim.DIMENSION_NM,
-				filterType : hier.HIER_TP,
+				filterType : type,
 				filterHierarchy : hier.HIER_NM,
 				validityDate : dateFormatted
 			};
@@ -138,6 +148,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 								data = [data];
 							}
 							choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
+							$scope.targetIsNew = false;
 						}else{
 							var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 							$scope.showAlert('ERROR',data.errors[0].message);
@@ -191,10 +202,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		promise
 			.then(function(newItem){
 					var tmpItem =angular.copy(item);
-					for ( key in newItem){ tmpItem[key] = newItem[key];}
-					tmpItem.children = [];
+					for ( key in newItem){ 
+						key =='children' ? tmpItem.children = [] : tmpItem[key] = newItem[key];
+					}
 					tmpItem.expanded = false;
 					item.children.splice(0,0,tmpItem);
+					$scope.treeTargetDirty = true;
 				},function(){
 				//nothing to do, request cancelled.
 			});
@@ -204,6 +217,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		var newItem = $scope.editNode(item,parent);
 		if (newItem !== null && newItem !== undefined){
 			item = newItem;
+			$scope.treeTargetDirty = true;
 		}
 		
 	}
@@ -213,11 +227,16 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		if ($scope.dimTarget && $scope.dimTarget.DIMENSION_NM && $scope.dimTarget.DIMENSION_NM.length > 0){ 
 			if ($scope.metadataMap[$scope.dimTarget.DIMENSION_NM].ALLOW_DUPLICATE == false){
 				//must modify the dates of validity
-				newItem = $scope.editNode(newItem,parent);
-			}
-			var idx = $scope.indexOf(parent.children,item,'id');
-			if (idx>=0 && newItem !== undefined && newItem !== null){
-				parent.children.splice(idx,0,newItem);
+				var promise = $scope.editNode(newItem,parent);
+				promise.then(
+					function(newItem){
+						var idx = $scope.indexOf(parent.children,item,'id');
+						if (idx >=0){
+							parent.children.splice(idx,0,newItem);
+							$scope.treeTargetDirty = true;
+						}
+					},function(){}	
+				);
 			}
 		}
 	}
@@ -233,8 +252,13 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				}else{
 					item = {};
 				}
-			}, function() {});
+				$scope.treeTargetDirty = true;
+			}, function() {
+				//nothing to do, response is 'cancel'
+		});
 	}
+	
+
 	$scope.menuOptionSrc = [{
 		label : 'No action',
 		action : function(){}
@@ -323,6 +347,61 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		        );
 		}
 	};
+	
+	$scope.createTree = function(){
+		if ($scope.dateFilterTarget && $scope.dimTarget && $scope.hierTarget){
+			var promise = $scope.editNode(angular.copy(rootStructure),null);
+			promise
+				.then(function(newItem){
+						$scope.hierTreeTarget.splice(0,0,newItem);
+						$scope.treeTargetDirty = true;
+						$scope.targetIsNew = true;
+					},function(){
+					//nothing to do, request cancelled.
+				}); 
+		}
+	}
+	
+	$scope.saveTree = function(){
+		if ($scope.dateFilterTarget && $scope.dimTarget && $scope.hierTarget && $scope.hierTreeTarget){
+			//saveHierarchy
+			var root = {};
+			root.dimension = $scope.dimTarget.DIMENSION_NM;
+			root.code = $scope.hierTarget.HIER_CD;
+			root.description = $scope.hierTarget.HIER_DS;
+			root.name = $scope.hierTarget.HIER_NM;
+			root.type = $scope.hierTarget.HIER_TP;
+			root.isInsert = $scope.targetIsNew;
+			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.hierTreeTarget[0] : $scope.hierTreeTarget;
+			root.root.$parent = undefined;
+			var elements = [root.root];
+			do{
+				var el = elements.shift();
+				el.$parent=null;
+				if (el.children !== undefined && el.children.length > 0){
+					for (var i =0 ; i<el.children.length;i++){
+						elements.push(el.children[i]);
+					}
+				}
+			}while(elements.length > 0);
+			
+			var jsonString = angular.toJson({root});
+			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
+			promise
+				.success(function (data){
+					if (data.errors === undefined){
+						$scope.treeTargetDirty = false;
+						$scope.targetIsNew = false;
+						$scope.showAlert('INFO','Succesfull upate');
+					}else{
+						$scope.showAlert('ERROR',data.errors[0].message);
+					}
+				})
+				.error(function(data,status){
+					$scope.showAlert('ERROR','Impossible to save the Tree');
+				});
+		}
+	}
 	
 	$scope.debug = function (){
 		var none='none';

@@ -73,23 +73,23 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 		    	
 		    	scope.initializeFolders = function (folders, parent){
 		    		for (var i = 0 ; i < folders.length; i ++ ){
-						folders[i].checked = false;
-						folders[i].expanded = false;
-						folders[i].type = "folder";
-						folders[i].visible = true;
+						folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
+						folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
+						folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
+						folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
 						folders[i].$parent = parent;
 						
 						if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
 							scope.initializeFolders(folders[i][subfoldersId], folders[i]);
 							if (attrs.orderBy){
-								folders[i].sortDirection = "desc";
+								folders[i].sortDirection = folders[i].sortDirection === undefined ? "desc" : folders[i].sortDirection;
 							}
 						}
 						for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
-							 folders[i].biObjects[j].type = "biObject";
-							 folders[i].biObjects[j].checked = false;
-							 folders[i].biObjects[j].visible = true;
-							 folders[i].biObjects[j].$parent = this;
+							 folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
+							 folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
+							 folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
+							 folders[i].biObjects[j].$parent = parent;
 						}
 					}
 		    	}
@@ -171,11 +171,11 @@ function DocumentTreeControllerFunction($scope,$timeout){
 	$scope.$watchCollection( 
 			'ngModel'
     	, function(){
-    		$scope.seeTree = false;
+    		$scope.toogleSeeTree(false);
     		$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
-			$scope.seeTree = true;
+			$scope.toogleSeeTree(true);
     	});
 	
 	$scope.toogleSort = function(element){
@@ -293,6 +293,10 @@ function DocumentTreeControllerFunction($scope,$timeout){
        };
        return 'unknown';
 	}
+    
+    $scope.toogleSeeTree = function (val){
+    	$scope.seeTree = val;
+    }
     
 	$scope.browser = $scope.detectBrowser();
 
