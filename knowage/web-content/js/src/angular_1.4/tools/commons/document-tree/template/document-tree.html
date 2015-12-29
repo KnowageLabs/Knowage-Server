@@ -49,20 +49,34 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 	</div>
 </script>
 
-<!-- change layout basing on browser -->
-<md-content ng-if="browser == 'firefox'" layout-padding>
-	<ng-include src="'tree_renderer.html'"></ng-include>
-</md-content ng-if="browser == 'firefox'">
+<!-- seeTree is true when the tree is initialized and elaborated -->
+<div ng-show='seeTree'>
+	<!-- change layout basing on browser -->
+	<md-content ng-if="browser == 'firefox'" layout-padding>
+		<ng-include src="'tree_renderer.html'"></ng-include>
+	</md-content ng-if="browser == 'firefox'">
+	
+	<md-content ng-if="browser == 'chrome'" layout-fill>
+		<ng-include src="'tree_renderer.html'"></ng-include>
+	</md-content ng-if="browser == 'chrome'">
+	
+	<md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
+		<ng-include src="'tree_renderer.html'"></ng-include>	
+	</md-content ng-if="browser != 'chrome' && browser != 'firefox'">
+</div>
 
-<md-content ng-if="browser == 'chrome'" layout-fill>
-	<ng-include src="'tree_renderer.html'"></ng-include>
-</md-content ng-if="browser == 'chrome'">
-
-<md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
-	<ng-include src="'tree_renderer.html'"></ng-include>	
-</md-content ng-if="browser != 'chrome' && browser != 'firefox'">
+<md-content class='waitingContainer' ng-show='!seeTree' layout='row' layout-padding layout-align ='space-around center'>
+	<i id='waitingIcon' class='fa fa-spinner fa-spin fa-5x'> </i>
+	<h4>Please wait...</h4>
+</md-content>
 
 <style>
+	.waitingContainer{
+		max-width: 100%;
+		width: 100%;
+		max-height: 100%;
+		height: 100%;
+	}
 	.fa-folder, .fa-folder-open{
 		padding-right: 4px;
 		color: black;

@@ -41,6 +41,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 		    	
 		    	scope.label = label;
 		    	scope.subfoldersId = subfoldersId;
+		    	scope.seeTree = false; //used to deactivate the tree visibility during the rendering
 		    	
 		    	scope.createTreeStructure = function (folders){
 		    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
@@ -120,6 +121,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 					if (!attrs.selecteditem) {
 						scope.selectedItem = [];
 				}
+				
+				$scope.seeTree = true;
 			}
 		}
 	}
@@ -168,9 +171,11 @@ function DocumentTreeControllerFunction($scope,$timeout){
 	$scope.$watchCollection( 
 			'ngModel'
     	, function(){
+    		$scope.seeTree = false;
     		$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
+			$scope.seeTree = true;
     	});
 	
 	$scope.toogleSort = function(element){
