@@ -293,7 +293,7 @@ function DocumentTreeControllerFunction($scope,$timeout){
        };
        return 'unknown';
 	}
-
+    
 	$scope.browser = $scope.detectBrowser();
 
 }
