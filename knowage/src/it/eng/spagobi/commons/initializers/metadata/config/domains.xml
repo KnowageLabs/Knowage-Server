@@ -159,9 +159,6 @@
 	<DOMAIN valueCd="org.hibernate.dialect.sparksql"
 		valueNm="sbidomains.nm.sparksql" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sparksql" />
-	<DOMAIN valueCd="org.hibernate.dialect.voltdb"
-		valueNm="sbidomains.nm.voltdb" domainCd="DIALECT_HIB"
-		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.voltdb" />
 	<DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.ingres" />
