@@ -96,7 +96,7 @@ Ext.define
 						id: "wordcloudMaxWords",
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width : 280,
-						maxValue : '100',
+						maxValue : '300',
 						minValue : '10',
 						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxNumWords.emptyText"),
 						
@@ -175,7 +175,7 @@ Ext.define
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width : 280,
 						maxValue : '200',
-						minValue : '50',
+						minValue : '30',
 						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxFontSize.emptyText"),
 						
 						listeners:
