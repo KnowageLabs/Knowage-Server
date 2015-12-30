@@ -1,8 +1,9 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="folders_renderer.html">
 		<div layout = "row" layout-align="start center"  class="customTreeNode" ui-tree-handle>
-			<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded || folder[subfoldersId].length == 0 || folder.biObjects.length == 0"  md-font-icon="fa fa-folder"></md-icon>				
-			<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded  && folder[subfoldersId].length != 0 && folder.biObjects.length != 0 " md-font-icon="fa fa-folder-open"></md-icon>
+			<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0"  md-font-icon="{{iconFolder}}"></md-icon>				
+			<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded && folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0" md-font-icon="{{iconFolderOpen}}"></md-icon>
+			<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined || folder[subfoldersId].length == 0 || folder.biObjects.length == 0 " md-font-icon="{{iconLeaf}}"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
 			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
@@ -39,8 +40,8 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}" -->
 <!-- create the tree structure -->
 <script type="text/ng-template" id="tree_renderer.html">
-	<div ui-tree  id="{{id}}-tree-container" data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone == true}}" data-drag-delay='500' 
-		data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}">	
+	<div ui-tree  id="{{id}}-tree-container" data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-drag-delay='500' 
+		data-empty-placeholder-enabled="{{showEmptyPlaceholder}}">	
 		<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
 				context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
@@ -50,11 +51,11 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 </script>
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
-<div ng-show='seeTree === true'>
+<div ng-show='seeTree == true'>
 	<!-- change layout basing on browser -->
-	<md-content ng-if="browser == 'firefox'" layout-padding>
+	<div ng-if="browser == 'firefox'" layout-padding>
 		<ng-include src="'tree_renderer.html'"></ng-include>
-	</md-content ng-if="browser == 'firefox'">
+	</div ng-if="browser == 'firefox'">
 	
 	<md-content ng-if="browser == 'chrome'" layout-fill>
 		<ng-include src="'tree_renderer.html'"></ng-include>
@@ -64,12 +65,12 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		<ng-include src="'tree_renderer.html'"></ng-include>	
 	</md-content ng-if="browser != 'chrome' && browser != 'firefox'">
 </div>
-
-<md-content class='waitingContainer' ng-show='seeTree === false' layout='row' layout-padding layout-align ='space-around center'>
-	<i id='waitingIcon' class='fa fa-spinner fa-spin fa-5x'> </i>
+ 
+<md-content class='waitingContainer' ng-hide='seeTree == true' layout='row' layout-padding layout-align ='space-around center'>
+	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	<h4>Please wait...</h4>
 </md-content>
-
+ 
 <style>
 	.waitingContainer{
 		max-width: 100%;
@@ -77,7 +78,7 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		max-height: 100%;
 		height: 100%;
 	}
-	.fa-folder, .fa-folder-open{
+	.fa-folder, .fa-folder-open, .fa-leaf{
 		padding-right: 4px;
 		color: black;
 	}
@@ -135,5 +136,25 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		margin-right: 8px;
 		border-radius: 0;
 	}
+	
+		
+	.minihead-tree {
+	/*  position: absolute !important; */
+	  	background-color: #3B668C !important;
+		color: white !important;	
+	}
 
+	md-toolbar.minihead-tree-small {
+		background-color: #3B668C;
+		color: #000000255255255;
+		height: 35px;
+		min-height: 0px;
+	}
+	
+	.minihead-tree-small{
+		background-color: #3B668C !important;
+		color: white !important;
+		height: 35px;
+}
+	
 </style>

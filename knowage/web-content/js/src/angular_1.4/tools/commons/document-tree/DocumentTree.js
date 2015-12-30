@@ -41,7 +41,12 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 		    	
 		    	scope.label = label;
 		    	scope.subfoldersId = subfoldersId;
-		    	scope.seeTree = false; //used to deactivate the tree visibility during the rendering
+		    	
+		    	scope.iconFolder = 'fa fa-folder';
+		    	scope.iconFolderOpen = 'fa fa-folder-open';	
+		    	scope.iconLeaf = 'fa fa-leaf';
+		    	
+		    	scope.seeTree = false;
 		    	
 		    	scope.createTreeStructure = function (folders){
 		    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
@@ -120,16 +125,16 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 				if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
 					if (!attrs.selecteditem) {
 						scope.selectedItem = [];
+					}
 				}
 				
-				$scope.seeTree = true;
-			}
+				scope.seeTree=true;
 		}
 	}
 });
 
 
-function DocumentTreeControllerFunction($scope,$timeout){
+function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	$scope.toogleSelected = function(element, parent){
 		if (element !== undefined && $scope.multiSelect){
 			//check the element as the parent. If not the parent doesn't exist, toggle the element check
@@ -171,11 +176,11 @@ function DocumentTreeControllerFunction($scope,$timeout){
 	$scope.$watchCollection( 
 			'ngModel'
     	, function(){
-    		$scope.toogleSeeTree(false);
+    		$scope.seeTree = false;
     		$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
-			$scope.toogleSeeTree(true);
+			$scope.seeTree = true;
     	});
 	
 	$scope.toogleSort = function(element){
@@ -293,9 +298,9 @@ function DocumentTreeControllerFunction($scope,$timeout){
        };
        return 'unknown';
 	}
-    
-    $scope.toogleSeeTree = function (val){
-    	$scope.seeTree = val;
+
+    $scope.checkSeeTree = function(){
+    	return $scope.seeTree;
     }
     
 	$scope.browser = $scope.detectBrowser();

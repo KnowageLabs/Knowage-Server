@@ -27,33 +27,36 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierarchiesController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/data.js"></script>
- <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTableController.js"></script>
- <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTreeController.js"></script>
- <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierTechnical/hierTechnicalController.js"></script>
- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/hierarchies/css/hierarchiesStyle.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierarchiesController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/data.js"></script>
+<!-- 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTableController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTreeController.js"></script>
+ -->	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierMasterController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierTechnical/hierTechnicalController.js"></script>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/hierarchies/css/hierarchiesStyle.css">
 <title>HierarchiesEditor</title>
 
 </head>
 
 <body class="hierBodyStyle">
-
 	<div ng-cloak>
-		 <md-content>
-		    <md-tabs md-dynamic-height md-border-bottom>
-		      <md-tab label="TECHNICAL" ng-if="<%=canSeeTechnicalHier%>==true">
-		        <md-content layout-padding>
-		        <!-- take file path form server using jsp -->
-		         	<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.html'">
-		        </md-content>
-		      </md-tab>		      
-		      <md-tab label="MASTER" ng-if="<%=canSeeMasterHier%>==true">
-		      	<!-- <ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.html'"> --> 
- 	  		  </md-tab>
-		    </md-tabs>
-	  	</md-content>	
+		<md-content>
+			<md-tabs md-dynamic-height md-border-bottom>
+				<md-tab label="MASTER" ng-if="<%=canSeeMasterHier%>==true">
+					<md-content layout-padding>
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.html'"></ng-include>
+					</md-content> 
+				</md-tab>		      
+				<md-tab label="TECHNICAL" ng-if="<%=canSeeTechnicalHier%>==true">
+					<md-content layout-padding>
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.html'"></ng-include>
+					</md-content>
+				</md-tab>
+			</md-tabs>
+		</md-content>	
 	</div>
  
 </body>
