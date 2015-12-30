@@ -1,13 +1,17 @@
 package it.eng.spagobi.api.v2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -24,7 +28,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List getAuthorizations() {
+	public Response getAuthorizations() {
 		IRoleDAO rolesDao = null;
 		List fullList = null;
 
@@ -33,7 +37,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			fullList = rolesDao.loadAllAuthorizations();
-			return fullList;
+			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
@@ -41,4 +45,24 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 
 	}
 
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@Path("/metaCategories/{id}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getMetaModelCat(@PathParam("id") Integer id) {
+		IRoleDAO rolesDao = null;
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+
+		try {
+
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			categories = rolesDao.getMetaModelCategoriesForRole(id);
+			return Response.ok(categories).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
+
+	}
 }

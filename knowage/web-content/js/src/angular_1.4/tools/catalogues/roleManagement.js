@@ -7,13 +7,15 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.showme = false; // flag for showing right side 
     $scope.dirtyForm = false; // flag to check for modification
+    $scope.disable = false;
     $scope.translate = sbiModule_translate;
     $scope.selectedRole = {}; // main item
-    $scope.rolesList = []; // array that hold list of users
+    $scope.rolesList = []; // array that hold list of roles
     $scope.authList = [];
     $scope.listType = [];
-    $scope.auth = [];
-
+    $scope.selectedAuths = [];
+    $scope.metaList = [];
+    $scope.meta = [];
     $scope.showActionOK = function (msg) {
         var toast = $mdToast.simple()
             .content(msg)
@@ -61,6 +63,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	$scope.getRoles();
     	$scope.getDomainType();
     	$scope.getAuthorizations();
+    	
     });
 
     $scope.setDirty = function () {
@@ -93,6 +96,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             
           
         }
+        if ($scope.selectedRole.roleTypeCD == "USER") {
+        	$scope.disable = false;
+			
+		}else{
+			$scope.disable = true;
+		}
     }
 
     $scope.cancel = function () { // on cancel button
@@ -128,11 +137,10 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.saveRole = function () { // this function is called when clicking on save button
  
-        if($scope.selectedUser.hasOwnProperty("id")){ // if item already exists do update PUT
+        if($scope.selectedRole.hasOwnProperty("id")){ // if item already exists do update PUT
 			sbiModule_restServices
 		    .put("2.0/roles",$scope.$scope.selectedRole.id,$scope.selectedRole).success(
 					function(data, status, headers, config) {
-						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
@@ -154,7 +162,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			sbiModule_restServices
 		    .post("2.0/roles","",angular.toJson($scope.selectedRole, true)).success(
 					function(data, status, headers, config) {
-						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
@@ -205,16 +212,34 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				})	
 	}
     
-    $scope.getAuthorizations = function(){ // service that gets domain types for dropdown GET
-		sbiModule_restServices.get("2.0/authorizations").success(
+    $scope.getAuthorizations = function(){ // service that gets authorizations GET
+		sbiModule_restServices.get("authorizations","").success( 
 				function(data, status, headers, config) {
+					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.authList = data;
+						$scope.authList = data.root;
+						
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					console.log(status);
+
+				})	
+	}
+    $scope.getMetaModelCategories = function(item){ // service that gets meta model categories GET
+		sbiModule_restServices.get("2.0/authorizations/metaCategories", item.id).success( 
+				function(data, status, headers, config) {
+					console.log(data);
+					if (data.hasOwnProperty("errors")) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					} else {
+						$scope.metaList = data;
+					}
+				}).error(function(data, status, headers, config) {
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					console.log(status);
 
 				})	
 	}

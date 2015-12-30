@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -76,7 +77,20 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertRole(@Valid Role body) {
 
-		return Response.ok().build();
+		IRoleDAO rolesDao = null;
+		Role role = body;
+
+		try {
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			rolesDao.insertRoleComplete(role);
+			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
+			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
+
 	}
 
 	@PUT
@@ -85,7 +99,19 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateRole(@PathParam("id") Integer id, @Valid Role body) {
 
-		return Response.ok().build();
+		IRoleDAO rolesDao = null;
+		Role role = body;
+
+		try {
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			rolesDao.modifyRole(role);
+			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
+			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
 	}
 
 	@DELETE

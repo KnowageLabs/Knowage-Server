@@ -129,20 +129,329 @@
 				   </div>
 			</div>
 			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.roles.authorizations");}}'> <md-content
-				flex style="margin-left:20px; overflow:hidden"
-				class="md-padding ToolbarBox noBorder"> <angular-table
-				layout-fill id="authList_id" ng-model="authList"
-				columns='[
-							{"label":"NAME","name":"name","size":"50px"},
-							 ]'
-				selected-item="auth" highlights-selected-item=true
-				multi-select="true"> </angular-table> </md-content> </md-tab> 
+				flex style="margin-left:20px;"
+				class="md-padding ToolbarBox noBorder">
+				<div style="display: flex;">
+				<div style="width: 50%">
+
+				<md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.save");}}
+				</md-toolbar>
+				
+				<div layout="row" layout-wrap>
+				<md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveIntoPersonalFolder" aria-label="check" name ="savePersonalFolder">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.savePersonalFolder")}}</label>
+			       </div>
+			       
+			   </div>
+				<div layout="row" layout-wrap>
+				<md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveMetadata" aria-label="check" name="saveMeta">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.saveMeta")}}</label>
+			       </div>
+			   </div>
+			   <div layout="row" layout-wrap>
+			   <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveRememberMe" aria-label="check" name="saveRemember">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.saveRemember")}}</label>
+			       </div>
+			   </div>
+			   <div layout="row" layout-wrap>
+			   <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveSubobjects" aria-label="check" name="saveSubobj">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.saveSubobj")}}</label>
+			       </div> 
+			   </div>
+			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.see");}}
+				</md-toolbar>
+				
+				
+				<div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMetadata" aria-label="check" name="seeMeta">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeMeta")}}</label>
+			       </div>
+			   </div>
+				<div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeNotes" aria-label="check" name="seeNotes">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeNotes")}}</label>
+			       </div>
+			   </div>
+			   <div layout="row" layout-wrap>
+			   <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSnapshots" aria-label="check" name="seeSnapshot">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeSnapshot")}}</label>
+			       </div>
+			   </div>
+			   <div layout="row" layout-wrap>
+			    <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubobjects" aria-label="check" name="seeSubobj">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeSubobj")}}</label>
+			       </div>
+			   </div>
+			   <div layout="row" layout-wrap>
+			    <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeViewpoints" aria-label="check" name="seeSnapshot">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeViewpoints")}}</label>
+			       </div>
+			   </div>
+			   
+			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.send");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSendMail" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.sendMail")}}</label>
+			       </div>
+			   </div>
+			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.build");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToBuildQbeQuery" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.buildQbe")}}</label>
+			       </div>
+			   </div>
+			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.export");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				   <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToDoMassiveExport" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.doMassiveExport")}}</label>
+			       </div>
+			   </div>
+			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.manage");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageUsers" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.manageUsers")}}</label>
+			       </div>
+			   </div>
+			    <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryBusiness" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.manageGlossaryBusiness")}}</label>
+			       </div>
+			   </div>
+			    <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryTechnical" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.manageGlossaryTechnical")}}</label>
+			       </div> 
+			   </div>
+			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.edit");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToEditWorksheet" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.worksheet")}}</label>
+			       </div> 
+			   </div>
+			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.view");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableFederatedDataset" aria-label="check">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.enableFederatedDataset")}}</label>
+			       </div> 
+			   </div>
+			   
+				</div>
+				<div style="flex-grow: 1;">
+				 <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.finalUserCan");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeDocumentBrowser" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeDocumentBrowser")}}</label>
+			       </div> 
+			   </div>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyData" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeMyData")}}</label>
+			       </div> 
+			   </div>
+				<div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeFavourites")}}</label>
+			       </div> 
+			   </div>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubscriptions" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeSubscriptions")}}</label>
+			       </div> 
+			   </div>
+			   <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeToDoList" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.seeToDoList")}}</label>
+			       </div> 
+			   </div>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.createDocument")}}</label>
+			       </div> 
+			   </div>
+			   <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSocialAnalysis" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.createSocialAnalysis")}}</label>
+			       </div> 
+			   </div>
+				 <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToViewSocialAnalysis" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.viewSocialAnalysis")}}</label>
+			       </div> 
+			   </div>
+			   <div layout="row" layout-wrap>
+				  <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToHierarchiesManagement" aria-label="check" ng-disabled="disable">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.hierarchiesManagement")}}</label>
+			       </div> 
+			   </div>
+				
+				</div>
+				</div>
+				 </md-content> </md-tab> 
 				<md-tab
 				label='{{translate.load("sbi.roles.businessModels");}}'> <md-content
 				flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">
-
-			
+				
+				<md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.businessModels.categories");}}
+				</md-toolbar>
+				
 			</md-content> </md-tab> </md-tabs> </md-content>
 		</div>
 	</form>
