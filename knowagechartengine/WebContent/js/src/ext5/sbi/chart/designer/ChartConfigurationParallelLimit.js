@@ -17,7 +17,6 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-//		width: 290,
 		height: 150,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),
@@ -52,6 +51,7 @@ Ext.define
 				{
 				    fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 				    bind : '{configModel.serieFilterColumn}',
+				    id: "seriesColumnsOnYAxisCombo",
 				    width: 280,
 				    store: this.storeForSeriesBeforeDrop,
 				    editable : false,
@@ -79,15 +79,23 @@ Ext.define
 				    	},
 				    	
 				    	change: function(thisEl, newValue, oldValue)
-				    	{		
+				    	{						    		
 				    		if (newValue && newValue!="")
 				    		{
-				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":"); 
+				    			if (this.labelEl)
+				    				this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":");
+			    				else
+			    					Ext.getCmp("seriesColumnsOnYAxisCombo").fieldLabel = LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":";
 				    		}	
 				    		else
 			    			{
-				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") 
-				    					+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+				    			if (this.labelEl)
+				    				this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") 
+				    						+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+			    				else				    			
+					    			Ext.getCmp("seriesColumnsOnYAxisCombo").fieldLabel = LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") 
+			    						+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
+				    			
 			    			}
 				    	}
 				    }
@@ -185,11 +193,13 @@ Ext.define
 		
 		addItem: function(data)
 		{
+//			Ext.getCmp("seriesColumnsOnYAxisCombo").getStore().add(data);
 			this.seriesColumnsOnYAxisCombo.getStore().add(data);
 		},
 		
 		removeItem: function(data)
 		{
+//			Ext.getCmp("seriesColumnsOnYAxisCombo").getStore().remove(data);
 			this.seriesColumnsOnYAxisCombo.getStore().remove(data);
 		}
 });

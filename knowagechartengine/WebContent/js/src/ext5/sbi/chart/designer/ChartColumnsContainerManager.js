@@ -430,12 +430,95 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								var axisId = c.id.substring(0,indexOfHeader);
 								Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
 
-								var chartParallelLimit = Ext.getCmp("chartParallelLimit");
+								/**
+								 * The combo box for the "Serie as filter column" on the
+								 * Configuration tab's Limit panel.
+								 * 
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								var seriesColumnsOnYAxisCombo = Ext.getCmp("seriesColumnsOnYAxisCombo");
 																
-								if(chartParallelLimit && chartParallelLimit != null && chartParallelLimit.hidden == false) 
+								if(seriesColumnsOnYAxisCombo && seriesColumnsOnYAxisCombo != null && seriesColumnsOnYAxisCombo.hidden == false) 
 								{	
-									chartParallelLimit.seriesColumnsOnYAxisCombo.getStore().removeAll();
-									chartParallelLimit.seriesColumnsOnYAxisCombo.setValue("");										
+									/**
+									 * We need to clean the store that is assigned to the combo box
+									 * that holds all series that can be chosen for the serie item 
+									 * that will serve as a filter. 
+									 * 
+									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									 */
+									seriesColumnsOnYAxisCombo.getStore().removeAll();
+									
+									/**
+									 * Take current JSON structure, since we need to modify it
+									 * because of the removing of all of series, including the one
+									 * that belongs to the "serieFilterColumn" attribute in the 
+									 * 'style' property of the 'LIMIT' property of the JSON. needs
+									 * to be cleared (its value should be removed).
+									 * 
+									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									 */
+									
+									/**
+									 * The name of the attribute in the 'style' property of the CHART.LIMIT
+									 * property that keeps data about the serie that serves as the filter
+									 * column.  
+									 */
+									var propOfSerAsFiltCol = "serieFilterColumn:";
+									/**
+									 * The current JSON structure of the document. We need to change it so
+									 * we can have an actual situation - no serie as filter column item.
+									 */
+									var jsonOfCurrentDocStructure = Sbi.chart.designer.Designer.exportAsJson();
+									/**
+									 * Style property of the current JSON structure of the document (needed
+									 * for extracting the 'serieFilterColumn' attribute.
+									 */
+									var styleOfTheJson = Sbi.chart.designer.Designer.exportAsJson().CHART.LIMIT.style;
+									
+									/**
+									 * Take the part of the 'style' string that keeps the old (not actual) 
+									 * value for this ('serieFilterColumn') parameter, so we can have a 
+									 * substring that contains it.
+									 */
+									var styleBehindTheAttribute = styleOfTheJson.substring(styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length,
+											styleOfTheJson.length);
+									
+									/**
+									 * Find the index of the semicolon sign that is the edge if the odl value
+									 * for the parameter that was actual for the opened (old) document and
+									 * set of series that we previously had (before this removement of all
+									 * series).
+									 */
+									var indexOfEndOfSerieAsFiltCol = styleBehindTheAttribute.indexOf(";");
+									
+									/**
+									 * Part of the 'style' string that contains everything that precedes the 
+									 * value of this property. 
+									 */
+									var precedingStyle = styleOfTheJson.substring(0,styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length);
+									/**
+									 * Part of the 'style' string that contains everything that follows the 
+									 * value of this property. 
+									 */
+									var appendixStyle = styleBehindTheAttribute.substring(indexOfEndOfSerieAsFiltCol,styleBehindTheAttribute.length);
+											
+									/**
+									 * Concatanate the preceding and appending part of the 'style', but now
+									 * without the old value - just an empty value.
+									 */
+									var finalString = precedingStyle + "" + appendixStyle;
+									
+									/**
+									 * Set this new 'style' string to appropriate JSON element (the one from
+									 * which we started this action). 
+									 */
+									jsonOfCurrentDocStructure.CHART.LIMIT.style = finalString;
+									
+									/**
+									 * Update the Designer so the change can be applied to the panel.
+									 */
+									Sbi.chart.designer.Designer.update(jsonOfCurrentDocStructure);	
 								}
 							}
 						}
