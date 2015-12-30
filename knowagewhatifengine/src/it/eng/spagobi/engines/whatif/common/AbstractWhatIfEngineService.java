@@ -29,8 +29,8 @@ import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Member;
+import org.pivot4j.PivotModel;
 
-import com.eyeq.pivot4j.PivotModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class AbstractWhatIfEngineService extends AbstractEngineRestService {

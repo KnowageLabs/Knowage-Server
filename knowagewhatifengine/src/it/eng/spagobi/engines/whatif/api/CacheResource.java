@@ -20,8 +20,7 @@ import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
-
-import com.eyeq.pivot4j.PivotModel;
+import org.pivot4j.PivotModel;
 
 @Path("1.0/cache")
 public class CacheResource extends AbstractWhatIfEngineService {

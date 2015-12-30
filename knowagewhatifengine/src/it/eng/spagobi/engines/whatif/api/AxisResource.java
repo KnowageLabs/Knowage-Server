@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *  
+ *
  * @class AxisResource
- * 
+ *
  * Provides services to manage the axis resource
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -28,9 +28,8 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.SwapAxes;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.SwapAxes;
 
 @Path("/1.0/axis")
 public class AxisResource extends AbstractWhatIfEngineService {
@@ -50,7 +49,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to swap the axis
-	 * 
+	 *
 	 * @return the rendered pivot table
 	 */
 	@POST
@@ -76,7 +75,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to move an hierarchy from an axis to another
-	 * 
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param fromAxisPos
@@ -91,8 +90,8 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
 	@Produces("text/html; charset=UTF-8")
-	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,
-			@PathParam("hierarchy") String hierarchyName) {
+	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos,
+			@PathParam("toAxis") int toAxisPos, @PathParam("hierarchy") String hierarchyName) {
 
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
 
@@ -101,7 +100,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to move a hierarchy in the axis
-	 * 
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param axisPos
@@ -118,8 +117,8 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
 	@Produces("text/html; charset=UTF-8")
-	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchyUniqueName") String hierarchyUniqueName,
-			@PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
+	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
+			@PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
@@ -129,7 +128,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	/**
 	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in
 	 * the same position
-	 * 
+	 *
 	 * @param axisPos
 	 *            the axis that contains the old hierarchy
 	 * @param newHierarchyUniqueName
@@ -157,7 +156,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * Service to change the visibility of the members of a hierarchy. It takes
 	 * a hierarchy, removes all the members and shows only the ones passed in
 	 * the body of the request
-	 * 
+	 *
 	 * @param req
 	 *            the HttpServletRequest
 	 * @param axisPos

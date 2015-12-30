@@ -17,7 +17,6 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -38,20 +37,23 @@ import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+import org.pivot4j.PivotModel;
+import org.pivot4j.impl.PivotModelImpl;
+import org.pivot4j.impl.QueryAdapter;
+import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.NonEmpty;
+import org.pivot4j.transform.impl.ChangeSlicerImpl;
+import org.pivot4j.ui.collector.NonInternalPropertyCollector;
+import org.pivot4j.ui.command.DrillCollapseMemberCommand;
+import org.pivot4j.ui.command.DrillCollapsePositionCommand;
+import org.pivot4j.ui.command.DrillDownCommand;
+import org.pivot4j.ui.command.DrillDownReplaceCommand;
+import org.pivot4j.ui.command.DrillExpandMemberCommand;
+import org.pivot4j.ui.command.DrillExpandPositionCommand;
+import org.pivot4j.ui.command.DrillUpReplaceCommand;
+import org.pivot4j.ui.html.HtmlRenderCallback;
+import org.pivot4j.ui.table.TableRenderer;
 
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.query.QueryAdapter;
-import com.eyeq.pivot4j.transform.ChangeSlicer;
-import com.eyeq.pivot4j.transform.NonEmpty;
-import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
-import com.eyeq.pivot4j.ui.command.DrillCollapseMemberCommand;
-import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
-import com.eyeq.pivot4j.ui.command.DrillDownCommand;
-import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
-import com.eyeq.pivot4j.ui.command.DrillExpandMemberCommand;
-import com.eyeq.pivot4j.ui.command.DrillExpandPositionCommand;
-import com.eyeq.pivot4j.ui.command.DrillUpReplaceCommand;
-import com.eyeq.pivot4j.ui.impl.NonInternalPropertyCollector;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -91,7 +93,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
-		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer(writer, modelConfig);
+		TableRenderer renderer = new TableRenderer();
 
 		logger.debug("Setting the properties of the renderer");
 
@@ -100,20 +102,25 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setShowDimensionTitle(false); // Optionally hide the dimension
 												// title headers.
 
-		renderer.setCellSpacing(0);
-		renderer.setRowHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		renderer.setColumnHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		renderer.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
-		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
-		renderer.setRowStyleClass(" generic-row-style ");
-
-		renderer.setEvenRowStyleClass(" even-row ");
-		renderer.setOddRowStyleClass(" odd-row ");
-
-		renderer.setEvenColumnStyleClass(" even-column ");
-		renderer.setOddColumnStyleClass(" odd-column ");
-
+		/*
+		 * renderer.setCellSpacing(0); renderer.setRowHeaderStyleClass(
+		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
+		 * ); renderer.setColumnHeaderStyleClass(
+		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
+		 * ); renderer.setCornerStyleClass(
+		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
+		 * ); renderer.setCellStyleClass(
+		 * "x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell"
+		 * ); renderer.setTableStyleClass(
+		 * "x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table"
+		 * ); renderer.setRowStyleClass(" generic-row-style ");
+		 * 
+		 * renderer.setEvenRowStyleClass(" even-row ");
+		 * renderer.setOddRowStyleClass(" odd-row ");
+		 * 
+		 * renderer.setEvenColumnStyleClass(" even-column ");
+		 * renderer.setOddColumnStyleClass(" odd-column ");
+		 */
 		String drillDownModeValue = modelConfig.getDrillType();
 
 		renderer.removeCommand(new DrillUpReplaceCommand(renderer).getName());
@@ -140,11 +147,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		renderer.setDrillDownMode(drillDownModeValue);
-
-		renderer.setEnableColumnDrillDown(true);
-		renderer.setEnableRowDrillDown(true);
-		renderer.setEnableSort(true);
-
+		/*
+		 * renderer.setEnableColumnDrillDown(true);
+		 * renderer.setEnableRowDrillDown(true); renderer.setEnableSort(true);
+		 */
 		// /show parent members
 		Boolean showParentMembers = modelConfig.getShowParentMembers();
 		renderer.setShowParentMembers(showParentMembers);
@@ -175,7 +181,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		logger.debug("Rendering the model");
-		renderer.render(value);
+		renderer.render(value, new HtmlRenderCallback(writer));
 
 		try {
 			writer.flush();
@@ -202,7 +208,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			jgen.writeStringField(TABLE, table);
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS);
 			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS);
-			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, value);
+
+			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			jgen.writeObjectField(MODELCONFIG, modelConfig);
@@ -238,7 +245,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	}
 
-	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model)
+	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model)
 			throws JSONException, JsonGenerationException, IOException {
 
 		QueryAdapter qa = null;

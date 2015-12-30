@@ -59,9 +59,8 @@ import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.export.poi.ExcelExporter;
+import org.pivot4j.PivotModel;
+import org.pivot4j.ui.poi.ExcelExporter;
 
 @Path("/1.0/model")
 public class ModelResource extends AbstractWhatIfEngineService {
@@ -86,7 +85,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Executes the mdx query. If the mdx is null it executes the query of the model
+	 * Executes the mdx query. If the mdx is null it executes the query of the
+	 * model
 	 *
 	 * @param mdx
 	 *            the query to execute
@@ -309,7 +309,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Exports the actual model in a xls format.. Since it takes the actual model, it takes also the pending transformations (what you see it's what you get)
+	 * Exports the actual model in a xls format.. Since it takes the actual
+	 * model, it takes also the pending transformations (what you see it's what
+	 * you get)
 	 *
 	 * @return the response with the file embedded
 	 */
@@ -328,7 +330,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// adds the calculated fields before rendering the model
 		model.applyCal();
 
-		exporter.render(model);
+		exporter.renderContent(arg0, arg1, arg2);
+		render(model);
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
@@ -340,7 +343,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Exports the actual model in a xls format.. Since it takes the actual model, it takes also the pendingg transformations (what you see it's what you get)
+	 * Exports the actual model in a xls format.. Since it takes the actual
+	 * model, it takes also the pendingg transformations (what you see it's what
+	 * you get)
 	 *
 	 * @return the response with the file embedded
 	 */

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.whatif;
@@ -29,13 +29,13 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
+import org.pivot4j.datasource.SimpleOlapDataSource;
 
 import sun.misc.BASE64Encoder;
 
-import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
-
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
+ *         (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
@@ -206,7 +206,8 @@ public class WhatIfEngineConfig {
 					String valueBase64 = encodeValue(value.toString());
 					connectionProps.put(attributeName, valueBase64);
 				} else if (cl.contains("[Ljava.lang.Object")) {
-					// Adds list of String (uses implicit cast of DBs) for multiple values.
+					// Adds list of String (uses implicit cast of DBs) for
+					// multiple values.
 					Object[] arrList = (Object[]) value;
 					String totalString = "";
 					String quote = "'";
@@ -345,7 +346,7 @@ public class WhatIfEngineConfig {
 
 	/**
 	 * Reads the configuration file and gets the list of allocation algorithms
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, AllocationAlgorithmDefinition> getAllocationAlgorithms() {

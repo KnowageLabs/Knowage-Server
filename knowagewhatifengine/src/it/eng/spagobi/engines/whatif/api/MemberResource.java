@@ -27,12 +27,11 @@ import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.DrillExpandMember;
-import com.eyeq.pivot4j.transform.DrillExpandPosition;
-import com.eyeq.pivot4j.transform.DrillReplace;
-import com.eyeq.pivot4j.ui.command.DrillDownCommand;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.DrillExpandMember;
+import org.pivot4j.transform.DrillExpandPosition;
+import org.pivot4j.transform.DrillReplace;
+import org.pivot4j.ui.command.DrillDownCommand;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -116,7 +115,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		Position p = CubeUtilities.getPosition(positions, positionUniqueName);
 
-		// if the drill is of type replace, the link of the table for drill up is the header of the hierarchy so instead of the memberUniqueName
+		// if the drill is of type replace, the link of the table for drill up
+		// is the header of the hierarchy so instead of the memberUniqueName
 		// positionUniqueName it contains the placeholder "x"
 		if (!memberUniqueName.equals("x")) {
 

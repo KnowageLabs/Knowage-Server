@@ -36,9 +36,8 @@ import org.olap4j.OlapDataSource;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.impl.PivotModelImpl;
-import com.eyeq.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.impl.PivotModelImpl;
+import org.pivot4j.transform.ChangeSlicer;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 
@@ -138,7 +137,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	 * Persist the modifications in the selected version
 	 *
 	 * @param version
-	 *            the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
+	 *            the version of the model in witch persist the modification. In
+	 *            null persist in the version selected in the Version dimension
 	 * @throws WhatIfPersistingTransformationException
 	 */
 	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException {

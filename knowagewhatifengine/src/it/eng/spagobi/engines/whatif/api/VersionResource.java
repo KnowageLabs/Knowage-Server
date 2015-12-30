@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Giulio Gavardi (giulio.gavardi@eng.it) 
- * 
+ * @author Giulio Gavardi (giulio.gavardi@eng.it)
+ *
  * @class DBWriteResource
- * 
+ *
  * Provides services to manage the axis resource
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -28,8 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
-
-import com.eyeq.pivot4j.PivotModel;
+import org.pivot4j.PivotModel;
 
 @Path("/1.0/version")
 public class VersionResource extends AbstractWhatIfEngineService {
@@ -49,7 +48,7 @@ public class VersionResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Load the list of versions
-	 * 
+	 *
 	 * @return the serialization of the versions
 	 */
 	@GET
@@ -73,7 +72,7 @@ public class VersionResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Delete the versions
-	 * 
+	 *
 	 * @param versionsToDelete
 	 *            its the serialization of a list with the ids of the version to
 	 *            remove. Example. "1 , 2, 4"

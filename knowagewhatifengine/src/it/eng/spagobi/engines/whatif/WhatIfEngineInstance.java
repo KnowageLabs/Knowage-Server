@@ -45,8 +45,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
-
-import com.eyeq.pivot4j.PivotModel;
+import org.pivot4j.PivotModel;
 
 public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 

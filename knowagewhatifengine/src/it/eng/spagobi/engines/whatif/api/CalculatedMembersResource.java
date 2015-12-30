@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.whatif.api;
@@ -33,8 +33,7 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.PivotModel;
+import org.pivot4j.PivotModel;
 
 @Path("/1.0/calculatedmembers")
 public class CalculatedMembersResource extends AbstractWhatIfEngineService {
@@ -43,7 +42,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to get Dimensions
-	 * 
+	 *
 	 * @return the dimensions
 	 */
 	@GET
@@ -68,7 +67,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to get the dimensions
-	 * 
+	 *
 	 * @return The SbiDimension List
 	 */
 	public List<SbiDimension> getDimensions(PivotModel model, ModelConfig modelConfig) throws SpagoBIEngineException {
@@ -111,17 +110,14 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 
 	/**
 	 * Service to create the calculated member
-	 * 
+	 *
 	 * @return the rendered pivot table
 	 */
 	@POST
 	@Path("/execute/{calculateFieldName}/{calculateFieldFormula}/{parentMemberUniqueName}/{axisOrdinal}")
 	@Produces("text/html; charset=UTF-8")
-	public String execute(
-			@PathParam("calculateFieldName") String calculateFieldName,
-			@PathParam("calculateFieldFormula") String calculateFieldFormula,
-			@PathParam("parentMemberUniqueName") String parentMemberUniqueName,
-			@PathParam("axisOrdinal") int axisOrdinal) {
+	public String execute(@PathParam("calculateFieldName") String calculateFieldName, @PathParam("calculateFieldFormula") String calculateFieldFormula,
+			@PathParam("parentMemberUniqueName") String parentMemberUniqueName, @PathParam("axisOrdinal") int axisOrdinal) {
 		logger.debug("IN");
 		Member parentMember;
 		logger.debug("expression= " + calculateFieldFormula);

@@ -20,9 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.NonEmpty;
-import com.eyeq.pivot4j.ui.command.DrillDownCommand;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.NonEmpty;
+import org.pivot4j.ui.command.DrillDownCommand;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ModelConfig implements Serializable {
@@ -241,7 +242,9 @@ public class ModelConfig implements Serializable {
 	}
 
 	/**
-	 * Updates the values of the object coping the values of another configuration.. Not all the modification are copied, id est Scenario and aliases
+	 * Updates the values of the object coping the values of another
+	 * configuration.. Not all the modification are copied, id est Scenario and
+	 * aliases
 	 */
 	public void update(ModelConfig source) {
 		this.drillType = source.drillType;

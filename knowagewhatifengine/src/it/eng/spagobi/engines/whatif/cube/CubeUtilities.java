@@ -37,9 +37,8 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.PlaceMembersOnAxes;
 
 public class CubeUtilities {
 
@@ -130,8 +129,8 @@ public class CubeUtilities {
 			Position p = positions.get(i);
 			String member = p.getMembers().toString();
 			member = member.replace(" ", "");
-			if (member.equals(positionUniqueName)){
-				logger.debug("OUT: fund a member "+member);
+			if (member.equals(positionUniqueName)) {
+				logger.debug("OUT: fund a member " + member);
 				return p;
 			}
 		}
@@ -279,7 +278,9 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and insert it in the cellMembers array (with a substitution)
+	 * Search if the specified member(s) currently exists, retrieve the
+	 * corresponding object(s) and insert it in the cellMembers array (with a
+	 * substitution)
 	 */
 	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
 		boolean memberFound = false;
@@ -434,8 +435,9 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * uniqueNameParts: parts of the unique name of the current cell selected memberToSearchSimpleName: specified level part in the member expression, ex:
-	 * Drink.Dairy in the member name [Product].[Drink.Dairy]
+	 * uniqueNameParts: parts of the unique name of the current cell selected
+	 * memberToSearchSimpleName: specified level part in the member expression,
+	 * ex: Drink.Dairy in the member name [Product].[Drink.Dairy]
 	 */
 	private static String generateUniqueName(String uniqueNameParts[], String memberToSearchSimpleName) {
 		String[] uniqueNamesPartsCopy = new String[uniqueNameParts.length];
@@ -469,7 +471,8 @@ public class CubeUtilities {
 	}
 
 	/*
-	 * Transform a string separated with dot in a string with square brackets separated by dot Ex: Name.Level -> [Name].[Level]
+	 * Transform a string separated with dot in a string with square brackets
+	 * separated by dot Ex: Name.Level -> [Name].[Level]
 	 */
 	private static String formatNameWithSquareBracket(String name) {
 		ArrayList<String> nameParts = new ArrayList<String>();

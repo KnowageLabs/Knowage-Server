@@ -44,10 +44,9 @@ import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property.StandardMemberProperty;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.ChangeSlicer;
-import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.PlaceMembersOnAxes;
 
 @Path("/1.0/hierarchy")
 public class HierarchyResource extends AbstractWhatIfEngineService {

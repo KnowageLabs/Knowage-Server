@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it) 
- * 
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ *
  * @class AxisResource
- * 
+ *
  * Provides utilities to manage the dimensions inside axes
- * 
+ *
  */
 package it.eng.spagobi.engines.whatif.axis;
 
@@ -25,11 +25,10 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.ChangeSlicer;
-import com.eyeq.pivot4j.transform.PlaceHierarchiesOnAxes;
-import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.PlaceHierarchiesOnAxes;
+import org.pivot4j.transform.PlaceMembersOnAxes;
 
 public class AxisDimensionManager {
 
@@ -44,7 +43,7 @@ public class AxisDimensionManager {
 
 	/**
 	 * Service to move an hierarchy from an axis to another
-	 * 
+	 *
 	 * @param fromAxisPos
 	 *            the source axis(0 for rows, 1 for columns, -1 for filters)
 	 * @param toAxisPos
@@ -146,7 +145,7 @@ public class AxisDimensionManager {
 
 	/**
 	 * method to move a hierarchy in the axis
-	 * 
+	 *
 	 * @param axisPos
 	 *            the destination axis(0 for rows, 1 for columns, -1 for
 	 *            filters)
@@ -190,7 +189,7 @@ public class AxisDimensionManager {
 	 * Changes the visibility of the members of a hierarchy. It takes a
 	 * hierarchy, removes all the members and shows only the ones passed in the
 	 * body of the request
-	 * 
+	 *
 	 * @param hierarchy
 	 *            hierarchy to update
 	 * @param members
@@ -224,7 +223,7 @@ public class AxisDimensionManager {
 	/**
 	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in
 	 * the same position
-	 * 
+	 *
 	 * @param axisPos
 	 *            the axis that contains the old hierarchy
 	 * @param newHierarchyUniqueName

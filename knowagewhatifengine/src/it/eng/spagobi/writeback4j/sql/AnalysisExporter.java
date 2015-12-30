@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.writeback4j.sql;
@@ -30,8 +30,7 @@ import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Member;
-
-import com.eyeq.pivot4j.PivotModel;
+import org.pivot4j.PivotModel;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -48,7 +47,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 
 	/**
 	 * Export the output table in CSV
-	 * 
+	 *
 	 * @param connection
 	 *            the connection to the output table
 	 * @param version
@@ -112,7 +111,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 
 	/**
 	 * Export the output table in an external table
-	 * 
+	 *
 	 * @param connection
 	 *            the connection to the output table
 	 * @param version
@@ -138,7 +137,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 
 	/**
 	 * Execute the export query
-	 * 
+	 *
 	 * @param connection
 	 *            the connection to the output table
 	 * @param version
@@ -158,7 +157,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 
 	/**
 	 * Builds the export query
-	 * 
+	 *
 	 * @param connection
 	 *            the connection to the output table
 	 * @param version
@@ -235,8 +234,8 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 		return queryString;
 	}
 
-	private void buildQueryForExport(List<IMemberCoordinates> memberCordinates, Map<TableEntry, String> whereConditions, Set<EquiJoin> joinConditions, Set<String> fromTables,
-			StringBuffer query, Map<String, String> table2Alias) {
+	private void buildQueryForExport(List<IMemberCoordinates> memberCordinates, Map<TableEntry, String> whereConditions, Set<EquiJoin> joinConditions,
+			Set<String> fromTables, StringBuffer query, Map<String, String> table2Alias) {
 		logger.debug("IN");
 
 		StringBuffer from = new StringBuffer();
@@ -263,7 +262,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 	/**
 	 * Build the select clause. Get a select statement for each levels of all
 	 * dimensions
-	 * 
+	 *
 	 * @param memberCordinates
 	 * @param table2Alias
 	 * @param query
