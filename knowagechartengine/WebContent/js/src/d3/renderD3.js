@@ -100,6 +100,7 @@ function renderWordCloud(chartConf){
 				cloud = {};
 
 				cloud.start = function() {
+			
 					var board = zeroArray((size[0] >> 5) * size[1]),
 					bounds = null,
 					n = Math.min(words.length, chartConf.chart.maxWords),
@@ -1613,9 +1614,9 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-
+   
 	var records = data.data[0];
-    console.log(records);
+   
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){
@@ -3190,7 +3191,7 @@ function renderChordChart(jsonData)
 	.style("min-height",20)
 	.style("max-height",400)
 	.style("padding",10)
-	.style("background-color",jsonData.chart.style.backgroundColor)
+	.style("background-color"," rgba(250,250,250,0.75)")
 	.style("font-size",jsonData.tooltip.fontSize)
 	.style("font-family",jsonData.tooltip.fontFamily)
 	.style("border",jsonData.tooltip.border+"px solid black")
