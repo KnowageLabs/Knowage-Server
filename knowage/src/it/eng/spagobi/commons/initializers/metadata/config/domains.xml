@@ -150,6 +150,18 @@
 	<DOMAIN valueCd="org.hibernate.dialect.PostgreSQLDialect"
 		valueNm="sbidomains.nm.postgresql" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.postgresql" />
+	<DOMAIN valueCd="org.hibernate.dialect.neo4j"
+		valueNm="sbidomains.nm.neo4j" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.neo4j" />
+	<DOMAIN valueCd="org.hibernate.dialect.cassandra"
+		valueNm="sbidomains.nm.cassandra" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.cassandra" />
+	<DOMAIN valueCd="org.hibernate.dialect.sparksql"
+		valueNm="sbidomains.nm.sparksql" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sparksql" />
+	<DOMAIN valueCd="org.hibernate.dialect.voltdb"
+		valueNm="sbidomains.nm.voltdb" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.voltdb" />
 	<DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.ingres" />
