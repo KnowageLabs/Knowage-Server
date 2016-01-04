@@ -252,7 +252,7 @@
     
     series: [
     
-	    #set ($first = true)
+	    #set ($counter = 1)
     	#foreach($valueKey in $seriesMap.keySet())
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
 	    	{
@@ -300,14 +300,47 @@
 	    	],
 	    	
 	    	#if($series.size()==2)
-		        size: '45%',
-		        #if($first)
+		        size: '50%',
+		        #if($counter==1)
 		        	center: ['25%', '50%'],
 		        #else
 		        	center: ['75%', '50%'],
 		        #end
-	    		#set ($first = false)
+	    		#set ($counter = $counter + 1)
 		    #end
+		    
+		    #if($series.size()==3)
+		        size: '40%',
+		        #if($counter==1)
+		        	center: ['50%', '25%'],
+		        #end
+		        #if($counter==2)
+		        	center: ['25%', '75%'],
+		        #end
+		        #if($counter==3)
+		        center: ['75%', '75%'],
+		        #end
+	    		#set ($counter = $counter + 1)
+		    #end
+		    
+		     #if($series.size()==4)
+		        size: '35%',
+		        #if($counter==1)
+		        	center: ['25%', '25%'],
+		        #end
+		        #if($counter==2)
+		        	center: ['75%', '25%'],
+		        #end
+		        #if($counter==3)
+		        center: ['25%', '75%'],
+		        #end
+		        #if($counter==4)
+		        center: ['75%', '75%'],
+		        #end
+	    		#set ($counter = $counter + 1)
+		    #end
+		    
+		    
 	        
         	tooltip: { 
 			#set($seriePrefix = $relatedSerie.prefixChar)
