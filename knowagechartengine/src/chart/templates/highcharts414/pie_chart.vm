@@ -277,7 +277,7 @@
 						y: $serieValue,
 						
 						#set($relatedSerieShowValue = $relatedSerie.showValue)
-						#if ($relatedSerieShowValue != '')
+						#if ($relatedSerieShowValue == true)
 						dataLabels: {
 		                    enabled: $relatedSerieShowValue,
 		                    
@@ -285,8 +285,14 @@
 		                    #if ($relatedSerie.precision != '')
 			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
 							#end
+							
 		                    
-		                    format: '{y$precisionValueAsString}'
+		                    format: '<b>{point.name}</b>: {y$precisionValueAsString}'
+		                }
+		                #else
+		                dataLabels: {
+		                    enabled: true,    
+		                    format: '<b>{point.name}</b>: {point.percentage:.'+$relatedSerie.precision+'f}%'
 		                }
 						#end
 					},
