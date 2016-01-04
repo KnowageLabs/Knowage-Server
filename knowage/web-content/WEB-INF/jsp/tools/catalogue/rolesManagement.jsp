@@ -120,7 +120,7 @@
 				       	name ="dropdown" 
 				        ng-required = "true"
 				        ng-model="selectedRole.roleTypeCD"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
+				        ng-repeat="l in listType track by $index" ng-click="comboCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedRole.roleTypeCD== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -229,7 +229,7 @@
 			   <div layout="row" layout-wrap>
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeViewpoints" aria-label="check" name="seeSnapshot">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeViewpoints" aria-label="check" name="seeViewpoints">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -244,7 +244,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSendMail" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSendMail" aria-label="check" name="sendMail">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -258,7 +258,7 @@
 				 <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToBuildQbeQuery" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToBuildQbeQuery" aria-label="check" name="buildQbe">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -272,7 +272,7 @@
 				 <div layout="row" layout-wrap>
 				   <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToDoMassiveExport" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToDoMassiveExport" aria-label="check" name="doMassiveExport">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -286,7 +286,7 @@
 				 <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageUsers" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageUsers" aria-label="check" name="manageUsers">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -296,7 +296,7 @@
 			    <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryBusiness" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryBusiness" aria-label="check" name="manageGlossaryBusiness">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -306,7 +306,7 @@
 			    <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryTechnical" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryTechnical" aria-label="check" name="manageGlossaryTechnical">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -320,7 +320,7 @@
 				 <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToEditWorksheet" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToEditWorksheet" aria-label="check" name="editWorksheet">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -334,7 +334,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableFederatedDataset" aria-label="check">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableFederatedDataset" aria-label="check" name="enableFederatedDataset">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -351,7 +351,7 @@
 				 <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeDocumentBrowser" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeDocumentBrowser" aria-label="check" ng-disabled="disable" name="seeDocBrowser">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -361,7 +361,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyData" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyData" aria-label="check" ng-disabled="disable" name="seeMyData">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -371,7 +371,7 @@
 				<div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable" name="seeFavourites">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -381,7 +381,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubscriptions" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubscriptions" aria-label="check" ng-disabled="disable" name="seeSubscriptions">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -391,7 +391,7 @@
 			   <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeToDoList" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeToDoList" aria-label="check" ng-disabled="disable" name="seeToDoList">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -401,7 +401,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable" name="createDocument">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -411,7 +411,7 @@
 			   <div layout="row" layout-wrap>
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSocialAnalysis" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSocialAnalysis" aria-label="check" ng-disabled="disable" name="createSocialAnalysis">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -421,7 +421,7 @@
 				 <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToViewSocialAnalysis" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToViewSocialAnalysis" aria-label="check" ng-disabled="disable" name="viewSocialAnalysis">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -431,7 +431,7 @@
 			   <div layout="row" layout-wrap>
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToHierarchiesManagement" aria-label="check" ng-disabled="disable">
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToHierarchiesManagement" aria-label="check" ng-disabled="disable" name="hierarchiesManagement">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">

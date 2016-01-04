@@ -69,11 +69,17 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.setDirty = function () {
         $scope.dirtyForm = true;
     }
-
     
+$scope.comboCheck = function(l){ // function that checks if field is necessary and assigns few values to main item on click
+		
+		
+		$scope.selectedRole.roleTypeID=l.VALUE_ID;
+		$scope.selectedRole.roleTypeCD=l.VALUE_CD;
+		
+
+			}
     
     $scope.loadRole = function (item) { // this function is called when item from custom table is clicked
-    	console.log($scope.selectedRole);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -136,10 +142,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     }
 
     $scope.saveRole = function () { // this function is called when clicking on save button
- 
         if($scope.selectedRole.hasOwnProperty("id")){ // if item already exists do update PUT
 			sbiModule_restServices
-		    .put("2.0/roles",$scope.$scope.selectedRole.id,$scope.selectedRole).success(
+		    .put("2.0/roles", $scope.selectedRole.id , $scope.selectedRole).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -159,12 +164,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 					})	
 			
 		}else{ // create new item in database POST
+			console.log($scope.selectedRole);
 			sbiModule_restServices
 		    .post("2.0/roles","",angular.toJson($scope.selectedRole, true)).success(
+		    		
 					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
+				
 							$scope.rolesList=[];
 							$timeout(function(){								
 								$scope.getRoles();
@@ -173,7 +178,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.selectedRole = {};
 							$scope.showme=false;
 							$scope.dirtyForm=false;
-						}
+						
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						console.log(data);
@@ -201,10 +206,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.getDomainType = function(){ // service that gets domain types for dropdown GET
 		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=ROLE_TYPE").success(
 				function(data, status, headers, config) {
+					
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.listType = data;
+						console.log($scope.listType);
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));

@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleBO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -75,10 +76,9 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertRole(@Valid Role body) {
-
+	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
-		Role role = body;
+		Role role = BOtoRole(body);
 
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
@@ -97,10 +97,11 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateRole(@PathParam("id") Integer id, @Valid Role body) {
+	public Response updateRole(@PathParam("id") Integer id, @Valid RoleBO body) {
 
 		IRoleDAO rolesDao = null;
-		Role role = body;
+		Role role = BOtoRole(body);
+		role.setId(body.getId());
 
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
@@ -135,4 +136,45 @@ public class RolesResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	public Role BOtoRole(RoleBO bo) {
+		Role role = new Role();
+		role.setName(bo.getName());
+		role.setCode(bo.getCode());
+		role.setDescription(bo.getDescription());
+		role.setRoleTypeCD(bo.getRoleTypeCD());
+		role.setRoleTypeID(bo.getRoleTypeID());
+
+		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
+		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
+		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
+		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
+		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
+		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
+		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
+		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
+		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
+		role.setIsAbleToSendMail(bo.isAbleToSendMail());
+		role.setIsAbleToEditWorksheet(bo.isAbleToEditWorksheet());
+		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
+		role.setIsAbleToSeeMetadata(bo.isAbleToSeeMetadata());
+		role.setIsAbleToSaveMetadata(bo.isAbleToSaveMetadata());
+		role.setIsAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
+		role.setIsAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
+		role.setIsAbleToManageUsers(bo.isAbleToManageUsers());
+		role.setIsAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
+		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
+		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
+		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
+		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
+		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
+		role.setIsAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
+		role.setIsAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
+		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
+		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
+		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
+
+		return role;
+	}
 }
