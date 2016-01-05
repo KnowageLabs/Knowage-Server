@@ -18,6 +18,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationModel',{
 		'nodataDimension','nodataStyle',
 		
 		'showLegend',
+		'legendTitle',
+		'legendTitleAlign','legendTitleColor','legendTitleFont',
+		'legendTitleDimension','legendTitleStyle',
 		'legendPosition', 'legendLayout',
 		'legendFloating','legendX','legendY',
 		'legendAlign','legendColor','legendFont',

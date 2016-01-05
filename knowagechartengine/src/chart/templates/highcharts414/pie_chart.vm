@@ -210,7 +210,30 @@
         	#else
         	fontWeight: '$chart.LEGEND.style.fontWeight',
         	#end
-        }
+        },
+         title:
+		        {
+		        	text:'$chart.LEGEND.TITLE.text',
+		        	style:
+		        	{	
+		        		color: '$chart.LEGEND.TITLE.style.color',
+		        		align: '$chart.LEGEND.TITLE.style.align',
+		        		
+		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+		        	#end
+		        	}	
+		        }
     },
     
     plotOptions: {

@@ -1201,9 +1201,43 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				LEGEND['ELEMENT'] = ELEMENT;
 
 			} else {
+				
 				LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel
 				.get('showLegend')
 				 : false;
+				
+				var TITLE={};
+				TITLE['text'] = (chartModel.get('legendTitle') != undefined) ? chartModel
+						.get('legendTitle')
+						 : '';
+				
+				var legendTitleStyle = '';
+				legendTitleStyle += 'align:'
+				 + ((chartModel.get('legendTitleAlign') != undefined) ? chartModel
+					.get('legendTitleAlign')
+					 : '') + ';';
+				legendTitleStyle += 'color:'
+				 + ((chartModel.get('legendTitleColor') != undefined && chartModel
+						.get('legendTitleColor') != ''&& chartModel.get('legendTitleColor') != 'transparent') ? '#'
+					 + chartModel.get('legendTitleColor') : '')
+				 + ';';
+				legendTitleStyle += 'fontFamily:'
+				 + ((chartModel.get('legendTitleFont') != undefined) ? chartModel
+					.get('legendTitleFont')
+					 : '') + ';';
+				legendTitleStyle += 'fontWeight:'
+				 + ((chartModel.get('legendTitleStyle') != undefined) ? chartModel
+					.get('legendTitleStyle')
+					 : '') + ';';
+				legendTitleStyle += 'fontSize:'
+				 + ((chartModel.get('legendTitleDimension') != undefined) ? chartModel
+					.get('legendTitleDimension')
+					 : '') + ';';
+
+				TITLE['style'] =legendTitleStyle;
+
+			    LEGEND['TITLE']=TITLE;
+			    
 				LEGEND['position'] = (chartModel
 					.get('legendPosition') != undefined) ? chartModel
 				.get('legendPosition')
@@ -1736,6 +1770,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND
 				 : '';
+			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND.TITLE ? jsonTemplate.CHART.LEGEND.TITLE.text
+					 : '';
+			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND.TITLE ? Sbi.chart.designer.ChartUtils
+					.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style)
+					 : {};
+			
 			var jsonLegendStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils
 				.jsonizeStyle(jsonTemplate.CHART.LEGEND.style)
 				 : {};
@@ -1942,6 +1982,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					nodataStyle : jsonEmptyMsgStyle.fontWeight,
 
 					showLegend : chartLegend.show,
+					legendTitle : jsonLegendTitleText,
+					legendTitleAlign : jsonLegendTitleStyle.align,
+					legendTitleColor : Sbi.chart.designer.ChartUtils
+					.removeStartingHash(jsonLegendTitleStyle.color),
+					legendTitleFont : jsonLegendTitleStyle.fontFamily,
+					legendTitleDimension : jsonLegendTitleStyle.fontSize,
+					legendTitleStyle : jsonLegendTitleStyle.fontWeight,
 					legendPosition : chartLegend.position,
 					legendLayout : chartLegend.layout,
 					legendFloating : chartLegend.floating,
