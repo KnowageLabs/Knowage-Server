@@ -327,6 +327,20 @@
 			        <label>{{translate.load("sbi.roles.worksheet")}}</label>
 			       </div> 
 			   </div>
+			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.enable");}}
+				</md-toolbar>
+				 <div layout="row" layout-wrap>
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableDatasetPersistence" aria-label="check" name="enableDatasetPersistence">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.enableDatasetPersistence")}}</label>
+			       </div> 
+			   </div>
 			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.view");}}
