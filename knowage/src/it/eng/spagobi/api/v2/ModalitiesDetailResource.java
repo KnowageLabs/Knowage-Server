@@ -35,7 +35,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List<Check> getCustom() {
+	public Response getCustom() {
 		ICheckDAO checksDao = null;
 		List<Check> fullList = null;
 
@@ -44,10 +44,10 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			fullList = checksDao.loadCustomChecks();
-			return fullList;
+			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
 	}
@@ -56,27 +56,21 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Check getSingleCheck(@PathParam("id") Integer id) {
+	public Response getSingleCheck(@PathParam("id") Integer id) {
 		ICheckDAO checksDao = null;
-		List<Check> fullList = null;
 
 		try {
+			Check check = new Check();
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			fullList = checksDao.loadCustomChecks();
-			if (fullList != null && !fullList.isEmpty()) {
-				for (int i = 0; i < fullList.size(); i++) {
-					if (fullList.get(i).getCheckId() == id.intValue()) {
-						return fullList.get(i);
-					}
+			check = checksDao.loadCheckByID(id);
+			return Response.ok(check).build();
 
-				}
-			}
 		} catch (Exception e) {
-			logger.error("Error with loading resource" + id, e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
+			logger.error("Check with selected id: " + id + " doesn't exists", e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
 		}
-		return new Check();
+
 	}
 
 	@POST
@@ -99,8 +93,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + id, "UTF-8");
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			logger.error("Error while inserting resource", e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
 		}
 	}
 
@@ -124,8 +118,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource" + id, e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
+			logger.error("Error while modifying resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 
@@ -145,8 +139,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.ok().entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource" + id, e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
+			logger.error("Error with deleting resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 }

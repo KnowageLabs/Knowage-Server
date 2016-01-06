@@ -8,21 +8,50 @@ package it.eng.spagobi.commons.bo;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
+import it.eng.spagobi.services.validation.Xss;
+
 /**
  * Defines a <code>Role</code> object.
  *
- * @author sulis
+ * @author Petrovic Stefan ( o_stpetrov, Stefan.Petrovic@mht.net )
  */
 
 public class RoleBO implements Serializable {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 6593919640188023895L;
+
+	@Xss
+	@NotNull
+	@Max(value = 11)
 	private Integer id;
-	private String name = "";
-	private String description = null;
-	private String roleTypeCD = null;
-	private String code = null;
+	@Xss
+	@NotNull
+	@Max(value = 100)
+	private String name;
+	@Xss
+	@Max(value = 160)
+	private String description;
+	@Xss
+	@NotNull
+	@Max(value = 20)
+	private String roleTypeCD;
+	@Xss
+	@Max(value = 20)
+	private String code;
+	@Xss
+	@NotNull
+	@Max(value = 11)
 	private Integer roleTypeID;
-	private String organization = null;
+	@Xss
+	@Max(value = 20)
+	private String organization;
+
 	private boolean ableToSaveSubobjects;
 	private boolean ableToSeeSubobjects;
 	private boolean ableToSeeViewpoints;

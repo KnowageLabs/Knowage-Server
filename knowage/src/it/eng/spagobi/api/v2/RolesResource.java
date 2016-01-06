@@ -35,7 +35,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List<Role> getRoles() {
+	public Response getRoles() {
 		IRoleDAO rolesDao = null;
 		List<Role> fullList = null;
 
@@ -44,19 +44,18 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			fullList = rolesDao.loadAllRoles();
-			return fullList;
+			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
-
 	}
 
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Role getRoleById(@PathParam("id") Integer id) {
+	public Response getRoleById(@PathParam("id") Integer id) {
 		IRoleDAO rolesDao = null;
 
 		try {
@@ -64,12 +63,11 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			role = rolesDao.loadByID(id);
-			return role;
+			return Response.ok(role).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			logger.error("Role with selected id: " + id + " doesn't exists", e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
 		}
-
 	}
 
 	@POST
@@ -87,10 +85,9 @@ public class RolesResource extends AbstractSpagoBIResource {
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			logger.error("Error while inserting resource", e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
 		}
-
 	}
 
 	@PUT
@@ -110,8 +107,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			logger.error("Error while modifying resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 
@@ -131,8 +128,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			String encodedRole = URLEncoder.encode("" + id, "UTF-8");
 			return Response.ok().entity(encodedRole).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource" + id, e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
+			logger.error("Error with deleting resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 

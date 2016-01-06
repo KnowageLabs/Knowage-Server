@@ -20,6 +20,11 @@ import it.eng.spagobi.services.validation.Xss;
  */
 
 public class Check implements Serializable {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -6563783224257501426L;
+
 	@Xss
 	@NotNull
 	@Max(value = 11)

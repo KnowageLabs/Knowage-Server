@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
@@ -25,7 +26,7 @@ public class ModalitiesResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List<Check> getPredefined() {
+	public Response getPredefined() {
 		ICheckDAO checksDao = null;
 		List<Check> fullList = null;
 
@@ -34,10 +35,8 @@ public class ModalitiesResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			fullList = checksDao.loadPredefinedChecks();
-			return fullList;
-
+			return Response.ok(fullList).build();
 		} catch (Exception e) {
-
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
 		}

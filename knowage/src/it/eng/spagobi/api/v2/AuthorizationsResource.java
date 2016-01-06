@@ -40,9 +40,8 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
-
 	}
 
 	@GET
@@ -61,8 +60,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			return Response.ok(categories).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
-
 	}
 }

@@ -268,7 +268,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     }
     
     $scope.getRoles = function () { // service that gets list of roles GET
-        sbiModule_restServices.get("2.0", "users/roles").success(
+        sbiModule_restServices.get("2.0", "roles").success(
             function (data, status, headers, config) {
                 if (data.hasOwnProperty("errors")) {
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
