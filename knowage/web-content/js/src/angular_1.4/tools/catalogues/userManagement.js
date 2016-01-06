@@ -68,7 +68,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.setDirty = function () {
         $scope.dirtyForm = true;
     }
-
+    
+    /*
+     * 	this function is used to properly fill
+     *  attributes table with attributes from
+     *  selected user																	
+     */
     $scope.setAttributes = function () {
         $scope.tempAttributes = [];
         for (i = 0; i < $scope.usersAttributes.length; i++) {
@@ -90,6 +95,11 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     }
     
+    /*
+     * 	this function is used to properly fill
+     *  roles table with roles from
+     *  selected user																	
+     */
     $scope.setRoles = function () {
         $scope.role = [];
         for (var i = 0; i < $scope.usersRoles.length; i++) {
@@ -100,7 +110,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             }
         }
     }
-
+    
+    /*
+     * 	this function is used to properly format
+     *  selected users roles and attributes
+     *  for adding or updating.
+     *  																	
+     */
     $scope.formatUser = function () {
         var tmpR = [];
         var tmpA = {};
@@ -304,6 +320,14 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     }
 };
 
+/*
+ * 	this directive is used for
+ *  password fields matching.
+ *  its not my code found this
+ *  snippet on internet and it 
+ *  worked best
+ * 																	
+ */
 app.directive('nxEqualEx', function() {
     return {
         require: 'ngModel',

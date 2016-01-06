@@ -95,7 +95,6 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
 	
 	$scope.loadConstraints=function(item){  // this function is called when item from custom table is clicked
-		
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -206,10 +205,41 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		}
 		
 	}
-
+	
+	/*
+     * 	function that adds VALUE_TR property to each Domain Type
+     *  object because of internalization																	
+     */
+	 $scope.addTranslation = function() {
+			
+    	 for ( var l in $scope.listType) {
+ 			switch ($scope.listType[l].VALUE_CD) {
+ 			case "DATE":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.date");
+ 			break;	
+ 			case "REGEXP":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.regexp");
+ 			break;	
+ 			case "MAXLENGTH":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.max");
+ 			break;	
+ 			case "RANGE":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.range");
+ 			break;	
+ 			case "DECIMALS":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.decimal");
+ 			break;
+ 			case "MINLENGTH":
+ 	 		$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbi.modalities.check.details.min");
+ 	 		break;	
+ 			default:
+ 			break;
+ 			}
+ 		}
+	 }
 	$scope.FieldsCheck = function(l){ // function that checks if field is necessary and assigns few values to main item on click
 		
-		$scope.label = l.VALUE_DS;
+		$scope.label = l.VALUE_TR;
 		$scope.SelectedConstraint.valueTypeId=l.VALUE_ID;
 	 $scope.SelectedConstraint.valueTypeCd=l.VALUE_CD;
 		if(l.VALUE_NM == "Range"){
@@ -217,11 +247,11 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		}else{
 			$scope.additionalField= false;
 		}
+		
 	}
 	$scope.getPredefined = function(){ // service that gets predefined list GET
 		sbiModule_restServices.get("2.0", "predefinedChecks").success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
@@ -256,8 +286,8 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						console.log(data);
 						$scope.listType = data;
+						$scope.addTranslation();
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));

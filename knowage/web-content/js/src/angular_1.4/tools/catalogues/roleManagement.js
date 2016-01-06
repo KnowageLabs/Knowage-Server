@@ -7,12 +7,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.showme = false; // flag for showing right side
     $scope.dirtyForm = false; // flag to check for modification
-    $scope.disable = false;
+    $scope.disable = false; // flag that disable some role options
     $scope.translate = sbiModule_translate;
     $scope.selectedRole = {}; // main item
     $scope.rolesList = []; // array that hold list of roles
     $scope.authList = [];  
-    $scope.listType = []; //list that holds list of domain roles (ie. admin,user,tester,developer)
+    $scope.listType = []; // list that holds list of domain roles
     $scope.metaList = [];
     $scope.showActionOK = function (msg) {
         var toast = $mdToast.simple()
@@ -51,7 +51,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         .ariaLabel('toast').ok(
             sbiModule_translate.load("sbi.general.continue")).cancel(
             sbiModule_translate.load("sbi.general.cancel"));
-
+    
 
 
 
@@ -62,7 +62,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	$scope.getDomainType();
     	
     });
-    $scope.roleInit = function(){
+    $scope.roleInit = function(){ // function the inits role object on creation
     	
     	$scope.disable = true;
         $scope.selectedRole.ableToManageGlossaryBusiness= false;
@@ -101,9 +101,11 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         $scope.dirtyForm = true;
     }
     
-    $scope.comboCheck = function(l){ // function that checks if field is
-										// necessary and assigns few values to
-										// main item on click
+    /*
+     * 	function that checks if role is "USER" and enables user available choices
+	 *	also assigns Domain Type values to main item on click																
+     */
+    $scope.comboCheck = function(l){ 
 		
 		$scope.selectedRole.roleTypeID=l.VALUE_ID;
 		$scope.selectedRole.roleTypeCD=l.VALUE_CD;
@@ -112,10 +114,44 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}else{
 				$scope.disable = true;
 			}
+		 
     }
     
-    $scope.loadRole = function (item) { // this function is called when item
-										// from custom table is clicked
+    /*
+     * 	function that adds VALUE_TR property to each Domain Type
+     *  object because of internalization																	
+     */
+    $scope.addTranslation = function() {
+		
+    	 for ( var l in $scope.listType) {
+ 			switch ($scope.listType[l].VALUE_CD) {
+ 			case "USER":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.user");
+ 			break;	
+ 			case "ADMIN":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.admin");
+ 			break;	
+ 			case "DEV_ROLE":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.dev_role");
+ 			break;	
+ 			case "TEST_ROLE":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.test_role");
+ 			break;	
+ 			case "MODEL_ADMIN":
+ 			$scope.listType[l].VALUE_TR = sbiModule_translate.load("sbidomains.nm.model_admin");
+ 			break;	
+ 			default:
+ 			break;
+ 			}
+ 		}
+    	
+	}
+    
+    /*
+     * 	this function is called when item
+     *  from table is clicked																	
+     */
+    $scope.loadRole = function (item) { 
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -126,9 +162,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 
             }, function () {
                 $scope.showme = true;
-                
-              
-                
             });
 
         } else {
@@ -150,11 +183,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         $scope.showme = false;
         $scope.dirtyForm = false;
     }
-
     
-
-    $scope.createRole = function () { // this function is called when clicking
-										// on plus button
+    /*
+     * 	this function is called when clicking
+     *  on plus button(create)																	
+     */
+    $scope.createRole = function () { 
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
             	
@@ -176,10 +210,16 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.showme = true;
         }
     }
-
-    $scope.saveRole = function () { // this function is called when clicking on							// save button
-        if($scope.selectedRole.hasOwnProperty("id")){ // if item already
-														// exists do update PUT
+    
+    /*
+     * 	this function is called when clicking
+     *  on save button.
+     *  If item already exists do update @PUT,
+     *  If item dont exists insert new one @POST
+     *  																
+     */
+    $scope.saveRole = function () { 
+        if($scope.selectedRole.hasOwnProperty("id")){ 
 			sbiModule_restServices
 		    .put("2.0/roles", $scope.selectedRole.id , $scope.selectedRole).success(
 					function(data, status, headers, config) {
@@ -199,10 +239,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					})	
 			
-		}else{ // create new item in database POST
+		}else{
 			sbiModule_restServices
 		    .post("2.0/roles","",angular.toJson($scope.selectedRole, true)).success(
-		    		
 					function(data, status, headers, config) {
 				
 							$scope.rolesList=[];
@@ -237,9 +276,11 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
         })
     }
-    
-    $scope.getDomainType = function(){ // service that gets domain types for
-										// dropdown GET
+    /*
+     * 	service that gets domain types for
+     *  dropdown @GET																	
+     */
+    $scope.getDomainType = function(){									
 		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=ROLE_TYPE").success(
 				function(data, status, headers, config) {
 					
@@ -247,44 +288,23 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.listType = data;
+						$scope.addTranslation();
+						
 					}
+					
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
-				})	
+				})
+				
 	}
+    
     /*
-     * $scope.getAuthorizations = function(){ // service that gets authorizations
-											// GET
-		sbiModule_restServices.get("authorizations","").success( 
-				function(data, status, headers, config) {
-					console.log(data);
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.authList = data.root;
-						
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-				})	
-	}
-    $scope.getMetaModelCategories = function(item){ // service that gets meta
-													// model categories GET
-		sbiModule_restServices.get("2.0/authorizations/metaCategories", item.id).success( 
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.metaList = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-				})	
-	}
-	*/
-    $scope.deleteRole = function (item) { // this function is called when
-											// clicking on delete button
+     * 	this function is called when
+     *  clicking on delete button @DELETE																	
+     */
+    $scope.deleteRole = function (item) { 
+											// 
         sbiModule_restServices.delete("2.0/roles", item.id).success(
             function (data, status, headers, config) {
                 if (data.hasOwnProperty("errors")) {

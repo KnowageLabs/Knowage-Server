@@ -120,7 +120,7 @@
 				       	name ="dropdown" 
 				        ng-required = "true"
 				        ng-model="selectedRole.roleTypeCD"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="comboCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
+				        ng-repeat="l in listType track by $index" ng-click="comboCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_TR}}</md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedRole.roleTypeCD== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
