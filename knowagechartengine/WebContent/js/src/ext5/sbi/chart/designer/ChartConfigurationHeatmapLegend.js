@@ -21,7 +21,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 120,
+		height: 160,
 		
 		title: LN("sbi.chartengine.configuration.heatmap.legendPanel.title"),
 		bodyPadding: 10,
@@ -101,7 +101,70 @@ Ext.define
 	        	}
 	        );
 	        
+	        this.stylePanelLegendTitle = Ext
+			.create(
+					'Sbi.chart.designer.StylePopup',
+					{
+						title : LN('sbi.chartengine.configuration.titlestyle'),
+						viewModel : this.viewModel,
+						bindFontAlign : '{configModel.legendTitleAlign}',
+						bindFont : '{configModel.legendTitleFont}',
+						bindFontDim : '{configModel.legendTitleDimension}',
+						bindFontStyle : '{configModel.legendTitleStyle}',
+						bindColor : '{configModel.legendTitleColor}'
+					});
+	        var stylePanelLegendTitle=this.stylePanelLegendTitle;
+	        var item = [
+									{
+										xtype : 'fieldcontainer',
+
+										/**
+										 * Take the default layout for fields in the
+										 * main panel. It is applied also in other
+										 * fields in this file.
+										 * 
+										 * @author Danilo Ristovski (danristo,
+										 *         danilo.ristovski@mht.net)
+										 */
+										layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+
+										defaults : {
+											/**
+											 * Old implementation (margin) and the
+											 * new one (padding). It is applied also
+											 * in other fields in this file.
+											 * 
+											 * @author Danilo Ristovski (danristo,
+											 *         danilo.ristovski@mht.net)
+											 */
+											margin : Sbi.settings.chart.configurationStep.marginOfTopFieldset
+										},
+
+										items : [
+												{
+													xtype : 'textfield',
+													width : Sbi.settings.chart.configurationStep.widthOfFields,
+													emptyText : LN("sbi.chartengine.configuration.title.emptyText"),
+													bind : '{configModel.legendTitle}',
+													fieldLabel : LN('sbi.chartengine.configuration.title')
+												},
+
+												{
+													xtype : 'button',
+
+													margin : Sbi.settings.chart.configurationStep.marginOfTopFieldsetButtons,
+
+													text : LN("sbi.chartengine.configuration.configurationButton.label"),
+
+													handler : function() {
+														stylePanelLegendTitle.show();
+													}
+												} ]
+									}]
+	        
+	        this.add(item);
         	this.add(align);
         	this.add(symbolHeight);
+        	
 		}
 });

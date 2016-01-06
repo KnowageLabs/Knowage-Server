@@ -540,7 +540,20 @@ function renderHeatmap(chartConf){
             layout: 'vertical',
             verticalAlign: chartConf.legend.style.align,
             //y: (Number(chartHeight)-Number(chartConf.legend.symbolHeight))/2,
-            symbolHeight: Number(chartConf.legend.symbolHeight)
+            symbolHeight: Number(chartConf.legend.symbolHeight),
+            title:{
+            	text:chartConf.legend.title.text,
+            	align:chartConf.legend.title.style.textAlign,
+            	style:{
+            		color: chartConf.legend.title.style.fontColor,
+                    fontSize: chartConf.legend.title.style.fontSize,
+                    fontFamily: chartConf.legend.title.style.fontFamily,
+                    fontStyle: chartConf.legend.title.style.fontStyle ? chartConf.legend.title.style.fontStyle : "none",
+    				textDecoration: chartConf.legend.title.style.textDecoration ? chartConf.legend.title.style.textDecoration : "none",
+    				fontWeight: chartConf.legend.title.fontWeight ? chartConf.legend.title.fontWeight : "none"
+            	}	
+            }
+            
         },
         
         tooltip: {

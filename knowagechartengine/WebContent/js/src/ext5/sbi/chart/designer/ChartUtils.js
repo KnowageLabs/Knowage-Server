@@ -1768,11 +1768,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				.jsonizeStyle(jsonTemplate.CHART.EMPTYMESSAGE.style)
 				 : {};
 
-			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND
-				 : '';
-			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND.TITLE ? jsonTemplate.CHART.LEGEND.TITLE.text
+			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND :{};
+			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND.TITLE.text
 					 : '';
-			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND.TITLE ? Sbi.chart.designer.ChartUtils
+			
+			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils
 					.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style)
 					 : {};
 			
