@@ -210,4 +210,27 @@ public class HierarchyUtils {
 		return convertedDate;
 	}
 
+	public static String createDateAfterCondition(IDataSource dataSource, String filterDate, String beginDtColumn) {
+
+		String fDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+		String dateAfterCondition = " AND " + beginDtColumn + " >= " + fDateConverted;
+
+		return dateAfterCondition;
+
+	}
+
+	public static String createNotInHierarchyCondition(IDataSource dataSource, String hierarchyTable, String hierNameCol, String hierarchyName,
+			String hierTypeCol, String hierarchyType, String dimFilterFieldCol, String selectFilterField, String vDateWhereClause) {
+
+		logger.debug("Filter Hierarchy [" + hierarchyName + "]");
+
+		StringBuffer query = new StringBuffer();
+
+		query.append(" AND " + dimFilterFieldCol + " NOT IN (SELECT " + selectFilterField + " FROM " + hierarchyTable);
+		query.append(" WHERE " + hierNameCol + " = \"" + hierarchyName + "\" AND " + hierTypeCol + " = \"" + hierarchyType + "\" AND " + vDateWhereClause
+				+ " )");
+
+		return query.toString();
+	}
+
 }

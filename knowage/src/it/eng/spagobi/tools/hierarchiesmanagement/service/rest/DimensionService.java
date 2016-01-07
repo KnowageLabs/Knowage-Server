@@ -108,7 +108,8 @@ public class DimensionService {
 	@Path("/dimensionData")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDimensionData(@QueryParam("dimension") String dimensionLabel, @QueryParam("validityDate") String validityDate,
-			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy) {
+			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy,
+			@QueryParam("filterHierType") String filterHierType) {
 
 		logger.debug("START");
 
@@ -140,8 +141,8 @@ public class DimensionService {
 			String dimFilterField = hierarchies.getPrefix(dimensionLabel) + HierarchyConstants.DIM_FILTER_FIELD;
 			String hierFilterField = hierarchies.getPrefix(dimensionLabel) + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
 
-			queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy, hierTableName,
-					dimFilterField, hierFilterField);
+			queryText = this.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy, filterHierType,
+					hierTableName, dimFilterField, hierFilterField);
 
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -175,7 +176,7 @@ public class DimensionService {
 	}
 
 	private String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate, String filterDate,
-			String filterHierarchy, String hierTableName, String dimFilterField, String hierFilterField) {
+			String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField, String hierFilterField) {
 
 		logger.debug("START");
 
@@ -210,23 +211,21 @@ public class DimensionService {
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
 
 		if (filterDate != null) {
-
 			logger.debug("Filter date is [" + filterDate + "]");
 
-			String fDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
-
-			query.append(" AND " + beginDtColumn + " >= " + fDateConverted);
+			query.append(HierarchyUtils.createDateAfterCondition(dataSource, filterDate, beginDtColumn));
 		}
 
 		if (filterHierarchy != null) {
 			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
 
+			String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+			String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 			String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
 			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
-			String whereFilterField = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
-			query.append(" AND " + dimFilterFieldCol + " NOT IN (SELECT " + selectFilterField + "FROM " + hierTableName);
-			query.append(" WHERE " + whereFilterField + " = \"" + filterHierarchy + "\" AND " + vDateWhereClause + " )");
+			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
+					dimFilterFieldCol, selectFilterField, vDateWhereClause));
 		}
 		// ****************forzatura solo per demo GUI ***********************************
 		// * da gestire con paginazione lato server o modifica widget angular table ******

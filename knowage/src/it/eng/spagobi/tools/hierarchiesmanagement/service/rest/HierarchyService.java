@@ -164,7 +164,8 @@ public class HierarchyService {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
 			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
-			@QueryParam("filterDimension") String filterDimension) {
+			@QueryParam("filterDimension") String filterDimension, @QueryParam("optionDate") String optionDate,
+			@QueryParam("optionHierarchy") String optionHierarchy, @QueryParam("optionHierType") String optionHierType) {
 		logger.debug("START");
 
 		HierarchyTreeNode hierarchyTree;
@@ -186,7 +187,8 @@ public class HierarchyService {
 
 			// 2 - execute query to get hierarchies leafs
 			IMetaData metadata = null;
-			String queryText = this.createQueryHierarchy(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDimension);
+			String queryText = this.createQueryHierarchy(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDimension, optionDate,
+					optionHierarchy, optionHierType);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 4 - Create ADT for Tree from datastore
@@ -426,7 +428,7 @@ public class HierarchyService {
 	 * Create query for extracting automatic hierarchy rows
 	 */
 	private String createQueryHierarchy(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate,
-			String filterDimension) {
+			String filterDimension, String optionDate, String optionHierarchy, String optionHierType) {
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
@@ -503,9 +505,10 @@ public class HierarchyService {
 		String hierDateEndColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String vDateConverted = HierarchyUtils.getConvertedDate(hierarchyDate, dataSource);
 
+		String vDateWhereClause = vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn;
+
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = \"" + hierarchyName
-				+ "\" AND " + hierTypeColumn + " = \"" + hierarchyType + "\" AND " + vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted
-				+ " <= " + hierDateEndColumn);
+				+ "\" AND " + hierTypeColumn + " = \"" + hierarchyType + "\" AND " + vDateWhereClause);
 
 		if (filterDimension != null) {
 			logger.debug("Filter dimension is [" + filterDimension + "]");
@@ -516,6 +519,22 @@ public class HierarchyService {
 			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + dimensionName);
 			query.append(" WHERE " + vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn + ")");
 		}
+
+		if (optionDate != null) {
+			logger.debug("Filter date is [" + optionDate + "]");
+
+			query.append(HierarchyUtils.createDateAfterCondition(dataSource, optionDate, hierDateBeginColumn));
+		}
+
+		if (optionHierarchy != null) {
+			logger.debug("Filter Hierarchy is [" + optionHierarchy + "]");
+
+			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
+
+			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierarchyTable, hierNameColumn, optionHierarchy, hierTypeColumn,
+					optionHierType, dimFilterField, dimFilterField, vDateWhereClause));
+		}
+
 		logger.debug("Query for get hierarchies: " + query);
 		return query.toString();
 	}
