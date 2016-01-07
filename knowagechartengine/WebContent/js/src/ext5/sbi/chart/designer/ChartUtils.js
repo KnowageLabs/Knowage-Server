@@ -1744,52 +1744,48 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			.getChartType() == 'PARALLEL' || Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'CHORD';
 		},
+		
 		createChartConfigurationModelFromJson : function (
 			jsonTemplate) {
 
-			var jsonChartStyle = Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.style);
+			var jsonChartStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.style);
 
-			var jsonTitleText = jsonTemplate.CHART.TITLE ? jsonTemplate.CHART.TITLE.text
-				 : '';
-			var jsonTitleStyle = jsonTemplate.CHART.TITLE ? Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.TITLE.style)
-				 : {};
-
-			var jsonSubtitleText = jsonTemplate.CHART.SUBTITLE ? jsonTemplate.CHART.SUBTITLE.text
-				 : '';
-			var jsonSubtitleStyle = jsonTemplate.CHART.SUBTITLE ? Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.SUBTITLE.style)
-				 : {};
-
-			var jsonEmptyMsgText = jsonTemplate.CHART.EMPTYMESSAGE ? jsonTemplate.CHART.EMPTYMESSAGE.text
-				 : '';
-			var jsonEmptyMsgStyle = jsonTemplate.CHART.EMPTYMESSAGE ? Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.EMPTYMESSAGE.style)
-				 : {};
-
-			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND :{};
-			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND.TITLE.text
-					 : '';
+			var jsonTitleText = jsonTemplate.CHART.TITLE ? jsonTemplate.CHART.TITLE.text : '';
 			
-			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style)
-					 : {};
+			var jsonTitleStyle = jsonTemplate.CHART.TITLE ? 
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TITLE.style) : {};
+
+			var jsonSubtitleText = jsonTemplate.CHART.SUBTITLE ? jsonTemplate.CHART.SUBTITLE.text : '';
 			
-			var jsonLegendStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.LEGEND.style)
-				 : {};
+			var jsonSubtitleStyle = jsonTemplate.CHART.SUBTITLE ? 
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.SUBTITLE.style) : {};
+
+			var jsonEmptyMsgText = jsonTemplate.CHART.EMPTYMESSAGE ? 
+					jsonTemplate.CHART.EMPTYMESSAGE.text : '';
+			
+			var jsonEmptyMsgStyle = jsonTemplate.CHART.EMPTYMESSAGE ? 
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.EMPTYMESSAGE.style) : {};
+
+			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND : {};
+			
+			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.TITLE && jsonTemplate.CHART.LEGEND.TITLE.text? 
+					jsonTemplate.CHART.LEGEND.TITLE.text : '';
+			
+			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.TITLE 
+						&& jsonTemplate.CHART.LEGEND.TITLE.style? 
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style) : {};
+			
+			var jsonLegendStyle = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.style?
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.style) : {};
 
 			/**
 			 * Variables used for the SUNBURST chart
 			 * (danilo.ristovski@mht.net)
 			 */
-			var jsonToolbarStyle = jsonTemplate.CHART.TOOLBAR ? Sbi.chart.designer.ChartUtils
-				.jsonizeStyle(jsonTemplate.CHART.TOOLBAR.style)
-				 : '';
+			var jsonToolbarStyle = jsonTemplate.CHART.TOOLBAR ? 
+					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLBAR.style) : '';
 
-			var jsonTipText = jsonTemplate.CHART.TIP ? jsonTemplate.CHART.TIP.text
-				 : '';
+			var jsonTipText = jsonTemplate.CHART.TIP ? jsonTemplate.CHART.TIP.text : '';
 
 			/**
 			 * Variables used for the SUNBURST or HEATMAP chart
@@ -1797,16 +1793,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			var jsonTipStyle = {};
 
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'SUNBURST') {
-				jsonTipStyle = jsonTemplate.CHART.TIP ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.TIP.style)
-					 : '';
-			} else if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'HEATMAP') {
-				jsonTipStyle = jsonTemplate.CHART.TOOLTIP ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style)
-					 : '';
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST') {
+				jsonTipStyle = jsonTemplate.CHART.TIP ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style) : '';
+			} else if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'HEATMAP') {
+				jsonTipStyle = jsonTemplate.CHART.TOOLTIP ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style) : '';
 			}
 
 			/**
@@ -1819,34 +1811,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var jsonParallelLegendTitle = null;
 			var jsonParallelLegendElement = null;
 
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'PARALLEL') {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL') {
 								
-				jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.LIMIT.style)
-					 : '';
+				jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LIMIT.style) : '';
 
-				jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style)
-					 : '';
+				jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style) : '';
 					
-				jsonParallelTooltipStyle = jsonTemplate.CHART.PARALLEL_TOOLTIP ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.PARALLEL_TOOLTIP.style)
-					 : '';
+				jsonParallelTooltipStyle = jsonTemplate.CHART.PARALLEL_TOOLTIP ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.PARALLEL_TOOLTIP.style) : '';
 
-				jsonParallelLegendTitle = jsonTemplate.CHART.LEGEND.TITLE ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style) : "";
+				jsonParallelLegendTitle = jsonTemplate.CHART.LEGEND.TITLE ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style) : '';
 
-				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ? Sbi.chart.designer.ChartUtils
-					.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : "";
+				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ?
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : '';
 			}
 			
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-					.getChartType() == 'CHORD') {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD') {
 				
-				jsonParallelTooltipStyle = jsonTemplate.CHART.TOOLTIP ? Sbi.chart.designer.ChartUtils
-						.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style)
-						 : '';
+				jsonParallelTooltipStyle = jsonTemplate.CHART.TOOLTIP ? 
+						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style) : '';
 			}
 
 			/**
