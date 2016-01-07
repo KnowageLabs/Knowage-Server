@@ -186,7 +186,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.checkLayerWithoutFilter = function(layerConf){
 	
 		geoModule_layerServices.layerWithoutFilter=true;
-	//	if(!geoModule_layerServices.filters[layerConf.layerId]){ geoModule_layerServices.loadedLayer[layerConf.layerId]
 		if(!geoModule_layerServices.layerIsLoaded(layerConf) ){
 			//si sta aggiungendo un layer alla mappa
 			if(!$scope.multipleFilters[layerConf.layerId]){
@@ -206,7 +205,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			}
 		}else{
 			if(!$scope.multipleFilters[layerConf.layerId]){
-				//è STATO RIMOSSO UN LAYER SENZA FILTRI
 				geoModule_layerServices.layerWithoutFilter=false;
 				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
 					//verifico che non è gia caricato un layer senza filtri
@@ -226,7 +224,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 	$scope.checkFilterInthisLayer = function(layerConf){
 		for(var i=0;i<$scope.multipleFilters[layerConf.layerId].length;i++){
-			//se tutti i campi sono null
+			//se è presente un filtro
 			if($scope.multipleFilters[layerConf.layerId][i].model!=""){
 				return false;
 			}
@@ -242,7 +240,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				for(var j=0;j<$scope.multipleFilters[obj].length;j++){
 					if($scope.multipleFilters[obj][j].id != id){
 						if($scope.multipleFilters[obj][j].model!=""){
-
 							return false;
 						}
 					}
@@ -253,17 +250,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 		return true;
 	}
-/*	$scope.removefromList=function(arr,k){
-		var arr_tmp=[];
-		for(var key in arr){
-			if(key == k){
 
-			}else{
-				arr_tmp[key]=arr[key];
-			}
-		}
-		return arr_tmp;
-	}*/
 	$scope.getFilter = function(selectedLayer){
 
 		$scope.layerSelected = selectedLayer;

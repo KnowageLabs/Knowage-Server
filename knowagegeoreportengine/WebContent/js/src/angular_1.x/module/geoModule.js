@@ -468,7 +468,7 @@ geoM.service(
 
 				if (currentInteraction != {} && currentInteraction.type != type) {
 					// remove $map
-					$map.removeInteraction(currentInteraction.obj);
+					//$map.removeInteraction(currentInteraction.obj);
 
 				}
 				// setta il tipo di interazione;
@@ -480,12 +480,12 @@ geoM.service(
 					layerServ.spy();
 
 				} else if (type == 'intersect') {
-					layerServ.setInteraction('intersect');
+					//layerServ.setInteraction('intersect');
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.intersectFeature();
 
 				} else if (type == 'inside') {
-					layerServ.setInteraction('inside');
+				//	layerServ.setInteraction('inside');
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.insideFeature();
 				}
