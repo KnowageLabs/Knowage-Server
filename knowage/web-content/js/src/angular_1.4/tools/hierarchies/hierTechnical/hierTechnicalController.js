@@ -311,7 +311,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			label: $scope.translate.load('sbi.roles.edit'),
 			action : $scope.modifyHier
 		},{
-			label: $scope.translate.load('sbi.hierarchies.node.delete'),
+			label: $scope.translate.load('sbi.generic.delete'),
 			action: $scope.deleteHier
 		}
 	];
@@ -420,8 +420,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			root.name = $scope.hierTarget.HIER_NM;
 			root.type = $scope.hierTarget.HIER_TP;
 			root.isInsert = $scope.targetIsNew;
-			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.hierTreeTarget[0] : $scope.hierTreeTarget;
+			root.root = Array.isArray($scope.hierTreeTarget) ? angular.copy($scope.hierTreeTarget[0]) : angular.copy($scope.hierTreeTarget);
 			root.root.$parent = undefined;
+			//remove c
 			var elements = [root.root];
 			do{
 				var el = elements.shift();
@@ -433,7 +434,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				}
 			}while(elements.length > 0);
 			
-			var jsonString = angular.toJson({root});
+			var jsonString = angular.toJson(root);
 			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
 			promise
 				.success(function (data){
