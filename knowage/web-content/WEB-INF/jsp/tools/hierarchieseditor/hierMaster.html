@@ -30,13 +30,16 @@
 						 		  class="closeSearchBar" style="padding-left:30px;"></md-icon>
 			       	</div> 
 		      	</div>
-		      	<div style="height:60%;position:relative;min-height:30rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
+		      	<div style="position:relative;min-height:30rem;max-height:32rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
 		      		<angular-table
 				        id='dimTable'
 				        ng-model="dimensionsTable"
 					    columns="columnsTable"
 					    columns-search="columnSearchTable"
-					    show-search-bar = "true"	
+					    show-search-bar = "true"
+					    drag-enabled = "true"
+					    enable-clone = "true"
+					    show-empty-placeholder = "true"
 					    no-pagination = false
 					    highlights-selected-item="true"											
 					>
@@ -64,15 +67,15 @@
 				<md-content id='hierarchiesSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
 				        	<label>{{translate.load("sbi.hierarchies.hierarchies");}} {{translate.load("sbi.generic.type");}}</label>
-				        	<md-select type='text' ng-model='hierType' ng-disabled='!dateTree' md-on-close='getHierarchies()'>
+				        	<md-select type='text' ng-model='hierType' ng-disabled='!dateTree || !dim' md-on-close='getHierarchies()'>
 				        		<md-option ng-value="hierType" ng-repeat="hierType in hierarchiesType">{{ hierType}}</md-option>
 				        	</md-select>
 						</md-input-container>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
 			        	<label ng-if=''>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-			        	<md-select type='text' ng-model='hierTarget'  md-on-close='getTree("target")' ng-disabled='!dimTarget || hierarchiesTarget.length==0'>
-			        		<md-option ng-value="hierTarget" ng-repeat="hierTarget in hierarchiesTarget">{{ hierTarget.HIER_NM	}}</md-option>
+			        	<md-select type='text' ng-model='hierMaster'  md-on-close='getTree("target")' ng-disabled='!dim || hierarchiesMaster.length==0'>
+			        		<md-option ng-value="hierMaster" ng-repeat="hierMaster in hierarchiesMaster">{{ hierMaster.HIER_NM	}}</md-option>
 			        	</md-select>
 					</md-input-container>
 				</md-content>
@@ -80,7 +83,7 @@
 					<md-icon ng-if="!seeFilterTarget" class="fa fa-filter" ng-click="toogleSeeFilter('target')"></md-icon>
 					<md-icon ng-if="seeFilterTarget" class="fa fa-times" ng-click="toogleSeeFilter('target')"></md-icon>
 				</md-content>
-				<md-content id='hierarchiesTargetFilters' ng-show='seeFilterTarget' layout-fill>
+				<md-content id='hierarchiesMasterFilters' ng-show='seeFilterTarget' layout-fill>
 					<fieldset class="standard" >
 				        <legend>Filters</legend>
 				        <div layout="column" layout-wrap flex layout-align="space-around stretch">
@@ -110,8 +113,8 @@
 			        </fieldset>
 				</md-content>
 				<md-content>
-					<document-tree id="right" ng-model="hierTree" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
-				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='true' no-drop-enabled='true' enable-clone='true'></document-tree>
+					<document-tree id="master" ng-model="hierTree" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
+				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='false' no-drop-enabled='false' enable-clone='false'></document-tree>
 				</md-content>
 			</md-content>
 		</div>

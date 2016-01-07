@@ -1,8 +1,8 @@
 var app = angular.module('hierManager');
 
-app.controller('hierMasterController', ["sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
+app.controller('hierMasterController', ["$timeout","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
-function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
+function masterControllerFunction ($timeout,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -64,7 +64,7 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 	
 	$scope.createTable = function(data){
 		$scope.dimensionsTable = data.root;
-		$scope.columnsTable = [];
+		$scope.columnsTable.splice(0,$scope.columnsTable.length);
 		for (var i = 0;i<data.columns.length;i++){
 			if (data.columns[i].VISIBLE == true || data.columns[i].VISIBLE == "true"){
 				$scope.columnsTable.push({ 'label' : data.columns[i].NAME, 'name': data.columns[i].ID});
@@ -79,7 +79,6 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 		var type = $scope.hierType;
 		var dim = $scope.dim;
 		var map = $scope.hierarchiesMap; 
-		var hierarchies = choose == 'src' ? $scope.hierarchiesSrc : $scope.hierarchiesTarget;
 		if (type !== undefined && dim !== undefined){
 			var dimName = dim.DIMENSION_NM;
 			var keyMap = type+'_'+dimName; 
@@ -92,7 +91,7 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
 								map[keyMap] = data;
-								choose == 'src' ?  $scope.hierarchiesSrc =  angular.copy(data) : $scope.hierarchiesTarget =  angular.copy(data);
+								hierarchiesMaster =  angular.copy(data);
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
@@ -103,7 +102,7 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 						
 					});
 			}else{
-				choose == 'src' ? $scope.hierarchiesSrc = map[keyMap] : $scope.hierarchiesTarget = map[keyMap];
+				$scope.hierarchiesMaster = map[keyMap];
 			}
 		}
 		//get the metadata for the dimension

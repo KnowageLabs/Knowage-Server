@@ -37,33 +37,24 @@ data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone ==
 		</ol>
 </script>
 <!-- data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone == true}}" data-drag-delay='500' 
-		data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}" -->
-<!-- create the tree structure -->
-<script type="text/ng-template" id="tree_renderer.html">
-	<div ui-tree  id="{{id}}-tree-container" data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-drag-delay='500' 
-		data-empty-placeholder-enabled="{{showEmptyPlaceholder}}">	
-		<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
-			<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
-				context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-			</li>
-		</ol>
-	</div>
-</script>
+		data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}" 
+		
+data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-drag-delay='500' 
+			data-empty-placeholder-enabled="{{showEmptyPlaceholder}}"
+		-->
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
 <div ng-show='seeTree == true'>
-	<!-- change layout basing on browser -->
-	<div ng-if="browser == 'firefox'" layout-padding>
-		<ng-include src="'tree_renderer.html'"></ng-include>
-	</div ng-if="browser == 'firefox'">
-	
-	<md-content ng-if="browser == 'chrome'" layout-fill>
-		<ng-include src="'tree_renderer.html'"></ng-include>
-	</md-content ng-if="browser == 'chrome'">
-	
-	<md-content ng-if="browser != 'chrome' && browser != 'firefox'" layout-fill>
-		<ng-include src="'tree_renderer.html'"></ng-include>	
-	</md-content ng-if="browser != 'chrome' && browser != 'firefox'">
+	<div class="{{classLayout}}" id ="{{id}}">
+		<!-- create the tree structure -->
+		<div ui-tree  id="tree-container" >	
+			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
+				<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
+					context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+				</li>
+			</ol>
+		</div>
+	</div>
 </div>
  
 <md-content class='waitingContainer' ng-hide='seeTree == true' layout='row' layout-padding layout-align ='space-around center'>

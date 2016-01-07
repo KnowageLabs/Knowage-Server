@@ -77,74 +77,76 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 						thead.attr('angular-table-head',"");
 						//create tbody
 						tbody.attr('angular-table-body',"");
-
-						//create the column of the table. If attrs.column is present load only this column, else load all the columns
-						scope.tableColumns=[];
 						
-						
-						if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
-							scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
-							thead.attr('multi-select',true);
-							tbody.attr('multi-select',true);
-						}
-						
-						if(attrs.dragEnabled && (attrs.dragEnabled==true || attrs.dragEnabled=="true")){
-							scope.tableColumns.push({label:"",name:"--DRAG_AND_DROP--",size:"1px"});
-						}else{
-							tbody.attr('no-drag-and-drop',true);
-						}
-						if(attrs.columnsSearch){
-							var colSearch=scope.columnsSearch;
-							if(Object.prototype.toString.call(colSearch)=="[object String]"){
-								//if is a string, convert it to object
-								scope.columnsSearch=JSON.parse(colSearch);
+						scope.initializeColumns = function(){
+							//create the column of the table. If attrs.column is present load only this column, else load all the columns
+							scope.tableColumns=[];
+							
+							
+							if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
+								scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
+								thead.attr('multi-select',true);
+								tbody.attr('multi-select',true);
 							}
-						}
-						
-						if(attrs.columns){
-							var col=scope.columns;
-							if(Object.prototype.toString.call(col)=="[object String]"){
-								//if is a string, convert it to object
-								col=JSON.parse(col);
+							
+							if(attrs.dragEnabled && (attrs.dragEnabled==true || attrs.dragEnabled=="true")){
+								scope.tableColumns.push({label:"",name:"--DRAG_AND_DROP--",size:"1px"});
+							}else{
+								tbody.attr('no-drag-and-drop',true);
 							}
-							 
-							for(var i=0;i<col.length;i++){
-								var tmpColData={};
-								if(Object.prototype.toString.call(col[i])=="[object Object]"){
-									//json of parameter like name, label,size
-									tmpColData.name=col[i].name || "---";
-									tmpColData.label=col[i].label || tmpColData.name;
-									tmpColData.size=col[i].size || "";
-								}else{
-									//only the col name
-									tmpColData.label=col[i];
-									tmpColData.name=col[i];
-									tmpColData.size="";
+							if(attrs.columnsSearch){
+								var colSearch=scope.columnsSearch;
+								if(Object.prototype.toString.call(colSearch)=="[object String]"){
+									//if is a string, convert it to object
+									scope.columnsSearch=JSON.parse(colSearch);
 								}
-
-								scope.tableColumns.push(tmpColData);
 							}
-						}else{
-							//load all
-							var firstValue=scope.ngModel[0];
-							if(firstValue!=undefined){
-								for(var key in firstValue){
+							
+							if(attrs.columns){
+								var col=scope.columns;
+								if(Object.prototype.toString.call(col)=="[object String]"){
+									//if is a string, convert it to object
+									col=JSON.parse(col);
+								}
+								 
+								for(var i=0;i<col.length;i++){
 									var tmpColData={};
-									tmpColData.label=key;
-									tmpColData.name=key;
-									tmpColData.size="";
+									if(Object.prototype.toString.call(col[i])=="[object Object]"){
+										//json of parameter like name, label,size
+										tmpColData.name=col[i].name || "---";
+										tmpColData.label=col[i].label || tmpColData.name;
+										tmpColData.size=col[i].size || "";
+									}else{
+										//only the col name
+										tmpColData.label=col[i];
+										tmpColData.name=col[i];
+										tmpColData.size="";
+									}
+
 									scope.tableColumns.push(tmpColData);
 								}
+							}else{
+								//load all
+								var firstValue=scope.ngModel[0];
+								if(firstValue!=undefined){
+									for(var key in firstValue){
+										var tmpColData={};
+										tmpColData.label=key;
+										tmpColData.name=key;
+										tmpColData.size="";
+										scope.tableColumns.push(tmpColData);
+									}
+								}
+							}
+							//add speed menu column at the end of the table
+							if(attrs.speedMenuOption ){
+								scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
+								thead.attr('speed-menu-option',true);
+								tbody.attr('speed-menu-option',true);
 							}
 						}
-						//add speed menu column at the end of the table
-						if(attrs.speedMenuOption ){
-							scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
-							thead.attr('speed-menu-option',true);
-							tbody.attr('speed-menu-option',true);
-						}
 
-						
+						scope.initializeColumns();
 						
 						//check for pagination
 						if(!attrs.totalItemCount){
@@ -154,15 +156,11 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 							paginBox.removeAttr("on-page-change");
 							tbody.attr('local-pagination',true);
 						}
-						if(attrs.noPagination){
+						if(attrs.noPagination && (attrs.noPagination == true || attrs.noPagination == "true")){
 							scope.itemsPerPage=999;
 						}else{
 							scope.itemsPerPage=3;
 						}
-
-
-					
-
 
 						$compile(thead)(scope);
 						$compile(tbody)(scope);
@@ -376,6 +374,12 @@ function TableControllerFunction($scope,$timeout){
 			$scope.changeWordItemPP();
 		}
 	}, true);
+	
+	$scope.$watchCollection('columns',function(newValue,oldValue){
+		if (!angular.equals(newValue,oldValue)){
+			$scope.initializeColumns();
+		}
+	});
 
 }
 

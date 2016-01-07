@@ -111,7 +111,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 				var treeElement = angular.element(element[0].querySelector('#tree-container'));
 				if (scope.dragEnabled == true){
 					treeElement.attr('data-drag-enabled','true');
-					treeElement.attr('data-drag-delay',500);
+					treeElement.attr('data-drag-delay',600);
 				}
 				if (scope.enableClone == true){
 					treeElement.attr('data-clone-enabled','true');
@@ -304,5 +304,10 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
     }
     
 	$scope.browser = $scope.detectBrowser();
-
+	
+	if ($scope.browser == 'firefox'){
+		$scope.classLayout='layout-padding';
+	}else{
+		$scope.classLayout='layout-fill';
+	}
 }
