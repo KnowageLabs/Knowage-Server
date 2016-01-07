@@ -84,7 +84,7 @@ function geoMapMenuControllerFunction(
 		console.log($scope.selectMisure, $scope.measureInsert);
 		if($scope.selectMisure=="miglia"){
 			//conversione in km
-			$scope.measureInsert=$scope.measureInsert*1.8;
+			$scope.measureInsert=$scope.measureInsert*1.852;
 		}
 		
 		geoModule_layerServices.measure=$scope.measureInsert*500;

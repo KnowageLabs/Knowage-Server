@@ -162,29 +162,32 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 		
 		if(geoModule_layerServices.filters[layerConf.layerId]){
-			//lo contiene già quindi si sta rimuovendo CHECK OFF
+			//lo contiene già quindi si staNNO RIMUOVENDO I FILTRI
 			//$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
 			delete $scope.listCheckedfilter[layerConf.layerId];
 		}else{
-			//check on 
+			//AGGIUNGO FILTRI
 			if($scope.multipleFilters[layerConf.layerId]){
 				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
+				
 			}
+		
+			
 		}
+	
+		$scope.checkLayerWithoutFilter(layerConf);
 		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
-
-		$scope.checkLayerWithoutFilter(layerConf);
-		$timeout(function() {
-			$map.updateSize();
-			$map.render();
-		}, 500);
+		
+		
 
 	};
 	//start code for filters 
 	$scope.checkLayerWithoutFilter = function(layerConf){
+	
 		geoModule_layerServices.layerWithoutFilter=true;
-		if(!geoModule_layerServices.filters[layerConf.layerId]){
+	//	if(!geoModule_layerServices.filters[layerConf.layerId]){ geoModule_layerServices.loadedLayer[layerConf.layerId]
+		if(!geoModule_layerServices.layerIsLoaded(layerConf) ){
 			//si sta aggiungendo un layer alla mappa
 			if(!$scope.multipleFilters[layerConf.layerId]){
 				//vuol dire che il layer non ha filtri!
@@ -202,8 +205,15 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 			}
 		}else{
-			geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
-			//geoModule_layerServices.layerWithoutFilter=false;
+			if(!$scope.multipleFilters[layerConf.layerId]){
+				//è STATO RIMOSSO UN LAYER SENZA FILTRI
+				geoModule_layerServices.layerWithoutFilter=false;
+
+			}else{
+				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
+
+			}
+			
 		}
 	}
 
@@ -211,7 +221,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		for(var i=0;i<$scope.multipleFilters[layerConf.layerId].length;i++){
 			//se tutti i campi sono null
 			if($scope.multipleFilters[layerConf.layerId][i].model!=""){
-				console.log("Naaaaaa");
 				return false;
 			}
 
