@@ -122,18 +122,21 @@
 			<div layout="row" layout-wrap>
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.confPwd")}}</label>
-					<input ng-model="tempPwdConfirm" type="password"
+					<input ng-model="selectedUser.confirm" type="password"
 						name="confirm_password" required ng-maxlength="100" ng-change="setDirty()"
 						nx-equal-ex="selectedUser.password">
+					<div ng-messages="attributeForm.confirm_password.$error"
+						ng-show="selectedUser.confirm== null">
+						<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+					</div>	
 					<div ng-messages="attributeForm.confirm_password.$error"
 						ng-show="attributeForm.confirm_password.$error.nxEqualEx">
 						<div ng-message="required">{{translate.load("sbi.users.pwdNotMatching");}}</div>
 					</div>
-					
-
 					</md-input-container>
 				</div>
 			</div>
+			
 			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.users.roles");}}'> <md-content
 				flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder"> <angular-table

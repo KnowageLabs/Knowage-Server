@@ -6,7 +6,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     //VARIABLES
 
     $scope.showme = false; // flag for showing right side 
-    $scope.tempPwdConfirm = null;
     $scope.dirtyForm = false; // flag to check for modification
     $scope.translate = sbiModule_translate;
     $scope.selectedUser = {}; // main item
@@ -131,7 +130,14 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             }
         }
         $scope.selectedUser.sbiUserAttributeses = tmpA;
+        delete $scope.selectedUser.confirm;
     }
+    
+    $scope.addConfirmPwdProp = function() {
+   	 for ( var l in $scope.usersList) {
+   		$scope.usersList[l].confirm = null;
+		}
+	}
     
     $scope.loadUser = function (item) { // this function is called when item from custom table is clicked
     	console.log($scope.selectedUser);
@@ -142,12 +148,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.setRoles();
                 $scope.setAttributes();
                 $scope.showme = true;
-                $scope.tempPwdConfirm = $scope.selectedUser.password;
+                $scope.selectedUser.confirm = $scope.selectedUser.password;
              
                 
             }, function () {
                 $scope.showme = true;
-                $scope.tempPwdConfirm = $scope.selectedUser.password;
+                $scope.selectedUser.confirm = $scope.selectedUser.password;
               
                 
             });
@@ -158,14 +164,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.setRoles();
             $scope.setAttributes();
             $scope.showme = true;
-            $scope.tempPwdConfirm = $scope.selectedUser.password;
+            $scope.selectedUser.confirm = $scope.selectedUser.password;
           
         }
     }
 
     $scope.cancel = function () { // on cancel button
         $scope.selectedUser = {};
-        $scope.tempPwdConfirm = null;
         $scope.showme = false;
         $scope.dirtyForm = false;
         $scope.tempAttributes = [];
@@ -179,7 +184,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
             	
-            	$scope.tempPwdConfirm = null;
                 $scope.dirtyForm = false;
                 $scope.selectedUser = {};
                 $scope.showme = true;
@@ -187,14 +191,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 
             }, function () {
-            	$$scope.tempPwdConfirm = null;
+            	
                 $scope.showme = true;
                 
             });
 
         } else {
             $scope.selectedUser = {};
-            $scope.tempPwdConfirm = null;
             $scope.showme = true;
             $scope.setAttributes();
         }
@@ -206,7 +209,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			sbiModule_restServices
 		    .put("2.0/users",$scope.selectedUser.id,$scope.selectedUser).success(
 					function(data, status, headers, config) {
-						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
@@ -218,19 +220,15 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;	
-							$scope.tempPwdConfirm = null;
-							
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						console.log(data);
 					})	
 			
 		}else{ // create new item in database POST
 			sbiModule_restServices
 		    .post("2.0/users","",angular.toJson($scope.selectedUser, true)).success(
 					function(data, status, headers, config) {
-						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
@@ -242,12 +240,9 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;
-							$scope.tempPwdConfirm = null;
-							
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						console.log(data);
 					})	
 			
 			
@@ -261,6 +256,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
                 } else {
                     $scope.usersList = data;
+                    $scope.addConfirmPwdProp();
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -274,7 +270,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
                 } else {
                     $scope.usersRoles = data;
-
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -311,7 +306,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                     $scope.selectedUser = {};
                     $scope.showme = false;
                     $scope.dirtyForm = false;
-                    $scope.tempPwdConfirm = null;
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));
