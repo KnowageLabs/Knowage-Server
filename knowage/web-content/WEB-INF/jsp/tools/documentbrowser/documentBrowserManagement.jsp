@@ -12,11 +12,6 @@
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentbrowser/css/md-data-table.min.css">
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentbrowser/css/documentBrowser.css">
 	
-	<!--
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentbrowser/css/style.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-	-->
-	
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script>
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
@@ -26,80 +21,84 @@
 
 <body class="bodyStyle" ng-app="documentBrowserModule" id="ng-app">
 	<div layout="column" ng-controller="documentBrowserController as ctrl" ng-cloak>
+		<!-- 
 		<div>folderDocuments.length = {{folderDocuments.length}}</div>
 		<div>searchDocuments.length = {{searchDocuments.length}}</div>
 		<div>showSearchResultHeader() = {{showSearchResultHeader()}}</div>
 		<div>showDefaultHeader() = {{showDefaultHeader()}}</div>
 		<div>showBreadcrumbHeader() = {{showBreadcrumbHeader()}}</div>
+		<div>selectedFolder = {{selectedFolder.name}}</div>
+		-->
 		
 		<!-- Toolbar -->
 		<md-toolbar class="header">
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
-			
 				<!-- Folders button -->
-				<md-button class="toolbar-button-custom" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-click="toggleFolders()">
+				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
 					<i class="fa fa-bars" style="color:white"></i>
 				</md-button>
 				
 				<!-- Title -->
-				<h2 ng-hide="showSearchView">Document Browser</h2>
+				<h1 ng-hide="showSearchView">Document Browser</h1>
 				
 				<!-- Search back -->
-				<md-button class="md-icon-button" aria-label="Back" style="margin-right:0px;" ng-show="showSearchView" ng-click="showSearchView=!showSearchView">
+				<md-button class="md-icon-button" title="Back" aria-label="Back" style="margin-right:0px;" ng-show="showSearchView" ng-click="toggleSearchView()">
 					<i class="fa fa-arrow-left" style="color:white"></i>
 				</md-button>
 				
 				<!-- Search input -->
-				<md-input-container md-no-float style="padding-bottom:0px;" flex ng-show="showSearchView">
-					<input class="header" type="text" ng-model="searchInput" placeholder="Search documents" style="margin-left:5px;" ng-change="setSearchInput(searchInput)" key-enter="setSearchInput(searchInput)">
+				<md-input-container ng-show="showSearchView">
+					<label class="header" for="searchInput">Search documents</label>
+					<input class="header" type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
 				</md-input-container>
 				
 				<!-- Search clear -->
-				<md-button class="md-icon-button" aria-label="Clear" ng-show="showSearchView" ng-click="setSearchInput('')">
+				<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show="showSearchView" ng-click="setSearchInput('')">
 					<i class="fa fa-times" style="color:white"></i>
 				</md-button>
 				
 				<span flex=""></span>
 				
 				<!-- Document view button -->
-				<md-button title="{{showDocumentGridView?'List view':'Grid view'}}" class="toolbar-button-custom" ng-hide="showSearchView" ng-click="toggleDocumentView()">
+				<md-button title="{{showDocumentGridView?'List view':'Grid view'}}" aria-label="{{showDocumentGridView?'List view':'Grid view'}}" class="toolbar-button-custom" ng-hide="showSearchView" ng-click="toggleDocumentView()">
 					<i class="fa fa-th-list" style="color:white" ng-show="showDocumentGridView"></i>
 					<i class="fa fa-th" style="color:white" ng-hide="showDocumentGridView"></i>
 				</md-button>
 				
 				<!-- Search button -->
-				<md-button title="Search" class="toolbar-button-custom" ng-hide="showSearchView" ng-click="showSearchView=!showSearchView">
+				<md-button class="toolbar-button-custom" title="Search" aria-label="Search" ng-class="{'md-raised':showSearchView}" ng-click="toggleSearchView()">
 					<i class="fa fa-search" style="color:white"></i>
 				</md-button>
 				
 				<!-- Document Detail button-->
-				<md-button title="Details" ng-class="{'md-raised':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" class="toolbar-button-custom" ng-disabled="!isSelectedDocumentValid()">
+				<md-button class="toolbar-button-custom" title="Details" aria-label="Details" ng-class="{'md-raised':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" ng-disabled="!isSelectedDocumentValid()">
 					<i class="fa fa-info-circle" style="color:white"></i>
 				</md-button>
 				
 				<!-- Settings button-->
-				<md-button title="Settings" class="toolbar-button-custom" ng-click="alert('Settings')">
+				<md-button class="toolbar-button-custom" title="Settings" aria-label="Settings" ng-click="alert('Settings')">
 					<i class="fa fa-cog header"></i>
 				</md-button>
+				
 			</div>
 		</md-toolbar>
-
+	
 		<section layout="row" flex>
 			
 			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
 				<md-toolbar class="header">
-        			<h3 class="md-toolbar-tools">Folders</h3>
-      			</md-toolbar>
-      			<document-tree ng-model="folders" create-tree="true" click-function="setSelectedFolder(item)" multi-select="false"></document-tree>
+	       			<h3 class="md-toolbar-tools">Folders</h3>
+     			</md-toolbar>
+     			<document-tree ng-model="folders" create-tree="true" drag-enabled="false" click-function="setSelectedFolder(item)" multi-select="false"></document-tree>
 			</md-sidenav>
-			
-			<md-content layout="column" flex>
+
+			<md-content layout-padding flex>
 				<div ng-include="'search_result_header.html'" ng-show="showSearchResultHeader()"></div>
-				<div layout="row" ng-include="'breadcrumbs_header.html'" ></div>
+				<div layout="row" ng-hide="showSearchView" ng-include="'breadcrumbs_header.html'" ></div>
 				<div ng-include="'no_documents.html'" ng-show="showDefaultHeader()"></div>
 				
 				<!-- Document List View -->
-				<div layout="column" ng-hide="showDocumentGridView" ng-class="{'doc-list-border': folderDocuments.length>0}" flex> 
+				<div layout="column" ng-hide="showDocumentGridView || showSearchView" ng-class="{'doc-list-border': folderDocuments.length>0}" flex> 
 					<md-data-table-container ng-show="folderDocuments.length>0">
 						<table md-data-table>
 							<thead md-order="documentsOrderProperty" style="height: 75px;">
@@ -123,7 +122,7 @@
 				</div>
 				
 				<!-- Document Grid View -->
-				<div layout="column" ng-show="showDocumentGridView" flex>
+				<div layout="column" ng-hide="!showDocumentGridView || showSearchView" flex>
 					<div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;">
 						<md-whiteframe flex="25" layout layout-align="center center" ng-repeat="document in folderDocuments">
 							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="alert(document.name)" ng-class="{'selected-doc':wasSelected(document)}">
@@ -137,9 +136,8 @@
 						</md-whiteframe>
 					</div>
 				</div>
-			</md-content>
 			
-			<!-- Document Search View -->
+				<!-- Document Search View -->
 				<div layout="column" ng-show="showSearchView" ng-class="{'doc-list-border': searchDocuments.length>0}" flex> 
 					<md-data-table-container ng-show="searchDocuments.length>0">
 						<table md-data-table>
@@ -162,24 +160,25 @@
 						</table>
 					</md-data-table-container>
 				</div>
+			</md-content>
 		
 			<md-sidenav class="md-sidenav-right selected-doc" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
 				<md-toolbar class="header" style="height: 75px;">
 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1>
 					<div layout="row" layout-align="center center">
-						<md-button title="Execute Document" class="toolbar-button-custom" ng-click="alert('Executing '+selectedDocument.name+'...')">
+						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="alert('Executing '+selectedDocument.name+'...')">
 							<i class="fa fa-play-circle" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Edit Document" class="toolbar-button-custom" ng-click="alert('Editing '+selectedDocument.name+'...')">
+						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" ng-click="alert('Editing '+selectedDocument.name+'...')">
 							<i class="fa fa-pencil" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Clone Document" class="toolbar-button-custom" ng-click="alert('Cloning '+selectedDocument.name+'...')">
+						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" ng-click="alert('Cloning '+selectedDocument.name+'...')">
 							<i class="fa fa-clone" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Delete Document" class="toolbar-button-custom" ng-click="alert('Deleting '+selectedDocument.name+'...')">
+						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" ng-click="alert('Deleting '+selectedDocument.name+'...')">
 							<i class="fa fa-trash-o" style="color:white"></i>
 						</md-button>
 					</div>
@@ -221,7 +220,7 @@
 	</script>
 	
 	<script type="text/ng-template" id="search_result_header.html">
-		<h3 class="md-title">{{searchDocuments.length}} documents found.</h3>
+		<h3 class="md-title">{{searchDocuments.length || 0}} documents found.</h3>
 	</script>
 
 	<script type="text/ng-template" id="no_documents.html">
@@ -230,9 +229,13 @@
 
 	<!-- Should be included in a div with layout row-->
 	<script type="text/ng-template" id="breadcrumbs_header.html">
-		<div ng-repeat="folderChild in getFolderAncestors(selectedFolder)">
-			<span ng-hide="$first">&gt;</span>
-			<md-button ng-click="setSelectedFolder(folderChild)">{{folderChild.NAME}}</md-button>
+		<div ng-repeat="folderChild in getFolderAncestors(selectedFolder, folders)">
+			<span ng-hide="$first">
+				&gt;
+			</span>
+			<md-button ng-click="setSelectedFolder(folderChild)">
+				{{folderChild.name}}
+			</md-button>
 		</div>
  	</script>
 </body>

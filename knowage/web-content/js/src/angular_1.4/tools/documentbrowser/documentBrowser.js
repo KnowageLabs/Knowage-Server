@@ -19,32 +19,36 @@ var reverseInPlace = function (array) {
 	}
 };
 
-var getFolderAncestors = function (folder) {
+var getFolderById = function(folderId, folders) {
+	for (var i = 0; i < folders.length; i++) {
+		var folder = folders[i];
+		if (folder.id === folderId) {
+			return folder;
+		}
+		var subFolder = getFolderById(folderId, folder.subfolders);
+		if(subFolder !== null) {
+			return subFolder; 
+		}
+	}
+	return null;
+}
+
+var getFolderAncestors = function (folder, folders) {
 	if (folder==null) {
 		return []; //avoid error when invisible
 	}
 	var res = [folder]; //with folder himself
-	while (folder.parent != null) {
-		folder=folder.parent;
-		res.push(folder);
+	while (folder.parentId !== null) {
+		folder = getFolderById(folder.parentId, folders);
+		if (folder !== null) {
+			res.push(folder);
+		}
 	}
-	res.pop();
+	// res.pop();
 	//no called by the root
 	assert(res.length != 0);
 	reverseInPlace(res);
 	return res;
-};
-
-var getBreadCrumbs = function (folder) {
-	assert(folder != null);
-	var ancestors = getFolderAncestors(folder);
-	assert(ancestors!=null && ancestors.length!=0); //at least the folder
-	var res ="";
-	//from 1, remove the 'Functionalities' root
-	for (var i = 0; i < ancestors.length; i++) {
-		res+=" > "+ancestors[i].NAME;
-	};
-	return res.substring(3);
 };
 
 var stringStartsWith=function (s, prefix) {
@@ -53,7 +57,7 @@ var stringStartsWith=function (s, prefix) {
 
 var app = angular.module('documentBrowserModule', ['md.data.table','ngMaterial','ui.tree','sbiModule','document_tree']);
 
-app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', function($scope, $mdSidenav, sbiModule_translate, sbiModule_restServices) {
+app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'setFocus', function($scope, $mdSidenav, sbiModule_translate, sbiModule_restServices, setFocus) {
 	
 	$scope.folders = [];
 	
@@ -63,7 +67,6 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 	
 	$scope.folderDocuments = [];
 	$scope.searchDocuments = [];
-	$scope.getBreadCrumbs = getBreadCrumbs;
 	$scope.getFolderAncestors = getFolderAncestors;
 
 	//Folder selection
@@ -75,7 +78,7 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 	$scope.setSelectedFolder = function (folder) {
 		if (folder !== $scope.selectedFolder) {
 			
-			if ($scope.selectedFolder != null){
+			if ($scope.selectedFolder !== null){
 				$scope.selectedFolder.selected = false; // disable selection on previous folder
 			}
 			
@@ -116,8 +119,7 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 	$scope.showDocumentDetail = false;
 	
 	$scope.setDetailOpen = function(isOpen) {
-		var detailSidenav = $mdSidenav('right');
-		if (isOpen && !detailSidenav.isLockedOpen() && !detailSidenav.isOpen()) {
+		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
 			$scope.toggleDocumentDetail();
 		}
 
@@ -141,16 +143,6 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 		return $scope.selectedDocument === document;
 	};
 	
-	//check if the document selected is still in documents shown
-	var checkDocumentSelected = function() {
-		for (i=0; i<$scope.documents.length; i++) {
-			if ($scope.documents[i] === $scope.selectedDocument) {
-				return; // the document is already shown
-			}
-		}
-		$scope.selectDocument(null); // the document is not shown
-	};
-	
 	$scope.setDetailOpen(false);
 	
 	$scope.documentsOrderProperty="BIOBJ_TYPE_CD";
@@ -158,72 +150,22 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 	//Search
 	
 	$scope.showSearchView = false;
-	
-	$scope.previousSearchInput = "";
-	$scope.previousSearchDocumentsResult = [];
-	//properties to show
-	var properties=["BIOBJ_TYPE_CD","NAME","CREATION_DATE","CREATION_USER"];
+	$scope.searchInput = "";
+	$scope.isSearchInputFocused = false;
 	
 	$scope.setSearchInput = function (newSearchInput) {
+		$scope.searchInput = newSearchInput;
+		setFocus("searchInput");
 		if (newSearchInput.length > 0) {
-			sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput, null)
+			sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
 			.success(function(data) {
 				$scope.searchDocuments = data;
 			});
+		} else {
+			$scope.searchDocuments = [];
 		}
 	}
-	
-	$scope.setSearchInputZ = function (newSearchInput) {
-		if (newSearchInput.length == 0) {
-			$scope.showSearchView = false;
-			$scope.setSelectedFolder(lastSelectedFolder);
-			$scope.selectDocument($scope.lastDocumentSelected);
-			if (lastSelectedFolder === null) {
-				//no folder selected before
-				$scope.documents = [];
-				checkDocumentSelected();
-			}
-		} else {
-			$scope.showSearchView = true;
-			$scope.setSelectedFolder(null);
-			
-			var documentsOnResearch;
-			
-			if ($scope.previousSearchInput.length !== 0 && stringStartsWith(newSearchInput,$scope.previousSearchInput)) {
-				documentsOnResearch = $scope.previousSearchDocumentsResult;
-			}
-			
-			sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput, null)
-			.success(function(data) {
-				documentsOnResearch = data;
-			});
-	
-			$scope.searchDocumentsResult = [];
-			for (var i=0;i<documentsOnResearch.length;i++) {
-				var doc = documentsOnResearch[i];
-				for (var k=0;k<properties.length;k++) {
-					var tokens=doc[properties[k]].split(" ");
-					var found = false;
-					for (var j=0;j<tokens.length;j++) {
-						if (stringStartsWith(tokens[j],newSearchInput)) {
-							$scope.searchDocumentsResult.push(doc);
-							found =true;
-							break;
-						}
-					}
-					if (found) {
-						break;
-					}
-				}
-			}
-			
-			$scope.previousSearchInput = newSearchInput;
-			$scope.previousSearchDocumentsResult = $scope.searchDocumentsResult;
-			$scope.documents = $scope.searchDocumentsResult;
-			checkDocumentSelected();
-		}
-	};
-	
+		
 	// GUI
 
 	$scope.showDocumentGridView = false;
@@ -240,17 +182,29 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 		$mdSidenav('right').toggle();
 	};
 	
+	$scope.toggleSearchView = function() {
+		$scope.showSearchView = !$scope.showSearchView;
+		if ($scope.showSearchView) {
+			setFocus('searchInput');
+		}
+		$scope.selectDocument(null);
+	};
+	
 	$scope.showSearchResultHeader = function() {
 		return $scope.showSearchView && $scope.searchInput.length>0;
 	};
 	
 	$scope.showDefaultHeader = function() {
 		return (!$scope.showSearchView && $scope.folderDocuments.length==0)
-				|| ($scope.showSearchView && $scope.searchInput.length==0);
+				|| ($scope.showSearchView && $scope.searchInput.length==0 );
 	};
 	
 	$scope.showBreadcrumbHeader = function() {
 		return !$scope.showSearchView && $scope.isSelectedFolderValid();
+	};
+	
+	$scope.setFocus = function(elementName) {
+		setFocus(elementName);
 	};
 	
 	// Utility
@@ -262,13 +216,31 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 }]);
 
 app.filter('limitEllipses', function() {
-	return function(s,max) {
-		if (s==null) {
+	return function(s, max) {
+		if (s == null) {
 			return null;
 		}
-		if (s.length>max) {
-			s=s.substring(0, Math.max(1, max - 3)) + "...";
+		if (s.length > max) {
+			s = s.substring(0, Math.max(1, max - 3)) + "...";
 		}
 		return s;
 	};
+});
+
+app.directive('focusOn', function() {
+	return function(scope, elem, attr) {
+		scope.$on('focusOn', function(e, name) {
+			if (name === attr.focusOn) {
+				elem[0].focus();
+			}
+		});
+	};
+});
+
+app.factory('setFocus', function($rootScope, $timeout) {
+	return function(name) {
+		$timeout(function() {
+			$rootScope.$broadcast('focusOn', name);
+		});
+	}
 });

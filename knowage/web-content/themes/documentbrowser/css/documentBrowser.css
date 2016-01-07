@@ -8,6 +8,10 @@
 	width: 50px;
 }
 
+.md-button.md-raised {
+	background-color: #BBBBBB;
+}
+
 .selected-doc {
 	background-color: #E8EAF6;
 }
