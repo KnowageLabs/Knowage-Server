@@ -197,9 +197,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				//verifico che nel form non siastato inserito niente
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
 
-				if(Object.getOwnPropertyNames(geoModule_layerServices.filters).length>0){
+				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
 					//verifico che non è gia caricato un layer senza filtri
-					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded();
+					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(-1);
 				}
 
 
@@ -208,10 +208,17 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			if(!$scope.multipleFilters[layerConf.layerId]){
 				//è STATO RIMOSSO UN LAYER SENZA FILTRI
 				geoModule_layerServices.layerWithoutFilter=false;
+				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
+					//verifico che non è gia caricato un layer senza filtri
+					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(-1);
+				}
 
 			}else{
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
-
+				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
+					//verifico che non è gia caricato un layer senza filtri
+					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(layerConf.layerId);
+				}
 			}
 			
 		}
@@ -229,14 +236,20 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	}
 
 
-	$scope.checkFilterInLayersLoaded = function(){
-		for(var obj in geoModule_layerServices.filters){
-			for(var j=0;j<geoModule_layerServices.filters[obj].length;j++){
-				if(geoModule_layerServices.filters[obj][j].model!=""){
+	$scope.checkFilterInLayersLoaded = function(id){
+		for(var obj in geoModule_layerServices.loadedLayer){
+			if($scope.multipleFilters[obj]){
+				for(var j=0;j<$scope.multipleFilters[obj].length;j++){
+					if($scope.multipleFilters[obj][j].id != id){
+						if($scope.multipleFilters[obj][j].model!=""){
 
-					return false;
+							return false;
+						}
+					}
+					
 				}
 			}
+			
 		}
 		return true;
 	}
