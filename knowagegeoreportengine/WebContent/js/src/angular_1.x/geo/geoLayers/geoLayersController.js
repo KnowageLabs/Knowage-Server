@@ -217,6 +217,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
 				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
 					//verifico che non è gia caricato un layer senza filtri
+				
 					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(layerConf.layerId);
 				}
 				geoModule_layerServices.layerWithoutFilter=$scope.emptyLayer(layerConf.layerId);
@@ -248,7 +249,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		for(var obj in geoModule_layerServices.loadedLayer){
 			if($scope.multipleFilters[obj]){
 				for(var j=0;j<$scope.multipleFilters[obj].length;j++){
-					if($scope.multipleFilters[obj][j].id != id){
+					if($scope.multipleFilters[obj][j].id != id ){
+						if($scope.multipleFilters[obj][j].model!=""){
+							return false;
+						}
+					}else if(Object.keys(geoModule_layerServices.loadedLayer).length == 1){
 						if($scope.multipleFilters[obj][j].model!=""){
 							return false;
 						}
