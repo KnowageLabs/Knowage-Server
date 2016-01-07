@@ -30,21 +30,21 @@
 						 		  class="closeSearchBar" style="padding-left:30px;"></md-icon>
 			       	</div> 
 		      	</div>
-		      	<div style="height:60%;position:relative">
-		      		<angular-table  ng-if="dimensionsTable.root"
+		      	<div style="height:60%;position:relative;min-height:30rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
+		      		<angular-table
 				        id='dimTable'
-				        ng-model=dimensionsTable.root
-						    columns=dimensionsTable.columns
-						    columns-search=dimensionsTable.columns_search	
-						    show-search-bar="true"		
-						    highlights-selected-item="true"											
+				        ng-model="dimensionsTable"
+					    columns="columnsTable"
+					    columns-search="columnSearchTable"
+					    show-search-bar = "true"	
+					    no-pagination = false
+					    highlights-selected-item="true"											
 					>
 					</angular-table>
-					
 				</div> 	  	
-				<div layout="row"  layout-align="end center" >
-					<md-button ng-disabled="true" class="md-raised" md-no-ink>Crea Gerarchia Automatica</md-button>
-				</div>
+				<md-content layout="row"  layout-align="end center" style="width:100%">
+					<md-button ng-disabled="true" class="md-raised md-ExtraMini" style="min-width: 12rem;">{{translate.load("sbi.hierarchies.new.create");}}</md-button>
+				</md-content>
 			</md-content>
 		</div>													    
 		<div  class="div-container" flex>

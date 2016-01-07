@@ -10,13 +10,16 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 	$scope.hierarchiesMap = {};
 	$scope.keys = {'subfolders' : 'children'};
 	$scope.dimensions = [];
-	$scope.dimensionsTable = {};
 	$scope.hierTree = [];
 	$scope.dateTree = new Date();
 	$scope.dateDim = new Date();
 	$scope.metadataMap = {};
-	
+	$scope.dimensionsTable = [];
+	$scope.columnsTable = [];
+	$scope.columnSearchTable = [];
 	$scope.hierTree.push(angular.copy(dataJson));
+	
+	
 	
 	$scope.restService.get("dimensions","getDimensions")
 		.success(
@@ -47,17 +50,30 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 				.success(
 					function(data, status, headers, config) {
 						if (data.error == undefined){
-							$scope.dimensionsTable=angular.copy(data);
+							$scope.createTable(data);
 						}else{
 							$scope.showAlert('ERROR',data.error[0].message);
 						}
 					})	
 				.error(function(data, status){
-					var message = 'GET dimensions error of ' + data + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
+					var message = 'GET dimension table error of ' + data + ' with status :' + status;
+					$scope.showAlert('ERROR', message);
 			});
 		}
 	}
+	
+	$scope.createTable = function(data){
+		$scope.dimensionsTable = data.root;
+		$scope.columnsTable = [];
+		for (var i = 0;i<data.columns.length;i++){
+			if (data.columns[i].VISIBLE == true || data.columns[i].VISIBLE == "true"){
+				$scope.columnsTable.push({ 'label' : data.columns[i].NAME, 'name': data.columns[i].ID});
+			}
+		}
+		$scope.columnSearchTable = data.columns_search;
+	}
+	
+	//$scope.createTable(dataRoot);
 	
 	$scope.getHierarchies = function (){
 		var type = $scope.hierType;
@@ -110,37 +126,7 @@ function masterControllerFunction (sbiModule_translate, $scope, $mdDialog, sbiMo
 	}
 	
 /*	
-	$scope.loadDimensionTable = function(e){
-		//chiamare servizio rest per recuperare i dati reali delle dimensioni
-		$scope.data.root=[{"dimId":"ID1","codice":"CDC1","name":"Conto1", "descr":"Conto numero 1","dt_inizio":"01/01/2015","dt_fine":"31/12/9999"}, 
-		                       {"dimId":"ID2","codice":"CDC2","name":"Conto2", "descr":"Conto numero 2","dt_inizio":"01/01/2015","dt_fine":"30/05/2015"}, 
-		                       {"dimId":"ID3","codice":"CDC3","name":"Conto3", "descr":"Conto numero 3","dt_inizio":"01/06/2015","dt_fine":"31/12/9999"},
-		                       {"dimId":"ID4","codice":"CDC4","name":"Conto4", "descr":"Conto numero 4","dt_inizio":"01/01/2015","dt_fine":"31/12/9999"}, 
-		                       {"dimId":"ID5","codice":"CDC5","name":"Conto5", "descr":"Conto numero 5","dt_inizio":"01/01/2015","dt_fine":"30/05/2015"}, 
-		                       {"dimId":"ID6","codice":"CDC6","name":"Conto6", "descr":"Conto numero 6","dt_inizio":"01/06/2015","dt_fine":"31/12/9999"},
-		                       {"dimId":"ID7","codice":"CDC7","name":"Conto7", "descr":"Conto numero 7","dt_inizio":"01/02/2015","dt_fine":"31/12/9999"}, 
-		                       {"dimId":"ID8","codice":"CDC8","name":"Conto8", "descr":"Conto numero 8","dt_inizio":"01/03/2015","dt_fine":"30/05/2015"}, 
-		                       {"dimId":"ID9","codice":"CDC9","name":"Conto9", "descr":"Conto numero 9","dt_inizio":"01/06/2015","dt_fine":"31/12/9999"},
-		                       {"dimId":"ID10","codice":"CDC10","name":"Conto10", "descr":"Conto numero 10","dt_inizio":"05/01/2015","dt_fine":"31/12/9999"}, 
-		                       {"dimId":"ID11","codice":"CDC11","name":"Conto11", "descr":"Conto numero 11","dt_inizio":"01/06/2015","dt_fine":"30/05/2015"}, 
-		                       {"dimId":"ID12","codice":"CDC12","name":"Conto12", "descr":"Conto numero 12","dt_inizio":"01/06/2015","dt_fine":"31/12/9999"},
-		                       {"dimId":"ID13","codice":"CDC13","name":"Conto13", "descr":"Conto numero 13","dt_inizio":"01/07/2015","dt_fine":"31/12/9999"}, 
-		                       {"dimId":"ID14","codice":"CDC14","name":"Conto14", "descr":"Conto numero 14","dt_inizio":"01/01/2015","dt_fine":"30/05/2015"}, 
-		                       {"dimId":"ID15","codice":"CDC15","name":"Conto15", "descr":"Conto numero 15","dt_inizio":"01/06/2015","dt_fine":"31/12/9999"}
-		                     ];
-		$scope.data.columns=[{"label":"ID","name":"dimId","visible":"false"},
-		                          {"label":"Codice","name":"codice","visible":"true"},
-		                          {"label":"Nome","name":"name","visible":"true"},
-		                          {"label":"Descrizione","name":"descr","size":"100px","visible":"true"},
-		                          {"label":"Data inizio","name":"dt_inizio","visible":"false"},
-		                          {"label":"Data fine","name":"dt_fine","visible":"false"}
-		                         ];
-		$scope.data.columns_search=["dimId","codice", "name", "descr", "dt_inizio", "dt_fine"];
-		
-		$scope.initTable($scope.data.columns);
-						
-	}
-	
+
 	$scope.showDetails = function(row,cells,listId) {
 		var cloneRow = [];
 		var idx=0; //order for the list of properties
