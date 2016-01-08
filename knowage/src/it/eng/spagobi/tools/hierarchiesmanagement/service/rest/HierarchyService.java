@@ -76,9 +76,10 @@ public class HierarchyService {
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
-					+ "=\"MASTER\"", 0, 0);
+					+ "=\"MASTER\" AND " + bkpColumn + "= 0", 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
@@ -122,10 +123,11 @@ public class HierarchyService {
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS, dataSource);
 			String scopeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_SCOPE, dataSource);
+			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + "," + scopeColumn + " ";
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-					+ typeColumn + "=\"TECHNICAL\" ORDER BY " + hierarchyCodeColumn, 0, 0);
+					+ typeColumn + "=\"TECHNICAL\" AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
@@ -1204,7 +1206,7 @@ public class HierarchyService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(calendar.getTime());
 
-		String selectQuery = "SELECT " + hierCdColumn + " FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+		String selectQuery = "SELECT DISTINCT(" + hierCdColumn + ") FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The select query is [" + selectQuery + "]");
 
