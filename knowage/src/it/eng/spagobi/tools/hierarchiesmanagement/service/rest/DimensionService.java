@@ -3,9 +3,6 @@ package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
@@ -30,7 +27,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/dimensions")
@@ -147,7 +143,7 @@ public class DimensionService {
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 3 - Create JSON for Dimension data from datastore
-			JSONArray rootArray = this.createRootDimensionData(dataStore);
+			JSONArray rootArray = HierarchyUtils.createRootData(dataStore);
 			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(metadataFields, false);
 			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(metadataFields);
 
@@ -235,38 +231,6 @@ public class DimensionService {
 		logger.debug("Query for dimension data is: " + query);
 		logger.debug("END");
 		return query.toString();
-	}
-
-	private JSONArray createRootDimensionData(IDataStore dataStore) throws JSONException {
-
-		logger.debug("START");
-
-		JSONArray rootArray = new JSONArray();
-
-		IMetaData columnsMetaData = dataStore.getMetaData();
-
-		Iterator iterator = dataStore.iterator();
-
-		while (iterator.hasNext()) {
-
-			IRecord record = (IRecord) iterator.next();
-			List<IField> recordFields = record.getFields();
-
-			JSONObject tmpJSON = new JSONObject();
-
-			for (int i = 0; i < recordFields.size(); i++) {
-
-				IField tmpField = recordFields.get(i);
-
-				String tmpKey = columnsMetaData.getFieldName(i);
-				tmpJSON.put(tmpKey, tmpField.getValue());
-			}
-
-			rootArray.put(tmpJSON);
-		}
-
-		logger.debug("END");
-		return rootArray;
 	}
 
 }

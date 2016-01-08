@@ -414,6 +414,63 @@ public class HierarchyService {
 
 	}
 
+	@GET
+	@Path("/getHierarchyBkps")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getHierarchyBkps(@QueryParam("dimension") String dimension, @QueryParam("hierarchyName") String hierarchyName,
+			@QueryParam("hierarchyType") String hierarchyType) throws SQLException {
+
+		logger.debug("START");
+
+		JSONObject result = new JSONObject();
+
+		try {
+
+			if ((dimension == null)) {
+				throw new SpagoBIServiceException("An unexpected error occured while retrieving hierarchy backups", "wrong request parameters");
+			}
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
+
+			IDataSource dataSource = HierarchyUtils.getDataSource(dimension);
+
+			Hierarchy hierarchy = hierarchies.getHierarchy(dimension);
+			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+
+			String queryText = selectHierarchyBkps(dataSource, hierarchyTable, hierarchyName, hierarchyType, generalMetadataFields);
+
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+
+			// 3 - Create JSON result
+			JSONArray rootArray = HierarchyUtils.createRootData(dataStore);
+			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(generalMetadataFields, true);
+			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(generalMetadataFields);
+
+			if (rootArray == null || columnsArray == null || columnsSearchArray == null) {
+				return null;
+			}
+
+			logger.debug("Root array is [" + rootArray.toString() + "]");
+			result.put(HierarchyConstants.ROOT, rootArray);
+
+			logger.debug("Columns array is [" + columnsArray.toString() + "]");
+			result.put(HierarchyConstants.COLUMNS, columnsArray);
+
+			logger.debug("Columns Search array is [" + columnsSearchArray.toString() + "]");
+			result.put(HierarchyConstants.COLUMNS_SEARCH, columnsSearchArray);
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retrieving hierarchy backups");
+			throw new SpagoBIServiceException("An unexpected error occured while retrieving hierarchy backups", t);
+		}
+
+		logger.debug("JSON for hierarchy backups is [" + result.toString() + "]");
+		logger.debug("END");
+		return result.toString();
+
+	}
+
 	/**
 	 * This method manages the creation of the JSON for hierarchies fields
 	 *
@@ -1168,9 +1225,6 @@ public class HierarchyService {
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(calendar.getTime());
-
 		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + "= ?";
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
@@ -1202,9 +1256,6 @@ public class HierarchyService {
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(calendar.getTime());
 
 		String selectQuery = "SELECT DISTINCT(" + hierCdColumn + ") FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
 
@@ -1275,4 +1326,54 @@ public class HierarchyService {
 
 	}
 
+	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyName, String hierarchyType,
+			List<Field> generalMetadataFields) {
+
+		logger.debug("START");
+
+		// select
+		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String sep = ",";
+
+		int fieldsSize = generalMetadataFields.size();
+
+		for (int i = 0; i < fieldsSize; i++) {
+			Field tmpField = generalMetadataFields.get(i);
+			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
+
+			if (i == fieldsSize - 1) {
+				sep = " ";
+			}
+
+			selectClauseBuffer.append(column + sep);
+		}
+
+		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+
+		String selectClause = selectClauseBuffer.toString();
+
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierTableName + " WHERE " + bkpColumn + " = 1 ");
+
+		if (hierarchyName != null) {
+			query.append(" AND " + hierCdColumn + "= \"" + hierarchyName + "\"");
+		}
+
+		if (hierarchyType != null) {
+			query.append(" AND " + hierTypeColumn + "= \"" + hierarchyType + "\"");
+		}
+
+		query.append(" GROUP BY " + hierNameColumn);
+
+		// ****************forzatura solo per demo GUI ***********************************
+		// * da gestire con paginazione lato server o modifica widget angular table ******
+		query.append(" limit 30 ");
+		// ****************forzatura solo per demo GUI ***********************************
+
+		logger.debug("Query for hier backups data is: " + query);
+		logger.debug("END");
+		return query.toString();
+	}
 }

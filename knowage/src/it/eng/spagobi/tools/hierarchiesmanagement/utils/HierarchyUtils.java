@@ -2,6 +2,10 @@ package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
@@ -231,6 +235,38 @@ public class HierarchyUtils {
 				+ " )");
 
 		return query.toString();
+	}
+
+	public static JSONArray createRootData(IDataStore dataStore) throws JSONException {
+
+		logger.debug("START");
+
+		JSONArray rootArray = new JSONArray();
+
+		IMetaData columnsMetaData = dataStore.getMetaData();
+
+		Iterator iterator = dataStore.iterator();
+
+		while (iterator.hasNext()) {
+
+			IRecord record = (IRecord) iterator.next();
+			List<IField> recordFields = record.getFields();
+
+			JSONObject tmpJSON = new JSONObject();
+
+			for (int i = 0; i < recordFields.size(); i++) {
+
+				IField tmpField = recordFields.get(i);
+
+				String tmpKey = columnsMetaData.getFieldName(i);
+				tmpJSON.put(tmpKey, tmpField.getValue());
+			}
+
+			rootArray.put(tmpJSON);
+		}
+
+		logger.debug("END");
+		return rootArray;
 	}
 
 }
