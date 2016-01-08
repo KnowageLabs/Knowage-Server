@@ -1,26 +1,17 @@
 <md-dialog aria-label="Mango (Fruit)" ng-cloak style="min-width:600px;min-height:300px;max-width:900px;max-height:700px;" ng-cloak> 
 	<md-toolbar class="miniheadhiersmall">
 		<div class="md-toolbar-tools">
-			  <h2 class="md-flex">{{translate.load('sbi.generic.details');}}</h2>
+			  <h2 class="md-flex">{{translate.load('sbi.hierarchies.hierTarget');}}</h2>
 		</div>
 	</md-toolbar> 
 	<md-dialog-content>
 		<md-content layout="column" layout-fill layout-align="space-between stretch">
-			<div layout-margin class='details-container'>
-				<md-grid-list layout-padding md-cols="2" md-row-height="50px"> 
-					<md-grid-tile md-colspan="1" ng-repeat='mt in metadataDim' ng-if="item[mt.ID] !== undefined">
-						<div>
-							<md-input-container>
-								<label> {{mt.NAME}}</label>
-								<input type="text" ng-model="item[mt.ID]" ng-disabled='true'></input>
-							</md-input-container>
-						</div>
-					</md-grid-tile>
-				</md-grid-list>
+			<div layout-padding layout="row" layout-align = "center center" style="width:100%">
+				<h3>No data found</h3>
 			</div>
 			<div layout="row" layout-align="end center" style="width:100%">
+				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="cancelDialog()">{{translate.load("sbi.general.cancel")}} </md-button>
 				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.general.ok")}} </md-button>
-				
 			</div> 
 		</md-content>
 	</md-dialog-content> 

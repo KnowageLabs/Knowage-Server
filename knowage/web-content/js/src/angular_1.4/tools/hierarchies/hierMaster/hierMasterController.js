@@ -2,6 +2,18 @@ var app = angular.module('hierManager');
 
 app.controller('hierMasterController', ["sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
+var nodeStructure = {
+		name:'node',
+		id:'node',
+		root: false,
+		children: [],
+		type: 'folder',
+		visible : true,
+		checked : false,
+		$parent: null,
+		expanded : false
+		};
+
 function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
 	
 	$scope.translate = sbiModule_translate;
@@ -36,8 +48,35 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
     		$scope.showDetails(item);
     	}
  	}];
-	
-	
+
+	$scope.tableOptions = {
+		beforeDrop : function(e){
+			$scope.showListHierarchies().then(
+				function(data){
+					var source = e.source.cloneModel;
+					var dest = e.dest.nodeScope !== undefined ? e.dest.nodeScope.$modelValue : e.dest.nodesScope.$modelValue;
+					var tmp = angular.copy(nodeStructure);
+					if (dest.length > 0){
+						tmp.$parent = dest[0].$parent
+						tmp.type = dest[0].type;
+					}else{
+						tmp.$parent = null;
+					}
+					source.name = source.CDC_NM; //TODO problem matching left side with right side. the field are different
+					source.id = source.CDC_CD;
+					var keys = Object.keys(tmp);
+					for (var i =0; i< keys.length;i++){
+						if (source[keys[i]] == undefined){
+							source[keys[i]] = tmp[keys[i]];
+						}
+					}
+					if ( Array.isArray(dest)){
+						dest.unshift(source);
+					}
+				},function(){}
+			);
+		}
+   }	
 	
 	$scope.hierTree.push(angular.copy(dataJson));
 	
@@ -271,6 +310,19 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			});
 	}
 	
+	$scope.showListHierarchies = function() {
+		return $mdDialog.show({
+				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/listHierarchiesDialog.html',
+				parent: angular.element(document.body),
+				locals: {
+					   translate: $scope.translate
+			         },
+				preserveScope : true,
+				clickOutsideToClose:false,
+				controller: showListHierarchyController
+			});
+	}
+	
 	$scope.applyFilter = function(choose){
 		//use to apply the filter only when is clicked the icon
 		var date = $scope.dateFilterTree;
@@ -309,16 +361,21 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
 	}
 	
-	 $scope.treeOptions = {
-		        beforeDrop : function (e) {
-		        	
-		        }  
-    }
-	
 	$scope.formatDate = function (date){
 		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
 	}
 	
+	function showListHierarchyController($scope, $mdDialog, translate) {
+			$scope.translate = translate;
+			
+			$scope.closeDialog = function() {
+		     	$mdDialog.hide();
+		    }
+			$scope.cancelDialog = function() {
+		     	$mdDialog.cancel();
+		     }
+	 } 
+	 
 	function showDetailsController($scope, $mdDialog, translate, item, metadataDim) {
 		$scope.translate = translate;
 		$scope.item = item;
