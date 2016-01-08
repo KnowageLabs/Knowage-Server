@@ -216,9 +216,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	
 	$scope.crateMasterHier = function (){
 		var dialog = $scope.showCreateMaster();
-		dialog.success(function(data){
+		dialog.then(function(data){
 			//TODO save received data = {hierNew, metadata}
-		});
+		},function(){});
 	}
 	
 	$scope.showCreateMaster = function(){
@@ -249,44 +249,64 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			$scope.date = date;
 			$scope.metadataDim = angular.copy(metadataDim);
 			$scope.metadataTree = angular.copy(metadataTree);
-		    $scope.selectedItem = {};
+		    $scope.selectedItemsLeft = [];
+		    $scope.selectedItemsRight = [];
 		    $scope.metadataDimExport = [];
-		    var posSelected = '';
-		    
+		    var level = 1 ;
+		    $scope.removeElement = function (array, el){
+	    		for ( var i = 0 ; i < array.length ; i++){
+	    			if (array[i].ID == el.ID){
+		    			array.splice(i,1);
+	    			}
+	    		}
+		    }
 		    //move selected item from posSelected to posDestination if they are set and different
 		    $scope.moveTo = function (posDestination){
-		    	if (posSelected != posDestination && posSelected.length > 0 && posDestination.length > 0 && $scope.selectedItem.isSelected){
-		    		var dest;
-		    		var source;
-		    		if (posDestination == 'left'){
-		    			dest = $scope.metadataDim ;
-		    			source = $scope.metadataDimExport;
-		    		} else if (posDestination == 'right'){
-		    			dest = $scope.metadataDimExport;
-		    			source = $scope.metadataDim ;
-		    		}
-		    		dest.push($scope.selectedItem);
-		    		var idx;
-		    		for ( var i = 0 ; i < source.length ; i++){
-		    			if (source[i].ID == $scope.selectedItem.ID){
-			    			idx = i;
-			    			break;
-		    			}
-		    		}
-		    		source.splice(idx,1);
-		    		$scope.selectedItem.isSelected=undefined;
-		    		$scope.selectedItem = {};
-		    		posSelected = '';
+		    	if (posDestination && posDestination.length > 0){
+	    			var dest = posDestination == 'right' ? $scope.metadataDimExport :$scope.metadataDim;
+	    			var source = posDestination == 'right' ?  $scope.metadataDim : $scope.metadataDimExport;
+	    			var itemsSource = posDestination == 'right' ?  $scope.selectedItemsLeft : $scope.selectedItemsRight;
+	    			if (source.length > 0){
+	    				var count = 0;
+	    				var tmpLevel = -1;
+	    				for (var i = 0 ; i < itemsSource.length;i++){
+    						itemsSource[i].level = posDestination == 'right' ?  level : undefined;
+	    					dest.push(itemsSource[i]);
+	    					$scope.removeElement(source,itemsSource[i]);
+		    				itemsSource[i].isSelected = undefined;
+	    				}
+	    				itemsSource.splice(0,itemsSource.length);
+	    				//if move to right, rise the level
+	    				//if move to left, decrease the level of the element with bigger level 
+	    				if (posDestination == 'right'){
+	    					level++;
+	    				}else if (posDestination == 'left'){
+	    					//check if the highest level is missing, in this case, decrease the level
+	    					//could be missing because the highest level could be moved
+	    					var isPresent = false;
+	    					for (var i=0;i<source.length;i++){
+	    						if (source[i].level == (level-1)){
+	    							isPresent=true;
+	    							break;
+	    						}
+	    					}
+	    					if (!isPresent){
+	    						level--;
+	    					}
+	    				}
+	    				
+	    			}
 		    	}
 		    }
 		  
-		    $scope.selectItem = function (item, pos){
-		    	if ($scope.selectedItem.isSelected){
-		    		$scope.selectedItem.isSelected = undefined;
+		    $scope.toogleItem = function (item,pos){
+		    	item.isSelected = item.isSelected == undefined ? true : !item.isSelected;
+		    	var arraySelected = pos == 'right' ? $scope.selectedItemsRight : $scope.selectedItemsLeft;
+		    	if (item.isSelected == true){
+		    		arraySelected.push(item);
+		    	}else{
+		    		$scope.removeElement(arraySelected, item);
 		    	}
-		    	$scope.selectedItem = item;
-		    	$scope.selectedItem.isSelected = true;
-		    	posSelected = pos;
 		    }
 		    
 			$scope.closeDialog = function() {
@@ -397,6 +417,12 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			$scope.seeFilterTree = !$scope.seeFilterTree;
 		}
 	}
+	
+	 $scope.treeOptions = {
+		        beforeDrop : function (e) {
+		        	
+		        }  
+    }
 	
 	//Create an alert dialog with a message
 	$scope.showAlert = function (title, message){
