@@ -430,6 +430,13 @@
 	<target name="create-debug" depends="delete-debug">
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
+				
+				<file name="./src/angular_1.4/mapFilter/sbiModule.js" />
+				<file name="./src/angular_1.4/mapFilter/geoModule.js" />
+				<file name="./src/angular_1.4/mapFilter/geoController.js" />
+				<file name="./src/angular_1.4/mapFilter/utils/geoUtils.js" />
+				<file name="./src/angular_1.4/mapFilter/utils/Ellipsoid.js" />
+				
 				<file name="./src/ext/sbi/commons/Format.js" />
 				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
@@ -460,6 +467,7 @@
 				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />  
 				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />      
 				<file name="./src/ext/sbi/widgets/LookupField.js" />  
+				<file name="./src/ext/sbi/widgets/MapField.js" />  
 				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" />
 				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js" />
 				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js" />
@@ -520,6 +528,11 @@
 
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
+				<file name="./src/angular_1.4/mapFilter/sbiModule.js" />
+				<file name="./src/angular_1.4/mapFilter/geoModule.js" />
+				<file name="./src/angular_1.4/mapFilter/geoController.js" />
+				<file name="./src/angular_1.4/mapFilter/utils/geoUtils.js" />
+				<file name="./src/angular_1.4/mapFilter/utils/Ellipsoid.js" />
 
 				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./src/ext/sbi/commons/Format.js" />
@@ -548,6 +561,7 @@
 				<file name="./src/ext/sbi/widgets/ListGridPanel.js" />
 				<file name="./src/ext/sbi/widgets/ListDetailForm.js" />
 				<file name="./src/ext/sbi/widgets/LookupField.js" />
+				<file name="./src/ext/sbi/widgets/MapField.js" />
 				<file name="./src/ext/sbi/widgets/TreeDetailForm.js" />
 				<file name="./src/ext/sbi/widgets/TreeModelPanel.js" />
 				<file name="./src/ext/sbi/widgets/SimpleTreePanel.js" />
