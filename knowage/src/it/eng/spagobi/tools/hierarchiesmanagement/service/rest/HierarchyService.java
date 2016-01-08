@@ -24,6 +24,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -1080,7 +1081,8 @@ public class HierarchyService {
 
 	}
 
-	private void updateHierarchyForBackup(IDataSource dataSource, String hierarchyType, String hierarchyName, String validityDate, String hierTableName) {
+	private void updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, String hierarchyType, String hierarchyName,
+			String validityDate, String hierTableName) {
 
 		logger.debug("START");
 
@@ -1088,6 +1090,7 @@ public class HierarchyService {
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(calendar.getTime());
@@ -1097,18 +1100,19 @@ public class HierarchyService {
 
 		String vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
 
-		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "=? WHERE " + hierTypeColumn + "=? AND " + vDateWhereClause;
+		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ? WHERE " + hierNameColumn + "=? AND "
+				+ hierTypeColumn + "= ? AND " + vDateWhereClause;
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
-		try (Connection databaseConnection = dataSource.getConnection();
-				Statement stmt = databaseConnection.createStatement();
-				PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
+		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 
-			preparedStatement.setString(1, hierarchyName + HierarchyConstants.BKP_LABEL + timestamp);
-			preparedStatement.setString(2, hierarchyType);
-			preparedStatement.setDate(3, vDateConverted);
-			preparedStatement.setDate(4, vDateConverted);
+			preparedStatement.setString(1, hierarchyName + "_" + timestamp);
+			preparedStatement.setBoolean(2, true);
+			preparedStatement.setString(3, hierarchyName);
+			preparedStatement.setString(4, hierarchyType);
+			preparedStatement.setDate(5, vDateConverted);
+			preparedStatement.setDate(6, vDateConverted);
 
 			preparedStatement.executeUpdate();
 
@@ -1118,6 +1122,118 @@ public class HierarchyService {
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while updating hierarchy for backup");
 			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t);
+		}
+
+	}
+
+	private void deleteBackupHierarchy(IDataSource dataSource, Connection databaseConnection, String hierBkpName, String hierTableName) {
+
+		logger.debug("START");
+
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(calendar.getTime());
+
+		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + "= ?";
+
+		logger.debug("The delete query is [" + deleteQuery + "]");
+
+		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(deleteQuery)) {
+
+			preparedStatement.setString(1, hierBkpName);
+
+			logger.debug("Preparing delete statement. Name of the hierarchy backup is [" + hierBkpName + "]");
+
+			preparedStatement.setBoolean(2, true);
+
+			preparedStatement.executeUpdate();
+
+			logger.debug("Delete query successfully executed");
+			logger.debug("END");
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while deleting hierarchy backup");
+			throw new SpagoBIServiceException("An unexpected error occured while deleting hierarchy backup", t);
+		}
+
+	}
+
+	private void restoreBackupHierarchy(IDataSource dataSource, Connection databaseConnection, String hierBkpName, String hierTableName, String prefix) {
+
+		logger.debug("START");
+
+		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(calendar.getTime());
+
+		String selectQuery = "SELECT " + hierCdColumn + " FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+
+		logger.debug("The select query is [" + selectQuery + "]");
+
+		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "=? AND " + bkpColumn + " = ?";
+
+		logger.debug("The delete query is [" + deleteQuery + "]");
+
+		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "=? WHERE " + hierNameColumn + "= ?";
+
+		logger.debug("The update query is [" + updateQuery + "]");
+
+		try (Statement stmt = databaseConnection.createStatement();
+				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
+				PreparedStatement deletePs = databaseConnection.prepareStatement(deleteQuery);
+				PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery)) {
+
+			// begin transaction
+			databaseConnection.setAutoCommit(false);
+
+			logger.debug("Auto-commit false. Begin transaction!");
+
+			selectPs.setString(1, hierBkpName);
+
+			logger.debug("Preparing select statement. Name of the hierarchy backup is [" + hierBkpName + "]");
+
+			selectPs.setBoolean(2, true);
+
+			ResultSet rs = selectPs.executeQuery();
+
+			logger.debug("Select query executed! Processing result set...");
+
+			if (rs.next()) {
+
+				String hierCd = rs.getString(HierarchyConstants.HIER_CD);
+
+				deletePs.setString(1, hierCd);
+				deletePs.setBoolean(2, false);
+
+				logger.debug("Preparing delete statement. Field [" + HierarchyConstants.HIER_CD + "] has value = " + hierCd);
+
+				deletePs.executeUpdate();
+
+				logger.debug("Delete query executed!");
+
+				logger.debug("Preparing update statement.");
+
+				updatePs.setString(1, hierCd);
+				updatePs.setString(2, hierBkpName);
+
+				updatePs.executeUpdate();
+
+				logger.debug("Update query executed!");
+			}
+
+			logger.debug("Executing commit. End transaction!");
+			databaseConnection.commit();
+
+			logger.debug("END");
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while restoring hierarchy backup");
+			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", t);
 		}
 
 	}

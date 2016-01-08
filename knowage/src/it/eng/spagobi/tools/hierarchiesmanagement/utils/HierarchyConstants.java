@@ -72,7 +72,7 @@ public class HierarchyConstants {
 	public final static String DIM_FILTER_FIELD = "_CD";
 	public final static String SELECT_HIER_FILTER_FIELD = "_CD_LEAF";
 
-	public final static String BKP_LABEL = "_bkp";
+	public final static String BKP_COLUMN = "BACKUP";
 	public final static String LEVEL = "LEVEL";
 
 }
