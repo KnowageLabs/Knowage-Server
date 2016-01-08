@@ -84,7 +84,6 @@ public class UserUtilities {
 	 * Gets the user profile.
 	 * 
 	 * @return the user profile
-	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -279,9 +278,7 @@ public class UserUtilities {
 	 * 
 	 * @param username
 	 *            the username
-	 * 
 	 * @return true, if successful
-	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -303,9 +300,7 @@ public class UserUtilities {
 	 * 
 	 * @param userProfile
 	 *            the user profile
-	 * 
 	 * @return true, if successful
-	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -329,7 +324,6 @@ public class UserUtilities {
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
 	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
-	 * 
 	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
@@ -388,7 +382,6 @@ public class UserUtilities {
 	 * 
 	 * @param userProfile
 	 *            the user profile
-	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
