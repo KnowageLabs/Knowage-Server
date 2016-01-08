@@ -431,12 +431,6 @@
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 				
-				<file name="./src/angular_1.4/mapFilter/sbiModule.js" />
-				<file name="./src/angular_1.4/mapFilter/geoModule.js" />
-				<file name="./src/angular_1.4/mapFilter/geoController.js" />
-				<file name="./src/angular_1.4/mapFilter/utils/geoUtils.js" />
-				<file name="./src/angular_1.4/mapFilter/utils/Ellipsoid.js" />
-				
 				<file name="./src/ext/sbi/commons/Format.js" />
 				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
 				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
@@ -528,11 +522,6 @@
 
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
-				<file name="./src/angular_1.4/mapFilter/sbiModule.js" />
-				<file name="./src/angular_1.4/mapFilter/geoModule.js" />
-				<file name="./src/angular_1.4/mapFilter/geoController.js" />
-				<file name="./src/angular_1.4/mapFilter/utils/geoUtils.js" />
-				<file name="./src/angular_1.4/mapFilter/utils/Ellipsoid.js" />
 
 				<file name="./src/ext/sbi/commons/Log.js" />
 				<file name="./src/ext/sbi/commons/Format.js" />
