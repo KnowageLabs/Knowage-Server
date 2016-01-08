@@ -112,6 +112,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 				if (scope.dragEnabled == true){
 					treeElement.attr('data-drag-enabled','true');
 					treeElement.attr('data-drag-delay',600);
+				}else{
+					treeElement.attr('data-drag-enabled','false');
 				}
 				if (scope.enableClone == true){
 					treeElement.attr('data-clone-enabled','true');
@@ -121,6 +123,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 				}
 				if (scope.noDropEnabled == true){
 					treeElement.attr('data-nodrop-enabled','true');
+				}
+				if (scope.dragDropOptions == true){
+					treeElement.attr('ui-tree',"dragDropOptions");
 				}
 				if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
 					if (!attrs.selecteditem) {

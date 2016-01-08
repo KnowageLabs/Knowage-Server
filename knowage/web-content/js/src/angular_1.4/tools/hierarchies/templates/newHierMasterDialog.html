@@ -1,0 +1,51 @@
+<md-dialog aria-label="Mango (Fruit)" ng-cloak style="min-width:600px;min-height:500px;max-width:900px;max-height:700px;" ng-cloak> 
+	<md-toolbar class="miniheadhiersmall">
+		<div class="md-toolbar-tools">
+			  <h2 class="md-flex">{{translate.load("sbi.hierarchies.new.create.master");}}</h2>
+		</div>
+	</md-toolbar> 
+	<md-dialog-content layout="column" layout-align="space-between stretch">
+		<form name="hierForm" layout-fill>
+			<div flex layout-margin>
+				<md-grid-list layout-fill md-cols="2" md-row-height="50px"> 
+					<md-grid-tile md-colspan="1" ng-repeat='mt in metadataTree' ng-if="mt.VISIBLE && mt.EDITABLE">
+						<div>
+							<md-input-container ng-if="mt.VISIBLE && mt.EDITABLE && (mt.TYPE == 'String' || mt.TYPE == 'Number')" >
+								<label> {{mt.NAME}}</label>
+								<input type="text" ng-model="hierNew[mt.ID]" ng-disabled='!mt.EDITABLE' ng-required='mt.REQUIRED'></input>
+							</md-input-container>
+							<div ng-if="mt.VISIBLE && mt.EDITABLE && mt.TYPE == 'Date'">
+								<md-datepicker ng-model="hierNew[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='mt.REQUIRED'></md-datepicker> {{mt.NAME}}
+							</div>
+						</div>
+					</md-grid-tile>
+				</md-grid-list>
+			</div>
+			<md-content layout="row" layout-align="space-around center" layout-padding>
+				<md-content class="list-container">
+					<md-list>
+						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim" ng-if="mtDim.VISIBLE">
+							<span ng-click="selectItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
+						</md-list-item>
+					</md-list>
+				</md-content>
+				<md-content layout="column" layout-align="center center">
+					<md-button class="md-raised button-move" ng-click="moveTo('right')"> &gt &gt</md-button>
+					<md-button class="md-raised button-move" ng-click="moveTo('left')"> &lt &lt</md-button>
+				</md-content>
+				<md-content class="list-container">
+					<md-list>
+						<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport">
+							<span ng-click="selectItem(mtDimExp,'right')"  ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:100%">{{mtDimExp.NAME}} </span>	
+						</md-list-item>
+					</md-list>
+				</md-content>
+			</md-content>
+			<div layout="row" layout-align="space-around center">
+				<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier()" ng-disabled="hierForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
+				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
+			</div> 
+		</form>
+	</md-dialog-content> 
+</md-dialog>
+

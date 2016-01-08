@@ -22,8 +22,7 @@
 		</div>
 
 		<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}" ui-tree-nodes="" ng-model="folder[subfoldersId]" ng-if	="folder.expanded">
-			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder[subfoldersId]"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'"
-data-drag-enabled="{{dragEnabled == true}}" data-clone-enabled="{{enableClone == true}}" data-drag-delay='500' data-empty-placeholder-enabled="{{showEmptyPlaceholder == true}}">
+			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder[subfoldersId]"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 			<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ng-show="biObject.visible" ui-tree-node >
 				<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>

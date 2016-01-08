@@ -102,7 +102,7 @@ md-checkbox.little-check {
   	
 }
 
-md-dialog {
+md-dialog.big-dialog {
     max-width: 95%;
     max-height: 90%;
     min-width: 70%;
@@ -122,4 +122,39 @@ legend {
 fieldset.standard{
     border-style: solid;
     border-width: 1px;
+}
+
+md-dialog.md-default-theme{
+	height: 25%;
+}
+
+resizer {
+	background-color: white !important; 
+}
+
+.list-container {
+	width: 220px;
+	height : 250px;
+	border-style: inset;
+    border-width: 3px;
+    border-color: #3B668C;
+}
+
+.button-move{
+	width: 60px;
+	min-width: 10px;
+	height: 10px;
+}
+
+.list-item-small{
+	min-height: 20px;
+	height: 20px;
+	padding-left: 5px !important;
+	margin-bottom: 2px;
+}
+
+.list-item-small-selected {
+	background-color: #3B668C;
+	border-style: dotted;
+	border-width: 1px;
 }
