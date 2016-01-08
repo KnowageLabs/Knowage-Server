@@ -43,7 +43,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				</td>
 			</tr>
 		<%} %>
-		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DATASOURCE_MANAGEMENT)) {%>		
+		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DATASOURCE_READ)) {%>		
 			<tr class="portlet-font">
 					<td width="100" align="center">
 						<img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/tools/datasource/datasource_2.png", currTheme)%>' />

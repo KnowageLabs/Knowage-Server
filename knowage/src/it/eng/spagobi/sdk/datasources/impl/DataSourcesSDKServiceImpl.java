@@ -29,7 +29,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasource congifuration.");
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_READ, "User cannot see datasource congifuration.");
 			if (dataSourceId == null) {
 				logger.warn("DataSource identifier in input is null!");
 				return null;
@@ -61,7 +61,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasources congifuration.");
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_READ, "User cannot see datasources congifuration.");
 			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
 			toReturn = new SDKDataSource[dataSourceList.size()];
 			for (int i = 0; i < dataSourceList.size(); i++) {

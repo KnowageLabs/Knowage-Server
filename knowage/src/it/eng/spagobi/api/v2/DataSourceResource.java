@@ -41,7 +41,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public List<DataSource> getAllDataSources() {
 
 		logger.debug("IN");
@@ -69,7 +69,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
 
 		logger.debug("IN");

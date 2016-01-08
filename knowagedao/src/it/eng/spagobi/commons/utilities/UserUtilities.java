@@ -443,6 +443,7 @@ public class UserUtilities {
 		if (isSuperAdm != null && isSuperAdm) {
 			superadminFunctionalities.add(SpagoBIConstants.TENANT_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
+			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
 			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}

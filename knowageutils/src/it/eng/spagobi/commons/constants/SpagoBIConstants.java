@@ -34,10 +34,8 @@ public class SpagoBIConstants {
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
 
 	/*
-	 * public static final String ACTOR = "ACTOR"; public static final String
-	 * TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
-	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
-	 * public static final String DEV_ACTOR = "DEV_ACTOR";
+	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
+	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
 	 */
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
@@ -338,6 +336,7 @@ public class SpagoBIConstants {
 	public static final String SYNCRONIZE_ROLES_MANAGEMENT = "SyncronizeRolesManagement";
 	public static final String PROFILE_ATTRIBUTES_MANAGEMENT = "ProfileAttributeManagement";
 	public static final String DATASOURCE_MANAGEMENT = "DataSourceManagement";
+	public static final String DATASOURCE_READ = "DataSourceRead";
 	public static final String DISTRIBUTIONLIST_MANAGEMENT = "DistributionListManagement";
 	public static final String DISTRIBUTIONLIST_USER = "DistributionListUser";
 	public static final String DOCUMENT_DELETE_MANAGEMENT = "DocumentDeleteManagement";

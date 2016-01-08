@@ -19,6 +19,10 @@
 		userFunctionality="DatasetManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DataSourceManagement" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY
+        userFunctionality="DataSourceRead" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY
+        userFunctionality="DataSourceRead" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DistributionListManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
