@@ -17,7 +17,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel='stylesheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/groupview.css",currTheme)%>' />
 <link rel='stylesheet' type='text/css'
-	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>' />
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css", currTheme)%>' />
 <link rel='stylesheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/loadmask.css", currTheme)%>' />
 <LINK rel='StyleSheet' type='text/css'
@@ -30,6 +30,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 -->
 <LINK rel='StyleSheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.css",currTheme)%>' />
+<link rel='StyleSheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "/fonts/font-awesome-4.4.0/css/font-awesome.min.css",currTheme)%>' />
 
 
 <script type="text/javascript"
@@ -107,6 +109,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/SliderField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/MapField.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/CheckboxField.js")%>'></script>
 <script type="text/javascript"

@@ -12,8 +12,8 @@
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
-<%@ page import="it.eng.spago.security.IEngUserProfile" %>
-<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spago.security.IEngUserProfile" %>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>

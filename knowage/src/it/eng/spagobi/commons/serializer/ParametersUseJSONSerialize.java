@@ -17,6 +17,9 @@ public class ParametersUseJSONSerialize implements Serializer {
 	public static final String NAME = "NAME";
 	public static final String MANUALINPUT = "MANUALINPUT";
 	public static final String SELECTIONTYPE = "SELECTIONTYPE";
+	public static final String VALUESELECTION = "VALUESELECTION";
+	public static final String SELECTEDLAYER = "SELECTEDLAYER";
+	public static final String SELECTEDLAYERPROP = "SELECTEDLAYERPROP";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
@@ -43,6 +46,9 @@ public class ParametersUseJSONSerialize implements Serializer {
 			result.put(DESCRIPTION, parameterUse.getDescription());
 			result.put(MANUALINPUT, parameterUse.getManualInput());
 			result.put(SELECTIONTYPE, parameterUse.getSelectionType());
+			result.put(VALUESELECTION, parameterUse.getValueSelection());
+			result.put(SELECTEDLAYER, parameterUse.getSelectedLayer());
+			result.put(SELECTEDLAYERPROP, parameterUse.getSelectedLayerProp());
 
 		} catch (Throwable t) {
 

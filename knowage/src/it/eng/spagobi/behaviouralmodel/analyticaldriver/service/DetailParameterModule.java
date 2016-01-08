@@ -326,12 +326,13 @@ public class DetailParameterModule extends AbstractHttpModule {
 			logParam.put("Parameter_name", parameter.getName());
 			logParam.put("Parameter_type", parameter.getType());
 			logParam.put("Parameter_label", parameter.getLabel());
+			logParam.put("Parameter_value_selection", parameter.getValueSelection());
 			
 			String selectedParuseIdStr = null;
 			if (mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 				String paruseIdStr = (String) request.getAttribute("useId");
 				Integer paruseIdInt = new Integer (paruseIdStr);
-				ParameterUse paruse = recoverParameterUseDetails(request, parameter.getId(), paruseIdInt);;
+				ParameterUse paruse = recoverParameterUseDetails(request, parameter.getId(), paruseIdInt);
 				Object selectedParuseIdObj = request
 						.getAttribute("selected_paruse_id");
 				Object deleteParameterUse = request.getAttribute("deleteParameterUse");
@@ -687,18 +688,27 @@ public class DetailParameterModule extends AbstractHttpModule {
 		String name = (String) request.getAttribute("paruseName");
 		String label = (String) request.getAttribute("paruseLabel");
 		String selectionType = (String) request.getAttribute("selectionType");		
-		String manInFlag = (String) request.getAttribute("valueSelection");
+		String valueSelection = (String) request.getAttribute("valueSelection");
 		String maximizerEnabledFlag = (String) request.getAttribute("maximizerEnabled");
+		String mapInputSelectedLayer = (String) request.getAttribute("mapInputSelectedLayer");
+		String mapInputSelectedLayerProp = (String) request.getAttribute("mapInputSelectedLayerProp");
+		
 		paruse.setName(name);
 		paruse.setDescription(description);
 		paruse.setLabel(label);
+		paruse.setValueSelection(valueSelection);
 		
-		if (manInFlag.equals("man_in")) {
+		if (valueSelection.equals("man_in")) {
 			paruse.setManualInput(Integer.valueOf("1"));
 			paruse.setSelectionType(null);
 			paruse.setMultivalue(false);
 			paruse.setMaximizerEnabled(Boolean.valueOf(maximizerEnabledFlag));
-		} else {
+		} else if (valueSelection.equals("map_in")) {
+			paruse.setSelectionType(null);
+			paruse.setManualInput(Integer.valueOf("1"));
+			paruse.setSelectedLayer(mapInputSelectedLayer);
+			paruse.setSelectedLayerProp(mapInputSelectedLayerProp);
+		} else { //Selected "Lov"
 			paruse.setManualInput(Integer.valueOf("0"));
 			paruse.setSelectionType(selectionType);
 			if (selectionType != null && 
@@ -751,6 +761,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 		String name = (String) request.getAttribute("name");
 		String isFunctional = (String) request.getAttribute("isFunctional");
 		String isTemporal = (String) request.getAttribute("isTemporal");
+		String valueSelection = (String) request.getAttribute("valueSelection");
+		String selectedLayer = (String) request.getAttribute("mapInputSelectedLayer");
+		String selectedLayerProp = (String) request.getAttribute("mapInputSelectedLayerProp");
 
         Parameter parameter  = new Parameter();
         parameter.setId(id);
@@ -768,6 +781,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 		parameter.setMask(mask);
 		parameter.setModality(modality);
 		parameter.setName(name);
+		parameter.setValueSelection(valueSelection);
+		parameter.setSelectedLayer(selectedLayer);
+		parameter.setSelectedLayerProp(selectedLayerProp);
 		if (isFunctional != null) parameter.setIsFunctional(true);
 		else parameter.setIsFunctional(false);
 		if (isTemporal != null) parameter.setIsTemporal(true);

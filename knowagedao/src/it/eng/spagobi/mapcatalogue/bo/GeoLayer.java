@@ -5,7 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.bo;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -98,6 +104,65 @@ public class GeoLayer {
 
 	public void setLayerDef(byte[] layerDef) {
 		this.layerDef = layerDef;
+		if (layerDef != null) {
+			try {
+
+				String layerDefString = new String(layerDef, "UTF-8");
+				JSONObject layerDefJson = new JSONObject(layerDefString);
+
+				this.setLayerIdentify(layerDefJson.getString("layerId"));
+				this.setLayerLabel(layerDefJson.getString("layerLabel"));
+				this.setLayerName(layerDefJson.getString("layerName"));
+				if (!layerDefJson.getString("properties").isEmpty()) {
+					List<String> prop = new ArrayList<>();
+					JSONArray obj = layerDefJson.getJSONArray("properties");
+
+					for (int j = 0; j < obj.length(); j++) {
+
+						prop.add(obj.getString(j));
+					}
+
+					this.setProperties(prop);
+				}
+				if (!layerDefJson.getString("layer_file").equals("null")) {
+					this.setPathFile(layerDefJson.getString("layer_file"));
+
+				}
+				if (!layerDefJson.getString("layer_url").equals("null")) {
+					this.setLayerURL(layerDefJson.getString("layer_url"));
+
+				}
+				if (!layerDefJson.getString("layer_params").equals("null")) {
+					this.setLayerParams(layerDefJson.getString("layer_params"));
+				}
+				if (!layerDefJson.getString("layer_options").equals("null")) {
+					this.setLayerOptions(layerDefJson
+							.getString("layer_options"));
+
+					if (!layerDefJson.getString("layer_order").equals("null")) {
+						this.setLayerOrder(new Integer(layerDefJson
+								.getString("layer_order")));
+
+					}
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		} else {
+			this.setLayerIdentify(null);
+			this.setLayerLabel(null);
+			this.setLayerName(null);
+			this.setProperties(null);
+			this.setPathFile(null);
+			this.setLayerURL(null);
+			this.setLayerParams(null);
+			this.setLayerOptions(null);
+			this.setLayerOrder(null);
+		}
 	}
 
 	// Chiara add this functions

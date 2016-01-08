@@ -53,6 +53,10 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("multivalue", parameter.isMultivalue());
 			result.put("visible", parameter.isVisible());
 			result.put("valuesCount", parameter.getValuesCount());
+			result.put("valueSelection", parameter.getValueSelection());
+			result.put("selectedLayer", parameter.getSelectedLayer());
+			result.put("selectedLayerProp", parameter.getSelectedLayerProp());
+			
 			if (parameter.getValuesCount() == 1) {
 				result.put("value", parameter.getValue());
 			}

@@ -64,68 +64,91 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%} %>
 
-  <script>
-    	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
-			var iframeDocElement = document.getElementById('iframeDoc');
-			if(!iframeDocElement) {
-				alert("[homeBase.execCrossNavigation]: Impossible to find element [iframeDoc]");
-				return;
-			}			
-			if(iframeDocElement.tagName != "IFRAME") {
-				alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
-				return;
-			}
-			
-			var iframeDocElementWindow = iframeDocElement.contentWindow;
-			if(!iframeDocElementWindow) {
-				alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
-				return;
-			}
-			
-			if(!iframeDocElementWindow.execCrossNavigation) {
-				alert("[homeBase.execCrossNavigation]: function execCrossNavigation is not defined in page [" + iframeDocElement.src + "] contained in iframe [iframeDoc]");
-				return;
-			}
-			
-			//alert("[homeBase.execCrossNavigation]: execCrossNavigation is equal to [" + iframeDocElementWindow.execCrossNavigation + "]");
-			iframeDocElementWindow.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
+<script>
+   	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
+		var iframeDocElement = document.getElementById('iframeDoc');
+		if(!iframeDocElement) {
+			alert("[homeBase.execCrossNavigation]: Impossible to find element [iframeDoc]");
+			return;
+		}			
+		if(iframeDocElement.tagName != "IFRAME") {
+			alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
+			return;
 		}
-    	
-    	
-    	
-    	function execShowHelpOnLine(getItem){
-    		
-   		  <%  if(enableGlossary){ %>
-    			
-    		console.log("execShowHelpOnLine");
-			if (getItem == undefined || getItem == null) {
-					return;
-				}
-
-			var panel = new Ext.ux.IFrame(
-				{
-					border : false,
-					bodyBorder : false,
-					height : '100%',
-					src : '<%=contextName %>/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+ getItem,
-				});
-
-			var dialogBox = new Ext.Window({
-				title : 'Help Online',
-				modal : true,
-				width : '90%',
-				height : Ext.getBody().getViewSize().height * 0.9,
-				closable : true,
-				items : [ panel ],
-			});
-
-			dialogBox.show();
 			
-		<% } %>
-	    	  
-    	}
+		var iframeDocElementWindow = iframeDocElement.contentWindow;
+		if(!iframeDocElementWindow) {
+			alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
+			return;
+		}
+			
+		if(!iframeDocElementWindow.execCrossNavigation) {
+			alert("[homeBase.execCrossNavigation]: function execCrossNavigation is not defined in page [" + iframeDocElement.src + "] contained in iframe [iframeDoc]");
+			return;
+		}
+			
+		//alert("[homeBase.execCrossNavigation]: execCrossNavigation is equal to [" + iframeDocElementWindow.execCrossNavigation + "]");
+		iframeDocElementWindow.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
+	};
     	
-  </script>
+   	function execShowHelpOnLine(getItem){
+  		
+<%  if(enableGlossary){ %>
+    			
+		console.log("execShowHelpOnLine");
+		if (getItem == undefined || getItem == null) {
+			return;
+		}
+
+		var panel = new Ext.ux.IFrame({
+			border : false,
+			bodyBorder : false,
+			height : '100%',
+			src : '<%=contextName %>/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+ getItem,
+		});
+
+		var dialogBox = new Ext.Window({
+			title : 'Help Online',
+			modal : true,
+			width : '90%',
+			height : Ext.getBody().getViewSize().height * 0.9,
+			closable : true,
+			items : [ panel ],
+		});
+
+		dialogBox.show();
+			
+<% } %>
+	    	  
+   	}
+   	
+   	/**
+   	* @parameter value - If present then this function is called as setter method, otherwise as a getter one.  
+   	*/
+   	function mapFilterSelectedProp(value) {
+   		var thisMapFilterSelectedProp
+   		
+   		if(value && value != null) { //setter mode
+   			var stringfyed = JSON.stringify(value);
+   			
+   			if(parent.thisMapFilterSelectedProp) {
+	   			delete parent.thisMapFilterSelectedProp;
+   			}
+   			
+   			parent.thisMapFilterSelectedProp = stringfyed;
+   			
+   		} else { //getter mode
+   			if(! parent.thisMapFilterSelectedProp) {
+	   			return null;
+   			} else {
+   				var jsonized = JSON.parse(parent.thisMapFilterSelectedProp);
+   				
+   				return jsonized;
+   			}
+   		}
+   	};
+    	
+</script>
 	
 
 

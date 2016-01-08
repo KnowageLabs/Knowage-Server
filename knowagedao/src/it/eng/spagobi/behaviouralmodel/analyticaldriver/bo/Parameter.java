@@ -21,10 +21,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Parameter implements Serializable {
 	
 	private Integer  id;
-	private String 	 description = ""; 
-	private Integer  length;
-	private String 	 label = "";
-	private String 	 name = "";
+	private String description = ""; 
+	private Integer length;
+	private String label = "";
+	private String name = "";
 	private String type = "";
 	private String mask = "";
 	private Integer typeId;
@@ -36,6 +36,10 @@ public class Parameter implements Serializable {
 	private ModalitiesValue modalityValueForDefault = null;
 	
 	private String defaultFormula = "";
+	
+	private String valueSelection;
+	private String selectedLayer = "";
+	private String selectedLayerProp = "";
 
 	private List checks = null;
 
@@ -62,7 +66,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @return Returns the id.
 	 */
-	public Integer  getId() {
+	public Integer getId() {
 		return id;
 	}
 	
@@ -71,7 +75,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @param id The id to set.
 	 */
-	public void setId(Integer  id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
@@ -291,5 +295,29 @@ public class Parameter implements Serializable {
 	public void setDefaultFormula(String defaultFormula) {
 		this.defaultFormula = defaultFormula;
 	}
+
+	public String getValueSelection() {
+		return valueSelection;
+	}
+
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
 	
+	public String getSelectedLayer() {
+		return selectedLayer;
+	}
+	
+	public void setSelectedLayer(String selectedLayer) {
+		this.selectedLayer = selectedLayer;
+	}
+	
+	public String getSelectedLayerProp() {
+		return selectedLayerProp;
+	}
+	
+	public void setSelectedLayerProp(String selectedLayerProp) {
+		this.selectedLayerProp = selectedLayerProp;
+	}
+
 }

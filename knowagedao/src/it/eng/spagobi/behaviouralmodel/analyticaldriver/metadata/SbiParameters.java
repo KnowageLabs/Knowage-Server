@@ -32,6 +32,9 @@ public class SbiParameters  extends SbiHibernateModel {
      private Set sbiObjPars;
      private Short functionalFlag;
      private Short temporalFlag;
+     private String valueSelection;
+     private String selectedLayer;
+     private String selectedLayerProp;
 
     // Constructors
 
@@ -264,4 +267,58 @@ public class SbiParameters  extends SbiHibernateModel {
 		this.temporalFlag = temporalFlag;
 	}
 	
+	/**
+	 * Gets the value selection.
+	 * 
+	 * @return Returns the valueSelection.
+	 */
+	public String getValueSelection() {
+		return valueSelection;
+	}
+	
+	/**
+	 * Sets the value selection.
+	 * 
+	 * @param valueSelection The value selection to set.
+	 */
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
+
+	/**
+	 * Gets the selected layer property.
+	 * 
+	 * @return Returns the selectedLayerProp.
+	 */
+	public String getSelectedLayerProp() {
+		return selectedLayerProp;
+	}
+	
+	/**
+	 * Sets the selected layer property.
+	 * 
+	 * @param selectedLayerProp The layer property to set.
+	 */
+	public void setSelectedLayerProp(String selectedLayerProp) {
+		this.selectedLayerProp = selectedLayerProp;
+	}
+	
+	/**
+	 * Gets the selected layer.
+	 * 
+	 * @return Returns the selectedLayer.
+	 */
+	public String getSelectedLayer() {
+		return selectedLayer;
+	}
+	
+	/**
+	 * Sets the selected layer.
+	 * 
+	 * @param selectedLayer The layer to set.
+	 */
+	public void setSelectedLayer(String selectedLayer) {
+		this.selectedLayer = selectedLayer;
+	}
+
 }

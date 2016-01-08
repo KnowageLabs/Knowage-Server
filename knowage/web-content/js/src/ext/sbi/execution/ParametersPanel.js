@@ -43,7 +43,6 @@
   * - Andrea Gioia (andrea.gioia@eng.it)
   */
 
-
 Ext.ns("Sbi.execution");
 
 Sbi.execution.ParametersPanel = function(config, doc) {
@@ -1163,7 +1162,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var field = this.fields[p];
 			if(field.isVisible()) {
 				this.addField(field, index++);
-				//var field = this.createField( this.parameters[0] );
 				this.addField(field, index++);
 				Sbi.trace('[ParametersPanel.refreshFields] : field [' + p + '] succesfully added');
 			} else {
@@ -1301,10 +1299,33 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}, this);
 		
 		field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
-			  store: store
-				, params: params
-				, readOnly: true
-				, singleSelect: (p.multivalue === false)
+			store: store
+			, params: params
+			, readOnly: true
+			, singleSelect: (p.multivalue === false)
+		}));
+		
+		return field;
+	}
+	
+	, createMapField: function( baseConfig, executionInstance )  {
+		
+		var p = baseConfig.parameter;
+		
+		var params = this.getBaseParams(p, executionInstance, 'complete');
+		
+		var store = this.createStore();
+		store.on('beforeload', function(store, o) {
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			o.params.PARAMETERS = p;
+			return true;
+		}, this);
+		
+		field = new Sbi.widgets.MapField(Ext.apply(baseConfig, {
+			store: store
+			, params: params
+			, readOnly: false
+			, singleSelect: (p.multivalue === false)
 		}));
 		
 		return field;
@@ -1552,6 +1573,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field = this.createLookupField( baseConfig, this.executionInstance );	
 		} else if(p.selectionType === 'SLIDER') { 
 			field = this.createSliderField( baseConfig, this.executionInstance );
+		
+		} else if( p.valueSelection && p.valueSelection.toLowerCase() == 'map_in'
+					&& p.selectedLayer && p.selectedLayer.trim() != ''
+						&& p.selectedLayerProp && p.selectedLayerProp.trim() != '') {
+			
+			field = this.createMapField( baseConfig, this.executionInstance );
+			
 		} else { 
 //			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
 //				baseConfig.format = Sbi.config.localizedDateFormat;
@@ -1560,11 +1588,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 //					field.setValue(new Date());
 //				}		
 //			} else {
-				if (p.enableMaximizer) {
-					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
-				} else {
-					field = new Ext.form.TextField(baseConfig);
-				}	
+			if (p.enableMaximizer) {
+				field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
+			} else {
+				field = new Ext.form.TextField(baseConfig);
+			}	
 //			}			
 		}
 		

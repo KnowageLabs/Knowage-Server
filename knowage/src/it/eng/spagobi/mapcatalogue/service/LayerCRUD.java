@@ -59,6 +59,7 @@ public class LayerCRUD {
 	private static final String fileValidationError = "error.mesage.description.layer.validation.file";
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
+	public static final String LAYER_URL = "layerUrl";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -89,11 +90,42 @@ public class LayerCRUD {
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
 	}
+	
+	@GET
+	@Path("/getLayerByLabel")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getLayerByLabel(@Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
+		String label = null;
 
+		try {
+			label = req.getParameter(LAYER_LABEL);
+
+			if (label == null || label.equals("")) {
+				throw new SpagoBIRuntimeException("The layer label passed in the request is null or empty");
+			}
+		} catch (Exception e) {
+			logger.error("error loading filter", e);
+			throw new SpagoBIRuntimeException("error request", e);
+		}
+
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		GeoLayer aLayer = dao.loadLayerByLabel(label);
+		ObjectMapper mapper = new ObjectMapper();
+		String s = "[]";
+		try {
+			s = mapper.writeValueAsString(aLayer);
+		} catch (Exception e) {
+			logger.error("Error serializing the layers", e);
+			throw new SpagoBIRuntimeException("Error serializing the layer", e);
+		}
+
+		return s;
+	}
+	
 	@GET
 	@Path("/getFilter")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getFiler(@Context HttpServletRequest req) throws JSONException {
+	public String getFilter(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
 
@@ -215,7 +247,7 @@ public class LayerCRUD {
 
 		logger.debug("Deleting the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
-		GeoLayer aLayer = dao.loadLayer(layerId);
+		GeoLayer aLayer = dao.loadLayerByID(layerId);
 		ObjectMapper mapper = new ObjectMapper();
 		String s = "[]";
 		try {
@@ -227,6 +259,7 @@ public class LayerCRUD {
 
 		return s;
 	}
+	
 
 	@POST
 	@Path("/postitem")
@@ -611,7 +644,6 @@ public class LayerCRUD {
 			layList = new String[requestBodyJSON.getJSONArray("items").length()];
 			for (int i = 0; i < requestBodyJSON.getJSONArray("items").length(); i++) {
 				layList[i] = requestBodyJSON.getJSONArray("items").getString(i);
-
 			}
 
 			if (layList != null && layList.length > 0) {
@@ -621,7 +653,6 @@ public class LayerCRUD {
 					logger.error("Error loading the layers", e);
 					throw new SpagoBIRuntimeException("Error loading the layers", e);
 				}
-
 			}
 		}
 
@@ -629,7 +660,8 @@ public class LayerCRUD {
 			logger.debug("No layer found");
 			return "{root:[]}";
 		}
-		System.out.println("Contengo " + layers.toString());
+		
+//		System.out.println("Contengo " + layers.toString());
 		logger.debug("Serializing the layers");
 		ObjectMapper mapper = new ObjectMapper();
 		String s = "[]";
@@ -643,5 +675,4 @@ public class LayerCRUD {
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
 	}
-
 }

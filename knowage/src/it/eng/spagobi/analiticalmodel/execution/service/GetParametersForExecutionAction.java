@@ -130,6 +130,9 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		String label;
 		String parType; // DATE, STRING, ...
 		String selectionType; // COMBOBOX, LIST, ...
+		String valueSelection; // "lov", "man_in", "map_in"
+		String selectedLayer;
+		String selectedLayerProp;
 		boolean enableMaximizer;
 		String typeCode; // SpagoBIConstants.INPUT_TYPE_X
 		boolean mandatory;
@@ -217,7 +220,6 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		}
 		
 		void initAttributes() {
-
 			ExecutionInstance executionInstance = this.getExecutionInstance();
 			if (executionInstance == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id "+" [" + analyticalDocumentParameter.getBiObjectID() + "]");		
@@ -226,11 +228,16 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			id = analyticalDocumentParameter.getParameterUrlName();
 			//label = localize( analyticalDocumentParameter.getLabel() );
 			label = analyticalDocumentParameter.getLabel();
+			
+			Integer parameterId = analyticalDocumentParameter.getParameter().getId();
 			analyticalDriver = analyticalDocumentParameter.getParameter();
 			parType = analyticalDriver.getType(); 
 			
-			
 			selectionType = analyticalDriver.getModalityValue().getSelectionType();
+			
+			valueSelection = analyticalDriver.getValueSelection();
+			selectedLayer = analyticalDriver.getSelectedLayer();
+			selectedLayerProp = analyticalDriver.getSelectedLayerProp();
 			
 			typeCode = analyticalDriver.getModalityValue().getITypeCd();			
 
@@ -272,8 +279,6 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			initVisualDependencies();		}
 
 		private void initVisualDependencies() {
-
-
 			if(dependencies == null) {
 				dependencies = new HashMap<String, List<ParameterDependency>>();
 			}
@@ -503,6 +508,30 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 
 		public void setSelectionType(String selectionType) {
 			this.selectionType = selectionType;
+		}
+		
+		public String getValueSelection() {
+			return valueSelection;
+		}
+		
+		public void setValueSelection(String valueSelection) {
+			this.valueSelection = valueSelection;
+		}
+		
+		public String getSelectedLayer() {
+			return selectedLayer;
+		}
+		
+		public void setSelectedLayer(String selectedLayer) {
+			this.selectedLayer = selectedLayer;
+		}
+		
+		public String getSelectedLayerProp() {
+			return selectedLayerProp;
+		}
+		
+		public void setSelectedLayerProp(String selectedLayerProp) {
+			this.selectedLayerProp = selectedLayerProp;
 		}
 		
 		public boolean isEnableMaximizer() {

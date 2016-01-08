@@ -3013,6 +3013,17 @@ CREATE TABLE SBI_OBJ_DATA_SET (
 --SpagoBI: 16.12.2015 Alberto Ghedin: add column indicationg that the federation is generated authomaticlly after the creation of a derived dataset
 ALTER TABLE SBI_FEDERATION_DEFINITION ADD COLUMN DEGENERATED BOOLEAN DEFAULT FALSE;
 
--- 22.12.2005 Lupo: added new custom oracle spatial dialect to dialects' domain
+-- 22.12.2015 Lupo: added new custom oracle spatial dialect to dialects' domain
 INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD, VALUE_NM, DOMAIN_CD, DOMAIN_NM,VALUE_DS, USER_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'), 'org.hibernatespatial.oracle.CustomOracleSpatialDialect', 'sbidomains.nm.oracle_spatial', 'DIALECT_HIB', 'Predefined hibernate dialect', 'sbidomains.ds.oracle_spatial', '');
 UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';
+
+-- 06.01.2016 Benedetto Milazzo: added new columns to tables "SBI_PARUSE" and "SBI_PARAMETERS"
+ALTER TABLE `SBI_PARUSE`
+	ADD COLUMN VALUE_SELECTION VARCHAR(20) NULL AFTER MULTIVALUE_FLAG,
+	ADD COLUMN SELECTED_LAYER VARCHAR(100) NULL AFTER VALUE_SELECTION,
+	ADD COLUMN SELECTED_LAYER_PROP VARCHAR(40) NULL AFTER SELECTED_LAYER;
+
+ALTER TABLE `SBI_PARAMETERS` 
+	ADD COLUMN VALUE_SELECTION VARCHAR(20) NULL AFTER TEMPORAL_FLAG,
+	ADD COLUMN SELECTED_LAYER VARCHAR(100) NULL AFTER VALUE_SELECTION,
+	ADD COLUMN SELECTED_LAYER_PROP VARCHAR(40) NULL AFTER SELECTED_LAYER;

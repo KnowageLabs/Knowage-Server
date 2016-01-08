@@ -188,6 +188,9 @@ public class AnalitycalDriverUse {
 		String desc = (String) requestBodyJSON.opt("DESCRIPTION");
 		String manualInput = (String) requestBodyJSON.opt("MANUALINPUT");
 		String selectionType = (String) requestBodyJSON.opt("SELECTIONTYPE");
+		String valueSelection = (String) requestBodyJSON.opt("VALUESELECTION");
+		String selectedLayer = (String) requestBodyJSON.opt("SELECTEDLAYER");
+		String selectedLayerProp = (String) requestBodyJSON.opt("SELECTEDLAYERPROP");
 
 		Assert.assertNotNull(id, "Id cannot be null");
 		Assert.assertNotNull(idd, "Idd cannot be null");
@@ -197,6 +200,7 @@ public class AnalitycalDriverUse {
 		Assert.assertNotNull(desc, "Description cannot be null");
 		Assert.assertNotNull(manualInput, "Manual input cannot be null");
 		Assert.assertNotNull(selectionType, "Selection type cannot be null");
+		Assert.assertNotNull(valueSelection, "Value selection cannot be null");
 
 		parameterUse.setId(new Integer(idd));
 		parameterUse.setUseID(id);
@@ -207,6 +211,9 @@ public class AnalitycalDriverUse {
 		parameterUse.setDescription(desc);
 		parameterUse.setManualInput(new Integer(manualInput));
 		parameterUse.setSelectionType(selectionType);
+		parameterUse.setValueSelection(valueSelection);
+		parameterUse.setSelectedLayer(selectedLayer);
+		parameterUse.setSelectedLayerProp(selectedLayerProp);
 
 		List<Role> roles = new ArrayList();
 		roles.add(DAOFactory.getRoleDAO().loadByID(5));

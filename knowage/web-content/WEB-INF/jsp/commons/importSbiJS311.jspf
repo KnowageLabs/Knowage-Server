@@ -17,6 +17,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/common.css", currTheme)%>' />
 <LINK rel='StyleSheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
+<link rel='StyleSheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "fonts/font-awesome-4.4.0/css/font-awesome.min.css", currTheme)%>' />
 
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
@@ -77,6 +79,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/ListDetailForm.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/LookupField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/MapField.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/TreeDetailForm.js")%>'></script>
 <script type="text/javascript"

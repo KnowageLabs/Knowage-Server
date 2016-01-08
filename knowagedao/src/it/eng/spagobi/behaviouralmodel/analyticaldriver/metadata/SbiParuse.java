@@ -18,182 +18,230 @@ import java.util.Set;
  */
 public class SbiParuse  extends SbiHibernateModel {
 
-    // Fields    
+	// Fields    
 
-     private Integer useId;
-     private SbiParameters sbiParameters;
-     private SbiLov sbiLov;
-     private SbiLov sbiLovForDefault;
-     private String label;
-     private String name;
-     private String descr;
-     private Set sbiParuseDets;
-     private Set sbiParuseCks;
-     private String selectionType;
-     private Integer multivalue;
-     private Integer manualInput;
-     private Boolean maximizerEnabled;
-     private String defaultFormula;
+	private Integer useId;
+	private SbiParameters sbiParameters;
+	private SbiLov sbiLov;
+	private SbiLov sbiLovForDefault;
+	private String label;
+	private String name;
+	private String descr;
+	private Set sbiParuseDets;
+	private Set sbiParuseCks;
+	private String selectionType;
+	private Integer multivalue;
+	private Integer manualInput;
+	private Boolean maximizerEnabled;
+	private String defaultFormula;
+	private String valueSelection;
+    private String selectedLayer;
+    private String selectedLayerProp;
 
 
-    // Constructors
+	// Constructors
+
+	public String getValueSelection() {
+		return valueSelection;
+	}
+
+	public void setValueSelection(String valueSelection) {
+		this.valueSelection = valueSelection;
+	}
+
 
 	/**
-     * default constructor.
-     */
-    public SbiParuse() {
-        this.useId = -1;
+	 * Gets the selected layer property.
+	 * 
+	 * @return Returns the selectedLayerProp.
+	 */
+	public String getSelectedLayerProp() {
+		return selectedLayerProp;
+	}
+	
+	/**
+	 * Sets the selected layer property.
+	 * 
+	 * @param selectedLayerProp The layer property to set.
+	 */
+	public void setSelectedLayerProp(String selectedLayerProp) {
+		this.selectedLayerProp = selectedLayerProp;
+	}
+	
+	/**
+	 * Gets the selected layer.
+	 * 
+	 * @return Returns the selectedLayer.
+	 */
+	public String getSelectedLayer() {
+		return selectedLayer;
+	}
+	
+	/**
+	 * Sets the selected layer.
+	 * 
+	 * @param selectedLayer The layer to set.
+	 */
+	public void setSelectedLayer(String selectedLayer) {
+		this.selectedLayer = selectedLayer;
+	}
+	
+	/**
+	 * default constructor.
+	 */
+	public SbiParuse() {
+		this.useId = -1;
 
-    }
-    
-    /**
-     * constructor with id.
-     * 
-     * @param useId the use id
-     */
-    public SbiParuse(Integer useId) {
-        this.useId = useId;
-    }
-   
-    
-    
+	}
 
-    // Property accessors
+	/**
+	 * constructor with id.
+	 * 
+	 * @param useId the use id
+	 */
+	public SbiParuse(Integer useId) {
+		this.useId = useId;
+	}
 
-    /**
-     * Gets the use id.
-     * 
-     * @return the use id
-     */
-    public Integer getUseId() {
-        return this.useId;
-    }
-    
-    /**
-     * Sets the use id.
-     * 
-     * @param useId the new use id
-     */
-    public void setUseId(Integer useId) {
-        this.useId = useId;
-    }
 
-    /**
-     * Gets the sbi parameters.
-     * 
-     * @return the sbi parameters
-     */
-    public SbiParameters getSbiParameters() {
-        return this.sbiParameters;
-    }
-    
-    /**
-     * Sets the sbi parameters.
-     * 
-     * @param sbiParameters the new sbi parameters
-     */
-    public void setSbiParameters(SbiParameters sbiParameters) {
-        this.sbiParameters = sbiParameters;
-    }
 
-    /**
-     * Gets the sbi lov.
-     * 
-     * @return the sbi lov
-     */
-    public SbiLov getSbiLov() {
-        return this.sbiLov;
-    }
-    
-    /**
-     * Sets the sbi lov.
-     * 
-     * @param sbiLov the new sbi lov
-     */
-    public void setSbiLov(SbiLov sbiLov) {
-        this.sbiLov = sbiLov;
-    }
-    
-    
-    public SbiLov getSbiLovForDefault() {
-        return this.sbiLovForDefault;
-    }
-    
-    public void setSbiLovForDefault(SbiLov sbiLovForDefault) {
-        this.sbiLovForDefault = sbiLovForDefault;
-    }
 
-    /**
-     * Gets the label.
-     * 
-     * @return the label
-     */
-    public String getLabel() {
-        return this.label;
-    }
-    
-    /**
-     * Sets the label.
-     * 
-     * @param label the new label
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	// Property accessors
 
-    /**
-     * Gets the descr.
-     * 
-     * @return the descr
-     */
-    public String getDescr() {
-        return this.descr;
-    }
-    
-    /**
-     * Sets the descr.
-     * 
-     * @param descr the new descr
-     */
-    public void setDescr(String descr) {
-        this.descr = descr;
-    }
+	/**
+	 * Gets the use id.
+	 * 
+	 * @return the use id
+	 */
+	public Integer getUseId() {
+		return this.useId;
+	}
 
-    /**
-     * Gets the sbi paruse dets.
-     * 
-     * @return the sbi paruse dets
-     */
-    public Set getSbiParuseDets() {
-        return this.sbiParuseDets;
-    }
-    
-    /**
-     * Sets the sbi paruse dets.
-     * 
-     * @param sbiParuseDets the new sbi paruse dets
-     */
-    public void setSbiParuseDets(Set sbiParuseDets) {
-        this.sbiParuseDets = sbiParuseDets;
-    }
+	/**
+	 * Sets the use id.
+	 * 
+	 * @param useId the new use id
+	 */
+	public void setUseId(Integer useId) {
+		this.useId = useId;
+	}
 
-    /**
-     * Gets the sbi paruse cks.
-     * 
-     * @return the sbi paruse cks
-     */
-    public Set getSbiParuseCks() {
-        return this.sbiParuseCks;
-    }
-    
-    /**
-     * Sets the sbi paruse cks.
-     * 
-     * @param sbiParuseCks the new sbi paruse cks
-     */
-    public void setSbiParuseCks(Set sbiParuseCks) {
-        this.sbiParuseCks = sbiParuseCks;
-    }
+	/**
+	 * Gets the sbi parameters.
+	 * 
+	 * @return the sbi parameters
+	 */
+	public SbiParameters getSbiParameters() {
+		return this.sbiParameters;
+	}
+
+	/**
+	 * Sets the sbi parameters.
+	 * 
+	 * @param sbiParameters the new sbi parameters
+	 */
+	public void setSbiParameters(SbiParameters sbiParameters) {
+		this.sbiParameters = sbiParameters;
+	}
+
+	/**
+	 * Gets the sbi lov.
+	 * 
+	 * @return the sbi lov
+	 */
+	public SbiLov getSbiLov() {
+		return this.sbiLov;
+	}
+
+	/**
+	 * Sets the sbi lov.
+	 * 
+	 * @param sbiLov the new sbi lov
+	 */
+	public void setSbiLov(SbiLov sbiLov) {
+		this.sbiLov = sbiLov;
+	}
+
+
+	public SbiLov getSbiLovForDefault() {
+		return this.sbiLovForDefault;
+	}
+
+	public void setSbiLovForDefault(SbiLov sbiLovForDefault) {
+		this.sbiLovForDefault = sbiLovForDefault;
+	}
+
+	/**
+	 * Gets the label.
+	 * 
+	 * @return the label
+	 */
+	public String getLabel() {
+		return this.label;
+	}
+
+	/**
+	 * Sets the label.
+	 * 
+	 * @param label the new label
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
+	 * Gets the descr.
+	 * 
+	 * @return the descr
+	 */
+	public String getDescr() {
+		return this.descr;
+	}
+
+	/**
+	 * Sets the descr.
+	 * 
+	 * @param descr the new descr
+	 */
+	public void setDescr(String descr) {
+		this.descr = descr;
+	}
+
+	/**
+	 * Gets the sbi paruse dets.
+	 * 
+	 * @return the sbi paruse dets
+	 */
+	public Set getSbiParuseDets() {
+		return this.sbiParuseDets;
+	}
+
+	/**
+	 * Sets the sbi paruse dets.
+	 * 
+	 * @param sbiParuseDets the new sbi paruse dets
+	 */
+	public void setSbiParuseDets(Set sbiParuseDets) {
+		this.sbiParuseDets = sbiParuseDets;
+	}
+
+	/**
+	 * Gets the sbi paruse cks.
+	 * 
+	 * @return the sbi paruse cks
+	 */
+	public Set getSbiParuseCks() {
+		return this.sbiParuseCks;
+	}
+
+	/**
+	 * Sets the sbi paruse cks.
+	 * 
+	 * @param sbiParuseCks the new sbi paruse cks
+	 */
+	public void setSbiParuseCks(Set sbiParuseCks) {
+		this.sbiParuseCks = sbiParuseCks;
+	}
 
 
 
@@ -205,7 +253,7 @@ public class SbiParuse  extends SbiHibernateModel {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Sets the name.
 	 * 
@@ -214,7 +262,7 @@ public class SbiParuse  extends SbiHibernateModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Gets the manual input.
 	 * 
@@ -223,7 +271,7 @@ public class SbiParuse  extends SbiHibernateModel {
 	public Integer getManualInput() {
 		return manualInput;
 	}
-	
+
 	/**
 	 * Sets the manual input.
 	 * 
@@ -232,7 +280,7 @@ public class SbiParuse  extends SbiHibernateModel {
 	public void setManualInput(Integer manualInput) {
 		this.manualInput = manualInput;
 	}
-	
+
 	/**
 	 * Gets the selection type.
 	 * 
@@ -268,9 +316,9 @@ public class SbiParuse  extends SbiHibernateModel {
 	public void setMultivalue(Integer multivalue) {
 		this.multivalue = multivalue;
 	}
-	
 
-    public Boolean getMaximizerEnabled() {
+
+	public Boolean getMaximizerEnabled() {
 		return maximizerEnabled;
 	}
 
@@ -285,5 +333,5 @@ public class SbiParuse  extends SbiHibernateModel {
 	public void setDefaultFormula(String defaultFormula) {
 		this.defaultFormula = defaultFormula;
 	}
-	
+
 }

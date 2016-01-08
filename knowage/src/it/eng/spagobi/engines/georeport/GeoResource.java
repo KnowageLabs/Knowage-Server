@@ -39,7 +39,6 @@ public class GeoResource {
 
 	@Path("/getWMSlayer")
 	@GET
-	// @Produces("image/png")
 	public Response getWMSlayer(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		String layerUrl = req.getParameter("layerURL");
@@ -60,7 +59,6 @@ public class GeoResource {
 			while ((line = br.readLine()) != null) {
 				stringBuilder.append(line + "\n");
 			}
-			;
 
 			return Response.ok(stringBuilder.toString()).build();
 		} else {

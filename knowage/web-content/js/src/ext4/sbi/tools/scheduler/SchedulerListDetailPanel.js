@@ -89,7 +89,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		
 		//custom buttons for scheduler operations
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
-				this.columns, 'button-detail', LN('sbi.scheduler.activity.detailactivity') ,function(grid, rowIndex, colIndex) {
+			this.columns, 'button-detail', LN('sbi.scheduler.activity.detailactivity') ,function(grid, rowIndex, colIndex) {
 			var record = grid.getStore().getAt(rowIndex);
 			var jobName = record.get('jobName');
 			var jobGroup = record.get('jobGroup');

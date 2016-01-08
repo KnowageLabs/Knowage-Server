@@ -7,8 +7,6 @@ sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 });
 
-
-
 sbiM.factory('sbiModule_config',function(){
 	return {
     	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
@@ -116,8 +114,14 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 	};
 
 	this.get = function(endP_path, req_Path, item, conf) {
-		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item,conf);
+		(item == undefined || item==null) ? 
+				item = "" : 
+					item = "?" + encodeURIComponent(item)
+							.replace(/'/g,"%27")
+							.replace(/"/g,"%22")
+							.replace(/%3D/g,"=")
+							.replace(/%26/g,"&");
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
 		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
