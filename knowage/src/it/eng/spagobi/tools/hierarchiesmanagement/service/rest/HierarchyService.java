@@ -291,7 +291,7 @@ public class HierarchyService {
 
 			if (!isInsert || customTreeInMemorySaved) {
 				// deleteHierarchy(req);
-				updateHierarchyForBackup(dataSource, hierarchyType, hierarchyName, validityDate, hierarchyTable);
+				// updateHierarchyForBackup(dataSource, hierarchyType, hierarchyName, validityDate, hierarchyTable);
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
@@ -375,6 +375,39 @@ public class HierarchyService {
 			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", t);
 		}
 
+		return "{\"response\":\"ok\"}";
+
+	}
+
+	@POST
+	@Path("/restoreHierarchy")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String restoreHierarchy(@Context HttpServletRequest req) throws SQLException {
+		// restores a backup hierarchy
+		try {
+
+			logger.debug("START");
+
+			String hierarchyBkpName = req.getParameter("name");
+			String dimension = req.getParameter("dimension");
+
+			if ((dimension == null) || (hierarchyBkpName == null)) {
+				throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", "wrong request parameters");
+			}
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
+
+			IDataSource dataSource = HierarchyUtils.getDataSource(dimension);
+
+			restoreBackupHierarchy(dataSource, hierarchyBkpName, hierarchyTable);
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while restoring a backup hierarchy");
+			throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", t);
+		}
+
+		logger.debug("END");
 		return "{\"response\":\"ok\"}";
 
 	}
@@ -1160,7 +1193,7 @@ public class HierarchyService {
 
 	}
 
-	private void restoreBackupHierarchy(IDataSource dataSource, Connection databaseConnection, String hierBkpName, String hierTableName, String prefix) {
+	private void restoreBackupHierarchy(IDataSource dataSource, String hierBkpName, String hierTableName) {
 
 		logger.debug("START");
 
@@ -1183,7 +1216,8 @@ public class HierarchyService {
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
-		try (Statement stmt = databaseConnection.createStatement();
+		try (Connection databaseConnection = dataSource.getConnection();
+				Statement stmt = databaseConnection.createStatement();
 				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
 				PreparedStatement deletePs = databaseConnection.prepareStatement(deleteQuery);
 				PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery)) {
