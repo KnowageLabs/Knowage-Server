@@ -312,7 +312,8 @@
 		width: 300,
 		
 		title:
-		{
+		{ 
+		    text: '$chart.LEGEND.TITLE.text',
 			style:
 			{
 				fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',			

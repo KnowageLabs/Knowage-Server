@@ -1155,11 +1155,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				var legendTitleStyle = '';
 				var legendElementStyle = "";
+				
+				TITLE['text']=(chartModel.get('legendTitle') != undefined) ? chartModel
+						.get('legendTitle')
+						 : '';
 
 				/**
 				 * Parameters linked to the TITLE subtag of the LEGEND element (tag)
 				 * on the PARALLEL chart
 				 */
+				
 				legendTitleStyle += 'fontFamily:'
 				 + ((chartModel.get('parallelLegendTitleFontFamily') != undefined) ? chartModel
 					.get('parallelLegendTitleFontFamily')

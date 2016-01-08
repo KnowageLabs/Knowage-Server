@@ -1874,6 +1874,14 @@ function renderWordCloud(chartConf){
 		         .style("width",legendWidth-25)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
+		/**
+		 * by default legend title is groupcolumn name, if custom title for legend is specified in designer
+		 * it is used instead of default
+		 */
+		var legendTitle=groupcolumn;
+		if(data.legend.title.text != ""){
+			legendTitle=data.legend.title.text;
+		}
 		
 		legend.append("svg:g")
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
@@ -1888,7 +1896,7 @@ function renderWordCloud(chartConf){
 		.attr("x", 20)
 		.attr("y",-10)
 		.attr("dy", ".31em")
-		.text(groupcolumn);
+		.text(legendTitle);
 
 
 		 legend.selectAll("g.legend")
