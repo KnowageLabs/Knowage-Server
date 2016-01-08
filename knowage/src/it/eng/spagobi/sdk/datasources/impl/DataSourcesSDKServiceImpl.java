@@ -21,12 +21,13 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 
 	static private Logger logger = Logger.getLogger(DataSourcesSDKServiceImpl.class);
 
+	@Override
 	public SDKDataSource getDataSource(Integer dataSourceId) throws NotAllowedOperationException {
 		SDKDataSource toReturn = null;
 		logger.debug("IN: dataSourceId in input = " + dataSourceId);
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasource congifuration.");
 			if (dataSourceId == null) {
@@ -39,9 +40,9 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 				return null;
 			}
 			toReturn = new SDKObjectsConverter().fromSpagoBiDataSourceToSDKDataSource(dataSource.toSpagoBiDataSource());
-		} catch(NotAllowedOperationException e) {
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKDataSources list", e);
 			logger.debug("Returning null");
 			return null;
@@ -52,12 +53,13 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 		return toReturn;
 	}
 
+	@Override
 	public SDKDataSource[] getDataSources() throws NotAllowedOperationException {
 		SDKDataSource[] toReturn = null;
 		logger.debug("IN");
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_MANAGEMENT, "User cannot see datasources congifuration.");
 			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
@@ -67,9 +69,9 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 				SDKDataSource sdkDataSource = new SDKObjectsConverter().fromSpagoBiDataSourceToSDKDataSource(dataSource.toSpagoBiDataSource());
 				toReturn[i] = sdkDataSource;
 			}
-		} catch(NotAllowedOperationException e) {
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKSource list", e);
 			logger.debug("Returning null");
 			return null;
@@ -78,6 +80,6 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 			logger.debug("OUT");
 		}
 		return toReturn;
-	}	
+	}
 
 }
