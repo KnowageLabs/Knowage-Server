@@ -71,17 +71,17 @@
 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.attributes.title");}}</div>
 							<div style="position: absolute; right: 0px" class="h100">
 								
+								<md-button type="button" tabindex="-1" aria-label="cancel"
+								class="md-raised md-ExtraMini" style=" margin-top: 2px;"
+								ng-click="cancel()">{{translate.load("sbi.generic.cancel");}}
+								</md-button>
+								
 								<md-button type="submit"
 								aria-label="save atrribute" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-disabled="!attributeForm.$valid"
 								>
 								{{translate.load("sbi.attributes.update");}} </md-button>
-
-								<md-button type="button" tabindex="-1" aria-label="cancel"
-								class="md-raised md-ExtraMini" style=" margin-top: 2px;"
-								ng-click="cancel()">{{translate.load("sbi.generic.cancel");}}
-								</md-button>
 								
 							</div>
 							</div>
