@@ -1175,11 +1175,11 @@ public class HierarchyService {
 
 		logger.debug("The select query is [" + selectQuery + "]");
 
-		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "=? AND " + bkpColumn + " = ?";
+		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
 
-		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "=? WHERE " + hierNameColumn + "= ?";
+		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ? WHERE " + hierNameColumn + "= ?";
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
@@ -1219,7 +1219,8 @@ public class HierarchyService {
 				logger.debug("Preparing update statement.");
 
 				updatePs.setString(1, hierCd);
-				updatePs.setString(2, hierBkpName);
+				updatePs.setBoolean(2, false);
+				updatePs.setString(3, hierBkpName);
 
 				updatePs.executeUpdate();
 
