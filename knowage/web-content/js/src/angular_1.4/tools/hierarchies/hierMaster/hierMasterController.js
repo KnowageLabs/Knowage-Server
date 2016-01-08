@@ -60,6 +60,8 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					function(data, status, headers, config) {
 						if (data.error == undefined){
 							$scope.createTable(data);
+							$scope.hierType = undefined;
+							$scope.hierarchiesMaster = [];
 						}else{
 							$scope.showAlert('ERROR',data.error[0].message);
 						}

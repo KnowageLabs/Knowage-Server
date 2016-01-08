@@ -24,7 +24,7 @@
 			<md-content layout="row" layout-align="space-around center" layout-padding>
 				<md-content class="list-container">
 					<md-list>
-						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim" ng-if="mtDim.VISIBLE">
+						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim">
 							<span ng-click="selectItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
 						</md-list-item>
 					</md-list>
