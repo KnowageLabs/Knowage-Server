@@ -1,3 +1,43 @@
+var backupTableFake = [
+                       {   
+                    	   code : 'code 1',
+                    	   name : 'backup 1',
+                    	   description : 'descr 1',
+                    	   type : 'technical'
+                       },{   
+                    	   code : 'code 2',
+                    	   name : 'backup 2',
+                    	   description : 'descr 2',
+                    	   type : 'technical'
+                       },{   
+                    	   code : 'code 3',
+                    	   name : 'backup 3',
+                    	   description : 'descr 3',
+                    	   type : 'technical'
+                       },{   
+                    	   code : 'code 4',
+                    	   name : 'backup 4',
+                    	   description : 'descr 4',
+                    	   type : 'technical'
+                       },{   
+                    	   code : 'code 5',
+                    	   name : 'backup 5',
+                    	   description : 'descr 5',
+                    	   type : 'master'
+                       },{   
+                    	   code : 'code 6',
+                    	   name : 'backup 6',
+                    	   description : 'descr 6',
+                    	   type : 'technical'
+                       },{   
+                    	   code : 'code 7',
+                    	   name : 'backup 7',
+                    	   description : 'descr 7',
+                    	   type : 'master'
+                       },
+                       
+                       ]
+
 var dataRoot={
 		  "root": [
 		           {

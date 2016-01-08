@@ -78,7 +78,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
    }	
 	
-	$scope.hierTree.push(angular.copy(dataJson));
+	//$scope.hierTree.push(angular.copy(dataJson));
 	
 	$scope.restService.get("dimensions","getDimensions")
 		.success(

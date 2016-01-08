@@ -30,12 +30,11 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierarchiesController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/data.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/data2.js"></script>
-<!-- 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTableController.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierTreeController.js"></script>
- -->	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMaster/hierMasterController.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierTechnical/hierTechnicalController.js"></script>
+
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierMasterController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierTechnicalController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/hierarchies/hierBackupController.js"></script>
+	
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/hierarchies/css/hierarchiesStyle.css">
 <title>HierarchiesEditor</title>
@@ -43,7 +42,7 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 </head>
 
 <body class="hierBodyStyle">
-	<div ng-cloak>
+	<div ng-cloak ng-controller="hierCtrl">
 		<md-content>
 			<md-tabs md-dynamic-height md-border-bottom>
 				<md-tab label="MASTER" ng-if="<%=canSeeMasterHier%>==true">
@@ -51,9 +50,14 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.html'"></ng-include>
 					</md-content> 
 				</md-tab>		      
-				<md-tab label="TECHNICAL" ng-if="<%=canSeeTechnicalHier%>==true">
-					<md-content layout-padding>
+				<md-tab label="TECHNICAL" md-on-select ="loadTechnical()" ng-if="<%=canSeeTechnicalHier%>==true">
+					<md-content layout-padding ng-if="technicalLoaded">
 						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.html'"></ng-include>
+					</md-content>
+				</md-tab>
+				<md-tab label="BACKUP"  md-on-select ="loadBackup()" ng-if="<%=canSeeTechnicalHier%>==true">
+					<md-content layout-padding ng-if="backupLoaded">
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierBackup.html'"></ng-include>
 					</md-content>
 				</md-tab>
 			</md-tabs>

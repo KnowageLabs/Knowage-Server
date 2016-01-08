@@ -1,0 +1,82 @@
+<div ng-controller = "hierBackupController">
+	<md-content layout="row" layout-wrap>
+		<div class="div-container" flex style="margin-right: 20px;" >
+			
+			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;" ng-click='debug()'>
+				<div class="md-toolbar-tools">
+					<i class="fa fa-list"></i>
+					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.hierarchies.backup");}}</h2>
+					<span flex=""></span>					
+				</div>
+			</md-toolbar>
+			
+			<md-content id='hierarchiesSrc' layout-padding layout='column' layout-align='space-around stretch'>
+				<md-datepicker ng-model="dateBackup" ng-change="getTree('src')"></md-datepicker>
+				<md-content id='hierarchiesSrcSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
+					<md-input-container flex flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
+			        	<md-select type='text' ng-model='dimSrc' ng-disabled='!dateBackup' md-on-close='getHierarchies("src")'>
+			        		<md-option ng-value="dimSrc" ng-repeat="dimSrc in dimensionSrc">{{ dimSrc.DIMENSION_NM }}</md-option>
+			        	</md-select>
+					</md-input-container>
+					<md-input-container flex flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}} {{translate.load("sbi.generic.type");}}</label>
+			        	<md-select type='text' ng-model='hierTypeSrc' ng-disabled='!dateBackup' md-on-close='getHierarchies("src")'>
+			        		<md-option ng-value="hierTypeSrc" ng-repeat="hierTypeSrc in hierarchiesTypeSrc">{{ hierTypeSrc }}</md-option>
+			        	</md-select>
+					</md-input-container>
+					<md-input-container flex flex-sm='90'>
+			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
+			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTree("src")' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
+			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIER_NM	}}</md-option>
+			        	</md-select>
+					</md-input-container>
+				</md-content>
+				<md-content layout='row' layout-align='start start'>
+					<md-icon ng-if="!seeFilter" class="fa fa-filter" ng-click="toogleSeeFilter('src')"></md-icon>
+					<md-icon ng-if="seeFilter" class="fa fa-times" ng-click="toogleSeeFilter('src')"></md-icon>
+				</md-content>
+				<md-content id='hierarchiesSrcFilters' ng-show='seeFilter' layout-fill>
+					<fieldset class="standard" >
+				        <legend>Filters</legend>
+				        <div layout="column" layout-wrap flex layout-align="space-around stretch">
+					        <md-content layout='row' layout-fill layout-align='space-around center'>
+						        <md-input-container flex='40'>
+						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
+						        	<input type='text' ng-model='filterBySrc'></input>
+					      		</md-input-container>
+						        <md-input-container flex='40'>
+						        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
+						        	<md-select type='text' ng-model='orderBySrc'>
+						        		<md-option ng-value="orderBySrc" ng-repeat="orderBySrc in orderByFields">{{ orderBySrc }}</md-option>
+						        	</md-select>
+						        </md-input-container>
+					        </md-content>
+				        	<md-content layout='row' layout-fill layout-align='start center'>
+				        		After Date: <md-datepicker ng-model="dateFilterSrc"></md-datepicker>
+				        	</md-content>
+				        	<md-content layout='row' layout-fill layout-align='space-between center'>
+				        		<md-checkbox ng-model="seeHideLeafSrc" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
+				        		 <div>
+					        		 <md-icon class="fa fa-check" ng-click="applyFilter('src')"></md-icon>
+							         <md-icon class="fa fa-trash" ng-click="removeFilter('src')"></md-icon>
+						         </div>
+			        		</md-content>
+			        	</div>
+			        </fieldset>
+				</md-content>
+				<md-content layout='row' layout-fill flex='50'>
+					<angular-table 
+						ng-model="backupTable"
+						columns = "backupColumns"
+						id='backupTable'
+					    columns-search="columnSearchTable"
+					    show-search-bar = "true"
+					    speed-menu-option="backupSpeedMenu"
+					    no-pagination = "true"
+					></angular-table>
+				</md-content>
+			</md-content>
+		</div> 
+	</md-content>
+</div>
