@@ -140,6 +140,12 @@ resizer {
     border-color: #3B668C;
 }
 
+.details-container {
+	width:95%;
+	heigth:100%;
+	margin-top:30px !important;
+}
+
 .button-move{
 	width: 60px;
 	min-width: 10px;
@@ -157,4 +163,8 @@ resizer {
 	background-color: #3B668C;
 	border-style: dotted;
 	border-width: 1px;
+}
+
+md-datepicker > div.md-datepicker-input-container{
+	padding-bottom: 3px !important;
 }

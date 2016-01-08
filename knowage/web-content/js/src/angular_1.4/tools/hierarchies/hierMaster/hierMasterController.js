@@ -28,6 +28,17 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	
 	$scope.hierMasterNew = {};
 	
+	$scope.dimSpeedMenu= [{
+    	label: $scope.translate.load('sbi.generic.details'),
+    	icon:'fa fa-info-circle',
+    	color:'#153E7E',
+    	action:function(item,event){
+    		$scope.showDetails(item);
+    	}
+ 	}];
+	
+	
+	
 	$scope.hierTree.push(angular.copy(dataJson));
 	
 	$scope.restService.get("dimensions","getDimensions")
@@ -234,151 +245,31 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					locals: {
 						   translate: $scope.translate,
 				           date : $scope.dateDim,
+				           dim: $scope.dim,
 				           metadataDim : $scope.metadataDimMap[dimName].DIM_FIELDS,
 				           metadataTree : $scope.metadataTreeMap[dimName].GENERAL_FIELDS
 				         },
 					preserveScope : true,
 					clickOutsideToClose:false,
-					controller: DialogController 
+					controller: newHierarchyController 
 				});
 		}
-		
-		function DialogController($scope, $mdDialog, translate, date, metadataDim, metadataTree) {
-			$scope.translate = translate;
-			$scope.dim = {};
-			$scope.date = date;
-			$scope.metadataDim = angular.copy(metadataDim);
-			$scope.metadataTree = angular.copy(metadataTree);
-		    $scope.selectedItemsLeft = [];
-		    $scope.selectedItemsRight = [];
-		    $scope.metadataDimExport = [];
-		    var level = 1 ;
-		    $scope.removeElement = function (array, el){
-	    		for ( var i = 0 ; i < array.length ; i++){
-	    			if (array[i].ID == el.ID){
-		    			array.splice(i,1);
-	    			}
-	    		}
-		    }
-		    //move selected item from posSelected to posDestination if they are set and different
-		    $scope.moveTo = function (posDestination){
-		    	if (posDestination && posDestination.length > 0){
-	    			var dest = posDestination == 'right' ? $scope.metadataDimExport :$scope.metadataDim;
-	    			var source = posDestination == 'right' ?  $scope.metadataDim : $scope.metadataDimExport;
-	    			var itemsSource = posDestination == 'right' ?  $scope.selectedItemsLeft : $scope.selectedItemsRight;
-	    			if (source.length > 0){
-	    				var count = 0;
-	    				var tmpLevel = -1;
-	    				for (var i = 0 ; i < itemsSource.length;i++){
-    						itemsSource[i].level = posDestination == 'right' ?  level : undefined;
-	    					dest.push(itemsSource[i]);
-	    					$scope.removeElement(source,itemsSource[i]);
-		    				itemsSource[i].isSelected = undefined;
-	    				}
-	    				itemsSource.splice(0,itemsSource.length);
-	    				//if move to right, rise the level
-	    				//if move to left, decrease the level of the element with bigger level 
-	    				if (posDestination == 'right'){
-	    					level++;
-	    				}else if (posDestination == 'left'){
-	    					//check if the highest level is missing, in this case, decrease the level
-	    					//could be missing because the highest level could be moved
-	    					var isPresent = false;
-	    					for (var i=0;i<source.length;i++){
-	    						if (source[i].level == (level-1)){
-	    							isPresent=true;
-	    							break;
-	    						}
-	    					}
-	    					if (!isPresent){
-	    						level--;
-	    					}
-	    				}
-	    				
-	    			}
-		    	}
-		    }
-		  
-		    $scope.toogleItem = function (item,pos){
-		    	item.isSelected = item.isSelected == undefined ? true : !item.isSelected;
-		    	var arraySelected = pos == 'right' ? $scope.selectedItemsRight : $scope.selectedItemsLeft;
-		    	if (item.isSelected == true){
-		    		arraySelected.push(item);
-		    	}else{
-		    		$scope.removeElement(arraySelected, item);
-		    	}
-		    }
-		    
-			$scope.closeDialog = function() {
-		     	$mdDialog.cancel();
-		     }
-		    $scope.saveHier = function(){
-		     	$mdDialog.hide(
-		     			{hierNew : $scope.hierNew,
-		     			 metadata: $scope.metadataDimExport
-		     			});
-		     }
-		}
-	}
-/*	
-
-	$scope.showDetails = function(row,cells,listId) {
-		var cloneRow = [];
-		var idx=0; //order for the list of properties
-		for (c in cells){			
-			var item = cells[c];
-			var value = $scope.getValueColumn(item, row);
-			var el = {};
-			el.index = idx;
-			el[item.label]=value;			
-			idx++;
-			cloneRow.push(el);
-		}
-		row = cloneRow;
-		
-        $mdDialog.show({
-        	locals:{lrow: row},
-        	 controllerAs : 'infCtrl',
-	         preserveScope : true,
-	         clickOutsideToClose : true,
-	         template:
-	           '<md-dialog style="width: 50%;  overflow-y: visible;"  class="infoBox" aria-label="Dettaglio">' +
-	           '  <md-dialog-content class="md-padding">'+
-	           '     <md-toolbar class="minihead">'+
-	           '  	   <div class="md-toolbar-tools">'+
-	           '		   <h4 class="md-flex" >Dettagli</h4>'+
-	           ' 	  </div>'+
-	           '   </md-toolbar>'+
-	           '    <md-list>'+    
-	           '      <md-list-item ng-repeat="(key,value) in infCtrl.row | orderBy: \'index\' ">'+
-	           '		<span ng-repeat="(label,val) in value">'+
-        	   '			<span ng-if="label!=\'index\'"><b>{{label}}:</b> {{val}}</span>'+
-	           '		</span>'+  
-	           '      '+
-	           '    </md-list-item></md-list>'+
-	           '  </md-dialog-content>' +
-	           '  <div class="md-actions" layout="row">'+    
-	           '  	<md-button ng-click="infCtrl.closeDialog()" class="md-raised">'+
-//	           ' 		{{translate.load("sbi.ds.wizard.cancel");}} '+
-	           '		Chiudi ' +	
-	           ' 	</md-button>'+	           
-	           '  </div>'+
-	           '</md-dialog>',
-
-	         controller: function(locals, $mdDialog) {
-	        	 this.row = locals.lrow;
-	        	 this.closeDialog = function() {	        		 
-			          $mdDialog.hide();
-			        }
-	         }
-	      });
 	}
 
-	
-	$scope.pageChanged = function(newPageNumber,itemsPerPage,searchValue){
-		//alert("paginazione lato server");
+	$scope.showDetails = function(item) {
+		return $mdDialog.show({
+				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/detailsMasterDialog.html',
+				parent: angular.element(document.body),
+				locals: {
+					   translate: $scope.translate,
+					   item: item,
+			           metadataDim : $scope.metadataDimMap[$scope.dim.DIMENSION_NM].DIM_FIELDS
+			         },
+				preserveScope : true,
+				clickOutsideToClose:false,
+				controller: showDetailsController
+			});
 	}
-	*/
 	
 	$scope.applyFilter = function(choose){
 		//use to apply the filter only when is clicked the icon
@@ -424,6 +315,97 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		        }  
     }
 	
+	$scope.formatDate = function (date){
+		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
+	}
+	
+	function showDetailsController($scope, $mdDialog, translate, item, metadataDim) {
+		$scope.translate = translate;
+		$scope.item = item;
+		$scope.metadataDim = angular.copy(metadataDim);
+		
+		$scope.closeDialog = function() {
+	     	$mdDialog.cancel();
+	     }
+	}
+	
+	function newHierarchyController($scope, $mdDialog, translate, item, metadataDim, metadataTree) {
+		$scope.translate = translate;
+		$scope.dim = {};
+		$scope.date = date;
+		$scope.metadataDim = angular.copy(metadataDim);
+		$scope.metadataTree = angular.copy(metadataTree);
+	    $scope.selectedItemsLeft = [];
+	    $scope.selectedItemsRight = [];
+	    $scope.metadataDimExport = [];
+	    var level = 1 ;
+	    $scope.removeElement = function (array, el){
+    		for ( var i = 0 ; i < array.length ; i++){
+    			if (array[i].ID == el.ID){
+	    			array.splice(i,1);
+    			}
+    		}
+	    }
+	    //move selected item from posSelected to posDestination if they are set and different
+	    $scope.moveTo = function (posDestination){
+	    	if (posDestination && posDestination.length > 0){
+    			var dest = posDestination == 'right' ? $scope.metadataDimExport :$scope.metadataDim;
+    			var source = posDestination == 'right' ?  $scope.metadataDim : $scope.metadataDimExport;
+    			var itemsSource = posDestination == 'right' ?  $scope.selectedItemsLeft : $scope.selectedItemsRight;
+    			if (source.length > 0){
+    				var count = 0;
+    				var tmpLevel = -1;
+    				for (var i = 0 ; i < itemsSource.length;i++){
+						itemsSource[i].level = posDestination == 'right' ?  level : undefined;
+    					dest.push(itemsSource[i]);
+    					$scope.removeElement(source,itemsSource[i]);
+	    				itemsSource[i].isSelected = undefined;
+    				}
+    				itemsSource.splice(0,itemsSource.length);
+    				//if move to right, rise the level
+    				//if move to left, decrease the level of the element with bigger level 
+    				if (posDestination == 'right'){
+    					level++;
+    				}else if (posDestination == 'left'){
+    					//check if the highest level is missing, in this case, decrease the level
+    					//could be missing because the highest level could be moved
+    					var isPresent = false;
+    					for (var i=0;i<source.length;i++){
+    						if (source[i].level == (level-1)){
+    							isPresent=true;
+    							break;
+    						}
+    					}
+    					if (!isPresent){
+    						level--;
+    					}
+    				}
+    				
+    			}
+	    	}
+	    }
+	  
+	    $scope.toogleItem = function (item,pos){
+	    	item.isSelected = item.isSelected == undefined ? true : !item.isSelected;
+	    	var arraySelected = pos == 'right' ? $scope.selectedItemsRight : $scope.selectedItemsLeft;
+	    	if (item.isSelected == true){
+	    		arraySelected.push(item);
+	    	}else{
+	    		$scope.removeElement(arraySelected, item);
+	    	}
+	    }
+	    
+		$scope.closeDialog = function() {
+	     	$mdDialog.cancel();
+	     }
+	    $scope.saveHier = function(){
+	     	$mdDialog.hide(
+	     			{hierNew : $scope.hierNew,
+	     			 metadata: $scope.metadataDimExport
+	     			});
+	     }
+	}
+
 	//Create an alert dialog with a message
 	$scope.showAlert = function (title, message){
 		$scope.log.log(message);
@@ -448,9 +430,5 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		        );
 		}
 	};
-	
-	$scope.formatDate = function (date){
-		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
-	}
 }
 
