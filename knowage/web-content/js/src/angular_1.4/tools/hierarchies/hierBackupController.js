@@ -303,7 +303,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		});
 	}
 	
-	$scope.menuOptionTarget = [{
+	$scope.menuOption = [{
 			label: $scope.translate.load('sbi.generic.add'),
 			showItem : function(item,event){
 				//visible if it is NOT a leaf

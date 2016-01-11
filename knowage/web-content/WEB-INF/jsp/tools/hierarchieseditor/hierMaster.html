@@ -19,8 +19,8 @@
 					</md-input-container>
 				</md-content>
 		      	<md-content layout='row' layout-align='start start'>
-					<md-icon ng-if="!seeFilterDim" class="fa fa-filter" ng-click="toogleSeeFilter('dim')"></md-icon>
-					<md-icon ng-if="seeFilterDim" class="fa fa-times" ng-click="toogleSeeFilter('dim')"></md-icon>
+					<md-icon ng-if="!seeFilterDim" class="fa fa-filter" ng-click="toggleSeeFilter('dim')"></md-icon>
+					<md-icon ng-if="seeFilterDim" class="fa fa-times" ng-click="toggleSeeFilter('dim')"></md-icon>
 				</md-content>
 				<md-content id='hierarchiesDimFilters' ng-show='seeFilterDim' layout-fill>
 					<fieldset class="standard" >
@@ -71,7 +71,7 @@
 			<md-content id='hierMasterTree' layout-padding layout='column' layout-align='space-around stretch'>
 				<md-content layout='row' layout-xs='column' layout-padding layout-align='space-around center'>
 					<md-datepicker ng-model="dateTree" ng-change="getTree()"></md-datepicker>
-					<md-button ng-click='saveTree()' ng-disabled='!treeMasterDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
+					<md-button ng-click='saveTree()' ng-disabled='!treeDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
 				</md-content>
 				<md-content id='hierarchiesSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
@@ -89,8 +89,8 @@
 					</md-input-container>
 				</md-content>
 				<md-content layout='row' layout-align='start start'>
-					<md-icon ng-if="!seeFilterTree" class="fa fa-filter" ng-click="toogleSeeFilter('tree')"></md-icon>
-					<md-icon ng-if="seeFilterTree" class="fa fa-times" ng-click="toogleSeeFilter('tree')"></md-icon>
+					<md-icon ng-if="!seeFilterTree" class="fa fa-filter" ng-click="toggleSeeFilter('tree')"></md-icon>
+					<md-icon ng-if="seeFilterTree" class="fa fa-times" ng-click="toggleSeeFilter('tree')"></md-icon>
 				</md-content>
 				<md-content id='hierarchiesTreeFilters' ng-show='seeFilterTree' layout-fill>
 					<fieldset class="standard" >

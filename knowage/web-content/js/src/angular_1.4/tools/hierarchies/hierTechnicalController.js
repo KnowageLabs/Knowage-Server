@@ -215,7 +215,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.addHier =  function(item,parent,event){
 		var promise = $scope.editNode({},parent);
-		promise
+		promise //TODO correggere inserimento
 			.then(function(newItem){
 					var tmpItem =angular.copy(item);
 					for ( key in newItem){ 
@@ -235,9 +235,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			item = newItem;
 			$scope.treeTargetDirty = true;
 		}
-		
 	}
-	
+	/*Clone the hierarchy of the tree with context menu. If the hier not allows duplicate, show Dialog to modify the new hier*/
 	$scope.duplicateLeaf =  function(item,parent,event){
 		var newItem = angular.copy(item);
 		if ($scope.dimTarget && $scope.dimTarget.DIMENSION_NM && $scope.dimTarget.DIMENSION_NM.length > 0){ 
@@ -301,7 +300,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				},
 			action: $scope.addHier
 		},{
-			label: 'Duplicate',
+			label: $scope.translate.load('sbi.generic.clone'),
 			showItem : function(item,event){
 				//visible if it IS a leaf
 				return item !== undefined && item.leaf !== undefined && item.leaf == true;
@@ -401,7 +400,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			var promise = $scope.editNode(angular.copy(rootStructure),null);
 			promise
 				.then(function(newItem){
-						$scope.hierTreeTarget.splice(0,0,newItem);
+						$scope.hierTreeTarget = [newItem]
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;
 					},function(){
@@ -422,7 +421,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			root.isInsert = $scope.targetIsNew;
 			root.root = Array.isArray($scope.hierTreeTarget) ? angular.copy($scope.hierTreeTarget[0]) : angular.copy($scope.hierTreeTarget);
 			root.root.$parent = undefined;
-			//remove c
+			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
 			var elements = [root.root];
 			do{
 				var el = elements.shift();

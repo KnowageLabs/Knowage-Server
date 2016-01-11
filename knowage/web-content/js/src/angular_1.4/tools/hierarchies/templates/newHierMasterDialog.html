@@ -25,7 +25,7 @@
 				<md-content class="list-container">
 					<md-list>
 						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim">
-							<span ng-click="toogleItem(mtDim)"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
+							<span ng-click="toggleItem(mtDim)"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
 						</md-list-item>
 					</md-list>
 				</md-content>
@@ -36,7 +36,7 @@
 				<md-content class="list-container">
 					<md-list>
 						<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport">
-							<span ng-click="toogleItem(mtDimExp,'right')"  ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:100%">
+							<span ng-click="toggleItem(mtDimExp,'right')"  ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:100%">
 								<b>Lev.{{mtDimExp.level}}</b> {{mtDimExp.NAME}} </span>	
 						</md-list-item>
 					</md-list>
