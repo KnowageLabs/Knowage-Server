@@ -17,7 +17,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.log = sbiModule_logger;
 	$scope.filterBySrc = '';
 	$scope.orderByFields = ['name','id'];
-	
+	$scope.doBackup = true;
 	/*Initialization Source variable*/
 	$scope.hierarchiesTypeSrc = ['Master', $scope.translate.load('sbi.hierarchies.type.technical')];
 	$scope.dateSrc = new Date();
@@ -55,31 +55,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 					return true;
 				},
 		beforeDrop : function(e){
-			$scope.showListHierarchies().then(
-				function(data){
-					var source = e.source.cloneModel;
-					var dest = e.dest.nodeScope !== undefined ? e.dest.nodeScope.$modelValue : e.dest.nodesScope.$modelValue;
-					var tmp = angular.copy(nodeStructure);
-					if (dest.length > 0){
-						tmp.$parent = dest[0].$parent
-						tmp.type = dest[0].type;
-					}else{
-						tmp.$parent = null;
-					}
-					source.name = source.CDC_NM; //TODO problem matching left side with right side. the field are different
-					source.id = source.CDC_CD;
-					var keys = Object.keys(tmp);
-					for (var i =0; i< keys.length;i++){
-						if (source[keys[i]] == undefined){
-							source[keys[i]] = tmp[keys[i]];
-						}
-					}
-					if ( Array.isArray(dest)){
-						dest.unshift(source);
-						$scope.treeDirty = true;
-					}
-				},function(){}
-			);
+			var x = "";
+			$scope.log.log("in before drop");
 		}
 	};
 	

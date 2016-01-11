@@ -23,7 +23,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	$scope.hierarchiesMap = {};
 	$scope.keys = {'subfolders' : 'children'};
 	$scope.orderByFields = ['name','id'];
-	
+	$scope.doBackup = true;
 	/*Initialization Left side variables*/
 	$scope.dimensions = []; //array of dimensions combo-box
 	$scope.seeFilterDim = false; //visibility filter flag of left side
@@ -96,6 +96,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	/*When selected a dimension, get the JSON to create the table*/
 	$scope.getDimensionsTable = function(filterDate,filterHierarchy){
 		if ($scope.dateDim && $scope.dim){
+			var hier = $scope.hierMaster;
 			var dateFormatted = $scope.formatDate($scope.dateDim);
 			var config = {};
 			config.params = {
@@ -105,8 +106,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			if (filterDate !== undefined && filterDate !== null){
 				config.params.filterDate = filterDate;
 			}
-			if (filterHierarchy !== undefined && filterHierarchy !== null){
-				config.params.filterHierarchy = filterHierarchy;
+			if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
+				config.params.filterHierType = hier.HIER_TP;
+				config.params.filterHierarchy = hier.HIER_NM;
 			}
 			$scope.restService.get("dimensions","dimensionData",null,config)
 				.success(
