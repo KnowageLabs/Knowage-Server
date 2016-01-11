@@ -11,6 +11,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 	return {
 		templateUrl: currentScriptPathDocumentTree.substring(0, currentScriptPathDocumentTree.lastIndexOf('/') + 1) + 'template/document-tree.html',
 		transclude : true,
+		priority:1000,
 		scope: {
 			ngModel : '='
 			, id : "@"
@@ -24,7 +25,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 			, orderBy : '=?' //field on which order the array
 			, menuOption : "=?" //menu to open with right click
 			, keys : '=?' //object of the keys 
-			, dragEnabled: "=?"
+			, enableDrag:"=?"
 			, dragDropOptions :"=?"
 			, enableClone:"=?"
 			, showEmptyPlaceholder :"=?"
@@ -32,109 +33,219 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 		},
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',
-	    link: function(scope, element, attrs, ctrl, transclude) {
-		    	//Customize the keys to use different JSON 
-		    	var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
-		    	var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
-		    	var subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
-		    	var label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
-		    	
-		    	scope.label = label;
-		    	scope.subfoldersId = subfoldersId;
-		    	
-		    	scope.iconFolder = 'fa fa-folder';
-		    	scope.iconFolderOpen = 'fa fa-folder-open';	
-		    	scope.iconLeaf = 'fa fa-leaf';
-		    	
-		    	scope.seeTree = false;
-		    	
-		    	scope.createTreeStructure = function (folders){
-		    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
-			    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
-				    		var mapFolder = {};	
-							
-							for (var i = 0 ; i < folders.length; i ++ ){
-								folders[i][subfoldersId] = [];
-								mapFolder[folders[i][elementId]] = folders[i]; 
-							}
-							
-							var treeFolders = [];
-							for (var i = 0 ; i < folders.length; i ++ ){
-								//if folder has not father, is a root folder
-								if (folders[i][parentId] == null || folders[i][parentId] == "null"){
-									treeFolders.push(folders[i]);
+		compile: function (tElement, tAttrs, transclude) {
+			 return {
+			        pre: function preLink(scope, element, attrs, ctrl, transclud) { 
+			        	
+//						if (scope.dragEnabled == true){
+//							treeElement.attr('data-drag-enabled','true');
+////							treeElement.attr('data-drag-delay',600);
+//						}else{
+//							treeElement.attr('data-drag-enabled','false');
+//						}
+//						if (scope.enableClone == true){
+//							treeElement.attr('data-clone-enabled','true');
+//						}
+//						if (scope.showEmptyPlaceholder == true){
+//							treeElement.attr('data-empty-placeholder-enabled','true');
+//						}
+//						if (scope.noDropEnabled == true){
+//							treeElement.attr('data-nodrop-enabled','true');
+//						}
+//						if (scope.dragDropOptions == true){
+//							treeElement.attr('ui-tree',"dragDropOptions");
+//						}
+//						if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
+//							if (!attrs.selecteditem) {
+//								scope.selectedItem = [];
+//							}
+//						}
+			        },
+			        post: function postLink(scope, element, attrs, ctrl, transclud) {
+			        	   	//Customize the keys to use different JSON 
+					    	var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
+					    	var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
+					    	var subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
+					    	var label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
+					    	
+					    	scope.label = label;
+					    	scope.subfoldersId = subfoldersId;
+					    	
+					    	scope.iconFolder = 'fa fa-folder';
+					    	scope.iconFolderOpen = 'fa fa-folder-open';	
+					    	scope.iconLeaf = 'fa fa-leaf';
+					    	
+					    	scope.seeTree = false;
+					    	
+					    	scope.createTreeStructure = function (folders){
+					    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
+						    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
+							    		var mapFolder = {};	
+										
+										for (var i = 0 ; i < folders.length; i ++ ){
+											folders[i][subfoldersId] = [];
+											mapFolder[folders[i][elementId]] = folders[i]; 
+										}
+										
+										var treeFolders = [];
+										for (var i = 0 ; i < folders.length; i ++ ){
+											//if folder has not father, is a root folder
+											if (folders[i][parentId] == null || folders[i][parentId] == "null"){
+												treeFolders.push(folders[i]);
+											}
+											else{
+												//search parent folder with hasmap and attach the son
+												mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+											}
+											//update linear structure with tree structure
+										}
+										folders=treeFolders; 
+						    		}
+					    		}
+					    		return folders;
+					    	}
+					    	
+					    	scope.initializeFolders = function (folders, parent){
+					    		for (var i = 0 ; i < folders.length; i ++ ){
+									folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
+									folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
+									folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
+									folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
+									folders[i].$parent = parent;
+									
+									if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
+										scope.initializeFolders(folders[i][subfoldersId], folders[i]);
+										if (attrs.orderBy){
+											folders[i].sortDirection = folders[i].sortDirection === undefined ? "desc" : folders[i].sortDirection;
+										}
+									}
+									for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
+										 folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
+										 folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
+										 folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
+										 folders[i].biObjects[j].$parent = parent;
+									}
 								}
-								else{
-									//search parent folder with hasmap and attach the son
-									mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
-								}
-								//update linear structure with tree structure
-							}
-							folders=treeFolders; 
-			    		}
-		    		}
-		    		return folders;
-		    	}
-		    	
-		    	scope.initializeFolders = function (folders, parent){
-		    		for (var i = 0 ; i < folders.length; i ++ ){
-						folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
-						folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
-						folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
-						folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
-						folders[i].$parent = parent;
-						
-						if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
-							scope.initializeFolders(folders[i][subfoldersId], folders[i]);
-							if (attrs.orderBy){
-								folders[i].sortDirection = folders[i].sortDirection === undefined ? "desc" : folders[i].sortDirection;
-							}
-						}
-						for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
-							 folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
-							 folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
-							 folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
-							 folders[i].biObjects[j].$parent = parent;
-						}
-					}
-		    	}
-	
-		    	scope.initializeFolders(scope.ngModel, null);
-		    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
-				scope.folders=scope.ngModel;
-		    	
-				var id="dcTree";
-				if(attrs.id){
-					id=attrs.id;
-				}
+					    	}
 				
-				var treeElement = angular.element(element[0].querySelector('#tree-container'));
-				if (scope.dragEnabled == true){
-					treeElement.attr('data-drag-enabled','true');
-					treeElement.attr('data-drag-delay',600);
-				}else{
-					treeElement.attr('data-drag-enabled','false');
-				}
-				if (scope.enableClone == true){
-					treeElement.attr('data-clone-enabled','true');
-				}
-				if (scope.showEmptyPlaceholder == true){
-					treeElement.attr('data-empty-placeholder-enabled','true');
-				}
-				if (scope.noDropEnabled == true){
-					treeElement.attr('data-nodrop-enabled','true');
-				}
-				if (scope.dragDropOptions == true){
-					treeElement.attr('ui-tree',"dragDropOptions");
-				}
-				if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
-					if (!attrs.selecteditem) {
-						scope.selectedItem = [];
-					}
-				}
-				
-				scope.seeTree=true;
-		}
+					    	scope.initializeFolders(scope.ngModel, null);
+					    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
+							scope.folders=scope.ngModel;
+					    	
+							var id="dcTree";
+							if(attrs.id){
+								id=attrs.id;
+							}
+							
+//							scope.seeTree=true;
+					
+			        }
+			 }
+		},
+//	    link: function(scope, element, attrs, ctrl, transclude) {
+//	    	console.log("link")
+//		    	//Customize the keys to use different JSON 
+//		    	var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
+//		    	var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
+//		    	var subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
+//		    	var label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
+//		    	
+//		    	scope.label = label;
+//		    	scope.subfoldersId = subfoldersId;
+//		    	
+//		    	scope.iconFolder = 'fa fa-folder';
+//		    	scope.iconFolderOpen = 'fa fa-folder-open';	
+//		    	scope.iconLeaf = 'fa fa-leaf';
+//		    	
+//		    	scope.seeTree = false;
+//		    	
+//		    	scope.createTreeStructure = function (folders){
+//		    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
+//			    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
+//				    		var mapFolder = {};	
+//							
+//							for (var i = 0 ; i < folders.length; i ++ ){
+//								folders[i][subfoldersId] = [];
+//								mapFolder[folders[i][elementId]] = folders[i]; 
+//							}
+//							
+//							var treeFolders = [];
+//							for (var i = 0 ; i < folders.length; i ++ ){
+//								//if folder has not father, is a root folder
+//								if (folders[i][parentId] == null || folders[i][parentId] == "null"){
+//									treeFolders.push(folders[i]);
+//								}
+//								else{
+//									//search parent folder with hasmap and attach the son
+//									mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+//								}
+//								//update linear structure with tree structure
+//							}
+//							folders=treeFolders; 
+//			    		}
+//		    		}
+//		    		return folders;
+//		    	}
+//		    	
+//		    	scope.initializeFolders = function (folders, parent){
+//		    		for (var i = 0 ; i < folders.length; i ++ ){
+//						folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
+//						folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
+//						folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
+//						folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
+//						folders[i].$parent = parent;
+//						
+//						if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
+//							scope.initializeFolders(folders[i][subfoldersId], folders[i]);
+//							if (attrs.orderBy){
+//								folders[i].sortDirection = folders[i].sortDirection === undefined ? "desc" : folders[i].sortDirection;
+//							}
+//						}
+//						for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
+//							 folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
+//							 folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
+//							 folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
+//							 folders[i].biObjects[j].$parent = parent;
+//						}
+//					}
+//		    	}
+//	
+//		    	scope.initializeFolders(scope.ngModel, null);
+//		    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
+//				scope.folders=scope.ngModel;
+//		    	
+//				var id="dcTree";
+//				if(attrs.id){
+//					id=attrs.id;
+//				}
+//				
+//				var treeElement = angular.element(element[0].querySelector('#tree-container'));
+//				if (scope.dragEnabled == true){
+//					treeElement.attr('data-drag-enabled','true');
+////					treeElement.attr('data-drag-delay',600);
+//				}else{
+//					treeElement.attr('data-drag-enabled','false');
+//				}
+//				if (scope.enableClone == true){
+//					treeElement.attr('data-clone-enabled','true');
+//				}
+//				if (scope.showEmptyPlaceholder == true){
+//					treeElement.attr('data-empty-placeholder-enabled','true');
+//				}
+//				if (scope.noDropEnabled == true){
+//					treeElement.attr('data-nodrop-enabled','true');
+//				}
+//				if (scope.dragDropOptions == true){
+//					treeElement.attr('ui-tree',"dragDropOptions");
+//				}
+//				if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
+//					if (!attrs.selecteditem) {
+//						scope.selectedItem = [];
+//					}
+//				}
+//				
+//				scope.seeTree=true;
+//		}
 	}
 });
 

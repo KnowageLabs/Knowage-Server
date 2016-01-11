@@ -21,7 +21,7 @@
 			</md-list>
 		</div>
 
-		<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}" ui-tree-nodes="" ng-model="folder[subfoldersId]" ng-if	="folder.expanded">
+		<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}" ui-tree-nodes="" ng-model="folder[subfoldersId]" ng-if="folder.expanded">
 			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder[subfoldersId]"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
 			<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ng-show="biObject.visible" ui-tree-node >
@@ -46,7 +46,7 @@ data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-dr
 <div ng-show='seeTree == true'>
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
-		<div ui-tree  id="tree-container" >	
+		<div ui-tree="{{dragDropOptions}}"  id="tree-container" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
 			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 				<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
 					context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
