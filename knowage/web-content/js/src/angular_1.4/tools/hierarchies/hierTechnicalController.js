@@ -50,9 +50,36 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	/*Drag and Drop option*/
 	$scope.treeTargetOptions = {
-		accept : function(s,d,i){
-				$scope.treeTargetDirty = true;
-				return true;
+		accept : function(sourceNodeScope,destNodesScope,destIndex){
+					$scope.treeTargetDirty = true;
+					return true;
+				},
+		beforeDrop : function(e){
+			$scope.showListHierarchies().then(
+				function(data){
+					var source = e.source.cloneModel;
+					var dest = e.dest.nodeScope !== undefined ? e.dest.nodeScope.$modelValue : e.dest.nodesScope.$modelValue;
+					var tmp = angular.copy(nodeStructure);
+					if (dest.length > 0){
+						tmp.$parent = dest[0].$parent
+						tmp.type = dest[0].type;
+					}else{
+						tmp.$parent = null;
+					}
+					source.name = source.CDC_NM; //TODO problem matching left side with right side. the field are different
+					source.id = source.CDC_CD;
+					var keys = Object.keys(tmp);
+					for (var i =0; i< keys.length;i++){
+						if (source[keys[i]] == undefined){
+							source[keys[i]] = tmp[keys[i]];
+						}
+					}
+					if ( Array.isArray(dest)){
+						dest.unshift(source);
+						$scope.treeDirty = true;
+					}
+				},function(){}
+			);
 		}
 	};
 	
@@ -141,7 +168,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		var date = choose == 'src' ? $scope.dateSrc : $scope.dateTarget;
 		var hier = choose == 'src' ?  $scope.hierSrc : $scope.hierTarget;
 		if (type && dim && hier && date){
-			var dateFormatted =$scope.formatData(date);
+			var dateFormatted =$scope.formatDate(date);
 			var keyMap = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM + '_' + dateFormatted;
 			var config = {};
 			config.params = {
@@ -300,7 +327,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		});
 	}
 	
-	$scope.menuOptionTarget = [{
+	$scope.menuTargetOption = [{
 			label: $scope.translate.load('sbi.generic.add'),
 			showItem : function(item,event){
 				//visible if it is NOT a leaf
@@ -330,7 +357,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		var dateFormatted;
 		
 		if (date !== undefined){
-			dateFormatted = $scope.formatData(date);
+			dateFormatted = $scope.formatDate(date);
 		}
 		//get the Tree if one off two filters are active
 		if ((seeElement !== undefined &&  seeElement != false) || (dateFormatted !== undefined && dateFormatted.length>0)){
@@ -461,7 +488,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}
 	}
 	
-	$scope.formatData = function (date){
+	$scope.formatDate = function (date){
 		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
 	}
 	
