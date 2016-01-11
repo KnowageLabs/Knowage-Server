@@ -109,7 +109,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 				hasFilter = true;
 			}
 			if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
-				config.params.filterHierType = hier.HIER_TP;
+				config.params.filterHierType = $scope.hierType.toUpperCase();
 				config.params.filterHierarchy = hier.HIER_NM;
 				hasFilter = true;
 			}
