@@ -489,7 +489,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	}
 	
 	$scope.formatDate = function (date){
-		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
+		var mm = date.getMonth() < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
+		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
 	}
 	
 	$scope.debug = function (){

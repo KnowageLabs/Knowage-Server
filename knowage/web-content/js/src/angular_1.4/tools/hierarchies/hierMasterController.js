@@ -683,7 +683,8 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	};
 	
 	$scope.formatDate = function (date){
-		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
+		var mm = date.getMonth() < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
+		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
 	}
 	
 	$scope.indexOf = function(myArray, myElement, key) {
