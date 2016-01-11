@@ -87,6 +87,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="LOAD_CALENDAR_LIST_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.LoadCalendarListAction"  
+			scope="REQUEST">		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 	<!-- 
 	<ACTION name="GET_AMBIGUOUS_FIELDS_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.core.GetAmbiguousFieldsAction"  

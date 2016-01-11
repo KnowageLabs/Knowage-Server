@@ -204,6 +204,7 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 	, addEntityNodeToSelect: function(node, rowIndex, recordBaseConfig) {
 		for(var i = 0; i < node.attributes.children.length; i++) {
 			var childNode = node.attributes.children[i];
+			if( childNode.iconCls=='calendar' ) continue;
 			childNode.attributes.attributes = childNode.attributes;
 			this.addNodeToSelect(childNode, rowIndex, recordBaseConfig);
 		}

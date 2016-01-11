@@ -5,6 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.query;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementCompositionException;
+import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,17 +29,6 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.StatementCompositionException;
-import it.eng.qbe.statement.StatementTockenizer;
-import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -271,8 +271,8 @@ public class Query implements IQuery {
 			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
 			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
 			String[] rightOperatorLastValues, String rightOperatorAlias, String booleanConnector) {
-		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription, leftOperatorType,
-				leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
+		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription,
+				leftOperatorType, leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
 		it.eng.qbe.query.WhereField.Operand rightOperand = new it.eng.qbe.query.WhereField.Operand(rightOperatorValues, rightOperatorDescription,
 				rightOperatorType, rightOperatorDefaulttValues, rightOperatorLastValues, rightOperatorAlias);
 		WhereField whereField = new WhereField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector);
@@ -351,8 +351,8 @@ public class Query implements IQuery {
 	}
 
 	public void removeSelectField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(),
-				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
+				+ selectFields.size() + ")");
 		selectFields.remove(fieldIndex);
 	}
 
@@ -366,20 +366,20 @@ public class Query implements IQuery {
 	}
 
 	public void removeWhereField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(),
-				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + whereClause.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
+				+ whereClause.size() + ")");
 		whereClause.remove(fieldIndex);
 	}
 
 	public void removeHavingField(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(),
-				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + havingClause.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
+				+ havingClause.size() + ")");
 		havingClause.remove(fieldIndex);
 	}
 
 	public ISelectField getSelectFieldByIndex(int fieldIndex) {
-		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(),
-				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - "
+				+ selectFields.size() + ")");
 		return selectFields.get(fieldIndex);
 	}
 
@@ -670,8 +670,7 @@ public class Query implements IQuery {
 		return true;
 	}
 
-	private void replaceFieldsIncalculatedFields(InLineCalculatedSelectField cf, Map<IModelField, Set<IQueryField>> modelFieldsInvolved,
-			IDataSource dataSource) {
+	private void replaceFieldsIncalculatedFields(InLineCalculatedSelectField cf, Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {
 		IModelField modelField;
 
 		try {

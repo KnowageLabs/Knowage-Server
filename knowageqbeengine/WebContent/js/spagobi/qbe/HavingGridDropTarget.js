@@ -319,6 +319,7 @@ Ext.extend(Sbi.qbe.HavingGridDropTarget, Ext.dd.DropTarget, {
 			for(var i = 0; i < node.attributes.children.length; i++) {
 				
 				var childNode = node.attributes.children[i];
+				if( childNode.iconCls=='calendar' ) continue;
 				var childNodeType = childNode.attributes.type;
 				
 				if(childNodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {

@@ -18,6 +18,7 @@ import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -151,11 +152,12 @@ public class ExtJsQbeTreeBuilder {
 	 *            the datamart name
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName, UserProfile userProfile) {
-		FilteredModelStructure filteredModelStructure = new FilteredModelStructure((dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure((dataSource).getModelStructure(userProfile), getDataSource(),
+				getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
 		Iterator<IModelEntity> it = entities.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			IModelEntity entity = it.next();
 			addEntityNode(nodes, entity, 1);
 		}
@@ -256,7 +258,7 @@ public class ExtJsQbeTreeBuilder {
 		List<IModelField> keyFields = entity.getKeyFields();
 
 		Iterator<IModelField> keyFieldIterator = keyFields.iterator();
-		while (keyFieldIterator.hasNext() ) {
+		while (keyFieldIterator.hasNext()) {
 			IModelField field = keyFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if (jsObject != null) {
@@ -269,7 +271,7 @@ public class ExtJsQbeTreeBuilder {
 		List<IModelField> normalFields = entity.getNormalFields();
 
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
-		while (normalFieldIterator.hasNext() ) {
+		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if (jsObject != null) {
@@ -281,7 +283,7 @@ public class ExtJsQbeTreeBuilder {
 		List<ModelCalculatedField> calculatedFields = entity.getCalculatedFields();
 
 		Iterator<ModelCalculatedField> calculatedFieldIterator = calculatedFields.iterator();
-		while (calculatedFieldIterator.hasNext() ) {
+		while (calculatedFieldIterator.hasNext()) {
 			ModelCalculatedField field = calculatedFieldIterator.next();
 
 			JSONObject jsObject = getCalculatedFieldNode(entity, field);
@@ -325,6 +327,7 @@ public class ExtJsQbeTreeBuilder {
 
 		// DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");
+
 		String fieldLabel = getFieldLabel(field);
 		String longDescription = QueryJSONSerializer.getFieldLongDescription(field, getDatamartLabels(), null);
 		String fieldTooltip = getFieldTooltip(field);
@@ -340,6 +343,9 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("iconCls", iconCls);
 			fieldNode.put("leaf", true);
 			fieldNode.put("qtip", fieldTooltip);
+			if (iconCls.equals(QuerySerializationConstants.CALENDAR)) {
+				fieldNode.put("hidden", true);
+			}
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
@@ -357,7 +363,7 @@ public class ExtJsQbeTreeBuilder {
 
 	public JSONObject getHierarchyNode(IModelEntity parentEntity, Hierarchy hierarchy) {
 		JSONObject fieldNode = new JSONObject();
-		String entityLabel = getEntityLabel( parentEntity );
+		String entityLabel = getEntityLabel(parentEntity);
 
 		try {
 			fieldNode.put("id", hierarchy.getName());
@@ -368,7 +374,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("type", NODE_TYPE_HIERARCHY_FIELD);
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("isdefault", false);
-			if(hierarchy.getIsDefault()){
+			if (hierarchy.getIsDefault()) {
 				fieldNode.put("cls", "default_hierarchy");
 				nodeAttributes.put("isdefault", true);
 			}
@@ -383,15 +389,15 @@ public class ExtJsQbeTreeBuilder {
 				JSONObject jsObject = new JSONObject();
 				jsObject.put("text", level.getName());
 				jsObject.put("type", level.getType());
-				jsObject.put("alias", parentEntity.getType()+":"+level.getColumn());
+				jsObject.put("alias", parentEntity.getType() + ":" + level.getColumn());
 				jsObject.put("leaf", true);
 
 				JSONObject levelAttributes = new JSONObject();
 				levelAttributes.put("type", NODE_TYPE_HIERARCHY_LEVEL_FIELD);
 				levelAttributes.put("entity", entityLabel);
-//				if(hierarchy.getIsDefault()){
-//					fieldNode.put("cls", "default_hierarchy");
-//				}
+				// if(hierarchy.getIsDefault()){
+				// fieldNode.put("cls", "default_hierarchy");
+				// }
 				jsObject.put("attributes", levelAttributes);
 
 				if (jsObject != null) {
@@ -409,9 +415,9 @@ public class ExtJsQbeTreeBuilder {
 
 	public JSONObject getCalculatedFieldNode(IModelEntity parentEntity, ModelCalculatedField field) {
 
-		String fieldLabel = getFieldLabel( field );
-		String fieldTooltip = getFieldTooltip( field );
-		String entityLabel = getEntityLabel( parentEntity );
+		String fieldLabel = getFieldLabel(field);
+		String fieldTooltip = getFieldTooltip(field);
+		String entityLabel = getEntityLabel(parentEntity);
 
 		writer.println(field.getUniqueName().replaceAll(":", "/") + "=");
 		writer.println(field.getUniqueName().replaceAll(":", "/") + ".tooltip=");
@@ -575,9 +581,9 @@ public class ExtJsQbeTreeBuilder {
 		List<IModelEntity> subEntities = entity.getSubEntities();
 
 		Iterator<IModelEntity> subEntitiesIterator = subEntities.iterator();
-		while (subEntitiesIterator.hasNext()){
+		while (subEntitiesIterator.hasNext()) {
 			IModelEntity subentity = subEntitiesIterator.next();
-			if (subentity.getType().equalsIgnoreCase( entity.getType() ) || recursionLevel > 10) {
+			if (subentity.getType().equalsIgnoreCase(entity.getType()) || recursionLevel > 10) {
 				// stop recursion
 			} else {
 				addEntityNode(nodes, subentity, recursionLevel + 1);

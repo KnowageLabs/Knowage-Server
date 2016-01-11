@@ -291,7 +291,8 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 			for(var i = 0; i < node.attributes.children.length; i++) {
 				var filterType;
 				var nodeType = node.attributes.children[i].attributes.type;
-				if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
+				if( node.attributes.children[i].attributes.iconCls=='calendar' ) {continue;}
+				else if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 					filterType = Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD;
 				} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 					filterType = Sbi.constants.qbe.OPERAND_TYPE_INLINE_CALCULATED_FIELD;
