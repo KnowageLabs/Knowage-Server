@@ -262,7 +262,7 @@
 			
 			## If the parameter is NOT NULL
 			#if ("$!borderWidth" != "")
-				#set($intBorderWidth = $Integer3.parseInt($borderWidth))
+				#set($intBorderWidth = $Integer3.parseInt($chart.LEGEND.style.borderWidth))
 			#end
 		
 			#if ($titleText == "" && $subtitleText == "")
