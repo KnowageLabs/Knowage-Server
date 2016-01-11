@@ -1,7 +1,10 @@
 <div id="geoLayerMenu">
 
       <md-content layout-padding  >
-      
+     
+   
+     
+     
       <md-button style="     width: calc( 100% - 20px);    margin-bottom: 0; " class="md-raised" id="addLayer" ng-click="addLayerFromCatalogue($event)">{{translate.load("gisengine.info.message.selectFromCatalogue")}}</md-button>
       
       	
@@ -25,7 +28,7 @@
 		
 		<expander-box id="layer" color="white" background-color="rgb(63,81,181)"   expanded='true' title='translate.load("gisengine.rigthMenu.tabs.layer")'> 
 			<expander-box id="categoryLayer" color="black" background-color="white" expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in layers">
-			<div  >
+			
 				
 	            <div  layout="row" layout-wrap  ng-repeat="(key,val) in CatVal">
 		           <div flex="60">
@@ -45,16 +48,12 @@
 			</expander-box>
 		</expander-box>
 			
-			
-			
-			
 	</md-content>
-		</div>
+	
+</div>
 
-
- 
-
-<!-- template -->
+	
+	  <!-- template -->
 
 <script type="text/ng-template" id="layerFromCatalogueTemplate.html">
 <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
@@ -102,7 +101,6 @@
 </md-dialog>
 
 </script>
-
 
 <script  type="text/ng-template" id="filtersforLayerTemplate.html">
 <md-dialog aria-label="layer" ng-cloak  >
