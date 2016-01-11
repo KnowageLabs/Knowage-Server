@@ -1,12 +1,12 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="folders_renderer.html">
 		<div layout = "row" layout-align="start center"  class="customTreeNode" ui-tree-handle>
-			<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0"  md-font-icon="{{iconFolder}}"></md-icon>				
-			<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded && folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0" md-font-icon="{{iconFolderOpen}}"></md-icon>
-			<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined || folder[subfoldersId].length == 0 || folder.biObjects.length == 0 " md-font-icon="{{iconLeaf}}"></md-icon>
+			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
+			<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0)"  md-font-icon="{{iconFolder}}"></md-icon>				
+			<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0) " md-font-icon="{{iconFolderOpen}}"></md-icon>
+			<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined ||  (folder[subfoldersId].length == 0 && folder.biObjects.length == 0)" md-font-icon="{{iconLeaf}}"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
 			<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
-			<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
 			<md-button ng-click='openFolder(folder)' ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}" class="docs"
 				context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 					&nbsp;{{folder[label]}} 
@@ -28,7 +28,7 @@
 				<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
 					<md-checkbox ng-if="multiSelect" ng-checked="biObject.checked" ng-click="toogleSelected(biObject)" aria-label="Checkbox"></md-checkbox>            
 					<md-button ng-class="{'md-primary':biObject.selected,'md-raised':biObject.selected}" ng-click="setSelected(biObject)" class="docs">
-						<md-icon md-font-icon="fa fa-file-o" style="color: black;"></md-icon>
+					<md-icon md-font-icon="fa fa-file-o" style="color: black;"></md-icon>
 						{{biObject.label}}	
 					</md-button>
 				</div>
