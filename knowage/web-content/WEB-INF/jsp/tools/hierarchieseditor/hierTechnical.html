@@ -67,7 +67,7 @@
 				</md-content>
 			<md-content layout='row' layout-fill flex='50'>
 				<document-tree id="left" ng-model="hierTreeSrc" create-tree="false" multi-select='false' keys='keys' text-search='filterBySrcTrigger' 
-				fields-search='["name"]' order-by='orderBySrcTrigger' drag-enabled='true' no-drop-enabled='true' enable-clone='true'
+				fields-search='["name"]' order-by='orderBySrcTrigger' enable-drag='true' no-drop-enabled='true' enable-clone='true'
 				 drag-drop-options="treeTargetOptions" show-empty-placeholder="true" ></document-tree>
 			</md-content>
 			</md-content>
@@ -137,7 +137,7 @@
 				</md-content>
 				<md-content>
 					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
-				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuTargetOption' drag-enabled='true' no-drop-enabled='true' enable-clone='true'
+				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuTargetOption' enable-drag='true' no-drop-enabled='true' enable-clone='true'
 				drag-drop-options="treeTargetOptions" show-empty-placeholder="true" 	
 				></document-tree>
 				</md-content>
