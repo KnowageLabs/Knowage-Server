@@ -158,6 +158,236 @@
     },
     #end
     
+    
+    #*
+    	The logic for handling data needed for rendering of the chart.
+    	
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    *#
+    #if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
+	     
+	    #if ($chart.LEGEND.position == "")      
+		 	
+		 	legend: 
+		 	{
+		        enabled: true,
+		        align: 'center', 
+		        verticalAlign: 'bottom',
+		        layout: 'horizontal',
+		    
+	    #end
+	    
+	    #if ($chart.LEGEND.position == "bottom")
+	  
+		    legend: 
+		    {
+	            enabled: true,
+	            align: 'center',
+	            verticalAlign: '$chart.LEGEND.position', 
+	            layout: 'horizontal',
+		    
+	 	#end
+	 	
+	 	#if ($chart.LEGEND.position == "top")
+	 	
+	 		#*
+		    	Take the size of the font that is used for the chart's title 
+		    	and subtitle. We will use this for determining how much we
+		    	should move the top legend downwards (towards the chart itself).
+		    *#
+		    #set($titleFontSize = $chart.TITLE.style.fontSize)
+		    #set($subtitleFontSize = $chart.SUBTITLE.style.fontSize)
+		    #set($titleText = $chart.TITLE.text)
+		    #set($subtitleText = $chart.SUBTITLE.text)
+		    
+		    #set($totalDistanceLegend = 0)
+		    
+		    #if ($titleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($titleFontSize != "")
+				    #foreach ($element in $titleFontSize.split("px"))  
+				    	#set($titleFontSize = $element)
+					#end				
+				#else
+					#set($titleFontSize = "15")
+				#end
+				
+			#else 		
+				
+		    	#set($titleFontSize = "0")
+		    					
+			#end
+			
+			#if ($subtitleText != "")
+		    
+			    #*
+					Take only numeric value from the font size parameter (that is 
+					actually the string in this moment. 
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				*#
+			    #if ($subtitleFontSize != "")
+				    #foreach ($element in $subtitleFontSize.split("px"))  
+				    	#set($subtitleFontSize = $element)
+					#end				
+				#else
+					#set($subtitleFontSize = "15")
+				#end
+				
+			#else 
+				
+				#set($subtitleFontSize = "0")
+				
+			#end
+		   
+		 	#*
+				Convert chart's title and subtitle heights to Integer.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+		    #set($intTitleFontSize = 0)
+		    #set($intSubtitleFontSize = 0)
+		    #set($intBorderWidth = 0)
+			#set($Integer1 = 0)
+			#set($Integer2 = 0)
+			#set($Integer3 = 0)
+			#set($intTitleFontSize = $Integer1.parseInt($titleFontSize))		
+			#set($intSubtitleFontSize = $Integer2.parseInt($subtitleFontSize))
+			
+			## If the parameter is NOT NULL
+			#if ("$!borderWidth" != "")
+				#set($intBorderWidth = $Integer3.parseInt($borderWidth))
+			#end
+		
+			#if ($titleText == "" && $subtitleText == "")
+				#set($offsetFromTitleSubtitle = 0)
+			#else
+				#set($offsetFromTitleSubtitle = 15)
+			#end		
+		
+			#*
+				Append the offset to the total height of the chart's title and subtitle
+				so it can have always the same distance from those two chart elements
+				(no matter what is the size of title and subtitle).
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			*#
+			#set($totalDistanceLegend  = ($intTitleFontSize + $intSubtitleFontSize + $intBorderWidth) + $offsetFromTitleSubtitle)
+				 	
+	 		legend: 
+		    {
+	          	enabled: true,
+	            align: 'center',
+	            verticalAlign: '$chart.LEGEND.position', 
+	            layout: 'horizontal',
+	          	y: $totalDistanceLegend,
+		    
+	 	#end
+	        
+	 	#if ($chart.LEGEND.position == "right" || $chart.LEGEND.position == "left")      
+		 	
+		 	legend: 
+		 	{
+		 		enabled: true,
+		        align: '$chart.LEGEND.position', 
+		        verticalAlign: 'middle',
+		        layout: 'vertical',
+		    
+	    #end
+	    		
+	    		#if ($chart.LEGEND.floating != '')
+		        	floating: $chart.LEGEND.floating,
+		        #end
+		        
+		    	#if($chart.LEGEND.floating == 'true')
+		    	
+			        #if($chart.LEGEND.x != '')
+			        	x: $chart.LEGEND.x,
+				    #end
+			        
+			        #if($chart.LEGEND.y != '')
+			        	y: $chart.LEGEND.y,
+			    	#end
+		    	
+		    	#end
+	    		
+			    #if($chart.LEGEND.style.backgroundColor != '')
+		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
+			    #end
+			    
+		        #if($chart.LEGEND.style.borderWidth != '')
+		        	borderWidth: $borderWidth,
+			    #end
+			    
+		        shadow: true,
+		        
+		        itemStyle: 
+		        { 
+		        	color: '$chart.LEGEND.style.color', 
+		        	
+		        	fontSize: '$chart.LEGEND.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.style.fontWeight',
+		        	#end
+		        },
+		        
+		        title:
+		        {
+		        	text:'$chart.LEGEND.TITLE.text',
+		        	style:
+		        	{	
+		        		color: '$chart.LEGEND.TITLE.style.color',
+		        		align: '$chart.LEGEND.TITLE.style.align',
+		        		
+		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
+		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+		        	#end
+		        	
+		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
+		        		fontStyle: 'italic',
+		        	#elseif ($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+		        		textDecoration: 'underline',
+		        	#else
+		        		fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+		        	#end
+		        	}	
+		        }
+		        
+        	},
+	    
+	#else
+		
+		#* 
+			If legend is disabled this JSON property ('enabled') should be false.
+			
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
+		*#
+		legend:
+		{
+			enabled: false,
+		},
+	    
+    #end
+    
+    
+    #*
     legend: {
     	#if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'false')
 	    enabled: false,
@@ -244,6 +474,7 @@
 		        }
 		 #end       
     },
+    *#
     
     plotOptions: {
         pie: {
