@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.hierarchiesmanagement.metadata;
 
-
 /**
  * @author Antonella Giachino (giachino.antonella@eng.it)
  *
@@ -40,7 +39,7 @@ public class Field {
 	 * @param name
 	 * @param type
 	 */
-	public Field(String id, String name, String type) {
+	public Field(String id, String name, String alias, String type) {
 		this(id, name, type, false, false, false, false);
 	}
 

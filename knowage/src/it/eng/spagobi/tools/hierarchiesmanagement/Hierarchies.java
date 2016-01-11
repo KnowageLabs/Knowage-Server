@@ -378,6 +378,14 @@ public class Hierarchies {
 						toReturn.put(HierarchyConstants.LEAF, sbConfig.getAttribute(HierarchyConstants.LEAF));
 					if (null != sbConfig.getAttribute(HierarchyConstants.ORIG_NODE))
 						toReturn.put(HierarchyConstants.ORIG_NODE, sbConfig.getAttribute(HierarchyConstants.ORIG_NODE));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_ID))
+						toReturn.put(HierarchyConstants.TREE_NODE_ID, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_ID));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NAME))
+						toReturn.put(HierarchyConstants.TREE_NODE_NAME, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NAME));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_ID))
+						toReturn.put(HierarchyConstants.TREE_LEAF_ID, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_ID));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NAME))
+						toReturn.put(HierarchyConstants.TREE_LEAF_NAME, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NAME));
 
 				}
 			}

@@ -37,6 +37,7 @@ public class HierarchyConstants {
 	public final static String FIELD = "FIELD";
 	public final static String FIELD_ID = "ID";
 	public final static String FIELD_NAME = "NAME";
+	public final static String FIELD_ALIAS = "ALIAS";
 	public final static String FIELD_VISIBLE = "VISIBLE";
 	public final static String FIELD_EDITABLE = "EDITABLE";
 	public final static String FIELD_TYPE = "TYPE";
@@ -58,7 +59,6 @@ public class HierarchyConstants {
 	public final static String HIER_CD = "HIER_CD";
 	public final static String HIER_TP = "HIER_TP";
 	public final static String HIER_DS = "HIER_DS";
-	public final static String HIER_SCOPE = "SCOPE";
 	public final static String LEAF_PARENT_CD = "LEAF_PARENT_CD";
 	public final static String LEAF_ORIG_PARENT_CD = "LEAF_ORIG_PARENT_CD";
 	public final static String LEAF_PARENT_NM = "LEAF_PARENT_NM";
@@ -82,4 +82,8 @@ public class HierarchyConstants {
 	public final static String TREE_NAME = "name";
 	public final static String LEAF_ID = "LEAF_ID";
 	public final static String MAX_DEPTH = "MAX_DEPTH";
+	public final static String TREE_NODE_ID = "TREE_NODE_ID";
+	public final static String TREE_NODE_NAME = "TREE_NODE_NAME";
+	public final static String TREE_LEAF_ID = "TREE_LEAF_ID";
+	public final static String TREE_LEAF_NAME = "TREE_LEAF_NAME";
 }

@@ -45,10 +45,12 @@ public class HierarchyUtils {
 
 		Assert.assertNotNull(field, "Impossible to create a JSON from a null field");
 
-		result.put(HierarchyConstants.FIELD_ID, field.getId());
+		if (field.getId() != null)
+			result.put(HierarchyConstants.FIELD_ID, field.getId());
 		logger.debug("Field [" + HierarchyConstants.FIELD_ID + "] is " + field.getId());
 
-		result.put(HierarchyConstants.FIELD_NAME, field.getName());
+		if (field.getName() != null)
+			result.put(HierarchyConstants.FIELD_NAME, field.getName());
 		logger.debug("Field [" + HierarchyConstants.FIELD_NAME + "] is " + field.getName());
 
 		result.put(HierarchyConstants.FIELD_VISIBLE, field.isVisible());
@@ -57,7 +59,8 @@ public class HierarchyUtils {
 		result.put(HierarchyConstants.FIELD_EDITABLE, field.isEditable());
 		logger.debug("Field [" + HierarchyConstants.FIELD_EDITABLE + "] is " + field.isEditable());
 
-		result.put(HierarchyConstants.FIELD_TYPE, field.getType());
+		if (field.getType() != null)
+			result.put(HierarchyConstants.FIELD_TYPE, field.getType());
 		logger.debug("Field [" + HierarchyConstants.FIELD_TYPE + "] is " + field.getType());
 
 		if (isHierarchyField) { // add these values only for hierarchies fields
