@@ -96,6 +96,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	/*When selected a dimension, get the JSON to create the table*/
 	$scope.getDimensionsTable = function(filterDate,filterHierarchy){
 		if ($scope.dateDim && $scope.dim){
+			var hasFilter=false;
 			var hier = $scope.hierMaster;
 			var dateFormatted = $scope.formatDate($scope.dateDim);
 			var config = {};
@@ -105,18 +106,25 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			}
 			if (filterDate !== undefined && filterDate !== null){
 				config.params.filterDate = filterDate;
+				hasFilter = true;
 			}
 			if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
 				config.params.filterHierType = hier.HIER_TP;
 				config.params.filterHierarchy = hier.HIER_NM;
+				hasFilter = true;
 			}
 			$scope.restService.get("dimensions","dimensionData",null,config)
 				.success(
 					function(data, status, headers, config) {
 						if (data.error == undefined){
 							$scope.createTable(data);
-							$scope.hierType = undefined;
-							$scope.hierarchiesMaster = [];
+							if (!hasFilter){
+								$scope.hierType = undefined;
+								$scope.hierarchiesMaster = [];
+								$scope.seeHideLeafDim = false;
+								$scope.dateFilterDim = undefined;
+							}else{
+							}
 						}else{
 							$scope.showAlert('ERROR',data.error[0].message);
 						}
