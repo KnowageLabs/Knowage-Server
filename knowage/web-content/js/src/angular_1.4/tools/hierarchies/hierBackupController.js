@@ -15,20 +15,15 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
 	$scope.log = sbiModule_logger;
-	$scope.filterBySrc = '';
-	$scope.orderByFields = ['name','id'];
 	
 	/*Initialization Source variable*/
 	$scope.hierarchiesTypeSrc = ['Master', $scope.translate.load('sbi.hierarchies.type.technical')];
-	$scope.dateBackup = new Date();
-	//$scope.dateFilterSrc = new Date();
 	$scope.hierarchiesSrcMap = {};
 	$scope.dimensionSrc = [];
 	$scope.hierarchiesSrc=[];
 	$scope.hierTreeSrc = [];
 	$scope.hierTreeMapSrc = {};
 	$scope.metadataMap = {};
-	$scope.seeFilter=false;
 	
 	$scope.backupTable = [];
 	
@@ -57,14 +52,6 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
     	}];
 	
 	$scope.backupTable = angular.copy(backupTableFake);
-	
-	$scope.toogleSeeFilter= function(choose){
-		if (choose == 'src'){
-			$scope.seeFilter = !$scope.seeFilter;
-		}else{
-			$scope.seeFilterTarget = !$scope.seeFilterTarget;
-		}
-	}	
 	
 	$scope.indexOf = function(myArray, myElement, key) {
 		if (myArray ===undefined || myElement === undefined) return -1;
@@ -137,29 +124,18 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		}
 	}
 	
-	$scope.getTree = function(choose,dateFilter,seeElement){
+	$scope.getTree = function(choose){
 		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
 		var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
-		var date = choose == 'src' ? $scope.dateBackup : $scope.dateTarget;
 		var hier = choose == 'src' ?  $scope.hierSrc : $scope.hierTarget;
-		if (type && dim && hier && date){
-			var dateFormatted =$scope.formatData(date);
+		if (type && dim && hier){
 			var keyMap = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM + '_' + dateFormatted;
 			var config = {};
 			config.params = {
 				dimension: dim.DIMENSION_NM,
 				filterType : type,
-				filterHierarchy : hier.HIER_NM,
-				validityDate : dateFormatted
+				filterHierarchy : hier.HIER_NM
 			};
-			if (dateFilter !== undefined && dateFilter!== null && dateFilter.length > 0){
-				config.params.filterDate = ''+dateFilter;
-				keyMap = keyMap + '_' + dateFilter;
-			}
-			if (seeElement == true){
-				config.params.filterDimension = seeElement;
-				keyMap = keyMap + '_' + seeElement;
-			}
 			if ($scope.hierTreeMapSrc[keyMap] === undefined && $scope.hierTreeMapTarget[keyMap] === undefined ){
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
@@ -325,51 +301,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			action: $scope.deleteHier
 		}
 	];
-	 
-	$scope.applyFilter = function(choose){
-		//use to apply the filter only when is clicked the icon
-		var date = choose == 'src' ? $scope.dateFilterSrc : $scope.dateFilterTarget;
-		var seeElement = choose == 'src' ? $scope.seeHideLeafSrc : $scope.seeHideLeafTarget;
-		var dateFormatted;
-		
-		if (date !== undefined){
-			dateFormatted = $scope.formatData(date);
-		}
-		//get the Tree if one off two filters are active
-		if ((seeElement !== undefined &&  seeElement != false) || (dateFormatted !== undefined && dateFormatted.length>0)){
-			$scope.getTree('src', dateFormatted, seeElement);
-		}
-		//apply filter on source side (left) or target side (right)
-		choose == 'src' ? $scope.filterBySrcTrigger = angular.copy($scope.filterBySrc) : $scope.filterByTargetTrigger = angular.copy($scope.filterByTarget);
-		choose == 'src' ? $scope.orderBySrcTrigger = angular.copy($scope.orderBySrc) : $scope.orderByTargetTrigger = angular.copy($scope.orderByTarget);
-	}
-	
-	$scope.removeFilter = function(choose){
-		if (choose = 'src'){
-			$scope.filterBySrcTrigger = "";
-			$scope.filterBySrc = "";
-			$scope.orderBySrcTrigger = "";
-			$scope.orderBySrc = "";
-			//get tree without filters if they were active
-			if (($scope.seeHideLeafSrc !== undefined &&  $scope.seeHideLeafSrc != false) || ($scope.dateFilterSrc !== undefined && $scope.dateFilterSrc.length>0)){
-				$scope.getTree('src');
-			}
-			$scope.dateFilterSrc = undefined;
-			$scope.seeHideLeafSrc = false;
-		}else if (choose = 'target'){
-			$scope.filterByTargetTrigger = "";
-			$scope.filterByTarget = "";
-			$scope.orderByTargetTrigger = "";
-			$scope.orderByTarget = "";
-			//get tree without filters if they were active
-			if (($scope.seeHideLeafTarget !== undefined &&  $scope.seeHideLeafTarget != false) || ($scope.dateFilterTarget !== undefined && $scope.dateFilterTarget.length>0)){
-				$scope.getTree('target');
-			}
-			$scope.dateFilterTarget = undefined;
-			$scope.seeHideLeafTarget = false;
-		}
-	}
-	
+	 	
 	$scope.showConfirm = function(hier) {
 	    var confirm = $mdDialog
 			.confirm()
