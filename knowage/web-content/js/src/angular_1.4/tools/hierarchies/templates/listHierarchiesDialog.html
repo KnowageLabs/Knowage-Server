@@ -5,14 +5,18 @@
 		</div>
 	</md-toolbar> 
 	<md-dialog-content>
-		<md-content layout="column" layout-fill layout-align="space-between stretch">
-			<div layout-padding layout="row" layout-align = "center center" style="width:100%">
-				<h3>No data found</h3>
-			</div>
-			<div layout="row" layout-align="end center" style="width:100%">
+		<md-content layout="column" layout-fill layout-align="space-between stretch" >
+			<md-content layout-wrap layout="row" layout-align = "left center" style="width:100%;max-height:500px">
+				<md-list>
+					<md-list-item class="" ng-repeat="hier in listHierarchies">
+						<md-checkbox ng-model="hier.checked"></md-checkbox>{{hier.HIER_NM}}	
+					</md-list-item>
+				</md-list>
+			</md-content>
+			<md-content layout="row" layout-align="end center" style="width:100%">
 				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="cancelDialog()">{{translate.load("sbi.general.cancel")}} </md-button>
 				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.general.ok")}} </md-button>
-			</div> 
+			</md-content> 
 		</md-content>
 	</md-dialog-content> 
 </md-dialog>

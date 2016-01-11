@@ -72,6 +72,7 @@
 				<md-content layout='row' layout-xs='column' layout-padding layout-align='space-around center'>
 					<md-datepicker ng-model="dateTree" ng-change="getTree()"></md-datepicker>
 					<md-button ng-click='saveTree()' ng-disabled='!treeDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
+					<md-checkbox ng-model="doBackup">{{translate.load("sbi.hierarchies.backup");}}</md-checkbox>
 				</md-content>
 				<md-content id='hierarchiesSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>

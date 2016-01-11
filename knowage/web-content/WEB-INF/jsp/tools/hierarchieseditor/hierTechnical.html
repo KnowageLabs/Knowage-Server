@@ -67,7 +67,7 @@
 				</md-content>
 			<md-content layout='row' layout-fill flex='50'>
 				<document-tree id="left" ng-model="hierTreeSrc" create-tree="false" multi-select='false' keys='keys' text-search='filterBySrcTrigger' 
-				fields-search='["name"]' order-by='orderBySrcTrigger' drag-enabled='true' no-drop-enabled='true' enable-clone='true'></document-tree>
+				fields-search='["name"]' order-by='orderBySrcTrigger' drag-enabled='true' no-drop-enabled='true' enable-clone='true' drag-drop-options="treeTargetOptions"></document-tree>
 			</md-content>
 			</md-content>
 		</div> 
@@ -84,6 +84,7 @@
 					<md-datepicker ng-model="dateTarget" ng-change="getTree('target')"></md-datepicker>
 					<md-button ng-click='createTree()' ng-disabled='!dimTarget || !dateTarget' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
 					<md-button ng-click='saveTree()' ng-disabled='!treeTargetDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
+					<md-checkbox ng-model="doBackup">{{translate.load("sbi.hierarchies.backup");}}</md-checkbox>
 				</md-content>
 				<md-content id='hierarchiesTargetSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
@@ -135,7 +136,9 @@
 				</md-content>
 				<md-content>
 					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
-				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='true' no-drop-enabled='true' enable-clone='true'></document-tree>
+				fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuOptionTarget' drag-enabled='true' no-drop-enabled='true' enable-clone='true'
+				 drag-drop-options="treeTargetOptions"	
+				></document-tree>
 				</md-content>
 			</md-content>	
 		</div>

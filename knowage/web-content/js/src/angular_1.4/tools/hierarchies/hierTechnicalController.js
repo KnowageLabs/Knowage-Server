@@ -45,8 +45,16 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.keys = {'subfolders' : 'children'};
 	
-//	$scope.hierTreeSrc.push(angular.copy(dataJson));
-//	$scope.hierTreeTarget.push(angular.copy(dataJson));
+	$scope.hierTreeSrc.push(angular.copy(dataJson));
+	$scope.hierTreeTarget.push(angular.copy(dataJson));
+	
+	/*Drag and Drop option*/
+	$scope.treeTargetOptions = {
+		accept : function(s,d,i){
+				$scope.treeTargetDirty = true;
+				return true;
+		}
+	};
 	
 	$scope.toogleSeeFilter= function(choose){
 		if (choose == 'src'){
@@ -54,7 +62,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}else{
 			$scope.seeFilterTarget = !$scope.seeFilterTarget;
 		}
-	}	
+	}
 	
 	$scope.indexOf = function(myArray, myElement, key) {
 		if (myArray ===undefined || myElement === undefined) return -1;
@@ -418,7 +426,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			root.description = $scope.hierTarget.HIER_DS;
 			root.name = $scope.hierTarget.HIER_NM;
 			root.type = $scope.hierTarget.HIER_TP;
+			root.dateValidity = $scope.formatDate($scope.dateTarget);
 			root.isInsert = $scope.targetIsNew;
+			root.doBackup = $scope.doBackup !== undefined ? $scope.doBackup : false;
 			root.root = Array.isArray($scope.hierTreeTarget) ? angular.copy($scope.hierTreeTarget[0]) : angular.copy($scope.hierTreeTarget);
 			root.root.$parent = undefined;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]

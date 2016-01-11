@@ -81,7 +81,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
 	}	
 	
-	$scope.hierTree.push(angular.copy(dataJson));
+	//$scope.hierTree.push(angular.copy(dataJson));
 	/*Get dimensions for combo box*/
 	$scope.restService.get("dimensions","getDimensions")
 		.success(
@@ -270,10 +270,12 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		if (promise !== null){
 			promise
 			.then(function(newItem){
-					var tmpItem =angular.copy(item);
+					var tmpItem =angular.copy(item.children.length > 0 ? item.children[0] : item );
 					for ( key in newItem){ 
-						key =='children' ? tmpItem.children = [] : tmpItem[key] = newItem[key];
+						tmpItem[key] = newItem[key];
 					}
+					tmpItem.name = tmpItem[$scope.dim.DIMENSION_NM + '_NM_LEV'];
+					tmpItem.children = [];
 					tmpItem.expanded = false;
 					item.children.splice(0,0,tmpItem);
 					$scope.treeDirty = true;
@@ -408,7 +410,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	
 	/*Save the tree when clicked the button. Create the parameters for the POST request and remove cyclic object*/
 	$scope.saveTree = function(){
-		if ($scope.dateTarget && $scope.dimTarget && $scope.hierMaster && $scope.hierTree){
+		if ($scope.dateTree && $scope.dim && $scope.hierMaster && $scope.hierTree && $scope.hierTree.length > 0){
 			//saveHierarchy
 			var root = {};
 			root.dimension = $scope.dim.DIMENSION_NM;
@@ -416,7 +418,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			root.description = $scope.hierMaster.HIER_DS;
 			root.name = $scope.hierMaster.HIER_NM;
 			root.type = $scope.hierMaster.HIER_TP;
+			root.dateValidity = $scope.formatDate($scope.dateTree);
 			root.isInsert = false;
+			root.doBackup = $scope.doBackup !== undefined ? $scope.doBackup : false;
 			root.root = Array.isArray($scope.hierTree) ? angular.copy($scope.hierTree[0]) : angular.copy($scope.hierTree);
 			root.root.$parent = undefined;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
@@ -510,7 +514,8 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/listHierarchiesDialog.html',
 				parent: angular.element(document.body),
 				locals: {
-					   translate: $scope.translate
+					   translate: $scope.translate,
+					   listHierarchies : $scope.hierarchiesMaster
 			         },
 				preserveScope : true,
 				clickOutsideToClose:false,
@@ -556,8 +561,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
 	}
 
-	$scope.showListHierarchyController = function($scope, $mdDialog, translate) {
+	$scope.showListHierarchyController = function($scope, $mdDialog, translate, listHierarchies) {
 			$scope.translate = translate;
+			$scope.listHierarchies = listHierarchies;
 			
 			$scope.closeDialog = function() {
 		     	$mdDialog.hide();
