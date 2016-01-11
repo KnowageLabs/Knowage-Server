@@ -322,7 +322,7 @@
 			    #end
 			    
 		        #if($chart.LEGEND.style.borderWidth != '')
-		        	borderWidth: $borderWidth,
+		        	borderWidth: $chart.LEGEND.style.borderWidth,
 			    #end
 			    
 		        shadow: true,
