@@ -107,7 +107,7 @@ Ext.define
 					{
 						title : LN('sbi.chartengine.configuration.titlestyle'),
 						viewModel : this.viewModel,
-						bindFontAlign : '{configModel.legendTitleAlign}',
+						//bindFontAlign : '{configModel.legendTitleAlign}',
 						bindFont : '{configModel.legendTitleFont}',
 						bindFontDim : '{configModel.legendTitleDimension}',
 						bindFontStyle : '{configModel.legendTitleStyle}',

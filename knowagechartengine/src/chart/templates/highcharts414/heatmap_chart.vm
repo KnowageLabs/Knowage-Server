@@ -222,19 +222,27 @@
 		{
 			align: '$chart.LEGEND.style.align'
 		},
+		#if('$!chart.LEGEND.TITLE' != "" && '$chart.LEGEND.TITLE'!='')
 		title:
 		        {
+		            #if('$chart.LEGEND.TITLE.text'!='')
 		        	text:'$chart.LEGEND.TITLE.text',
+		        	#end
 		        	style:
 		        	{	
-		        		color: '$chart.LEGEND.TITLE.style.color',
-		        		align: '$chart.LEGEND.TITLE.style.align',
-		        		
+		       	    #if ($chart.LEGEND.TITLE.style.color != '')
+		        	   color: '$chart.LEGEND.TITLE.style.color',
+		            #end
+		        	##if ($chart.LEGEND.TITLE.style.align != '')
+		        	##	align: '$chart.LEGEND.TITLE.style.align',
+		            ##end
+		            #if ($chart.LEGEND.TITLE.style.fontSize != '')	
 		        		fontSize: '$chart.LEGEND.TITLE.style.fontSize', 
-		        	
+		        	#end
 		        	#if ($chart.LEGEND.TITLE.style.fontFamily != '')
 		        		fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
 		        	#end
+		        	
 		        	
 		        	#if ($chart.LEGEND.TITLE.style.fontWeight == 'italic')
 		        		fontStyle: 'italic',
@@ -245,6 +253,7 @@
 		        	#end
 		        	}	
 		        }
+	#end	        
 		
 	},
 	
