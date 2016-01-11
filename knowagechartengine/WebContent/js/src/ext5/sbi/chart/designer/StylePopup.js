@@ -106,7 +106,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		/**
 		 * Added for the Heatmap (danristo :: danilo.ristovski@mht.net) 
 		 */
-		if(this.config.bindFontAlign) {
+		if(this.config.bindFontStyle) {
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontStyle,
