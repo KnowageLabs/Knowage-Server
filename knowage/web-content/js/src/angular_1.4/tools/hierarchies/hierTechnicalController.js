@@ -50,13 +50,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	/*Drag and Drop option*/
 	$scope.treeTargetOptions = {
-		accept : function(sourceNodeScope,destNodesScope,destIndex){
-					$scope.treeTargetDirty = true;
-					return true;
-				},
 		beforeDrop : function(e){
-			var x = "";
-			$scope.log.log("in before drop");
+			$scope.treeTargetDirty = true;
 		}
 	};
 	

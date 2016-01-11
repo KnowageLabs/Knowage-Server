@@ -26,7 +26,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 			, menuOption : "=?" //menu to open with right click
 			, keys : '=?' //object of the keys 
 			, enableDrag:"=?"
-			, dragDropOptions :"=?"
+			, optionsDragDrop:"=?"
 			, enableClone:"=?"
 			, showEmptyPlaceholder :"=?"
 			, noDropEnabled:"=?"
@@ -121,6 +121,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 //						}else{
 //							treeElement.attr('data-drag-enabled','false');
 //						}
+						var treeElement = angular.element(element[0].querySelector('#tree-container'));
 						if (scope.enableClone == true){
 							treeElement.attr('data-clone-enabled','true');
 						}
@@ -130,8 +131,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 						if (scope.noDropEnabled == true){
 							treeElement.attr('data-nodrop-enabled','true');
 						}
-						if (scope.dragDropOptions == true){
-							treeElement.attr('ui-tree',"dragDropOptions");
+						if (scope.optionsDragDrop){
+							//treeElement.attr('ui-tree',"optionsDragDrop");
 						}
 						if(attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true") ){
 							if (!attrs.selecteditem) {

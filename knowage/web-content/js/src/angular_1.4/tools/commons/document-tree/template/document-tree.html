@@ -46,7 +46,7 @@ data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-dr
 <div ng-show='seeTree == true'>
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
-		<div ui-tree="{{dragDropOptions}}"  id="tree-container" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
+		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
 			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 				<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
 					context-menu data-target='{{id}}TreeContextMenu-{{folder[label]}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
