@@ -565,8 +565,13 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 
 	$scope.showListHierarchyController = function($scope, $mdDialog, translate, listHierarchies) {
 			$scope.translate = translate;
-			$scope.listHierarchies = listHierarchies;
-			
+			$scope.listHierarchies = angular.copy(listHierarchies);
+			$scope.all = false;
+			$scope.selectAll = function (){
+				for (var i = 0 ; i <$scope.listHierarchies.length ; i++){
+					$scope.listHierarchies[i].checked = $scope.listHierarchies[i].checked !== undefined ? !$scope.listHierarchies[i].checked : true; 
+				}
+			}
 			$scope.closeDialog = function() {
 		     	$mdDialog.hide();
 		    }
