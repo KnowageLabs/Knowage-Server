@@ -680,10 +680,10 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		node.expandChildNodes();
 		     
 		if( node.childNodes && node.childNodes.length > 0 ) {
-			this.tree.getSelectionModel().suspendEvents(false);  // workaround (work-around): when GUI is initialized, the first node is selected twice (why?)
+			//this.tree.getSelectionModel().suspendEvents(false);  // workaround (work-around): when GUI is initialized, the first node is selected twice (why?)
 															     // therefore we suspend (and resume just after) events to avoid this 
 			this.tree.getSelectionModel().select( node.childNodes[0] );
-			this.tree.getSelectionModel().resumeEvents();
+			//this.tree.getSelectionModel().resumeEvents();
 		}
 		
 		this.fireEvent('load', this);
