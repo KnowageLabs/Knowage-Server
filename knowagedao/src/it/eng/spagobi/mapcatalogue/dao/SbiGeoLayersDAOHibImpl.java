@@ -201,7 +201,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						OutputStreamWriter out;
 						String name = aLayer.getLabel();
 						out = new FileWriter(path + name);
-						out.write(new String(aLayer.getFilebody()));
+						String content = new String(aLayer.getFilebody());
+						content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
+						out.write(content);
 						out.close();
 					}
 				} catch (IOException e) {
@@ -351,7 +353,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					OutputStreamWriter out;
 					String name = aLayer.getLabel();
 					out = new FileWriter(path + name);
-					out.write(new String(aLayer.getFilebody()));
+					System.out.println("prima " + aLayer.getFilebody().toString());
+					String content = new String(aLayer.getFilebody());
+					content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
+					out.write(content);
 					out.close();
 				}
 			} catch (IOException e) {
@@ -651,7 +656,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				do {
 					c = br.readLine();
 
-					obj = obj = new JSONObject(c);
+					obj = new JSONObject(c);
 					System.out.println(obj);
 				} while (c != null);
 			}
