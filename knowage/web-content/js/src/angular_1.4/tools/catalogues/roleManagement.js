@@ -10,10 +10,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.disable = false; // flag that disable some role options
     $scope.translate = sbiModule_translate;
     $scope.selectedRole = {}; // main item
+    $scope.selectedMeta = {};
     $scope.rolesList = []; // array that hold list of roles
     $scope.authList = [];  
     $scope.listType = []; // list that holds list of domain roles
-    $scope.metaList = [];
+    $scope.roleMetaModelCategories = [];
+    $scope.category = [];
     $scope.showActionOK = function (msg) {
         var toast = $mdToast.simple()
             .content(msg)
@@ -60,6 +62,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     angular.element(document).ready(function () { // on page load function
     	$scope.getRoles();
     	$scope.getDomainType();
+    	$scope.getCategories();
     	
     });
     $scope.roleInit = function(){ // function the inits role object on creation
@@ -148,10 +151,57 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
     
     /*
+     * 	this function is used to properly format
+     *  selected roles categories
+     *  for adding or updating.
+     *  																	
+     */
+    $scope.formatCategories = function () {
+        
+       if ($scope.category.length > 0) {
+    	   console.log("full metaa");
+    	   var tmpR = []; 
+    	   for (var i = 0; i < $scope.category.length; i++) {
+          	 $scope.selectedMeta={};
+          	$scope.selectedMeta.categoryId=$scope.category[i].VALUE_ID;
+          	tmpR.push($scope.selectedMeta);
+          }
+          	$scope.selectedRole.roleMetaModelCategories = tmpR;
+		
+       }else{
+    	   console.log("empty metaa");
+    	   delete $scope.selectedRole.roleMetaModelCategories;
+       }
+           //delete $scope.selectedRole.roleMetaModelCategories;
+    	}
+    
+    
+    /*
+     * 	this function is used to properly fill
+     *  categories table with categories from
+     *  selected role																	
+     */
+    $scope.setCetegories = function(data) {
+    	if (data.length>0) {
+			$scope.category = [];
+	        for (var i = 0; i < $scope.roleMetaModelCategories.length; i++) {
+	            for (var j = 0; j < data.length; j++) {
+	                if (data[j].categoryId == $scope.roleMetaModelCategories[i].VALUE_ID) {
+	                    $scope.category.push($scope.roleMetaModelCategories[i]);
+	                }
+	            }
+	        }
+		}else{
+			$scope.category = [];
+		}	
+	}
+        
+    /*
      * 	this function is called when item
      *  from table is clicked																	
      */
-    $scope.loadRole = function (item) { 
+    $scope.loadRole = function (item) {
+    	$scope.getCategoriesByID(item);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -180,6 +230,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
     $scope.cancel = function () { // on cancel button
     	$scope.selectedRole = {};
+    	$scope.category = [];
         $scope.showme = false;
         $scope.dirtyForm = false;
     }
@@ -188,17 +239,16 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
      * 	this function is called when clicking
      *  on plus button(create)																	
      */
-    $scope.createRole = function () { 
+    $scope.createRole = function () {
+    	$scope.selectedRole = {};
+    	$scope.category = [];
         if ($scope.dirtyForm) {
-            $mdDialog.show($scope.confirm).then(function () {
-            	
+            $mdDialog.show($scope.confirm).then(function () {	
             	
                 $scope.dirtyForm = false;
                 $scope.roleInit();
                 $scope.showme = true;
                 
-
-
             }, function () {
             	
                 $scope.showme = true;
@@ -218,7 +268,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
      *  If item dont exists insert new one @POST
      *  																
      */
-    $scope.saveRole = function () { 
+    $scope.saveRole = function () {
+    	$scope.formatCategories();
+    	console.log($scope.selectedRole);
         if($scope.selectedRole.hasOwnProperty("id")){ 
 			sbiModule_restServices
 		    .put("2.0/roles", $scope.selectedRole.id , $scope.selectedRole).success(
@@ -255,7 +307,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						console.log(data);
 					})	
 			
 			
@@ -295,8 +346,47 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
-				})
-				
+				})		
+	}
+    
+    /*
+     * 	service that gets domain types for
+     *  categories @GET																	
+     */
+    $scope.getCategories = function(){									
+		sbiModule_restServices.get("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY").success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					} else {
+						$scope.roleMetaModelCategories = data;
+
+					}
+					
+				}).error(function(data, status, headers, config) {
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+
+				})		
+	}
+    
+    /*
+     * 	service that gets loaded categories
+     *  for selected role @GET																	
+     */
+    $scope.getCategoriesByID = function(item){									
+		sbiModule_restServices.get("2.0/roles/categories", item.id).success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					} else {
+						
+						$scope.setCetegories(data);
+					}
+					
+				}).error(function(data, status, headers, config) {
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+
+				})		
 	}
     
     /*

@@ -379,7 +379,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			// deletes associations with events (and events themselves, if they
 			// have no more associations)
 			// Query hibQuery =
-			// aSession.createQuery(" from SbiEventRole ser where ser.id.role.extRoleId = "
+			// aSession.createQuery(" from SbiEventRole ser where
+			// ser.id.role.extRoleId = "
 			// + hibRole.getExtRoleId().toString());
 			Query hibQuery = aSession.createQuery(" from SbiEventRole ser where ser.id.role.extRoleId = ?");
 			hibQuery.setInteger(0, hibRole.getExtRoleId().intValue());
@@ -481,7 +482,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			// Get corresponding Product Type Id for role's tenant
 			Set<Integer> productTypesId = findProductTypesId(aSession, tenant);
 
-			// 2 - Get only the authorizations of the product types of the tenant
+			// 2 - Get only the authorizations of the product types of the
+			// tenant
 			String hqlall = "from SbiAuthorizations aut where aut.productType.productTypeId IN (:PRODUCT_TYPES)";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
 			hqlQueryAll.setParameterList("PRODUCT_TYPES", productTypesId);
@@ -590,7 +592,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			List hibListAllRoles = hibQuery.list();
 
 			/*
-			 * String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
+			 * String hql = "from SbiParuseDet s " +
+			 * " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
 			 */
 
 			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ?";
@@ -667,7 +670,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			/*
-			 * String hql = "from SbiParuseDet s " +" where s.id.sbiParuse.sbiParameters.parId = "+ sbiParuse.getSbiParameters().getParId() +
+			 * String hql = "from SbiParuseDet s " +
+			 * " where s.id.sbiParuse.sbiParameters.parId = "+
+			 * sbiParuse.getSbiParameters().getParId() +
 			 * " and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
 			 */
 
@@ -714,7 +719,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * From the hibernate Role at input, gives the corrispondent <code>Role</code> object.
+	 * From the hibernate Role at input, gives the corrispondent
+	 * <code>Role</code> object.
 	 *
 	 * @param hibRole
 	 *            The hybernate role
@@ -855,8 +861,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +" where f.functId = fr.id.function.functId " +
-			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
+			 * String hql =
+			 * "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +
+			 * " where f.functId = fr.id.function.functId " +
+			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = "
+			 * + roleID;
 			 */
 
 			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId "
@@ -900,8 +909,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +" where pu.useId = pud.id.sbiParuse.useId " +
-			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +" and r.extRoleId = " + roleID;
+			 * String hql =
+			 * "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +
+			 * " where pu.useId = pud.id.sbiParuse.useId " +
+			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +
+			 * " and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId "
@@ -961,7 +973,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Set<Integer> productTypesId = findProductTypesId(aSession, tenant);
 
 			// ------------------------
-			// 2 - Get only the authorizations of the product types of the tenant
+			// 2 - Get only the authorizations of the product types of the
+			// tenant
 
 			String hqlall = "from SbiAuthorizations aut where aut.productType.productTypeId IN (:PRODUCT_TYPES)";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
@@ -1031,13 +1044,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertRoleComplete] occurs. Role cache will be cleaned.");
+					logger.debug("OUT");
 					this.clearCache();
 				}
 			}
-			return roleId;
 		}
-
+		return roleId;
 	}
 
 	@Override
@@ -1133,7 +1145,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Associate a Meta Model Category to the role
 	 *
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
 	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1185,7 +1198,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Remove the association between the role and the Meta Model Category
 	 *
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1442,7 +1456,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
+	 * Gets all the authorizationsRoles object (relationn objects) associated to
+	 * the role.
 	 *
 	 * @param roleID
 	 *            The role id
@@ -1641,7 +1656,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					if (cacheManager.cacheExists(cacheName)) {
 						cacheManager.getCache(cacheName).removeAll();
 					}
-					// else nothing to do, no cache existed for the current tenant
+					// else nothing to do, no cache existed for the current
+					// tenant
 				}
 				// else nothing to do, no cache manager exists
 			} catch (Throwable t) {

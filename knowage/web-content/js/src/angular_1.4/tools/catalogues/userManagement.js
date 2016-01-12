@@ -133,6 +133,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         delete $scope.selectedUser.confirm;
     }
     
+    /*
+     * 	this function is used to add
+     *  temporary comfirm property to
+     *  user object
+     *  																	
+     */
     $scope.addConfirmPwdProp = function() {
    	 for ( var l in $scope.usersList) {
    		$scope.usersList[l].confirm = null;
@@ -187,6 +193,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.dirtyForm = false;
                 $scope.selectedUser = {};
                 $scope.showme = true;
+                $scope.setRoles();
                 $scope.setAttributes();
 
 
@@ -197,10 +204,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             });
 
         } else {
-            $scope.selectedUser = {};
-            $scope.showme = true;
-            $scope.setAttributes();
+                $scope.selectedUser = {};
+	            $scope.showme = true;
+	            $scope.setRoles();
+	            $scope.setAttributes();
         }
+        
     }
 
     $scope.saveUser = function () { // this function is called when clicking on save button
@@ -284,7 +293,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
                 } else {
                     $scope.usersAttributes = data;
-
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));

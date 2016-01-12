@@ -30,14 +30,14 @@
 					<div class="md-toolbar-tools" >
 						<div style="font-size: 24px;">{{translate.load("sbi.modalities.check.title.constraints");}}</div>
 						<md-button aria-label="create_button"
-							class="md-fab md-ExtraMini addButton"
-							style="position:absolute; right:11px; top:0px;"
+							class="md-fab md-Mini addButtonCatalogue"
+							style="position:absolute; right:20px; top:20px;"
 							ng-click="createConstraints()"
 							>
 							 
 							<md-icon
 								md-font-icon="fa fa-plus" 
-								style=" margin-top: 6px ; color: white;">
+								style=" margin-top: 8px ; color: white;">
 							</md-icon> 
 						</md-button>
 					</div>
