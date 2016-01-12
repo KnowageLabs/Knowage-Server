@@ -18,6 +18,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.filterBySrc = '';
 	$scope.orderByFields = ['name','id'];
 	$scope.doBackup = true;
+	$scope.metadataMap = {};
+	
 	/*Initialization Source variable*/
 	$scope.hierarchiesTypeSrc = ['Master', $scope.translate.load('sbi.hierarchies.type.technical')];
 	$scope.dateSrc = new Date();
@@ -27,7 +29,6 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.hierarchiesSrc=[];
 	$scope.hierTreeSrc = [];
 	$scope.hierTreeMapSrc = {};
-	$scope.metadataMap = {};
 	$scope.seeFilterSrc=false;
 
 	/*Initialization Target variable*/
@@ -38,7 +39,6 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	//$scope.dimensionTarget = [];
 	$scope.hierarchiesTarget = [];
 	$scope.hierTreeMapTarget = {};
-	$scope.metadataMap = {};
 	$scope.seeFilterTarget=false;
 	$scope.treeTargetDirty=false;
 	$scope.targetIsNew = false; //flag, if is true, the tree create from user, else is get from server
@@ -117,21 +117,27 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			}
 		}
 		//get the metadata for the dimension
-		var dimName = dim.DIMENSION_NM;
-		if ($scope.metadataMap !== undefined && $scope.metadataMap[dimName] == undefined){
-			$scope.restService.get("hierarchies","nodeMetadata","dimension="+dimName+"&excludeLeaf=false")
-			.success(
-				function(data, status, headers, config) {
-					if (data.errors === undefined){
-						$scope.metadataMap[dimName] = data;
-					}else{
-						$scope.showAlert('ERROR',data.errors[0].message);
-					}
-			})
-			.error(function(data, status){
-				var message = 'GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
-				$scope.showAlert('ERROR',message);
-			});
+		$scope.getMetadata(dim);
+	}
+	
+	$scope.getMetadata = function (dim){
+		if (dim){
+			var dimName = dim.DIMENSION_NM;
+			if ($scope.metadataMap !== undefined && $scope.metadataMap[dimName] == undefined){
+				$scope.restService.get("hierarchies","nodeMetadata","dimension="+dimName+"&excludeLeaf=false")
+				.success(
+					function(data, status, headers, config) {
+						if (data.errors === undefined){
+							$scope.metadataMap[dimName] = data;
+						}else{
+							$scope.showAlert('ERROR',data.errors[0].message);
+						}
+				})
+				.error(function(data, status){
+					var message = 'GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
+					$scope.showAlert('ERROR',message);
+				});
+			}
 		}
 	}
 	
@@ -159,7 +165,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				config.params.filterDimension = seeElement;
 				keyMap = keyMap + '_' + seeElement;
 			}
-			if ($scope.hierTreeMapSrc[keyMap] === undefined && $scope.hierTreeMapTarget[keyMap] === undefined ){
+			var hierMap = choose == 'src' ? $scope.hierTreeMapSrc : $scope.hierTreeMapTarget;
+			if (hierMap[keyMap] === undefined){
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
 						function(data, status, headers, config) {
@@ -301,6 +308,47 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		});
 	}
 	
+	$scope.showDetailsNode =  function(item,parent,event){
+		var parentEl = angular.element(document.body);
+		var dimName = $scope.dimSrc !== undefined ? $scope.dimSrc.DIMENSION_NM : ''; 
+		var metTmp =  $scope.metadataMap[dimName];
+		if (metTmp === undefined){
+			$scope.showAlert('Error','No metadata found for dimension '+ dimName );
+			return null;
+		}
+		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
+		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
+		metadata == undefined ? metadata =  metTmp.GENERAL_FIELDS : metadata = metadata; //TODO remove hard coded for test
+		return $mdDialog.show({
+				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
+				parent: angular.element(document.body),
+				locals: {
+					   translate: $scope.translate,
+			           hier:  $scope.hierSrc,
+			           metadata : metadata
+			         },
+				preserveScope : true,
+				clickOutsideToClose:false,
+				controller: DialogController 
+			});
+	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
+	 		$scope.translate = translate;
+			$scope.hier = angular.copy(hier);
+			$scope.metadata = angular.copy(metadata);
+			$scope.showOnlyConfirm = true;
+			for (var i = 0 ; i <$scope.metadata.length; i++){
+				$scope.metadata[i].EDITABLE = false;
+			}
+			
+	        $scope.closeDialog = function() {
+	        	$mdDialog.cancel();
+	        }
+	        $scope.saveHier = function(){
+	        	$mdDialog.hide(hier);
+	        }
+	 	}
+	}
+	
 	$scope.menuTargetOption = [{
 			label: $scope.translate.load('sbi.generic.add'),
 			showItem : function(item,event){
@@ -323,6 +371,11 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			action: $scope.deleteHier
 		}
 	];
+	
+	$scope.menuSrcOption = [{
+		label: $scope.translate.load('sbi.generic.details'),
+		action : $scope.showDetailsNode
+	}];
 	 
 	$scope.applyFilter = function(choose){
 		//use to apply the filter only when is clicked the icon

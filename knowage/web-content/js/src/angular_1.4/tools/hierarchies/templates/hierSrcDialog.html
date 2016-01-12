@@ -16,10 +16,13 @@
 						<md-datepicker ng-model="hier[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='mt.REQUIRED'></md-datepicker> {{mt.NAME}}
 					</div>
 				</div>
-				<div layout="row" layout-align="space-around center">
+				<div layout="row" layout-align="space-around center" ng-if = "!showOnlyConfirm">
 					<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier(hier)" ng-disabled="hierForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
 					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
 				</div> 
+				<div layout="row" layout-align="space-around center" ng-if = "showOnlyConfirm">
+					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.general.ok")}} </md-button>
+				</div>	
 		</form>
 	</md-dialog-content> 
 </md-dialog>

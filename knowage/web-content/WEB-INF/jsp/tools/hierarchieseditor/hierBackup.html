@@ -10,32 +10,32 @@
 				</div>
 			</md-toolbar>
 			
-			<md-content id='hierarchiesSrc' layout-padding layout='column' layout-align='space-around stretch'>
-				<md-content id='hierarchiesSrcSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
+			<md-content id='hierarchiesBackup' layout-padding layout='column' layout-align='space-around stretch'>
+				<md-content id='hierarchiesBackupSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
-			        	<md-select type='text' ng-model='dimSrc' md-on-close='getHierarchies("src")'>
-			        		<md-option ng-value="dimSrc" ng-repeat="dimSrc in dimensionSrc">{{ dimSrc.DIMENSION_NM }}</md-option>
+			        	<md-select type='text' ng-model='dimBackup' md-on-close='getHierarchies()'>
+			        		<md-option ng-value="dimBackup" ng-repeat="dimBackup in dimensionBackup">{{ dimBackup.DIMENSION_NM }}</md-option>
 			        	</md-select>
 					</md-input-container>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}} {{translate.load("sbi.generic.type");}}</label>
-			        	<md-select type='text' ng-model='hierTypeSrc' ng-disabled='!dateBackup' md-on-close='getHierarchies("src")'>
-			        		<md-option ng-value="hierTypeSrc" ng-repeat="hierTypeSrc in hierarchiesTypeSrc">{{ hierTypeSrc }}</md-option>
+			        	<md-select type='text' ng-model='hierTypeBackup' ng-disabled='!dimBackup' md-on-close='getHierarchies()'>
+			        		<md-option ng-value="hierTypeBackup" ng-repeat="hierTypeBackup in hierarchiesTypeBackup">{{ hierTypeBackup }}</md-option>
 			        	</md-select>
 					</md-input-container>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.hierarchies");}}</label>
-			        	<md-select type='text' ng-model='hierSrc'  md-on-close='getTree("src")' ng-disabled='!hierTypeSrc || !dimSrc || hierarchiesSrc.length==0'>
-			        		<md-option ng-value="hierSrc" ng-repeat="hierSrc in hierarchiesSrc">{{ hierSrc.HIER_NM	}}</md-option>
+			        	<md-select type='text' ng-model='hierBackup'  md-on-close='getBackupTable()' ng-disabled='!hierTypeBackup || !dimBackup || hierarchiesBackup.length==0'>
+			        		<md-option ng-value="hierBackup" ng-repeat="hierBackup in hierarchiesBackup">{{ hierBackup.HIER_NM	}}</md-option>
 			        	</md-select>
 					</md-input-container>
 				</md-content>
 				<md-content layout='row' layout-fill flex='50'>
 					<angular-table 
-						ng-model="backupTable"
-						columns = "backupColumns"
 						id='backupTable'
+						ng-model="backupTable"
+						columns = "columnsTable"
 					    columns-search="columnSearchTable"
 					    show-search-bar = "true"
 					    speed-menu-option="backupSpeedMenu"

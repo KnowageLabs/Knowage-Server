@@ -345,7 +345,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	/*Visualize the edit dialog to modify the item with context menu*/
 	$scope.editNode = function(item,parent){
 		var parentEl = angular.element(document.body);
-		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : 'ACCOUNT'; //TODO remove hard coded for test
+		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; //TODO remove hard coded for test
 		var metTmp =  $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined){
 			$scope.showAlert('Error','No metadata found for dimension '+ dimName );
@@ -353,7 +353,6 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
-		metadata == undefined ? metadata =  metTmp.GENERAL_FIELDS : metadata = metadata; //TODO remove hard coded for test
 		return $mdDialog.show({
 				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 				parent: angular.element(document.body),
