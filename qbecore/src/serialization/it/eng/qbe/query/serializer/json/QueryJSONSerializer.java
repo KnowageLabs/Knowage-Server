@@ -130,7 +130,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 	private String getCalendarFieldUniqueName(IDataSource dataSource) {
 		IModelField calendarField = getCalendarField(dataSource);
-		String calendarFieldUniqueName = calendarField.getParent().getUniqueType() + ":" + calendarField.getName();
+		String calendarFieldUniqueName = calendarField == null ? null : calendarField.getParent().getUniqueType() + ":" + calendarField.getName();
 		return calendarFieldUniqueName;
 	}
 
