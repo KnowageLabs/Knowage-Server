@@ -15,10 +15,7 @@
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 		     -->
-		    <ITEM	title="#menu.TenantMan"
-					functionality="TenantManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp" 
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+		   
 		    <ITEM	title="#menu.EngMan"
 					functionality="TenantManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -156,26 +153,21 @@
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/timespan/timespan.jsp" />
 								
 		</ITEM>		
-		<ITEM	code="menu_tools" 
-			title="#menu.ToolsMenu"
-			groupingMenu="true"
-			iconCls="build">
-			<ITEM	title="#menu.ImpExp"
-					functionality="ImportExportManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/importexport/importexport16.png" />
-			<ITEM	title="#menu.Scheduler"
-					functionality="SchedulerManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
-					<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"-->
-	  		<ITEM	title="#menu.HierarchiesEditor"
-					functionality="HierarchiesManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
-			<ITEM	title="#menu.SocialAnalysis"
-					functionality="CreateSocialAnalysis"
-					url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
-	  	</ITEM>	  	
+		<ITEM code="menu_tools" title="#menu.ToolsMenu" groupingMenu="true"	iconCls="build">
+		   	<ITEM title="#menu.ImpExp"
+		     functionality="ImportExportManagement"
+		     url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+		     iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/importexport/importexport16.png" />
+			<ITEM title="#menu.Scheduler" functionality="SchedulerManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
+			<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+			<ITEM title="#menu.HierarchiesEditor" functionality="HierarchiesManagement"
+			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
+			<ITEM title="#menu.SocialAnalysis" functionality="CreateSocialAnalysis"
+			url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
+		</ITEM>
+		
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"
 				groupingMenu="true"
@@ -282,6 +274,20 @@
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUEe"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlistuser16.png" />
 		</ITEM>
+		<ITEM code="menu_servermanager" title="#menu.ServerManager"	groupingMenu="true" iconCls="build">
+
+
+			<ITEM title="#menu.TenantMan" functionality="TenantManagement"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp"
+				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+			<ITEM title="#menu.TemplateManagement" functionality="TemplateManagement"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
+	
+			<ITEM title="#menu.ImpExpDocument" functionality="ImpExpDocument"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments.jsp" />
+			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
+	  	</ITEM>	  	
 	</ITEM>
 	
 	<!-- ITEM	code="repo_mng" 

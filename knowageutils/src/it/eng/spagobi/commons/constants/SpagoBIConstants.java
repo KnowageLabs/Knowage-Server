@@ -457,4 +457,7 @@ public class SpagoBIConstants {
 	public static final String DOMAIN_MANAGEMENT = "DomainManagement";
 	public static final String CONFIG_MANAGEMENT = "ConfigManagement";
 	public static final String USER_DATA_PROPERTIES_MANAGEMENT = "UserDefinedPropertyManagement";
+	public static final String TEMPLATE_MANAGEMENT = "TemplateManagement";
+	public static final String IMP_EXP_DOCUMENT = "ImpExpDocument";
+	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
 }

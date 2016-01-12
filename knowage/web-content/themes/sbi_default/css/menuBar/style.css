@@ -306,8 +306,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
 .gruppoLinkAdmin{
+/*  min-height: 205px; update to 240px to solve graphic's problem*/
   margin-bottom: 5px;
-  min-height: 205px;
+  min-height: 240px;
 }
 #contieniLinkAdmin {
   width: 0;

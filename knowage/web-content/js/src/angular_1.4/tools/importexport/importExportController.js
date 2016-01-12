@@ -108,6 +108,8 @@ function funcController($http,sbiModule_download,sbiModule_device,$scope, $mdDia
 		
 		$http.post($scope.pathRest.urlTest,data, config)
 			.success(function(data){
+				console.log("Hi");
+				console.log(data);
 				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
 				
 				$scope.flags.viewDownload = false

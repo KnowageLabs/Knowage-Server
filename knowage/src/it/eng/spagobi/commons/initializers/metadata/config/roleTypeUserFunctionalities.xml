@@ -313,5 +313,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="MODEL_ADMIN" />
-
+	
+	
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemplateManagement" roleType="ADMIN" />	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpDocument" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpResources" roleType="ADMIN" />
 </ROLE_TYPE_USER_FUNCTIONALITIES>
