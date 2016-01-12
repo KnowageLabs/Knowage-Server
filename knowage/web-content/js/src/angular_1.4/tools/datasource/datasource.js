@@ -342,9 +342,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 	
 	//TEST FAILED
-	$scope.showActionTestKO = function() {
+	$scope.showActionTestKO = function(e) {
 		var toast = $mdToast.simple()
-		.content('Data Source is not correct!')
+		.content(e)
 		.action('OK')
 		.position('top')
 
@@ -389,29 +389,46 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	
 	//REST
 	$scope.testDataSource = function () {
-		//TEST DATA SOURCE
-		sbiModule_restServices.post('datasources/2.0/test','', angular.toJson($scope.selectedDataSource))
 		
+		//TEST DATA SOURCE
+		
+		var testJSON = angular.copy($scope.selectedDataSource);
+		
+		if(testJSON.hasOwnProperty("dsId")){
+			delete testJSON.dsId;
+		}
+		
+		if(testJSON.hasOwnProperty("userIn")) {
+			delete testJSON.userIn;
+		}
+		
+		console.log(angular.toJson(testJSON));
+		
+		sbiModule_restServices.post('2.0/datasources/test','',testJSON)
+	
 		.success(
 				
 				function(data, status, headers, config) {
 					if(data.hasOwnProperty("errors")) {
+						
 						console.log("[TEST]: DATA HAS ERRORS PROPERTY!");
-						$scope.showActionTestKO();
+						$scope.showActionTestKO(data.errors[0].message);
 					} else {
 						console.log("[TEST]: SUCCESS!");
 						$scope.showActionTestOK();
-						
 					}
 				})	
 				
 		.error(
 				
 				function(data, status, headers, config) {
+					
 					console.log("[TEST]: FAIL!"+status);
 					$scope.showActionTestKO();
 				}					
 		);
+		
+		
 	}
 	
 	//SPEED MENU TRASH ITEM
