@@ -335,7 +335,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}
 		//get the Tree if one off two filters are active
 		if ((seeElement !== undefined &&  seeElement != false) || (dateFormatted !== undefined && dateFormatted.length>0)){
-			$scope.getTree('src', dateFormatted, seeElement);
+			$scope.getTree(choose, dateFormatted, seeElement);
 		}
 		//apply filter on source side (left) or target side (right)
 		choose == 'src' ? $scope.filterBySrcTrigger = angular.copy($scope.filterBySrc) : $scope.filterByTargetTrigger = angular.copy($scope.filterByTarget);
