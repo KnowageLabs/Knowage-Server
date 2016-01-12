@@ -27,10 +27,10 @@
 				        <legend>Filters</legend>
 				        <div layout="column" layout-wrap flex layout-align="space-around stretch">
 				        	<md-content layout='row' layout-fill layout-align='start center'>
-				        		After Date: <md-datepicker ng-model="dateFilterDim"></md-datepicker>
+				        		After Date: <md-datepicker ng-model="dateFilterDim" ng-disabled="!dim"></md-datepicker>
 				        	</md-content>
 				        	<md-content layout='row' layout-fill layout-align='space-between center'>
-				        		<md-checkbox ng-model="seeHideLeafDim" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
+				        		<md-checkbox ng-model="seeHideLeafDim" style='height: 33px;' ng-disabled="!dim">{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
 				        		 <div>
 					        		 <md-icon class="fa fa-check" ng-click="getDimensionsTable(dateFilterDim,seeHideLeafDim,false)"></md-icon>
 							         <md-icon class="fa fa-trash" ng-click="getDimensionsTable(undedined,undefined,true)"></md-icon>
@@ -100,20 +100,20 @@
 					        <md-content layout='row' layout-fill layout-align='space-around center'>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
-						        	<input type='text' ng-model='filterByTree'></input>
+						        	<input type='text' ng-model='filterByTree' ng-disabled="!hierMaster"></input>
 					      		</md-input-container>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
-						        	<md-select type='text' ng-model='orderByTree'>
+						        	<md-select type='text' ng-model='orderByTree' ng-disabled="!hierMaster">
 						        		<md-option ng-value="orderByTree" ng-repeat="orderByTree in orderByFields">{{ orderByTree }}</md-option>
 						        	</md-select>
 						        </md-input-container>
 					        </md-content>
 					        <md-content layout='row' layout-fill layout-align='start center'>
-				        		After Date: <md-datepicker ng-model="dateFilterTree"></md-datepicker>
+				        		After Date: <md-datepicker ng-model="dateFilterTree" ng-disabled="!hierMaster"></md-datepicker>
 				        	</md-content>
 				        	<md-content layout='row' layout-fill layout-align='space-between center'>
-				        		<md-checkbox ng-model="seeHideLeafTree" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
+				        		<md-checkbox ng-model="seeHideLeafTree" style='height: 33px;' ng-disabled="!hierMaster">{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
 				        		 <div>
 					        		 <md-icon class="fa fa-check" ng-click="applyFilter('tree')"></md-icon>
 							         <md-icon class="fa fa-trash" ng-click="removeFilter('tree')"></md-icon>

@@ -43,20 +43,20 @@
 					        <md-content layout='row' layout-fill layout-align='space-around center'>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
-						        	<input type='text' ng-model='filterBySrc'></input>
+						        	<input type='text' ng-model='filterBySrc' ng-disabled="!hierSrc"></input>
 					      		</md-input-container>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
-						        	<md-select type='text' ng-model='orderBySrc'>
+						        	<md-select type='text' ng-model='orderBySrc' ng-disabled="!hierSrc">
 						        		<md-option ng-value="orderBySrc" ng-repeat="orderBySrc in orderByFields">{{ orderBySrc }}</md-option>
 						        	</md-select>
 						        </md-input-container>
 					        </md-content>
 				        	<md-content layout='row' layout-fill layout-align='start center'>
-				        		After Date: <md-datepicker ng-model="dateFilterSrc"></md-datepicker>
+				        		After Date: <md-datepicker ng-model="dateFilterSrc" ng-disabled="!hierSrc"></md-datepicker>
 				        	</md-content>
 				        	<md-content layout='row' layout-fill layout-align='space-between center'>
-				        		<md-checkbox ng-model="seeHideLeafSrc" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
+				        		<md-checkbox ng-model="seeHideLeafSrc" style='height: 33px;' ng-disabled="!hierSrc">{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
 				        		 <div>
 					        		 <md-icon class="fa fa-check" ng-click="applyFilter('src')"></md-icon>
 							         <md-icon class="fa fa-trash" ng-click="removeFilter('src')"></md-icon>
@@ -113,20 +113,20 @@
 					        <md-content layout='row' layout-fill layout-align='space-around center'>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.filterLabel");}}</label>
-						        	<input type='text' ng-model='filterByTarget'></input>
+						        	<input type='text' ng-model='filterByTarget' ng-disabled="!hierTarget"></input>
 					      		</md-input-container>
 						        <md-input-container flex='40'>
 						        	<label>{{translate.load("sbi.ds.orderComboLabel");}}</label>
-						        	<md-select type='text' ng-model='orderByTarget'>
+						        	<md-select type='text' ng-model='orderByTarget' ng-disabled="!hierTarget">
 						        		<md-option ng-value="orderByTarget" ng-repeat="orderByTarget in orderByFields">{{ orderByTarget }}</md-option>
 						        	</md-select>
 						        </md-input-container>
 					        </md-content>
 					        <md-content layout='row' layout-fill layout-align='start center'>
-				        		After Date: <md-datepicker ng-model="dateFilterTarget"></md-datepicker>
+				        		After Date: <md-datepicker ng-model="dateFilterTarget"  ng-disabled="!hierTarget"></md-datepicker>
 				        	</md-content>
 				        	<md-content layout='row' layout-fill layout-align='space-between center'>
-				        		<md-checkbox ng-model="seeHideLeafTarget" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
+				        		<md-checkbox ng-model="seeHideLeafTarget" style='height: 33px;' ng-disabled="!hierTarget">{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
 				        		 <div>
 					        		 <md-icon class="fa fa-check" ng-click="applyFilter('target')"></md-icon>
 							         <md-icon class="fa fa-trash" ng-click="removeFilter('target')"></md-icon>
