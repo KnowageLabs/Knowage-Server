@@ -10,8 +10,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jgrapht.graph.Pseudograph;
 
 public class AssociativeLogicManager {
+
+	private final static int IN_CLAUSE_LIMIT = 999;
 
 	private final IDataSource dataSource;
 	private final ICache cache;
@@ -50,10 +50,18 @@ public class AssociativeLogicManager {
 	}
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
+
+		if (dataSource == null) {
+			// eccezione
+		}
+		if (cache == null) {
+			// eccezione
+		}
+
 		// (0) generate the starting set of values for each associations
 		init();
 
-		// (1) user click on widget built with dataset D2 -> it clicks on gender 'F'
+		// (1) user click on widget -> selection!
 		calculateDatasets(datasetSelected, null, filterSelected);
 
 		// String inLastnameValues = "'" + StringUtils.join(associationValues.get("LNAME").iterator(), "','") + "'";
@@ -110,13 +118,16 @@ public class AssociativeLogicManager {
 	private void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
 
 		Set<EdgeGroup> groups = datasetToEdgeGroup.get(dataset);
+		// ******* CHECK THIS ******* //
 		// no need to iterate over the incoming association -> TO BE CHECKED
 		// datasetAssociation.remove(fromAssociation);
+		// *******FINISH CHECK THIS ******* //
+
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
 			String query = "SELECT DISTINCT " + group.getColumnNames() + " FROM " + dataset + " WHERE " + filter;
 			ResultSet rs = dataSource.getConnection().createStatement().executeQuery(query);
-			// ResultSetMetaData rsMetadata = rs.getMetaData();
+			// ResultSetMetaData rsMetadata = rs.getMetaData(); // maybe we do not need it: we handle everything as strings
 			Set<String> distinctValues = getTupleOfValues(rs);
 
 			// Map<String, Class> classes = new HashMap<String, Class>(group.getEdgeNames().size());
@@ -130,8 +141,18 @@ public class AssociativeLogicManager {
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
 			if (!intersection.equals(baseSet)) {
 				edgeGroupValues.put(group, intersection);
-				String inClauseValues = StringUtils.join(edgeGroupValues.get(group).iterator(), "','");
-				String f = "(" + group.getColumnNames() + ") IN (" + inClauseValues + ")";
+				Set<String> values = edgeGroupValues.get(group);
+				String inClauseColumns;
+				String inClauseValues;
+				if (values.size() > IN_CLAUSE_LIMIT) {
+					inClauseColumns = "1," + group.getColumnNames();
+					inClauseValues = getUnlimitedInClauseValues(values);
+				} else {
+					inClauseColumns = group.getColumnNames();
+					inClauseValues = StringUtils.join(values.iterator(), "','");
+				}
+
+				String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
 				for (String datasetInvolved : edgeGroupToDataset.get(group)) {
 					if (!datasetInvolved.equals(dataset)) {
 						// it will skip the current dataset, from which the filter is fired
@@ -140,6 +161,14 @@ public class AssociativeLogicManager {
 				}
 			}
 		}
+	}
+
+	private String getUnlimitedInClauseValues(Set<String> values) {
+		Set<String> newValues = new HashSet<String>();
+		for (String value : values) {
+			newValues.add(value.replaceFirst("(", "(1,"));
+		}
+		return StringUtils.join(newValues.iterator(), "','");
 	}
 
 	private Set<String> getTupleOfValues(ResultSet rs) throws SQLException {
@@ -161,20 +190,20 @@ public class AssociativeLogicManager {
 		return tuple;
 	}
 
-	@SuppressWarnings("unused")
-	private PreparedStatement getPreparedQuery(Connection connection, String[] columnNames, String tableName) throws SQLException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT");
-		sb.append(" ");
-		for (int i = 0; i < columnNames.length; i++) {
-			if (i != 0) {
-				sb.append(",");
-			}
-			sb.append("?");
-		}
-		sb.append("FROM");
-		sb.append(" ");
-		sb.append(tableName);
-		return connection.prepareStatement(sb.toString());
-	}
+	// @SuppressWarnings("unused")
+	// private PreparedStatement getPreparedQuery(Connection connection, String[] columnNames, String tableName) throws SQLException {
+	// StringBuilder sb = new StringBuilder();
+	// sb.append("SELECT DISTINCT");
+	// sb.append(" ");
+	// for (int i = 0; i < columnNames.length; i++) {
+	// if (i != 0) {
+	// sb.append(",");
+	// }
+	// sb.append("?");
+	// }
+	// sb.append("FROM");
+	// sb.append(" ");
+	// sb.append(tableName);
+	// return connection.prepareStatement(sb.toString());
+	// }
 }
