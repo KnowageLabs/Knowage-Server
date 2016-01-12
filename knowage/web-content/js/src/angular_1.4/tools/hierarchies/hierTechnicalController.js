@@ -35,7 +35,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	//$scope.dateFilterTarget = new Date();
 	$scope.hierarchiesTargetMap = {};
 	$scope.hierTreeTarget = [];
-	$scope.dimensionTarget = [];
+	//$scope.dimensionTarget = [];
 	$scope.hierarchiesTarget = [];
 	$scope.hierTreeMapTarget = {};
 	$scope.metadataMap = {};
@@ -77,7 +77,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		.success(
 			function(data, status, headers, config) {
 				$scope.dimensionSrc = angular.copy(data);
-				$scope.dimensionTarget = angular.copy(data);
+				//$scope.dimensionTarget = angular.copy(data);
 			})	
 		.error(function(data, status){
 			var message = 'GET dimensions error of ' + data + ' with status :' + status;
@@ -87,7 +87,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.getHierarchies = function (choose){
 		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
-		var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
+		//var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
+		var dim = $scope.dimSrc;
 		var map = choose == 'src' ? $scope.hierarchiesSrcMap : $scope.hierarchiesTargetMap; 
 		if (type !== undefined && dim !== undefined){
 			var dimName = dim.DIMENSION_NM;
@@ -136,7 +137,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.getTree = function(choose,dateFilter,seeElement){
 		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
-		var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
+		//var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
+		var dim = $scope.dimSrc ;
 		var date = choose == 'src' ? $scope.dateSrc : $scope.dateTarget;
 		var hier = choose == 'src' ?  $scope.hierSrc : $scope.hierTarget;
 		if (type && dim && hier && date){
@@ -186,7 +188,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	 $scope.editNode = function(item,parent){
 		 var parentEl = angular.element(document.body);
-		 var dimName = $scope.dimTarget !== undefined ? $scope.dimTarget.DIMENSION_NM : 'ACCOUNT'; //TODO remove hard coded for test
+		 var dimName = $scope.dimSrc  !== undefined ? $scope.dimSrc.DIMENSION_NM : '';
 		 var metTmp =  $scope.metadataMap[dimName];
 		 if (metTmp === undefined){
 			 $scope.showAlert('Error','No metadata found for dimension '+ dimName );
@@ -246,9 +248,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	/*Clone the hierarchy of the tree with context menu. If the hier not allows duplicate, show Dialog to modify the new hier*/
 	$scope.duplicateLeaf =  function(item,parent,event){
 		var newItem = angular.copy(item);
-		if ($scope.dimTarget && $scope.dimTarget.DIMENSION_NM && $scope.dimTarget.DIMENSION_NM.length > 0){ 
+		if ($scope.dimSrc && $scope.dimSrc.DIMENSION_NM && $scope.dimSrc.DIMENSION_NM.length > 0){ 
 			var idx = $scope.indexOf(parent.children,item,'id');
-			var allowDuplicate = $scope.metadataMap[$scope.dimTarget.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
+			var allowDuplicate = $scope.metadataMap[$scope.dimSrc.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
 			if (allowDuplicate == false || allowDuplicate == "false"){
 				//must modify the dates of validity
 				var promise = $scope.editNode(newItem,parent);
@@ -403,7 +405,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	};
 	
 	$scope.createTree = function(){
-		if ($scope.dateTarget && $scope.dimTarget && $scope.hierTarget){
+		if ($scope.dateTarget && $scope.dimSrc && $scope.hierTarget){
 			var promise = $scope.editNode(angular.copy(rootStructure),null);
 			promise
 				.then(function(newItem){
@@ -417,10 +419,10 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	}
 	
 	$scope.saveTree = function(){
-		if ($scope.dateTarget && $scope.dimTarget && $scope.hierTarget && $scope.hierTreeTarget){
+		if ($scope.dateTarget && $scope.dimSrc && $scope.hierTarget && $scope.hierTreeTarget){
 			//saveHierarchy
 			var root = {};
-			root.dimension = $scope.dimTarget.DIMENSION_NM;
+			root.dimension = $scope.dimSrc.DIMENSION_NM;
 			root.code = $scope.hierTarget.HIER_CD;
 			root.description = $scope.hierTarget.HIER_DS;
 			root.name = $scope.hierTarget.HIER_NM;
