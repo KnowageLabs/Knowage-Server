@@ -300,13 +300,10 @@ public class HierarchyService {
 			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
 
-			// ************************ ONLY FOR TEST *******************************
-			doBackup = true;
-			// *********************** FINE TEST **********************************
 			if (!isInsert && doBackup) {
 				updateHierarchyForBackup(dataSource, connection, hierarchyType, hierarchyName, validityDate, hierarchyTable);
 			} else if (!isInsert && doBackup) {
-				// deleteHierarchy(req, connection);
+				deleteHierarchy(req, dataSource, connection);
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
@@ -342,29 +339,18 @@ public class HierarchyService {
 		Connection connection = null;
 		try {
 			String dimension = req.getParameter("dimension");
-			String hierarchyCode = req.getParameter("code");
-
-			// 1 - get hierarchy table postfix(ex: _CDC)
+			// 1 - get datasource label name
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
-
-			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
 
-			// 3 - create query text
-			String hierarchyCodeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
-			String tableName = "HIER_" + hierarchyPrefix;
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyCodeCol + "=\"" + hierarchyCode + "\" ";
-
-			// 4 - Execute DELETE statement
+			// 2 - Execute DELETE
 			connection = dataSource.getConnection();
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(queryText);
-			statement.close();
+			deleteHierarchy(req, dataSource, connection);
 
 		} catch (Throwable t) {
+			connection.rollback();
 			logger.error("An unexpected error occured while deleting custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
 		} finally {
@@ -493,6 +479,35 @@ public class HierarchyService {
 		logger.debug("JSON for hierarchy backups is [" + result.toString() + "]");
 		logger.debug("END");
 		return result.toString();
+
+	}
+
+	private boolean deleteHierarchy(@Context HttpServletRequest req, IDataSource dataSource, Connection connection) throws SQLException {
+		// delete hierarchy
+		try {
+			String dimension = req.getParameter("dimension");
+			String hierarchyName = req.getParameter("name");
+
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
+
+			// 2 - create query text
+			String hierarchyCodeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String tableName = "HIER_" + hierarchyPrefix;
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyCodeCol + "=\"" + hierarchyName + "\" ";
+
+			// 3 - Execute DELETE statement
+			Statement statement = connection.createStatement();
+			statement.executeUpdate(queryText);
+			statement.close();
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while deleting custom hierarchy");
+			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
+		}
+
+		return true;
 
 	}
 
