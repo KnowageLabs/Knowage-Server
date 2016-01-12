@@ -94,7 +94,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			
 		});
 	/*When selected a dimension, get the JSON to create the table*/
-	$scope.getDimensionsTable = function(filterDate,filterHierarchy){
+	$scope.getDimensionsTable = function(filterDate,filterHierarchy,removeFilter){
 		if ($scope.dateDim && $scope.dim){
 			var hasFilter=false;
 			var hier = $scope.hierMaster;
@@ -118,12 +118,12 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					function(data, status, headers, config) {
 						if (data.error == undefined){
 							$scope.createTable(data);
-							if (!hasFilter){
+							if (!hasFilter && !removeFilter){
 								$scope.hierType = undefined;
 								$scope.hierarchiesMaster = [];
+							}else if (removeFilter == true){
 								$scope.seeHideLeafDim = false;
 								$scope.dateFilterDim = undefined;
-							}else{
 							}
 						}else{
 							$scope.showAlert('ERROR',data.error[0].message);
@@ -307,7 +307,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		var newItem = angular.copy(item);
 		if ($scope.dim && $scope.dim.DIMENSION_NM && $scope.dim.DIMENSION_NM.length > 0){ 
 			var idx = $scope.indexOf(parent.children,item,'id');
-			var allowDuplicate = $scope.getTreeMetadata[$scope.dim.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
+			var allowDuplicate = $scope.metadataTreeMap[$scope.dim.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
 			if (allowDuplicate == false || allowDuplicate == "false"){
 				//must modify the dates of validity
 				var promise = $scope.editNode(newItem,parent);
@@ -368,7 +368,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			});
 	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
 	 		$scope.translate = translate;
-			$scope.hier = hier;
+			$scope.hier = angular.copy(hier);
+			$scope.hier.BEGIN_DT = new Date();
+			$scope.hier.END_DT = new Date();
 			$scope.metadata = metadata;
 	        $scope.closeDialog = function() {
 	        	$mdDialog.cancel();

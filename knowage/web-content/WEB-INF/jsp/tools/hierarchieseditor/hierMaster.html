@@ -32,8 +32,8 @@
 				        	<md-content layout='row' layout-fill layout-align='space-between center'>
 				        		<md-checkbox ng-model="seeHideLeafDim" style='height: 33px;'>{{translate.load("sbi.hierarchies.show.misselement");}}</md-checkbox>
 				        		 <div>
-					        		 <md-icon class="fa fa-check" ng-click="getDimensionsTable(dateFilterDim,seeHideLeafDim)"></md-icon>
-							         <md-icon class="fa fa-trash" ng-click="getDimensionsTable()"></md-icon>
+					        		 <md-icon class="fa fa-check" ng-click="getDimensionsTable(dateFilterDim,seeHideLeafDim,false)"></md-icon>
+							         <md-icon class="fa fa-trash" ng-click="getDimensionsTable(undedined,undefined,true)"></md-icon>
 						         </div>
 			        		</md-content>
 			        	</div>
