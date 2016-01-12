@@ -81,7 +81,7 @@ data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-dr
 	.dropdown_menu_list {
 		margin-top: -25px;
 		position: fixed !important;
-		left: 10px;
+		left: inherit;
 	}
 	.dropdown_menu_list.open:before {
    	  content: '';
@@ -94,9 +94,9 @@ data-drag-enabled="{{dragEnabled}}" data-clone-enabled="{{enableClone}}" data-dr
   }
 	
 	.dropdown_menu_list md-list {
-		position: absolute;
-		top: 100%;
-		left: 0;
+		position: fixed;
+		top: initial;
+		left: initial;
 		z-index: -1;
 		display: none;
 		float: left;
