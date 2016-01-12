@@ -34,11 +34,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	Map formImportUrlPars = new HashMap();
 	String formImportUrl = urlBuilder.getUrl(request, formImportUrlPars);
   
-	String downloadUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userId);
-	downloadUrl += "&ACTION_NAME=DOWNLOAD_FILE_ACTION";
-	if((exportFilePath!=null) && !exportFilePath.trim().equalsIgnoreCase("") ) {
-		downloadUrl += "&OPERATION=downloadExportFile&FILE_NAME="+  exportFilePath;
-	}
+
    
 %>
 
@@ -47,7 +43,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/importexport/importExportController.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportController.js"></script>
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/importexport/css/importExportStyle.css">
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/generalStyle.css">
 	<title>{{translate.load("SBISet.importexport","component_impexp_messages");}}</title>
@@ -136,7 +132,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						</md-content>
 					</md-content>
 					<md-content layout-margin ng-if="flags.viewDownload">
-						<form method='POST' action='<%=downloadUrl%>' id='downForm' name='downForm'>
+<%-- 						<form method='POST' action='<%=downloadUrl%>' id='downForm' name='downForm'> --%>
 							<h3 class="md-body-2">
 								<md-button aria-label="Close" ng-click="toggleViewDownload()" style="min-width: 24px;min-height:24px;width:24px;height:24px">
 									<md-icon class="fa fa-times" style="margin-top: 0.3rem;margin-left: -0.3rem;"></md-icon>
@@ -146,30 +142,31 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								<br>
 								<span>{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</span>
 							</h3>
-						</form>
+<!-- 						</form> -->
 					</md-content>
-					<md-content flex layout="column" layout-padding layout-align = "start stretch">
-						<md-content layout="row" layout-align="space-around center" style="bottom: 5px;">
-							<md-input-container flex="75"  md-no-float class="md-block">
+					<md-content flex layout="column"  layout-padding layout-wrap layout-align = "start stretch">
+						<div layout="row" layout-wrap style=" width:100%;">
+						
+							<md-input-container flex   class="md-block">
 								<label>{{translate.load("SBISet.importexport.nameExp","component_impexp_messages");}}</label>
 								<input type="text" ng-model="exportName" required>
 							</md-input-container>
-							<div flex="15">
-								<md-button class="md-fab md-fab-mini" ng-click="exportFiles(selected)" ng-disabled="selected.length==0 || exportName===undefined || exportName.length == 0" aria-label="{{translate.load('SBISet.importexport.fileArchive','component_impexp_messages')}}">
+							
+								<md-button  class="md-fab md-fab-mini" ng-click="exportFiles(selected)" ng-disabled="selected.length==0 || exportName===undefined || exportName.length == 0" aria-label="{{translate.load('SBISet.importexport.fileArchive','component_impexp_messages')}}">
 			           				 <md-icon class="fa fa-upload center-ico"></md-icon>
 			           				 <!-- <md-tooltip md-direction="bottom" >
 			          					{{translate.load("SBISet.importexport.fileArchive","component_impexp_messages");}}
 			        				</md-tooltip>
 			        				 -->
 			       				 </md-button>
-		       				 </div>
-	       				</md-content>
+		       				
+	       				</div>
 	       				<md-content layout-padding layout-gt-sm="row" layout-align-gt-sm="start center" layout-sm="column" layuout-align-sm ="start start">
 	       				 	<md-checkbox class="little-check" ng-model="checkboxs.exportSubObj" aria-label="Export sub views">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
 	       				 	<md-checkbox class="little-check" ng-model="checkboxs.exportSnapshots" aria-label="Export snapshots">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
        				 	</md-content>
 						<md-content layout-padding>
-							<document-tree ng-model="folders" id="impExpTree" create-tree="true" selected-item="selected"  multi-select="true" show-files="true" >
+							<document-tree ng-model="folders" id="impExpTree" create-tree="true" selected-item="selected"  multi-select="true" show-files="true"  >
 							</document-tree>
 						</md-content>
 					</md-content>

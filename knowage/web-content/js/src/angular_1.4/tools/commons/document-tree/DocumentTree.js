@@ -115,6 +115,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 								id=attrs.id;
 							}
 							
+							var treeElement = angular.element(element[0].querySelector('#tree-container'));
+							
 //							if (scope.dragEnabled == true){
 //							treeElement.attr('data-drag-enabled','true');
 ////							treeElement.attr('data-drag-delay',600);

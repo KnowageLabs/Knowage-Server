@@ -2,7 +2,7 @@
 	<md-checkbox ng-checked="isSelected(row)" ng-click="clickItem(row)" aria-label="selected item checked"> </md-checkbox>
 </td>
 
-<td ng-if="columns==undefined || columns.length==0" ng-repeat="(col,val) in row" ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"</td>
+<td ng-if="columns==undefined || columns.length==0" ng-repeat="(col,val) in row" ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"></td>
 <td ng-if="!(columns==undefined || columns.length==0)" ng-repeat="col in columns" ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"></td>
 
 <td ng-if="speedMenuOption!=undefined && speedMenuOption.length>0" >
