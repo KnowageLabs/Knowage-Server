@@ -175,6 +175,19 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 		}
 	}
 			
+	this.getPlain = function(data, nameFile, typeFile, extensionFile){
+		if (browser == 'internet explorer'){
+			this.getBlob(data, nameFile, typeFile, extensionFile);
+		}else{
+			text = JSON.stringify(data);	
+			a = document.createElement('a');
+			document.body.appendChild(a);
+			a.download = nameFile+".json";
+			a.href = 'data:text/json;charset=utf-8,' + encodeURI(text);
+			a.target = '_blank';
+			a.click();
+		}
+	}
 	/* download file from direct link */
 	this.getLink = function (directLink){
 		$window.open(directLink,'_blank');

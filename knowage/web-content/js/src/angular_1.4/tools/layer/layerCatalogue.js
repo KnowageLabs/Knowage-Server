@@ -677,7 +677,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						var text ;						
 
 						if($scope.typeWFS == 'geojson'){
-							$scope.download.getBlob(data, item.label, 'text/json', 'json');
+							$scope.download.getPlain(data, item.label, 'text/json', 'json');
 						} else if($scope.typeWFS == 'kml' || $scope.typeWFS == 'shp'){
 							$scope.download.getLink(data.url);
 						}
