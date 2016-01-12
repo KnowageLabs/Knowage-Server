@@ -84,7 +84,8 @@ function renderWordCloud(chartConf){
 		(function() {
 
 			function cloud() {
-				var size = [256, 256],
+				var size = [chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+						+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6],
 				text = cloudText,
 				font = cloudFont,
 				fontSize = cloudFontSize,
@@ -92,7 +93,7 @@ function renderWordCloud(chartConf){
 				fontWeight = cloudFontNormal,
 				rotate = cloudRotate,
 				padding = cloudPadding,
-				spiral = archimedeanSpiral,
+				spiral = rectangularSpiral,
 				words = [],
 				timeInterval = Infinity,
 				event = d3.dispatch("word", "end"),
@@ -488,12 +489,13 @@ function renderWordCloud(chartConf){
 
 			if (typeof module === "object" && module.exports) module.exports = cloud;
 			else (d3.layout || (d3.layout = {})).cloud = cloud;
-		})();
+		})();    
 
 		var maxfontsize=chartConf.chart.maxFontSize;
 		var fill = d3.scale.category20();
 
-		d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height])
+		var layout=d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
 			 return {text: d.name, size: d.value/(maxic/maxfontsize)};
 		}))
@@ -509,11 +511,12 @@ function renderWordCloud(chartConf){
 			return angle })
 		.font("Impact")
 		.fontSize(function(d) { return d.size; })
-		.on("end", draw)
-		.start();
-
-		function draw(words) {
+		.on("end", draw);
 			
+		layout.start();
+
+		function draw(words,e) {
+					  
 			d3.select("body")
 			.append("div").attr("id","main")
 			.style("height",chartConf.chart.height)
@@ -630,30 +633,39 @@ function renderWordCloud(chartConf){
 		    		.style("text-decoration", subtitleTextDecoration)
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
-
-			d3.select("#main")
+			
+		var bacground=d3.select("#main")
 			.append("div").attr("id","chart")
 			.append("svg")
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
-					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6)
+					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
+         
+		    var wordArea=bacground
 			.append("g")
-			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
+			//.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
+			.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
 			.selectAll("text")
 			.data(words)
-			.enter().append("text")
-			.style("font-size", function(d) { return d.size + "px"; })
+			.enter()
+			.append("text")
+			.style("font-size", "1px")
 			.style("font-family",chartConf.chart.style.fontFamily)
 			.style("font-style", chartConf.chart.style.fontStyle)
     		.style("font-weight", chartConf.chart.style.fontWeight)
     		.style("text-decoration", chartConf.chart.style.textDecoration)
 			.style("fill", function(d, i) { return fill(i); })
-			.attr("text-anchor", "middle")
+			.attr("text-anchor", "middle");
+		    
+		    
+			wordArea.transition().duration(1e3)
 			.attr("transform", function(d) {
-				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-			})
-			.text(function(d) { return d.text; })
-			.on('click', function(d){
+				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
+			.style("font-size", function(d) { return d.size + "px"; })	
+			.text(function(d) { return d.text.toLowerCase(); });
+		    
+		   
+			wordArea.on('click', function(d){
 				if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 					paramethers=fetchParamethers(d);
 					var navigParams={
@@ -666,11 +678,12 @@ function renderWordCloud(chartConf){
 						groupingCategoryName:paramethers.groupingCategoryName,
 						groupingCategoryValue:paramethers.groupingCategoryValue
 					};
-					console.log(navigParams)
+					
 					handleCrossNavigationTo(navigParams);
 				}
 				
-			});
+			})
+			;
 			
 			}	
 		}
@@ -697,7 +710,7 @@ function renderWordCloud(chartConf){
     
 	function renderSunburst(jsonObject)
 	{
-		console.log(jsonObject);
+		
 		/*The part that we need to place into HTML (JSP) in order to attach 
 		 * given data to them - we are going to create it through D3 notation */
 				
