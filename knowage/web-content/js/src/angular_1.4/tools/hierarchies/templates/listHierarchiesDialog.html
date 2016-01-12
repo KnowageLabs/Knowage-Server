@@ -12,7 +12,8 @@
 						<md-checkbox ng-model="all" ng-click="selectAll()"></md-checkbox>{{translate.load("sbi.generic.select")}} {{translate.load("sbi.generic.all")}}
 					</md-list-item>
 					<md-list-item class="" ng-repeat="hier in listHierarchies">
-						<md-checkbox ng-model="hier.checked"></md-checkbox>{{hier.HIER_NM}}	
+						<md-checkbox ng-model="hier.checked"></md-checkbox>{{hier.HIER_NM}} - {{hier.$parent.HIER_NM}}<br>
+						{{hier.path}}	
 					</md-list-item>
 				</md-list>
 			</md-content>

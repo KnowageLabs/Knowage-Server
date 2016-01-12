@@ -105,7 +105,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					validityDate : dateFormatted
 			}
 			if (filterDate !== undefined && filterDate !== null){
-				config.params.filterDate = filterDate;
+				config.params.filterDate = $scope.formatDate(filterDate);
 				hasFilter = true;
 			}
 			if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
@@ -541,7 +541,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		var seeElement = $scope.seeHideLeafTree;
 		var dateFormatted;
 		if (date !== undefined){
-			dateFormatted = $scope.formatData(date);
+			dateFormatted = $scope.formatDate	(date);
 		}
 		//get the Tree if one off two filters are active
 		if ((seeElement !== undefined &&  seeElement != false) || (dateFormatted !== undefined && dateFormatted.length>0)){
@@ -577,6 +577,15 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			$scope.translate = translate;
 			$scope.listHierarchies = angular.copy(listHierarchies);
 			$scope.all = false;
+			//create path for each element
+			for (var i = 0; i < $scope.listHierarchies.length ; i++){
+				var path = '';
+				for (var p=$scope.listHierarchies[i]; p !=null && p!=undefined; p = p.$parent){
+					path = p.HIER_NM + '\\'  + path;
+				}
+				$scope.listHierarchies[i].path  = path;
+			}
+			
 			$scope.selectAll = function (){
 				for (var i = 0 ; i <$scope.listHierarchies.length ; i++){
 					$scope.listHierarchies[i].checked = $scope.listHierarchies[i].checked !== undefined ? !$scope.listHierarchies[i].checked : true; 
