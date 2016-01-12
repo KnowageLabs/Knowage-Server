@@ -45,8 +45,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.keys = {'subfolders' : 'children'};
 	
-	$scope.hierTreeSrc.push(angular.copy(dataJson));
-	$scope.hierTreeTarget.push(angular.copy(dataJson));
+//	$scope.hierTreeSrc.push(angular.copy(dataJson));
+//	$scope.hierTreeTarget.push(angular.copy(dataJson));
 	
 	/*Drag and Drop option*/
 	$scope.treeTargetOptions = {

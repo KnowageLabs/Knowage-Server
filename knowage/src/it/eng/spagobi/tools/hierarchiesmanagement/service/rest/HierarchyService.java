@@ -302,8 +302,8 @@ public class HierarchyService {
 
 			if (!isInsert && doBackup) {
 				updateHierarchyForBackup(dataSource, connection, hierarchyType, hierarchyName, validityDate, hierarchyTable);
-			} else if (!isInsert && doBackup) {
-				deleteHierarchy(req, dataSource, connection);
+			} else if (!isInsert && !doBackup) {
+				deleteHierarchy(requestVal, dataSource, connection);
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
@@ -338,7 +338,9 @@ public class HierarchyService {
 		// delete hierarchy
 		Connection connection = null;
 		try {
-			String dimension = req.getParameter("dimension");
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String dimension = requestVal.getString("dimension");
 			// 1 - get datasource label name
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -347,7 +349,7 @@ public class HierarchyService {
 
 			// 2 - Execute DELETE
 			connection = dataSource.getConnection();
-			deleteHierarchy(req, dataSource, connection);
+			deleteHierarchy(requestVal, dataSource, connection);
 
 		} catch (Throwable t) {
 			connection.rollback();
@@ -482,19 +484,19 @@ public class HierarchyService {
 
 	}
 
-	private boolean deleteHierarchy(@Context HttpServletRequest req, IDataSource dataSource, Connection connection) throws SQLException {
+	private boolean deleteHierarchy(JSONObject requestVal, IDataSource dataSource, Connection connection) throws SQLException {
 		// delete hierarchy
 		try {
-			String dimension = req.getParameter("dimension");
-			String hierarchyName = req.getParameter("name");
+
+			String dimension = requestVal.getString("dimension");
+			String hierarchyName = requestVal.getString("name");
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			String hierarchyPrefix = hierarchies.getHierarchyTableName(dimension);
 
 			// 2 - create query text
 			String hierarchyCodeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
-			String tableName = "HIER_" + hierarchyPrefix;
+			String tableName = hierarchies.getHierarchyTableName(dimension);
 			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyCodeCol + "=\"" + hierarchyName + "\" ";
 
 			// 3 - Execute DELETE statement

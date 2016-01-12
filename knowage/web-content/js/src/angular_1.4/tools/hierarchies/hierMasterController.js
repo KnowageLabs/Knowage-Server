@@ -81,7 +81,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 		}
 	};	
 	
-	$scope.hierTree.push(angular.copy(dataJson));
+//	$scope.hierTree.push(angular.copy(dataJson));
 	/*Get dimensions for combo box*/
 	$scope.restService.get("dimensions","getDimensions")
 		.success(
