@@ -450,19 +450,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				SbiFederationDefinition federationDefinition;
 				if(dataSet.getDatasetFederation().getFederation_id()<0){
 					logger.debug("The federation is not saved.. Adding it");
-					//adding the tenant to the dataset... It has been lost because the service doesn't pass the value
-					dataSet.getDatasetFederation().getSourceDatasets().iterator().next().setOrganization(getTenant());;
+					// adding the tenant to the dataset... It has been lost because the service doesn't pass the value
+					dataSet.getDatasetFederation().getSourceDatasets().iterator().next().setOrganization(getTenant());
+
 					
-					
-					SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl)DAOFactory.getFedetatedDatasetDAO();
+					SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl) DAOFactory.getFedetatedDatasetDAO();
 					federationDefinition = dao.saveSbiFederationDefinition(dataSet.getDatasetFederation(), false, session, transaction);
-					
+
 					dataSet.getDatasetFederation().setFederation_id(federationDefinition.getFederation_id());
-					logger.debug("New federation created with id "+federationDefinition.getFederation_id());
-					
-				}else{
+					logger.debug("New federation created with id " + federationDefinition.getFederation_id());
+
+				} else {
 					federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
-					
+
 				}
 				hibDataSet.setFederation(federationDefinition);
 
@@ -1472,10 +1472,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				
 				//check if its a derived dataset.. In this case delete also the federation..
 
-					for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
-						FederationDefinition fedDef = (FederationDefinition) iterator.next();
-						logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
-					}	
+				for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
+					FederationDefinition fedDef = (FederationDefinition) iterator.next();
+					logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
+				}
 				
 				
 			}
@@ -1515,16 +1515,17 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (sbiDataSet != null) {
 					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 					session.delete(sbiDataSet);
-					
+
 					FederationDefinition fd = toReturn.getDatasetFederation();
-					if(fd.isDegenerated()){
-						logger.debug("The datset is derived so there is a linked federation");
-						SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl)DAOFactory.getFedetatedDatasetDAO();
-						dao.deleteFederatedDatasetById(fd.getFederation_id(), session);
-						logger.debug("Deleted the linked federation with id"+derivedFederationId);
+					if (fd != null) {
+						if (fd.isDegenerated()) {
+							logger.debug("The datset is derived so there is a linked federation");
+							SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl) DAOFactory.getFedetatedDatasetDAO();
+							dao.deleteFederatedDatasetById(fd.getFederation_id(), session);
+							logger.debug("Deleted the linked federation with id" + derivedFederationId);
+						}
 					}
-					
-					
+
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
 			}
