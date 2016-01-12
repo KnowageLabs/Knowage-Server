@@ -169,7 +169,7 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			var link = document.createElement('a');
 			document.body.appendChild(link);
 			link.download = nameFile + '.'  + extensionFile;
-			link.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(url);
+			link.href = url;
 			link.target = '_blank';
 			link.click();
 		}
@@ -182,8 +182,8 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			text = JSON.stringify(data);	
 			a = document.createElement('a');
 			document.body.appendChild(a);
-			a.download = nameFile+".json";
-			a.href = 'data:text/json;charset=utf-8,' + encodeURI(text);
+			a.download = nameFile+ '.'  + extensionFile;
+			a.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(text);
 			a.target = '_blank';
 			a.click();
 		}
