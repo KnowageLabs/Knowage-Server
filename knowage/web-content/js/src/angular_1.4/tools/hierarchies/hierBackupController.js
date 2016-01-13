@@ -199,8 +199,8 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			$scope.restService.post("hierarchies","restoreHierarchy",null,config)
 				.success(
 					function(data, status, headers, config) {
-						if (data.errors === undefined){
-							$scope.createTable(data);
+						if (data.errors !== undefined){
+							$scope.showAlert('INFO','Backup restored');
 						}else{
 							$scope.showAlert('ERROR',data.errors[0].message);
 						}
@@ -225,7 +225,8 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 				.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
-								$scope.createTable(data);
+								$scope.showAlert('INFO','Backup deleted');
+								//TODO remove item from the table
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
