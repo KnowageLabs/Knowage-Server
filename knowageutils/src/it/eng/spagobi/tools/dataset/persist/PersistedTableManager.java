@@ -217,7 +217,7 @@ public class PersistedTableManager {
 			// Steps #3: define create table statement
 			String createStmtQuery = getCreateTableQuery(datastore, datasource);
 			dropTableIfExists(datasource);
-			// Step #4: execute create table statament
+			// Step #4: execute create table statement
 			executeStatement(createStmtQuery, datasource);
 			// Step #5: execute batch with insert statements
 			statement.executeBatch();
@@ -371,18 +371,19 @@ public class PersistedTableManager {
 					getColumnSize().remove(fieldMeta.getName());
 					getColumnSize().put(fieldMeta.getName(), lenValue);
 				}
-				if(!(field.getValue() instanceof String)){
-					logger.debug("An unexpected error occured while extimating field [" + fieldMeta.getName() + "] memory size whose type is equal to [" + fieldMeta.getType().toString() + "]. Field forced to String");
+				if (!(field.getValue() instanceof String)) {
+					logger.debug("An unexpected error occured while extimating field [" + fieldMeta.getName() + "] memory size whose type is equal to ["
+							+ fieldMeta.getType().toString() + "]. Field forced to String");
 					Object nonStringValue = field.getValue();
-					if(nonStringValue!=null){
+					if (nonStringValue != null) {
 						insertStatement.setString(fieldIndex + 1, nonStringValue.toString());
-					}else{
+					} else {
 						insertStatement.setString(fieldIndex + 1, "");
 					}
-				}else{
+				} else {
 					insertStatement.setString(fieldIndex + 1, (String) field.getValue());
 				}
-				
+
 			} else if (fieldMeta.getType().toString().contains("Date")) {
 				insertStatement.setDate(fieldIndex + 1, (Date) field.getValue());
 			} else if (fieldMeta.getType().toString().contains("Timestamp")) {

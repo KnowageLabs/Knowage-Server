@@ -54,7 +54,7 @@ public class EdgeGroupTest {
 
 	@Test
 	public void testGetColumnNames() {
-		assertEquals(eg1.getColumnNames(), eg1.getColumnNames());
-		assertEquals(eg1.getColumnNames(), eg4.getColumnNames());
+		assertEquals(eg1.getOrderedEdgeNames(), eg1.getOrderedEdgeNames());
+		assertEquals(eg1.getOrderedEdgeNames(), eg4.getOrderedEdgeNames());
 	}
 }

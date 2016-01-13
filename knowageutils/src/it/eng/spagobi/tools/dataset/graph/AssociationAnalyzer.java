@@ -79,7 +79,7 @@ public class AssociationAnalyzer {
 		Map<Set<String>, Set<String>> associationsToValuesMap = new HashMap<Set<String>, Set<String>>();
 		for (EdgeGroup edgeGroup : egdegroupToValues.keySet()) {
 			Set<String> associations = new TreeSet<String>();
-			String associationString = edgeGroup.getColumnNames();
+			String associationString = edgeGroup.getOrderedEdgeNames();
 			associations.addAll(Arrays.asList(associationString.split(",")));
 			Set<String> values = egdegroupToValues.get(edgeGroup);
 			associationsToValuesMap.put(associations, values);
