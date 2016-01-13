@@ -1,6 +1,7 @@
 package it.eng.spagobi.tools.dataset;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -13,8 +14,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,20 +36,20 @@ public class AssociativeLogicManager {
 	private Map<String, Set<EdgeGroup>> datasetToEdgeGroup;
 	private Map<EdgeGroup, Set<String>> edgeGroupToDataset;
 	private final Pseudograph<String, LabeledEdge<String>> graph;
-	private final Map<String, IDataSet> datasets;
+	private Map<String, String> datasetToCachedTable;
 
 	private final String datasetSelected;
 	private final String filterSelected;
 
-	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, IDataSet> datasets,
-			Map<String, Map<String, String>> datasetToAssociations, String datasetSelected, String filterSelected) {
+	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
+			String datasetSelected, String filterSelected) {
 		this.dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		this.cache = SpagoBICacheManager.getCache();
 		this.graph = graph;
-		this.datasets = datasets;
 		this.datasetToAssociations = datasetToAssociations;
 		this.datasetSelected = datasetSelected;
 		this.filterSelected = filterSelected;
+		this.datasetToCachedTable = new HashMap<String, String>();
 	}
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
@@ -85,12 +88,11 @@ public class AssociativeLogicManager {
 							EdgeGroup group = new EdgeGroup(edges);
 							datasetToEdgeGroup.get(v1).add(group);
 
-							CacheItem cacheItem = cache.getMetadata().getCacheItem(v1);
-							String tableName = cacheItem.getTable();
+							String tableName = getCachedTableName(v1);
 							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
 							Statement stmt = dataSource.getConnection().createStatement();
-							ResultSet rs;
-							rs = stmt.executeQuery("SELECT DISTINCT " + group.getColumnNames() + " FROM " + tableName);
+							String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
+							ResultSet rs = stmt.executeQuery(query);
 							Set<String> tuple = getTupleOfValues(rs);
 
 							if (!edgeGroupValues.containsKey(group)) {
@@ -109,9 +111,30 @@ public class AssociativeLogicManager {
 					}
 				}
 			}
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Error during the initializing of the AssociativeLogicManager", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error during the initializing of the AssociativeLogicManager", e);
 		}
+	}
+
+	private String getCachedTableName(String datasetLabel) throws EMFUserError {
+		if (datasetToCachedTable.containsKey(datasetLabel)) {
+			return datasetToCachedTable.get(datasetLabel);
+		} else {
+			String signature = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel).getSignature();
+			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+			String tableName = cacheItem.getTable();
+			datasetToCachedTable.put(datasetLabel, tableName);
+			return tableName;
+		}
+	}
+
+	private String getColumnNames(String associationNamesString, String datasetName) {
+		String[] associationNames = associationNamesString.split(",");
+		List<String> columnNames = new ArrayList<String>();
+		for (String associationName : associationNames) {
+			columnNames.add(datasetToAssociations.get(datasetName).get(associationName));
+		}
+		return StringUtils.join(columnNames.iterator(), ",");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -123,9 +146,12 @@ public class AssociativeLogicManager {
 		// datasetAssociation.remove(fromAssociation);
 		// *******FINISH CHECK THIS ******* //
 
+		String tableName = getCachedTableName(dataset);
+
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
-			String query = "SELECT DISTINCT " + group.getColumnNames() + " FROM " + dataset + " WHERE " + filter;
+			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
+			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
 			ResultSet rs = dataSource.getConnection().createStatement().executeQuery(query);
 			// ResultSetMetaData rsMetadata = rs.getMetaData(); // maybe we do not need it: we handle everything as strings
 			Set<String> distinctValues = getTupleOfValues(rs);
@@ -141,15 +167,14 @@ public class AssociativeLogicManager {
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
 			if (!intersection.equals(baseSet)) {
 				edgeGroupValues.put(group, intersection);
-				Set<String> values = edgeGroupValues.get(group);
 				String inClauseColumns;
 				String inClauseValues;
-				if (values.size() > IN_CLAUSE_LIMIT) {
-					inClauseColumns = "1," + group.getColumnNames();
-					inClauseValues = getUnlimitedInClauseValues(values);
+				if (intersection.size() > IN_CLAUSE_LIMIT) {
+					inClauseColumns = "1," + columnNames;
+					inClauseValues = getUnlimitedInClauseValues(intersection);
 				} else {
-					inClauseColumns = group.getColumnNames();
-					inClauseValues = StringUtils.join(values.iterator(), "','");
+					inClauseColumns = columnNames;
+					inClauseValues = StringUtils.join(intersection.iterator(), ",");
 				}
 
 				String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
@@ -168,7 +193,7 @@ public class AssociativeLogicManager {
 		for (String value : values) {
 			newValues.add(value.replaceFirst("(", "(1,"));
 		}
-		return StringUtils.join(newValues.iterator(), "','");
+		return StringUtils.join(newValues.iterator(), ",");
 	}
 
 	private Set<String> getTupleOfValues(ResultSet rs) throws SQLException {

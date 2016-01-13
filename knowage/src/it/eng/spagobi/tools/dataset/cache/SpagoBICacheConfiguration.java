@@ -208,17 +208,17 @@ public class SpagoBICacheConfiguration {
 		try {
 			SourceBean configSB = (SourceBean) ConfigSingleton.getInstance().getAttribute(CACHE_CONFIG_TAG);
 			if (configSB == null) {
-				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "]");
+				throw new CacheException("Impossible to find configuration block [" + CACHE_CONFIG_TAG + "]");
 			}
 
 			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
 			if (typesSB == null) {
-				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
+				throw new CacheException("Impossible to find configuration block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
 			}
 
 			List<SourceBean> typesList = typesSB.getAttributeAsList(TYPE_TAG);
 			if (typesSB == null) {
-				throw new CacheException("Impossible to find configuartion blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
+				throw new CacheException("Impossible to find configuration blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
 			}
 
 			logger.trace("Initializing types' default dimension");
