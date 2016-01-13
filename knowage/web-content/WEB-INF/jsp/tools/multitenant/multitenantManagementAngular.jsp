@@ -96,7 +96,7 @@
 										Product Types
 									</md-tab-label>
 									<md-tab-body>
-								 		<div flex layout="column" layout-fill>
+										<md-content layout-fill style="" class="">
 										 	<angular-table 
 												id="productTypes" ng-model="productTypes" 
 												columns='[{"label":"Label","name":"LABEL"},{"label":"Select","name":"checkbox"}]'
@@ -106,7 +106,7 @@
 												no-pagination="true"
 												click-function = "toogleCheckBox(item,cell,listId)"  
 											></angular-table>
-										</div>
+										</md-content>
 									</md-tab-body>								 
 								</md-tab>
 								<md-tab>
@@ -114,7 +114,7 @@
 										{{translate.load("sbi.ds.dataSource")}}
 									</md-tab-label>
 									<md-tab-body>
-								 		<div flex layout="column" layout-fill>
+								 		<md-content layout-fill style="" class="">
 									 		<angular-table 
 												id="datasource" ng-model="datasources" 
 												columns='[{"label":"Label","name":"LABEL"},{"label":"Description","name":"DESCRIPTION"},{"label":"Select","name":"checkbox"}]'
@@ -124,7 +124,7 @@
 												no-pagination="true"
 												click-function = "toogleCheckBox(item,cell,listId)"
 											></angular-table>
-								 		</div>
+								 		</md-content>
 								 	</md-tab-body>
 								</md-tab>
 							</md-tabs>
