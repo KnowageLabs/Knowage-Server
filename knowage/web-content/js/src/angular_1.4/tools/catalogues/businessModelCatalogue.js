@@ -28,6 +28,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmVersionsActive;
 	$scope.fileObj ={};
 
+	$scope.fileClicked =false;
+
 	angular.element(document).ready(function () {
         $scope.getData();
     });
@@ -48,6 +50,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.bmVersions=[];
 		$scope.isNew = true;
 		$scope.showMe = true;
+		$scope.fileClicked = false;
 	}
 	
 	
@@ -529,9 +532,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				    		});
 		};
 		
+		$scope.fileChange = function(){
+			$scope.fileClicked = true;  // tells that file input has been clicked
+		}
+		
 		//check if is name dirty 
 		$scope.checkChange = function(){
-			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === ""){
+
+			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === ""
+				|| $scope.selectedBusinessModel.category === undefined || $scope.selectedBusinessModel.category === "" 
+				|| $scope.selectedBusinessModel.dataSourceLabel === undefined || $scope.selectedBusinessModel.dataSourceLabel === "" 
+				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileClicked === false)   // if file is new check also file has been added
+			){
 					$scope.isDirty = false;
 			}
 			else{

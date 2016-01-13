@@ -162,7 +162,7 @@
       						<div flex=100>
        							<md-input-container class="small counter"> 
        								<label>{{translate.load("sbi.ds.catType")}}</label>
-							       <md-select  aria-label="aria-label"
+							       <md-select  aria-label="aria-label" required
 							        ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
 							        ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
 							       </md-select> 
@@ -174,7 +174,7 @@
       						<div flex=100>
        							<md-input-container class="small counter"> 
        								<label>{{translate.load("sbi.ds.dataSource")}}</label>
-							       <md-select  aria-label="aria-label"
+							       <md-select  aria-label="aria-label" required
 							        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
 							        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
 							       </md-select> 
@@ -190,7 +190,7 @@
       						<!--<md-input-container > 
        							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
       						</md-input-container>-->
-      						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
+      						<file-upload required style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
       					</div>
      					     				
      					<!--<div layout="row" layout-wrap>
