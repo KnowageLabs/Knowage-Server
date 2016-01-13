@@ -49,6 +49,10 @@ public class ModelConfig implements Serializable {
 
 	private SpagoBICrossNavigationConfig crossNavigation;
 
+	public ModelConfig() {
+
+	}
+
 	public ModelConfig(PivotModel pivotModel) {
 		drillType = DrillDownCommand.MODE_POSITION;
 		showParentMembers = false;

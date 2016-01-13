@@ -1,12 +1,12 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 
 package it.eng.spagobi.engines.whatif.exception;
@@ -28,11 +28,10 @@ import org.json.JSONObject;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 @Provider
-public class RestExceptionMapper extends AbstractWhatIfEngineService implements ExceptionMapper<Throwable>
-{
+public class RestExceptionMapper extends AbstractWhatIfEngineService implements ExceptionMapper<Throwable> {
 
 	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";
@@ -43,7 +42,7 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 	public Response toResponse(Throwable e) {
 		logger.debug("RestExceptionMapper:toResponse IN");
 		String localizedMessage = e.getLocalizedMessage();
-		String errorMessage = e.getMessage();
+		String errorMessage = e.getCause().toString();
 		String errorService = "";
 
 		// logs the error
@@ -79,9 +78,7 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 			bytesResponse = serializedMessages.toString().getBytes();
 		}
 
-		Response response = Response.status(200)
-				.entity(bytesResponse)
-				.header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
+		Response response = Response.status(200).entity(bytesResponse).header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
 
 		logger.debug("RestExceptionMapper:toResponse OUT");
 

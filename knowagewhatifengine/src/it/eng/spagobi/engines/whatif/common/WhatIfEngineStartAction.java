@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -62,6 +63,16 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
 	@GET
+	@Path("/test")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String test() {
+
+		return "test";
+
+	}
+
+	@GET
+	@Path("/")
 	@Produces("text/html")
 	public void startAction() {
 

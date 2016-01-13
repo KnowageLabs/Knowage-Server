@@ -4,7 +4,7 @@
 	
 	<!-- WHATIF_ENGINE Initializations -->
 	<ACTION name="WHATIF_ENGINE_START_ACTION" 
-			class="it.eng.spagobi.engines.whatif.services.initializers.WhatIfEngineStartAction" 
+			class="it.eng.spagobi.engines.whatif.common.WhatIfEngineStartAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

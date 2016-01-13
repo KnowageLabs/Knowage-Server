@@ -60,7 +60,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
+import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
+import org.pivot4j.ui.table.TableRenderContext;
+import org.pivot4j.ui.table.TableRenderer;
 
 @Path("/1.0/model")
 public class ModelResource extends AbstractWhatIfEngineService {
@@ -326,12 +329,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new ExcelExporter(out);
+		FopExporter exporter2 = new FopExporter(out);
+		// exporter2.renderContent(ei., label, value);
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
 
-		exporter.renderContent(arg0, arg1, arg2);
-		render(model);
+		exporter.renderContent(new TableRenderContext(model, new TableRenderer(), model.getTopBottomCount(), 5, 5, 5), "", 5.00); // render(model);
+
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();

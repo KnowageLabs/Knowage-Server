@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.whatif;
@@ -9,6 +9,7 @@ package it.eng.spagobi.engines.whatif;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.PivotJsonSerializer;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Map;
 
@@ -36,20 +37,26 @@ public class WhatIfEngine {
 
 	/**
 	 * Creates the instance.
-	 * 
+	 *
 	 * @param template
 	 *            the template
 	 * @param env
 	 *            the env
-	 * 
+	 *
 	 * @return the WhatIf engine instance
 	 */
 	public static WhatIfEngineInstance createInstance(Object template, Map env) {
+
 		WhatIfEngineInstance whatIfEngineInstance = null;
 		logger.debug("IN");
-		whatIfEngineInstance = new WhatIfEngineInstance(template, env);
-		initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
-		logger.debug("OUT");
+		try {
+			whatIfEngineInstance = new WhatIfEngineInstance(template, env);
+			initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
+		} catch (Exception e) {
+			logger.error("OUT", e);
+			throw new SpagoBIEngineRuntimeException("error", e);
+
+		}
 
 		return whatIfEngineInstance;
 	}
