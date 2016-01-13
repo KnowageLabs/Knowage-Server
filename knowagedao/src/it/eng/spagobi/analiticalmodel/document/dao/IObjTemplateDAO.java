@@ -1,9 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.dao;
+
+import java.text.ParseException;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -11,18 +17,16 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
-import java.util.List;
-
 public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the bI object active template.
-	 * 
+	 *
 	 * @param biobjId
 	 *            the biobj id
-	 * 
+	 *
 	 * @return the bI object active template
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -30,12 +34,12 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the bI object active template starting by document label
-	 * 
+	 *
 	 * @param biobjLabel
 	 *            the BiObject label
-	 * 
+	 *
 	 * @return the bI object active template
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -43,12 +47,12 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the bI object template list.
-	 * 
+	 *
 	 * @param biobjId
 	 *            the biobj id
-	 * 
+	 *
 	 * @return the bI object template list
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -56,12 +60,12 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Load bi object template.
-	 * 
+	 *
 	 * @param tempId
 	 *            the temp id
-	 * 
+	 *
 	 * @return the obj template
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -69,23 +73,27 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the next prog for template.
-	 * 
+	 *
 	 * @param biobjId
 	 *            the biobj id
-	 * 
+	 *
 	 * @return the next prog for template
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
+	public List getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException;
+
+	public void removeTemplates(JSONArray documents) throws EMFInternalError, JSONException;
+
 	public Integer getNextProgForTemplate(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Delete bi object template.
-	 * 
+	 *
 	 * @param tempId
 	 *            the temp id
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -93,10 +101,10 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 
 	/**
 	 * Insert a new bi object template.
-	 * 
+	 *
 	 * @param objTemplate
 	 *            the new template
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */

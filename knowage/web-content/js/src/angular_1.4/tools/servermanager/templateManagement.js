@@ -9,51 +9,203 @@ app.config(function($mdThemingProvider) {
 
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
 
+
 function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	//main Controller
-	 $scope.dayFormat = "d";
+	
+	//variables
+	$scope.dateSelected={};
+	$scope.translate=sbiModule_translate;
+	$scope.dateSelected.data="";
+	$scope.data_format=null;
+	$scope.documents=[];
+	$scope.docChecked=[];
+	$scope.flagCheck=false;
+	$scope.flagSelect=false;
+	$scope.confirm="";
+	
+	
+	
+	
+	$scope.loadDocuments = function(ev){
+		if($scope.data_format){
+			//data inserita
+		
+			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
+					function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							console.log("layer non Ottenuti");
+							$scope.flagSelect=false;
+						} else {
+							console.log(data);
+							//prendo tutti i documenti
+				
+							$scope.documents=data;
+							$scope.flagSelect=true;
+						}
 
-	    // To select a single date, make sure the ngModel is not an array.
-	    $scope.selectedDate = null;
+					}).error(function(data, status, headers, config) {
+						$scope.flagSelect=false;
+						console.log("layer non Ottenuti " + status);
+					})
+					$scope.parseDate();
+		}else{
+			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
+		}
+		
+	}
+	
+	$scope.parseDate = function(){
+		//parse the date in the format yyyy-mm-gg
+		if($scope.dateSelected.data){
+			$scope.data_format = new Date($scope.dateSelected.data);
+			var year= $scope.data_format.getFullYear();
+			var month=$scope.data_format.getMonth()+1;
+			var day=$scope.data_format.getDate();
+			$scope.data_format=year+"-"+month+"-"+day;
+			console.log($scope.data_format);
+		}else{
+			$scope.data_format = null;
+			console.log($scope.data_format);
+		}
+		
+	}
+	
+	
+	$scope.deleteTemplate=function(ev){
+		if(!$scope.data_format){
+			//manca la data alert di richiesta
+			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
+		}
+		if($scope.docChecked.length==0 && $scope.data_format ){
+			//non è stato checkato nessun document
+			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertmissingdocument"));
+		}
+		if($scope.data_format && $scope.docChecked.length!=0){
+			//data inserita cancello template ma chiedo conferma
+		
+			 $scope.confirm =  $mdDialog.confirm()
+			          .title(sbiModule_translate.load("sbi.templatemanagemenent.alertdatedelete"))
+			          .ariaLabel('Lucky day')
+			          .targetEvent(ev)
+			          .ok('Ok')
+			          .cancel('Cancel');
+			 
+			 $mdDialog.show( $scope.confirm).then(function() {
+				//ha confermato la cancellazione
+				 var request = [];
+					for(var i=0;i<$scope.docChecked.length;i++){
+						var obj={id:$scope.docChecked[i], data:$scope.data_format};
+						request.push(obj);
+					}
+					console.log(request);
+					sbiModule_restServices.post("template",'deleteTemplate',request).success(
+							function(data, status, headers, config) {
+								if (data.hasOwnProperty("errors")) {
+									console.log("layer non Ottenuti");
+									$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeletederror"));
 
-	    // If you want multi-date select, initialize it as an array.
-	    $scope.selectedDate = [];
+								} else {
+									$scope.loadDocuments(null);
+									$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeleted"));
+								}
 
-	    $scope.firstDayOfWeek = 0; // First day of the week, 0 for Sunday, 1 for Monday, etc.
-	    $scope.setDirection = function(direction) {
-	      $scope.direction = direction;
-	      $scope.dayFormat = direction === "vertical" ? "EEEE, MMMM d" : "d";
-	    };
+							}).error(function(data, status, headers, config) {
+								console.log("layer non Ottenuti " + status);
+								$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeletederror"));
+							})
+			    }, function() {
+			    	//ha annullato
+			    });
+		
+				
+	
+			
+		}
+			
+	}
+	
+	$scope.showActionOK = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
 
-	    $scope.dayClick = function(date) {
-	      $scope.msg = "You clicked " + $filter("date")(date, "MMM d, y h:mm:ss a Z");
-	    };
+		$mdToast.show(toast).then(function(response) {
 
-	    $scope.prevMonth = function(data) {
-	      $scope.msg = "You clicked (prev) month " + data.month + ", " + data.year;
-	    };
+			if ( response == 'ok' ) {
 
-	    $scope.nextMonth = function(data) {
-	      $scope.msg = "You clicked (next) month " + data.month + ", " + data.year;
-	    };
 
-	    $scope.tooltips = true;
-	    $scope.setDayContent = function(date) {
+			}
+		});
+	};
+    // to prevent interaction outside of dialog
+	$scope.openDialog = function(ev, insTitle,conferm){
+	
+			 
+		if(ev){
+			 $mdDialog.show(
+				      $mdDialog.alert()
+				        .parent(angular.element(document.querySelector('#popupContainer')))
+				        .clickOutsideToClose(true)
+				        .title(insTitle)
+				        
+				        .ariaLabel('Alert Dialog Demo')
+				        .ok('Ok')
+				        .targetEvent(ev)
+				    );
+		} else{
+			
+		}
+		
+		
+	   
+	}
+	$scope.toggle = function (item, list) {
+		var index = $scope.indexInList(item.id, list);
 
-	        // You would inject any HTML you wanted for
-	        // that particular date here.
-	        return "<p></p>";
+		if(index != -1){
+			$scope.docChecked.splice(index,1);
+		}else{
+			$scope.docChecked.push(item.id);
+		}
 
-	        // You could also use an $http function directly.
-	        return $http.get("/some/external/api");
+	};
 
-	        // You could also use a promise.
-	        var deferred = $q.defer();
-	        $timeout(function() {
-	            deferred.resolve("<p></p>");
-	        }, 1000);
-	        return deferred.promise;
+	$scope.exists = function (item, list) {
 
-	    };
+		return  $scope.indexInList(item.id, list)>-1;
 
+	};
+
+	$scope.indexInList= function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object==item){
+				//se nella lista è presente l'item è checked
+				return i;
+			}
+		}
+
+		return -1;
+	};
+	$scope.selectAll = function(){
+		if(!$scope.flagCheck){
+			//se era falso allora stiamo facendo il check
+			$scope.flagCheck=true;
+			$scope.docChecked=[];
+			for(var i=0;i<$scope.documents.length;i++){
+				$scope.docChecked.push($scope.documents[i].id);
+			}
+		}else{
+			$scope.flagCheck=false;
+			$scope.docChecked=[];
+		}
+		
+		
+	}
 }
+

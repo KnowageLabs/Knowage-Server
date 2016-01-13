@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 13-mag-2005
@@ -11,6 +11,11 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.Session;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -18,11 +23,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a BI object.
@@ -32,14 +32,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all information for the execution of a BI Object identified by its <code>id</code> and its <code>role</code>. All these information, achived by a
 	 * query to the DB, are stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param id
 	 *            The BI object id
 	 * @param role
 	 *            The BI object role
-	 * 
+	 *
 	 * @return The BIobject execution information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -48,14 +48,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all information for the execution of a BI Object identified by its <code>label</code> and its <code>role</code>. All these information, achived by
 	 * a query to the DB, are stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param label
 	 *            The BI object label
 	 * @param role
 	 *            The BI object role
-	 * 
+	 *
 	 * @return The BIobject execution information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -64,12 +64,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>label</code> identifier. All these information, achived by a query to the DB, are
 	 * stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param label
 	 *            The BI object label identifier
-	 * 
+	 *
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -78,12 +78,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>biObjectID</code> identifier. All these information, achived by a query to the DB,
 	 * are stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param biObjectID
 	 *            the BI object identifier
-	 * 
+	 *
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -92,12 +92,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>id</code> identifier integer. All these information, achived by a query to the DB,
 	 * are stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -106,12 +106,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all detail information for a BI Object identified by its <code>path</code> in the cms. All these information, achived by a query to the DB, are
 	 * stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param path
 	 *            the path
-	 * 
+	 *
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -120,12 +120,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Loads all tree information for a BI Object identified by its <code>id</code> identifier Integer. All these information, achived by a query to the DB, are
 	 * stored into a <code>BIObject</code> object, which is returned.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return The BI object tree information, stored into a <code>BIObject</code>
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurs
 	 */
@@ -133,10 +133,10 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to modify a BI Object. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -145,12 +145,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to modify a BI Object. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param loadParsDC
 	 *            the boolean that permit the loading of parameters of a document composition
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -160,12 +160,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to modify a BI Object and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param objTemp
 	 *            The template of the biobject
 	 * @param obj
 	 *            the obj
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -174,14 +174,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to modify a BI Object and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param objTemp
 	 *            The template of the biobject
 	 * @param obj
 	 *            the obj
 	 * @param loadParsDC
 	 *            the boolean that permit the loading of parameters of a document composition
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -189,10 +189,10 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -201,12 +201,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param loadParsDC
 	 *            the boolean that permit the loading of parameters of a document composition
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -215,7 +215,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param objTemp
@@ -228,14 +228,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param objTemp
 	 *            The template of the biobject
 	 * @param loadParsDC
 	 *            the boolean that permit the loading of parameters of a document composition
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -244,12 +244,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	/**
 	 * Deletes a BIObject from a functionality. If the functionality is not specified (i.e. idFunct == null), the method deletes the BIObject from all the
 	 * functionalities. Then, if the BIObject is no more referenced in any functionality, deletes it completely from db and from CMS.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all delete information
 	 * @param idFunct
 	 *            The Integer representing the functionality id
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -257,14 +257,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Given the id for a report and the user profile, gets the corret roles for execution.
-	 * 
+	 *
 	 * @param id
 	 *            The Integer id for the report
 	 * @param profile
 	 *            The user profile
-	 * 
+	 *
 	 * @return The list of correct roles for execution
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -272,12 +272,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the correct roles for Report execution, given only the Report's id.
-	 * 
+	 *
 	 * @param id
 	 *            The Integer id for the report
-	 * 
+	 *
 	 * @return The list of correct roles for execution
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -285,12 +285,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
-	 * 
+	 *
 	 * @param aBIObject
 	 *            BIObject the biobject to analize
-	 * 
+	 *
 	 * @return List, list of the biparameters associated with the biobject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -298,9 +298,9 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects.
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -308,20 +308,22 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects ordered by parameter column.
-	 * 
+	 *
 	 * @param filterOrder
 	 *            the filter order
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
+	public List loadDocumentsBeforeDate(String data) throws EMFUserError;
+
 	public List loadAllBIObjects(String filterOrder) throws EMFUserError;
 
 	/**
 	 * Loads all BIObjects filtered by parameters specified in 'restrictions' (AND condition) and in 'disjunctions' (OR condition) with capability of pagination
-	 * 
+	 *
 	 * @param page
 	 * @param item_per_page
 	 * @param disjunctions
@@ -340,12 +342,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects that belong to sub functionalities of the given functionality path.
-	 * 
+	 *
 	 * @param initialPath
 	 *            the initial path
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -353,14 +355,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects that belong to sub functionalities of the given functionality path and ordered by parameter column.
-	 * 
+	 *
 	 * @param initialPath
 	 *            the initial path
 	 * @param filterOrder
 	 *            the filter order
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -368,16 +370,16 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects filtering with the input parameters.
-	 * 
+	 *
 	 * @param type
 	 *            the type of the biobjects (DASH/REPORT/OLAP...); if it is null, all types will be considered
 	 * @param state
 	 *            the type of the biobjects (REL/DEV...); if it is null, all states will be considered
 	 * @param folderPath
 	 *            the path of the folder; if it is null, all folders will be considered
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -385,14 +387,14 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Loads all the BIObjects filtering with the input parameters.
-	 * 
+	 *
 	 * @param folderID
 	 *            the identifier of the folder; if it is null, all folders will be considered
 	 * @param profile
 	 *            the user profile
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -400,7 +402,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Search objects with the features specified.
-	 * 
+	 *
 	 * @param valueFilter
 	 *            the value of the filter for the research
 	 * @param typeFilter
@@ -411,9 +413,9 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 *            the node (folder id) on which the filter is applied
 	 * @param profile
 	 *            the profile of the user
-	 * 
+	 *
 	 * @return the list of BIObjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */

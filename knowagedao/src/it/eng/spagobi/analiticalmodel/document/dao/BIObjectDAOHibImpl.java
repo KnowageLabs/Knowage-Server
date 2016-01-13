@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 21-giu-2005
@@ -10,6 +10,28 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
@@ -57,28 +79,6 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 /**
  * Defines the Hibernate implementations for all DAO methods, for a BI Object.
  */
@@ -110,17 +110,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for execution by id and role.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 * @param role
 	 *            the role
-	 * 
+	 *
 	 * @return the BI object
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForExecutionByIdAndRole(java.lang.Integer, java.lang.String)
 	 */
 	@Override
@@ -189,15 +189,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object by id.
-	 * 
+	 *
 	 * @param biObjectID
 	 *            the bi object id
-	 * 
+	 *
 	 * @return the BI object
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectById(java.lang.Integer)
 	 */
 	@Override
@@ -229,15 +229,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for detail.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return the BI object
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.Integer)
 	 */
 	@Override
@@ -275,15 +275,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object by label.
-	 * 
+	 *
 	 * @param label
 	 *            the label
-	 * 
+	 *
 	 * @return the BI object
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectByLabel(java.lang.String)
 	 */
 	@Override
@@ -320,15 +320,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for tree.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return the BI object
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForTree(java.lang.Integer)
 	 */
 	@Override
@@ -371,13 +371,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -387,15 +387,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param loadParsDC
 	 *            boolean for management Document Composition params
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -405,15 +405,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
 	 *            the obj temp
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -423,17 +423,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
 	 *            the obj temp
 	 * @param loadParsDC
 	 *            boolean for management Document Composition params
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -444,7 +444,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Updates the biobject data into database.
-	 * 
+	 *
 	 * @param biObject
 	 *            The BI Object as input
 	 * @param objTemp
@@ -570,12 +570,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param objTemp
 	 *            The template of the biobject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -586,10 +586,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -600,12 +600,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param loadParsDC
 	 *            boolean for management Document Composition params
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -616,12 +616,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 * 
+	 *
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param loadParsDC
 	 *            boolean for management Document Composition params
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -764,15 +764,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Erase bi object.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param idFunct
 	 *            the id funct
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#eraseBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject, java.lang.Integer)
 	 */
 	@Override
@@ -930,17 +930,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the correct roles for execution.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the correct roles for execution
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
@@ -959,15 +959,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the correct roles for execution.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return the correct roles for execution
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer)
 	 */
 	@Override
@@ -987,7 +987,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets a list of correct role according to the report at input, identified by its id
-	 * 
+	 *
 	 * @param id
 	 *            The Integer representing report's id
 	 * @param roles
@@ -1122,10 +1122,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * From the Hibernate BI object at input, gives the corrispondent BI object.
-	 * 
+	 *
 	 * @param hibBIObject
 	 *            The Hibernate BI object
-	 * 
+	 *
 	 * @return the corrispondent output <code>BIObject</code>
 	 */
 	@Override
@@ -1256,10 +1256,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * From the hibernate BI object parameter at input, gives the corrispondent <code>BIObjectParameter</code> object.
-	 * 
+	 *
 	 * @param hiObjPar
 	 *            The hybernate BI object parameter
-	 * 
+	 *
 	 * @return The corrispondent <code>BIObjectParameter</code>
 	 */
 	public BIObjectParameter toBIObjectParameter(SbiObjPar hiObjPar) {
@@ -1283,7 +1283,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1317,9 +1317,42 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		return realResult;
 	}
 
+	@Override
+	public List loadDocumentsBeforeDate(String data) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery("select distinct t.sbiObject from SbiObjTemplates t  where t.active = 0 and t.creationDate < ?");
+			hibQuery.setString(0, data);
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects(java.lang.String)
 	 */
 	@Override
@@ -1332,7 +1365,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			Query hibQuery = aSession.createQuery("from SbiObjects s  order by s." + filterOrder);
-			// Query hibQuery = aSession.createQuery("from SbiObjects s  order by ?" );
+			// Query hibQuery = aSession.createQuery("from SbiObjects s order by ?" );
 			// hibQuery.setString(0, filterOrder);
 			List hibList = hibQuery.list();
 
@@ -1362,7 +1395,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1417,12 +1450,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
-	 * 
+	 *
 	 * @param aBIObject
 	 *            BIObject the biobject to analize
-	 * 
+	 *
 	 * @return List, list of the biparameters associated with the biobject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1435,7 +1468,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -1449,15 +1482,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx = aSession.beginTransaction();
 			/*
 			 * Query hibQuery = aSession.createQuery( "select " + "	distinct(objects) " + "from " +
-			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " +
-			 * "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " + "		(functions.path = '" + initialPath + "' " +
-			 * "		 or functions.path like '" + initialPath + "/%' ) " + "order by " + "	objects.label");
+			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " +
+			 * "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " +
+			 * "		(functions.path = '" + initialPath + "' " + "		 or functions.path like '" + initialPath + "/%' ) " + "order by " +
+			 * "	objects.label");
 			 */
 
-			Query hibQuery = aSession.createQuery("select " + "	distinct(objects) " + "from "
-					+ "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where "
-					+ "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and "
-					+ "		(functions.path = ? " + "		 or functions.path like ?) " + "order by " + "	objects.label");
+			Query hibQuery = aSession
+					.createQuery("select " + "	distinct(objects) " + "from " + "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions "
+							+ "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId "
+							+ "	and " + "		(functions.path = ? " + "		 or functions.path like ?) " + "order by " + "	objects.label");
 
 			hibQuery.setString(0, initialPath);
 			hibQuery.setString(1, initialPath + "%");
@@ -1488,7 +1522,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1502,14 +1536,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx = aSession.beginTransaction();
 			/*
 			 * Query hibQuery = aSession.createQuery( "select " + "	distinct(objects) " + "from " +
-			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " +
-			 * "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " + "		(functions.path = '" + initialPath + "' " +
-			 * "		 or functions.path like '" + initialPath + "/%' ) " + "order by " + "	objects." + filterOrder);
+			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " +
+			 * "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " +
+			 * "		(functions.path = '" + initialPath + "' " + "		 or functions.path like '" + initialPath + "/%' ) " + "order by " + "	objects." +
+			 * filterOrder);
 			 */
-			Query hibQuery = aSession.createQuery("select " + "	distinct(objects) " + "from "
-					+ "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where "
-					+ "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and "
-					+ "		(functions.path = ? " + "		 or functions.path like ? " + "order by ? ");
+			Query hibQuery = aSession
+					.createQuery("select " + "	distinct(objects) " + "from " + "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions "
+							+ "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " + "	and objFuncs.id.sbiFunctions.functId = functions.functId "
+							+ "	and " + "		(functions.path = ? " + "		 or functions.path like ? " + "order by ? ");
 			hibQuery.setString(0, initialPath);
 			hibQuery.setString(1, initialPath + "%");
 			hibQuery.setString(2, "	objects." + filterOrder);
@@ -1540,7 +1575,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
@@ -1580,7 +1615,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Called only for document composition (update object modality). Puts parameters into the document composition getting these from document's children.
-	 * 
+	 *
 	 * @param aSession
 	 *            the hibernate session
 	 * @param biObject
@@ -1700,7 +1735,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Called only for document composition (insert object modality). Puts parameters into the document composition getting these from document's children.
-	 * 
+	 *
 	 * @param biobjectId
 	 *            the document composition biobject id
 	 * @throws EMFUserError
@@ -1870,7 +1905,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Loads visible objects of the user roles
-	 * 
+	 *
 	 * @param folderID
 	 * @param profile
 	 *            the profile of the user
@@ -1915,7 +1950,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						buffer.append(" and (" + "(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '"
 								+ SpagoBIConstants.DOC_STATE_DEV + "') OR" + "(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST
 								+ "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " + "(fr.id.state.valueCd = '"
-								+ SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "')" + ") ");
+								+ SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "')"
+								+ ") ");
 					}
 
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
@@ -1984,7 +2020,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Search objects with the features specified
-	 * 
+	 *
 	 * @param valueFilter
 	 *            the value of the filter for the research
 	 * @param typeFilter

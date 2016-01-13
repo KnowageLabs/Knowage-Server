@@ -392,6 +392,7 @@
 						click-function="addFilter(item)" show-search-bar=true />
 				</div>
 				<div flex=50>
+				{{filter_set}}
 					<angular-list class="mozSelect" style="margin-left: 55px;"
 						flex="35" layout-fill id='right' ng-model=filter_set
 						item-name='property' click-function="removeFilter(item)"
