@@ -659,6 +659,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	    $scope.selectedItemsRight = [];
 	    $scope.metadataDimExport = [];
 	    var level = 1;
+	    $scope.showWarningMessage = false;
 	    $scope.removeElement = function (array, el){
     		for ( var i = 0 ; i < array.length ; i++){
     			if (array[i].ID == el.ID){
@@ -703,16 +704,24 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 					
 				}
 	    	}
+	    	$scope.showWarningMessage = false;
 	    }
 	    /*Toggle the element clicked and [remove,add] it to the array of selected items*/  
 	    $scope.toggleItem = function (item,pos){
-	    	item.isSelected = item.isSelected == undefined ? true : !item.isSelected;
+	    	var selected = item.isSelected == undefined ? true : !item.isSelected;
 	    	var arraySelected = pos == 'right' ? $scope.selectedItemsRight : $scope.selectedItemsLeft;
-	    	if (item.isSelected == true){
-	    		arraySelected.push(item);
+	    	if (selected == true && pos == 'left' && arraySelected.length >= 2){
+    			$scope.showWarningMessage = true;
+    			return;
+    			}
+	    	if (selected== true){
+    			item.isSelected = selected;
+    			arraySelected.push(item);
 	    	}else{
+	    		item.isSelected = selected;
 	    		$scope.removeElement(arraySelected, item);
 	    	}
+	    	$scope.showWarningMessage = false;
 	    }
 	    
 		$scope.closeDialog = function() {

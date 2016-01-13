@@ -25,12 +25,12 @@
 				<md-content class="list-container">
 					<md-list>
 						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim">
-							<span ng-click="toggleItem(mtDim)"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
+							<span ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
 						</md-list-item>
 					</md-list>
 				</md-content>
 				<md-content layout="column" layout-align="center center">
-					<md-button class="md-raised button-move" ng-click="moveTo('right')"> &gt &gt</md-button>
+					<md-button class="md-raised button-move" ng-click="moveTo('right')" ng-disabled="selectedItemsLeft.length<2"> &gt &gt</md-button>
 					<md-button class="md-raised button-move" ng-click="moveTo('left')"> &lt &lt</md-button>
 				</md-content>
 				<md-content class="list-container">
@@ -42,6 +42,11 @@
 					</md-list>
 				</md-content>
 			</md-content>
+			<md-content layout="row" layout-align="space-around center" layout-padding ng-if = "showWarningMessage">
+				<md-input-container class="md-block" flex-gt-sm>
+					<div class="hint">You can select only two items</div>
+				</md-input-container>
+			</md-content>
 			<div layout="row" layout-align="space-around center">
 				<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier()" ng-disabled="hierForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
 				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
@@ -50,3 +55,11 @@
 	</md-dialog-content> 
 </md-dialog>
 
+<style>
+.hint{
+	font-size: 12px;
+    line-height: 14px;
+    /* Set our own color */
+    color: grey;
+    }
+</style>
