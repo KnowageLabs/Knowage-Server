@@ -1,6 +1,6 @@
 var app = angular.module('hierManager');
 
-app.controller('hierMasterController', ["sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
+app.controller('hierMasterController', ["$q","$timeout","sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
 var nodeStructure = {
 		name:'node',
@@ -14,7 +14,7 @@ var nodeStructure = {
 		expanded : false
 		};
 
-function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
+function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
 	/*General initialization*/
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -32,6 +32,8 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	$scope.columnsTable = [];
 	$scope.columnSearchTable = [];
 	$scope.metadataDimMap = {};
+	$scope.styleContainer = 'table-container'; //class for the container table
+	$scope.styleTable = 'table-object';//class for the table
 	/*Initialization Tree (right side) variables*/
 	$scope.hierTree = [];
 	$scope.dateTree = new Date();
@@ -50,34 +52,46 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
     		$scope.showDetails(item);
     	}
  	}];
+	
+	$scope.treeOptions = {
+	}
 	/*Drag and Drop options from table to tree. Create node or leaf to insert in the tree if confirmed the list dialog*/
 	$scope.tableOptions = {
 		beforeDrop : function(e){
-			$scope.showListHierarchies().then(
-				function(data){
-					var source = e.source.cloneModel;
-					var dest = e.dest.nodeScope !== undefined ? e.dest.nodeScope.$modelValue : e.dest.nodesScope.$modelValue;
-					var tmp = angular.copy(nodeStructure);
-					if (dest.length > 0){
-						tmp.$parent = dest[0].$parent
-						tmp.type = dest[0].type;
-					}else{
-						tmp.$parent = null;
-					}
-					source.name = source.CDC_NM; //TODO problem matching left side with right side. the field are different
-					source.id = source.CDC_CD;
-					var keys = Object.keys(tmp);
-					for (var i =0; i< keys.length;i++){
-						if (source[keys[i]] == undefined){
-							source[keys[i]] = tmp[keys[i]];
+			var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+			if (dest !== undefined && dest.children !== undefined){
+				$scope.showListHierarchies().then(
+					function(data){
+						var source = e.source.cloneModel;
+						var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+						var keyName = $scope.dim.DIMENSION_NM + '_NM';
+						var keyId = $scope.dim.DIMENSION_NM + '_CD';
+						source.name = source[keyName]; 
+						source.id = source[keyId];
+						var tmp = angular.copy(nodeStructure);
+						if (dest.children.length > 0){
+							tmp.$parent = dest;
+							tmp.type = dest.children.length > 0 ? dest.children[0].type : 'biObject';
+						}else{
+							tmp.$parent = null;
 						}
+						var keys = Object.keys(tmp);
+						for (var i =0; i< keys.length;i++){
+							if (source[keys[i]] == undefined){
+								source[keys[i]] = tmp[keys[i]];
+							}
+						}
+						if ( Array.isArray(dest.children)){
+							dest.children.unshift(source);
+							$scope.treeDirty = true;
+						}
+						return $q.reject();
+					},function(){
+						return $q.reject();
 					}
-					if ( Array.isArray(dest)){
-						dest.unshift(source);
-						$scope.treeDirty = true;
-					}
-				},function(){}
-			);
+				);
+			}
+			return $q.reject();
 		}
 	};	
 	
@@ -134,6 +148,7 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					$scope.showAlert('ERROR', message);
 			});
 		}
+		$timeout()
 		$scope.getDimMetadata($scope.dim);
 		$scope.getTreeMetadata($scope.dim);
 	}
@@ -169,6 +184,13 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			}
 		}
 		$scope.columnSearchTable = data.columns_search;
+		//calculate the width dynamically
+		$timeout(function(){
+			//var table = angular.element(document).find('table');
+			//var width = ($scope.columnsTable.length + 2) * 150; // + 2 because the drag column and speedMenu column
+			//table.css('width',width + 'px');
+		},200,true);
+		
 	}
 	/*Get hierarchies for combo-box*/
 	$scope.getHierarchies = function (){
@@ -284,8 +306,13 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 					for ( key in newItem){ 
 						tmpItem[key] = newItem[key];
 					}
-					tmpItem.name = tmpItem[$scope.dim.DIMENSION_NM + '_NM_LEV'];
+					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName : $scope.dim.DIMENSION_NM + "_NM_LEV";
+					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+					tmpItem.name = tmpItem[keyName];
+					tmpItem.id = tmpItem[keyId];
 					tmpItem.children = [];
+					tmpItem.$parent = item;
+					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1; 
 					tmpItem.expanded = false;
 					item.children.splice(0,0,tmpItem);
 					$scope.treeDirty = true;
@@ -296,11 +323,24 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 	}
 	/*Modify the hierarchy of the tree with context menu*/
 	$scope.modifyHier =  function(item,parent,event){
-		var newItem = $scope.editNode(item,parent);
-		if (newItem !== null && newItem !== undefined){
-			item = newItem;
-			$scope.treeDirty = true;
-		}
+		var promise = $scope.editNode(item,parent);
+		promise.then(function (newItem){
+			if (newItem !== null && newItem !== undefined){
+				var keyName = newItem.aliasName !== undefined ? newItem.aliasName : $scope.dim.DIMENSION_NM + "_NM_LEV";
+				var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+				newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : item.name;
+				newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
+				if (parent && parent.children){
+					var idx = $scope.indexOf(parent.children,item,"id");
+					if (idx > 0){
+						parent.children[idx] = newItem;					
+					}
+				}else{
+					$scope.hierTree = [newItem];
+				}
+				$scope.treeDirty = true;
+			}
+		},function(){});
 	}
 	/*Clone the hierarchy of the tree with context menu. If the hier not allows duplicate, show Dialog to modify the new hier*/
 	$scope.duplicateLeaf =  function(item,parent,event){
@@ -363,21 +403,9 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			         },
 				preserveScope : true,
 				clickOutsideToClose:false,
-				controller: DialogController 
+				controller: $scope.hierSrcDialogController 
 			});
-	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
-	 		$scope.translate = translate;
-			$scope.hier = angular.copy(hier);
-			$scope.hier.BEGIN_DT = new Date();
-			$scope.hier.END_DT = new Date();
-			$scope.metadata = metadata;
-	        $scope.closeDialog = function() {
-	        	$mdDialog.cancel();
-	        }
-	        $scope.saveHier = function(){
-	        	$mdDialog.hide(hier);
-	        }
-	 	}
+	
 	}
 	/*Visualize the confirm dialog to delete the item and call the rest service*/
 	$scope.deleteHier =  function(item,parent,event){
@@ -571,6 +599,20 @@ function masterControllerFunction (sbiModule_config,sbiModule_logger,sbiModule_t
 			$scope.seeFilterTree = !$scope.seeFilterTree;
 		}
 	}
+	
+ 	$scope.hierSrcDialogController = function($scope, $mdDialog, translate, hier, metadata) {
+ 		$scope.translate = translate;
+		$scope.hier = angular.copy(hier);
+		$scope.hier.BEGIN_DT = new Date();
+		$scope.hier.END_DT = new Date();
+		$scope.metadata = metadata;
+        $scope.closeDialog = function() {
+        	$mdDialog.cancel();
+        }
+        $scope.saveHier = function(){
+        	$mdDialog.hide($scope.hier);
+        }
+ 	}
 
 	$scope.showListHierarchyController = function($scope, $mdDialog, translate, listHierarchies) {
 			$scope.translate = translate;

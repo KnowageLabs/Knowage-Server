@@ -213,22 +213,22 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				         },
 					preserveScope : true,
 					clickOutsideToClose:false,
-					controller: DialogController 
+					controller: hierSrcDialogController 
 				});
-	
-	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
-	 		$scope.translate = translate;
-			$scope.hier = hier;
-			$scope.metadata = metadata;
-	        $scope.closeDialog = function() {
-	        	$mdDialog.cancel();
-	        }
-	        $scope.saveHier = function(){
-	        	$mdDialog.hide(hier);
-	        }
-		 }
 	 }
 	
+	$scope.hierSrcDialogController = function($scope, $mdDialog, translate, hier, metadata) {
+		$scope.translate = translate;
+		$scope.hier = hier;
+		$scope.metadata = metadata;
+		$scope.closeDialog = function() {
+			$mdDialog.cancel();
+		}
+		$scope.saveHier = function(){
+			$mdDialog.hide($scope.hier);
+		}
+	}
+	 
 	$scope.addHier =  function(item,parent,event){
 		var promise = $scope.editNode({},parent);
 		promise //TODO correggere inserimento
@@ -237,6 +237,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 					for ( key in newItem){ 
 						key =='children' ? tmpItem.children = [] : tmpItem[key] = newItem[key];
 					}
+					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName : $scope.dimSrc.DIMENSION_NM + "_NM_LEV";
+					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dimSrc.DIMENSION_NM + "_CD_LEV";
+					tmpItem.name = tmpItem[keyNa
+					tmpItem.children = [];
+					tmpItem.$parent = item;
+					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
 					tmpItem.expanded = false;
 					item.children.splice(0,0,tmpItem);
 					$scope.treeTargetDirty = true;
@@ -246,11 +252,27 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	}
 	
 	$scope.modifyHier =  function(item,parent,event){
-		var newItem = $scope.editNode(item,parent);
-		if (newItem !== null && newItem !== undefined){
-			item = newItem;
-			$scope.treeTargetDirty = true;
-		}
+		var promise = $scope.editNode(item,parent);
+		promise.then(function (newItem){
+			if (newItem !== null && newItem !== undefined){
+				var keyName = newItem.aliasName !== undefined ? newItem.aliasName : $scope.dimSrc.DIMENSION_NM + "_NM_LEV";
+				var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dimSrc.DIMENSION_NM + "_CD_LEV";
+				newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : item.name;
+				newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
+				if (parent && parent.children){
+					var idx = $scope.indexOf(parent.children,item,"id");
+					if (idx > 0){
+						parent.children[idx] = newItem;					
+					}
+				}else{
+					//choose =='src' ? $scope.hierTreeSrc = newItem : $scope.hierTreeTarget = newItem;
+					for (var k in newItem){
+						item[k] = newItem[k];
+					}
+				}
+				$scope.treeTargetDirty = true;
+			}
+		},function(){});
 	}
 	/*Clone the hierarchy of the tree with context menu. If the hier not allows duplicate, show Dialog to modify the new hier*/
 	$scope.duplicateLeaf =  function(item,parent,event){

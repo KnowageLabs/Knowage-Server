@@ -168,3 +168,17 @@ resizer {
 md-datepicker > div.md-datepicker-input-container{
 	padding-bottom: 3px !important;
 }
+
+.table-container {
+	width:100px !important;
+	
+}
+/*
+.table-object > div > md-content {
+	width: 30rem !important;
+	max-width : 30rem;
+}
+
+.table-object > div > md-content > table{
+	overflow-x: scroll !important;
+}*/
