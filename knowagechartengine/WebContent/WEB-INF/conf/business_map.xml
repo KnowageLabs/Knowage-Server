@@ -9,6 +9,7 @@
         <MAP_REST_SERVICE serviceUrl="/test" businessProcess="CreateChartFunctionality" />     
     	<MAP_REST_SERVICE serviceUrl="/datasets" businessProcess="CreateChartFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/style" businessProcess="publicFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/types" businessProcess="publicFunctionality" />
     </MAP_REST_SERVICES>
 
 </BUSINESS_MAP>
