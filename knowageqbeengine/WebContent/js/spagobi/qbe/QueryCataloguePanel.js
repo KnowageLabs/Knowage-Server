@@ -40,6 +40,7 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.QueryCataloguePanel = function(config) {
 	var c = Ext.apply({
 		// set default values here
+		id: 'QueryCataloguePanel'
 	}, config || {});
 	
 	this.services = new Array();

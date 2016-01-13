@@ -609,6 +609,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			,	freeOperands: node.attributes.freeOperands?node.attributes.freeOperands:[]
 			,   fields: this.expItemsTreeRootNode.childNodes[0]	
 			,   text: node.attributes.value
+			,   subqueries: Ext.getCmp('QueryCataloguePanel').getSelectedQuery()?Ext.getCmp('QueryCataloguePanel').getSelectedQuery().subqueries:[]
 			});
 			this.opWin.on('click', function(win, text) {
 				this.expressionEditor.insertAtCursor(text) ;

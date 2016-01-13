@@ -165,6 +165,17 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
     	return state;
     }
 
+	, createSubqueriesFields: function(){
+		var records = [];
+		for (var i=0; i<this.subqueries.length; i++){
+			var o = this.subqueries[i];
+			var r = new Ext.data.Record();
+			r.data = {'column_1': '(Q{'+o.id+'})', 'column_2': o.description};
+			records.push(r);
+		}
+		return records;
+	}
+	
 	, createComboField: function(label, name){
 		
 		var tmpStore = null; 
@@ -172,7 +183,7 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
 		var tmpValueText = 'column_2';
 		
 		tmpStore = this.createStore(this.fields.childNodes);
-				
+		tmpStore.add(this.createSubqueriesFields());
 		var field = new Ext.form.ComboBox({
 		    fieldLabel: label,
 		    name: name,

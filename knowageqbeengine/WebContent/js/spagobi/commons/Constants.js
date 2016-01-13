@@ -54,7 +54,7 @@ Sbi.constants.qbe = {
 	    ['NOT IN', LN('sbi.qbe.filtergridpanel.foperators.name.notin'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notin')],
 	    ['NOT NULL', LN('sbi.qbe.filtergridpanel.foperators.name.notnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notnull')],
 	    ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')],
-	    /* spatial operators (last value 'geometry' actually is not used) */
+	    /* spatial operators (actually the last field is used to filter 'geometry' type operators */
 	    ['SPATIAL_CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.contains'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.contains'), 'geometry']
 	    ,['SPATIAL_COVERED_BY', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.coveredby'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.coveredby'), 'geometry']
 	    ,['SPATIAL_COVERS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.covers'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.covers'), 'geometry']
@@ -65,6 +65,7 @@ Sbi.constants.qbe = {
 	    ,['SPATIAL_OVERLAPS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.overlaps'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.overlaps'), 'geometry']
 	    ,['SPATIAL_TOUCHES', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.touches'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.touches'), 'geometry']
 	    ,['SPATIAL_INSIDE', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.inside'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.inside'), 'geometry']
+	    /* these operators are not used */
 //	    ,['SPATIAL_NOT_CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcontains'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcontains'), 'geometry']
 //	    ,['SPATIAL_NOT_COVERED_BY', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcoveredby'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcoveredby'), 'geometry']
 //	    ,['SPATIAL_NOT_COVERS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcovers'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcovers'), 'geometry']
@@ -209,6 +210,42 @@ Sbi.constants.qbe = {
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Union')}, 
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Union')}
             ]
+	    }, {
+	    	text: 'latitude'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.latitude')
+    		, type: 'function'
+            , value: 'latitude(op1)'
+            , alias: 'latitude(op1)'
+        	, operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Latitude')}
+            ]
+	    }, {
+	    	text: 'longitude'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.longitude')
+    		, type: 'function'
+            , value: 'longitude(op1)'
+            , alias: 'longitude(op1)'
+        	, operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Longitude')}
+            ]
+	    }, {
+	    	text: 'toKM'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.toKM')
+    		, type: 'function'
+            , value: 'to_km(op1)'
+            , alias: 'to_km(op1)'
+        	, operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1ToKM')}
+            ]
+	    }, {
+	    	text: 'toNM'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.toNM')
+    		, type: 'function'
+            , value: 'to_nm(op1)'
+            , alias: 'to_nm(op1)'
+        	, operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1ToNM')}
+            ]
 	    }
 	]
 
@@ -350,6 +387,21 @@ Sbi.constants.qbe = {
            , value: Ext.util.Format.htmlEncode('AA_up_today(op1)')
            , alias: Ext.util.Format.htmlEncode('AA_up_today(op1)')
            , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate')}]
+        }, {
+           text: 'extract'
+           , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.extract')
+           , type: 'function'
+           , value: Ext.util.Format.htmlEncode('extract(op2, op1)')
+           , alias: Ext.util.Format.htmlEncode('extract(op2, op1)')
+           , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.extract')}]
+           , freeOperands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.extract.op2')}]
+        }, {
+           text: 'toLocalTime'
+           , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.toLocalTime')
+           , type: 'function'
+           , value: Ext.util.Format.htmlEncode('to_timezone(op1,'+((new Date()).getTimezoneOffset()/60*(-1))+')')
+           , alias: Ext.util.Format.htmlEncode('to_timezone(op1,'+((new Date()).getTimezoneOffset()/60*(-1))+')')
+           , operands: [{label: LN('sbi.qbe.selectgridpanel.aggfunc.desc.labelOpToLocalTime')}]
         }
     ]
 
