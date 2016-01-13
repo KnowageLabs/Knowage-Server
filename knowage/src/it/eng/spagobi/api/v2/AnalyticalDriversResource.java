@@ -18,7 +18,9 @@ import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -115,6 +117,27 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("Driver with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+		}
+
+	}
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@Path("/{id}/modes")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getParModesForDriver(@PathParam("id") Integer id) {
+		IParameterUseDAO useModesDao = null;
+		List<ParameterUse> fullList = null;
+
+		try {
+
+			useModesDao = DAOFactory.getParameterUseDAO();
+			useModesDao.setUserProfile(getUserProfile());
+			fullList = useModesDao.loadParametersUseByParId(id);
+			return Response.ok(fullList).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
 	}

@@ -159,7 +159,7 @@
 			
 			</md-content> </md-tab> 
 			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> <md-content
-				flex style="margin-left:20px; overflow:hidden"
+				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder"> 
 				
 				<md-button type="button" tabindex="-1" aria-label="cancel"
@@ -169,7 +169,9 @@
 			    <md-button type="button" tabindex="-1" aria-label="cancel"
 							class="md-raised md-ExtraMini" style=" margin-top: 2px; float:right;"
 							ng-click="deleteUseMode()">{{translate.load("sbi.generic.delete");}}
-			    </md-button>		
+			    </md-button>
+			    
+			    
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							 <md-input-container class="small counter">
@@ -210,33 +212,33 @@
 						</div>
 					</div>
 				
-					<md-radio-group ng-model="date"  layout="row">
-				      <md-radio-button value="lovdate" class="md-primary">
+					<md-radio-group ng-model="selectedDriver.valueSelection" ng-init="selectedDriver.valueSelection = man_in"  layout="row">
+				      <md-radio-button value="lov" class="md-primary">
 				      
 				      {{translate.load("sbi.analytical.drivers.usemode.lovdate")}}
 					
 				      </md-radio-button>
-				      <md-radio-button value="map">
+				      <md-radio-button value="map_in">
 				      
 				      {{translate.load("sbi.analytical.drivers.usemode.mapinput")}}
 				      
 				      </md-radio-button>
-				      <md-radio-button value="manual" checked="checked">
+				      <md-radio-button value="man_in">
 				      
 				      {{translate.load("sbi.analytical.drivers.usemode.manualinput")}}
 				      
 				      </md-radio-button>
     				</md-radio-group>
     				
-    				<div ng-show= "date == 'lovdate'">
+    				<div ng-show= "selectedDriver.valueSelection == 'lov'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="small counter" > 
 					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
-					        ng-required = "date == 'lovdate'"
-					        ng-model="selectedParUse.valueTypeCd"> <md-option 
+					        ng-required = "selectedDriver.valueSelection == 'lov'"
+					        ng-model="selectedParUse.idLov"> <md-option 
 					        ng-repeat="l in listDate track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.valueTypeCd== null">
@@ -251,25 +253,25 @@
 					       <label>{{translate.load("sbi.generic.select")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
-					        ng-required = "date == 'lovdate'"
-					        ng-model="selectedParUse.selType"> <md-option 
+					        ng-required = "selectedDriver.valueSelection == 'lov'"
+					        ng-model="selectedParUse.selectionType"> <md-option 
 					        ng-repeat="l in listSelType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}</md-option>
 					       </md-select>
-					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.valueTypeCd== null">
+					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectionType== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					      </div>   
 					        </md-input-container>
 					    </div>
 					    </div>												
 					</div>
-					<div ng-show= "date == 'map'">
+					<div ng-show= "selectedDriver.valueSelection == 'map_in'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="small counter" > 
 					       <label>{{translate.load("sbi.analytical.drivers.usemode.mapinput.layer")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
-					        ng-required = "date == 'map'"
+					        ng-required = "selectedDriver.valueSelection == 'map_in'"
 					        ng-model="selectedParUse.valueTypeCd"> <md-option 
 					        ng-repeat="l in layersList track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
 					       </md-select>
@@ -283,17 +285,17 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.analytical.drivers.usemode.mapinput.layer.prop")}}</label>
-							<input ng-model="selectedParUse.description"
+							<input ng-model="selectedDriver.selectedLayerProp"
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>					
 					</div>
 					
     				
-    				<div layout="row" layout-wrap  ng-if = "date != 'map'">
+    				<div layout="row" layout-wrap  ng-if = "selectedDriver.valueSelection != 'map_in'">
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedParUse.expandable" aria-label="driver">
+			         ng-change="setDirty()"  ng-model="selectedParUse.maximizerEnabled" aria-label="driver">
 			        </md-checkbox> 
 			       </md-input-container>
 			       <div flex=3 style="line-height: 40px">
@@ -311,7 +313,7 @@
 				      {{translate.load("sbi.analytical.drivers.usemode.uselov")}}
 				      
 				      </md-radio-button>
-				      <md-radio-button value="pickup" ng-if="date != 'map'">
+				      <md-radio-button value="pickup" ng-if="selectedDriver.valueSelection != 'map_in'">
 				      {{translate.load("sbi.analytical.drivers.usemode.pickup")}}
 				      
 				      </md-radio-button>
@@ -324,7 +326,7 @@
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "default == 'lov'"
-					        ng-model="selectedParUse.valueTypeCd"> <md-option 
+					        ng-model="selectedParUse.idLovForDefault"> <md-option 
 					        ng-repeat="l in listDate track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.valueTypeCd== null">
@@ -336,15 +338,15 @@
 				    </div>
 					
 					<div ng-show= "default == 'pickup'">
-						<div layout="row" layout-wrap>
+						<div layout="row" layout-wrap ng-if="selectedDriver.valueSelection != 'map_in'">
 	      				<div flex=100>
 					       <md-input-container class="small counter" > 
-					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
+					       <label>{{translate.load("sbi.generic.select")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "default == 'pickup'"
-					        ng-model="selectedParUse.valueTypeCd"> <md-option 
-					        ng-repeat="l in listDate track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
+					        ng-model="selectedParUse.defaultFormula"> <md-option 
+					        ng-repeat="f in defaultFormula track by $index" ng-click="FieldsCheck(l)" value="{{f.f_value}}">{{f.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.valueTypeCd== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -373,6 +375,21 @@
 
 					</div>
 				    </div>	
+				    <div>
+				    <md-content  layout-padding >
+							<angular-list
+							layout-fill 
+							id="useModeList_id" 
+							ng-model="useModeList" 
+							item-name="name"
+							speed-menu-option=ctrl.fdsSpeedMenuOptAD
+							click-function="loadUseMode(item)"
+							style="overflow:hidden"	
+							>					
+							</angular-list>
+						</md-content>
+				    </div>
+				   
 				 </md-content> </md-tab></md-tabs> </md-content>
 		</div>	
 		</form>

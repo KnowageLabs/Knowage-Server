@@ -17,6 +17,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.layersList = [];
 	$scope.rolesList = [];
 	$scope.checksList = [];
+	$scope.useModeList= [];
 	$scope.showActionOK = function(msg) {
 		  var toast = $mdToast.simple() 
 		  .content(msg)
@@ -85,6 +86,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		
 	$scope.loadDrivers=function(item){  // this function is called when item from custom table is clicked
 		$scope.showadMode = true;
+		$scope.getUseModesById(item);
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -101,6 +103,27 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			  }else{
 			 
 			  $scope.selectedDriver=angular.copy(item);
+			  $scope.showme=true;
+			  $scope.showadMode = true;
+			  }
+	}
+	$scope.loadUseMode=function(item){  // this function is called when item from custom table is clicked
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.selectedParUse=angular.copy(item);
+				$scope.showme=true;
+				$scope.showadMode = true;
+			           
+			   },function(){
+			    
+				$scope.showme = true;
+				$scope.showadMode = true;
+			   });
+			   
+			  }else{
+			 
+			  $scope.selectedParUse=angular.copy(item);
 			  $scope.showme=true;
 			  $scope.showadMode = true;
 			  }
@@ -243,6 +266,18 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				})	
 	}
 	
+	$scope.defaultFormula = [{
+	   	 "f_value": "FIRST",
+		  "name": "Main lov's first item"	 
+	}, 
+	{
+		 "f_value": "LAST",
+		  "name": "Main lov's last item"	 
+	}]
+	                         
+	                     
+	               
+	
 	$scope.formatDriver = function() {
 		$scope.selectedDriver.length = 0; // length of what??
 		for ( var l in $scope.listType) {
@@ -325,4 +360,19 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 				})	
 	}
+	
+	$scope.getUseModesById = function (item) { // service that gets list of roles GET
+        sbiModule_restServices.get("2.0/analyticalDrivers/"+item.id+"/modes", "").success(
+            function (data, status, headers, config) {
+                if (data.hasOwnProperty("errors")) {
+                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+                } else {
+                	$scope.useModeList = data;
+
+                }
+            }).error(function (data, status, headers, config) {
+            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+
+        })
+    }
 };
