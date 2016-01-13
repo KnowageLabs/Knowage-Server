@@ -333,6 +333,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				if (parent && parent.children){
 					var idx = $scope.indexOf(parent.children,item,"id");
 					if (idx > -1){
+						//copy fields
 						for (var k in newItem){
 							parent.children[idx][k] = newItem[k];
 						}
@@ -506,11 +507,39 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
   	};
 	
 	/*Visualize the create new master hierarchy dialog. If confirmed save the new element*/
-	$scope.crateMasterHier = function (){
-		var dialog = $scope.showCreateMaster();
-		dialog.then(function(data){
-			//TODO save received data = {hierNew, metadata}
-		},function(){});
+	$scope.crateMasterHier = function (filterDate,filterHierarchy){
+		if ($scope.dim && $scope.dateDim){
+			var dialog = $scope.showCreateMaster();
+			dialog.then(function(newHier){
+				var hier = $scope.hierMaster;
+				var dateFormatted = $scope.formatDate($scope.dateDim);
+				var config = {};
+				config.params = {
+						dimension : $scope.dim.DIMENSION_NM,
+						validityDate : dateFormatted
+				}
+				if (filterDate !== undefined && filterDate !== null){
+					config.params.filterDate = $scope.formatDate(filterDate);
+				}
+				if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
+					config.params.filterHierType = $scope.hierType.toUpperCase();
+					config.params.filterHierarchy = hier.HIER_NM;
+				}
+				var promise = $scope.restService.post('hierarchies','createHierarchyMaster',angular.toJson(newHier),config);
+				promise
+					.success(function (data){
+						if (data.errors === undefined){
+							$scope.showAlert('INFO','Succesfull creation');
+						}else{
+							$scope.showAlert('ERROR',data.errors[0].message);
+						}
+					})
+					.error(function(data,status){
+						$scope.showAlert('ERROR','Impossible to save the Master hierarchy');
+					});
+				//TODO fix REST service connection
+			},function(){});
+		}
 	}
 	/*Dialog to create the master hierarchy*/
 	$scope.showCreateMaster = function(){
@@ -660,14 +689,63 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	    $scope.selectedItemsLeft = [];
 	    $scope.selectedItemsRight = [];
 	    $scope.metadataDimExport = [];
+	    $scope.hierNew={};
 	    var level = 1;
 	    $scope.showWarningMessage = false;
+	    
 	    $scope.removeElement = function (array, el){
     		for ( var i = 0 ; i < array.length ; i++){
-    			if (array[i].ID == el.ID){
+    			if (el.ID !== undefined && array[i].ID == el.ID){
 	    			array.splice(i,1);
+    			}else if (el.code && el.name && array[i].name.ID == el.name.ID && array[i].code.ID == el.code.ID){
+    				array.splice(i,1);
     			}
+    			
     		}
+	    }
+	    $scope.toRight = function (source, dest, itemsSource){
+	    	if (itemsSource.length == 2){
+				var newLevel = {};
+				newLevel.code = itemsSource[0];
+				newLevel.name = itemsSource[1];
+				newLevel.code.level = level;
+				newLevel.name.level = level;
+				level++;
+				for (var i = 0 ; i < itemsSource.length;i++){
+					$scope.removeElement(source,itemsSource[i]);
+    				itemsSource[i].isSelected = undefined;
+				}
+				itemsSource.splice(0,itemsSource.length);
+				
+				dest.push(newLevel);
+			}
+	    }
+	    
+	    $scope.toLeft = function(source, dest, itemsSource){
+	    	var maxLevel = -1;
+	    	if (itemsSource.length > 0){
+	    		for (var i = 0 ; i < itemsSource.length;i++){
+	    			if (maxLevel < itemsSource[i].code.level){
+	    				maxLevel = itemsSource[i].code.level;
+	    			}
+	    			itemsSource[i].code.level = undefined;
+	    			itemsSource[i].name.level = undefined;
+	    			dest.push(itemsSource[i].code);
+	    			dest.push(itemsSource[i].name);
+	    			itemsSource[i].isSelected = undefined;
+	    			$scope.removeElement(source,itemsSource[i]);
+	    		}
+	    		itemsSource.splice(0,itemsSource.length);
+	    		if (maxLevel != (level-1)){
+	    			for (var i = 0 ; i < source.length ; i++){
+	    				if (source[i].code.level > maxLevel){
+	    					source[i].code.level--;
+	    					source[i].name.level--;
+	    				}
+	    			}
+    			}
+    			level = source.length+1;
+	    	}
 	    }
 	    //move selected item from posSelected to posDestination if they are set and different
 	    $scope.moveTo = function (posDestination){
@@ -675,46 +753,10 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				var dest = posDestination == 'right' ? $scope.metadataDimExport :$scope.metadataDim;
 				var source = posDestination == 'right' ?  $scope.metadataDim : $scope.metadataDimExport;
 				var itemsSource = posDestination == 'right' ?  $scope.selectedItemsLeft : $scope.selectedItemsRight;
-				if (source.length > 0){
-					var count = 0;
-					var tmpLevel = -1;
-					var biArray = [];
-					for (var i = 0 ; i < itemsSource.length;i++){
-						itemsSource[i].level = posDestination == 'right' ?  level : undefined;
-						if (posDestination == 'right'){
-							if ( i % 2 == 0){
-								biArray.push(itemsSource[i])
-							}else{
-								biArray.push(itemsSource[i])
-								dest.push(biArray);
-								biArray.splice(0,biArray.length);
-							}
-						}else{
-							dest.push(itemsSource[i]);
-						}
-						$scope.removeElement(source,itemsSource[i]);
-	    				itemsSource[i].isSelected = undefined;
-					}
-					itemsSource.splice(0,itemsSource.length);
-					//if move to right, rise the level
-					//if move to left, decrease the level of the element with bigger level 
-					if (posDestination == 'right'){
-						level++;
-					}else if (posDestination == 'left'){
-						//check if the highest level is missing, in this case, decrease the level
-						//could be missing because the highest level could be moved
-						var isPresent = false;
-						for (var i=0;i<source.length;i++){
-							if (source[i].level == (level-1)){
-								isPresent=true;
-								break;
-							}
-						}
-						if (!isPresent){
-							level--;
-						}
-					}
-					
+				if (posDestination == "right"){
+					$scope.toRight($scope.metadataDim,$scope.metadataDimExport,$scope.selectedItemsLeft);
+				}else if (posDestination == "left"){
+					$scope.toLeft($scope.metadataDimExport,$scope.metadataDim,$scope.selectedItemsRight);
 				}
 	    	}
 	    	$scope.showWarningMessage = false;
@@ -742,7 +784,15 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	    }
 		
 	    $scope.saveHier = function(){
-	     	$mdDialog.hide({ hierNew : $scope.hierNew, metadata: $scope.metadataDimExport});
+	     	var levels = [];
+	     	for (var i = 0 ; i<$scope.metadataDimExport.length;i++){
+	     		levels.push({
+	     			"CD": $scope.metadataDimExport[i].code.NAME,
+	     			"NM": $scope.metadataDimExport[i].name.NAME
+	     		});
+	     	}
+	     	$scope.hierNew.levels = levels;
+	    	$mdDialog.hide($scope.hierNew);
 	    }
 	}
 

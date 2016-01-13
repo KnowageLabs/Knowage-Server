@@ -263,6 +263,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				if (parent && parent.children){
 					var idx = $scope.indexOf(parent.children,item,"id");
 					if (idx > 0){
+						//copy fields
 						for (var k in newItem){
 							parent.children[idx][k] = newItem[k];
 						}

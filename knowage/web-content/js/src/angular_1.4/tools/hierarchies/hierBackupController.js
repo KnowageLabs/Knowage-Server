@@ -167,7 +167,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var config = {
 					params : {
 						dimension: dim.DIMENSION_NM,
-						name: backup.name
+						name: backup.HIER_NM
 					}
 			};
 			//TODO update edit rest service
@@ -193,7 +193,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var config = {
 					params : {
 						dimension: dim.DIMENSION_NM,
-						name: backup.name
+						name: backup.HIER_NM
 					}
 			};
 			$scope.restService.post("hierarchies","restoreHierarchy",null,config)
@@ -218,7 +218,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var config = {
 					params : {
 						dimension: dim.DIMENSION_NM,
-						name: backup.name
+						name: backup.HIER_NM
 					}
 			};
 			$scope.restService.post("hierarchies","deleteHierarchy",null,config)
