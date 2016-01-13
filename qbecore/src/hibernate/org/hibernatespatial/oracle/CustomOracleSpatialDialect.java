@@ -31,10 +31,10 @@ public class CustomOracleSpatialDialect extends OracleSpatial10gDialect {
 		registerFunction("coveredby", new StandardSQLFunction("SDO_COVEREDBY", StandardBasicTypes.STRING));
 		registerFunction("relate", new StandardSQLFunction("SDO_GEOM.RELATE", StandardBasicTypes.STRING));
 		registerFunction("inside", new StandardSQLFunction("SDO_INSIDE", StandardBasicTypes.STRING));
-		registerFunction("to_km", new SQLFunctionTemplate(StandardBasicTypes.BIG_DECIMAL, "?1 * 1.852"));
-		registerFunction("to_nm", new SQLFunctionTemplate(StandardBasicTypes.BIG_DECIMAL, "?1 / 1.852"));
-		registerFunction("extract", new SQLFunctionTemplate(StandardBasicTypes.LONG, "extract (?1 from ?2)"));
-		registerFunction("to_timezone", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "?1 + (?2 /24)"){
+		registerFunction("to_km", new SQLFunctionTemplate(StandardBasicTypes.BIG_DECIMAL, "((?1) * 1.852)"));
+		registerFunction("to_nm", new SQLFunctionTemplate(StandardBasicTypes.BIG_DECIMAL, "((?1) / 1.852)"));
+		registerFunction("extract", new SQLFunctionTemplate(StandardBasicTypes.LONG, "extract (?1 from (?2))"));
+		registerFunction("to_timezone", new SQLFunctionTemplate(StandardBasicTypes.TIMESTAMP, "((?1) + ?2/24)"){
 			@Override
 			public String render(Type argumentType, List args,
 					SessionFactoryImplementor factory) {
