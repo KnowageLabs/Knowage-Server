@@ -239,7 +239,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 					}
 					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName : $scope.dimSrc.DIMENSION_NM + "_NM_LEV";
 					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dimSrc.DIMENSION_NM + "_CD_LEV";
-					tmpItem.name = tmpItem[keyNa
+					tmpItem.name = tmpItem[keyName];
+					tmpItem.id = tmpItem[keyId];
 					tmpItem.children = [];
 					tmpItem.$parent = item;
 					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
@@ -262,7 +263,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				if (parent && parent.children){
 					var idx = $scope.indexOf(parent.children,item,"id");
 					if (idx > 0){
-						parent.children[idx] = newItem;					
+						for (var k in newItem){
+							parent.children[idx][k] = newItem[k];
+						}
 					}
 				}else{
 					//choose =='src' ? $scope.hierTreeSrc = newItem : $scope.hierTreeTarget = newItem;

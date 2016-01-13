@@ -332,8 +332,10 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
 				if (parent && parent.children){
 					var idx = $scope.indexOf(parent.children,item,"id");
-					if (idx > 0){
-						parent.children[idx] = newItem;					
+					if (idx > -1){
+						for (var k in newItem){
+							parent.children[idx][k] = newItem[k];
+						}
 					}
 				}else{
 					$scope.hierTree = [newItem];
@@ -676,9 +678,20 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				if (source.length > 0){
 					var count = 0;
 					var tmpLevel = -1;
+					var biArray = [];
 					for (var i = 0 ; i < itemsSource.length;i++){
 						itemsSource[i].level = posDestination == 'right' ?  level : undefined;
-						dest.push(itemsSource[i]);
+						if (posDestination == 'right'){
+							if ( i % 2 == 0){
+								biArray.push(itemsSource[i])
+							}else{
+								biArray.push(itemsSource[i])
+								dest.push(biArray);
+								biArray.splice(0,biArray.length);
+							}
+						}else{
+							dest.push(itemsSource[i]);
+						}
 						$scope.removeElement(source,itemsSource[i]);
 	    				itemsSource[i].isSelected = undefined;
 					}
