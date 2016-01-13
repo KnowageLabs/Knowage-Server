@@ -215,12 +215,14 @@ public class JPQLStatementConditionalOperators {
 		conditionalOperators.put(CriteriaConstants.SPATIAL_DISJOINT, new SpatialOperator(CriteriaConstants.SPATIAL_DISJOINT, "disjoint"));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_FILTER, new SpatialOperator(CriteriaConstants.SPATIAL_FILTER, "filter"));
 		
+		/* not used 
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_COVERED_BY, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_COVERED_BY, "coveredby", true));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_CONTAINS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_CONTAINS, "contains", true));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_COVERS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_COVERS, "covers", true));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_EQUALS_TO, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_EQUALS_TO, "equals", true));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_TOUCHES, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_TOUCHES,"touches", true));
 		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_OVERLAPS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_OVERLAPS,"overlaps",true));
+		*/
 	}
 }
 

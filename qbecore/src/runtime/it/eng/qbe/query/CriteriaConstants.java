@@ -30,6 +30,7 @@ public class CriteriaConstants {
 	public static final String NOT_BETWEEN = "NOT BETWEEN";	
 	public static final String IN = "IN";	
 	public static final String NOT_IN = "NOT IN";	
+	
 	// spatial operators
 	public static final String SPATIAL_COVERS = "SPATIAL_COVERS";
 	public static final String SPATIAL_EQUALS_TO = "SPATIAL_EQUALS_TO";
@@ -42,10 +43,12 @@ public class CriteriaConstants {
 	public static final String SPATIAL_DISJOINT = "SPATIAL_DISJOINT";
 	public static final String SPATIAL_FILTER = "SPATIAL_FILTER";
 	
+	/* not used
 	public static final String SPATIAL_NOT_COVERED_BY = "SPATIAL_NOT_COVERED_BY";
 	public static final String SPATIAL_NOT_CONTAINS = "SPATIAL_NOT_CONTAINS";
 	public static final String SPATIAL_NOT_COVERS = "SPATIAL_NOT_COVERS";
 	public static final String SPATIAL_NOT_EQUALS_TO = "SPATIAL_NOT_EQUALS_TO";
 	public static final String SPATIAL_NOT_TOUCHES = "SPATIAL_NOT_TOUCHES";
 	public static final String SPATIAL_NOT_OVERLAPS = "SPATIAL_NOT_OVERLAPS";
+	*/
 }
