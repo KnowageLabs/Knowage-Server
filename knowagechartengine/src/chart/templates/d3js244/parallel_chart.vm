@@ -30,9 +30,13 @@
 
 #set($colorsReqCounter = 0)
 
-#foreach($value in $category) 
- #set($columnsNeeded[$columnCounter] = $value.column)
+#if($category.class.name == "java.util.LinkedHashMap")
+  #set($columnsNeeded[0]=$category.column)
+#else  
+ #foreach($value in $category) 
+   #set($columnsNeeded[$columnCounter] = $value.column)
  #set($columnCounter = $columnCounter + 1)
+ #end
 #end
 
 #foreach($value in $serie) 
@@ -108,13 +112,21 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 
+#set($tooltipColumn='')
+
+#if("$!columnsNeeded[1]" != "")
+  #set($tooltipColumn=$columnsNeeded[1])
+#else
+   #set($tooltipColumn=$columnsNeeded[0])
+#end
+
 {
  	chart: 
  	{
   		type: '$chart.type',
   		serie: '$series',
   		groups: '$groups',
-  		tooltip: '$columnsNeeded[1]',
+  		tooltip: '$tooltipColumn',
   		group: '$columnsNeeded[0]',  	
 
   		width: '$chart.width',

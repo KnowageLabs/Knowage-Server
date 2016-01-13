@@ -2756,7 +2756,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();				
 				
-				if (chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD")
+				if ( chartType == "HEATMAP" || chartType == "CHORD")
 				{
 					if (categoriesAsJson.length != 2)
 					{

@@ -80,9 +80,9 @@ function renderWordCloud(chartConf){
 		}
 		
 	}
-	
-		(function() {
 
+		(function() {
+               
 			function cloud() {
 				var size = [chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 						+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6],
@@ -99,7 +99,8 @@ function renderWordCloud(chartConf){
 				event = d3.dispatch("word", "end"),
 				timer = null,
 				cloud = {};
-
+                w=timeInterval;
+                h=fontSize;
 				cloud.start = function() {
 			
 					var board = zeroArray((size[0] >> 5) * size[1]),
@@ -662,8 +663,8 @@ function renderWordCloud(chartConf){
 			.attr("transform", function(d) {
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
 			.style("font-size", function(d) { return d.size + "px"; })	
-			.text(function(d) { return d.text.toLowerCase(); });
-		    
+			.text(function(d) { return d.text.toLowerCase(); })
+			
 		   
 			wordArea.on('click', function(d){
 				if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
@@ -1627,7 +1628,7 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-   
+    console.log(data);
 	var records = data.data[0];
    
 	if(records.length>0){
@@ -1818,16 +1819,16 @@ function renderWordCloud(chartConf){
 		 * Height of the DIV that holds the chart itself (axes).
 		 * @author Ana Tomic
 		 */
-		var chartDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight - buttonHeight;
+		var chartDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight - buttonHeight-10;
 		
 		/**
 		 * Add brush clearing selections button to the main DIV.
 		 * @author Ana Tomic
 		 */
-		d3.select("#main").append("div").attr("id","clearButton").style("padding-left",m[3]).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
+		d3.select("#main").append("div").attr("id","clearButton").style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
 		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",chartDivHeight);
 			
-		var axesDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight;
+		var axesDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
 		
 		var svg = d3.select("#chart")
 			.append("div")
@@ -2189,6 +2190,7 @@ function renderWordCloud(chartConf){
 	if(showTable){
 		
 		var initialTableData=records;
+		
 	
 		var allTableData=initialTableData; // all records or filtered records
 		var currentTableData=allTableData.slice(0,5); // up to 5 recoords
@@ -2292,7 +2294,9 @@ function renderWordCloud(chartConf){
 		//columns for table
 		var tableColumns=[];
 		tableColumns.push(groupcolumn);
+		if(!(groupcolumn===data.chart.tooltip)){
 		tableColumns.push(data.chart.tooltip);
+		}
 		tableColumns=tableColumns.concat(columns);
 	
 		
