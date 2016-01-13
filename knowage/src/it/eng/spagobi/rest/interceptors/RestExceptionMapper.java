@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.rest.interceptors;
@@ -33,11 +33,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 
+ *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  *         Updates the audit log for the services that throw exceptions
- * 
+ *
  */
 
 @Provider
@@ -58,6 +58,7 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable> {
 	@Context
 	private HttpServletResponse servletResponse;
 
+	@Override
 	public Response toResponse(Throwable t) {
 
 		Response response = null;
@@ -101,7 +102,6 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable> {
 			if (rootCause == null) {
 				rootCause = "An unexpected [" + exception.getRootException().getClass().getName() + "] exception has been trown during service execution";
 			}
-			errorMessage = rootCause;
 
 			String rootCauseLoaclized = exception.getRootException().getLocalizedMessage();
 			if (rootCause != null) {
@@ -172,16 +172,9 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable> {
 		String owner = servletRequest.getParameter("owner");
 		String userToAccept = servletRequest.getParameter("userToAccept");
 
-		String url = protocol + "://" +
-				addr + ":" +
-				port + "" +
-				contextName +
-				"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&" +
-				SpagoBIConstants.BACK_URL + "=" + backUrl +
-				"&community=" + community +
-				"&owner=" + owner +
-				"&userToAccept=" + userToAccept +
-				"&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
+		String url = protocol + "://" + addr + ":" + port + "" + contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&"
+				+ SpagoBIConstants.BACK_URL + "=" + backUrl + "&community=" + community + "&owner=" + owner + "&userToAccept=" + userToAccept + "&"
+				+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
 		return url;
 
 	}
