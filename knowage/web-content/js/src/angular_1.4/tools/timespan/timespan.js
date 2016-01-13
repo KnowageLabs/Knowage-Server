@@ -83,9 +83,12 @@ function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog
 				}
 				
 				if (ctrl.delay){
-					var dist = to.getDate() - from.getDate();
+					var timeDiff = Math.abs(to.getTime() - from.getTime());
+					var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+					f_date = new Date(to);
+					t_date = new Date(to);
 					f_date.setDate(to.getDate() + ctrl.delay); 
-					t_date.setDate(to.getDate() + ctrl.delay + dist);					
+					t_date.setDate(to.getDate() + ctrl.delay + diffDays);					
 				}
 				
 				for(var i in ctrl.selectedItem.definition){
