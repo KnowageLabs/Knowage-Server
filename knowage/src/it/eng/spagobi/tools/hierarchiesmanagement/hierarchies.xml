@@ -15,6 +15,7 @@
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
 			</CONFIGS>			
 			<DIM_FIELDS>
+				<FIELD ID="CDC_ID" NAME="Identifier" VISIBLE="false" EDITABLE="false" TYPE="Number" />
 				<FIELD ID="CDC_CD" NAME="Code" VISIBLE="false" EDITABLE="false" TYPE="String" />
 				<FIELD ID="CDC_NM" NAME="Name" VISIBLE="true" EDITABLE="false" TYPE="String" />
 				<FIELD ID="CDC_DS" NAME="Description" VISIBLE="true" EDITABLE="false" TYPE="String"/>
@@ -87,6 +88,7 @@
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
 			</CONFIGS>			
 			<DIM_FIELDS>
+				<FIELD ID="ACCOUNT_ID" NAME="Identifier" VISIBLE="false" EDITABLE="false" TYPE="Number" />
 				<FIELD ID="ACCOUNT_CD" NAME="Code" VISIBLE="false" EDITABLE="false" TYPE="String" />
 				<FIELD ID="ACCOUNT_NM" NAME="Name" VISIBLE="true" EDITABLE="false" TYPE="String" />
 				<FIELD ID="ACCOUNT_DS" NAME="Description" VISIBLE="true" EDITABLE="false" TYPE="String"/>
