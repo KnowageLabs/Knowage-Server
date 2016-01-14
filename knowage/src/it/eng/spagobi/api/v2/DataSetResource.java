@@ -295,7 +295,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "A dataset doesn't exist");
 		}
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasets, datasetToAssociationToColumnMap, sourceDataset, sourceColumn);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, sourceDataset, sourceColumn);
 		Map<EdgeGroup, Set<String>> egdegroupToValuesMap;
 		try {
 			egdegroupToValuesMap = manager.process();
