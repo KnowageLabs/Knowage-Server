@@ -217,8 +217,8 @@ public class HierarchyService {
 
 			// 4 - Create ADT for Tree from datastore
 			hierarchyTree = createHierarchyTreeStructure(dataStore, dimension, metadata);
-
-			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree, hierarchyName, dimension);
+			// put hiercode for the second hiername
+			treeJSONObject = convertHierarchyTreeAsJSON(hierarchyTree, hierarchyName, hierarchyName, dimension);
 
 			if (treeJSONObject == null)
 				return null;
@@ -1063,7 +1063,7 @@ public class HierarchyService {
 		return data;
 	}
 
-	private JSONObject convertHierarchyTreeAsJSON(HierarchyTreeNode root, String hierName, String dimension) {
+	private JSONObject convertHierarchyTreeAsJSON(HierarchyTreeNode root, String hierName, String hierCode, String dimension) {
 		JSONObject rootJSONObject = new JSONObject();
 
 		if (root == null)
@@ -1099,6 +1099,10 @@ public class HierarchyService {
 			arRootJSONObject.put(rootJSONObject);
 			mainObject.put(HierarchyConstants.TREE_NAME, hierName);
 			mainObject.put(HierarchyConstants.ID, "root");
+			mainObject.put("aliasId", HierarchyConstants.HIER_CD);
+			mainObject.put("aliasName", HierarchyConstants.HIER_NM);
+			mainObject.put(HierarchyConstants.HIER_NM, hierName);
+			mainObject.put(HierarchyConstants.HIER_CD, hierCode);
 			mainObject.put("root", true);
 			mainObject.put("children", arRootJSONObject);
 			mainObject.put("leaf", false);
