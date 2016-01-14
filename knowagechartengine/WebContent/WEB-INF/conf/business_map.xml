@@ -12,4 +12,5 @@
     	<MAP_REST_SERVICE serviceUrl="/types" businessProcess="publicFunctionality" />
     </MAP_REST_SERVICES>
 
+
 </BUSINESS_MAP>
