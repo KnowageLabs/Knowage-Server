@@ -148,7 +148,6 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 					$scope.showAlert('ERROR', message);
 			});
 		}
-		$timeout()
 		$scope.getDimMetadata($scope.dim);
 		$scope.getTreeMetadata($scope.dim);
 	}
@@ -694,15 +693,22 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	    $scope.showWarningMessage = false;
 	    
 	    $scope.removeElement = function (array, el){
-    		for ( var i = 0 ; i < array.length ; i++){
-    			if (el.ID !== undefined && array[i].ID == el.ID){
-	    			array.splice(i,1);
-    			}else if (el.code && el.name && array[i].name.ID == el.name.ID && array[i].code.ID == el.code.ID){
-    				array.splice(i,1);
-    			}
-    			
+    		var idx = $scope.indexOf(array, el);
+    		if (idx >= 0){
+    			array.splice(idx,1);
     		}
 	    }
+	    
+	    $scope.indexOf = function (array, el){
+    		for ( var i = 0 ; i < array.length ; i++){
+    			if (el.ID !== undefined && array[i].ID == el.ID){
+	    			return i;
+    			}else if (el.code && el.name && array[i].name.ID == el.name.ID && array[i].code.ID == el.code.ID){
+    				return i;
+    			}
+    		}
+	    }
+	    
 	    $scope.toRight = function (source, dest, itemsSource){
 	    	if (itemsSource.length == 2){
 				var newLevel = {};
@@ -716,7 +722,6 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
     				itemsSource[i].isSelected = undefined;
 				}
 				itemsSource.splice(0,itemsSource.length);
-				
 				dest.push(newLevel);
 			}
 	    }
@@ -747,6 +752,34 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
     			level = source.length+1;
 	    	}
 	    }
+	    $scope.moveUp = function(item){
+	    	var array =  $scope.metadataDimExport;
+	    	var i = $scope.indexOf(array,item);
+	    	if (i > 0 && array.length > 1){
+	    		var tmp = angular.copy(array[i-1]);
+	    		array[i-1] = angular.copy(array[i]);
+	    		array[i] = angular.copy(tmp);
+	    		array[i-1].code.level--;
+	    		array[i-1].name.level--;
+	    		array[i].code.level++;
+	    		array[i].name.level++;
+	    	}
+	    }
+	    
+	    $scope.moveDown = function(item){
+	    	var array =  $scope.metadataDimExport;
+	    	var i = $scope.indexOf(array,item);
+	    	if (i < (array.length-1) && array.length > 1){
+	    		var tmp = angular.copy(array[i+1]);
+	    		array[i+1] = angular.copy(array[i]);
+	    		array[i] = angular.copy(tmp);
+	    		array[i+1].code.level++;
+	    		array[i+1].name.level++;
+	    		array[i].code.level--;
+	    		array[i].name.level--;
+	    	}
+	    }
+	    
 	    //move selected item from posSelected to posDestination if they are set and different
 	    $scope.moveTo = function (posDestination){
 	    	if (posDestination && posDestination.length > 0){
