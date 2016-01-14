@@ -2,16 +2,18 @@ var app = angular.module('hierManager');
 
 app.controller('hierTechnController', ['sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyTechFunction ]);
 
-var rootStructure = {
-		name:'root',
-		id:'root',
-		root: true,
-		children: [],
-		leaf:false,
-		type: "folder"
-		};
-
 function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
+	
+	var rootStructure = {
+			name:'root',
+			id:'root',
+			root: true,
+			children: [],
+			leaf:false,
+			aliasName: "HIER_NM",
+			aliasId: "HIER_CD",
+			type: "folder"
+			};
 	
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -504,7 +506,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				.then(function(newItem){
 					if (newItem !== null && newItem !== undefined){
 						var keyName = newItem.aliasName !== undefined ? newItem.aliasName : 'HIER_NM';
-						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dimSrc.DIMENSION_NM + "HIER_CD";
+						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : "HIER_CD";
 						newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : rootStructure.name;
 						newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : rootStructure.name;
 						$scope.hierTreeTarget = [newItem];
