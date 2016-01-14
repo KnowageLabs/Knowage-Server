@@ -752,6 +752,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
     			level = source.length+1;
 	    	}
 	    }
+	    
 	    $scope.moveUp = function(item){
 	    	var array =  $scope.metadataDimExport;
 	    	var i = $scope.indexOf(array,item);
@@ -820,8 +821,8 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	     	var levels = [];
 	     	for (var i = 0 ; i<$scope.metadataDimExport.length;i++){
 	     		levels.push({
-	     			"CD": $scope.metadataDimExport[i].code.NAME,
-	     			"NM": $scope.metadataDimExport[i].name.NAME
+	     			"CD": $scope.metadataDimExport[i].code.ID,
+	     			"NM": $scope.metadataDimExport[i].name.ID
 	     		});
 	     	}
 	     	$scope.hierNew.levels = levels;

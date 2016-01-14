@@ -133,7 +133,7 @@ resizer {
 }
 
 .list-container {
-	width: 220px;
+	width: 300px;
 	height : 250px;
 	border-style: inset;
     border-width: 3px;
@@ -154,7 +154,7 @@ resizer {
 
 .list-item-small{
 	min-height: 20px;
-	padding-left: 5px !important;
+	padding: 0px 5px !important;
 	margin-bottom: 2px;
 }
 
@@ -179,6 +179,13 @@ md-datepicker > div.md-datepicker-input-container{
 	width:100px !important;
 	
 }
+
+.hint{
+	font-size: 12px;
+    line-height: 14px;
+    /* Set our own color */
+    color: grey;
+    }
 /*
 .table-object > div > md-content {
 	width: 30rem !important;

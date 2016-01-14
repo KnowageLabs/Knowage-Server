@@ -202,7 +202,6 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		 }
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		 var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
-		 metadata == undefined ? metadata =  metTmp.GENERAL_FIELDS : metadata = metadata; //TODO remove hard coded for test
 		 return $mdDialog.show({
 					templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 					parent: angular.element(document.body),
@@ -213,7 +212,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				         },
 					preserveScope : true,
 					clickOutsideToClose:false,
-					controller: hierSrcDialogController 
+					controller: $scope.hierSrcDialogController 
 				});
 	 }
 	
@@ -341,23 +340,23 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		if (metTmp === undefined){
 			$scope.showAlert('Error','No metadata found for dimension '+ dimName );
 			return null;
-		}
+		}h
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
-		metadata == undefined ? metadata =  metTmp.GENERAL_FIELDS : metadata = metadata; //TODO remove hard coded for test
 		return $mdDialog.show({
 				templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 				parent: angular.element(document.body),
 				locals: {
 					   translate: $scope.translate,
-			           hier:  $scope.hierSrc,
+			           hier:  item,
 			           metadata : metadata
 			         },
 				preserveScope : true,
 				clickOutsideToClose:false,
 				controller: DialogController 
 			});
-	 	function DialogController($scope, $mdDialog, translate, hier, metadata) {
+	 
+		function DialogController($scope, $mdDialog, translate, hier, metadata) {
 	 		$scope.translate = translate;
 			$scope.hier = angular.copy(hier);
 			$scope.metadata = angular.copy(metadata);
