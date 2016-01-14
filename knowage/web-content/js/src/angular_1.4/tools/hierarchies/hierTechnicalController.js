@@ -52,6 +52,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.treeTargetOptions = {
 		beforeDrop : function(e){
 			$scope.treeTargetDirty = true;
+		},
+		beforeDrag : function(sourceNodeScope){
+			if (sourceNodeScope.$treeScope.cloneEnabled==false){
+				sourceNodeScope.$treeScope.cloneEnabled = true;
+			}
+			return true;
 		}
 	};
 	
@@ -340,7 +346,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		if (metTmp === undefined){
 			$scope.showAlert('Error','No metadata found for dimension '+ dimName );
 			return null;
-		}h
+		}
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
 		return $mdDialog.show({
