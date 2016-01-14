@@ -338,6 +338,7 @@ public class HierarchyService {
 		// delete hierarchy
 		Connection connection = null;
 		try {
+			String pippo = (String) req.getAttribute("params");
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimension = requestVal.getString("dimension");
@@ -356,7 +357,8 @@ public class HierarchyService {
 			logger.error("An unexpected error occured while deleting custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
 		} finally {
-			connection.close();
+			if (connection != null && !connection.isClosed())
+				connection.close();
 		}
 
 		return "{\"response\":\"ok\"}";
@@ -367,31 +369,106 @@ public class HierarchyService {
 	@Path("/modifyHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String modifyHierarchy(@Context HttpServletRequest req) throws SQLException {
-		// modify an existing custom hierarchy
+		// modify an existing hierarchy (ONLY GENERAL section)
+		Connection databaseConnection = null;
 		try {
-			String dimension = req.getParameter("dimension");
-			String hierarchyCode = req.getParameter("code");
-			String hierarchyName = req.getParameter("name");
-			String root = req.getParameter("root");
-			String hierarchyDescription = req.getParameter("description");
-			String hierarchyScope = req.getParameter("scope");
-			String hierarchyType = req.getParameter("type");
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			if ((dimension == null) || (hierarchyCode == null) || (hierarchyName == null) || (root == null) || (hierarchyDescription == null)
-					|| (hierarchyScope == null) || (hierarchyType == null)) {
-				throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", "wrong request parameters");
+			// Information for persistence
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			String dimension = requestVal.getString("dimension");
+			String hierarchyNameNew = req.getParameter("HIER_NM");
+			String hierarchyNameOrig = req.getParameter("HIER_NM_ORIG");
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
+			Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
+			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
+
+			// 2 - get datasource label name
+			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy", "No datasource found for saving hierarchy");
 			}
-			// rename old hierarchy (as backup)
-			// deleteHierarchy(req);
-			saveHierarchy(req);
+
+			// 3 - define update command
+			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
+			StringBuffer columnsBuffer = new StringBuffer(" ");
+			// general fields:
+			for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
+				Field f = generalMetadataFields.get(i);
+				String key = f.getId();
+				String value = requestVal.getString(key);
+				lstFields.put(key, value);
+				if (key != null && value != null) {
+					String sep = (i < l - 1) ? "= ?, " : "= ? ";
+					String column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
+					columnsBuffer.append(column + sep);
+				}
+			}
+			String columns = columnsBuffer.toString();
+			String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+
+			databaseConnection = dataSource.getConnection();
+			Statement stmt = databaseConnection.createStatement();
+
+			if (!hierarchyNameNew.equalsIgnoreCase(hierarchyNameOrig)) {
+				// if the name is changed check its univocity
+				String selectQuery = "SELECT count(*) as num FROM " + hierarchyTable + " WHERE  HIER_NM = " + hierNameColumn + "= ?";
+
+				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
+				selectPs.setString(1, hierNameColumn);
+				ResultSet rs = selectPs.executeQuery();
+
+				if (rs.next()) {
+					String count = rs.getString("num");
+					if (Integer.valueOf(count) > 0) {
+						logger.error("A hierarchy with name " + hierarchyNameNew + "  already exists. Change name.");
+						throw new SpagoBIServiceException("", "A hierarchy with name " + hierarchyNameNew + "  already exists. Change name.");
+					}
+				}
+
+			}
+			String updateQuery = "UPDATE " + hierarchyTable + " SET " + columns + " WHERE " + hierNameColumn + "= ?";
+			logger.debug("The update query is [" + updateQuery + "]");
+
+			PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery);
+
+			// begin transaction
+			databaseConnection.setAutoCommit(false);
+
+			logger.debug("Auto-commit false. Begin transaction!");
+
+			int pos = 1;
+			for (String key : lstFields.keySet()) {
+				String value = lstFields.get(key);
+				updatePs.setObject(pos, value);
+			}
+
+			updatePs.executeUpdate();
+			logger.debug("Update query executed!");
+
+			logger.debug("Executing commit. End transaction!");
+			databaseConnection.commit();
 
 		} catch (Throwable t) {
+			if (databaseConnection != null && !databaseConnection.isClosed()) {
+				databaseConnection.rollback();
+			}
 			logger.error("An unexpected error occured while modifing custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", t);
+		} finally {
+			try {
+				if (databaseConnection != null && !databaseConnection.isClosed()) {
+					databaseConnection.close();
+				}
+			} catch (SQLException sqle) {
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure", sqle);
+			}
 		}
-
 		return "{\"response\":\"ok\"}";
-
 	}
 
 	@POST
@@ -403,8 +480,10 @@ public class HierarchyService {
 
 			logger.debug("START");
 
-			String hierarchyBkpName = req.getParameter("name");
-			String dimension = req.getParameter("dimension");
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String hierarchyBkpName = requestVal.getString("name");
+			String dimension = requestVal.getString("dimension");
 
 			if ((dimension == null) || (hierarchyBkpName == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", "wrong request parameters");
@@ -591,14 +670,12 @@ public class HierarchyService {
 
 		// 3 - define select command
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
-		int pos = 0;
 		// general fields:
 		for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
 			Field f = generalMetadataFields.get(i);
 			String sep = ", ";
 			String column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 			selectClauseBuffer.append(column + sep);
-			pos++;
 		}
 		// node fields:
 		for (int i = 0, l = nodeMetadataFields.size(); i < l; i++) {
@@ -608,13 +685,11 @@ public class HierarchyService {
 			if (f.isSingleValue()) {
 				column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 				selectClauseBuffer.append(column + sep);
-				pos++;
 			} else {
 				for (int i2 = 1, l2 = totalLevels; i2 <= l2; i2++) {
 					sep = ",";
 					column = AbstractJDBCDataset.encapsulateColumnName(f.getId() + i2, dataSource);
 					selectClauseBuffer.append(column + sep);
-					pos++;
 				}
 			}
 		}
@@ -624,7 +699,6 @@ public class HierarchyService {
 			String sep = ",";
 			String column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 			selectClauseBuffer.append(column + sep);
-			pos++;
 		}
 		// add leafId (last field)
 		String leafId = hierarchies.getHierarchyTableForeignKeyName(dimension);
