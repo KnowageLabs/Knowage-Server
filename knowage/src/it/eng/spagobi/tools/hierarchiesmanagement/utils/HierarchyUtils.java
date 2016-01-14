@@ -356,10 +356,6 @@ public class HierarchyUtils {
 			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
 					dimFilterFieldCol, selectFilterField, vDateWhereClause));
 		}
-		// ****************forzatura solo per demo GUI ***********************************
-		// * da gestire con paginazione lato server o modifica widget angular table ******
-		query.append(" limit 30 ");
-		// ****************forzatura solo per demo GUI ***********************************
 
 		logger.debug("Query for dimension data is: " + query);
 		logger.debug("END");
