@@ -14,6 +14,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -560,6 +562,103 @@ public class HierarchyService {
 		logger.debug("JSON for hierarchy backups is [" + result.toString() + "]");
 		logger.debug("END");
 		return result.toString();
+
+	}
+
+	@POST
+	@Path("/createHierarchyMaster")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String createHierarchyMaster(@Context HttpServletRequest req, @QueryParam("dimension") String dimensionLabel,
+			@QueryParam("validityDate") String validityDate, @QueryParam("filterDate") String filterDate,
+			@QueryParam("filterHierarchy") String filterHierarchy, @QueryParam("filterHierType") String filterHierType) throws SQLException {
+
+		logger.debug("START");
+
+		if ((dimensionLabel == null) || (validityDate == null)) {
+			throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
+		}
+
+		IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
+
+		if (dataSource == null) {
+			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+		}
+
+		try (Connection dbConnection = dataSource.getConnection()) {
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			// JSONObject testJson = new JSONObject();
+			// testJson.put("HIER_CD", "pippoCD");
+			// testJson.put("HIER_NM", "pippoNM");
+			// testJson.put("HIER_DS", "pippoDS");
+			// testJson.put("HIER_TP", "pippoTP");
+			// testJson.put("YEAR", "1999");
+			// testJson.put("MAX_DEPTH", "");
+			// testJson.put("COMPANY_SRC", "");
+			// testJson.put("SOURCE_SYSTEM", "");
+			// testJson.put("BEGIN_DT", "2010-04-11");
+			// testJson.put("END_DT", "2016-04-11");
+			//
+			// JSONArray testArray = new JSONArray();
+			//
+			// JSONObject obj1 = new JSONObject();
+			// obj1.put("CD", "SEGMENT_CD");
+			// obj1.put("NM", "SEGMENT_NM");
+			//
+			// JSONObject obj2 = new JSONObject();
+			// obj2.put("CD", "DEPARTMENT_CD");
+			// obj2.put("NM", "DEPARTMENT_NM");
+			//
+			// testArray.put(obj1);
+			// testArray.put(obj2);
+			//
+			// testJson.put("levels", testArray);
+
+			// String dimensionLabel = req.getParameter("dimension");
+			// String validityDate = req.getParameter("validityDate");
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
+
+			Dimension dimension = hierarchies.getDimension(dimensionLabel);
+			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
+
+			Hierarchy hierarchy = hierarchies.getHierarchy(dimensionLabel);
+			Assert.assertNotNull(hierarchy, "Impossible to find a valid hierarchy with label [" + dimensionLabel + "]");
+
+			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
+			String prefix = hierarchies.getPrefix(dimensionLabel);
+
+			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
+			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
+
+			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimension, dimensionLabel, metadataFields, validityDate, filterDate,
+					filterHierarchy, filterHierType, hierTableName, prefix);
+
+			dbConnection.setAutoCommit(false);
+
+			Iterator iterator = dataStore.iterator();
+
+			while (iterator.hasNext()) {
+
+				IRecord record = (IRecord) iterator.next();
+				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metadataFields, metatadaFieldsMap, requestVal,
+						prefix);
+
+			}
+
+			dbConnection.commit();
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while retriving dimension data");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
+		}
+
+		logger.debug("END");
+		return "{\"response\":\"ok\"}";
 
 	}
 
@@ -1562,4 +1661,277 @@ public class HierarchyService {
 		logger.debug("END");
 		return query.toString();
 	}
+
+	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
+			List<Field> generalFields, List<Field> metadataFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix) {
+
+		logger.debug("START");
+
+		try (Statement stmt = dbConnection.createStatement()) {
+
+			// Create two clauses, one for columns and another for values
+			// INSERT INTO name_table [columnsClause] values [valuesClause]
+			StringBuffer columnsClause = new StringBuffer("(");
+			StringBuffer valuesClause = new StringBuffer("(");
+
+			String sep = ",";
+
+			// fieldsMap is necessary to keep track of the position for values we need to use later when replace the prep. stat.
+			Map<Integer, String> fieldsMap = new HashMap<Integer, String>();
+
+			// typeMap is necessary to keep track of the value type in a position
+			Map<Integer, String> fieldsTypeMap = new HashMap<Integer, String>();
+
+			// this counter come across different logics to build the insert query and it's used to keep things sequential
+			int index = 0;
+
+			/**********************************************************************************************************
+			 * in this section we add columns and values related to hierarchy general fields specified in request JSON*
+			 **********************************************************************************************************/
+
+			for (Field tmpField : generalFields) {
+
+				// retrieve id and type for the general field
+				String id = tmpField.getId();
+				String type = tmpField.getType();
+
+				logger.debug("Processing Hierarchy general field [" + id + "] of type [" + type + "]");
+
+				if (requestVal.isNull(id)) {
+					// this general field is missing from the request JSON
+					logger.debug("The general field [" + id + "] is not present in the request JSON");
+					continue;
+				}
+
+				// create a column from the the general field id and take the value from the request JSON
+				String column = AbstractJDBCDataset.encapsulateColumnName(id, dataSource);
+				String value = requestVal.getString(id);
+
+				logger.debug("The general field [" + id + "] has value [" + value + "] in the request JSON");
+
+				// updating sql clauses for columns and values
+				columnsClause.append(column + sep);
+				valuesClause.append("?" + sep);
+
+				// updating values and types maps
+				fieldsMap.put(index, value);
+				fieldsTypeMap.put(index, type);
+
+				index++;
+			}
+
+			/****************************************************************************************
+			 * in this section we add columns and values related to levels specified in request JSON*
+			 ****************************************************************************************/
+
+			// retrieve levels from request json
+			JSONArray lvls = requestVal.getJSONArray("levels");
+
+			int lvlsLength = lvls.length();
+			logger.debug("The user has specified [" + lvlsLength + "] level/s");
+
+			// used to keep track of levels for parent, leaf and max-depth
+			int lvlIndex;
+
+			for (lvlIndex = 0; lvlIndex < lvlsLength; lvlIndex++) {
+
+				JSONObject lvl = lvls.getJSONObject(lvlIndex);
+
+				// levels begin from 1, the array from 0
+				int tmpLvl = lvlIndex + 1;
+
+				// columns for code and name level
+				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (tmpLvl), dataSource);
+				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (tmpLvl), dataSource);
+
+				// retrieve values to look for in dimension columns
+				String cdLvl = lvl.getString("CD");
+				String nmLvl = lvl.getString("NM");
+
+				logger.debug("In the level [" + tmpLvl + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
+
+				// retrieve record fields looking at metafield position in the dimension
+				IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
+				IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
+
+				String cdValue = (String) cdTmpField.getValue();
+				String nmValue = (String) nmTmpField.getValue();
+
+				logger.debug("For the level [" + tmpLvl + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
+
+				// updating sql clauses for columns and values
+				columnsClause.append(cdColumn + "," + nmColumn + sep);
+				valuesClause.append("?," + "?" + sep);
+
+				// updating values and types maps
+				fieldsMap.put(index, cdValue);
+				fieldsMap.put(index + 1, nmValue);
+
+				fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+				fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+				index = index + 2;
+
+				// this condition is needed to set leaf parent code and name values
+				if (lvlIndex == lvlsLength - 1) {
+
+					logger.debug("The level [" + tmpLvl + "] is the last specified from the user. We are going to use code [" + cdValue + "] and name ["
+							+ nmValue + "] for parent");
+
+					String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
+					String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
+
+					// updating sql clauses for columns and values
+					columnsClause.append(cdParentColumn + "," + nmParentColumn + sep);
+					valuesClause.append("?," + "?" + sep);
+
+					// updating values and types maps
+					fieldsMap.put(index, cdValue);
+					fieldsMap.put(index + 1, nmValue);
+
+					fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+					fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+					index = index + 2;
+
+				}
+
+			}
+
+			/*****************************************************************************
+			 * in this section we add columns and values related to the level of the leaf*
+			 *****************************************************************************/
+
+			String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex + 1), dataSource);
+			String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex + 1), dataSource);
+
+			IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_CD"));
+			IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_NM"));
+
+			String cdValue = (String) cdTmpField.getValue();
+			String nmValue = (String) nmTmpField.getValue();
+
+			logger.debug("For the leaf level [" + lvlIndex + 1 + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(cdColumn + "," + nmColumn + sep);
+			valuesClause.append("?," + "?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, cdValue);
+			fieldsMap.put(index + 1, nmValue);
+
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+			index = index + 2;
+
+			/********************************************************************************************************
+			 * in this section we add column and value related to the leaf id that comes from id in dimension record*
+			 ********************************************************************************************************/
+
+			String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_LEAF_ID", dataSource);
+			IField leafIdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_ID"));
+
+			Long leafIdValue = (Long) leafIdTmpField.getValue();
+
+			logger.debug("Leaf ID is [" + leafIdValue + "]");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(leafIdColumn + sep);
+			valuesClause.append("?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, Long.toString(leafIdValue));
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
+
+			index++;
+
+			/******************************************************************************
+			 * in this section we add columns and values related to the leaf code and name*
+			 ******************************************************************************/
+
+			String cdLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
+			String nmLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEAF", dataSource);
+
+			IField cdLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_CD"));
+			IField nmLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_NM"));
+
+			String cdLeafValue = (String) cdLeafTmpField.getValue();
+			String nmLeafValue = (String) nmLeafTmpField.getValue();
+
+			logger.debug("For the leaf we are going to insert code [" + cdLeafValue + "] and name [" + nmLeafValue + "]");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(cdLeafColumn + sep + nmLeafColumn + sep);
+			valuesClause.append("?,?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, cdLeafValue);
+			fieldsMap.put(index + 1, nmLeafValue);
+
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+			index = index + 2;
+
+			/******************************************************************************
+			 * in this section we add column and value related to the max depth of levels*
+			 ******************************************************************************/
+
+			String maxDepthColumn = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
+
+			logger.debug("Levels max depth is [" + lvlIndex + "]");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(maxDepthColumn + ")");
+			valuesClause.append("?)");
+
+			// updating values and types maps
+			fieldsMap.put(index, String.valueOf(lvlIndex));
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
+
+			/***************************************************************************************
+			 * put together clauses in order to create the insert prepared statement and execute it*
+			 ***************************************************************************************/
+
+			StringBuffer insertQuery = new StringBuffer("INSERT INTO " + hTableName + columnsClause + " VALUES " + valuesClause);
+
+			logger.debug("The insert query is [" + insertQuery.toString() + "]");
+
+			PreparedStatement insertPs = dbConnection.prepareStatement(insertQuery.toString());
+
+			for (int i = 0; i < fieldsMap.size(); i++) {
+
+				String fieldType = fieldsTypeMap.get(i);
+				String tmpValue = fieldsMap.get(i);
+
+				logger.debug("Set the insert prepared statement with a field of type [" + fieldType + "] and value [" + tmpValue + "]");
+
+				if (fieldType.equals(HierarchyConstants.FIELD_TP_STRING)) {
+					insertPs.setString(i + 1, tmpValue);
+				} else if (fieldType.equals(HierarchyConstants.FIELD_TP_NUMBER)) {
+					insertPs.setLong(i + 1, Long.valueOf(tmpValue));
+				} else if (fieldType.equals(HierarchyConstants.FIELD_TP_DATE)) {
+					final Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(tmpValue);
+					java.sql.Date tmpDate = new java.sql.Date(calendar.getTimeInMillis());
+					insertPs.setDate(i + 1, tmpDate);
+				}
+
+			}
+
+			logger.debug("Insert prepared statement correctly set. It's time to execute it");
+
+			insertPs.executeUpdate();
+
+			logger.debug("Insert correctly executed");
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while inserting a new hierarchy");
+			throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", t);
+		}
+
+		logger.debug("END");
+	}
+
 }
