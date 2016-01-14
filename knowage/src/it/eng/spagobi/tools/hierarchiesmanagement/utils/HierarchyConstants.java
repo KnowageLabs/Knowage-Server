@@ -86,4 +86,9 @@ public class HierarchyConstants {
 	public final static String TREE_NODE_NAME = "TREE_NODE_NAME";
 	public final static String TREE_LEAF_ID = "TREE_LEAF_ID";
 	public final static String TREE_LEAF_NAME = "TREE_LEAF_NAME";
+
+	// FIELDS TYPES
+	public final static String FIELD_TP_STRING = "String";
+	public final static String FIELD_TP_NUMBER = "Number";
+	public final static String FIELD_TP_DATE = "Date";
 }

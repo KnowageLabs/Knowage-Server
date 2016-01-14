@@ -2,6 +2,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -10,6 +11,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -17,6 +19,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -270,6 +273,97 @@ public class HierarchyUtils {
 
 		logger.debug("END");
 		return rootArray;
+	}
+
+	public static IDataStore getDimensionDataStore(IDataSource dataSource, Dimension dimension, String dimensionLabel, List<Field> metadataFields,
+			String validityDate, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
+
+		String dimensionName = dimension.getName();
+
+		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
+		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
+
+		// 2 - execute query to get dimension data
+		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy,
+				filterHierType, hierTableName, dimFilterField, hierFilterField);
+
+		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+
+		return dataStore;
+	}
+
+	public static Map<String, Integer> getMetadataFieldsMap(List<Field> metadataFields) {
+
+		Map<String, Integer> resultMap = new HashMap<String, Integer>();
+
+		for (int i = 0; i < metadataFields.size(); i++) {
+
+			Field tmpField = metadataFields.get(i);
+			resultMap.put(tmpField.getId(), i);
+		}
+
+		return resultMap;
+	}
+
+	private static String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
+			String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField, String hierFilterField) {
+
+		logger.debug("START");
+
+		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String sep = ",";
+
+		int fieldsSize = metadataFields.size();
+
+		for (int i = 0; i < fieldsSize; i++) {
+			Field tmpField = metadataFields.get(i);
+			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
+
+			if (i == fieldsSize - 1) {
+				sep = " ";
+			}
+
+			selectClauseBuffer.append(column + sep);
+		}
+
+		String selectClause = selectClauseBuffer.toString();
+
+		// where
+
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+
+		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
+
+		String vDateWhereClause = vDateConverted + " >= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
+
+		if (filterDate != null) {
+			logger.debug("Filter date is [" + filterDate + "]");
+
+			query.append(HierarchyUtils.createDateAfterCondition(dataSource, filterDate, beginDtColumn));
+		}
+
+		if (filterHierarchy != null) {
+			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
+
+			String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+			String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+			String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
+			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
+
+			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
+					dimFilterFieldCol, selectFilterField, vDateWhereClause));
+		}
+		// ****************forzatura solo per demo GUI ***********************************
+		// * da gestire con paginazione lato server o modifica widget angular table ******
+		query.append(" limit 30 ");
+		// ****************forzatura solo per demo GUI ***********************************
+
+		logger.debug("Query for dimension data is: " + query);
+		logger.debug("END");
+		return query.toString();
 	}
 
 }
