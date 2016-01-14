@@ -7,7 +7,8 @@ var rootStructure = {
 		id:'root',
 		root: true,
 		children: [],
-		leaf:false
+		leaf:false,
+		type: "folder"
 		};
 
 function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
@@ -28,7 +29,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.dimensionSrc = [];
 	$scope.hierarchiesSrc=[];
 	$scope.hierTreeSrc = [];
-	$scope.hierTreeMapSrc = {};
+	$scope.hierTreeCacheSrc = {};
 	$scope.seeFilterSrc=false;
 
 	/*Initialization Target variable*/
@@ -38,7 +39,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.hierTreeTarget = [];
 	//$scope.dimensionTarget = [];
 	$scope.hierarchiesTarget = [];
-	$scope.hierTreeMapTarget = {};
+	$scope.hierTreeCacheTarget = {};
 	$scope.seeFilterTarget=false;
 	$scope.treeTargetDirty=false;
 	$scope.targetIsNew = false; //flag, if is true, the tree create from user, else is get from server
@@ -51,7 +52,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	/*Drag and Drop option*/
 	$scope.treeTargetOptions = {
 		beforeDrop : function(e){
+			//set dirty the tree and update the level of the object dragged
 			$scope.treeTargetDirty = true;
+			e.source.cloneModel.LEVEL = e.dest.nodesScope.$nodeScope.$modelValue.LEVEL + 1;
 		},
 		beforeDrag : function(sourceNodeScope){
 			if (sourceNodeScope.$treeScope.cloneEnabled==false){
@@ -171,7 +174,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 				config.params.filterDimension = seeElement;
 				keyMap = keyMap + '_' + seeElement;
 			}
-			var hierMap = choose == 'src' ? $scope.hierTreeMapSrc : $scope.hierTreeMapTarget;
+			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
 			if (hierMap[keyMap] === undefined){
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
@@ -181,7 +184,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 									data = [data];
 								}
 								choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
-								choose =='src' ? $scope.hierTreeMapSrc[keyMap] = data : $scope.hierTreeMapTarget[keyMap] = data;
+								choose =='src' ? $scope.hierTreeCacheSrc[keyMap] = angular.copy(data) : $scope.hierTreeCacheTarget[keyMap] = angular.copy(data);
 								$scope.targetIsNew = false;
 							}else{
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
@@ -194,7 +197,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 						$scope.showAlert('ERROR',message);
 					});
 			}else{
-				choose =='src' ? $scope.hierTreeSrc = $scope.hierTreeMapSrc[keyMap] : $scope.hierTreeTarget = $scope.hierTreeMapTarget[keyMap];
+				choose =='src' ? $scope.hierTreeSrc = angular.copy($scope.hierTreeCacheSrc[keyMap]) : $scope.hierTreeTarget = angular.copy($scope.hierTreeCacheTarget[keyMap]);
 			}
 		}	
 	}
@@ -274,7 +277,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 						}
 					}
 				}else{
-					//choose =='src' ? $scope.hierTreeSrc = newItem : $scope.hierTreeTarget = newItem;
+					//copy in the object directly
 					for (var k in newItem){
 						item[k] = newItem[k];
 					}
@@ -493,13 +496,35 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			var promise = $scope.editNode(angular.copy(rootStructure),null);
 			promise
 				.then(function(newItem){
-						$scope.hierTreeTarget = [newItem]
+					if (newItem !== null && newItem !== undefined){
+						var keyName = newItem.aliasName !== undefined ? newItem.aliasName : 'HIER_NM';
+						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dimSrc.DIMENSION_NM + "HIER_CD";
+						newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : rootStructure.name;
+						newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : rootStructure.name;
+						$scope.hierTreeTarget = [newItem];
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;
-					},function(){
+					}
+				},function(){
 					//nothing to do, request cancelled.
 				}); 
 		}
+	}
+	//clean object from cycle and undesired element inject with drag
+	$scope.cleanTree = function(tree){
+		var treeCleaned =angular.copy(tree);
+		var elements = [treeCleaned];
+		do{
+			var el = elements.shift();
+			el.$parent=null;
+			if (el.children !== undefined && el.children.length > 0){
+				for (var i =0 ; i<el.children.length;i++){
+					elements.push(el.children[i]);
+				}
+			}
+		}while(elements.length > 0);
+		
+		return treeCleaned;
 	}
 	
 	$scope.saveTree = function(){
@@ -514,19 +539,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			root.dateValidity = $scope.formatDate($scope.dateTarget);
 			root.isInsert = $scope.targetIsNew;
 			root.doBackup = $scope.doBackup !== undefined ? $scope.doBackup : false;
-			root.root = Array.isArray($scope.hierTreeTarget) ? angular.copy($scope.hierTreeTarget[0]) : angular.copy($scope.hierTreeTarget);
 			root.root.$parent = undefined;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
-			var elements = [root.root];
-			do{
-				var el = elements.shift();
-				el.$parent=null;
-				if (el.children !== undefined && el.children.length > 0){
-					for (var i =0 ; i<el.children.length;i++){
-						elements.push(el.children[i]);
-					}
-				}
-			}while(elements.length > 0);
+			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
 			
 			var jsonString = angular.toJson(root);
 			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
@@ -535,6 +550,15 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 					if (data.errors === undefined){
 						$scope.treeTargetDirty = false;
 						$scope.targetIsNew = false;
+						/*clean cache map*/
+						var keyMap = root.type + '_' + root.dimension + '_' + root.name + '_' + root.dateValidity;
+						if ($scope.dateFilterTarget){
+							keyMap = keyMap + '_' + $scope.formatDate($scope.dateFilterTarget);
+						}
+						if ($scope.seeHideLeafTarget){
+							keyMap = keyMap + '_' + $scope.seeHideLeafTarget;
+						}
+						$scope.hierTreeCacheTarget[keyMap]=undefined;
 						$scope.showAlert('INFO','Succesfull upate');
 					}else{
 						$scope.showAlert('ERROR',data.errors[0].message);
