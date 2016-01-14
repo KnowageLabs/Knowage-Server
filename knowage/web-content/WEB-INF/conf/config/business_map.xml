@@ -107,6 +107,7 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyHierarchy" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/restoreHierarchy" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyBkps" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/createHierarchyMaster" businessProcess="HierarchiesManagement" />
 				
 		<!-- 			
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />			
