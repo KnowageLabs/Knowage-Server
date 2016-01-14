@@ -202,7 +202,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		}	
 	}
 	
-	 $scope.editNode = function(item,parent){
+	 $scope.editNode = function(item,parent,forceEditable){
 		 var parentEl = angular.element(document.body);
 		 var dimName = $scope.dimSrc  !== undefined ? $scope.dimSrc.DIMENSION_NM : '';
 		 var metTmp =  $scope.metadataMap[dimName];
@@ -211,6 +211,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		 }
 		 //take generals_fields if it is root[parent is null], leaf_fields if it is leaf or node_fields if it is node
 		 var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
+		 if (metadata && forceEditable == true){
+			 for (var i = 0 ; i < metadata.length; i++){
+				 metadata[i].EDITABLE=true;
+				 //metadata[i].VISIBLE=true;
+			 }
+		 }
 		 return $mdDialog.show({
 					templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 					parent: angular.element(document.body),
@@ -493,7 +499,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.createTree = function(){
 		if ($scope.dateTarget && $scope.dimSrc && $scope.hierTarget){
-			var promise = $scope.editNode(angular.copy(rootStructure),null);
+			var promise = $scope.editNode(angular.copy(rootStructure),null,true);
 			promise
 				.then(function(newItem){
 					if (newItem !== null && newItem !== undefined){
