@@ -23,6 +23,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,12 +49,24 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	private final List<String> childrenKeys;
 
+	private HashMap attributes;
+
 	static private final List<HierarchyTreeNode> EMPTY_LIST = Collections.emptyList();
 	static private final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode> emptyList().iterator();
 
 	public HierarchyTreeNode(Object obj, String key) {
 		this.obj = obj;
 		this.key = key;
+		parent = null;
+		allowsChildren = true;
+		childrenKeys = new ArrayList<String>();
+		attributes = new HashMap();
+	}
+
+	public HierarchyTreeNode(Object obj, String key, HashMap attributes) {
+		this.obj = obj;
+		this.key = key;
+		this.attributes = attributes;
 		parent = null;
 		allowsChildren = true;
 		childrenKeys = new ArrayList<String>();
@@ -104,9 +117,8 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * Returns the number of levels above this node -- the distance from the
-	 * root to this node. If this node is the root, returns 0.
-	 * 
+	 * Returns the number of levels above this node -- the distance from the root to this node. If this node is the root, returns 0.
+	 *
 	 * @return the number of levels above this node
 	 */
 	public int getLevel() {
@@ -142,7 +154,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/**
 	 * Returns the number of children of this node.
-	 * 
+	 *
 	 * @return an int giving the number of children of this node
 	 */
 	public int getChildCount() {
@@ -155,7 +167,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/**
 	 * Returns this node's user object.
-	 * 
+	 *
 	 * @return the Object stored at this node by the user
 	 * @see #setObject
 	 * @see #toString
@@ -166,7 +178,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/**
 	 * Returns this node's parent or null if this node has no parent.
-	 * 
+	 *
 	 * @return this node's parent TreeNode, or null if this node has no parent
 	 */
 	public HierarchyTreeNode getParent() {
@@ -189,7 +201,22 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * 
+	 * @return the attributes
+	 */
+	public HashMap getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes
+	 *            the attributes to set
+	 */
+	public void setAttributes(HashMap attributes) {
+		this.attributes = attributes;
+	}
+
+	/**
+	 *
 	 * @return a list of this node's children, or empty list if it is a leaf
 	 */
 	public List<HierarchyTreeNode> children() {
@@ -205,11 +232,9 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * Returns the index of the specified child in this node's child array. If
-	 * the specified node is not a child of this node, returns <code>-1</code>.
-	 * This method performs a linear search and is O(n) where n is the number of
-	 * children.
-	 * 
+	 * Returns the index of the specified child in this node's child array. If the specified node is not a child of this node, returns <code>-1</code>. This
+	 * method performs a linear search and is O(n) where n is the number of children.
+	 *
 	 */
 	public int indexOf(HierarchyTreeNode aChild) {
 		if (aChild == null) {
@@ -224,9 +249,10 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@Override
 	public Iterator<HierarchyTreeNode> iterator() {
 		return new BreadthFirstIterator(this);
 	}
@@ -244,8 +270,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/*
-	 * ------------------------------------------------------- Utilities Methods
-	 * -------------------------------------------------------
+	 * ------------------------------------------------------- Utilities Methods -------------------------------------------------------
 	 */
 
 	public List<HierarchyTreeNode> getPathFromRoot() {
@@ -337,10 +362,12 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 			queue.offer(v.iterator());
 		}
 
+		@Override
 		public boolean hasNext() {
 			return (!queue.isEmpty() && queue.peek().hasNext());
 		}
 
+		@Override
 		public HierarchyTreeNode next() {
 			Iterator<HierarchyTreeNode> enumer = queue.peek();
 			HierarchyTreeNode node = enumer.next();
@@ -355,6 +382,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 			return node;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException("remove() is not supported.");
 		}
@@ -375,10 +403,12 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 			stack.push(l.iterator());
 		}
 
+		@Override
 		public boolean hasNext() {
 			return (!stack.empty() && stack.peek().hasNext());
 		}
 
+		@Override
 		public HierarchyTreeNode next() {
 			Iterator<HierarchyTreeNode> itr = stack.peek();
 			HierarchyTreeNode node = itr.next();
@@ -393,6 +423,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 			return node;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException("remove() is not supported.");
 		}

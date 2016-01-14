@@ -892,8 +892,7 @@ public class HierarchyService {
 		String prefix = hierarchies.getPrefix(dimension);
 		HashMap hierConfig = hierarchies.getConfig(dimension);
 		int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
-		// contains the code of the last level node (not null) inserted in the
-		// tree
+		// contains the code of the last level node (not null) inserted in the tree
 		IMetaData dsMeta = dataStore.getMetaData();
 		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 			String lastLevelFound = null;
@@ -949,19 +948,27 @@ public class HierarchyService {
 							Field fld = nodeFields.get(f);
 							if (fld.isVisible() || fld.isEditable()) {
 								IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
-								// mapAttrs.put(fld.getId() + ((fld.isSingleValue()) ? "" : i), fldValue.getValue());
 								mapAttrs.put(fld.getId(), fldValue.getValue());
 							}
 						}
 						data.setAttributes(mapAttrs);
 						if (root == null) {
-							root = new HierarchyTreeNode(data, nodeCode);
+							// get root attribute for automatic edit node GUI
+							HashMap rootAttrs = new HashMap();
+							ArrayList<Field> generalFields = hierarchies.getHierarchy(dimension).getMetadataGeneralFields();
+							for (int f = 0, lf = generalFields.size(); f < lf; f++) {
+								Field fld = generalFields.get(f);
+								// if (fld.isVisible() || fld.isEditable()) {
+								IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
+								rootAttrs.put(fld.getId(), fldValue.getValue());
+								// }
+							}
+							root = new HierarchyTreeNode(data, nodeCode, rootAttrs);
 						} else {
 							attachNodeToLevel(root, nodeCode, lastLevelFound, data, null);
 						}
 					}
 					lastLevelFound = nodeCode;
-					// }
 				}
 				currentLevel++;
 			}
@@ -1101,11 +1108,13 @@ public class HierarchyService {
 			mainObject.put(HierarchyConstants.ID, "root");
 			mainObject.put("aliasId", HierarchyConstants.HIER_CD);
 			mainObject.put("aliasName", HierarchyConstants.HIER_NM);
-			mainObject.put(HierarchyConstants.HIER_NM, hierName);
-			mainObject.put(HierarchyConstants.HIER_CD, hierCode);
+			// mainObject.put(HierarchyConstants.HIER_NM, hierName);
+			// mainObject.put(HierarchyConstants.HIER_CD, hierCode);
 			mainObject.put("root", true);
 			mainObject.put("children", arRootJSONObject);
 			mainObject.put("leaf", false);
+			HashMap rootAttrs = root.getAttributes();
+			HierarchyUtils.createJSONArrayFromHashMap(rootAttrs, mainObject);
 
 			return mainObject;
 
