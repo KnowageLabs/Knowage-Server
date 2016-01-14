@@ -200,13 +200,23 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	public Response deleteDriver(@PathParam("id") Integer id) {
 
 		IParameterDAO driversDao = null;
+		IParameterUseDAO useModesDao = null;
+		List<ParameterUse> fullList = null;
 
 		try {
 			Parameter driver = new Parameter();
 			driver.setId(id);
 			driversDao = DAOFactory.getParameterDAO();
+			useModesDao = DAOFactory.getParameterUseDAO();
 			driversDao.setUserProfile(getUserProfile());
+			fullList = useModesDao.loadParametersUseByParId(id);
+			if (fullList != null) {
+				for (ParameterUse parameterUse : fullList) {
+					useModesDao.eraseParameterUse(parameterUse);
+				}
+			}
 			driversDao.eraseParameter(driver);
+
 			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
 			return Response.ok().entity(encodedDriver).build();
 		} catch (Exception e) {

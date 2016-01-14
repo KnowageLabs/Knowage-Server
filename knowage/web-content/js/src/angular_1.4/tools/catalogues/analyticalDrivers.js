@@ -10,6 +10,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.translate = sbiModule_translate;
 	$scope.selectedDriver = {}; // main item
 	$scope.selectedParUse = {}; // main item
+	$scope.selectedTab = 0;
 	$scope.adList = []; // array that hold custom list
 	$scope.listType = [];
 	$scope.listDate = [];
@@ -46,7 +47,17 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		                            }
 		                         }
 		                        ];
-		 
+		 $scope.dumSpeedMenu= [
+		                         {
+		                            label:sbiModule_translate.load("sbi.generic.delete"),
+		                            icon:'fa fa-trash-o fa-lg',
+		                            color:'#153E7E',
+		                            action:function(item,event){
+		                                
+		                            	$scope.deleteUseMode(item);
+		                            }
+		                         }
+		                        ];
 		 
 		 $scope.confirm = $mdDialog
 		    .confirm()
@@ -83,10 +94,16 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedDriver.type = "DATE";
 		$scope.selectedDriver.functional = true;
 	}
+	
+	 $scope.changeTab = function() {
+		 console.log($scope.selectedTab);
+	        
+	 }
 		
 	$scope.loadDrivers=function(item){  // this function is called when item from custom table is clicked
 		$scope.showadMode = true;
 		$scope.getUseModesById(item);
+		$scope.changeTab();
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -107,27 +124,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			  $scope.showadMode = true;
 			  }
 	}
-	$scope.loadUseMode=function(item){  // this function is called when item from custom table is clicked
-		 if($scope.dirtyForm){
-			   $mdDialog.show($scope.confirm).then(function(){
-				$scope.dirtyForm=false;   
-				$scope.selectedParUse=angular.copy(item);
-				$scope.showme=true;
-				$scope.showadMode = true;
-			           
-			   },function(){
-			    
-				$scope.showme = true;
-				$scope.showadMode = true;
-			   });
-			   
-			  }else{
-			 
-			  $scope.selectedParUse=angular.copy(item);
-			  $scope.showme=true;
-			  $scope.showadMode = true;
-			  }
-	} 	                
 	
 	$scope.cancel = function() { // on cancel button
 		$scope.selectedDriver={};
@@ -360,7 +356,42 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 				})	
 	}
+	$scope.loadUseMode=function(item){  // this function is called when item from custom table is clicked
+		
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.selectedParUse=angular.copy(item);
+				$scope.showme=true;
+				$scope.showadMode = true;
+			           
+			   },function(){
+			    
+				$scope.showme = true;
+				$scope.showadMode = true;
+			   });
+			   
+			  }else{
+			 
+			  $scope.selectedParUse=angular.copy(item);
+			  $scope.showme=true;
+			  $scope.showadMode = true;
+			  }
+		 $scope.viewParUse();
+	}
 	
+	$scope.viewParUse = function () {
+		console.log(item);
+	if($scope.selectedParUse.defaultFormula == null){
+		$scope.defaultrg = "none";
+	}else{
+		$scope.defaultrg = "pickup";
+	}
+	if($scope.selectedParUse.idLovForDefault != null){
+		$scope.defaultrg = "lov";
+	}
+		
+	}
 	$scope.getUseModesById = function (item) { // service that gets list of roles GET
         sbiModule_restServices.get("2.0/analyticalDrivers/"+item.id+"/modes", "").success(
             function (data, status, headers, config) {
