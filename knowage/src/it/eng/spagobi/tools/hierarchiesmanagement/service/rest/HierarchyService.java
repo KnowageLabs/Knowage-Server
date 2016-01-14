@@ -1484,11 +1484,6 @@ public class HierarchyService {
 
 		query.append(" GROUP BY " + hierNameColumn);
 
-		// ****************forzatura solo per demo GUI ***********************************
-		// * da gestire con paginazione lato server o modifica widget angular table ******
-		query.append(" limit 30 ");
-		// ****************forzatura solo per demo GUI ***********************************
-
 		logger.debug("Query for hier backups data is: " + query);
 		logger.debug("END");
 		return query.toString();
