@@ -58,8 +58,8 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	/*Drag and Drop options from table to tree. Create node or leaf to insert in the tree if confirmed the list dialog*/
 	$scope.tableOptions = {
 		beforeDrop : function(e){
-			var dest = e.dest.nodesScope.$nodeScope.$modelValue;
-			if (dest !== undefined && dest.children !== undefined){
+			var dest = e.dest.nodesScope.$nodeScope;
+			if (dest !== undefined && dest.$modelValue && dest.$modelValue.children !== undefined){
 				$scope.showListHierarchies().then(
 					function(data){
 						var source = e.source.cloneModel;
@@ -135,6 +135,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 							if (!hasFilter && !removeFilter){
 								$scope.hierType = undefined;
 								$scope.hierarchiesMaster = [];
+								$scope.hierTree = [];
 							}else if (removeFilter == true){
 								$scope.seeHideLeafDim = false;
 								$scope.dateFilterDim = undefined;
