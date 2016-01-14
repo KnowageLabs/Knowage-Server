@@ -80,16 +80,32 @@ public class HierarchyService {
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
+			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS, dataSource);
 			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
+			// IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
+			// + "=\"MASTER\" AND " + bkpColumn + "= 0", 0, 0);
 
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyNameColumn + ") FROM " + tableName + " WHERE " + typeColumn
-					+ "=\"MASTER\" AND " + bkpColumn + "= 0", 0, 0);
+			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
+					+ typeColumn + "=\"MASTER\" AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
+
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
 				IField field = record.getFieldAt(0);
+				String hierarchyCode = (String) field.getValue();
+				field = record.getFieldAt(1);
 				String hierarchyName = (String) field.getValue();
+				field = record.getFieldAt(2);
+				String hierarchyType = (String) field.getValue();
+				field = record.getFieldAt(3);
+				String hierarchyDescription = (String) field.getValue();
+
 				JSONObject hierarchy = new JSONObject();
+				hierarchy.put(HierarchyConstants.HIER_CD, hierarchyCode);
 				hierarchy.put(HierarchyConstants.HIER_NM, hierarchyName);
+				hierarchy.put(HierarchyConstants.HIER_TP, hierarchyType);
+				hierarchy.put(HierarchyConstants.HIER_DS, hierarchyDescription);
 				hierarchiesJSONArray.put(hierarchy);
 
 			}
@@ -317,7 +333,9 @@ public class HierarchyService {
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while saving custom hierarchy structure");
 			try {
-				connection.rollback();
+				if (connection != null && !connection.isClosed()) {
+					connection.rollback();
+				}
 			} catch (SQLException sqle) {
 				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure", sqle);
 			}
