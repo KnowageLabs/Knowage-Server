@@ -98,7 +98,11 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 								source[keys[i]] = tmp[keys[i]];
 							}
 						}
-						dest.children.push(source);
+						if (dest.children.length == 1 && dest.children[0].fake == true){
+							dest.children = [source];
+						}else{
+							dest.children.splice(0,0,source);
+						}
 						$scope.treeDirty = true;
 						e.source.cloneModel = source;
 						return false;
@@ -326,11 +330,15 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
 					tmpItem.name = tmpItem[keyName];
 					tmpItem.id = tmpItem[keyId];
-					tmpItem.children = [];
+					tmpItem.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false,children:[]}];
 					tmpItem.$parent = item;
 					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1; 
 					tmpItem.expanded = false;
-					item.children.splice(0,0,tmpItem);
+					if (item.children.length == 1 && item.children[0].fake == true){
+						item.children = [tmpItem];
+					}else{
+						item.children.splice(0,0,tmpItem);
+					}
 					$scope.treeDirty = true;
 				},function(){
 				//nothing to do, request cancelled.
@@ -476,7 +484,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 			el.$parent=null;
 			if (el.children !== undefined && el.children.length > 0){
 				for (var i =0 ; i<el.children.length;i++){
-					if (!el.children[i].leaf && !el.children[i].children){
+					if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true){
 						el.children.splice(i,1);
 						i--;
 					}else{
