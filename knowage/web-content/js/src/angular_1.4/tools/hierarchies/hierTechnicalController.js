@@ -216,7 +216,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		 if (metadata && forceEditable == true){
 			 for (var i = 0 ; i < metadata.length; i++){
 				 metadata[i].EDITABLE=true;
-				 //metadata[i].VISIBLE=true;
+				 metadata[i].VISIBLE=true;
 			 }
 		 }
 		 return $mdDialog.show({
@@ -302,6 +302,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			var allowDuplicate = $scope.metadataMap[$scope.dimSrc.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
 			if (allowDuplicate == false || allowDuplicate == "false"){
 				//must modify the dates of validity
+				newItem.BEGIN_DT = new Date();
+				newItem.END_DT = new Date();
 				var promise = $scope.editNode(newItem,parent);
 				promise.then(
 					function(newItem){
@@ -547,9 +549,9 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			root.dateValidity = $scope.formatDate($scope.dateTarget);
 			root.isInsert = $scope.targetIsNew;
 			root.doBackup = $scope.doBackup !== undefined ? $scope.doBackup : false;
-			root.root.$parent = undefined;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
 			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
+			root.root.$parent = undefined;
 			
 			var jsonString = angular.toJson(root);
 			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);

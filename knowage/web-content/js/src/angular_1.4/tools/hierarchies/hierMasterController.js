@@ -369,6 +369,8 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 			var allowDuplicate = $scope.metadataTreeMap[$scope.dim.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
 			if (allowDuplicate == false || allowDuplicate == "false"){
 				//must modify the dates of validity
+				newItem.BEGIN_DT = new Date();
+				newItem.END_DT = new Date();
 				var promise = $scope.editNode(newItem,parent);
 				if (promise !== null){
 					promise.then(
