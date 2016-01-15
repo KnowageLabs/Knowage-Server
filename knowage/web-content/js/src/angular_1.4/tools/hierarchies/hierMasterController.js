@@ -1,16 +1,5 @@
 var app = angular.module('hierManager');
 
-app.config(function($mdDateLocaleProvider) {
-	 $mdDateLocaleProvider.parseDate = function(date) {
-		 if (typeof date == "string"){
-			 var tmp = date.split('/');
-			 return new Date(tmp[2],tmp[1],tmp[0]);
-		 }else{
-		    return date;
-		 }
-	};
-});
-
 app.controller('hierMasterController', ["$q","$timeout","sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
 var nodeStructure = {

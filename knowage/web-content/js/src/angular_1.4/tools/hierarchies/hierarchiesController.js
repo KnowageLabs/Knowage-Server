@@ -1,8 +1,14 @@
 var app = angular.module('hierManager', ['ngMaterial','ng-context-menu','angular_list','angular_table','sbiModule','document_tree','ui.tree', 'angularUtils.directives.dirPagination']);
 
-app.factory('glDimension',function(){
-	 var dimensione = {};
-	 return dimensione;
+app.config(function($mdDateLocaleProvider) {
+	 $mdDateLocaleProvider.parseDate = function(date) {
+		 if (typeof date == "string"){
+			 var tmp = date.split('/');
+			 return new Date(tmp[2],tmp[1],tmp[0]);
+		 }else{
+		    return date;
+		 }
+	};
 });
 
 app.controller('hierCtrl', ['sbiModule_translate',"$scope",funzione ]);
