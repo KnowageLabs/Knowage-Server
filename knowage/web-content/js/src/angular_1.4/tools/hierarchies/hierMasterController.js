@@ -324,14 +324,14 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 		}	
 	}
 	
-	$scope.createEmptyNode = function (){
+	$scope.createEmptyNode = function (type){
 		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; 
 		var metTmp =  $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined){
 			$scope.showAlert('Error','No metadata Node found for dimension '+ dimName );
 			return null;
 		}
-		var metadata = metTmp.NODE_FIELDS;
+		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: type == "node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS;var metadata = metTmp.NODE_FIELDS;
 		var node = {};
 		for (var i =0; i < metadata.length; i++){
 			if (metadata[i].TYPE == 'Number'){
@@ -342,11 +342,12 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				node[metadata[i].ID] = '';
 			}
 		}
-		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false,children:[]}];
+		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false}];
 		node.expanded = false;
 		node.visible=true;
 		node.type="folder";
-		node.cheked = false;
+		node.checked = false;
+		node.leaf = type == "leaf";
 		return node;
 	}
 	
@@ -356,7 +357,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 		if (promise !== null){
 			promise
 			.then(function(newItem){
-					var tmpItem = $scope.createEmptyNode();
+					var tmpItem = $scope.createEmptyNode("node");
 					for ( key in newItem){ 
 						tmpItem[key] = newItem[key];
 					}

@@ -244,12 +244,40 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			$mdDialog.hide($scope.hier);
 		}
 	}
-	 
+	
+	$scope.createEmptyNode = function (type){
+		var dimName = $scope.dimSrc !== undefined ? $scope.dimSrc.DIMENSION_NM : ''; 
+		var metTmp =  $scope.metadataMap[dimName];
+		if (metTmp === undefined){
+			$scope.showAlert('Error','No metadata Node found for dimension '+ dimName );
+			return null;
+		}
+		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: type =="node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS;
+		var node = {};
+		for (var i =0; i < metadata.length; i++){
+			if (metadata[i].TYPE == 'Number'){
+				node[metadata[i].ID] = -1;
+			}else if(metadata[i].TYPE == 'Date'){
+				node[metadata[i].ID] = new Date();
+			}else{
+				node[metadata[i].ID] = '';
+			}
+		}
+		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false}];
+		node.expanded = false;
+		node.visible=true;
+		node.type="folder";
+		node.checked = false;
+		node.leaf = type == "leaf";
+		node.root = type == "root";
+		return node;
+	}
+	
 	$scope.addHier =  function(item,parent,event){
 		var promise = $scope.editNode({},parent);
 		promise //TODO correggere inserimento
 			.then(function(newItem){
-					var tmpItem = $scope.createEmptyNode();
+					var tmpItem = $scope.createEmptyNode('node');
 					for ( key in newItem){ 
 						tmpItem[key] = newItem[key];
 					}
@@ -505,7 +533,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	
 	$scope.createTree = function(){
 		if ($scope.dateTarget && $scope.dimSrc && $scope.hierTarget){
-			var promise = $scope.editNode(angular.copy(rootStructure),null,true);
+			var promise = $scope.editNode($scope.createEmptyNode("root"),null,true);
 			promise
 				.then(function(newItem){
 					if (newItem !== null && newItem !== undefined){
@@ -513,6 +541,8 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : "HIER_CD";
 						newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : rootStructure.name;
 						newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : rootStructure.name;
+						newItem.root = true;
+						newItem.leaf = false;
 						$scope.hierTreeTarget = [newItem];
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;
