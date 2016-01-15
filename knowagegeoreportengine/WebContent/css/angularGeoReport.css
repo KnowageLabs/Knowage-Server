@@ -39,7 +39,9 @@ geo-distance-calculator {
 	/* 	bottom: 0px; */
 	/* 	left: 55px; */
 }
-
+geo-download {
+		z-index: 1;
+}
 #geoRigthMenu button#showMenu {
 	    border-radius: 0;
     width: 31px;

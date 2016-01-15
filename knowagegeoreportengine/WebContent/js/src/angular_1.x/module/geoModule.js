@@ -658,7 +658,8 @@ geoM.service(
 									url : layerConf.layerURL,
 									params : JSON.parse(layerConf.layerParams),
 									options : JSON.parse(layerConf.layerOptions)
-								}))
+								})),
+					crossOriginKeyword: 'anonymous'
 					});
 					break;
 
@@ -690,14 +691,16 @@ geoM.service(
 								return layerConf.layerURL + '' + z + '/' + x + '/' + y + '.' + options.type;
 							},
 
-						})
+						}),
+						crossOriginKeyword: 'anonymous'
 					});
 					break;
 
 				case 'OSM':
 					tmpLayer = new ol.layer.Tile({
 						source : new ol.source.MapQuest({
-							layer : 'osm'
+							layer : 'osm',
+							crossOriginKeyword: 'anonymous'
 						})
 					});
 					break;

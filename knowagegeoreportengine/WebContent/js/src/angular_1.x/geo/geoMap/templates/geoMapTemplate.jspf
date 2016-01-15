@@ -11,6 +11,7 @@
 			style="bottom: 0; right: 0; position: absolute;">
 			<geo-legend id="legend"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
+			<geo-download></geo-download>
 		</div>
 	</div>
 

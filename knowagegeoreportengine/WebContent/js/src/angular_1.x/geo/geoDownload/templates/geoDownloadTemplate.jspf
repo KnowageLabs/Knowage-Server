@@ -1,0 +1,36 @@
+<script  type="text/ng-template" id="SelectInfoforDowload.html">
+<md-dialog aria-label="ExportPDF"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Export PDF</h1>
+        <span flex></span>
+        <md-button  ng-click="close()">
+          <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:800px;max-height:810px; ">
+     <div class="md-dialog-content">
+		<form class="form">
+			<label>Page size </label> <select id="format">
+				<option value="a3">A3</option>
+				<option value="a4" selected>A4</option>
+				<option value="a5">A5 (fast)</option>
+			</select> <label>Resolution </label> <select id="resolution">
+				<option value="72">72 dpi (fast)</option>
+				<option value="150">150 dpi</option>
+			</select>
+		</form>
+
+	</div>
+	<div class="footer">
+	<md-button id="export-png" style="margin-left:80%;" ng-click="downloadLayer()"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
+	</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>
+</script>
+<md-button  id="download" class="md-fab md-mini" ng-click="showOverlay($event)" aria-label="toggle menu" ng-disabled="disableButtons">
+<i class="material-icons">get_app</i>
+</md-button>
