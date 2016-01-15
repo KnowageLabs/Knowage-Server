@@ -77,6 +77,9 @@ public class HierarchyConstants {
 	public final static String SUFFIX_NM_LEAF = "_NM_LEAF";
 
 	public final static String BKP_COLUMN = "BACKUP";
+	public final static String BKP_TIMESTAMP_COLUMN = "BACKUP_TIMESTAMP";
+	public final static String[] BKP_GEN_FIELDS = new String[] { HIER_NM, HIER_CD, HIER_DS };
+
 	public final static String LEVEL = "LEVEL";
 
 	// TREE

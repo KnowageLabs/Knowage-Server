@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -360,6 +361,36 @@ public class HierarchyUtils {
 		logger.debug("Query for dimension data is: " + query);
 		logger.debug("END");
 		return query.toString();
+	}
+
+	public static List<Field> createBkpFields(List<Field> genFields, String[] bkpGenFields) {
+
+		logger.debug("START");
+
+		List<Field> result = new ArrayList<Field>();
+
+		// first we take real fields from generic fields...
+		for (int i = 0; i < genFields.size(); i++) {
+
+			Field tmpField = genFields.get(i);
+
+			for (int j = 0; j < bkpGenFields.length; j++) {
+
+				if (tmpField.getId().equals(bkpGenFields[j])) {
+					result.add(tmpField);
+					break;
+				}
+
+			}
+
+		}
+
+		// ...then we build a field for the others backup info
+		Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", true, false, false, true);
+		result.add(bkpField);
+
+		logger.debug("END");
+		return result;
 	}
 
 }

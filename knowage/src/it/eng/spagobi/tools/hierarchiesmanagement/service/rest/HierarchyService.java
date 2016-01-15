@@ -540,16 +540,18 @@ public class HierarchyService {
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimension);
 
 			Hierarchy hierarchy = hierarchies.getHierarchy(dimension);
-			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+			List<Field> genFields = hierarchy.getMetadataGeneralFields();
 
-			String queryText = selectHierarchyBkps(dataSource, hierarchyTable, hierarchyName, hierarchyType, generalMetadataFields);
+			List<Field> bkpFields = HierarchyUtils.createBkpFields(genFields, HierarchyConstants.BKP_GEN_FIELDS);
+
+			String queryText = selectHierarchyBkps(dataSource, hierarchyTable, hierarchyName, hierarchyType, bkpFields);
 
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			// 3 - Create JSON result
 			JSONArray rootArray = HierarchyUtils.createRootData(dataStore);
-			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(generalMetadataFields, true);
-			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(generalMetadataFields);
+			JSONArray columnsArray = HierarchyUtils.createJSONArrayFromFieldsList(bkpFields, true);
+			JSONArray columnsSearchArray = HierarchyUtils.createColumnsSearch(bkpFields);
 
 			if (rootArray == null || columnsArray == null || columnsSearchArray == null) {
 				return null;
@@ -1503,6 +1505,7 @@ public class HierarchyService {
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+		String bkpTimestampColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_TIMESTAMP_COLUMN, dataSource);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(calendar.getTime());
@@ -1512,8 +1515,8 @@ public class HierarchyService {
 
 		String vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
 
-		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ? WHERE " + hierNameColumn + "=? AND "
-				+ hierTypeColumn + "= ? AND " + vDateWhereClause;
+		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, " + bkpTimestampColumn + "= ? WHERE "
+				+ hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
@@ -1524,10 +1527,11 @@ public class HierarchyService {
 		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 			preparedStatement.setString(1, hierarchyName + "_" + timestamp);
 			preparedStatement.setBoolean(2, true);
-			preparedStatement.setString(3, hierarchyName);
-			preparedStatement.setString(4, hierarchyType);
-			preparedStatement.setDate(5, vDateConverted);
+			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
+			preparedStatement.setString(4, hierarchyName);
+			preparedStatement.setString(5, hierarchyType);
 			preparedStatement.setDate(6, vDateConverted);
+			preparedStatement.setDate(7, vDateConverted);
 
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
@@ -1650,8 +1654,7 @@ public class HierarchyService {
 
 	}
 
-	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyName, String hierarchyType,
-			List<Field> generalMetadataFields) {
+	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyName, String hierarchyType, List<Field> bkpFields) {
 
 		logger.debug("START");
 
@@ -1659,10 +1662,10 @@ public class HierarchyService {
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
 		String sep = ",";
 
-		int fieldsSize = generalMetadataFields.size();
+		int fieldsSize = bkpFields.size();
 
 		for (int i = 0; i < fieldsSize; i++) {
-			Field tmpField = generalMetadataFields.get(i);
+			Field tmpField = bkpFields.get(i);
 			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
 
 			if (i == fieldsSize - 1) {
@@ -1970,5 +1973,4 @@ public class HierarchyService {
 
 		logger.debug("END");
 	}
-
 }
