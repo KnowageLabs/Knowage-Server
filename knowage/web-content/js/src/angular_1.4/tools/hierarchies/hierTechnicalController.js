@@ -249,19 +249,21 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		var promise = $scope.editNode({},parent);
 		promise //TODO correggere inserimento
 			.then(function(newItem){
-					var tmpItem =angular.copy(item);
+					var tmpItem = $scope.createEmptyNode();
 					for ( key in newItem){ 
-						key =='children' ? tmpItem.children = [] : tmpItem[key] = newItem[key];
+						tmpItem[key] = newItem[key];
 					}
 					var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName : $scope.dimSrc.DIMENSION_NM + "_NM_LEV";
 					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dimSrc.DIMENSION_NM + "_CD_LEV";
 					tmpItem.name = tmpItem[keyName];
 					tmpItem.id = tmpItem[keyId];
-					tmpItem.children = [];
 					tmpItem.$parent = item;
-					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
-					tmpItem.expanded = false;
-					item.children.splice(0,0,tmpItem);
+					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1; 
+					if (item.children.length == 1 && item.children[0].fake == true){
+						item.children = [tmpItem];
+					}else{
+						item.children.splice(0,0,tmpItem);
+					}
 					$scope.treeTargetDirty = true;
 				},function(){
 				//nothing to do, request cancelled.
@@ -527,7 +529,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		do{
 			var el = elements.shift();
 			el.$parent=null;
-			if (el.children !== undefined && el.children.length > 0){
+			if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true){
 				for (var i =0 ; i<el.children.length;i++){
 					elements.push(el.children[i]);
 				}

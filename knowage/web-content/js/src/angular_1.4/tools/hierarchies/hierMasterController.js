@@ -342,6 +342,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				node[metadata[i].ID] = '';
 			}
 		}
+		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false,children:[]}];
 		node.expanded = false;
 		node.visible=true;
 		node.type="folder";
@@ -363,7 +364,6 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 					var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
 					tmpItem.name = tmpItem[keyName];
 					tmpItem.id = tmpItem[keyId];
-					tmpItem.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false,children:[]}];
 					tmpItem.$parent = item;
 					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1; 
 					if (item.children.length == 1 && item.children[0].fake == true){
