@@ -29,7 +29,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	
 	$scope.backupTable = [];
 	
-	$scope.columnsTable = [{'name':'name','label':'name'},{'name':'code','label':'code'},{'name':'description','label':'description'},{'name':'type','label':'type'}];
+	$scope.columnsTable = [{'name':'name','label':'name','editable':true},{'name':'code','label':'code','editable':false},{'name':'description','label':'description','editable':true},{'name':'type','label':'type','editable':false}];
 	$scope.backupSpeedMenu = [{
 	    	label: $scope.translate.load('sbi.generic.update2'),
 	    	icon:'fa fa-pencil',
@@ -244,7 +244,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		$scope.columnsTable.splice(0,$scope.columnsTable.length);
 		for (var i = 0;i<data.columns.length;i++){
 			if (data.columns[i].VISIBLE == true || data.columns[i].VISIBLE == "true"){
-				$scope.columnsTable.push({ 'label' : data.columns[i].NAME, 'name': data.columns[i].ID});
+				$scope.columnsTable.push({ 'label' : data.columns[i].NAME, 'name': data.columns[i].ID, 'editable': data.columns[i].EDITABLE});
 			}
 		}
 		$scope.columnSearchTable = data.columns_search;
@@ -270,12 +270,22 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	
 	$scope.menuOption = [{
 			}];
-	 	
-	$scope.showConfirm = function(hier) {
+	
+	
+	$scope.confirm = function(item,cell,listId){
+	    return  $scope.showConfirm(item);
+	}
+	
+	$scope.allowEdit = function(item,cell,listId, row, column){
+	    return column.EDITABLE == undefined || column.EDITABLE == true;
+	}
+	
+	
+	$scope.showConfirm = function(backup) {
 	    var confirm = $mdDialog
 			.confirm()
-			.title('Delete ' + hier.name.toUpperCase())
-			.content('Would you like to delete the item?')
+			.title('Modification')
+			.content('Are you sure to modify the backup?')
 			.ariaLabel('Lucky day')
 			.ok('Yes')
 			.cancel('No');

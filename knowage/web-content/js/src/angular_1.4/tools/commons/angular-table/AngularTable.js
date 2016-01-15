@@ -37,7 +37,8 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			showEmptyPlaceholder :"=?",
 			noDropEnabled:"=?",
 			allowEdit : "=?",
-			editFunction : "&"
+			editFunction : "&",
+			allowEditFunction: "&"
 		},
 		compile: function (tElement, tAttrs, transclude) {
 			 return {
@@ -118,11 +119,13 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 										tmpColData.name=col[i].name || "---";
 										tmpColData.label=col[i].label || tmpColData.name;
 										tmpColData.size=col[i].size || "";
+										tmpColData.editable=(col[i].editable && scope.allowEdit) || false;
 									}else{
 										//only the col name
 										tmpColData.label=col[i];
 										tmpColData.name=col[i];
 										tmpColData.size="";
+										tmpColData.editable=scope.allowEdit || false;
 									}
 
 									scope.tableColumns.push(tmpColData);
@@ -136,6 +139,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 										tmpColData.label=key;
 										tmpColData.name=key;
 										tmpColData.size="";
+										tmpColData.editable=key;
 										scope.tableColumns.push(tmpColData);
 									}
 								}
@@ -431,20 +435,36 @@ function TableBodyControllerFunction($scope){
 
 	}
 	
-	var oldObject = {};
+	var oldObject = [];
+	$scope.editingMap = {};
 	
-	$scope.startEdit = function (row, cell,evt){
-		if ($scope.allowEdit){
-			oldObject.row = angular.copy(row);
-			oldObject.cell = angular.copy(cell);
+	$scope.checkIfEditable = function (row,column,cell,evt){
+		var allowEdit = $scope.allowEdit && column.editable;
+		if ($scope.allowEditFunction){
+			allowEdit = allowEdit && $scope.allowEditFunction({
+				item : row,
+				cell : cell,
+				listId : $scope.id,
+				row : row,
+				column : column
+			});
+		}
+		return allowEdit;
+	}
+	
+	$scope.startEdit = function (row, column, cell,evt){
+		var allowEdit = $scope.checkIfEditable(row,column,cell,evt);
+		if (allowEdit && oldObject.length < 1){
+			oldObject.push(angular.copy(row));
 			row.editing = true;
 		}
 	}
 	
-	$scope.doneEdit = function(row, cell, evt){
-		if ($scope.allowEdit){
+	$scope.doneEdit = function(row, column, cell, evt){
+		if (row.editing){
 			row.editing = undefined;
-			if (!angular.equals(row,oldObject.row)){
+			var oldObj = oldObject.pop();
+			if (!angular.equals(row,oldObj)){
 				if ($scope.editFunction){
 					var response = $scope.editFunction({
 						item : row,
@@ -463,7 +483,7 @@ function TableBodyControllerFunction($scope){
 								function(){},
 								function(){
 									for (var k in row){
-										row[k] = angular.copy(oldObject.row[k]);
+										row[k] = angular.copy(oldObj[k]);
 									}
 								}
 						);

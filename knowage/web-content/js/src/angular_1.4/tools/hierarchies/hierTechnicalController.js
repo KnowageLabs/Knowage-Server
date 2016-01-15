@@ -545,6 +545,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 						$scope.hierTreeTarget = [newItem];
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;
+						$scope.hierTarget = {};
 					}
 				},function(){
 					//nothing to do, request cancelled.
