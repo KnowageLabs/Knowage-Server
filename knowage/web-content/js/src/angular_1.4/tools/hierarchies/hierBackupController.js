@@ -170,20 +170,25 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 						name: backup.HIER_NM
 					}
 			};
-			//TODO update edit rest service
-			$scope.restService.post("hierarchies","restoreHierarchy",null,config)
-				.success(
-					function(data, status, headers, config) {
-						if (data.errors === undefined){
-							$scope.createTable(data);
-						}else{
-							$scope.showAlert('ERROR',data.errors[0].message);
-						}
-					})	
-				.error(function(data, status){
-					var message = 'POST edit backup error of ' + data + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
-				});
+			var title = $scope.translate.load("sbi.generic.update2");
+		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+			var response = $scope.showConfirm(title,message);
+			response.then(function(){
+				$scope.restService.post("hierarchies","restoreHierarchy",null,config)
+					.success(
+						function(data, status, headers, config) {
+							if (data.errors === undefined){
+								$scope.createTable(data);
+							}else{
+								$scope.showAlert('ERROR',data.errors[0].message);
+							}
+						})	
+					.error(function(data, status){
+						var message = 'POST edit backup error of ' + data + ' with status :' + status;
+						$scope.showAlert('ERROR',message);
+					})
+				,function(){}
+			});
 		}
 	}
 	
@@ -196,19 +201,25 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 						name: backup.HIER_NM
 					}
 			};
-			$scope.restService.post("hierarchies","restoreHierarchy",null,config)
-				.success(
-					function(data, status, headers, config) {
-						if (data.errors !== undefined){
-							$scope.showAlert('INFO','Backup restored');
-						}else{
-							$scope.showAlert('ERROR',data.errors[0].message);
-						}
-					})	
-				.error(function(data, status){
-					var message = 'POST restore backup error of ' + data + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
-				});
+			var title = $scope.translate.load("sbi.generic.confirmRestore");
+		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+			var response = $scope.showConfirm(title,message);
+			response.then (function(){
+				$scope.restService.post("hierarchies","restoreHierarchy",null,config)
+					.success(
+						function(data, status, headers, config) {
+							if (data.errors !== undefined){
+								$scope.showAlert('INFO','Backup restored');
+							}else{
+								$scope.showAlert('ERROR',data.errors[0].message);
+							}
+						})	
+					.error(function(data, status){
+						var message = 'POST restore backup error of ' + data + ' with status :' + status;
+						$scope.showAlert('ERROR',message);
+					})
+				,function(){}
+			});
 		}
 	}
 	
@@ -221,20 +232,28 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 						name: backup.HIER_NM
 					}
 			};
-			$scope.restService.post("hierarchies","deleteHierarchy",null,config)
-				.success(
-						function(data, status, headers, config) {
-							if (data.errors === undefined){
-								$scope.showAlert('INFO','Backup deleted');
-								//TODO remove item from the table
-							}else{
-								$scope.showAlert('ERROR',data.errors[0].message);
-							}
-						})	
-				.error(function(data, status){
-					var message = 'POST delete backup error of ' + data + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
-				});
+			var title = $scope.translate.load("sbi.generic.delete");
+		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+			var response = $scope.showConfirm(title,message);
+			response.then (function(){
+				$scope.restService.post("hierarchies","deleteHierarchy",null,config)
+					.success(
+							function(data, status, headers, config) {
+								if (data.errors === undefined){
+									$scope.showAlert('INFO','Backup deleted');
+									//TODO remove item from the table
+								}else{
+									$scope.showAlert('ERROR',data.errors[0].message);
+								}
+							})	
+					.error(function(data, status){
+						var message = 'POST delete backup error of ' + data + ' with status :' + status;
+						$scope.showAlert('ERROR',message);
+					})
+				,function(){
+					
+				}
+			})
 		}
 	}
 	
@@ -272,8 +291,10 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			}];
 	
 	
-	$scope.confirm = function(item,cell,listId){
-	    return  $scope.showConfirm(item);
+	$scope.confirmModification = function(item,cell,listId){
+	    var title = $scope.translate.load("sbi.generic.modify");
+	    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+		return  $scope.showConfirm(title,message,item);
 	}
 	
 	$scope.allowEdit = function(item,cell,listId, row, column){
@@ -281,11 +302,11 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	}
 	
 	
-	$scope.showConfirm = function(backup) {
+	$scope.showConfirm = function(title,message,backup) {
 	    var confirm = $mdDialog
 			.confirm()
-			.title('Modification')
-			.content('Are you sure to modify the backup?')
+			.title(title)
+			.content(message)
 			.ariaLabel('Lucky day')
 			.ok('Yes')
 			.cancel('No');
