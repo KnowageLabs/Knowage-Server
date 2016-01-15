@@ -57,7 +57,7 @@
   		{
   			fontFamily: '$chart.style.fontFamily',
 	  		backgroundColor: '$chart.style.backgroundColor',	  		
-					
+            fontSize:'$chart.style.fontSize',					
 			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
     			fontStyle: '$chart.style.fontWeight',
 			#elseif($chart.style.fontWeight == 'underline')

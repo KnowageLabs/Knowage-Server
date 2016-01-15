@@ -517,7 +517,7 @@ function renderWordCloud(chartConf){
 		layout.start();
 
 		function draw(words,e) {
-					  
+				
 			d3.select("body")
 			.append("div").attr("id","main")
 			.style("height",chartConf.chart.height)
@@ -642,6 +642,27 @@ function renderWordCloud(chartConf){
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
          
+		
+		var tooltip=d3.select("#chart")
+		.append("div")
+		.attr("class","tooltip")
+		.style("opacity","0");
+		
+		d3.selectAll(".tooltip")
+		.style("position","absolute")
+		.style("text-align","center")
+		.style("min-width",10)
+		.style("max-width",1000)
+		.style("min-height",10)
+		.style("max-height",800)
+		.style("padding",3)
+		.style("font-size",chartConf.chart.style.fontSize)
+		.style("font-family",chartConf.chart.style.fontFamily)
+		.style("border","1px solid black")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
+		.style("border-radius","2px")
+		.style("pointer-events","none")
+		.style("background-color"," rgba(250,250,250,0.75)");
+		
 		    var wordArea=bacground
 			.append("g")
 			//.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
@@ -685,6 +706,33 @@ function renderWordCloud(chartConf){
 				
 			})
 			;
+			
+			wordArea.on('mouseover',function(d){
+				var tooltipText;
+				for(j=0;j<chartConf.data[0].length;j++){
+					if(chartConf.data[0][j].name===d.text){
+						
+						tooltipText=chartConf.data[0][j].value;
+					}
+				}
+				tooltip.transition().duration(50).style("opacity","1");
+				
+			
+    				
+				tooltip.text(" "+tooltipText.toFixed(2)+" ")				
+					.style("left", (d3.event.pageX) + "px")     
+					.style("top", (d3.event.pageY - 25) + "px");
+				
+			});
+			
+			wordArea.on('mouseleave',function(d){
+				
+				tooltip.transition().duration(50).style("opacity","0");
+				
+				
+			});
+			
+			
 			
 			}	
 		}
