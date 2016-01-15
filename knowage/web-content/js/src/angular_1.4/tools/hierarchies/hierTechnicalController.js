@@ -1,19 +1,8 @@
 var app = angular.module('hierManager');
 
-app.controller('hierTechnController', ['sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyTechFunction ]);
+app.controller('hierTechnController', ['$timeout','sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyTechFunction ]);
 
-function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
-	
-	var rootStructure = {
-			name:'root',
-			id:'root',
-			root: true,
-			children: [],
-			leaf:false,
-			aliasName: "HIER_NM",
-			aliasId: "HIER_CD",
-			type: "folder"
-			};
+function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -26,25 +15,24 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	/*Initialization Source variable*/
 	$scope.hierarchiesTypeSrc = ['MASTER','TECHNICAL'];
 	$scope.dateSrc = new Date();
-	//$scope.dateFilterSrc = new Date();
 	$scope.hierarchiesSrcMap = {};
 	$scope.dimensionSrc = [];
 	$scope.hierarchiesSrc=[];
 	$scope.hierTreeSrc = [];
 	$scope.hierTreeCacheSrc = {};
 	$scope.seeFilterSrc=false;
-
+	$scope.showLoadingSrc= false;
+	
 	/*Initialization Target variable*/
 	$scope.dateTarget = new Date();
-	//$scope.dateFilterTarget = new Date();
 	$scope.hierarchiesTargetMap = {};
 	$scope.hierTreeTarget = [];
-	//$scope.dimensionTarget = [];
 	$scope.hierarchiesTarget = [];
 	$scope.hierTreeCacheTarget = {};
 	$scope.seeFilterTarget=false;
 	$scope.treeTargetDirty=false;
 	$scope.targetIsNew = false; //flag, if is true, the tree create from user, else is get from server
+	$scope.showLoadingTarget = false;
 	
 	$scope.keys = {'subfolders' : 'children'};
 	
@@ -108,6 +96,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined){
+				$scope.toogleLoading(choose);
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
@@ -117,11 +106,12 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
+							$scope.toogleLoading(choose);
 						})
 					.error(function(data, status){
 						var message='GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
 						$scope.showAlert('ERROR',message);
-						
+						$scope.toogleLoading(choose);
 					});
 			}else{
 				choose == 'src' ? $scope.hierarchiesSrc = map[keyMap] : $scope.hierarchiesTarget = map[keyMap];
@@ -178,6 +168,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			}
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
 			if (hierMap[keyMap] === undefined){
+				$scope.toogleLoading(choose);
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
 						function(data, status, headers, config) {
@@ -192,11 +183,13 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
+							$scope.toogleLoading(choose);
 						})
 					.error(function(data, status){
 						var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 						var message='GET tree source error with parameters' + params + ' with status: "' + status+ '"';
 						$scope.showAlert('ERROR',message);
+						$scope.toogleLoading(choose);
 					});
 			}else{
 				choose =='src' ? $scope.hierTreeSrc = angular.copy($scope.hierTreeCacheSrc[keyMap]) : $scope.hierTreeTarget = angular.copy($scope.hierTreeCacheTarget[keyMap]);
@@ -427,21 +420,27 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 			label: $scope.translate.load('sbi.generic.add'),
 			showItem : function(item,event){
 				//visible if it is NOT a leaf
-				return item !== undefined && (item.leaf === undefined || item.leaf == false);
+				return item !== undefined && (item.leaf === undefined || item.leaf == false) && item.fake != true;
 				},
 			action: $scope.addHier
 		},{
 			label: $scope.translate.load('sbi.generic.clone'),
 			showItem : function(item,event){
 				//visible if it IS a leaf
-				return item !== undefined && item.leaf !== undefined && item.leaf == true;
+				return item !== undefined && item.leaf !== undefined && item.leaf == true && item.fake != true;
 				},
 			action : $scope.duplicateLeaf
 		},{
 			label: $scope.translate.load('sbi.roles.edit'),
+			showItem : function(item,event){
+				return item !== undefined && item.fake != true;
+				},
 			action : $scope.modifyHier
 		},{
 			label: $scope.translate.load('sbi.generic.delete'),
+			showItem : function(item,event){
+				return item !== undefined && item.fake != true;
+				},
 			action: $scope.deleteHier
 		}
 	];
@@ -558,6 +557,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		var elements = [treeCleaned];
 		do{
 			var el = elements.shift();
+			el.checked = el.visible = el.expanded = el.type = undefined;
 			el.$parent=null;
 			if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true){
 				for (var i =0 ; i<el.children.length;i++){
@@ -617,7 +617,16 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
 	}
 	
-	$scope.debug = function (){
-		var none='none';
+	$scope.toogleLoading = function(choose){
+		var loading = choose ==  "src" ? $scope.showLoadingSrc : $scope.showLoadingTarget;
+		if (loading){
+			$timeout(function(){
+				choose == "src" ? $scope.showLoadingSrc = false : $scope.showLoadingTarget = false;
+			},400,true);
+		}else{
+			$timeout(function(){
+				choose == "src" ? $scope.showLoadingSrc = true : $scope.showLoadingTarget = true;
+			},0,true);
+		}
 	}
 };

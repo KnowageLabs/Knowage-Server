@@ -1,4 +1,4 @@
-<div ng-controller = "hierTechnController" style="min-height: 30rem;height:92%">
+<div ng-controller = "hierTechnController" style="min-height: 30rem;height:90%">
 	<md-content layout="row" layout-wrap>
 		<div class="div-container" flex style="margin-right: 20px;" >
 			
@@ -65,24 +65,28 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-			<md-content layout='row' layout-fill flex='50'>
-				<document-tree 
-					id="left" 
-					ng-model="hierTreeSrc" 
-					create-tree="false"
-					multi-select='false' 
-					keys='keys' 
-					text-search='filterBySrcTrigger' 
-					fields-search='["name"]' 
-					order-by='orderBySrcTrigger'
-					menu-option='menuSrcOption' 
-					enable-drag='true' 
-					no-drop-enabled='true'
-					enable-clone='true'
-					show-empty-placeholder="true" o
-					options-drag-drop="treeTargetOptions" >
-				</document-tree>
-			</md-content>
+				<md-content ng-hide="showLoadingSrc" layout='row' layout-fill flex='50'>
+					<document-tree 
+						id="left" 
+						ng-model="hierTreeSrc" 
+						create-tree="false"
+						multi-select='false' 
+						keys='keys' 
+						text-search='filterBySrcTrigger' 
+						fields-search='["name"]' 
+						order-by='orderBySrcTrigger'
+						menu-option='menuSrcOption' 
+						enable-drag='true' 
+						no-drop-enabled='true'
+						enable-clone='true'
+						show-empty-placeholder="true" o
+						options-drag-drop="treeTargetOptions" >
+					</document-tree>
+				</md-content>
+				<md-content class='waitingContainer' ng-show='showLoadingSrc' layout='row' layout-padding layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>Please wait...</h4>
+				</md-content>
 			</md-content>
 		</div> 
 		<div  class="div-container" flex>	
@@ -148,8 +152,8 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-				<md-content>
-					<document-tree 
+				<md-content ng-hide="showLoadingRight">
+					<document-tree  
 						id="right" 
 						ng-model="hierTreeTarget" 
 						create-tree="false" 
@@ -163,6 +167,10 @@
 						enable-clone='true'
 						show-empty-placeholder="true" 	
 					></document-tree>
+				</md-content>
+				<md-content class='waitingContainer' ng-show='showLoadingTarget' layout='row' layout-padding layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>Please wait...</h4>
 				</md-content>
 			</md-content>	
 		</div>

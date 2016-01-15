@@ -123,7 +123,7 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-				<md-content>
+				<md-content ng-hide="showLoading">
 					<document-tree id="master" 
 						ng-model="hierTree"
 						create-tree="false" 
@@ -139,6 +139,10 @@
 						options-drag-drop = "treeOptions"
 						>
 					</document-tree>
+				</md-content>
+				<md-content class='waitingContainer' ng-show='showLoading' layout='row' layout-padding layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>Please wait...</h4>
 				</md-content>
 			</md-content>
 		</div>

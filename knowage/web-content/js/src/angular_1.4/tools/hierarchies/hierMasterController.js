@@ -1,6 +1,6 @@
 var app = angular.module('hierManager');
 
-app.controller('hierMasterController', ["$q","$timeout","sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
+app.controller('hierMasterController', ["$timeout","sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
 var nodeStructure = {
 		name:'node',
@@ -14,7 +14,7 @@ var nodeStructure = {
 		expanded : false
 		};
 
-function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
+function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,$mdDialog){
 	/*General initialization*/
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -24,6 +24,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	$scope.keys = {'subfolders' : 'children'};
 	$scope.orderByFields = ['name','id'];
 	$scope.doBackup = true;
+	$scope.showLoading = false;
 	/*Initialization Left side variables*/
 	$scope.dimensions = []; //array of dimensions combo-box
 	$scope.seeFilterDim = false; //visibility filter flag of left side
@@ -231,6 +232,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined){
+				$scope.toogleLoading();
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
@@ -240,11 +242,12 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
+							$scope.toogleLoading();
 						})
 					.error(function(data, status){
 						var message='GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
 						$scope.showAlert('ERROR',message);
-						
+						$scope.toogleLoading();
 					});
 			}else{
 				$scope.hierarchiesMaster = map[keyMap];
@@ -298,6 +301,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 				keyMap = keyMap + '_' + seeElement;
 			}
 			if (!$scope.hierTreeCache[keyMap]){
+				$scope.toogleLoading();
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
 						function(data, status, headers, config) {
@@ -312,11 +316,13 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
+							$scope.toogleLoading();
 						})
 					.error(function(data, status){
 						var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 						var message='GET tree source error with parameters' + params + ' with status: "' + status+ '"';
 						$scope.showAlert('ERROR',message);
+						$scope.toogleLoading();
 					});
 			}else{
 				$scope.hierTree =  angular.copy($scope.hierTreeCache[keyMap]);
@@ -491,21 +497,27 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 		label: $scope.translate.load('sbi.generic.add'),
 		showItem : function(item,event){
 			//visible if it is NOT a leaf
-			return item !== undefined && (item.leaf === undefined || item.leaf == false);
+			return item !== undefined && (item.leaf === undefined || item.leaf == false) && item.fake != true;
 			},
 		action: $scope.addHier
 		},{
 		label: $scope.translate.load('sbi.generic.clone'),
 		showItem : function(item,event){
 			//visible if it IS a leaf
-			return item !== undefined && item.leaf !== undefined && item.leaf == true;
+			return item !== undefined && item.leaf !== undefined && item.leaf == true && item.fake != true;
 			},
 		action : $scope.duplicateLeaf
 		},{
 		label: $scope.translate.load('sbi.roles.edit'),
+		showItem : function(item,event){
+			return item !== undefined && item.fake != true;
+			},
 		action : $scope.modifyHier
 		},{
 		label: $scope.translate.load('sbi.generic.delete'),
+		showItem : function(item,event){
+			return item !== undefined && item.fake != true;
+			},
 		action: $scope.deleteHier
 		}];
 	
@@ -514,6 +526,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 		var elements = [treeCleaned];
 		do{
 			var el = elements.shift();
+			el.checked = el.visible = el.expanded = el.type = el.sortDirection = undefined;
 			el.$parent=null;
 			if (el.children !== undefined && el.children.length > 0){
 				for (var i =0 ; i<el.children.length;i++){
@@ -950,5 +963,17 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 		}
 		return -1;
 	};
+	
+	$scope.toogleLoading = function(){
+		if ($scope.showLoading){
+			$timeout(function(){
+				$scope.showLoading = false;
+			},400,true);
+		}else{
+			$timeout(function(){
+				$scope.showLoading = true;
+			},0,true);
+		}
+	}
 }
 
