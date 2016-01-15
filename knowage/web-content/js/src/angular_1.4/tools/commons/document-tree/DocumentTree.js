@@ -301,7 +301,9 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
     		$scope.initializeFolders($scope.ngModel, null);
 			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
 			$scope.folders= $scope.ngModel;
-			$scope.seeTree = true;
+			$timeout(function(){
+				$scope.seeTree = true;
+				},400,true);
     	});
 	
 	$scope.toogleSort = function(element){
