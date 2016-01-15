@@ -40,7 +40,7 @@ public class Field {
 	 * @param type
 	 */
 	public Field(String id, String name, String alias, String type) {
-		this(id, name, type, false, false, false, false);
+		this(id, name, type, false, false, false, true);
 	}
 
 	public Field(String id, String name, String type, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue) {
