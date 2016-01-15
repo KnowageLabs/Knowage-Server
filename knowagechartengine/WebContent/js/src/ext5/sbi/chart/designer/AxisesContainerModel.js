@@ -10,7 +10,8 @@ Ext.define('Sbi.chart.designer.AxisesContainerModel',{
 		'categoryDataType',
 		
 		'serieAxis', 'serieGroupingFunction', 'serieType', 'serieOrderType', 
-		'serieColumn', 'serieColor', 'serieShowValue', 'seriePrecision',
+		'serieColumn', 'serieColor', 'serieShowValue', 'serieShowPercentage', 'serieShowAbsValue',
+		'seriePrecision',
 		'seriePrefixChar', 'seriePostfixChar', 
 		'serieDataType',
 		

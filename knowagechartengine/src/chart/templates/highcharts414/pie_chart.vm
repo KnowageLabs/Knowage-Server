@@ -539,23 +539,41 @@
 						name: '$serieName',
 						y: $serieValue,
 						
-						#set($relatedSerieShowValue = $relatedSerie.showValue)
-						#if ($relatedSerieShowValue == true)
+						#set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
+						#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
+						#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage)
+						
+						#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false)
 						dataLabels: {
-		                    enabled: $relatedSerieShowValue,
+		                    enabled: true,
 		                    
 		                    #set ($precisionValueAsString = '')
 		                    #if ($relatedSerie.precision != '')
 			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
 							#end
 							
-		                    
-		                    format: '<b>{point.name}</b>: {y$precisionValueAsString}'
+		                  format: '<b>{point.name}</b>: {y$precisionValueAsString}'
 		                }
-		                #else
+		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true )
 		                dataLabels: {
 		                    enabled: true,    
 		                    format: '<b>{point.name}</b>: {point.percentage:.'+$relatedSerie.precision+'f}%'
+		                }
+		                
+		                #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true)
+						dataLabels: {
+		                    enabled: true,
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
+							#end
+							
+		                    format: '<b>{point.name}</b>: {y$precisionValueAsString} ({point.percentage:.'+$relatedSerie.precision+'f}%)'
+		                }
+		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == false)
+		                dataLabels: {
+		                enabled: false
 		                }
 						#end
 					},

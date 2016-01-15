@@ -348,6 +348,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 //			console.log("-- After saving the chart: --");
 			//console.log(result);
 			//console.log("exportAsJson (END)");
+			
+			
+			
 			return result;
 		},
 
@@ -666,7 +669,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					serie['showValue'] = serieAsMap
 						.get('serieShowValue') != undefined ? serieAsMap
 						.get('serieShowValue')
-						 : '';
+						 : '';						
+					serie['showAbsValue'] = serieAsMap
+						.get('serieShowAbsValue') != undefined ? serieAsMap
+						.get('serieShowAbsValue')
+						 : '';	
+					serie['showPercentage'] = serieAsMap
+						.get('serieShowPercentage') != undefined ? serieAsMap
+						.get('serieShowPercentage')
+						 : '';	
 					serie['type'] = serieAsMap.get('serieType') != undefined ? serieAsMap
 						.get('serieType')
 						 : '';
@@ -1590,7 +1601,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				
 			}
 			
-			//console.log("getChartDataAsOriginaJson (END)");
 			return CHART;
 		},
 

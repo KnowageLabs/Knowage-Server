@@ -31,6 +31,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	serieOrderComboBox: null,
 	serieColorPicker: null,
 	serieShowValue: null,
+	serieShowAbsValue: null,
+	serieShowPercentage:null,
+
 	seriePrecisionNumberField: null,
 	seriePrefixCharTextField: null,
 	seriePostfixCharTextField: null,
@@ -417,8 +420,36 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});		
+       
+		var showAbsValue = dataAtRow.get('serieShowAbsValue');
+		this.serieShowAbsValue = Ext.create('Ext.form.field.Checkbox',{
+			checked: (showAbsValue != undefined) ? showAbsValue: true,
+			labelSeparator: '',
+			fieldLabel: LN('sbi.chartengine.designer.showAbsValue'),
+		});		
+        
+		var showPercentage = dataAtRow.get('serieShowPercentage');
+		this.serieShowPercentage = Ext.create('Ext.form.field.Checkbox',{
+			checked: (showPercentage != undefined) ? showPercentage: true,
+			labelSeparator: '',
+			fieldLabel: LN('sbi.chartengine.designer.showPercentage'),
+		});		
 
+		
 		this.serieFieldSet.add(this.serieShowValue);
+		this.serieFieldSet.add(this.serieShowAbsValue);
+		this.serieFieldSet.add(this.serieShowPercentage);
+		
+		if(chartType=="PIE"){
+			this.serieShowAbsValue.show();
+			this.serieShowPercentage.show();
+			this.serieShowValue.hide();
+
+		}else{
+			this.serieShowAbsValue.hide();
+			this.serieShowPercentage.hide();
+			this.serieShowValue.show();
+		}
 		
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
@@ -603,6 +634,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var showValue = this.serieShowValue.getValue();
 		dataAtRow.set('serieShowValue', showValue);
+		
+		var showAbsValue = this.serieShowAbsValue.getValue();
+		dataAtRow.set('serieShowAbsValue', showAbsValue);
+		
+		var showPercentage = this.serieShowPercentage.getValue();
+		dataAtRow.set('serieShowPercentage', showPercentage);
 		
 		var seriePrecision = this.seriePrecisionNumberField.getValue();
 		dataAtRow.set('seriePrecision', seriePrecision);
