@@ -321,7 +321,7 @@ public class HierarchyService {
 			if (!isInsert && doBackup) {
 				updateHierarchyForBackup(dataSource, connection, hierarchyType, hierarchyName, validityDate, hierarchyTable);
 			} else if (!isInsert && !doBackup) {
-				deleteHierarchy(requestVal, dataSource, connection);
+				deleteHierarchy(dimension, hierarchyName, dataSource, connection);
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
@@ -354,14 +354,11 @@ public class HierarchyService {
 	@POST
 	@Path("/deleteHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String deleteHierarchy(@Context HttpServletRequest req) throws SQLException {
+	public String deleteHierarchy(@QueryParam("dimension") String dimension, @QueryParam("name") String hierarchyName) throws SQLException {
 		// delete hierarchy
 		Connection connection = null;
 		try {
-			String pippo = (String) req.getAttribute("params");
-			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			String dimension = requestVal.getString("dimension");
 			// 1 - get datasource label name
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -370,7 +367,7 @@ public class HierarchyService {
 
 			// 2 - Execute DELETE
 			connection = dataSource.getConnection();
-			deleteHierarchy(requestVal, dataSource, connection);
+			deleteHierarchy(dimension, hierarchyName, dataSource, connection);
 
 		} catch (Throwable t) {
 			connection.rollback();
@@ -494,16 +491,11 @@ public class HierarchyService {
 	@POST
 	@Path("/restoreHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String restoreHierarchy(@Context HttpServletRequest req) throws SQLException {
+	public String restoreHierarchy(@QueryParam("name") String hierarchyBkpName, @QueryParam("dimension") String dimension) throws SQLException {
 		// restores a backup hierarchy
 		try {
 
 			logger.debug("START");
-
-			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-
-			String hierarchyBkpName = requestVal.getString("name");
-			String dimension = requestVal.getString("dimension");
 
 			if ((dimension == null) || (hierarchyBkpName == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", "wrong request parameters");
@@ -680,25 +672,35 @@ public class HierarchyService {
 
 	}
 
-	private boolean deleteHierarchy(JSONObject requestVal, IDataSource dataSource, Connection connection) throws SQLException {
+	private boolean deleteHierarchy(String dimension, String hierarchyName, IDataSource dataSource, Connection connection) throws SQLException {
 		// delete hierarchy
+
+		logger.debug("START");
+
 		try {
 
-			String dimension = requestVal.getString("dimension");
-			String hierarchyName = requestVal.getString("name");
+			// String dimension = requestVal.getString("dimension");
+			// String hierarchyName = requestVal.getString("name");
+
+			logger.debug("Preparing delete statement. Name of the hierarchy is [" + hierarchyName + "]");
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
 			// 2 - create query text
-			String hierarchyCodeCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String tableName = hierarchies.getHierarchyTableName(dimension);
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyCodeCol + "=\"" + hierarchyName + "\" ";
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "=\"" + hierarchyName + "\" ";
+
+			logger.debug("The delete query is [" + queryText + "]");
 
 			// 3 - Execute DELETE statement
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(queryText);
 			statement.close();
+
+			logger.debug("Delete query successfully executed");
+			logger.debug("END");
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while deleting custom hierarchy");
@@ -1540,36 +1542,36 @@ public class HierarchyService {
 
 	}
 
-	private void deleteBackupHierarchy(IDataSource dataSource, Connection databaseConnection, String hierBkpName, String hierTableName) {
-
-		logger.debug("START");
-
-		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
-		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
-
-		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + "= ?";
-
-		logger.debug("The delete query is [" + deleteQuery + "]");
-
-		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(deleteQuery)) {
-
-			preparedStatement.setString(1, hierBkpName);
-
-			logger.debug("Preparing delete statement. Name of the hierarchy backup is [" + hierBkpName + "]");
-
-			preparedStatement.setBoolean(2, true);
-
-			preparedStatement.executeUpdate();
-
-			logger.debug("Delete query successfully executed");
-			logger.debug("END");
-
-		} catch (Throwable t) {
-			logger.error("An unexpected error occured while deleting hierarchy backup");
-			throw new SpagoBIServiceException("An unexpected error occured while deleting hierarchy backup", t);
-		}
-
-	}
+	// private void deleteBackupHierarchy(IDataSource dataSource, Connection databaseConnection, String hierBkpName, String hierTableName) {
+	//
+	// logger.debug("START");
+	//
+	// String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+	// String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
+	//
+	// String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + "= ?";
+	//
+	// logger.debug("The delete query is [" + deleteQuery + "]");
+	//
+	// try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(deleteQuery)) {
+	//
+	// preparedStatement.setString(1, hierBkpName);
+	//
+	// logger.debug("Preparing delete statement. Name of the hierarchy backup is [" + hierBkpName + "]");
+	//
+	// preparedStatement.setBoolean(2, true);
+	//
+	// preparedStatement.executeUpdate();
+	//
+	// logger.debug("Delete query successfully executed");
+	// logger.debug("END");
+	//
+	// } catch (Throwable t) {
+	// logger.error("An unexpected error occured while deleting hierarchy backup");
+	// throw new SpagoBIServiceException("An unexpected error occured while deleting hierarchy backup", t);
+	// }
+	//
+	// }
 
 	private void restoreBackupHierarchy(IDataSource dataSource, String hierBkpName, String hierTableName) {
 
@@ -1948,6 +1950,9 @@ public class HierarchyService {
 					final Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(tmpValue);
 					java.sql.Date tmpDate = new java.sql.Date(calendar.getTimeInMillis());
 					insertPs.setDate(i + 1, tmpDate);
+				} else {
+					Object tmpObj = tmpValue;
+					insertPs.setObject(i + 1, tmpObj);
 				}
 
 			}
