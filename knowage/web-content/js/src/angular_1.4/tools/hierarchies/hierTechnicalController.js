@@ -24,7 +24,7 @@ function hierarchyTechFunction(sbiModule_config,sbiModule_translate,sbiModule_re
 	$scope.metadataMap = {};
 	
 	/*Initialization Source variable*/
-	$scope.hierarchiesTypeSrc = ['Master', $scope.translate.load('sbi.hierarchies.type.technical')];
+	$scope.hierarchiesTypeSrc = ['MASTER','TECHNICAL'];
 	$scope.dateSrc = new Date();
 	//$scope.dateFilterSrc = new Date();
 	$scope.hierarchiesSrcMap = {};

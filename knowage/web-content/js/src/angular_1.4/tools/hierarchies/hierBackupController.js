@@ -17,7 +17,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.log = sbiModule_logger;
 	
 	/*Initialization backup variable*/
-	$scope.hierarchiesTypeBackup = ['Master', $scope.translate.load('sbi.hierarchies.type.technical')];
+	$scope.hierarchiesTypeBackup = ['MASTER','TECHNICAL'];
 	$scope.hierarchiesBackupMap = {};
 	$scope.backupTable = [];
 	$scope.columnsTable = [];
