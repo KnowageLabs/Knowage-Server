@@ -224,4 +224,26 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
+
+	@DELETE
+	@Path("/modes/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	public Response deleteUseMode(@PathParam("id") Integer id) {
+
+		IParameterUseDAO useModesDao = null;
+
+		try {
+			ParameterUse mode = new ParameterUse();
+			mode.setUseID(id);
+			useModesDao = DAOFactory.getParameterUseDAO();
+			useModesDao.setUserProfile(getUserProfile());
+			useModesDao.eraseParameterUse(mode);
+
+			String encodedMode = URLEncoder.encode("" + mode.getUseID(), "UTF-8");
+			return Response.ok().entity(encodedMode).build();
+		} catch (Exception e) {
+			logger.error("Error with deleting resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
+		}
+	}
 }

@@ -60,7 +60,7 @@
 
 			<md-button class="md-fab md-ExtraMini addButton" aria-label="create"
 				style="position:absolute; right:11px; top:0px;"
-				ng-click="createDrivers()"> <md-icon
+				ng-click="createUseModes()"> <md-icon
 				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
 			</md-icon> </md-button>
 		</div>
@@ -103,8 +103,8 @@
 				</div>
 				</md-toolbar>
 				<md-content flex style="margin-left:20px;"
-				class="ToolbarBox miniToolbar noBorder"> <md-tabs
-				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
+				class="ToolbarBox miniToolbar noBorder"> 
+			<md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.analytical.drivers.details");}}'>
 			<md-content flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">
@@ -195,7 +195,7 @@
 						<div flex=100>
 							 <md-input-container class="small counter">
 								<label>{{translate.load("sbi.ds.label")}}</label>
-								<input name="lbl" ng-model="selectedParUse.label" ng-required="true"
+								<input name="lbl" ng-model="selectedParUse.label" ng-required="selectedTab == 1"
 								ng-maxlength="20" ng-change="setDirty()">
 							
 									<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedDriver.label== null">
@@ -210,7 +210,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input name="name" ng-model="selectedParUse.name"  ng-required = "true"
+							<input name="name" ng-model="selectedParUse.name"  ng-required = "selectedTab == 1"
 						    ng-maxlength="40" ng-change="setDirty()">
 						    
 						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedDriver.name== null">
@@ -324,7 +324,8 @@
 			   		</div>
 			   		
     				<label>{{translate.load("sbi.generic.defaultValue")}}</label>
-    				<md-radio-group ng-model="defaultrg" layout="row" ng-change="viewParUse()">
+    				<md-radio-group ng-model="selectedParUse.defaultrg" layout="row">
+    				
 				      <md-radio-button value="none" class="md-primary">
 				      {{translate.load("sbi.analytical.drivers.usemode.none")}}
 				      
@@ -382,7 +383,9 @@
 					
 				    <div layout="row" layout-wrap flex>
 					<div flex="25" ng-repeat="rl in rolesList">
-						<md-checkbox > {{ rl.name }} </md-checkbox>
+						<md-checkbox ng-checked="setRoles(rl, role)" ng-click="check(rl, role)"> 
+						{{ rl.name }} 
+						</md-checkbox>
 					</div>
 				    </div>
 					
