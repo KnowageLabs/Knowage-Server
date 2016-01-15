@@ -98,11 +98,8 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 								source[keys[i]] = tmp[keys[i]];
 							}
 						}
-						if (dest.children.length == 1 && dest.children[0].fake == true){
-							dest.children = [source];
-						}else{
-							dest.children.splice(0,0,source);
-						}
+						$scope.removeFakeAndCorupt(dest.children);
+						dest.children.splice(0,0,source);
 						$scope.treeDirty = true;
 						e.source.cloneModel = source;
 						return false;
@@ -114,6 +111,16 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 			return false;
 		}
 	};	
+	
+	/*remove elements dropped by ui-tree that are wrong. These elements are dropped though you cancel the confirm dialog [showListHierarchies]*/
+	$scope.removeFakeAndCorupt = function (array){
+		for (var i = 0;i< array.length ; i++){
+			if (array[i].fake == true || (!array[i].leaf && !array[i].children)){
+				array.splice(i,1);
+				i--;
+			}
+		}
+	}
 	
 //	$scope.hierTree.push(angular.copy(dataJson));
 	/*Get dimensions for combo box*/
@@ -316,13 +323,39 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 			}
 		}	
 	}
+	
+	$scope.createEmptyNode = function (){
+		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; 
+		var metTmp =  $scope.metadataTreeMap[dimName];
+		if (metTmp === undefined){
+			$scope.showAlert('Error','No metadata Node found for dimension '+ dimName );
+			return null;
+		}
+		var metadata = metTmp.NODE_FIELDS;
+		var node = {};
+		for (var i =0; i < metadata.length; i++){
+			if (metadata[i].TYPE == 'Number'){
+				node[metadata[i].ID] = -1;
+			}else if(metadata[i].TYPE == 'Date'){
+				node[metadata[i].ID] = new Date();
+			}else{
+				node[metadata[i].ID] = '';
+			}
+		}
+		node.expanded = false;
+		node.visible=true;
+		node.type="folder";
+		node.cheked = false;
+		return node;
+	}
+	
 	/*Add new hierarchy in the tree with context menu*/
 	$scope.addHier =  function(item,parent,event){
 		var promise = $scope.editNode({},parent);
 		if (promise !== null){
 			promise
 			.then(function(newItem){
-					var tmpItem =angular.copy(item.children.length > 0 ? item.children[0] : item );
+					var tmpItem = $scope.createEmptyNode();
 					for ( key in newItem){ 
 						tmpItem[key] = newItem[key];
 					}
@@ -333,7 +366,6 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 					tmpItem.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false,children:[]}];
 					tmpItem.$parent = item;
 					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1; 
-					tmpItem.expanded = false;
 					if (item.children.length == 1 && item.children[0].fake == true){
 						item.children = [tmpItem];
 					}else{
@@ -414,7 +446,7 @@ function masterControllerFunction ($q,$timeout,sbiModule_config,sbiModule_logger
 	/*Visualize the edit dialog to modify the item with context menu*/
 	$scope.editNode = function(item,parent){
 		var parentEl = angular.element(document.body);
-		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; //TODO remove hard coded for test
+		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : ''; 
 		var metTmp =  $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined){
 			$scope.showAlert('Error','No metadata found for dimension '+ dimName );
