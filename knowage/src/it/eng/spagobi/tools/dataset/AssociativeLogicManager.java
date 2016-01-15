@@ -165,7 +165,7 @@ public class AssociativeLogicManager {
 
 			Set<String> baseSet = edgeGroupValues.get(group);
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
-			if (!intersection.equals(baseSet)) {
+			if (!intersection.equals(baseSet) && intersection.size() > 0) {
 				edgeGroupValues.put(group, intersection);
 				String inClauseColumns;
 				String inClauseValues;
