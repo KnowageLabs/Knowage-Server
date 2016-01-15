@@ -35,7 +35,9 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			dragDropOptions :"=?",
 			enableClone:"=?",
 			showEmptyPlaceholder :"=?",
-			noDropEnabled:"=?"
+			noDropEnabled:"=?",
+			allowEdit : "=?",
+			editFunction : "&"
 		},
 		compile: function (tElement, tAttrs, transclude) {
 			 return {
@@ -427,6 +429,48 @@ function TableBodyControllerFunction($scope){
 			return angular.equals($scope.selectedItem, item);
 		}
 
+	}
+	
+	var oldObject = {};
+	
+	$scope.startEdit = function (row, cell,evt){
+		if ($scope.allowEdit){
+			oldObject.row = angular.copy(row);
+			oldObject.cell = angular.copy(cell);
+			row.editing = true;
+		}
+	}
+	
+	$scope.doneEdit = function(row, cell, evt){
+		if ($scope.allowEdit){
+			row.editing = undefined;
+			if (!angular.equals(row,oldObject.row)){
+				if ($scope.editFunction){
+					var response = $scope.editFunction({
+						item : row,
+						cell : cell,
+						listId : $scope.id,
+						row : row,
+						column : cell
+					})
+					//check which type is the response. Could be either boolean or promise
+					if (typeof response == "boolean" && response == false){
+						for (var k in row){
+							row[k] = angular.copy(oldObject.row[k]);
+						}
+					}else if (typeof response == "object" && typeof response.then == "function"){
+						response.then(
+								function(){},
+								function(){
+									for (var k in row){
+										row[k] = angular.copy(oldObject.row[k]);
+									}
+								}
+						);
+					}
+				}
+			}
+		}
 	}
 
 
