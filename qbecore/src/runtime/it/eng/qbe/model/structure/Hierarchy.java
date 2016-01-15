@@ -5,12 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.model.structure;
 
-import java.util.List;
+import java.util.LinkedList;
 
 public class Hierarchy {
 	private String name;
 	private Boolean isDefault;
-	private List<HierarchyLevel> levels;
+	private LinkedList<HierarchyLevel> levels;
 
 	public Hierarchy(String name, Boolean isDefault) {
 		setName(name);
@@ -35,7 +35,7 @@ public class Hierarchy {
 	/**
 	 * @return the levels
 	 */
-	public List<HierarchyLevel> getLevels() {
+	public LinkedList<HierarchyLevel> getLevels() {
 		return levels;
 	}
 
@@ -43,7 +43,7 @@ public class Hierarchy {
 	 * @param levels
 	 *            the levels to set
 	 */
-	public void setLevels(List<HierarchyLevel> levels) {
+	public void setLevels(LinkedList<HierarchyLevel> levels) {
 		this.levels = levels;
 	}
 
@@ -89,13 +89,20 @@ public class Hierarchy {
 	}
 
 	public String getLevelByType(String levelType) {
-		String retVal = null;
 		for (HierarchyLevel level : getLevels()) {
 			if (level.getType().equals(levelType)) {
-				retVal = level.getColumn();
-				break;
+				return level.getColumn();
 			}
 		}
-		return retVal;
+		return null;
+	}
+	
+	public boolean contains(String name) {
+		for (HierarchyLevel level : getLevels()) {
+			if (level.getColumn().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

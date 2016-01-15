@@ -58,7 +58,16 @@ public class Query implements IQuery {
 	String relationsRoles;
 
 	Map<IModelEntity, Map<String, List<String>>> mapEntityRoleField;
-
+	
+	private Map<String, Map<String, String>> inlineFilteredSelectFields;
+	private Set<String> aliasesToBeRemovedAfterExecution;
+	private Set<String> temporalFieldTypesInSelect;
+	private Map<String, String> hierarchyFullColumnMap;
+	private int relativeYearIndex;
+	private LinkedList<String> allYearsOnDWH;
+	private Map<String, List<String>> distinctPeriods;
+	private Map<String, String> currentPeriodValuyesByType;
+	
 	public Query() {
 		selectFields = new LinkedList(); /* modified by: (danilo.ristovski@mht.net) */
 		whereClause = new ArrayList();
@@ -240,6 +249,10 @@ public class Query implements IQuery {
 			String orderType, String pattern, String temporalOperand, String temporalOperandParameter) {
 		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, temporalOperand,
 				temporalOperandParameter));
+	}
+
+	public void addSelectFiled(SimpleSelectField timeIdField) {
+		this.selectFields.add(timeIdField);
 	}
 
 	public void addCalculatedFiled(String fieldAlias, String expression, String type, boolean included, boolean visible) {
@@ -890,4 +903,79 @@ public class Query implements IQuery {
 			}
 		}
 	}
+	
+	public void setInlineFilteredSelectFields(Map<String, Map<String, String>> inlineFilteredSelectFields) {
+		this.inlineFilteredSelectFields = inlineFilteredSelectFields;
+	}
+	
+	public Map<String, Map<String, String>> getInlineFilteredSelectFields() {
+		return inlineFilteredSelectFields;
+	}
+
+	public void setAliasesToBeRemovedAfterExecution(Set<String> aliasesToBeRemovedAfterExecution) {
+		this.aliasesToBeRemovedAfterExecution = aliasesToBeRemovedAfterExecution;
+	}
+	
+	public Set<String> getAliasesToBeRemovedAfterExecution() {
+		return aliasesToBeRemovedAfterExecution;
+	}
+
+	public void setTemporalFieldTypesInSelect(Set<String> temporalFieldTypesInSelect) {
+		this.temporalFieldTypesInSelect = temporalFieldTypesInSelect;
+	}
+	
+	public Set<String> getTemporalFieldTypesInSelect() {
+		return temporalFieldTypesInSelect;
+	}
+
+	
+	public Set<String> getTemporalFieldTypesInQuery() {
+		Set<String> temporalFieldTypesInQuery = new HashSet<>();
+		temporalFieldTypesInQuery.addAll(temporalFieldTypesInSelect);
+		temporalFieldTypesInQuery.addAll(aliasesToBeRemovedAfterExecution);
+		return temporalFieldTypesInQuery;
+	}
+
+	public void setHierarchyFullColumnMap(Map<String, String> hierarchyFullColumnMap) {
+		this.hierarchyFullColumnMap = hierarchyFullColumnMap;
+	}
+	
+	public Map<String, String> getHierarchyFullColumnMap() {
+		return hierarchyFullColumnMap;
+	}
+
+	public void setRelativeYearIndex(int relativeYearIndex) {
+		this.relativeYearIndex = relativeYearIndex;
+	}
+	
+	public int getRelativeYearIndex() {
+		return relativeYearIndex;
+	}
+
+	public void setAllYearsOnDWH(LinkedList<String> allYearsOnDWH) {
+		this.allYearsOnDWH = allYearsOnDWH;
+	}
+	
+	public LinkedList<String> getAllYearsOnDWH() {
+		return allYearsOnDWH;
+	}
+
+	public void setDistinctPeriods(Map<String, List<String>> distinctPeriods) {
+		this.distinctPeriods = distinctPeriods;
+	}
+	
+	public Map<String, List<String>> getDistinctPeriods() {
+		return distinctPeriods;
+	}
+
+	public void setCurrentPeriodValuyesByType(Map<String, String> currentPeriodValuyesByType) {
+		this.currentPeriodValuyesByType = currentPeriodValuyesByType;
+	}
+	
+	public Map<String, String> getCurrentPeriodValuyesByType() {
+		return currentPeriodValuyesByType;
+	}
+	
 }
+
+

@@ -165,7 +165,7 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 		Hierarchy hierarchy = new Hierarchy(name, isDefault);
 		List<?> levelNodes = hierarchyNode.selectNodes(LEVEL_TAG);
 
-		List<HierarchyLevel> levels = new LinkedList<HierarchyLevel>();
+		LinkedList<HierarchyLevel> levels = new LinkedList<HierarchyLevel>();
 		for (Object levelObj : levelNodes) {
 			Node levelNode = (Node) levelObj;
 			String levelName = levelNode.valueOf("@name");

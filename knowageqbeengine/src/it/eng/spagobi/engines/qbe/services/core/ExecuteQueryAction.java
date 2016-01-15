@@ -8,7 +8,9 @@ package it.eng.spagobi.engines.qbe.services.core;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -26,9 +28,15 @@ import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.services.core.catalogue.SetCatalogueAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -39,8 +47,12 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.LogMF;
@@ -128,11 +140,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			updatePromptableFiltersValue(query, this);
 
 			dataStore = executeQuery(start, limit);
+			dataStore = handleTimeAggregations(dataStore, start, limit);
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);
 
+			
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
@@ -158,6 +172,423 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			logger.debug("OUT");
 		}
 
+	}
+
+
+
+	private IDataStore handleTimeAggregations(IDataStore fullDatastore, Integer start, Integer limit) {
+		
+		Query query = this.getQuery();
+		Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
+		
+		if(inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
+			IDataStore finalDatastore = null;
+			
+			/*
+			 * DATA FOR AGGREGATION
+			 * */
+			Set<String> aliasesToBeRemovedAfterExecution = query.getAliasesToBeRemovedAfterExecution();
+			Map<String, String> hierarchyFullColumnMap = query.getHierarchyFullColumnMap();
+			LinkedList<String> allYearsOnDWH = query.getAllYearsOnDWH();
+			int relativeYearIndex = query.getRelativeYearIndex();
+			Set<String> temporalFieldTypesInQuery = query.getTemporalFieldTypesInQuery();
+			Map<String, List<String>> distinctPeriods = query.getDistinctPeriods();
+			
+			// per comodità riorganizzo i periodi per type
+			Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
+			for (String type : hierarchyFullColumnMap.keySet()) {
+				distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	
+			}
+			
+			/*
+			 * END DATA FOR AGGREGATION
+			 * */
+			
+			// elimino le groupby aggiuntive per ottenere tutte le righe della query finale
+			List<ISelectField> selectFields = query.getSelectFields(false);
+			for (ISelectField sfield : selectFields) {
+				if (sfield.isSimpleField()) {
+					SimpleSelectField ssField = (SimpleSelectField) sfield;
+					if(aliasesToBeRemovedAfterExecution != null && aliasesToBeRemovedAfterExecution.contains(ssField.getUniqueName())) {
+						ssField.setGroupByField(false);
+						ssField.setFunction(AggregationFunctions.COUNT_FUNCTION);
+					}
+				}
+			}
+			
+			// eseguo la query per avere il numero di righe finale
+			finalDatastore = executeQuery(start, limit);
+			
+			// aggrego!
+			for (Iterator finalIterator = finalDatastore.iterator(); finalIterator.hasNext();) {
+				Record finalRecord = (Record) finalIterator.next();
+
+				Map<String, String> rowPeriodValuesByType = new HashMap<>();
+				for (String type : temporalFieldTypesInQuery) {
+					for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
+						String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
+						if(fieldName != null && query.getTemporalFieldTypesInQuery().contains(fieldName)){
+							rowPeriodValuesByType.put(fieldName, finalRecord.getFieldAt(fieldIndex).getValue().toString()); 
+						}
+					}
+				}
+				
+				
+				// recupero l'identificativo della riga, rappresentato 
+				// come coppie alias/valore
+				Map<String, String> currentRecordId = getRecordAggregatedId(finalRecord, finalDatastore, query);
+				
+				
+				
+				
+				// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 0 a 11, i quarter da 0 a 3
+				Map<String, Integer> rowPeriodsNumbered = new HashMap<>();
+				for (String type : rowPeriodValuesByType.keySet()) {
+					String currentPeriodValue = rowPeriodValuesByType.get(type);
+					List<String> distinctPeriodsForThisType = distinctPeriods.get(type);
+					int currentValueIndexForThisType = -1;
+					for(int i = 0; i< distinctPeriodsForThisType.size(); i++) {
+						String period = distinctPeriodsForThisType.get(i);
+						if(period.equals(currentPeriodValue)) {
+							currentValueIndexForThisType = i;
+							break;
+						}
+					}
+					rowPeriodsNumbered.put(type, currentValueIndexForThisType);	
+				}
+				
+				
+				String rowLog = "| ";
+				
+				// per ogni colonna di ogni riga, se c'è un operatore inline, ne calcolo il valore
+				for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
+					Map<String, String> firstRecordId = new HashMap<>();
+					firstRecordId.putAll(currentRecordId);
+					Map<String, String> lastRecordId = new HashMap<>();
+					lastRecordId.putAll(currentRecordId);
+					
+					String fieldAlias = finalDatastore.getMetaData().getFieldAlias(fieldIndex);
+					// se la colonna è da calcolare...
+					if(fieldAlias != null && inlineFilteredSelectFields.containsKey(fieldAlias)){
+						
+						Map<String, String> inlineParameters = inlineFilteredSelectFields.get(fieldAlias);
+						String temporalOperand = inlineParameters.get("temporalOperand");
+						String temporalOperandParameter_str = inlineParameters.get("temporalOperandParameter");
+						int temporalOperandParameter = Integer.parseInt(temporalOperandParameter_str);
+						
+						String periodType = null;
+						boolean lastPeriod = false;
+						switch (temporalOperand) {
+						
+						// PERIOD_TO_DATE
+						// per i PERIOD_TO_DATE devo recuperare l'id temporale della riga  da cui partire, 
+						// quella a cui fermarmi corrisponde con la riga corrente traslata nel periodo di riferimento
+						// YTD_1 per la riga corrispondente a Giugno 2016 visualizzerà il dato aggregato da inizio 2015 a tutto Giugno 2015
+						case SetCatalogueAction.TEMPORAL_OPERAND_YTD:
+						{
+							// PORTO AL PRIMO RECORD DEL ANNO
+							for (String fieldType : temporalFieldTypesInQuery) {
+								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
+									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
+								}
+							}
+							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
+							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex -1 ) {
+								String parallelYear =  allYearsOnDWH.get(parallelYearIndex);
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
+							}
+							else {
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
+							}
+							break;
+						}	
+						case SetCatalogueAction.TEMPORAL_OPERAND_QTD:
+							if (periodType == null) {
+								periodType = "QUARTER";
+							}
+						case SetCatalogueAction.TEMPORAL_OPERAND_MTD:
+							if (periodType == null) {
+								periodType = "MONTH";
+							}
+						case SetCatalogueAction.TEMPORAL_OPERAND_WTD:
+							if (periodType == null) {
+								periodType = "WEEK";
+							}
+						case SetCatalogueAction.TEMPORAL_OPERAND_LAST_QUARTER:
+							if (periodType == null) {
+								periodType = "QUARTER";
+								lastPeriod = true;
+							}
+
+						case SetCatalogueAction.TEMPORAL_OPERAND_LAST_MONTH:
+							if (periodType == null) {
+								periodType = "MONTH";
+								lastPeriod = true;
+							}
+
+						case SetCatalogueAction.TEMPORAL_OPERAND_LAST_WEEK:
+							if (periodType == null) {
+								periodType = "WEEK";
+								lastPeriod = true;
+							}
+						{
+							// PORTO AL PRIMO RECORD DEL PERIODO (nell'anno)
+							for (String fieldType : temporalFieldTypesInQuery) {
+								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType) &&
+								   !hierarchyFullColumnMap.get(periodType).equals(fieldType)) {
+									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
+								}
+							}
+							
+							Integer rowPeriodNumber = rowPeriodsNumbered.get(hierarchyFullColumnMap.get(periodType));
+							Integer otherPeriodNumber = rowPeriodNumber - temporalOperandParameter;
+							if(otherPeriodNumber < rowPeriodNumber) {
+								otherPeriodNumber = otherPeriodNumber + 1;
+							}
+							else {
+								otherPeriodNumber = otherPeriodNumber - 1;
+							}
+							
+							List<String> periods = distinctPeriodsByType.get(periodType);
+							int periodsCount = periods.size();
+							int periodOtherIndex = (otherPeriodNumber % periodsCount);
+							
+							int yearOffset = 0;
+							while (periodOtherIndex < 0) {
+								periodOtherIndex += periodsCount;
+								yearOffset--;
+							}
+							while (periodOtherIndex >= periodsCount) {
+								periodOtherIndex = periodOtherIndex % periodsCount;
+								yearOffset++;
+							}
+							
+							int yearOtherIndex = (int) (relativeYearIndex + yearOffset);
+							if(yearOtherIndex < 0) {
+								yearOtherIndex = 0;
+							}
+							if(yearOtherIndex >= allYearsOnDWH.size()) {
+								yearOtherIndex = allYearsOnDWH.size() -1;
+								periodOtherIndex = periods.size() -1;
+							}
+							// L'ANNO LO DEVO METTERE SOLO SE PRESENTE TRA I CAMPI DELLA SELECT ???
+							firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(yearOtherIndex));
+							firstRecordId.put(hierarchyFullColumnMap.get(periodType), periods.get(periodOtherIndex));
+							
+							if(lastPeriod) {
+								// se operatore last, aggrego fino al periodo della riga corrente
+								lastRecordId.put(hierarchyFullColumnMap.get(periodType), rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
+							}
+							else {
+								// se operatore period to date, aggrego fino allo stesso 'tempo' nel periodo di riferimento
+								lastRecordId.put(hierarchyFullColumnMap.get(periodType), periods.get(periodOtherIndex));
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(yearOtherIndex));
+							}
+							break;
+						}
+							
+							
+						// LAST_PERIOD
+						// per i LAST_PERIOD devo recuperare l'id temporale della riga da cui partire, 
+						// quella a cui fermarmi corrisponde con la riga corrente
+						// LM_3 per la riga Giugno 2016 visualizzerà il dato aggregato da Aprile a Giugno 2015
+						// LM_4 per la riga Gennaio 2016 visualizzerà il dato aggregato da Ottobre 2015 a Gennaio 2016
+						case SetCatalogueAction.TEMPORAL_OPERAND_LAST_YEAR:
+						{
+							// setta gennaio/Q1/W1
+							for (String fieldType : temporalFieldTypesInQuery) {
+								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
+									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
+								}
+							}
+							
+							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
+							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex ) {
+								String parallelYear =  allYearsOnDWH.get(parallelYearIndex);
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
+							}
+							else {
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
+							}
+							
+							break;
+						}
+
+						// PARALLEL_PERIOD
+						case SetCatalogueAction.TEMPORAL_OPERAND_PARALLEL_YEAR:
+						{
+							// i parallel years si calcolano sempre in funzione di quello che trovo nella where
+							
+							String year = null;
+							
+							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
+							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex -1 ) {
+								year =  allYearsOnDWH.get(parallelYearIndex);
+							}
+							firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), year);
+							lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), year);
+							break;
+						}
+						default:
+							break;
+						}
+						
+						double finalValue = 0D;
+						boolean firstRecordFound = false;
+						/** INQUESTO CICLO DEVO UTILIZZARE I CAMPI FIRST E LAST */
+						for (Iterator fullIterator = fullDatastore.iterator(); fullIterator.hasNext();) {
+							Record record = (Record) fullIterator.next();
+							Map<String, String> recordId = getRecordFullId(record, finalDatastore, query);
+							if(recordId.equals(firstRecordId)) {
+								firstRecordFound = true;
+							}
+							
+							if(firstRecordFound) {
+								finalValue += Double.parseDouble(record.getFieldAt(fieldIndex).getValue().toString());
+							}
+							
+							if(recordId.equals(lastRecordId)) {
+								finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
+								break;
+							}
+						}
+						
+						rowLog += " | " + firstRecordId + " >>> " + lastRecordId;
+					}
+					else {
+						rowLog += " | NON AGGREGATO ";
+					}
+				}
+				
+				logger.debug(rowLog);
+				
+			}
+			
+			return finalDatastore;
+			
+		}
+		else {
+			return fullDatastore;
+		}
+		
+		
+	}
+	
+	private Map<String, String> getRecordAggregatedId(Record finalRecord, IDataStore finalDatastore, Query query) {
+		Set<String> idAliases = query.getTemporalFieldTypesInSelect();
+		return getRecordId(finalRecord, finalDatastore, query, idAliases);
+	}
+	
+	private Map<String, String> getRecordFullId(Record finalRecord, IDataStore finalDatastore, Query query) {
+		Set<String> idAliases = query.getTemporalFieldTypesInQuery();
+		return getRecordId(finalRecord, finalDatastore, query, idAliases);
+	}
+	
+	private Map<String, String> getRecordId(Record finalRecord, IDataStore finalDatastore, Query query, Set<String> idAliases) {
+		Map<String, String> recordId = new HashMap<>();
+		for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
+			String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
+			if(fieldName != null && idAliases.contains(fieldName)){
+				recordId.put(fieldName, (finalRecord.getFieldAt(fieldIndex).getValue() != null ? finalRecord.getFieldAt(fieldIndex).getValue().toString(): "") );
+			}
+		}
+		return recordId;
+	}
+
+
+
+	private void handleTTTTTTimeAggregations(IDataStore dataStore) {
+		final String PY = "_PY_";
+		final String LY = "_LY_";
+		final String LM = "_LM_";
+		final String LW = "_LW_";
+		
+		Map<String, LinkedList<Integer>> groupedFieldsIndexMap = new LinkedHashMap<String, LinkedList<Integer>>();
+		
+		Map<Object, Record> finalResultMap = new LinkedHashMap<Object, Record>();
+		Integer yearIndex = null;
+		for (int fieldIndex = 0; fieldIndex < dataStore.getMetaData().getFieldCount(); fieldIndex++) {
+			String fieldAlias = dataStore.getMetaData().getFieldAlias(fieldIndex);
+
+			if(fieldAlias != null){
+				
+				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, PY);
+				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LY);
+				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LM);
+				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LW);
+
+				if(yearIndex == null && fieldAlias.equals("YEAR")) {
+					yearIndex = fieldIndex;
+				}
+			}
+		}
+
+		IRecord r = new Record();
+		
+		IDataStore ds = new DataStore();
+		ds.appendRecord(r);
+		
+		LinkedList<Integer> pyFields = groupedFieldsIndexMap.get(PY);	
+		LinkedList<Integer> lyFields = groupedFieldsIndexMap.get(LY);
+		
+		// for each record 
+		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
+			Record record = (Record) iterator.next();
+			List<IField> fields = record.getFields();
+
+			//for each field
+			for (int fieldIndex = 0; fieldIndex < fields.size(); fieldIndex++) {
+				IField currentField = fields.get(fieldIndex);
+				if(pyFields != null && pyFields.contains(fieldIndex)) {
+					Object currentKey = fields.get(yearIndex).getValue();
+					
+					Record finalRecord = finalResultMap.get(currentKey);
+					if(finalRecord == null) {
+						finalResultMap.put(currentKey, record);
+					}
+					else {
+						IField finalField = finalRecord.getFieldAt(fieldIndex);
+						if(finalField != null) {
+							double finalValue = Double.parseDouble(finalField.getValue() != null ? finalField.getValue().toString() : "0");
+							double currentValue = Double.parseDouble(currentField.getValue() != null ? currentField.getValue().toString() : "0");
+							// MAX MIN AVG COUNT ? ? ? 
+							finalField.setValue(finalValue+currentValue);
+						}
+					}
+				}
+			}
+		}
+
+		// UPDATING RESULTSET
+		// for each record 
+		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
+			Record record = (Record) iterator.next();
+			List<IField> fields = record.getFields();
+			//for each field
+			for (int fieldIndex = 0; fieldIndex < fields.size(); fieldIndex++) {
+				IField currentField = fields.get(fieldIndex);
+				if(pyFields.contains(fieldIndex)) {
+					Object currentKey = fields.get(yearIndex).getValue();
+					Record finalRecord = finalResultMap.get(currentKey);
+					currentField.setValue(finalRecord.getFieldAt(fieldIndex).getValue());
+				}
+			}
+		}
+	}
+
+	private void extractGroupedFieldsIndexes(Map<String, LinkedList<Integer>> groupedFieldsIndexMap, int fieldIndex,
+			String fieldAlias, String groupingType) {
+		if(fieldAlias.contains(groupingType)) {
+			if(groupedFieldsIndexMap.get(groupingType) == null) {
+				groupedFieldsIndexMap.put(groupingType, new LinkedList<Integer>());
+			}
+			LinkedList<Integer> l = groupedFieldsIndexMap.get(groupingType);
+			l.add(fieldIndex);
+		}
 	}
 
 	private QueryGraph getQueryGraph(Query query) {
@@ -315,6 +746,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			String jpaQueryStr = statement.getQueryString();
+			
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
 			logQueryInAudit(qbeDataSet);

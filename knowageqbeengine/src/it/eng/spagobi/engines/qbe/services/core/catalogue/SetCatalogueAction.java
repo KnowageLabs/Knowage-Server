@@ -5,18 +5,50 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.Hierarchy;
+import it.eng.qbe.model.structure.HierarchyLevel;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.QueryMeta;
 import it.eng.qbe.query.QueryValidator;
@@ -50,6 +82,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -57,37 +90,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -497,235 +499,607 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		return index - 1;
 	}
 
-	private void handleInLineTemporalFilter(Query query, IModelEntity temporalDimension, Hierarchy defaultHierarchy) {
+	public final static String TEMPORAL_OPERAND_YTD = "YTD";
+	public final static String TEMPORAL_OPERAND_QTD = "QTD";
+	public final static String TEMPORAL_OPERAND_MTD = "MTD";
+	public final static String TEMPORAL_OPERAND_WTD = "WTD";
+	public final static String TEMPORAL_OPERAND_LAST_YEAR = "LAST_YEAR";
+	public final static String TEMPORAL_OPERAND_LAST_QUARTER = "LAST_QUARTER";
+	public final static String TEMPORAL_OPERAND_LAST_MONTH = "LAST_MONTH";
+	public final static String TEMPORAL_OPERAND_LAST_WEEK = "LAST_WEEK";
+	public final static String TEMPORAL_OPERAND_PARALLEL_YEAR = "PARALLEL_YEAR";
 
-		final String temporalDimensionId = "time_id";
+	private void handleInLineTemporalFilter(Query query, IModelEntity temporalDimension, Hierarchy hierarchy) {
 
-		final String TEMPORAL_OPERAND_YTD = "YTD";
-		final String TEMPORAL_OPERAND_QTD = "QTD";
-		final String TEMPORAL_OPERAND_MTD = "MTD";
-		final String TEMPORAL_OPERAND_WTD = "WTD";
-		final String TEMPORAL_OPERAND_LAST_YEAR = "LAST_YEAR";
-		final String TEMPORAL_OPERAND_LAST_MONTH = "LAST_MONTH";
-		final String TEMPORAL_OPERAND_LAST_WEEK = "LAST_WEEK";
-		final String TEMPORAL_OPERAND_PARALLEL_YEAR = "PARALLEL_YEAR";
-		final String TEMPORAL_OPERAND_PARALLEL_MONTH = "PARALLEL_MONTH";
-		final String TEMPORAL_OPERAND_PARALLEL_WEEK = "PARALLEL_WEEK";
+		
+		List<ISelectField> selectFields = query.getSelectFields(false);
+		List<WhereField> whereFields = query.getWhereFields();
+		
+		//verifico la presenza di un filtro in line
+		Set<String> inlineFilterFieldTypes = new HashSet();
+		boolean hasInlineFilters = populateInlineFilterFieldTypes(selectFields, inlineFilterFieldTypes);
+		if(hasInlineFilters) {
+		
+			// recupero l'id della dimensione tempo
+			String temporalDimensionId = "time_id";
+			
+			// aggiungo alla query il time_id
+			addTimeIdToQuery(query, temporalDimension, temporalDimensionId);
+			
+			// Recupero i livelli della gerarchia
+			List<HierarchyLevel> levels = hierarchy.getLevels();
+			
+			// Recupero le colonne della gerarchia (mi serviranno per vedere se sono tutte incluse nella select e nella group by)
+			Map<String, String> hierarchyFullColumnMap = new LinkedHashMap<>();
+			Map<String, String> hierarchyColumnMap = new LinkedHashMap<>();
+			for (HierarchyLevel level : levels) {
+				hierarchyColumnMap.put(level.getType(), level.getColumn());
+				hierarchyFullColumnMap.put(level.getType(), extractColumnName(temporalDimension, level.getColumn()));
+			}
+			
+			// anno di riferimento
+			String relativeYear = (new GregorianCalendar().get(Calendar.YEAR))+"";
+			Set<String> yearsInWhere = extractYearsFromWhereFields(whereFields, hierarchyFullColumnMap.get("YEAR"));
+			if(yearsInWhere.size() > 0) {
+				relativeYear = yearsInWhere.iterator().next();
+			}
+			
+			// recupero tutti gli anni presenti nella base dati
+			LinkedList<TemporalRecord> allYearsOnDWH = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,  hierarchyColumnMap.get("YEAR"));
+			LinkedList<String> allYearsOnDWHString = new LinkedList<>();
+			for (TemporalRecord temporalRecord : allYearsOnDWH) {
+				allYearsOnDWHString.add(temporalRecord.getPeriod().toString());
+			}
+			
+			// recupero l'indice dell'anno di riferimento nella lista precedente
+			int relativeYearIndex = -1;
+			for (int i = 0; i < allYearsOnDWHString.size(); i++) {
+				if(allYearsOnDWHString.get(i).equals(relativeYear)) {
+					relativeYearIndex = i;
+					break;
+				}
+			}
+			
+			Set<String> aliasesToBeRemovedAfterExecution = addMissingGroupByToTheQuery(query, selectFields,
+					inlineFilterFieldTypes, hierarchyFullColumnMap);
+			
+			addSumFunctionToAllMeasureInSelect(selectFields);
+			
+			
+			// se una funzione temporale richiama un attributo temporale che non è 
+			// previsto nella where e non è presente nella select, verranno visualizzati solo i dati relativi al periodo corrente.
+			Map<String, String> currentPeriodValuyesByType = addMissingCurrentPeriodWhereClauses(query, temporalDimension, selectFields, whereFields,
+					inlineFilterFieldTypes, temporalDimensionId, hierarchyFullColumnMap, hierarchyColumnMap);
 
-		final String TEMPORAL_FIELD_YEAR = "YEAR";
-		final String TEMPORAL_FIELD_QUARTER = "QUARTER";
-		final String TEMPORAL_FIELD_MONTH = "MONTH";
-		final String TEMPORAL_FIELD_WEEK = "WEEK";
-		final String TEMPORAL_FIELD_DAY = "DAY";
+			// recupero tutti i campi temporali presenti nella query
+			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(selectFields, hierarchyFullColumnMap);
+			
+			// definisco quali campi andranno ricalcolati
+			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(selectFields);
+			
+			// se non è presente l'anno nella select, lo aggiungo
+			if(!temporalFieldTypesInSelect.contains(hierarchyFullColumnMap.get("YEAR"))) {
+				addYearToQuery(query, temporalDimension, hierarchyFullColumnMap);
+				aliasesToBeRemovedAfterExecution.add(hierarchyFullColumnMap.get("YEAR"));
+			}
+			
+			// dico alla query che dovrà eseguire una postExecutionAnalysis
+			query.setInlineFilteredSelectFields(inlineFilteredSelectFields);
+			query.setAliasesToBeRemovedAfterExecution(aliasesToBeRemovedAfterExecution);
+			query.setTemporalFieldTypesInSelect(temporalFieldTypesInSelect);
+			query.setHierarchyFullColumnMap(hierarchyFullColumnMap);
+			query.setRelativeYearIndex(relativeYearIndex);
+			query.setAllYearsOnDWH(allYearsOnDWHString);
+			
+			Map<String, List<String>> distinctPeriods = new HashMap<>();
+			for (String temporalFieldColumn : temporalFieldTypesInSelect) {
+				distinctPeriods.put(temporalFieldColumn, loadDistinctPeriods(temporalDimension, temporalDimensionId, temporalFieldColumn));
+			}
+			for (String temporalFieldColumn : aliasesToBeRemovedAfterExecution) {
+				distinctPeriods.put(temporalFieldColumn, loadDistinctPeriods(temporalDimension, temporalDimensionId, temporalFieldColumn));
+			}
+			query.setDistinctPeriods(distinctPeriods);
+			query.setCurrentPeriodValuyesByType(currentPeriodValuyesByType);
+			
+			// aggiungo i filtri per le performance
+			addYearsFilterForPerformances(query, selectFields, whereFields, hierarchyFullColumnMap, relativeYear,
+					yearsInWhere, allYearsOnDWHString, relativeYearIndex, distinctPeriods, currentPeriodValuyesByType);
 
-		final String EQUALS_TO = " = ";
-		final String AND = " and ";
-		final String GREATER_EQUALS = " >= ";
-		final String LESS_EQUALS = " <= ";
+		}
+	}
 
-		List<ISelectField> selectFieldsToRemove = new LinkedList<ISelectField>();
-		List<ISelectField> selectFieldsToAdd = new LinkedList<ISelectField>();
-
-		List<ISelectField> selectFields = query.getSelectFields(true);
-		for (ISelectField iSelectField : selectFields) {
-			if (((AbstractSelectField) iSelectField).isSimpleField()) {
-				SimpleSelectField sField = (SimpleSelectField) iSelectField;
-				String temporalOperand = sField.getTemporalOperand();
-				String temporalOperandParameter = sField.getTemporalOperandParameter();
-				if (StringUtilities.isNotEmpty(temporalOperand)) {
-					// SIAMO IN PRESENZA DI FILTRO TEMPORALE INLINE
-
-					selectFieldsToRemove.add(iSelectField);
-
-					String entity = temporalDimension.getType();
-					String temporalCondition = " 1 = 1 ";
-					String id = entity + ":" + temporalDimensionId;
-					String year = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_YEAR);
-					String quarter = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_QUARTER);
-					String month = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_MONTH);
-					String week = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_WEEK);
-
-					Date actualTime = new Date();
-
-					// type-safe
-					if (!temporalOperandParameter.matches("\\d+"))
-						temporalOperandParameter = "0";
-					boolean isSIMPLEOperand = false;
-					boolean isLASTOperand = false;
-					boolean isParallelOperand = false;
-					Integer slideBackHowMuch = Integer.parseInt(temporalOperandParameter);
-					slideBackHowMuch *= -1;
-					Calendar c = new GregorianCalendar();
-					int slideWhat = -1;
-					if (temporalOperand.equals(TEMPORAL_OPERAND_YTD)) {
-						isSIMPLEOperand = true;
-						slideWhat = Calendar.YEAR;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_QTD)) {
-						isSIMPLEOperand = true;
-						slideWhat = Calendar.MONTH;
-						slideBackHowMuch *= 3;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_MTD)) {
-						isSIMPLEOperand = true;
-						slideWhat = Calendar.MONTH;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_WTD)) {
-						isSIMPLEOperand = true;
-						slideWhat = Calendar.WEEK_OF_YEAR;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_YEAR)) {
-						isLASTOperand = true;
-						slideWhat = Calendar.YEAR;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_MONTH)) {
-						isLASTOperand = true;
-						slideWhat = Calendar.MONTH;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_WEEK)) {
-						isLASTOperand = true;
-						slideWhat = Calendar.WEEK_OF_YEAR;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
-						isParallelOperand = true;
-						slideWhat = Calendar.YEAR;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_MONTH)) {
-						isParallelOperand = true;
-						slideWhat = Calendar.MONTH;
-					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
-						isParallelOperand = true;
-						slideWhat = Calendar.WEEK_OF_YEAR;
+	private void addYearsFilterForPerformances(Query query, List<ISelectField> selectFields,
+			List<WhereField> whereFields, Map<String, String> hierarchyFullColumnMap, String relativeYear,
+			Set<String> yearsInWhere, LinkedList<String> allYearsOnDWHString, int relativeYearIndex, Map<String, List<String>> distinctPeriods, Map<String, String> currentPeriodValuyesByType) {
+		Set<String> yearsToBeAddedToWhereClause = extractYearsToBeAddedToWhereClause(selectFields, relativeYear, yearsInWhere, allYearsOnDWHString, relativeYearIndex, hierarchyFullColumnMap, distinctPeriods, currentPeriodValuyesByType);
+		if(yearsToBeAddedToWhereClause.size() > 0) {
+			
+			if(whereFields.size() > 0) {
+				for (WhereField wField : whereFields) {
+					if(
+							wField.getLeftOperand().values != null && 
+							wField.getLeftOperand().values.length > 0 && 
+							hierarchyFullColumnMap.get("YEAR").equals(wField.getLeftOperand().values[0]) &&
+							"EQUALS TO".equals(wField.getOperator()) &&
+							wField.getRightOperand().values != null &&
+							wField.getRightOperand().values.length > 0) {
+						
+						yearsToBeAddedToWhereClause.add(wField.getRightOperand().values[0]+"");
+						Operand right = new Operand(yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]),
+								"YEAR", "Static Content", new String[] {}, null);
+						
+						wField.setRightOperand(right);
+						wField.setOperator("IN");
+						break;
 					}
+				}
+			}
+			else {
+				Operand left = new Operand(new String[] { hierarchyFullColumnMap.get("YEAR") },
+						hierarchyFullColumnMap.get("YEAR"), "Field Content", new String[] {}, null);
+				
+				Operand right = new Operand(yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]),
+						"YEAR", "Static Content", new String[] {}, null);
+				query.addWhereField("ParallelYear", "ParallelYear", false, left, "IN", right, "AND");
+			}
+			
+			query.updateWhereClauseStructure();
+		}
+	}
 
-					if (slideWhat > 0 && !isLASTOperand) {
-						c.add(slideWhat, slideBackHowMuch);
-						actualTime = c.getTime();
-					}
+	private Map<String, Map<String,String>> updateInlineFilteredSelectFieldsAliases(List<ISelectField> selectFields) {
+		Map<String, Map<String,String>> inlineFilteredSelectFields = new HashMap<>();
+		for (ISelectField sfield : selectFields) {
+			if(sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				String temporalOperand = ssField.getTemporalOperand();
+				if(temporalOperand != null && !"".equals(temporalOperand)) {
+					String temporalOperandParameter = ssField.getTemporalOperandParameter();
+					if(temporalOperandParameter == null) temporalOperandParameter = "0";
+					String newAlias = ssField.getAlias()+"_"+temporalOperand+"_"+temporalOperandParameter;
+					ssField.setAlias(newAlias);
+					
+					Map<String, String> parameters = new HashMap<>();
+					parameters.put("temporalOperand", temporalOperand);
+					parameters.put("temporalOperandParameter", temporalOperandParameter);
+					
+					inlineFilteredSelectFields.put(newAlias, parameters);
+					
+				}
+			}
+		}
+		return inlineFilteredSelectFields;
+	}	
 
-					TemporalRecord actualPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, TEMPORAL_FIELD_DAY, temporalDimensionId, actualTime);
-					if (actualPeriod != null /* || isLASTOperand || isParallelOperand */) {
+	private Map<String, String> addMissingCurrentPeriodWhereClauses(Query query, IModelEntity temporalDimension,
+			List<ISelectField> selectFields, List<WhereField> whereFields, Set<String> inlineFilterFieldTypes,
+			String temporalDimensionId, Map<String, String> hierarchyFullColumnMap,
+			Map<String, String> hierarchyColumnMap) {
+		
+		Map<String, String> currentPeriodValuesByType = new HashMap<>();
 
-						String beforeOrActualPeriod = " " + id + LESS_EQUALS + actualPeriod.getId();
-						if (isSIMPLEOperand) {
-
-							String yearValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
-									TEMPORAL_FIELD_YEAR, year);
-							String withinThisYear = year + EQUALS_TO + yearValueBounded;
-
-							if (temporalOperand.equals(TEMPORAL_OPERAND_YTD)) {
-								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + " ";
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_QTD)) {
-								String quarterValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
-										TEMPORAL_FIELD_QUARTER, quarter);
-								String withinThisQuarter = quarter + EQUALS_TO + quarterValueBounded;
-
-								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisQuarter + " ";
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_MTD)) {
-								String monthValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
-										TEMPORAL_FIELD_MONTH, month);
-								String withinThisMonth = month + EQUALS_TO + monthValueBounded;
-
-								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisMonth + " ";
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_WTD)) {
-								String weekValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
-										TEMPORAL_FIELD_WEEK, week);
-								String withinThisMonth = week + EQUALS_TO + weekValueBounded;
-
-								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisMonth + " ";
+		Set<String> temporalFieldTypesInSelect = new HashSet<>();
+		Set<String> temporalFieldTypesInWhere = new HashSet<>();
+		
+		LOOP_1:
+		for (String levelType : inlineFilterFieldTypes) {
+			String levelColumn = hierarchyFullColumnMap.get(levelType);
+			if(!temporalFieldTypesInSelect.contains(levelType)) {
+				
+				// lo cerco nelle select
+				for (ISelectField sfield : selectFields) {
+					if(sfield.isSimpleField()) {
+						SimpleSelectField ssField = (SimpleSelectField) sfield;
+						if(levelColumn.equals(ssField.getUniqueName())) {
+							temporalFieldTypesInSelect.add(levelType);
+							
+							TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, hierarchyColumnMap.get(levelType), new Date());
+							String currentPeriodValue = "K_UNDEFINED";
+							if((currentPeriod != null)) {
+								currentPeriodValue = currentPeriod.getPeriod()+"";
 							}
+							currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 
-						} else if (isLASTOperand) {
-
-							String temporalField = TEMPORAL_FIELD_YEAR;
-
-							if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_YEAR)) {
-								temporalField = TEMPORAL_FIELD_YEAR;
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_MONTH)) {
-								temporalField = TEMPORAL_FIELD_MONTH;
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_WEEK)) {
-								temporalField = TEMPORAL_FIELD_WEEK;
-							}
-
-							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
-									defaultHierarchy.getLevelByType(temporalField),
-									defaultHierarchy.getAncestors(defaultHierarchy.getLevelByType(temporalField)));
-
-							TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalField, temporalDimensionId,
-									actualTime);
-							int currentPeriodIndex = getCurrentIndex(allPeriodsStartingDate, (Integer) currentPeriod.getId());
-							int oldestPeriodIndex = currentPeriodIndex + slideBackHowMuch > 0 ? currentPeriodIndex + slideBackHowMuch : 0;
-							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
-
-							String fromStartingDate = id + GREATER_EQUALS + oldestPeriod.getId();
-
-							temporalCondition = fromStartingDate + AND + beforeOrActualPeriod;
-
-						} else if (isParallelOperand) {
-							String temporalField = TEMPORAL_FIELD_YEAR;
-
-							if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
-								temporalField = TEMPORAL_FIELD_YEAR;
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_MONTH)) {
-								temporalField = TEMPORAL_FIELD_MONTH;
-							} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_WEEK)) {
-								temporalField = TEMPORAL_FIELD_WEEK;
-							}
-
-							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
-									defaultHierarchy.getLevelByType(temporalField),
-									defaultHierarchy.getAncestors(defaultHierarchy.getLevelByType(temporalField)));
-
-							TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalField, temporalDimensionId,
-									actualTime);
-							int currentPeriodIndex = getCurrentIndex(allPeriodsStartingDate, (Integer) currentPeriod.getId());
-							int oldestPeriodIndex = currentPeriodIndex + slideBackHowMuch > 0 ? currentPeriodIndex + slideBackHowMuch : 0;
-							int youngestPeriodIndex = oldestPeriodIndex + 1 < allPeriodsStartingDate.size() ? oldestPeriodIndex + 1 : -1;
-							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
-							TemporalRecord youngestPeriod = youngestPeriodIndex > 0 ? allPeriodsStartingDate.get(youngestPeriodIndex) : null;
-
-							String fromStartingDate = id + GREATER_EQUALS + oldestPeriod.getId();
-							String toStartingDate = youngestPeriod != null ? id + LESS_EQUALS + youngestPeriod.getId() : " 1 = 1 ";
-
-							temporalCondition = fromStartingDate + AND + toStartingDate;
-
+							
+							continue LOOP_1;
 						}
-					} else {
-						temporalCondition = " 1 <> 1 ";
 					}
+				}
+			}
 
-					String expression = "( case when " + temporalCondition + " then " + sField.getName() + " else NULL end ) ";
-
-					IModelField field = getDataSource().getModelStructure().getField(sField.getName());
-
-					String nature = field.getProperties().get("type").toString().toUpperCase();
-					String type = "STRING";
-					if (nature.equals("MEASURE")) {
-						type = "NUMBER";
+			if(!temporalFieldTypesInWhere.contains(levelType)) {
+				// lo cerco nelle where
+				for (WhereField wField : whereFields) {
+					if(
+							wField.getLeftOperand().values != null && 
+							wField.getLeftOperand().values.length > 0 && 
+							levelColumn.equals(wField.getLeftOperand().values[0]) &&
+							"EQUALS TO".equals(wField.getOperator()) || "IN".equals(wField.getOperator())) {
+						temporalFieldTypesInWhere.add(levelType);
+						
+						currentPeriodValuesByType.put(levelColumn, wField.getRightOperand().values[0]);
+						
+						continue LOOP_1;
 					}
-					String fieldAlias = sField.getAlias() + "_" + temporalOperand + "_" + temporalOperandParameter;
-
-					InLineCalculatedSelectField icField = new InLineCalculatedSelectField(fieldAlias, expression, "", type, nature, sField.isIncluded(),
-							sField.isVisible(), sField.isGroupByField(), sField.getOrderType(), sField.getFunction().getName());
-
-					selectFieldsToAdd.add(icField);
 				}
 			}
 		}
 
-		for (ISelectField toRemove : selectFieldsToRemove) {
-			//query.removeSelectField(toRemove);
-		}
+		Set<String> temporalFieldTypesInSelectOrWhere = new HashSet<>();
+		temporalFieldTypesInSelectOrWhere.addAll(temporalFieldTypesInSelect);
+		temporalFieldTypesInSelectOrWhere.addAll(temporalFieldTypesInWhere);
+		
+		for (String levelType : inlineFilterFieldTypes) {
+			if(!temporalFieldTypesInSelectOrWhere.contains(levelType)) {
+				String levelColumn = hierarchyFullColumnMap.get(levelType);
+				Operand left = new Operand(new String[] { levelColumn },
+						levelColumn, "Field Content", new String[] {}, null);
 
-		for (ISelectField iSelectField : selectFieldsToAdd) {
-			InLineCalculatedSelectField icField = (InLineCalculatedSelectField) iSelectField;
-			query.addInLineCalculatedFiled(icField.getAlias(), icField.getExpression(), icField.getSlots(), icField.getType(), icField.getNature(),
-					icField.isIncluded(), icField.isVisible(), icField.isGroupByField(), icField.getOrderType(), icField.getFunction().getName());
+				TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, hierarchyColumnMap.get(levelType), new Date());
+				String currentPeriodValue = "K_UNDEFINED";
+				if((currentPeriod != null)) {
+					currentPeriodValue = currentPeriod.getPeriod()+"";
+				}
+				Operand right = new Operand(new String[]{currentPeriodValue},
+						levelType, "Static Content", new String[] {}, null);
+				query.addWhereField("current_"+levelType, "current_"+levelType, false, left, "EQUALS TO", right, "AND");
+				query.updateWhereClauseStructure();
+				
+				currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
+			}
 		}
-
+		query.updateWhereClauseStructure();
+		
+		return currentPeriodValuesByType;
 	}
 
-	private String getActualPeriodValueBounded(Date actualTime, IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalDimensionId,
-			String temporalFieldType, String fieldUniqueName) {
+	private Set<String> getTemporalFieldsInSelect(List<ISelectField> selectFields,
+			Map<String, String> hierarchyFullColumnMap) {
+		Set<String> temporalFieldsInSelect = new HashSet<>();
 
-		String temporalLevel = temporalFieldType;// defaultHierarchy.getLevelByType(temporalFieldType);
+		LOOP_3:
+			
+			
+		for (String levelType : hierarchyFullColumnMap.keySet()) {
+			String levelColumn = hierarchyFullColumnMap.get(levelType);
+			// lo cerco nelle select
+			for (ISelectField sfield : selectFields) {
+				if(sfield.isSimpleField()) {
+					SimpleSelectField ssField = (SimpleSelectField) sfield;
+					if(levelColumn.equals(ssField.getUniqueName())) {
+						temporalFieldsInSelect.add(levelColumn);
+						continue LOOP_3;
+					}
+				}
+			}
+		}
 
-		TemporalRecord value = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalLevel, temporalDimensionId, actualTime);
-		IModelField field = getDataSource().getModelStructure().getField(fieldUniqueName);
-		return getValueBounded(value.getPeriod().toString(), field.getType());
+		
+		
+		return temporalFieldsInSelect;
 	}
+
+	private void addTimeIdToQuery(Query query, IModelEntity temporalDimension, String temporalDimensionId) {
+		String fieldUniqueName = extractColumnName(temporalDimension, temporalDimensionId);
+		String function = "MIN";
+		boolean include = true;
+		boolean visible = false;
+		boolean groupByField = false;
+		String orderType = "ASC";
+		String pattern = null;
+		String temporalOperand = null;
+		String temporalOperandParameter = null;
+		query.addSelectFiled(fieldUniqueName, function, temporalDimensionId, include, visible, groupByField, orderType, pattern, temporalOperand, temporalOperandParameter);
+	}
+
+	private void addYearToQuery(Query query, IModelEntity temporalDimension, Map<String, String> hierarchyFullColumnMap) {
+		String fieldUniqueName = hierarchyFullColumnMap.get("YEAR") ;
+		String function = null;
+		boolean include = true;
+		boolean visible = false;
+		boolean groupByField = true;
+		String orderType = "ASC";
+		String pattern = null;
+		String temporalOperand = null;
+		String temporalOperandParameter = null;
+		query.addSelectFiled(fieldUniqueName, function, "YEAR", include, visible, groupByField, orderType, pattern, temporalOperand, temporalOperandParameter);
+	}
+
+	private void addSumFunctionToAllMeasureInSelect(List<ISelectField> selectFields) {
+		for (ISelectField sfield : selectFields) {
+			if(sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				
+				if(ssField.getFunction() == null && "MEASURE".equals(ssField.getNature())
+						|| ssField.getTemporalOperand() != null && ssField.getTemporalOperand().length()>0
+						) {
+					ssField.setFunction(AggregationFunctions.get(AggregationFunctions.SUM));
+				}
+				
+			}
+		}
+	}
+
+	private Set<String> addMissingGroupByToTheQuery(Query query, List<ISelectField> selectFields,
+			Set<String> inlineFilterFieldTypes, Map<String, String> hierarchyFullColumnMap) {
+		Set<String> aliasesToBeRemovedAfterExecution = new HashSet<>();
+		
+		Set<String> temporalFieldAlreadyInSelect = new HashSet<>();
+		for (String levelType : hierarchyFullColumnMap.keySet()) {
+			String levelColumn = hierarchyFullColumnMap.get(levelType);
+			for (ISelectField sfield : selectFields) {
+				if(sfield.isSimpleField()) {
+					SimpleSelectField ssField = (SimpleSelectField) sfield;
+					if(levelColumn.equals(ssField.getUniqueName())) {
+						temporalFieldAlreadyInSelect.add(levelColumn);
+						// se nei campi select è presente un campo della gerarchia, tale campo parteciperà al raggruppamento
+						ssField.setGroupByField(true);
+					}
+				}
+			}
+		}
+
+		for (String inlineFilterType : inlineFilterFieldTypes) {
+			if(!temporalFieldAlreadyInSelect.contains(hierarchyFullColumnMap.get(inlineFilterType))) {
+				String fieldUniqueName = hierarchyFullColumnMap.get(inlineFilterType);
+				boolean include = true;
+				boolean visible = false;
+				boolean groupByField = true;
+				String orderType = null;
+				String pattern = null;
+				String temporalOperand = null;
+				String temporalOperandParameter = null;
+				query.addSelectFiled(fieldUniqueName, null, inlineFilterType, include, visible, groupByField, orderType, pattern, temporalOperand, temporalOperandParameter);
+				
+				aliasesToBeRemovedAfterExecution.add(fieldUniqueName);
+			}
+		}
+		return aliasesToBeRemovedAfterExecution;
+	}
+
+	private Set<String> extractYearsToBeAddedToWhereClause(List<ISelectField> selectFields, String relativeYear,
+			Set<String> yearsInWhere, LinkedList<String> allYearsOnDWHString, int relativeYearIndex, 
+			Map<String, String> hierarchyFullColumnMap, Map<String, List<String>> distinctPeriods,
+			Map<String, String> currentPeriodValuesByType) {
+		Set<String> yearsToBeAddedToWhereClause = new HashSet<>();
+		
+		// per comodità riorganizzo i periodi per type
+		Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
+		for (String type : hierarchyFullColumnMap.keySet()) {
+			distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	
+		}
+		// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 1 a 12, i quarter da 1 a 4
+		Map<String, Integer> currentPeriodsNumbered = new HashMap<>();
+		for (String type : currentPeriodValuesByType.keySet()) {
+			String currentPeriodValue = currentPeriodValuesByType.get(type);
+			List<String> distinctPeriodsForThisType = distinctPeriods.get(type);
+			int currentValueIndexForThisType = -1;
+			for(int i = 0; i< distinctPeriodsForThisType.size(); i++) {
+				String period = distinctPeriodsForThisType.get(i);
+				if(period.equals(currentPeriodValue)) {
+					currentValueIndexForThisType = i;
+					break;
+				}
+			}
+			currentPeriodsNumbered.put(type, currentValueIndexForThisType+1);	
+		}
+		
+		for (ISelectField sfield : selectFields) {
+			if(sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				String temporalOperand = ssField.getTemporalOperand();
+				String temporalOperandParameter = ssField.getTemporalOperandParameter();
+
+				int n = (temporalOperandParameter == null || !temporalOperandParameter.matches("[0-9]*")) ? 0 : Integer.parseInt(temporalOperandParameter);
+
+				if(temporalOperand != null && !"".equals(temporalOperand)) {
+					Integer yearOtherIndex = null;
+					String periodType = null;
+					boolean lastPeriod = false;
+					switch (temporalOperand) {
+
+					// PERIOD_TO_DATE
+					case TEMPORAL_OPERAND_QTD:
+						if (periodType == null) {
+							periodType = "QUARTER";
+						}
+					case TEMPORAL_OPERAND_MTD:
+						if (periodType == null) {
+							periodType = "MONTH";
+						}
+					case TEMPORAL_OPERAND_WTD:
+						if (periodType == null) {
+							periodType = "WEEK";
+						}
+					case TEMPORAL_OPERAND_LAST_QUARTER:
+						if (periodType == null) {
+							periodType = "QUARTER";
+							lastPeriod = true;
+						}
+
+					case TEMPORAL_OPERAND_LAST_MONTH:
+						if (periodType == null) {
+							periodType = "MONTH";
+							lastPeriod = true;
+						}
+
+					case TEMPORAL_OPERAND_LAST_WEEK:
+						if (periodType == null) {
+							periodType = "WEEK";
+							lastPeriod = true;
+						}
+
+						Integer currentPeriodNumber = currentPeriodsNumbered.get(hierarchyFullColumnMap.get(periodType));
+						Integer otherPeriodNumber = currentPeriodNumber - n;
+						if(otherPeriodNumber < currentPeriodNumber) {
+							otherPeriodNumber = otherPeriodNumber + 1;
+						}
+						else {
+							otherPeriodNumber = otherPeriodNumber - 1;
+						}
+						
+						List<String> periods = distinctPeriodsByType.get(periodType);
+						int periodsCount = periods.size();
+						int periodOtherIndex = (otherPeriodNumber % periodsCount);
+						
+						int yearOffset = 0;
+						while (periodOtherIndex < 0) {
+							periodOtherIndex += periodsCount;
+							yearOffset--;
+						}
+						while (periodOtherIndex >= periodsCount) {
+							periodOtherIndex = periodOtherIndex % periodsCount;
+							yearOffset++;
+						}
+						
+						yearOtherIndex = (int) (relativeYearIndex + yearOffset);
+						if(yearOtherIndex < 0) {
+							yearOtherIndex = 0;
+						}
+						if(yearOtherIndex >= allYearsOnDWHString.size()) {
+							yearOtherIndex = allYearsOnDWHString.size() -1;
+							periodOtherIndex = periods.size() -1;
+						}
+
+					case TEMPORAL_OPERAND_LAST_YEAR:
+						if (yearOtherIndex == null) {
+							yearOtherIndex = relativeYearIndex - n;
+						}
+
+						if (lastPeriod) {
+							if (yearOtherIndex < relativeYearIndex) {
+								yearsToBeAddedToWhereClause
+										.addAll(allYearsOnDWHString.subList(yearOtherIndex, relativeYearIndex+1));
+							} else {
+								yearsToBeAddedToWhereClause
+										.addAll(allYearsOnDWHString.subList(relativeYearIndex, yearOtherIndex+1));
+							}
+						} else {
+							if (yearOtherIndex >= 0 && allYearsOnDWHString.size() > yearOtherIndex) {
+								yearsToBeAddedToWhereClause.add(allYearsOnDWHString.get(yearOtherIndex));
+							}
+						}
+						break;
+
+					// PARALLEL_PERIOD AND YTD
+					case TEMPORAL_OPERAND_YTD:
+					case TEMPORAL_OPERAND_PARALLEL_YEAR:
+						int parallelYearIndex = relativeYearIndex - n;
+						if (parallelYearIndex >= 0 && allYearsOnDWHString.size() > parallelYearIndex + 1) {
+							yearsToBeAddedToWhereClause.add(allYearsOnDWHString.get(parallelYearIndex));
+						}
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return yearsToBeAddedToWhereClause;
+	}
+
+	private boolean populateInlineFilterFieldTypes(List<ISelectField> selectFields, Set<String> inlineFilterFieldTypes) {
+		for (ISelectField sfield : selectFields) {
+			if(sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				String temporalOperand = ssField.getTemporalOperand();
+				
+				/*
+				Parallel_YEAR: viene effettuata l'aggregazione come definito
+				LAST_PERIOD: viene effettuata l'aggregazione come definito, aggiungo il PERIOD nella groupby
+				PERIOD_TO_DATE: viene effettuata l'aggregazione come definito, aggiungo il PERIOD nella groupby
+				 */
+				
+				if(temporalOperand != null) {
+					switch (temporalOperand) {
+					
+					// YEAR
+					case TEMPORAL_OPERAND_YTD:
+					case TEMPORAL_OPERAND_LAST_YEAR:
+					case TEMPORAL_OPERAND_PARALLEL_YEAR:
+						inlineFilterFieldTypes.add("YEAR");
+						break;
+					
+					// QUARTER
+					case TEMPORAL_OPERAND_QTD:
+					case TEMPORAL_OPERAND_LAST_QUARTER:
+						inlineFilterFieldTypes.add("QUARTER");
+						break;
+						
+					// MONTH
+					case TEMPORAL_OPERAND_MTD:
+					case TEMPORAL_OPERAND_LAST_MONTH:
+						inlineFilterFieldTypes.add("MONTH");
+						break;
+					
+					// WEEK
+					case TEMPORAL_OPERAND_WTD:
+					case TEMPORAL_OPERAND_LAST_WEEK:
+						inlineFilterFieldTypes.add("WEEK");
+						break;
+						
+					default:
+						break;
+					}
+				}
+				
+			}
+		}
+		return inlineFilterFieldTypes.size()>0;
+	}
+
+	private Set<String> extractYearsFromWhereFields(List<WhereField> whereFields, String yearColumn) {
+		Set<String> yearsInWhere = new HashSet<>();
+		
+		
+		// cerco anni nella where
+		for (WhereField wField : whereFields) {
+			if(
+					wField.getLeftOperand().values != null && 
+					wField.getLeftOperand().values.length > 0 && 
+					yearColumn.equals(wField.getLeftOperand().values[0]) &&
+					"EQUALS TO".equals(wField.getOperator()) &&
+					wField.getRightOperand().values != null &&
+					wField.getRightOperand().values.length > 0) {
+				yearsInWhere.add(wField.getRightOperand().values[0]+"");
+			}
+		}
+		
+		
+		return yearsInWhere;
+	}
+
+	private String extractColumnName(IModelEntity temporalDimension, String column) {
+		return temporalDimension.getType()+":"+column;
+	}
+	
+	private String getParallelYear(LinkedList<TemporalRecord> allYears, String currentYear, int offset) {
+		if(offset == 0) return currentYear;
+		
+		int currentYearIndex = 0;
+		for (TemporalRecord y : allYears) {
+			if(y.getPeriod().toString().equals(currentYear)) {
+				break;
+			}
+			currentYearIndex++;
+		}
+		int parallelYearIndex = currentYearIndex - offset;
+		if (parallelYearIndex >= 0 && parallelYearIndex < allYears.size()) {
+			return allYears.get(parallelYearIndex).getPeriod().toString();
+		}
+		return "-1";
+	}
+
+//	private String getActualPeriodValueBounded(Date actualTime, IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalDimensionId,
+//			String temporalFieldType, String fieldUniqueName) {
+//
+//		String temporalLevel = temporalFieldType;// defaultHierarchy.getLevelByType(temporalFieldType);
+//
+//		TemporalRecord value = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalLevel, temporalDimensionId, actualTime);
+//		IModelField field = getDataSource().getModelStructure().getField(fieldUniqueName);
+//		return getValueBounded(value.getPeriod().toString(), field.getType());
+//	}
 
 	private IModelEntity getTemporalDimension(IDataSource dataSource) {
 		IModelEntity temporalDimension = null;
@@ -759,14 +1133,14 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		return timeDimension;
 	}
 
-	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalLevel, String temporalDimensionId,
-			Date actualTime) {
-		String temporalLevelColumn;
-		temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
-		TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn, actualTime,
-				defaultHierarchy.getAncestors(temporalLevelColumn));
-		return currentPeriod;
-	}
+//	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalLevel, String temporalDimensionId,
+//			Date actualTime) {
+//		String temporalLevelColumn;
+//		temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
+//		TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn, actualTime,
+//				defaultHierarchy.getAncestors(temporalLevelColumn));
+//		return currentPeriod;
+//	}
 
 	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, String idField, String periodField, Date actualTime, String... parentPeriodFields) {
 
@@ -852,10 +1226,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		parentPeriodFields = parentPeriodFields != null ? parentPeriodFields : new String[] {};
 
 		Query periodsStartingDates = new Query();
-		periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + idField, "MIN", "ID", true, true, false, "ASC", null);
-		periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + periodField, null, "LEVEL", true, true, true, null, null);
+		periodsStartingDates.addSelectFiled(extractColumnName(temporalDimension, idField), "MIN", "ID", true, true, false, "ASC", null);
+		periodsStartingDates.addSelectFiled(extractColumnName(temporalDimension, periodField), null, "LEVEL", true, true, true, null, null);
 		for (String parentPeriodField : parentPeriodFields) {
-			periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + parentPeriodField, null, parentPeriodField, true, true, true, null, null);
+			periodsStartingDates.addSelectFiled(extractColumnName(temporalDimension, parentPeriodField), null, parentPeriodField, true, true, true, null, null);
 		}
 		IDataStore periodsStartingDatesDataStore = executeDatamartQuery(periodsStartingDates);
 		@SuppressWarnings("unchecked")
@@ -868,6 +1242,27 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			periodStartingDates.add(tr);
 		}
 		return periodStartingDates;
+	}
+
+
+	private LinkedList<String> loadDistinctPeriods(IModelEntity temporalDimension, String idField, String temporalFieldColumn) {
+
+		Query distinctPeriodsQuery = new Query();
+		distinctPeriodsQuery.addSelectFiled(extractColumnName(temporalDimension, idField), "MIN", "ID", true, true, false, "ASC", null);
+		distinctPeriodsQuery.addSelectFiled(temporalFieldColumn, null, "LEVEL", true, true, true, null, null);
+		distinctPeriodsQuery.setDistinctClauseEnabled(true);
+
+		IDataStore distinctPeriodsDatesDataStore = executeDatamartQuery(distinctPeriodsQuery);
+		@SuppressWarnings("unchecked")
+		Iterator<IRecord> distinctPeriod = distinctPeriodsDatesDataStore.iterator();
+
+		LinkedList<String> distinctPeriods = new LinkedList<String>();
+		while (distinctPeriod.hasNext()) {
+			IRecord r = distinctPeriod.next();
+			TemporalRecord tr = new TemporalRecord(r, 0);
+			distinctPeriods.add(tr.getPeriod().toString());
+		}
+		return distinctPeriods;
 	}
 
 	private IDataStore executeDatamartQuery(Query myquery) {
