@@ -210,7 +210,7 @@ public class Hierarchies {
 					boolean fieldIsRequired = sbField.getAttribute(HierarchyConstants.FIELD_REQUIRED) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
-							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : false;
+							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
 					metadataDimension.add(field);
@@ -257,7 +257,7 @@ public class Hierarchies {
 					boolean fieldIsRequired = sbField.getAttribute(HierarchyConstants.FIELD_REQUIRED) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
-							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : false;
+							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
 					metadataGeneralHierarchy.add(field);
@@ -282,7 +282,7 @@ public class Hierarchies {
 					boolean fieldIsRequired = sbField.getAttribute(HierarchyConstants.FIELD_REQUIRED) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
-							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : false;
+							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
 					metadataNodeHierarchy.add(field);
@@ -307,7 +307,7 @@ public class Hierarchies {
 					boolean fieldIsRequired = sbField.getAttribute(HierarchyConstants.FIELD_REQUIRED) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
-							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : false;
+							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
 					metadataLeafHierarchy.add(field);
