@@ -32,6 +32,12 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.selectedDataSourceItems = [];
 	$scope.isDirty = false;
 	$scope.forms = {};
+	$scope.isSuperAdmin = superadmin;
+	$scope.jdbcOrJndi = {};
+	
+	$scope.isSuperAdminFunction=function(){               
+        return !superadmin;
+	};
 	
 	angular.element(document).ready(function () {
         $scope.getDataSources();
@@ -97,7 +103,12 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//REST
 	$scope.saveOrUpdateDataSource = function(){
 		
+		delete $scope.jdbcOrJndi.type;
+		
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
+			
+
+			var errorU = "Error updating the datasource!"
 			
 			//MODIFY DATA SOURCE
 			sbiModule_restServices.put('2.0/datasources','',angular.toJson($scope.selectedDataSource))
@@ -107,6 +118,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					function(data, status, header, config) {
 						if(data.hasOwnProperty("errors")) {
 							console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
+							$scope.showActionTestKO(errorU);
 						} else {
 							console.log("[PUT]: SUCCESS!");
 							$scope.dataSourceList = [];
@@ -120,10 +132,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					
 					function(data, status, header, config) {
 						console.log("[PUT]: FAIL!"+status);
+						$scope.showActionTestKO(errorU);
 					}
 			
 			);
 		} else {
+			
+			var errorS = "Error saving the datasource!";
 			
 			//CREATE NEW DATA SOURCE
 			sbiModule_restServices.post('2.0/datasources','', angular.toJson($scope.selectedDataSource))
@@ -133,6 +148,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					function(data, status, headers, config) {
 						if(data.hasOwnProperty("errors")) {
 							console.log("[POST]: DATA HAS ERRORS PROPERTY!");
+							console.log(data)
+							$scope.showActionTestKO(errorS);
 						} else {
 							console.log("[POST]: SUCCESS!");
 							$scope.dataSourceList = [];
@@ -146,6 +163,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					
 					function(data, status, headers, config) {
 						console.log("[POST]: FAIL!"+status);
+						$scope.showActionTestKO(errorS);
 					}					
 			);
 		}		
@@ -203,6 +221,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		
 		if($scope.isDirty==false) {
 			$scope.showme=true;
+			$scope.jdbcOrJndi = {type:"JDBC"};
 			$scope.selectedDataSource = {
 					label : "",
 					descr : "",
@@ -248,6 +267,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
 		
+		$scope.jdbcOrJndi.type = null;
 		$scope.showme=true;
 			
 			if($scope.isDirty==false) {
@@ -269,8 +289,20 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					$scope.showMe = true;
 				});
 			}
-		
+			
+			$scope.connectionType();
 	};
+	
+	$scope.connectionType = function () {
+		
+		 if($scope.selectedDataSource.driver){
+			 $scope.jdbcOrJndi.type = "JDBC";
+		 } 
+		 if($scope.selectedDataSource.jndi!="") {
+			 $scope.jdbcOrJndi.type = "JNDI";
+		 }
+		 
+	}
 	
 	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
 	$scope.closeForm = function(){
@@ -391,7 +423,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.testDataSource = function () {
 		
 		//TEST DATA SOURCE
-		
 		var testJSON = angular.copy($scope.selectedDataSource);
 		
 		if(testJSON.hasOwnProperty("dsId")){
@@ -411,8 +442,15 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				function(data, status, headers, config) {
 					if(data.hasOwnProperty("errors")) {
 						
-						console.log("[TEST]: DATA HAS ERRORS PROPERTY!");
-						$scope.showActionTestKO(data.errors[0].message);
+						var error = "Error testing the datasource!";
+						
+						if(data.errors[0].message){
+							$scope.showActionTestKO(data.errors[0].message);
+						} else {
+							$scope.showActionTestKO(error);
+						}
+						
+						
 					} else {
 						console.log("[TEST]: SUCCESS!");
 						$scope.showActionTestOK();
@@ -424,12 +462,19 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				function(data, status, headers, config) {
 					
 					console.log("[TEST]: FAIL!"+status);
-					$scope.showActionTestKO();
+					var error = "Error testing the datasource!"
+					$scope.showActionTestKO(error);
 				}					
 		);
 		
+	}
+	
+	//Get user
+	$scope.getUser = function() {
+		console.log("is super admin - "+$scope.isSuperAdmin);
 		
 	}
+	$scope.getUser();
 	
 	//SPEED MENU TRASH ITEM
 	$scope.dsSpeedMenu= [
