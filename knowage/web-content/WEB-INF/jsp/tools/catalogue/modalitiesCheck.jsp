@@ -168,8 +168,11 @@
 				       <md-select  aria-label="dropdown" placeholder ="Check Type"
 				       	name ="dropdown" 
 				        ng-required = "true"
-				        ng-model="SelectedConstraint.valueTypeCd"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
+				        ng-model="SelectedConstraint.valueTypeCd"
+				        ng-change="changeType(SelectedConstraint.valueTypeCd)">
+				        <md-option 
+				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}
+				        </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="SelectedConstraint.valueTypeCd== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>

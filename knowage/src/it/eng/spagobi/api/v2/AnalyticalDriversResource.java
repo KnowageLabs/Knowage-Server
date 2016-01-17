@@ -2,6 +2,8 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,6 +18,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -23,6 +27,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleBO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -168,6 +174,45 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@POST
+	@Path("/modes")
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response insertUseMode(@Valid ParameterUse body) {
+
+		IParameterUseDAO useModesDao = null;
+		ParameterUse useMode = body;
+		ObjectMapper mapper = new ObjectMapper();
+		List<LinkedHashMap> roles = useMode.getAssociatedRoles();
+		List<LinkedHashMap> checks = useMode.getAssociatedChecks();
+		if (useMode.getUseID() != null) {
+			logger.error("Error paramters. New check should not have ID value");
+			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
+		}
+		List<Role> formatedRoles = new ArrayList<>();
+		List<Check> formatedChecks = new ArrayList<>();
+		for (LinkedHashMap temp : roles) {
+			RoleBO role = mapper.convertValue(temp, RoleBO.class);
+			formatedRoles.add(BOtoRole(role));
+		}
+		for (LinkedHashMap temp : checks) {
+			Check check = mapper.convertValue(temp, Check.class);
+			formatedChecks.add(check);
+		}
+		useMode.setAssociatedRoles(formatedRoles);
+		useMode.setAssociatedChecks(formatedChecks);
+		try {
+			useModesDao = DAOFactory.getParameterUseDAO();
+			useModesDao.setUserProfile(getUserProfile());
+			useModesDao.insertParameterUse(useMode);
+			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), "UTF-8");
+			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
+		} catch (Exception e) {
+			logger.error("Error while inserting resource", e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+		}
+	}
+
 	@PUT
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
@@ -188,6 +233,45 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			driversDao.modifyParameter(driver);
 			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedDriver)).entity(encodedDriver).build();
+		} catch (Exception e) {
+			logger.error("Error while modifying resource with id: " + id, e);
+			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
+		}
+	}
+
+	@PUT
+	@Path("/modes/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateUseMode(@PathParam("id") Integer id, @Valid ParameterUse body) {
+
+		IParameterUseDAO useModesDao = null;
+		ParameterUse useMode = body;
+		ObjectMapper mapper = new ObjectMapper();
+		List<LinkedHashMap> roles = useMode.getAssociatedRoles();
+		List<LinkedHashMap> checks = useMode.getAssociatedChecks();
+		if (useMode.getUseID() == null) {
+			logger.error("The check with ID " + id + " doesn't exist");
+			throw new SpagoBIRuntimeException("The check with ID " + id + " doesn't exist");
+		}
+		List<Role> formatedRoles = new ArrayList<>();
+		List<Check> formatedChecks = new ArrayList<>();
+		for (LinkedHashMap temp : roles) {
+			RoleBO role = mapper.convertValue(temp, RoleBO.class);
+			formatedRoles.add(BOtoRole(role));
+		}
+		for (LinkedHashMap temp : checks) {
+			Check check = mapper.convertValue(temp, Check.class);
+			formatedChecks.add(check);
+		}
+		useMode.setAssociatedRoles(formatedRoles);
+		useMode.setAssociatedChecks(formatedChecks);
+		try {
+			useModesDao = DAOFactory.getParameterUseDAO();
+			useModesDao.setUserProfile(getUserProfile());
+			useModesDao.modifyParameterUse(useMode);
+			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), "UTF-8");
+			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			logger.error("Error while modifying resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
@@ -245,5 +329,48 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			logger.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
+	}
+
+	public Role BOtoRole(RoleBO bo) {
+		Role role = new Role();
+		role.setId(bo.getId());
+		role.setName(bo.getName());
+		role.setCode(bo.getCode());
+		role.setDescription(bo.getDescription());
+		role.setRoleTypeCD(bo.getRoleTypeCD());
+		role.setRoleTypeID(bo.getRoleTypeID());
+
+		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
+		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
+		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
+		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
+		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
+		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
+		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
+		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
+		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
+		role.setIsAbleToSendMail(bo.isAbleToSendMail());
+		role.setIsAbleToEditWorksheet(bo.isAbleToEditWorksheet());
+		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
+		role.setIsAbleToSeeMetadata(bo.isAbleToSeeMetadata());
+		role.setIsAbleToSaveMetadata(bo.isAbleToSaveMetadata());
+		role.setIsAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
+		role.setIsAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
+		role.setIsAbleToManageUsers(bo.isAbleToManageUsers());
+		role.setIsAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
+		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
+		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
+		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
+		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
+		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
+		role.setIsAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
+		role.setIsAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
+		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
+		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
+		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
+
+		return role;
 	}
 }

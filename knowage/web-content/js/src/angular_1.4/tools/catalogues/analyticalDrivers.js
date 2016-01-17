@@ -17,7 +17,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.listSelType = []; // array that hold list of ways to show lov
 	$scope.layersList = []; // array that hold layers list
 	$scope.rolesList = [];  // array that hold roles list
-	$scope.role = [];
+	$scope.associatedRoles=[]; // temp array that hold selected object roles list
+	$scope.associatedChecks=[]; // temp array that hold selected object checks list
 	$scope.checksList = []; // array that hold checks list
 	$scope.useModeList= []; // array that hold use mode objects list
 	$scope.showActionOK = function(msg) {
@@ -83,8 +84,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				$scope.getSelTypes();
 				$scope.getLayers();
 				$scope.getRoles();
-				$scope.getChecks();
-				
+				$scope.getChecks();				
 		    });
 	
 	$scope.setDirty=function(){ 
@@ -97,7 +97,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	//TODO delete defaultrg property before saving
 	$scope.useModeInit = function(){
+		$scope.selectedParUse.idLov= -1;
+		$scope.selectedParUse.idLovForDefault= -1;
+		$scope.selectedParUse.selectionType= null;
+		$scope.selectedParUse.defaultFormula = null;
 		$scope.selectedParUse.valueSelection = "man_in";
+		$scope.selectedParUse.maximizerEnabled = true;
 		$scope.selectedParUse.defaultrg="none";
 		
 	}
@@ -172,7 +177,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.getDrivers = function(){ // service that gets list of drivers @GET
 		sbiModule_restServices.get("2.0", "analyticalDrivers").success(
 				function(data, status, headers, config) {
-					
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
@@ -187,7 +191,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.getLayers = function(){ // service that gets list of layers @GET
 		sbiModule_restServices.get("2.0/analyticalDrivers/layers/", "").success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
@@ -206,7 +209,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
                 } else {
                 	$scope.rolesList = data;
-
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -221,7 +223,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
                     console.log(sbiModule_translate.load("sbi.glossary.load.error"));
                 } else {
                 	$scope.checksList = data;
-
                 }
             }).error(function (data, status, headers, config) {
             console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -236,7 +237,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.listType = data;
-			
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -247,12 +247,10 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.getSelTypes = function(){ // service that gets lovs selection types for dropdown @GET
 		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=SELECTION_TYPE").success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.listSelType = data;
-			
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -263,12 +261,10 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.getLovDates = function(){ // service that gets list of lovs @GET
 		sbiModule_restServices.get("2.0", "lovs").success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.listDate = data;
-			
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -288,19 +284,28 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	                     
 	               
 	/*
-     * 	this function is used to properly format
-     *  driver object for saving													
+     * 	this functions are used to properly format
+     *   objects for saving													
      */
 	$scope.formatDriver = function() {
 		$scope.selectedDriver.length = 0; // length of what??
 		for ( var l in $scope.listType) {
-		
-		if ($scope.selectedDriver.type == $scope.listType[l].VALUE_CD) {
-			$scope.selectedDriver.typeId = $scope.listType[l].VALUE_ID;
-		}
-		}
+			
+			if ($scope.selectedDriver.type == $scope.listType[l].VALUE_CD) {
+				$scope.selectedDriver.typeId = $scope.listType[l].VALUE_ID;
+			}
+			}
 	}
-	
+	$scope.formatUseMode = function() {
+		$scope.selectedParUse.multivalue = true; // multivalue??
+		$scope.selectedParUse.manualInput = 1; // manualinput??
+		$scope.selectedDriver.valueSelection = $scope.selectedParUse.valueSelection;
+		$scope.selectedParUse.id = $scope.selectedDriver.id;
+		$scope.selectedParUse.associatedRoles = $scope.associatedRoles;
+		$scope.selectedParUse.associatedChecks = $scope.associatedChecks;
+		delete $scope.selectedParUse.defaultrg;
+	}
+	 
 	$scope.saveDrivers= function(){  // this function is called when clicking on save button
 		$scope.formatDriver();
 		console.log($scope.selectedDriver);
@@ -327,8 +332,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
-					})	
-			
+					})
+					
+					if($scope.selectedParUse.label != null){
+						$scope.saveUseMode();
+					}
+						
 		}else{ // create new item in database @POST
 			console.log($scope.selectedDriver);
 			sbiModule_restServices
@@ -341,6 +350,59 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 							}, 1000);
 							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
 							$scope.selectedDriver={};
+							$scope.selectedTab = 0;
+							$scope.showme=false;
+							$scope.showadMode = false;
+							$scope.dirtyForm=false;
+						
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+
+					})	
+		}
+	}
+	
+	$scope.saveUseMode= function(){  // this function is called when clicking on save button
+		$scope.formatUseMode();
+		console.log($scope.selectedParUse);
+		if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT
+			$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
+			$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
+			sbiModule_restServices
+		    .put("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse).success(
+					function(data, status, headers, config) {
+						
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+						} else {
+							$scope.useModeList=[];
+							$timeout(function(){								
+								$scope.getUseModesById($scope.selectedDriver);
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
+							$scope.getUseModesById($scope.selectedDriver);
+							$scope.selectedTab = 0;
+							$scope.showme=false;
+							$scope.showadMode = false;
+							$scope.dirtyForm=false;	
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+
+					})	
+			
+		}else{ // create new item in database @POST
+			console.log($scope.selectedParUse);
+			sbiModule_restServices
+		    .post("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse)).success(
+					function(data, status, headers, config) {
+						
+							$scope.useModeList=[];
+							$timeout(function(){								
+								$scope.getUseModesById($scope.selectedDriver);
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
+							$scope.selectedParUse={};
 							$scope.selectedTab = 0;
 							$scope.showme=false;
 							$scope.showadMode = false;
@@ -378,6 +440,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	// this function is called when item from use mode table is clicked
 	$scope.loadUseMode=function(item){
+		$scope.associatedRoles = item.associatedRoles;
+		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
@@ -401,6 +465,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		 $scope.changeTab(item);
 		 $scope.setParUse();
 	}
+	
 	// this function properly checks radio buttons
 	$scope.setParUse = function () {		
 	if($scope.selectedParUse.defaultFormula == null){
@@ -413,26 +478,60 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}	
 	}
 	
-	$scope.setRoles = function(item,list) {
+	/*
+	 * this set of functions handle getting and setting of roles
+	 *  and checks checkboxes TODO when save set temp arrays to object fields
+	 */ 
+	$scope.checkCheckboxes = function (item, list) {
+		if(item.hasOwnProperty("id")){
+			var index = $scope.indexInList(item, list);
+
+			if(index != -1){
+				$scope.associatedRoles.splice(index,1);
+			}else{
+				$scope.associatedRoles.push(item);
+			}
+		} 
+		if (item.hasOwnProperty("checkId")) {
+			var index = $scope.indexInList(item, list);
+
+			if(index != -1){
+				$scope.associatedChecks.splice(index,1);
+			}else{
+				$scope.associatedChecks.push(item);
+			}
+		}
+	};
+	
+	$scope.getCheckboxes = function(item,list) {
 		
 		return  $scope.indexInList(item, list)>-1;
-		
 	}
-	
 	$scope.indexInList=function(item, list) {
-
+		if(item.hasOwnProperty("id")){
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
 				return i;
 			}
 		}
-
+		}
+		if(item.hasOwnProperty("checkId")){
+			for (var i = 0; i < list.length; i++) {
+				var object = list[i];
+				if(object.checkId==item.checkId){
+					return i;
+				}
+			}
+			}
 		return -1;
-	};
+	}
+	
 	// this function is called when clicking on plus button in use mode table
 	$scope.createUseModes =function(){ 
 		$scope.selectedParUse = {};
+		$scope.associatedRoles= [];
+		$scope.associatedChecks= [];
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;
@@ -491,4 +590,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 				})	
 	}
+	
+	$scope.test = function() {
+		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
+		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
+		console.log($scope.selectedParUse);
+	}
+	
+	
 };

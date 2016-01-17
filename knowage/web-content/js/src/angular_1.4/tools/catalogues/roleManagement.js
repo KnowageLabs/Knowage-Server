@@ -106,19 +106,22 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     
     /*
      * 	function that checks if role is "USER" and enables user available choices
-	 *	also assigns Domain Type values to main item on click																
+	 *	also assigns Domain Type values to main item on change																
      */
-    $scope.comboCheck = function(l){ 
-		
-		$scope.selectedRole.roleTypeID=l.VALUE_ID;
-		$scope.selectedRole.roleTypeCD=l.VALUE_CD;
+    $scope.changeType = function(item) {
+    	console.log(item);
+		for (var i = 0; i < $scope.listType.length; i++) {
+			if($scope.listType[i].VALUE_CD == item){
+				$scope.selectedRole.roleTypeID=$scope.listType[i].VALUE_ID;
+			}
+		}
 		 if ($scope.selectedRole.roleTypeCD == "USER") {
 	        	$scope.disable = false;	
 			}else{
 				$scope.disable = true;
 			}
-		 
-    }
+		
+	}
     
     /*
      * 	function that adds VALUE_TR property to each Domain Type
@@ -172,7 +175,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	   console.log("empty metaa");
     	   delete $scope.selectedRole.roleMetaModelCategories;
        }
-           //delete $scope.selectedRole.roleMetaModelCategories;
     	}
     
     
@@ -270,7 +272,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
      */
     $scope.saveRole = function () {
     	$scope.formatCategories();
-    	console.log($scope.selectedRole);
+    	console.log($scope.selectedRole.roleMetaModelCategories);
         if($scope.selectedRole.hasOwnProperty("id")){ 
 			sbiModule_restServices
 		    .put("2.0/roles", $scope.selectedRole.id , $scope.selectedRole).success(

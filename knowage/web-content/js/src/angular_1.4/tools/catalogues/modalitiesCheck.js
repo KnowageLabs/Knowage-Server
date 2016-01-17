@@ -237,18 +237,23 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
  			}
  		}
 	 }
-	$scope.FieldsCheck = function(l){ // function that checks if field is necessary and assigns few values to main item on click
-		
-		$scope.label = l.VALUE_TR;
-		$scope.SelectedConstraint.valueTypeId=l.VALUE_ID;
-	 $scope.SelectedConstraint.valueTypeCd=l.VALUE_CD;
-		if(l.VALUE_NM == "Range"){
-			$scope.additionalField= true;
-		}else{
-			$scope.additionalField= false;
+	 
+	$scope.changeType = function(item) {
+		 console.log(item);
+			for (var i = 0; i < $scope.listType.length; i++) {
+				if($scope.listType[i].VALUE_CD == item){
+					$scope.SelectedConstraint.valueTypeId=$scope.listType[i].VALUE_ID;
+					$scope.label = $scope.listType[i].VALUE_TR;
+				}
+			}
+			 if ($scope.SelectedConstraint.valueTypeCd == "RANGE") {
+				 $scope.additionalField= true;
+				}else{
+				$scope.additionalField= false;
+				}
+			
 		}
-		
-	}
+	
 	$scope.getPredefined = function(){ // service that gets predefined list GET
 		sbiModule_restServices.get("2.0", "predefinedChecks").success(
 				function(data, status, headers, config) {
@@ -288,6 +293,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 					} else {
 						$scope.listType = data;
 						$scope.addTranslation();
+						console.log($scope.listType);
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));

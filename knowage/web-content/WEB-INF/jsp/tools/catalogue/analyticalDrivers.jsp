@@ -108,7 +108,6 @@
 			<md-tab label='{{translate.load("sbi.analytical.drivers.details");}}'>
 			<md-content flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">
-
 			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
@@ -190,6 +189,11 @@
 			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> <md-content
 				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder"> 
+							
+			<md-button type="button" tabindex="-1" aria-label="cancel"
+							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;float:right;"
+							ng-click="test()">TEST
+			</md-button>	
 				
 					<div layout="row" layout-wrap>
 						<div flex=100>
@@ -258,8 +262,10 @@
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'lov'"
-					        ng-model="selectedParUse.idLov"> <md-option 
-					        ng-repeat="l in listDate track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
+					        ng-model="selectedParUse.idLov">
+					        <md-option 
+					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}}
+					        </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLov== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -275,7 +281,7 @@
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'lov'"
 					        ng-model="selectedParUse.selectionType"> <md-option 
-					        ng-repeat="l in listSelType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}</md-option>
+					        ng-repeat="l in listSelType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}</md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectionType== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -339,7 +345,7 @@
 				      
 				      </md-radio-button>
     				</md-radio-group>
-					<div ng-show= "defaultrg == 'lov'">
+					<div ng-show= "selectedParUse.defaultrg == 'lov'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="small counter" > 
@@ -358,7 +364,7 @@
 					    </div>
 				    </div>
 					
-					<div ng-show= "defaultrg == 'pickup'">
+					<div ng-show= "selectedParUse.defaultrg == 'pickup'">
 						<div layout="row" layout-wrap ng-if="selectedParUse.valueSelection != 'map_in'">
 	      				<div flex=100>
 					       <md-input-container class="small counter" > 
@@ -370,8 +376,8 @@
 					        ng-repeat="f in defaultFormula track by $index" ng-click="FieldsCheck(l)" value="{{f.f_value}}">{{f.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.defaultFormula == null">
-					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-					      </div>   
+					       <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+					       </div>   
 					        </md-input-container>
 					    </div>
 					    </div>
@@ -382,12 +388,16 @@
 					</md-toolbar>
 					
 				    <div layout="row" layout-wrap flex>
-					<div flex="25" ng-repeat="rl in rolesList">
-						<md-checkbox ng-checked="setRoles(rl, role)" ng-click="check(rl, role)"> 
-						{{ rl.name }} 
-						</md-checkbox>
-					</div>
+					<div flex="25" ng-repeat="role in rolesList">
+						<md-checkbox 
+						ng-required = "true"
+						ng-checked="getCheckboxes(role , associatedRoles)"
+						ng-click="checkCheckboxes(role , associatedRoles)"> 
+						{{ role.name }} 
+						</md-checkbox>	
+					</div>	
 				    </div>
+				    
 					
 				     <md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
@@ -395,9 +405,12 @@
 					</md-toolbar>
 					
 					<div layout="row" layout-wrap flex>
-					<div flex="25" ng-repeat="c in checksList">
-						<md-checkbox > {{ c.name }} </md-checkbox>
-
+					<div flex="25" ng-repeat="check in checksList">
+						<md-checkbox 
+						ng-checked="getCheckboxes(check , associatedChecks)" 
+						ng-click="checkCheckboxes(check , associatedChecks)"> 
+						{{ check.name }} 
+						</md-checkbox>
 					</div>
 				    </div>	
 				 </md-content>
