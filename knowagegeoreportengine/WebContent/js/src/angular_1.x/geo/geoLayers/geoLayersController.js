@@ -153,7 +153,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 	$scope.toggleLayer = function(layerConf){
 		sbiModule_logger.log("toggleLayer");
-		//controllo se nel template erano salvati dei filtri e li ricarico
+		//reload filters
 
 		if(geoModule_template.hasOwnProperty('filtersApplied') && $scope.oneTime){
 			$scope.oneTime=false;
@@ -162,11 +162,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 		
 		if(geoModule_layerServices.filters[layerConf.layerId]){
-			//lo contiene già quindi si staNNO RIMUOVENDO I FILTRI
+			//remove filters
 			//$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
 			delete $scope.listCheckedfilter[layerConf.layerId];
 		}else{
-			//AGGIUNGO FILTRI
+			//add filters
 			if($scope.multipleFilters[layerConf.layerId]){
 				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
 				
@@ -188,17 +188,17 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		geoModule_layerServices.layerWithoutFilter=true;
 	//	if(!geoModule_layerServices.filters[layerConf.layerId]){ geoModule_layerServices.loadedLayer[layerConf.layerId]
 		if(!geoModule_layerServices.layerIsLoaded(layerConf) ){
-			//si sta aggiungendo un layer alla mappa
+			//add Layer
 			if(!$scope.multipleFilters[layerConf.layerId]){
-				//vuol dire che il layer non ha filtri!
+				//if layer haven't filters
 				geoModule_layerServices.layerWithoutFilter=true;
 				console.log("Layer senza filtri");
 			}else{
-				//verifico che nel form non siastato inserito niente
+			
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
 
 				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
-					//verifico che non è gia caricato un layer senza filtri
+					//if it was added a layer with filters
 					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(-1);
 				}
 
@@ -209,14 +209,14 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			
 				geoModule_layerServices.layerWithoutFilter=false;
 				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
-					//verifico che non è gia caricato un layer senza filtri
+					//if it was added a layer without filters
 					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(-1);
 				}
 
 			}else{
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);
 				if(Object.getOwnPropertyNames(geoModule_layerServices.loadedLayer).length>0){
-					//verifico che non è gia caricato un layer senza filtri
+					//if it was added a layer without filters
 				
 					geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInLayersLoaded(layerConf.layerId);
 				}
@@ -228,7 +228,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 	$scope.checkFilterInthisLayer = function(layerConf){
 		for(var i=0;i<$scope.multipleFilters[layerConf.layerId].length;i++){
-			//se è presente un filtro
 			if($scope.multipleFilters[layerConf.layerId][i].model!=""){
 				return false;
 			}
@@ -272,11 +271,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		$scope.filters=[];
 		var selectedLayerProperties = selectedLayer.properties;
 		if($scope.multipleFilters[selectedLayer.layerId]){
-			//se è stato gia filtrato riprendi i valori
+			//Recover filters
 			$scope.filters = angular.copy($scope.multipleFilters[selectedLayer.layerId]);
 
 		}else{
-			//altrimenti inserisci i filtri per il layer selezionato
+			//add filters for the selected layer
 			for(var i = 0;i<selectedLayerProperties.length;i++){
 				$scope.filters.push({
 					filter: selectedLayerProperties[i],
@@ -325,15 +324,14 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			}
 		}
 		for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){
-			//se tutti i campi sono null
+			//if all fields are null
 			if($scope.multipleFilters[$scope.layerSelected.layerId][i].model!=""){
 				flag=true;
 			}
 
 		}
 		if(!flag){
-			//rimuovi layer da multiFilters
-			//$scope.multipleFilters = $scope.removefromList($scope.multipleFilters ,$scope.layerSelected.layerId);
+			//remove Layer from multifilters variable
 			delete $scope.multipleFilters[$scope.layerSelected.layerId];
 		}
 		
@@ -343,7 +341,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 		$timeout(function() {
 			$map.updateSize();
-			//$map.redraw();
 		}, 500);
 
 	}

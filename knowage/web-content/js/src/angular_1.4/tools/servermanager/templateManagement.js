@@ -29,7 +29,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	$scope.loadDocuments = function(ev){
 		if($scope.data_format){
-			//data inserita
+			//get the date selected
 		
 			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
 					function(data, status, headers, config) {
@@ -38,7 +38,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							$scope.flagSelect=false;
 						} else {
 							console.log(data);
-							//prendo tutti i documenti
 				
 							$scope.documents=data;
 							$scope.flagSelect=true;
@@ -74,15 +73,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	$scope.deleteTemplate=function(ev){
 		if(!$scope.data_format){
-			//manca la data alert di richiesta
+			//if missing date
 			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
 		}
 		if($scope.docChecked.length==0 && $scope.data_format ){
-			//non è stato checkato nessun document
+			//if any document is check
 			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertmissingdocument"));
 		}
 		if($scope.data_format && $scope.docChecked.length!=0){
-			//data inserita cancello template ma chiedo conferma
+			//confim delete
 		
 			 $scope.confirm =  $mdDialog.confirm()
 			          .title(sbiModule_translate.load("sbi.templatemanagemenent.alertdatedelete"))
@@ -92,7 +91,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			          .cancel('Cancel');
 			 
 			 $mdDialog.show( $scope.confirm).then(function() {
-				//ha confermato la cancellazione
+				
 				 var request = [];
 					for(var i=0;i<$scope.docChecked.length;i++){
 						var obj={id:$scope.docChecked[i], data:$scope.data_format};
@@ -115,7 +114,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 								$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeletederror"));
 							})
 			    }, function() {
-			    	//ha annullato
+			    	//else nothing ACTION
 			    });
 		
 				
@@ -185,7 +184,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object==item){
-				//se nella lista è presente l'item è checked
 				return i;
 			}
 		}
@@ -194,7 +192,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	};
 	$scope.selectAll = function(){
 		if(!$scope.flagCheck){
-			//se era falso allora stiamo facendo il check
+			//if it was false then the user check 
 			$scope.flagCheck=true;
 			$scope.docChecked=[];
 			for(var i=0;i<$scope.documents.length;i++){

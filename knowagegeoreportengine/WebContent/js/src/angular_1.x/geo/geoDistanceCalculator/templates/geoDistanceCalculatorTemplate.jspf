@@ -8,8 +8,7 @@
 	            {{meas.label}}
 	          </md-option>
 	        </md-select>
-     	 </md-input-container>
-			
+     	 </md-input-container>		
 	    </div>
 </md-whiteframe>
   

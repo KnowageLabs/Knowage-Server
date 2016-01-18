@@ -79,10 +79,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog,geo_interaction,sbi
 				//Security Error
 			}
 		}
-		//vector[j]= raster;
-		//var vector = $map.getLayers().getArray();
-		//var length = vector.length;
-		//vector[length]= raster;
+
 		var map = new ol.Map({
 			layers: vector,
 			target: 'map_fake',
@@ -138,10 +135,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog,geo_interaction,sbi
 					source.un('tileloadstart', tileLoadStart);
 					source.un('tileloadend', tileLoadEnd, canvas);
 					source.un('tileloaderror', tileLoadEnd, canvas);
-				//	map.setSize(size);
-				//	map.getView().fit(extent, size);
-				//	map.renderSync();
-
+	
 					document.body.style.cursor = 'auto';
 				}, 10000);
 			}

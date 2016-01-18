@@ -129,9 +129,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		console.log($scope.selectedLayer.properties);
 		if($scope.flag){
 
-			//siamo nel caso di modifica dati già precedentemente inseriti
+			//case: modify layer
 			if($scope.selectedLayer.layerFile == null || $scope.selectedLayer.layerFile == undefined){
-				//siamo nel caso in cui la modifica del layer non coinvolge caricamento di file
+				//modify layer without upload file
 				sbiModule_restServices.put("layers", '', $scope.selectedLayer).success(
 
 						function(data, status, headers, config) {
@@ -158,7 +158,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						})
 
 			} else {
-				//siamo nel caso in cui la modifica del layer comporta il caricamento di un file
+				//modify layer with upload file
 				var fd = new FormData();
 				fd.append('data', angular.toJson($scope.selectedLayer));
 				fd.append('layerFile', $scope.selectedLayer.layerFile);
@@ -191,7 +191,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			}
 		}else{
-			//siamo nel caso in cui si sta aggiungengo un nuovo layer
+			//add new Layer
 			console.log($scope.selectedLayer.layerFile);
 			var fd = new FormData();
 			fd.append('data', angular.toJson($scope.selectedLayer));
@@ -199,7 +199,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			if($scope.selectedLayer.layerFile == null || $scope.selectedLayer.layerFile == undefined){
 				console.log($scope.selectedLayer);
-				//siamo nel caso in cui la post non prevede aggiunzioni di file
+				//add layer without upload file
 				sbiModule_restServices.post("layers",'',$scope.selectedLayer).success(
 						function(data, status, headers, config) {
 							console.log(data)
@@ -227,7 +227,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						})
 
 			} else{
-				//siamo nel caso in cui si sta aggiungengo un layer con file
+				//add Layer with file
 				sbiModule_restServices.post("layers", 'addData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
 
 						function(data, status, headers, config) {
@@ -278,7 +278,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			$scope.flagtype=false;
 
-			//siamo in una condizione di caricamento dati dalla lista
+			//load Layer in the form
 			if($scope.selectedLayer != null){
 				var confirm = $mdDialog
 				.confirm()
@@ -292,7 +292,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 				$mdDialog.show(confirm).then(function() {
 					if(item.pathFile!=null){
-						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
+						//if pathfile!=null enable the visualization of filename
 						console.log("true");
 						$scope.pathFileCheck =true;
 					} else{
@@ -300,7 +300,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						$scope.pathFileCheck = false;
 					}
 					$scope.flag=true;
-					//$scope.filter_set=[];
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
 
@@ -314,7 +313,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			}  else {
 				if(item.pathFile!=null){
-					//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
+					//if pathfile!=null enable the visualization of filename
 					console.log("true");
 					$scope.pathFileCheck =true;
 				} else{
@@ -359,7 +358,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	}
 	$scope.loadFilter = function(){
-		//funzione che carica i Filtri per ogni layer
+		//load filters for each layer
 		$scope.loadFilterAdded();
 
 		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
@@ -372,10 +371,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						$scope.filter = data;
 
 						for(var i=0;i<$scope.filter_set.length;i++){
-							//scorro tutti i filtri 
-							//prendo l'index del filter tot
+							//if filer is selected 
 							var index = $scope.filterInList($scope.filter_set[i],$scope.filter);
-							//e lo rimuovo per non mostrarlo
+							//remove it from the list of all filters
 							if(index > -1){
 								$scope.filter.splice(index,1);
 							}
@@ -413,7 +411,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		sbiModule_restServices.post("layers", "postitem", item).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						//change sbi.glossary.load.error
 
 					} else {
 						$scope.rolesItem = data;
@@ -429,7 +426,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		$scope.setTab('Layer');
 
 		if($scope.flag==true){
-			//c'è un layer caricato
+			//there is a layer loaded in the form
 			$scope.isRequired=false;
 			$scope.selectedLayer = angular.copy($scope.object_temp);
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
@@ -537,7 +534,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						//change sbi.glossary.load.error
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 					} else {
-						//mostro tutti i ruoli
+						//show all roles
 						$scope.roles = data;
 
 
@@ -574,7 +571,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
-				//se nella lista è presente l'item è checked
 				return i;
 			}
 		}
@@ -586,7 +582,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.property==item.property){
-				//se nella lista è presente l'item è checked
 				return i;
 			}
 		}
@@ -597,7 +592,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
-		.content('Layer saved correctly...')
+		.content(sbiModule_translate.load("sbi.layercatalogue.save"))
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
@@ -614,7 +609,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	$scope.showActionError = function() {
 		var toast = $mdToast.simple()
-		.content('Error...A problem occured.Retry it')
+		.content(sbiModule_translate.load("sbi.layercatalogue.problem"))
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
@@ -644,7 +639,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			}
 		});
 	};
-	//per vedere suggerimento pathFile
 	$scope.demo = {
 			showTooltip : false,
 			tipDirection : 'buttom'
@@ -739,7 +733,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 	$scope.addFilter = function(item){
 		if( $scope.filter_set.indexOf(item)>-1){
-			//se presente non fare nulla
+			//if it present no action
 		} else{
 			$scope.filter_set.push(item);
 			var index = $scope.filter.indexOf(item);
