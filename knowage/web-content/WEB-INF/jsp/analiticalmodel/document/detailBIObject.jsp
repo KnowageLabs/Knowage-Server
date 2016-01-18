@@ -190,10 +190,16 @@ function saveDocument(goBack) {
 		if (versionTemplateChanged == 'true' || fileUploadChanged == 'true'){
 			versionTemplateChanged = 'false';
 			fileUploadChanged = 'false';
-			if (confirm(message)) {
-				document.getElementById('loadParsDC').name = 'loadParsDC';
-				document.getElementById('loadParsDC').value = 'loadParsDC';
-			}
+			
+			<% if(modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)){ %>
+			
+		    			if (confirm(message)) {
+		    			    	document.getElementById('loadParsDC').name = 'loadParsDC';
+		    			        document.getElementById('loadParsDC').value = 'loadParsDC';
+		    			        }
+              <%
+		    		}
+		    	%>
 		}		
 	}
 	
