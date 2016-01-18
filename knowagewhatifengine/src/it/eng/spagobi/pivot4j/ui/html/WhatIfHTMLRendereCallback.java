@@ -1,19 +1,17 @@
 package it.eng.spagobi.pivot4j.ui.html;
 
-import static org.pivot4j.ui.table.TablePropertyCategories.HEADER;
-
-import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.olap4j.Axis;
+import org.pivot4j.ui.command.DrillDownCommand;
+import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
-import org.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
-
-	private boolean showProperties = false;
 
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
@@ -21,65 +19,51 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	@Override
-	public void startCell(TableRenderContext context) {
-		boolean header;
+	public void renderCommands(TableRenderContext context, List<UICommand<?>> commands) {
+		Map<String, String> attributes = new TreeMap<String, String>();
 
-		switch (context.getCellType()) {
-		case HEADER:
-		case "Title":
-		case "None":
-			header = true;
-			break;
-		default:
-			header = false;
-			break;
-		}
+		if (commands != null && !commands.isEmpty()) {
+			for (UICommand<?> command : commands) {
+				String cmd = command.getName();
+				String drillMode = command.getMode(context);
 
-		String name = header ? "th" : "td";
+				int colIdx = context.getColumnIndex();
+				int rowIdx = context.getRowIndex();
 
-		startElement(name, getCellAttributes(context));
+				int axis = 0;
+				if (context.getAxis() != null) {
+					axis = context.getAxis().axisOrdinal();
+				}
+				int memb = 0;
+				if (context.getPosition() != null) {
+					memb = context.getAxis().axisOrdinal();
+				}
+				int pos = 0;
+				if (context.getAxis() == Axis.COLUMNS) {
+					pos = rowIdx;
+				} else {
+					pos = colIdx;
+				}
 
-		/*
-		 * if (getCommands() != null && !commands.isEmpty()) { start
-		 * startCommand(context, commands); }
-		 */
+				String uniqueName = context.getMember().getUniqueName();
+				String positionUniqueName = context.getPosition().getMembers().toString();
 
-	}
+				if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
+						&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
+					attributes.put("src", "../img/minus.gif");
+					attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+							+ positionUniqueName + " ')");
+					startElement("img", attributes);
+					endElement("img");
 
-	@Override
-	protected Map<String, String> getCellAttributes(TableRenderContext context) {
-
-		String styleClass = null;
-
-		StringWriter writer = new StringWriter();
-		CssWriter cssWriter = new CssWriter(writer);
-
-		switch (context.getCellType()) {
-
-		case HEADER:
-			if (context.getAxis() == Axis.COLUMNS) {
-				styleClass = getColumnHeaderStyleClass();
-			} else {
-				styleClass = getRowHeaderStyleClass();
+				} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
+					attributes.put("src", "../img/plus.gif");
+					attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+							+ positionUniqueName + "' )");
+					startElement("img", attributes);
+					endElement("img");
+				}
 			}
-
-			// if its a property cell no span needed
-			if (getRowHeaderLevelPadding() > 0) {
-
-			}
-
 		}
-		return super.getCellAttributes(context);
 	}
-	/*
-	 * private boolean isProperyCell(RenderContext context) { if (showProperties
-	 * && this.getPropertyCollector() != null && context.getLevel() != null &&
-	 * isEmptyNonProperyCell(context)) { List<org.olap4j.metadata.Property>
-	 * propertieds =
-	 * this.getPropertyCollector().getProperties(context.getLevel()); return
-	 * (propertieds != null && propertieds.size() > 0);// check if // contains
-	 * // properties..
-	 * 
-	 * } return false; }
-	 */
 }
