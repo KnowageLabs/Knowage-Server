@@ -349,7 +349,7 @@ geoM.service(
 				document.addEventListener('keydown', function(evt) {
 
 					if(evt.which === 17 && geo_interaction.selectedFilterType == "near"){
-						//se premo control seleziono le features
+						//if press control select all features
 						sFeatures.clear();
 						layerServ.near($map.getCoordinateFromPixel(coordinate), ray);
 						$map.removeLayer(imagery);
@@ -471,7 +471,7 @@ geoM.service(
 					//$map.removeInteraction(currentInteraction.obj);
 
 				}
-				// setta il tipo di interazione;
+				// set the tyoe of interaction
 
 				currentInteraction.type = type;
 				if (type == 'near') {
@@ -480,12 +480,12 @@ geoM.service(
 					layerServ.spy();
 
 				} else if (type == 'intersect') {
-					//layerServ.setInteraction('intersect');
+
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.intersectFeature();
 
 				} else if (type == 'inside') {
-				//	layerServ.setInteraction('inside');
+
 					$map.removeInteraction(currentInteraction.obj);
 					layerServ.insideFeature();
 				}
@@ -541,7 +541,7 @@ geoM.service(
 			
 			
 			this.calculateDistance = function(coord,endCoord){
-				//calcola il raggio in km
+				//calculate ray in km
 				var wgs84Ellipsoid = new ol.Ellipsoid(6378137, 1 / 298.257223563);
 				var sourceProj = $map.getView().getProjection();
 				
@@ -552,7 +552,7 @@ geoM.service(
 			}
 			
 			this.calculateRay = function(distance){
-				//coordinate scelte randomicamente
+				//random coordinate
 				var x = -12821852.872668605;
 				var y = 5021607.010222939;
 				var xF = x + distance;
@@ -609,7 +609,6 @@ geoM.service(
 					delete this.loadedLayer[layerConf.layerId];
 					delete this.loadedLayerOBJ[layerConf.layerId];
 					geoModule_template.layersLoaded[layerConf.label]=false;
-					//layerServ.removeFromSelectedFilter(layerConf);
 				} else {
 					var layer = this.createLayer(layerConf, false);
 					if(layer.hasOwnProperty("$$state")){
@@ -634,7 +633,8 @@ geoM.service(
 				}
 			}
 			this.removeFromSelectedFilter = function(layerConf){
-				//rimuovo dai filtri selezionati che applico al layer quelli del layer rimosso
+				//remove from selected filters the filters of removed layer
+
 				var arr_tmp=[];
 				for(var key in layerServ.filters){
 					if(key==layerConf.layerId){
@@ -794,7 +794,7 @@ geoM.service(
 
 							for(var k=0;k<valuesInsert.length;k++){
 								if(value==valuesInsert[k]){
-									//se contiene il filtro selezionato 
+									//if contains filter
 									return styleTMP;
 
 								}
