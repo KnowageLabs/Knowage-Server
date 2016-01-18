@@ -212,7 +212,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 
 			}
-			// prendo la lista d properties da inserire poi nel campo keys di LayerDef
+			// insert properties in a field of layerDef
 			layerDef.put("properties", aLayer.getProperties());
 
 			// preparo il jsonObject da memorizzare in LayerDefinition
@@ -220,10 +220,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
 			layerDef.put("layer_file", aLayer.getPathFile());
-			/*
-			 * if (aLayer.getPathFile() != null) { layerDef.put("layer_file", aLayer.getPathFile()); // layerDef.put("properties", properties); } else {
-			 * layerDef.put("layer_file", JSONObject.NULL); // layerDef.put("properties", ""); }
-			 */
+
 			if (aLayer.getLayerURL() != null) {
 				layerDef.put("layer_url", aLayer.getLayerURL());
 			} else {
@@ -251,17 +248,17 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
 			updateSbiCommonInfo4Update(hibLayer);
 
-			// cancello tutti i roles associati al layer
+			// delete all roles of layer
 			// query hql
 			String hql = "DELETE from SbiGeoLayersRoles a WHERE a.layer.id =" + aLayer.getLayerId();
 			Query q = tmpSession.createQuery(hql);
 			q.executeUpdate();
 
-			// aggiorno i ruoli utenti scelti
+			// reload roles
 			if (aLayer.getRoles() != null) {
 				for (SbiExtRoles r : aLayer.getRoles()) {
 
-					// riaggiungo ruoli
+					// add roles
 					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(aLayer.getLayerId(), r.getExtRoleId().intValue());
 					updateSbiCommonInfo4Update(hibLayRol);
 					tmpSession.save(hibLayRol);
@@ -364,8 +361,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				e.printStackTrace();
 			}
 
-			// preparo il jsonObject da memorizzare in LayerDefinition
-
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
@@ -411,7 +406,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);
 
-			// setto i ruoli utenti scelti
+			// set roles choosen
 			if (aLayer.getRoles() != null) {
 				for (SbiExtRoles r : aLayer.getRoles()) {
 					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(id, r.getExtRoleId().intValue());
@@ -468,7 +463,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 
-			// se dobbiamo prendere le properties di un file
+			// load properties of file
 			if (!layerDef.get("layer_file").equals("null")) {
 				File doc = new File(layerDef.getString("layer_file"));
 				URL path = doc.toURI().toURL();
@@ -496,7 +491,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				} while (c != null);
 			}
 
-			// se dobbiamo prendere le properties di un wfs
+			// load properties of wfs
 			if (!layerDef.get("layer_url").equals(null)) {
 				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
 				URL url = new URL(urlDescribeFeature);
@@ -507,8 +502,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				connection.setDoInput(true);
 				connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
 				connection.setRequestProperty("Accept", "application/json");
-				// connection.setReadTimeout(30 * 1000);
 				connection.connect();
+
 				int HttpResult = connection.getResponseCode();
 				StringBuilder sb = new StringBuilder();
 				if (HttpResult == HttpURLConnection.HTTP_OK) {
@@ -611,7 +606,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(layerId, roleId);
 
-			// delete(SbiGeoLayersRoles.class, hibLayRol);
 			tmpSession.delete(hibLayRol);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -660,7 +654,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					System.out.println(obj);
 				} while (c != null);
 			}
-			// se dobbiamo prendere le properties di un wfs
+			// load properties of wfs
 			if (!layerDef.get("layer_url").equals(null)) {
 				if (typeWFS.equals("kml")) {
 					URL url = new URL(getOutputFormatKML(layerDef.getString("layer_url")));
@@ -743,7 +737,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				hibLayer = (SbiGeoLayers) it.next();
 				if (hibLayer != null) {
 					final GeoLayer bilayer = hibLayer.toGeoLayer();
-					// if temporaneo in fase d'implementaz
 
 					String str = new String(hibLayer.getLayerDef(), "UTF-8");
 					JSONObject layerDef = new JSONObject(str);

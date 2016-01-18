@@ -56,7 +56,7 @@ function geoMapMenuControllerFunction(
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
-   // 
+    
 	$scope.typeOfMisure = [
 	                       {label: "m",type:"miglia"},
 	                       {label: "km",type:"kilometers"},
@@ -64,8 +64,7 @@ function geoMapMenuControllerFunction(
 	                       ];
 	
 	$scope.setSelectedFilterType = function(type) {
-		//cambio geo_interaction con layer service
-		//geo_interaction.selectedFilterType = type;
+
 		geo_interaction.selectedFilterType=type;
 		if(type=="near"){
 			
@@ -83,7 +82,7 @@ function geoMapMenuControllerFunction(
 		$scope.measureInsert=2*num;
 		console.log($scope.selectMisure, $scope.measureInsert);
 		if($scope.selectMisure=="miglia"){
-			//conversione in km
+			//conversion in km
 			$scope.measureInsert=$scope.measureInsert*1.852;
 		}
 		
@@ -141,7 +140,6 @@ function geoMapMenuControllerFunction(
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.name==item.name){
-				//se nella lista è presente l'item è checked
 				return i;
 			}
 		}

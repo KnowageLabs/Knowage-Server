@@ -6,18 +6,6 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +37,18 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/layers")
 public class LayerCRUD {
@@ -90,7 +90,7 @@ public class LayerCRUD {
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
 	}
-	
+
 	@GET
 	@Path("/getLayerByLabel")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -121,7 +121,7 @@ public class LayerCRUD {
 
 		return s;
 	}
-	
+
 	@GET
 	@Path("/getFilter")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -153,7 +153,6 @@ public class LayerCRUD {
 			prop.add(obj);
 		}
 
-		// obj.put("result", properties.toString());
 		return prop.toString();
 	}
 
@@ -168,7 +167,6 @@ public class LayerCRUD {
 		String[] requestSplit;
 		try {
 
-			// id = req.getParameter("id");
 			request = req.getParameter("id");
 			requestSplit = request.split(",");
 			id = requestSplit[0];
@@ -198,7 +196,6 @@ public class LayerCRUD {
 		List roles = null;
 		Role aRole = null;
 		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
-		// gets roles from database
 		try {
 			roles = DAOFactory.getRoleDAO().loadAllRoles();
 			System.out.println(roles.toString());
@@ -259,7 +256,6 @@ public class LayerCRUD {
 
 		return s;
 	}
-	
 
 	@POST
 	@Path("/postitem")
@@ -278,7 +274,6 @@ public class LayerCRUD {
 		// get roles for item selected from database
 		List roles = new ArrayList<>();
 		Role aRole = null;
-		// gets roles from database
 		try {
 			roles = DAOFactory.getRoleDAO().loadRolesItem(requestBodyJSON);
 			System.out.println(roles);
@@ -390,7 +385,7 @@ public class LayerCRUD {
 			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
-			// prendo i pacchetti del file
+			// get File
 
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			LayerServices layerServices = new LayerServices();
@@ -404,21 +399,6 @@ public class LayerCRUD {
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
 				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
-				// FileOutputStream oo = new FileOutputStream("C:/Devel/SPAGOBI/pippo.zip");
-				// oo.write(data);
-				// oo.flush();
-				// oo.close();
-				if (bool) {
-					// unzip
-					// ZipUtils.unzipFile("C:/Devel/SPAGOBI/pippo.zip");
-
-					// fine
-					// ZipUtils zip = new ZipUtils();
-					// ByteArrayOutputStream output = new ByteArrayOutputStream();
-					// ZipUtils.unzip(new ByteArrayInputStream(data), f);
-					// ZipUtils.unzip(new File("C:/Devel/SPAGOBI/pippo.zip"), output);
-					// data = output.toByteArray();
-				}
 
 				String path = layerServices.getResourcePath(data);
 				aLayer.setPathFile(path);
@@ -488,7 +468,7 @@ public class LayerCRUD {
 			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
-			// prendo i pacchetti del file
+			// load File
 
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			LayerServices layerServices = new LayerServices();
@@ -535,7 +515,6 @@ public class LayerCRUD {
 		}
 
 		GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-		// aLayer.setPathFile(null);
 		Assert.assertNotNull(aLayer, "The layer is null");
 		logger.debug("Layer deserialized correctly");
 
@@ -621,9 +600,8 @@ public class LayerCRUD {
 	@POST
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// {items:["layername1","layername2",....]}
-	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
-			IOException {
+	public String getLayerFromList(@Context HttpServletRequest req)
+			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -660,8 +638,7 @@ public class LayerCRUD {
 			logger.debug("No layer found");
 			return "{root:[]}";
 		}
-		
-//		System.out.println("Contengo " + layers.toString());
+
 		logger.debug("Serializing the layers");
 		ObjectMapper mapper = new ObjectMapper();
 		String s = "[]";
