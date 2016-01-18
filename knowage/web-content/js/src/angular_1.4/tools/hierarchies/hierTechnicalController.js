@@ -256,7 +256,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				node[metadata[i].ID] = '';
 			}
 		}
-		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false}];
+		node.children = [{fake:true,name:$scope.translate.load("sbi.hierarchies.new.empty"),id:'',visible:true,checked:false,expanded:false}];
 		node.expanded = false;
 		node.visible=true;
 		node.type="folder";
@@ -531,7 +531,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	};
 	
 	$scope.createTree = function(){
-		if ($scope.dateTarget && $scope.dimSrc && $scope.hierTarget){
+		if ($scope.dimSrc){
 			var promise = $scope.editNode($scope.createEmptyNode("root"),null,true);
 			promise
 				.then(function(newItem){

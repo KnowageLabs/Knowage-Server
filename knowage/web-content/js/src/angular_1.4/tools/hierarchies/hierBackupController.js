@@ -164,17 +164,15 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.editBackup = function (backup){
 		var dim = $scope.dimBackup;
 		if (dim && backup){
-			var config = {
-					params : {
+			var item = {
 						dimension: dim.DIMENSION_NM,
 						name: backup.HIER_NM
-					}
-			};
+						};
 			var title = $scope.translate.load("sbi.generic.update2");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
 			response.then(function(){
-				$scope.restService.post("hierarchies","restoreHierarchy",null,config)
+				$scope.restService.post("hierarchies","restoreHierarchy",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
@@ -195,17 +193,15 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.restoreBackup = function (backup){
 		var dim = $scope.dimBackup;
 		if (dim && backup){
-			var config = {
-					params : {
-						dimension: dim.DIMENSION_NM,
-						name: backup.HIER_NM
-					}
-			};
+			var item = {
+					dimension: dim.DIMENSION_NM,
+					name: backup.HIER_NM
+					};
 			var title = $scope.translate.load("sbi.generic.confirmRestore");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
 			response.then (function(){
-				$scope.restService.post("hierarchies","restoreHierarchy",null,config)
+				$scope.restService.post("hierarchies","restoreHierarchy",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors !== undefined){
@@ -226,17 +222,15 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.deleteBackup = function (backup){
 		var dim = $scope.dimBackup;
 		if (dim && backup){
-			var config = {
-					params : {
-						dimension: dim.DIMENSION_NM,
-						name: backup.HIER_NM
-					}
-			};
+			var item = {
+					dimension: dim.DIMENSION_NM,
+					name: backup.HIER_NM
+					};
 			var title = $scope.translate.load("sbi.generic.delete");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
 			response.then (function(){
-				$scope.restService.post("hierarchies","deleteHierarchy",null,config)
+				$scope.restService.post("hierarchies","deleteHierarchy",item)
 					.success(
 							function(data, status, headers, config) {
 								if (data.errors === undefined){
@@ -270,8 +264,8 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	}
 	
 	
-	 $scope.editNode = function(item,parent){
-	 }
+	$scope.editNode = function(item,parent){
+	}
 	
 	$scope.addHier =  function(item,parent,event){
 		
@@ -294,7 +288,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	$scope.confirmModification = function(item,cell,listId){
 	    var title = $scope.translate.load("sbi.generic.modify");
 	    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
-		return  $scope.showConfirm(title,message,item);
+	    var response = $scope.showConfirm(title,message,item).then(function(){
+	    		$scope.dirtyTable = true;
+		    },function(){
+		    	
+		    });
+		return response;
 	}
 	
 	$scope.allowEdit = function(item,cell,listId, row, column){

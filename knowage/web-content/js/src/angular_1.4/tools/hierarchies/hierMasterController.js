@@ -25,6 +25,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	$scope.orderByFields = ['name','id'];
 	$scope.doBackup = true;
 	$scope.showLoading = false;
+	$scope.fakeNode = {fake:true,name:$scope.translate.load("sbi.hierarchies.new.empty"),id:'',visible:true,checked:false,expanded:false};
 	/*Initialization Left side variables*/
 	$scope.dimensions = []; //array of dimensions combo-box
 	$scope.seeFilterDim = false; //visibility filter flag of left side
@@ -348,7 +349,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				node[metadata[i].ID] = '';
 			}
 		}
-		node.children = [{fake:true,name:'',id:'',visible:true,checked:false,expanded:false}];
+		node.children = [angular.copy($scope.fakeNode)];
 		node.expanded = false;
 		node.visible=true;
 		node.type="folder";
@@ -484,6 +485,9 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				if (parent !== undefined && parent !== null){
 					var idx = $scope.indexOf(parent.children,item,'id');
 					parent.children.splice(idx,1);
+					if (parent.children.length == 0){
+						parent.children.push(angular.copy($scope.fakeNode));
+					}
 				}else{
 					item = {};
 				}
@@ -606,19 +610,21 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 			dialog.then(function(newHier){
 				var hier = $scope.hierMaster;
 				var dateFormatted = $scope.formatDate($scope.dateDim);
-				var config = {};
-				config.params = {
+				var item = {
 						dimension : $scope.dim.DIMENSION_NM,
 						validityDate : dateFormatted
-				}
+					};
 				if (filterDate !== undefined && filterDate !== null){
-					config.params.filterDate = $scope.formatDate(filterDate);
+					item.filterDate = $scope.formatDate(filterDate);
 				}
 				if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
-					config.params.filterHierType = $scope.hierType.toUpperCase();
-					config.params.filterHierarchy = hier.HIER_NM;
+					item.filterHierType = $scope.hierType.toUpperCase();
+					item.filterHierarchy = hier.HIER_NM;
 				}
-				var promise = $scope.restService.post('hierarchies','createHierarchyMaster',angular.toJson(newHier),config);
+				for (var k in hier){
+					item[k] = angular.copy(hier[k]);
+				}
+				var promise = $scope.restService.post('hierarchies','createHierarchyMaster',item);
 				promise
 					.success(function (data){
 						if (data.errors === undefined){
@@ -752,8 +758,9 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 			}
 			
 			$scope.selectAll = function (){
+				$scope.all = !$scope.all; 
 				for (var i = 0 ; i <$scope.listHierarchies.length ; i++){
-					$scope.listHierarchies[i].checked = $scope.listHierarchies[i].checked !== undefined ? !$scope.listHierarchies[i].checked : true; 
+					$scope.listHierarchies[i].checked = $scope.all; 
 				}
 			}
 			$scope.closeDialog = function() {

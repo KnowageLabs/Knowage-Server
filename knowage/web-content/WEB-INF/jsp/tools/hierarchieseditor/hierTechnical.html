@@ -100,7 +100,7 @@
 			<md-content id='hierarchiesTarget' layout-padding layout='column' layout-align='space-around stretch'>
 				<md-content layout='row' layout-xs='column' layout-padding layout-align='space-around center'>
 					<md-datepicker ng-model="dateTarget" ng-change="getTree('target')"></md-datepicker>
-					<md-button ng-click='createTree()' ng-disabled='!dimSrc || !dateTarget' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
+					<md-button ng-click='createTree()' ng-disabled='!dimSrc' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
 					<md-button ng-click='saveTree()' ng-disabled='!treeTargetDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
 					<md-checkbox ng-model="doBackup" ng-disabled='!treeTargetDirty'>{{translate.load("sbi.hierarchies.backup");}}</md-checkbox>
 				</md-content>
