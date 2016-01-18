@@ -786,6 +786,8 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 		$scope.dim = {};
 		$scope.metadataDim = angular.copy(metadataDim);
 		$scope.metadataTree = angular.copy(metadataTree);
+		$scope.codes = angular.copy(metadataDim);
+		$scope.descriptions = angular.copy(metadataDim);
 	    $scope.selectedItemsLeft = [];
 	    $scope.selectedItemsRight = [];
 	    $scope.metadataDimExport = [];
@@ -810,17 +812,44 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
     		}
 	    }
 	    
+	    $scope.removeRecursive = function (){
+	    	var code = $scope.mtRecursive.code;
+	    	var name = $scope.mtRecursive.name;
+	    	$scope.mtRecursive = undefined;
+	    	code.level = undefined;
+			name.level = undefined;
+			code.isSelected = undefined;
+			name.isSelected = undefined;
+			$scope.metadataDim.push(code);
+			$scope.metadataDim.push(name);
+	    }
+	    
+	    $scope.moveToRecursive = function (item){
+	    	item.isLast = undefined;
+	    	var pos = $scope.metadataDimExport.length-1;
+	    	$scope.metadataDimExport.splice(pos,1);
+	    	if ($scope.metadataDimExport.length > 0){
+	    		$scope.metadataDimExport[pos - 1].isLast = true;
+	    	}
+	    	$scope.mtRecursive=item;
+	    	level--;
+	    }
+	    
 	    $scope.toRight = function (source, dest, itemsSource){
 	    	if (itemsSource.length == 2){
 				var newLevel = {};
 				newLevel.code = itemsSource[0];
 				newLevel.name = itemsSource[1];
-				newLevel.code.level = level;
-				newLevel.name.level = level;
+				newLevel.code.level = angular.copy(level);
+				newLevel.name.level = angular.copy(level);
 				level++;
 				for (var i = 0 ; i < itemsSource.length;i++){
 					$scope.removeElement(source,itemsSource[i]);
     				itemsSource[i].isSelected = undefined;
+				}
+				newLevel.isLast=true;
+				if (dest.length > 0){
+					dest[dest.length -1].isLast = false;
 				}
 				itemsSource.splice(0,itemsSource.length);
 				dest.push(newLevel);
@@ -850,6 +879,9 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	    				}
 	    			}
     			}
+	    		if (source.length > 0){
+	    			source[source.length-1].isLast = true;
+	    		}
     			level = source.length+1;
 	    	}
 	    }
@@ -858,6 +890,10 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	    	var array =  $scope.metadataDimExport;
 	    	var i = $scope.indexOf(array,item);
 	    	if (i > 0 && array.length > 1){
+	    		if (array[i].isLast){
+	    			array[i].isLast = undefined;
+	    			array[i-1].isLast = true;
+	    		}
 	    		var tmp = angular.copy(array[i-1]);
 	    		array[i-1] = angular.copy(array[i]);
 	    		array[i] = angular.copy(tmp);
@@ -872,6 +908,10 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	    	var array =  $scope.metadataDimExport;
 	    	var i = $scope.indexOf(array,item);
 	    	if (i < (array.length-1) && array.length > 1){
+	    		if (array[i+1].isLast){
+	    			array[i+1].isLast = undefined;
+	    			array[i].isLast = true;
+	    		}
 	    		var tmp = angular.copy(array[i+1]);
 	    		array[i+1] = angular.copy(array[i]);
 	    		array[i] = angular.copy(tmp);
@@ -927,6 +967,14 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	     		});
 	     	}
 	     	$scope.hierNew.levels = levels;
+	     	if ($scope.mtRecursive && $scope.code && $scope.descr){
+	     		$scope.hierNew.recursive = {
+	     				"NM": $scope.mtRecursive.name.ID,
+	     				"CD": $scope.mtRecursive.code.ID,
+	     				"NM_PARENT" : $scope.descr.ID,
+	     				"CD_PARENT" : $scope.code.ID
+	     		};
+	     	}
 	    	$mdDialog.hide($scope.hierNew);
 	    }
 	}

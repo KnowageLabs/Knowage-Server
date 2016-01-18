@@ -25,7 +25,7 @@
 				<md-content class="list-container">
 					<md-list>
 						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim">
-							<span ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}" style="width:100%">{{mtDim.NAME}} </span>	
+							<span class="force-100width" ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}">{{mtDim.NAME}} </span>	
 						</md-list-item>
 					</md-list>
 				</md-content>
@@ -33,25 +33,48 @@
 					<md-button class="md-raised button-move" ng-click="moveTo('right')" ng-disabled="selectedItemsLeft.length<2"> &gt &gt</md-button>
 					<md-button class="md-raised button-move" ng-click="moveTo('left')"> &lt &lt</md-button>
 				</md-content>
-				<md-content class="list-container">
-					<md-list layout-padding>
-						<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport">
-							<md-content layout-fill layout="row" layout-align="space-between center">
-								<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
-									<span ng-click="toggleItem(mtDimExp,'right')"  style="width:100%">
-									<b>Lev.{{mtDimExp.code.level}}</b> {{mtDimExp.code.NAME}}, {{mtDimExp.name.NAME}} </span>
+				<md-content layout="column" space-align="space-between stretch">
+					<md-content class="list-container" style="height:11rem;">
+						<md-list layout-padding>
+							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport">
+								<md-content layout-fill layout="row" layout-align="space-between center">
+									<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
+										<span class="force-100width" ng-click="toggleItem(mtDimExp,'right')">
+										<b>Lev.{{mtDimExp.code.level}}</b> {{mtDimExp.code.NAME}}, {{mtDimExp.name.NAME}} </span>
+									</md-content>
+									<md-content ng-if="mtDimExp.isLast && !mtRecursive">
+										<md-button ng-click="moveToRecursive(mtDimExp)" class="md-fab addButton-small" arial-label="{{translate.load('sbi.hierarchies.new.create.master.addrecursive');}}">
+											<md-icon class="fa fa-plus" style="width:10px;height:15px"></md-icon>
+										</md-button>	
+									</md-content>
+									<md-content layout="column" layout-align="space-between center" style="width:5%;min-height:30px">
+										<div ng-click="moveUp(mtDimExp)" style="height:15px">
+											<md-icon class="fa fa-caret-up"></md-icon>
+										</div>
+										<div ng-click="moveDown(mtDimExp)" style="height:15px">
+											<md-icon class="fa fa-caret-down"></md-icon>
+										</div>
+									</md-content>
 								</md-content>
-								<md-content layout="column" layout-align="space-between center" style="width:5%;min-height:30px">
-									<div ng-click="moveUp(mtDimExp)" style="height:15px">
-										<md-icon class="fa fa-caret-up"></md-icon>
-									</div>
-									<div ng-click="moveDown(mtDimExp)" style="height:15px">
-										<md-icon class="fa fa-caret-down"></md-icon>
-									</div>
-								</md-content>
-							</md-content>
-						</md-list-item>
-					</md-list>
+							</md-list-item>
+						</md-list>
+					</md-content>
+					<md-content layout="column" layout-align="space-around stretch" layout-padding class="recursive-container">
+						<md-content class="force-100width" layout="row" layout-align="space-between center">
+							<div class="text-container">
+								<span>Recursive: {{mtRecursive.code.NAME}} {{mtRecursive.name.NAME}}</span>
+							</div>
+							<md-icon ng-if="mtRecursive" class="fa fa-trash" ng-click="removeRecursive()" ng-disabled="!mtRecursive"></md-icon>
+						</md-content>
+						<md-content class="force-100width" layout="row" layout-align="space-between center" layout-padding style="height:40px" >
+							<md-select flex="45" ng-model="code" placeholder="{{translate.load('sbi.generic.code')}}" ng-disabled="!mtRecursive">
+								<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT != true">{{code.NAME}}</md-option>
+							</md-select>
+							<md-select flex="45" ng-model="descr" placeholder="{{translate.load('sbi.generic.descr')}}" ng-disabled="!mtRecursive">
+								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="code.PARENT != true">{{descr.NAME}}</md-option>
+							</md-select>
+						</md-content>
+					</md-content>
 				</md-content>
 			</md-content>
 			<md-content layout="row" layout-align="space-around center" layout-padding ng-if = "showWarningMessage">

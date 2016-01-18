@@ -39,7 +39,7 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-		      	<md-content style="position:relative;min-height:30rem;max-height:32rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
+		      	<md-content style="position:relative;min-height:32rem;max-height:32rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
 		      		<angular-table
 				        id='dimTable'
 				        ng-model="dimensionsTable"
@@ -58,7 +58,10 @@
 					>
 					</angular-table>
 				</md-content> 	  	
-				<md-button ng-click="crateMasterHier()" ng-disabled="!dim || !dateDim" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
+				<md-content layout="row" layout-align="start start">	
+					<md-button ng-click="crateMasterHier()" ng-disabled="!dim || !dateDim" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
+					<md-button ng-click="synchronizeMaster()" ng-disabled="true" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.synchronize");}}</md-button>
+				</md-content>
 			</md-content>
 		</div>													    
 		<div  class="div-container" flex>

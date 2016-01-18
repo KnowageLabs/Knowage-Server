@@ -63,12 +63,6 @@ editedRelationButton {
 	background-color: #E8EAF6;
 }
 
-.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
-
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
-.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
-
 /* border of document list view */
 .doc-list-border {
 	border-left:  1px solid rgba(0, 0, 0, 0.12);
@@ -78,12 +72,6 @@ editedRelationButton {
 .toolbar-button-custom {
 	min-width: 50px;
 	width: 50px;
-}
-
-/* to remove border on selection*/
-.customTreeNode {
-	outline: none;
-    border: 0;
 }
 
 .md-fab.md-fab-mini {
@@ -133,17 +121,36 @@ resizer {
 }
 
 .list-container {
-	width: 300px;
-	height : 250px;
+	width: 19rem;
+	height : 16rem;
 	border-style: inset;
     border-width: 3px;
     border-color: #3B668C;
+}
+
+.recursive-container{
+	width: inherit;
+	height : 5rem;
+	max-width: inherit;
+	max-height : 6rem;
+	border-style: inset;
+    border-width: 3px;
+    border-color: #3B668C;
+    border-top: medium hidden;
+	top: -1px;
 }
 
 .details-container {
 	width:95%;
 	heigth:100%;
 	margin-top:30px !important;
+}
+
+.text-container{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 18rem;
 }
 
 .button-move{
@@ -171,6 +178,14 @@ resizer {
     color: grey;
     }
 
+.addButton-small{
+	width:22px !important;
+	height:20px !important;
+	min-height:10px;
+	min-width:10px;
+	background-color: rgb(0, 148, 255)!important;
+}
+
 md-datepicker > div.md-datepicker-input-container{
 	padding-bottom: 3px !important;
 }
@@ -185,7 +200,11 @@ md-datepicker > div.md-datepicker-input-container{
     line-height: 14px;
     /* Set our own color */
     color: grey;
-    }
+}
+
+.force-100width {
+	width:100% !important;
+}
 /*
 .table-object > div > md-content {
 	width: 30rem !important;
