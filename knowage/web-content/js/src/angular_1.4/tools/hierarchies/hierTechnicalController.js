@@ -230,6 +230,8 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		$scope.translate = translate;
 		$scope.hier = hier;
 		$scope.metadata = metadata;
+		$scope.hier.BEGIN_DT = hier.BEGIN_DT !== undefined ? new Date(hier.BEGIN_DT) : new Date();
+		$scope.hier.END_DT = hier.END_DT !== undefined ? new Date(hier.END_DT) : new Date();
 		$scope.closeDialog = function() {
 			$mdDialog.cancel();
 		}

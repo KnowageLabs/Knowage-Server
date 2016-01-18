@@ -474,7 +474,6 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				clickOutsideToClose:false,
 				controller: $scope.hierSrcDialogController 
 			});
-	
 	}
 	/*Visualize the confirm dialog to delete the item and call the rest service*/
 	$scope.deleteHier =  function(item,parent,event){
@@ -733,8 +732,8 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
  	$scope.hierSrcDialogController = function($scope, $mdDialog, translate, hier, metadata) {
  		$scope.translate = translate;
 		$scope.hier = angular.copy(hier);
-		$scope.hier.BEGIN_DT = new Date();
-		$scope.hier.END_DT = new Date();
+		$scope.hier.BEGIN_DT = hier.BEGIN_DT !== undefined ? new Date(hier.BEGIN_DT) : new Date();
+		$scope.hier.END_DT = hier.END_DT !== undefined ? new Date(hier.END_DT) : new Date();
 		$scope.metadata = metadata;
         $scope.closeDialog = function() {
         	$mdDialog.cancel();
