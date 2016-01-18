@@ -432,6 +432,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
 			tempMenuList.put(tenantManagementTechnical);
 		}
+		if (isAbleTo(SpagoBIConstants.IMP_EXP_USERS, funcs)) {
+			JSONObject tenantManagementTechnical = new JSONObject();
+			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_ALIGN, "top");
+			tenantManagementTechnical.put(SCALE, "large");
+			tenantManagementTechnical.put(TARGET, "_self");
+			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tempMenuList.put(tenantManagementTechnical);
+		}
 		// end
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
 		JSONObject myFolder = new JSONObject();
