@@ -1,4 +1,4 @@
-<div ng-controller = "hierTechnController">
+<div ng-controller = "hierTechnController" style="min-height: 30rem;height:90%">
 	<md-content layout="row" layout-wrap>
 		<div class="div-container" flex style="margin-right: 20px;" >
 			
@@ -65,11 +65,31 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-			<md-content layout='row' layout-fill flex='50'>
-				<document-tree id="left" ng-model="hierTreeSrc" create-tree="false" multi-select='false' keys='keys' text-search='filterBySrcTrigger' 
-				fields-search='["name"]' order-by='orderBySrcTrigger' enable-drag='true' no-drop-enabled='true' enable-clone='true'
-				show-empty-placeholder="true" options-drag-drop="treeTargetOptions" ></document-tree>
-			</md-content>
+				<md-content ng-hide="showLoadingSrc || hierTreeSrc.length == 0" layout='row' layout-fill flex='50'>
+					<document-tree 
+						id="left" 
+						ng-model="hierTreeSrc" 
+						create-tree="false"
+						multi-select='false' 
+						keys='keys' 
+						text-search='filterBySrcTrigger' 
+						fields-search='["name"]' 
+						order-by='orderBySrcTrigger'
+						menu-option='menuSrcOption' 
+						enable-drag='true' 
+						no-drop-enabled='true'
+						enable-clone='true'
+						show-empty-placeholder="true" o
+						options-drag-drop="treeTargetOptions" >
+					</document-tree>
+				</md-content>
+				<md-content class='waitingContainer' ng-show='showLoadingSrc' layout='row' layout-padding layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>{{translate.load("sbi.generic.wait");}}</h4>
+				</md-content>
+				<md-content class='' ng-show='hierTreeSrc.length==0 && !showLoadingSrc && hierTypeSrc && hierSrc' layout='row' layout-padding layout-align ='space-around center'>
+					<h4>{{translate.load("sbi.hierarchies.nodata");}}</h4>
+				</md-content>
 			</md-content>
 		</div> 
 		<div  class="div-container" flex>	
@@ -83,7 +103,7 @@
 			<md-content id='hierarchiesTarget' layout-padding layout='column' layout-align='space-around stretch'>
 				<md-content layout='row' layout-xs='column' layout-padding layout-align='space-around center'>
 					<md-datepicker ng-model="dateTarget" ng-change="getTree('target')"></md-datepicker>
-					<md-button ng-click='createTree()' ng-disabled='!dimSrc || !dateTarget' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
+					<md-button ng-click='createTree()' ng-disabled='!dimSrc' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.create");}}</md-button>
 					<md-button ng-click='saveTree()' ng-disabled='!treeTargetDirty' class='md-raised md-ExtraMini'>{{translate.load("sbi.generic.update");}}</md-button>
 					<md-checkbox ng-model="doBackup" ng-disabled='!treeTargetDirty'>{{translate.load("sbi.hierarchies.backup");}}</md-checkbox>
 				</md-content>
@@ -135,11 +155,28 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-				<md-content>
-					<document-tree id="right" ng-model="hierTreeTarget" create-tree="false" multi-select='false' keys='keys' text-search='filterByTargetTrigger' 
-						fields-search='["name"]' order-by='orderByTargetTrigger' menu-option='menuTargetOption' enable-drag='true' no-drop-enabled='true' enable-clone='true'
+				<md-content ng-hide="showLoadingRight || hierTreeTarget.length == 0">
+					<document-tree  
+						id="right" 
+						ng-model="hierTreeTarget" 
+						create-tree="false" 
+						multi-select='false' 
+						keys='keys' 
+						text-search='filterByTargetTrigger' 
+						fields-search='["name"]' 
+						order-by='orderByTargetTrigger' 
+						menu-option='menuTargetOption' 
+						enable-drag='true' 
+						enable-clone='true'
 						show-empty-placeholder="true" 	
-				></document-tree>
+					></document-tree>
+				</md-content>
+				<md-content class='waitingContainer' ng-show='showLoadingTarget' layout='row' layout-padding layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>{{translate.load("sbi.generic.wait");}}</h4>
+				</md-content>
+				<md-content class='' ng-show='hierTreeTarget.length==0 && !showLoadingTarget && dateTarget && hierTypeSrc && hierTarget' layout='row' layout-padding layout-align ='space-around center'>
+					<h4>{{translate.load("sbi.hierarchies.nodata");}}</h4>
 				</md-content>
 			</md-content>	
 		</div>
