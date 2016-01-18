@@ -17,11 +17,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -124,14 +126,21 @@ public class RolesResource extends AbstractSpagoBIResource {
 	public Response updateRole(@PathParam("id") Integer id, @Valid RoleBO body) {
 
 		IRoleDAO rolesDao = null;
+		IDomainDAO domainsDao = null;
 		Role role = BOtoRole(body);
 		role.setId(body.getId());
 		List<RoleMetaModelCategory> list = body.getRoleMetaModelCategories();
+		List<Domain> listAll;
 
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
+			domainsDao = DAOFactory.getDomainDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			rolesDao.modifyRole(role);
+			listAll = domainsDao.loadListDomainsByType("BM_CATEGORY");
+			for (Domain domain : listAll) {
+				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
+			}
 			if (list != null) {
 				for (RoleMetaModelCategory roleMetaModelCategory : list) {
 					rolesDao.insertRoleMetaModelCategory(role.getId(), roleMetaModelCategory.getCategoryId());

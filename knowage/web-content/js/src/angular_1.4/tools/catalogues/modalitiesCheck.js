@@ -95,14 +95,16 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
 	
 	$scope.loadConstraints=function(item){  // this function is called when item from custom table is clicked
+		console.log(item);
+		$scope.changeType(item.valueTypeCd)
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
 				$scope.SelectedConstraint=angular.copy(item);
 				$scope.showme=true;
 				$scope.showpred = false;
-			    $scope.label = "";
-			           
+				
+				
 			   },function(){
 			    
 				$scope.showme = true;
@@ -114,6 +116,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 			  $scope.SelectedConstraint=angular.copy(item);
 			  $scope.showme=true;
 			  $scope.showpred = false;
+			 
 			  }
 	} 	                
 	

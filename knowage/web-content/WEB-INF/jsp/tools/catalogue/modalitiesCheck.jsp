@@ -30,14 +30,14 @@
 					<div class="md-toolbar-tools" >
 						<div style="font-size: 24px;">{{translate.load("sbi.modalities.check.title.constraints");}}</div>
 						<md-button aria-label="create_button"
-							class="md-fab md-Mini addButtonCatalogue"
-							style="position:absolute; right:20px; top:20px;"
+							class="md-fab md-ExtraMini addButton"
+							style="position:absolute; right:11px; top:0px;"
 							ng-click="createConstraints()"
 							>
 							 
 							<md-icon
 								md-font-icon="fa fa-plus" 
-								style=" margin-top: 8px ; color: white;">
+								style=" margin-top: 6px ; color: white;">
 							</md-icon> 
 						</md-button>
 					</div>
@@ -47,8 +47,9 @@
 	<md-content style="display:inline !important;">
     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
       <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
-        <md-content class="md-padding" style="background-color: rgb(236, 236, 236); height:80%;" class="ToolbarBox miniToolbar noBorder">
-          
+        <md-content layout-padding
+			style="background-color: rgb(236, 236, 236);"
+			class="ToolbarBox miniToolbar noBorder leftListbox">
         <angular-table 
 						layout-fill
 						id="TestItemList_id"
@@ -56,7 +57,6 @@
 						columns ='[
 							{"label":"LABEL","name":"label","size":"50px"},
 							{"label":"NAME","name":"name","size":"50px"},
-							{"label":"DESCRIPTION","name":"description","size":"100px"},
 							{"label":"CHECK TYPE","name":"valueTypeCd","size":"85px"}
 							 ]'
 						show-search-bar=true
@@ -71,8 +71,9 @@
         </md-content>
       </md-tab>
       <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
-        <md-content class="md-padding" style="background-color: rgb(236, 236, 236);height:80%;" class="ToolbarBox miniToolbar noBorder leftListbox">
-         
+        <md-content layout-padding
+			style="background-color: rgb(236, 236, 236);"
+			class="ToolbarBox miniToolbar noBorder leftListbox">
          <angular-table 
 						layout-fill
 						id="predefined_id"
@@ -169,10 +170,9 @@
 				       	name ="dropdown" 
 				        ng-required = "true"
 				        ng-model="SelectedConstraint.valueTypeCd"
-				        ng-change="changeType(SelectedConstraint.valueTypeCd)">
-				        <md-option 
-				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}
-				        </md-option>
+				        ng-change="changeType(SelectedConstraint.valueTypeCd)"
+				        > <md-option 
+				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="SelectedConstraint.valueTypeCd== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>

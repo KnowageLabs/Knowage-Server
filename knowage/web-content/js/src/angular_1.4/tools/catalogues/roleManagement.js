@@ -204,6 +204,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
      */
     $scope.loadRole = function (item) {
     	$scope.getCategoriesByID(item);
+    	console.log($scope.selectedRole);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
                 $scope.dirtyForm = false;
@@ -362,7 +363,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.roleMetaModelCategories = data;
-
+						console.log($scope.roleMetaModelCategories);
 					}
 					
 				}).error(function(data, status, headers, config) {

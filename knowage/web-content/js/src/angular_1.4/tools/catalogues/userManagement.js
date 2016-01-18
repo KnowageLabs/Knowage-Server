@@ -193,7 +193,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.dirtyForm = false;
                 $scope.selectedUser = {};
                 $scope.showme = true;
-                $scope.setRoles();
+                $scope.role = [];
                 $scope.setAttributes();
 
 
@@ -206,7 +206,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         } else {
                 $scope.selectedUser = {};
 	            $scope.showme = true;
-	            $scope.setRoles();
+	            $scope.role = [];
 	            $scope.setAttributes();
         }
         

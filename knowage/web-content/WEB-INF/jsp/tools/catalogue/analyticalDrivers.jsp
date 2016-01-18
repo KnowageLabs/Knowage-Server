@@ -95,7 +95,7 @@
 						<md-button  type="submit"
 							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 							style=" margin-top: 2px;"
-							ng-disabled="!attributeForm.$valid"
+							ng-disabled="!attributeForm.$valid || associatedRoles.length == 0"
 							>
 						{{translate.load("sbi.browser.defaultRole.save")}}
 						</md-button>
@@ -189,12 +189,6 @@
 			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> <md-content
 				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder"> 
-							
-			<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;float:right;"
-							ng-click="test()">TEST
-			</md-button>	
-				
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							 <md-input-container class="small counter">
@@ -202,7 +196,7 @@
 								<input name="lbl" ng-model="selectedParUse.label" ng-required="selectedTab == 1"
 								ng-maxlength="20" ng-change="setDirty()">
 							
-									<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedDriver.label== null">
+									<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedParUse.label== null">
 										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 									</div>
 							
@@ -217,7 +211,7 @@
 							<input name="name" ng-model="selectedParUse.name"  ng-required = "selectedTab == 1"
 						    ng-maxlength="40" ng-change="setDirty()">
 						    
-						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedDriver.name== null">
+						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedParUse.name== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						    
@@ -236,7 +230,7 @@
 					</div>
 				
 					
-					<md-radio-group ng-model="selectedParUse.valueSelection" ng-init="selectedDriver.valueSelection = man_in"  layout="row">
+					<md-radio-group ng-model="selectedParUse.valueSelection" ng-init="selectedParUse.valueSelection = man_in"  layout="row">
 				      <md-radio-button value="lov" class="md-primary">
 				      
 				      {{translate.load("sbi.analytical.drivers.usemode.lovdate")}}
@@ -267,7 +261,7 @@
 					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}}
 					        </md-option>
 					       </md-select>
-					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLov== null">
+					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLov== -1">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					      </div>   
 					        </md-input-container>
@@ -299,7 +293,7 @@
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'map_in'"
 					        ng-model="selectedParUse.selectedLayer"> <md-option 
-					        ng-repeat="l in layersList track by $index" ng-click="FieldsCheck(l)" value="{{l.name}}">{{l.name}} </md-option>
+					        ng-repeat="l in layersList track by $index" value="{{l.name}}">{{l.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectedLayer== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -354,9 +348,9 @@
 					       	name ="dropdown" 
 					        ng-required = "defaultrg == 'lov'"
 					        ng-model="selectedParUse.idLovForDefault"> <md-option 
-					        ng-repeat="l in listDate track by $index" ng-click="FieldsCheck(l)" value="{{l.id}}">{{l.name}} </md-option>
+					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}} </md-option>
 					       </md-select>
-					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault== null">
+					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault== -1">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					      </div>   
 					        </md-input-container>
@@ -373,7 +367,7 @@
 					       	name ="dropdown" 
 					        ng-required = "defaultrg == 'pickup'"
 					        ng-model="selectedParUse.defaultFormula"> <md-option 
-					        ng-repeat="f in defaultFormula track by $index" ng-click="FieldsCheck(l)" value="{{f.f_value}}">{{f.name}} </md-option>
+					        ng-repeat="f in defaultFormula track by $index" value="{{f.f_value}}">{{f.name}} </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.defaultFormula == null">
 					       <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -389,16 +383,20 @@
 					
 				    <div layout="row" layout-wrap flex>
 					<div flex="25" ng-repeat="role in rolesList">
+					
 						<md-checkbox 
 						ng-required = "true"
 						ng-checked="getCheckboxes(role , associatedRoles)"
 						ng-click="checkCheckboxes(role , associatedRoles)"> 
 						{{ role.name }} 
-						</md-checkbox>	
-					</div>	
+						</md-checkbox>
+					</div>
 				    </div>
-				    
-					
+				    <md-input-container class="small counter" >
+				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="associatedRoles.length== 0">
+					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
+					</div>  
+					</md-input-container>
 				     <md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.modalities.check.title.predefined");}}

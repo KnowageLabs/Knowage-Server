@@ -590,12 +590,4 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 				})	
 	}
-	
-	$scope.test = function() {
-		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
-		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
-		console.log($scope.selectedParUse);
-	}
-	
-	
 };
