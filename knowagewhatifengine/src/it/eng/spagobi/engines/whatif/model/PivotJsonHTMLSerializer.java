@@ -17,6 +17,7 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -52,7 +53,6 @@ import org.pivot4j.ui.command.DrillExpandMemberCommand;
 import org.pivot4j.ui.command.DrillExpandPositionCommand;
 import org.pivot4j.ui.command.DrillUpReplaceCommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
-import org.pivot4j.ui.table.TableRenderer;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -76,6 +76,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String MDXFORMATTED = "mdxFormatted";
 	private static final String MODELCONFIG = "modelConfig";
 	private static final String HAS_PENDING_TRANSFORMATIONS = "hasPendingTransformations";
+	private static final String POSITION = "position";
+	private static final String AXIS = "axis";
+	private static final String SLICERS = "slicers";
 
 	private final OlapConnection connection;
 	private final ModelConfig modelConfig;
@@ -93,8 +96,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
-		TableRenderer renderer = new TableRenderer();
 
+		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
+		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
+		HtmlRenderCallback callback = new HtmlRenderCallback(writer);
 		logger.debug("Setting the properties of the renderer");
 
 		renderer.setShowParentMembers(false); // Optionally make the parent
@@ -102,25 +107,20 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setShowDimensionTitle(false); // Optionally hide the dimension
 												// title headers.
 
-		/*
-		 * renderer.setCellSpacing(0); renderer.setRowHeaderStyleClass(
-		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
-		 * ); renderer.setColumnHeaderStyleClass(
-		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
-		 * ); renderer.setCornerStyleClass(
-		 * "x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header"
-		 * ); renderer.setCellStyleClass(
-		 * "x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell"
-		 * ); renderer.setTableStyleClass(
-		 * "x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table"
-		 * ); renderer.setRowStyleClass(" generic-row-style ");
-		 * 
-		 * renderer.setEvenRowStyleClass(" even-row ");
-		 * renderer.setOddRowStyleClass(" odd-row ");
-		 * 
-		 * renderer.setEvenColumnStyleClass(" even-column ");
-		 * renderer.setOddColumnStyleClass(" odd-column ");
-		 */
+		callback.setCellSpacing(0);
+		callback.setRowHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
+		callback.setColumnHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
+		callback.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
+		callback.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
+		callback.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
+		callback.setRowStyleClass(" generic-row-style ");
+
+		callback.setEvenRowStyleClass(" even-row ");
+		callback.setOddRowStyleClass(" odd-row ");
+
+		// callback.setEvenColumnStyleClass(" even-column ");
+		// callback.setOddColumnStyleClass(" odd-column ");
+
 		String drillDownModeValue = modelConfig.getDrillType();
 
 		renderer.removeCommand(new DrillUpReplaceCommand(renderer).getName());
@@ -147,10 +147,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		renderer.setDrillDownMode(drillDownModeValue);
-		/*
-		 * renderer.setEnableColumnDrillDown(true);
-		 * renderer.setEnableRowDrillDown(true); renderer.setEnableSort(true);
-		 */
+		renderer.setEnableDrillDown(true);
+		// renderer.setEnableColumnDrillDown(true);
+		// renderer.setEnableRowDrillDown(true);
+		renderer.setEnableSort(true);
+
 		// /show parent members
 		Boolean showParentMembers = modelConfig.getShowParentMembers();
 		renderer.setShowParentMembers(showParentMembers);
@@ -181,7 +182,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		logger.debug("Rendering the model");
-		renderer.render(value, new HtmlRenderCallback(writer));
+
+		renderer.render(value, callback);
 
 		try {
 			writer.flush();
@@ -303,46 +305,34 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		jgen.writeEndArray();
 	}
 
-	//
-	// private void serializeFilters(String field, JsonGenerator
-	// jgen,List<Hierarchy> hierarchies, PivotModel model) throws JSONException,
-	// JsonGenerationException, IOException{
-	//
-	// QueryAdapter qa = new QueryAdapter(model);
-	// qa.initialize();
-	//
-	// ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	//
-	//
-	// jgen.writeArrayFieldStart(field);
-	// if(hierarchies!=null){
-	// for (int i=0; i<hierarchies.size(); i++) {
-	// Hierarchy hierarchy = hierarchies.get(i);
-	// Map<String,Object> hierarchyObject = new HashMap<String,Object>();
-	// hierarchyObject.put(NAME, hierarchy.getName());
-	// hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
-	// hierarchyObject.put(POSITION, ""+i);
-	// hierarchyObject.put(AXIS, ""+FILTERS_AXIS_POS);
-	//
-	//
-	// List<Member> slicers = ph.getSlicer(hierarchy);
-	// if(slicers!= null && slicers.size()>0){
-	// List<Map<String,String>> slicerMap = new ArrayList<Map<String,String>>();
-	// for(int j=0; j<slicers.size(); j++){
-	// Map<String,String> slicer = new HashMap<String,String>();
-	// slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
-	// slicer.put(NAME, slicers.get(j).getName());
-	// slicerMap.add(slicer);
-	// }
-	// hierarchyObject.put(SLICERS, slicerMap);
-	// }
-	// jgen.writeObject(hierarchyObject);
-	//
-	// }
-	// }
-	// jgen.writeEndArray();
-	// }
-
+	/*
+	 * private void serializeFilters(String field, JsonGenerator jgen,
+	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
+	 * JsonGenerationException, IOException {
+	 * 
+	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
+	 * 
+	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+	 * 
+	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
+	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
+	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
+	 * HashMap<String, Object>(); hierarchyObject.put(NAME,
+	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
+	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
+	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
+	 * 
+	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
+	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
+	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
+	 * j++) { Map<String, String> slicer = new HashMap<String, String>();
+	 * slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName()); slicer.put(NAME,
+	 * slicers.get(j).getName()); slicerMap.add(slicer); }
+	 * hierarchyObject.put(SLICERS, slicerMap); }
+	 * jgen.writeObject(hierarchyObject);
+	 * 
+	 * } } jgen.writeEndArray(); }
+	 */
 	public String formatQueryString(String queryString) {
 		String formattedQuery;
 		BasicFormatterImpl fromatter;
