@@ -68,7 +68,7 @@
 					</md-button>
 					<md-button type="submit" aria-label="save_constraint"
 						class="md-raised md-ExtraMini rightHeaderButtonBackground"
-						style=" margin-top: 2px;" ng-disabled="!attributeForm.$valid || role.length== 0">
+						style=" margin-top: 2px;" ng-disabled="!attributeForm.$valid">
 					{{translate.load("sbi.browser.defaultRole.save")}} </md-button>
 				</div>
 			</div>
@@ -138,32 +138,15 @@
 			</div>
 			
 			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.users.roles");}}'> <md-content
-				flex style="margin-left:20px; overflow:hidden;"
-				class="md-padding ToolbarBox noBorder">
-				 <md-input-container class="small counter" >
-				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="role.length== 0">
-					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
-					</div>  
-				</md-input-container>
-				
-				 <angular-table
+				flex style="margin-left:20px; overflow:hidden"
+				class="md-padding ToolbarBox noBorder"> <angular-table
 				layout-fill id="usersRoles_id" ng-model="usersRoles"
 				columns='[
 							{"label":"NAME","name":"name","size":"50px"},
 							{"label":"VALUE","name":"description","size":"100px"},
 							 ]'
 				selected-item="role" highlights-selected-item=true
-				multi-select="true">
-				 </angular-table>
-				
-				 <md-input-container class="small counter" >
-				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="role.length== 0">
-					<div ng-message="required">Please select at least one role</div>
-					</div>  
-				</md-input-container>
-				
-				
-				 </md-content> </md-tab> <md-tab
+				multi-select="true"> </angular-table> </md-content> </md-tab> <md-tab
 				label='{{translate.load("sbi.users.attributes");}}'> <md-content
 				flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">

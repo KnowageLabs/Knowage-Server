@@ -89,13 +89,9 @@
 					functionality="LovsView"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
-			<ITEM	title="Analytical drivers management Old"
-					functionality="ParameterView"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 			<ITEM	title="#menu.ParameterMan"
 					functionality="ParameterView"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/analyticalDrivers.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 			<ITEM	title="Constraints Management Old"
 					functionality="ConstraintView"
@@ -288,12 +284,9 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
 	
 			<ITEM title="#menu.ImpExpDocument" functionality="ImpExpDocument"
-				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments.jsp" />
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
 			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
-			<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
-				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers.jsp" /> 
-				
 	  	</ITEM>	  	
 	</ITEM>
 	

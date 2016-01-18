@@ -1,26 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="knowage">
-        <wb-resource deploy-path="/" source-path="/web-content" />
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src" />
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test" />
-        <dependent-module deploy-path="/WEB-INF/lib"
-            handle="module:/resource/knowagedao/knowagedao">
+        <wb-resource deploy-path="/" source-path="/web-content"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowagedao/knowagedao">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib"
-            handle="module:/resource/knowageutils/knowageutils">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutils/knowageutils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib"
-            handle="module:/resource/knowageutilsjson/knowageutilsjson">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutilsjson/knowageutilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib"
-            handle="module:/resource/qbecore/qbecore">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/qbecore/qbecore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="java-output-path" value="build/classes" />
-        <property name="context-root" value="knowage" />
+        <dependent-module archiveName="knowageservermanager.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/knowageservermanager/knowageservermanager">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="build/classes"/>
+        <property name="context-root" value="knowage"/>
     </wb-module>
 </project-modules>

@@ -7,10 +7,10 @@
 		</div>
 	</md-toolbar>
 	
-	<md-content flex layout-padding layout="column" layout-align="space-around stretch" ng-class="{ styleIE : isIE, contentIE: isIE}">			
+	<md-content flex layout-padding layout-wrap layout="column" layout-align="space-around stretch" ng-class="{ styleIE : isIE, contentIE: isIE}">			
 		
 		<!-- layout row for adding new file association -->
-		<md-content layout="row" space-align="start center" style="min-height: 60px;" ng-class="{'flex-15' : isIE, 'flex-10': !isIE}">
+		<div layout="row" space-align="start center" style="min-height: 60px;" ng-class="{'flex-15' : isIE, 'flex-10': !isIE}">
 			<md-button class="md-fab md-fab-mini" ng-click="toogleViewInsertForm()" aria-label="{{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}">
 				<md-icon ng-if="!viewInsertForm" class="fa fa-plus center-ico"></md-icon>
 				<md-icon ng-if="viewInsertForm" class="fa fa-minus center-ico"></md-icon>
@@ -19,7 +19,7 @@
 				</md-tooltip>
 			</md-button>
 			
-			<md-content ng-if="viewInsertForm" layout="row" layout-align="space-around stretch">
+			<div ng-if="viewInsertForm" layout="row" layout-align="space-around stretch">
 				<md-input-container flex-sm="90" flex="25"  md-no-float class="md-block">
 					<label>{{translate.load("sbi.generic.name");}}</label>
 					<input type="text" ng-model="form.name" required>
@@ -32,25 +32,24 @@
 				<md-button  ng-click="save()" ng-if="viewInsertForm" ng-disabled="form.name===undefined || form.name.length == 0 ||  || form.file ===undefined || form.file.fileName === undefined || form.file.fileName.length == 0" class="md-fab md-fab-mini" aria-label="{{translate.load('sbi.generic.update');}}">
 					<md-icon class="fa fa-floppy-o center-ico"></md-icon>
 				</md-button>
-			</md-content>
-		</md-content>
+			</div>
+		</div>
 		
 		<!-- table and buttons for select and cancel -->
-		<md-content flex style="max-width:95%%;">
-			<angular-table
+		
+			<angular-table  flex
 				id="listAssociation" ng-model="associations" 
 				columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"},{"label":"Creation Date","name":"creationDate"}]'
 				columns-search='["name","description","creationDate"]'
 				highlights-selected-item = "true"
 				show-search-bar="true"
-				no-pagination="true"
 				selected-item="associationSelected"
 			></angular-table>
-		</md-content>
-		<md-content layout="row" layout-align="end center">
+		
+		<div layout="row" layout-align="end center">
 			<md-button class="md-raised md-ExtraMini" ng-click="selectAssociation()" ng-disabled="associationSelected.name === undefined || associationSelected.name.length === 0"> Select </md-button>
 			<md-button class="md-raised md-ExtraMini" ng-click="cancel()" > Cancel</md-button>
-		</md-content>
+		</div>
 	</md-content>
 </md-dialog>
 

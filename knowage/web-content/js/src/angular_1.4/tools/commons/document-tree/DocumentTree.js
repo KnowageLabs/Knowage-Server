@@ -431,6 +431,6 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	if ($scope.browser == 'firefox'){
 		$scope.classLayout='layout-padding';
 	}else{
-		$scope.classLayout='layout-fill';
+//		$scope.classLayout='layout-fill';
 	}
 }

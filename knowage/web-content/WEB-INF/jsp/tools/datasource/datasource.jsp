@@ -1,5 +1,3 @@
-
-<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
 
 
@@ -9,16 +7,6 @@
 
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
-
-<%
-	
-	Boolean superadmin =(Boolean)((UserProfile)userProfile).getIsSuperadmin();
-%>
-
-<script>
-	var superadmin = '<%= superadmin %>';
-</script>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -47,12 +35,12 @@
 											
 						<md-button
 							id="createNewDataSourceForm" 
-							class="md-fab md-ExtraMini addButtonCatalogue"
+							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
 							ng-click="createNewForm()"> 
 							<md-icon
 								md-font-icon="fa fa-plus" 
-								style=" margin-top: 6px ; color: white;" class="addButtonIcon">
+								style=" margin-top: 6px ; color: white;">
 							</md-icon> 
 						</md-button>
 						
@@ -78,8 +66,8 @@
 		</left-col>
 			
 		<right-col>
-			
-			<form name="forms.dataSourceForm" layout-fill ng-submit="forms.dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody md-whiteframe-z1" ng-disabled="isSuperAdminFunction() && isDirty()">
+		
+			<form name="forms.dataSourceForm" layout-fill ng-submit="forms.dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody md-whiteframe-z1">
 				
 			<div ng-show="showme">
 			
@@ -98,13 +86,15 @@
 							<md-button type="button"
 								aria-label="test datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
+								ng-disabled="!forms.dataSourceForm.$valid"
 								ng-click="testDataSource()">
 							{{translate.load("sbi.datasource.testing");}} 
 							</md-button>
 							
 							<md-button type="submit"
 								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-								style=" margin-top: 2px;">
+								style=" margin-top: 2px;"
+								ng-disabled="!forms.dataSourceForm.$valid">
 							{{translate.load("sbi.browser.defaultRole.save");}} 
 							</md-button>
 							
@@ -118,7 +108,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.ds.label")}}</label>
-								<input ng-model="selectedDataSource.label" ng-required
+								<input ng-model="selectedDataSource.label" required
 									ng-change="setDirty()" ng-maxlength="50">
 									
 								<div ng-messages="forms.dataSourceForm.label.$error" ng-show="!selectedDataSource.label">
@@ -194,20 +184,20 @@
 							
 						</div>
 						
-						<div layout="row" layout-wrap>
-							<md-radio-group ng-model="jdbcOrJndi.type"> Type:
-		      					<md-radio-button value="JDBC">JDBC</md-radio-button>
-		      					<md-radio-button value="JNDI" ng-disabled="isSuperAdminFunction()">JNDI</md-radio-button>
+						<div layout="row" ng-init="type='JDBC'" layout-wrap>
+							<md-radio-group ng-model="type"> Type:
+		      					<md-radio-button ng-class="{'md-checked':!selectedDataSource.jndi.length}"  value="JDBC">JDBC</md-radio-button>
+		      					<md-radio-button ng-class="{'md-checked':selectedDataSource.jndi.length}" value="JNDI">JNDI</md-radio-button>
 		    				</md-radio-group>
 						</div>
 						
-						<div ng-if= "jdbcOrJndi.type == 'JDBC'">
+						<div ng-show= "type == 'JDBC'" ng-hide="selectedDataSource.jndi.length">
 											
 							<div layout="row" layout-wrap>
 								<div flex=100>
 									<md-input-container class="small counter">
 										<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
-										<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" ng-required
+										<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" ng-required="type=='JDBC'"
 											ng-maxlength="500">
 										<div ng-messages="forms.dataSourceForm.urlConnection.$error" ng-show="!selectedDataSource.urlConnection">
 	          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -238,7 +228,7 @@
 								<div flex=100>
 									<md-input-container class="small counter">
 										<label>{{translate.load("sbi.datasource.driver")}}</label>
-										<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" ng-required
+										<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" ng-required="type=='JDBC'"
 											ng-maxlength="160">
 										<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.driver">
 	          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
@@ -248,14 +238,14 @@
 							</div>
 						</div>
 						
-						<div flex=95 layout="row" ng-if= "jdbcOrJndi.type != 'JDBC'">
+						<div flex=95 layout="row" ng-show= "type == 'JNDI' || selectedDataSource.jndi.length">
 							<md-input-container flex> 
 								<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
 								<input ng-model="selectedDataSource.jndi"> 
 							</md-input-container>
 							<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
 						</div>
-						
+
 			</md-content>
 				</div>
 			</form>
