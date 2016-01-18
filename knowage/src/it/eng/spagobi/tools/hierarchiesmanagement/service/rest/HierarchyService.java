@@ -346,10 +346,15 @@ public class HierarchyService {
 	@POST
 	@Path("/deleteHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String deleteHierarchy(@QueryParam("dimension") String dimension, @QueryParam("name") String hierarchyName) throws SQLException {
+	public String deleteHierarchy(@Context HttpServletRequest req) throws SQLException {
 		// delete hierarchy
 		Connection connection = null;
 		try {
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String dimension = requestVal.getString("dimension");
+			String hierarchyName = requestVal.getString("name");
 
 			// 1 - get datasource label name
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -484,11 +489,16 @@ public class HierarchyService {
 	@POST
 	@Path("/restoreHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String restoreHierarchy(@QueryParam("name") String hierarchyBkpName, @QueryParam("dimension") String dimension) throws SQLException {
+	public String restoreHierarchy(@Context HttpServletRequest req) throws SQLException {
 		// restores a backup hierarchy
 		try {
 
 			logger.debug("START");
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String dimension = requestVal.getString("dimension");
+			String hierarchyBkpName = requestVal.getString("name");
 
 			if ((dimension == null) || (hierarchyBkpName == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", "wrong request parameters");
@@ -573,25 +583,31 @@ public class HierarchyService {
 	@POST
 	@Path("/createHierarchyMaster")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String createHierarchyMaster(@Context HttpServletRequest req, @QueryParam("dimension") String dimensionLabel,
-			@QueryParam("validityDate") String validityDate, @QueryParam("filterDate") String filterDate,
-			@QueryParam("filterHierarchy") String filterHierarchy, @QueryParam("filterHierType") String filterHierType) throws SQLException {
+	public String createHierarchyMaster(@Context HttpServletRequest req) throws SQLException {
 
 		logger.debug("START");
 
-		if ((dimensionLabel == null) || (validityDate == null)) {
-			throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
-		}
-
-		IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
-
-		if (dataSource == null) {
-			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
-		}
-
-		try (Connection dbConnection = dataSource.getConnection()) {
+		try {
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String dimensionLabel = requestVal.getString("dimension");
+			String validityDate = requestVal.getString("validityDate");
+			String filterDate = requestVal.getString("filterDate");
+			String filterHierarchy = requestVal.getString("filterHierarchy");
+			String filterHierType = requestVal.getString("filterHierType");
+
+			if ((dimensionLabel == null) || (validityDate == null)) {
+				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
+			}
+
+			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
+
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+
+			Connection dbConnection = dataSource.getConnection();
 
 			// JSONObject testJson = new JSONObject();
 			// testJson.put("HIER_CD", "pippoCD");
