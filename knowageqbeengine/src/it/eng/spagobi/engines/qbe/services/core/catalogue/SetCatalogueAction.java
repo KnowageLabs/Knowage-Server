@@ -342,7 +342,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 				if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
 					if (QuerySerializationConstants.TEMPORAL.equals(lValues[0])) {
-
+ 
 						whereField.setDescription(QuerySerializationConstants.TEMPORAL);
 
 						String temporalLevelColumn = null;
@@ -566,8 +566,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			addSumFunctionToAllMeasureInSelect(selectFields);
 			
 			
-			// se una funzione temporale richiama un attributo temporale che non è 
-			// previsto nella where e non è presente nella select, verranno visualizzati solo i dati relativi al periodo corrente.
+			// se una funzione temporale richiama un attributo temporale che non ï¿½ 
+			// previsto nella where e non ï¿½ presente nella select, verranno visualizzati solo i dati relativi al periodo corrente.
 			Map<String, String> currentPeriodValuyesByType = addMissingCurrentPeriodWhereClauses(query, temporalDimension, selectFields, whereFields,
 					inlineFilterFieldTypes, temporalDimensionId, hierarchyFullColumnMap, hierarchyColumnMap);
 
@@ -577,13 +577,13 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			// definisco quali campi andranno ricalcolati
 			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(selectFields);
 			
-			// se non è presente l'anno nella select, lo aggiungo
+			// se non ï¿½ presente l'anno nella select, lo aggiungo
 			if(!temporalFieldTypesInSelect.contains(hierarchyFullColumnMap.get("YEAR"))) {
 				addYearToQuery(query, temporalDimension, hierarchyFullColumnMap);
 				aliasesToBeRemovedAfterExecution.add(hierarchyFullColumnMap.get("YEAR"));
 			}
 			
-			// dico alla query che dovrà eseguire una postExecutionAnalysis
+			// dico alla query che dovrï¿½ eseguire una postExecutionAnalysis
 			query.setInlineFilteredSelectFields(inlineFilteredSelectFields);
 			query.setAliasesToBeRemovedAfterExecution(aliasesToBeRemovedAfterExecution);
 			query.setTemporalFieldTypesInSelect(temporalFieldTypesInSelect);
@@ -832,7 +832,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					SimpleSelectField ssField = (SimpleSelectField) sfield;
 					if(levelColumn.equals(ssField.getUniqueName())) {
 						temporalFieldAlreadyInSelect.add(levelColumn);
-						// se nei campi select è presente un campo della gerarchia, tale campo parteciperà al raggruppamento
+						// se nei campi select ï¿½ presente un campo della gerarchia, tale campo parteciperï¿½ al raggruppamento
 						ssField.setGroupByField(true);
 					}
 				}
@@ -863,7 +863,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			Map<String, String> currentPeriodValuesByType) {
 		Set<String> yearsToBeAddedToWhereClause = new HashSet<>();
 		
-		// per comodità riorganizzo i periodi per type
+		// per comoditï¿½ riorganizzo i periodi per type
 		Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
 		for (String type : hierarchyFullColumnMap.keySet()) {
 			distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	

@@ -194,7 +194,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Set<String> temporalFieldTypesInQuery = query.getTemporalFieldTypesInQuery();
 			Map<String, List<String>> distinctPeriods = query.getDistinctPeriods();
 			
-			// per comodità riorganizzo i periodi per type
+			// per comoditï¿½ riorganizzo i periodi per type
 			Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
 			for (String type : hierarchyFullColumnMap.keySet()) {
 				distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	
@@ -260,7 +260,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 				String rowLog = "| ";
 				
-				// per ogni colonna di ogni riga, se c'è un operatore inline, ne calcolo il valore
+				// per ogni colonna di ogni riga, se c'ï¿½ un operatore inline, ne calcolo il valore
 				for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
 					Map<String, String> firstRecordId = new HashMap<>();
 					firstRecordId.putAll(currentRecordId);
@@ -268,7 +268,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					lastRecordId.putAll(currentRecordId);
 					
 					String fieldAlias = finalDatastore.getMetaData().getFieldAlias(fieldIndex);
-					// se la colonna è da calcolare...
+					// se la colonna ï¿½ da calcolare...
 					if(fieldAlias != null && inlineFilteredSelectFields.containsKey(fieldAlias)){
 						
 						Map<String, String> inlineParameters = inlineFilteredSelectFields.get(fieldAlias);
@@ -283,7 +283,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 						// PERIOD_TO_DATE
 						// per i PERIOD_TO_DATE devo recuperare l'id temporale della riga  da cui partire, 
 						// quella a cui fermarmi corrisponde con la riga corrente traslata nel periodo di riferimento
-						// YTD_1 per la riga corrispondente a Giugno 2016 visualizzerà il dato aggregato da inizio 2015 a tutto Giugno 2015
+						// YTD_1 per la riga corrispondente a Giugno 2016 visualizzerï¿½ il dato aggregato da inizio 2015 a tutto Giugno 2015
 						case SetCatalogueAction.TEMPORAL_OPERAND_YTD:
 						{
 							// PORTO AL PRIMO RECORD DEL ANNO
@@ -394,8 +394,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 						// LAST_PERIOD
 						// per i LAST_PERIOD devo recuperare l'id temporale della riga da cui partire, 
 						// quella a cui fermarmi corrisponde con la riga corrente
-						// LM_3 per la riga Giugno 2016 visualizzerà il dato aggregato da Aprile a Giugno 2015
-						// LM_4 per la riga Gennaio 2016 visualizzerà il dato aggregato da Ottobre 2015 a Gennaio 2016
+						// LM_3 per la riga Giugno 2016 visualizzerï¿½ il dato aggregato da Aprile a Giugno 2015
+						// LM_4 per la riga Gennaio 2016 visualizzerï¿½ il dato aggregato da Ottobre 2015 a Gennaio 2016
 						case SetCatalogueAction.TEMPORAL_OPERAND_LAST_YEAR:
 						{
 							// setta gennaio/Q1/W1
@@ -482,7 +482,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Set<String> idAliases = query.getTemporalFieldTypesInSelect();
 		return getRecordId(finalRecord, finalDatastore, query, idAliases);
 	}
-	
+	 
 	private Map<String, String> getRecordFullId(Record finalRecord, IDataStore finalDatastore, Query query) {
 		Set<String> idAliases = query.getTemporalFieldTypesInQuery();
 		return getRecordId(finalRecord, finalDatastore, query, idAliases);
