@@ -1,6 +1,6 @@
 /**
 
-SpagoBI - The Business Intelligence Free Platform
+SpagoBI - The Business Intelligence Free  Platform
 
 Copyright (C) 2005-2010 Engineering Ingegneria Informatica S.p.A.
 
@@ -18,8 +18,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.analiticalmodel.document.util;
+
+import it.eng.spago.base.SourceBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,42 +32,35 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-
 /**
- * @author Marco Cortella (marco.cortella@eng.it)
- * 
- * Class created to remove dependency from BIObjectDAOHibImpl and 
- * it.eng.spagobi.engines.documentcomposition.configuration.DocumentConfigurationConfiguration
- *
+ * @author Marco Cortella (marco.cortella@eng.it) Class created to remove dependency from BIObjectDAOHibImpl and
+ *         it.eng.spagobi.engines.documentcomposition.configuration.DocumentConfigurationConfiguration
  */
 public class DocumentCompositionUtil {
-	
-	private Map documentsMap;
-	private String templateFile;
-	
+
+	private final Map documentsMap;
+	private final String templateFile;
+
 	public static final String TEMPLATE_VALUE = "template_value";
 	public static final String DOCUMENTS_CONFIGURATION = "DOCUMENTS_CONFIGURATION";
 
-	
-	private static transient Logger logger=Logger.getLogger(DocumentCompositionUtil.class);
-
+	private static transient Logger logger = Logger.getLogger(DocumentCompositionUtil.class);
 
 	/**
 	 * Instantiates a new document composition configuration.
 	 * 
-	 * @param DocumentCompositionConfigurationSB the document composition configuration sb
+	 * @param DocumentCompositionConfigurationSB
+	 *            the document composition configuration sb
 	 */
-	public DocumentCompositionUtil (SourceBean DocumentCompositionConfigurationSB){
+	public DocumentCompositionUtil(SourceBean DocumentCompositionConfigurationSB) {
 		documentsMap = new LinkedHashMap();
 
-		templateFile = (String)DocumentCompositionConfigurationSB.getAttribute(TEMPLATE_VALUE);
+		templateFile = (String) DocumentCompositionConfigurationSB.getAttribute(TEMPLATE_VALUE);
 
-
-		SourceBean documentsConfigurationSB = (SourceBean)DocumentCompositionConfigurationSB.getAttribute(DOCUMENTS_CONFIGURATION);
+		SourceBean documentsConfigurationSB = (SourceBean) DocumentCompositionConfigurationSB.getAttribute(DOCUMENTS_CONFIGURATION);
 
 	}
-	
+
 	/**
 	 * Gets the sbi obj labels array.
 	 * 
@@ -76,21 +71,20 @@ public class DocumentCompositionUtil {
 
 		Collection collLabels = documentsMap.values();
 		List retLabels = new ArrayList();
-		Object[] arrDocs = (Object[])collLabels.toArray();
-		try{
-			for(int i=0; i < arrDocs.length; i++){
-				Document tmpDoc =(Document) arrDocs[i];
+		Object[] arrDocs = collLabels.toArray();
+		try {
+			for (int i = 0; i < arrDocs.length; i++) {
+				Document tmpDoc = (Document) arrDocs[i];
 				retLabels.add(tmpDoc.getSbiObjLabel());
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error("Error while getting documents label.", e);
 		}
 		logger.debug("OUT");
 		return retLabels;
 
 	}
-	
-	
+
 	/*
 	 * Internal Class
 	 */
@@ -130,7 +124,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the sbi obj label.
 		 * 
-		 * @param sbiObjLabel the new sbi obj label
+		 * @param sbiObjLabel
+		 *            the new sbi obj label
 		 */
 		public void setSbiObjLabel(String sbiObjLabel) {
 			this.sbiObjLabel = sbiObjLabel;
@@ -148,7 +143,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the name par.
 		 * 
-		 * @param namePar the new name par
+		 * @param namePar
+		 *            the new name par
 		 */
 		public void setNamePar(String namePar) {
 			this.namePar = namePar;
@@ -166,7 +162,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the sbi par name.
 		 * 
-		 * @param sbiParName the new sbi par name
+		 * @param sbiParName
+		 *            the new sbi par name
 		 */
 		public void setSbiParName(String sbiParName) {
 			this.sbiParName = sbiParName;
@@ -184,7 +181,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the type.
 		 * 
-		 * @param type the new type
+		 * @param type
+		 *            the new type
 		 */
 		public void setType(String type) {
 			this.type = type;
@@ -202,7 +200,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the default value.
 		 * 
-		 * @param defaultValue the new default value
+		 * @param defaultValue
+		 *            the new default value
 		 */
 		public void setDefaultValue(String defaultValue) {
 			this.defaultValue = defaultValue;
@@ -220,7 +219,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the params.
 		 * 
-		 * @param params the new params
+		 * @param params
+		 *            the new params
 		 */
 		public void setParams(Properties params) {
 			this.params = params;
@@ -243,22 +243,25 @@ public class DocumentCompositionUtil {
 		}
 
 		/**
-		 * @param title the title to set
+		 * @param title
+		 *            the title to set
 		 */
 		public void setTitle(String title) {
 			this.title = title;
 		}
 
 		/**
-		/**
+		 * /**
+		 * 
 		 * @return the activeExport
 		 */
 		public String getActiveExport() {
-			return (activeExport == null)?"false":activeExport;
+			return (activeExport == null) ? "false" : activeExport;
 		}
 
 		/**
-		 * @param activeExport the activeExport to set
+		 * @param activeExport
+		 *            the activeExport to set
 		 */
 		public void setActiveExport(String activeExport) {
 			this.activeExport = activeExport;
@@ -267,7 +270,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the style.
 		 * 
-		 * @param style the new style
+		 * @param style
+		 *            the new style
 		 */
 		public void setStyle(String style) {
 			this.style = style;
@@ -285,7 +289,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the num order.
 		 * 
-		 * @param numOrder the new num order
+		 * @param numOrder
+		 *            the new num order
 		 */
 		public void setNumOrder(int numOrder) {
 			this.numOrder = numOrder;
@@ -303,7 +308,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the video width.
 		 * 
-		 * @param videoWidth the new video width
+		 * @param videoWidth
+		 *            the new video width
 		 */
 		public void setVideoWidth(Integer[] videoWidth) {
 			this.videoWidth = videoWidth;
@@ -321,7 +327,8 @@ public class DocumentCompositionUtil {
 		/**
 		 * Sets the video height.
 		 * 
-		 * @param videoHeight the new video height
+		 * @param videoHeight
+		 *            the new video height
 		 */
 		public void setVideoHeight(Integer[] videoHeight) {
 			this.videoHeight = videoHeight;
@@ -335,12 +342,13 @@ public class DocumentCompositionUtil {
 		}
 
 		/**
-		 * @param typeCross the typeCross to set
+		 * @param typeCross
+		 *            the typeCross to set
 		 */
 		public void setTypeCross(String typeCross) {
 			this.typeCross = typeCross;
 		}
 	}
-	
-	//-----------------------------------------------------------------------------
+
+	// -----------------------------------------------------------------------------
 }
