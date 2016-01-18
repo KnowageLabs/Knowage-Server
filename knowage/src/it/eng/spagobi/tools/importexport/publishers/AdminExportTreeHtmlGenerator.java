@@ -14,7 +14,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
-import it.eng.spagobi.tools.importexport.ImportExportConstants;
+import it.eng.spagobi.tools.importexportOLD.ImportExportConstants;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
 import java.util.Iterator;

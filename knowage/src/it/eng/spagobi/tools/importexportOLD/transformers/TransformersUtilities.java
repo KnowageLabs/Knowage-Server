@@ -9,9 +9,9 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.tools.importexport.ImportExportConstants;
-import it.eng.spagobi.tools.importexport.ImportManager;
-import it.eng.spagobi.tools.importexport.ImportUtilities;
+import it.eng.spagobi.tools.importexportOLD.ImportExportConstants;
+import it.eng.spagobi.tools.importexportOLD.ImportManager;
+import it.eng.spagobi.tools.importexportOLD.ImportUtilities;
 
 import java.io.File;
 import java.io.FileInputStream;

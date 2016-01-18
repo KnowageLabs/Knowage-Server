@@ -94,7 +94,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.importexport.bo.AssociationFile;
-import it.eng.spagobi.tools.importexport.transformers.TransformersUtilities;
+import it.eng.spagobi.tools.importexportOLD.transformers.TransformersUtilities;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;

@@ -8,8 +8,8 @@ package it.eng.spagobi.tools.importexport.services;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.tools.importexport.ExportUtilities;
-import it.eng.spagobi.tools.importexport.ImportUtilities;
+import it.eng.spagobi.tools.importexportOLD.ExportUtilities;
+import it.eng.spagobi.tools.importexportOLD.ImportUtilities;
 
 import java.io.File;
 import java.io.FileInputStream;

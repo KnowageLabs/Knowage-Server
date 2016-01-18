@@ -14,8 +14,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.presentation.PublisherDispatcherIFace;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.tools.importexport.ImportExportConstants;
-import it.eng.spagobi.tools.importexport.ImportManager;
+import it.eng.spagobi.tools.importexportOLD.ImportExportConstants;
+import it.eng.spagobi.tools.importexportOLD.ImportManager;
 
 import org.apache.log4j.Logger;
 

@@ -14,8 +14,8 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
-import it.eng.spagobi.tools.importexport.ExportManager;
-import it.eng.spagobi.tools.importexport.ExporterMetadata;
+import it.eng.spagobi.tools.importexportOLD.ExportManager;
+import it.eng.spagobi.tools.importexportOLD.ExporterMetadata;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;

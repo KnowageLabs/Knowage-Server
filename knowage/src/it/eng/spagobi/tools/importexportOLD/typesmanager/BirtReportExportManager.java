@@ -13,8 +13,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.importexport.ExportManager;
-import it.eng.spagobi.tools.importexport.ExporterMetadata;
+import it.eng.spagobi.tools.importexportOLD.ExportManager;
+import it.eng.spagobi.tools.importexportOLD.ExporterMetadata;
 
 import java.util.ArrayList;
 import java.util.Iterator;

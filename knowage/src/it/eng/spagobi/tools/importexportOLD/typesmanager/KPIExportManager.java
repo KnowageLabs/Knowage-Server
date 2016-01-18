@@ -14,8 +14,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
-import it.eng.spagobi.tools.importexport.ExportManager;
-import it.eng.spagobi.tools.importexport.ExporterMetadata;
+import it.eng.spagobi.tools.importexportOLD.ExportManager;
+import it.eng.spagobi.tools.importexportOLD.ExporterMetadata;
 
 import java.util.ArrayList;
 import java.util.Iterator;

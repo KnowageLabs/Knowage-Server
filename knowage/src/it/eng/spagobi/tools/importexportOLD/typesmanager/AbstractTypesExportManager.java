@@ -5,8 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexportOLD.typesmanager;
 
-import it.eng.spagobi.tools.importexport.ExportManager;
-import it.eng.spagobi.tools.importexport.ExporterMetadata;
+import it.eng.spagobi.tools.importexportOLD.ExportManager;
+import it.eng.spagobi.tools.importexportOLD.ExporterMetadata;
 
 import org.apache.log4j.Logger;
 

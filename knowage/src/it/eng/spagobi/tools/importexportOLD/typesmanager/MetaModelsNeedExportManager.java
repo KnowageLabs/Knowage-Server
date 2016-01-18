@@ -16,8 +16,8 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.importexport.ExportManager;
-import it.eng.spagobi.tools.importexport.ExporterMetadata;
+import it.eng.spagobi.tools.importexportOLD.ExportManager;
+import it.eng.spagobi.tools.importexportOLD.ExporterMetadata;
 
 import java.util.Iterator;
 import java.util.Vector;

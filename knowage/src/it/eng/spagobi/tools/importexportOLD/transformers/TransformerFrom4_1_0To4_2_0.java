@@ -6,7 +6,7 @@
 package it.eng.spagobi.tools.importexportOLD.transformers;
 
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.tools.importexport.ITransformer;
+import it.eng.spagobi.tools.importexportOLD.ITransformer;
 
 import java.io.File;
 import java.sql.Connection;

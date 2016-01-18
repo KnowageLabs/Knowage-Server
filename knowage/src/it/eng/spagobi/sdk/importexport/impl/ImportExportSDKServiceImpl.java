@@ -12,11 +12,12 @@ import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.importexport.ImportExportSDKService;
 import it.eng.spagobi.sdk.importexport.bo.SDKFile;
-import it.eng.spagobi.tools.importexport.IImportManager;
-import it.eng.spagobi.tools.importexport.ImportResultInfo;
-import it.eng.spagobi.tools.importexport.ImportUtilities;
-import it.eng.spagobi.tools.importexport.MetadataAssociations;
-import it.eng.spagobi.tools.importexport.TransformManager;
+
+import it.eng.spagobi.tools.importexportOLD.ImportResultInfo;
+import it.eng.spagobi.tools.importexportOLD.ImportUtilities;
+import it.eng.spagobi.tools.importexportOLD.MetadataAssociations;
+import it.eng.spagobi.tools.importexportOLD.TransformManager;
+import it.eng.spagobi.tools.importexportOLD.IImportManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
