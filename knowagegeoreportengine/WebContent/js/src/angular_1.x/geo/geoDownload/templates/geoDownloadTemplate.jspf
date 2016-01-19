@@ -26,7 +26,8 @@
 	</div>
 	<div class="footer">
 	<md-button id="export-png" style="margin-left:80%;" ng-click="downloadLayer()"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
-	</div>
+	
+</div>
    	 </md-dialog-content>
   </form>
 </md-dialog>
