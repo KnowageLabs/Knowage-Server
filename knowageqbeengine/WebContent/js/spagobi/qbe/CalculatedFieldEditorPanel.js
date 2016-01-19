@@ -366,7 +366,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			autoScroll: true,
 		    frame: false, 
 		    border: true,
-		    width: 120,
+		    width: 180,
 		    minWidth: 120
 		}, c || {}));
 		

@@ -823,6 +823,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
       			alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
       	}
 		this.showCalculatedFieldWizard(null);
+		this.calculatedFieldWizard.setWidth(this.inLineCalculatedFieldWizard.getWidth());
+		this.calculatedFieldWizard.setHeight(this.inLineCalculatedFieldWizard.getHeight());
+		this.calculatedFieldWizard.setPosition(this.inLineCalculatedFieldWizard.getPosition());
 		this.inLineCalculatedFieldWizard.hide();
     	this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
     }
@@ -834,6 +837,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
  			alias = this.calculatedFieldWizard.inputFields.alias.getValue();
  		}
  		this.showInLineCalculatedFieldWizard(null);
+ 		this.inLineCalculatedFieldWizard.setWidth(this.calculatedFieldWizard.getWidth());
+ 		this.inLineCalculatedFieldWizard.setHeight(this.calculatedFieldWizard.getHeight());
+ 		this.inLineCalculatedFieldWizard.setPosition(this.calculatedFieldWizard.getPosition());
  		this.calculatedFieldWizard.hide();
  		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
  	}
