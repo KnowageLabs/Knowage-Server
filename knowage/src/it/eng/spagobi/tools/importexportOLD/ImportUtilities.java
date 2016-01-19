@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexportOLD;
 
@@ -123,7 +123,7 @@ public class ImportUtilities {
 
 	/**
 	 * Decompress the export compress file.
-	 * 
+	 *
 	 * @param pathImpTmpFolder
 	 *            The path of the import directory
 	 * @param pathArchiveFile
@@ -192,7 +192,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates an Hibernate session factory for the exported database.
-	 * 
+	 *
 	 * @param pathDBFolder
 	 *            The path of the folder which contains the exported database
 	 * @return The Hibernate session factory
@@ -213,7 +213,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate role object.
-	 * 
+	 *
 	 * @param role
 	 *            old hibernate role object
 	 * @return the new hibernate role object
@@ -246,7 +246,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate role object.
-	 * 
+	 *
 	 * @param role
 	 *            old hibernate role object
 	 * @param id
@@ -263,7 +263,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate engine object.
-	 * 
+	 *
 	 * @param engine
 	 *            old hibernate engine object
 	 * @return the new hibernate engine object
@@ -289,7 +289,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new data source.
-	 * 
+	 *
 	 * @param ds
 	 *            the ds
 	 * @return the sbi data source
@@ -340,7 +340,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate engine object.
-	 * 
+	 *
 	 * @param engine
 	 *            old hibernate engine object
 	 * @param id
@@ -357,7 +357,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate functionality object.
-	 * 
+	 *
 	 * @param funct
 	 *            the funct
 	 * @return the new hibernate functionality object
@@ -378,7 +378,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate functionality object.
-	 * 
+	 *
 	 * @param funct
 	 *            the funct
 	 * @param id
@@ -408,7 +408,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate lov object.
-	 * 
+	 *
 	 * @param lov
 	 *            old hibernate lov object
 	 * @return the new hibernate lov object
@@ -479,7 +479,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate lov object.
-	 * 
+	 *
 	 * @param lov
 	 *            old hibernate lov object
 	 * @param id
@@ -496,7 +496,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate check object.
-	 * 
+	 *
 	 * @param check
 	 *            old hibernate check object
 	 * @return the new hibernate check object
@@ -517,7 +517,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate check object.
-	 * 
+	 *
 	 * @param check
 	 *            old hibernate check object
 	 * @param id
@@ -534,7 +534,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter object.
-	 * 
+	 *
 	 * @param param
 	 *            the param
 	 * @return the new hibernate parameter object
@@ -559,7 +559,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter object.
-	 * 
+	 *
 	 * @param param
 	 *            the param
 	 * @param id
@@ -576,7 +576,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate viewpoint
-	 * 
+	 *
 	 * @param paruse
 	 *            the paruse
 	 * @return the new hibernate parameter use object
@@ -623,7 +623,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter use object.
-	 * 
+	 *
 	 * @param paruse
 	 *            the paruse
 	 * @return the new hibernate parameter use object
@@ -709,7 +709,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter use object.
-	 * 
+	 *
 	 * @param paruse
 	 *            the paruse
 	 * @return the new hibernate parameter use object
@@ -816,7 +816,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter use object.
-	 * 
+	 *
 	 * @param paruse
 	 *            the paruse
 	 * @return the new hibernate parameter use object
@@ -931,7 +931,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate parameter use object.
-	 * 
+	 *
 	 * @param paruse
 	 *            the paruse
 	 * @param id
@@ -948,7 +948,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate biobject.
-	 * 
+	 *
 	 * @param obj
 	 *            old hibernate biobject
 	 * @return the new hibernate biobject
@@ -990,7 +990,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new sbi snapshots.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @return the sbi snapshots
@@ -1008,7 +1008,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new sbi sub objects.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @return the sbi sub objects
@@ -1028,7 +1028,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new sbi obj templates.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @return the sbi obj templates
@@ -1048,7 +1048,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new sbi bin contents.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @return the sbi bin contents
@@ -1063,7 +1063,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate biobject.
-	 * 
+	 *
 	 * @param obj
 	 *            old hibernate biobject
 	 * @param id
@@ -1081,7 +1081,7 @@ public class ImportUtilities {
 	/**
 	 * Load an existing biobject and make modifications as per the exported biobject in input (existing associations with functionalities are maintained, while
 	 * existing associations with parameters are deleted).
-	 * 
+	 *
 	 * @param exportedObj
 	 *            the exported obj
 	 * @param sessionCurrDB
@@ -1121,17 +1121,17 @@ public class ImportUtilities {
 			Set objPars = existingObj.getSbiObjPars();
 
 			/*
-			 * 
+			 *
 			 * Iterator objParsIt = objPars.iterator(); while (objParsIt.hasNext()) { SbiObjPar objPar = (SbiObjPar) objParsIt.next(); // for each
 			 * biobjectparameter deletes all its dependencies, if any Query query =
 			 * sessionCurrDB.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objPar.getObjParId()); logger.debug("delete dependencies"); List
 			 * dependencies = query.list(); if (dependencies != null && !dependencies.isEmpty()) { Iterator it = dependencies.iterator(); while (it.hasNext()) {
 			 * SbiObjParuse aSbiObjParuse = (SbiObjParuse) it.next(); sessionCurrDB.delete(aSbiObjParuse); } }
-			 * 
+			 *
 			 * // for each biobjectparameter deletes all its visual dependencies, if any Query visQuery =
 			 * sessionCurrDB.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objPar.getObjParId());
 			 * logger.debug("delete visual dependencies");
-			 * 
+			 *
 			 * List visdependencies = visQuery.list(); if (visdependencies != null && !visdependencies.isEmpty()) { Iterator it = visdependencies.iterator();
 			 * while (it.hasNext()) { SbiObjParview aSbiObjParview = (SbiObjParview) it.next();
 			 * logger.debug("Delete parView "+aSbiObjParview.getId().getSbiObjPar().getLabel()); sessionCurrDB.delete(aSbiObjParview); } } } // delete par only
@@ -1149,7 +1149,7 @@ public class ImportUtilities {
 	/**
 	 * Load an existing parameter and make modifications as per the exported parameter in input (existing associations with biobjects are maintained, while
 	 * parameter uses are deleted).
-	 * 
+	 *
 	 * @param exportedParameter
 	 *            the exported parameter
 	 * @param sessionCurrDB
@@ -1187,7 +1187,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate biobject dataset object.
-	 * 
+	 *
 	 * @param objDs
 	 *            the objDs
 	 * @return the sbi obj dataset
@@ -1253,7 +1253,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate biobject parameter object.
-	 * 
+	 *
 	 * @param objpar
 	 *            the objpar
 	 * @return the sbi obj par
@@ -1288,7 +1288,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate biobject parameter object.
-	 * 
+	 *
 	 * @param objpar
 	 *            the objpar
 	 * @param id
@@ -1369,7 +1369,7 @@ public class ImportUtilities {
 
 	/**
 	 * Set into the biobject to the engine/object type/object state/datasource the entities associated with the exported biobject.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
 	 * @param exportedObj
@@ -1593,7 +1593,7 @@ public class ImportUtilities {
 
 	/**
 	 * Set into the parameter to the parameter type domain associated with the exported parameter.
-	 * 
+	 *
 	 * @param parameter
 	 *            the parameter
 	 * @param exportedParameter
@@ -1624,7 +1624,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new data set.
-	 * 
+	 *
 	 * @param dataProxy
 	 *            the ds
 	 * @return the sbi data set public SbiDataSet makeNew(SbiDataSet dataset, IEngUserProfile profile){ logger.debug("IN"); SbiDataSet newDsConfig = new
@@ -1636,7 +1636,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new Artifact.
-	 * 
+	 *
 	 * @param dataProxy
 	 *            the ds
 	 * @return the sbi Artifact
@@ -1766,7 +1766,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing artifact and make modifications as per the exported artifact in input
-	 * 
+	 *
 	 * @param exportedartifact
 	 *            the exported artifact
 	 * @param sessionCurrDB
@@ -1854,7 +1854,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new Meta MOdel
-	 * 
+	 *
 	 * @param dataProxy
 	 *            the ds
 	 * @return the Meta Model
@@ -1886,7 +1886,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing metamodel and make modifications as per the exported metamodel in input
-	 * 
+	 *
 	 * @param exportedmetamodel
 	 *            the exported metamodel
 	 * @param sessionCurrDB
@@ -2011,7 +2011,7 @@ public class ImportUtilities {
 
 	/**
 	 * Make new data set.
-	 * 
+	 *
 	 * @param dataProxy
 	 *            the ds
 	 * @return the sbi data set
@@ -2183,7 +2183,7 @@ public class ImportUtilities {
 	/**
 	 * Load an existing dataset and make modifications as per the exported dataset in input For what concern the history keep track of the previous one and
 	 * insert the new one
-	 * 
+	 *
 	 * @param exportedDataset
 	 *            the exported dataset
 	 * @param sessionCurrDB
@@ -2261,7 +2261,7 @@ public class ImportUtilities {
 
 	/**
 	 * associate the new History associated with the exported dataset.
-	 * 
+	 *
 	 * @param dataset
 	 *            the dataset
 	 * @param exportedDataset
@@ -2342,7 +2342,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing lov and make modifications as per the exported lov in input (existing associations with parameters are maintained).
-	 * 
+	 *
 	 * @param exportedLov
 	 *            the exported lov
 	 * @param sessionCurrDB
@@ -2422,7 +2422,7 @@ public class ImportUtilities {
 
 	/**
 	 * Set into the lov the lov type domain associated with the exported lov.
-	 * 
+	 *
 	 * @param lov
 	 *            the lov
 	 * @param exportedLov
@@ -2453,7 +2453,7 @@ public class ImportUtilities {
 
 	/**
 	 * Set into the datasource the dialect type domain associated with the exported datasource.
-	 * 
+	 *
 	 * @param datasource
 	 *            the datasource
 	 * @param exportedDatasource
@@ -2780,7 +2780,7 @@ public class ImportUtilities {
 		String toReturn = null;
 		try {
 			ConfigSingleton conf = ConfigSingleton.getInstance();
-			SourceBean importerSB = (SourceBean) conf.getAttribute("IMPORTEXPORT.IMPORTER");
+			SourceBean importerSB = (SourceBean) conf.getAttribute("IMPORTEXPORT.IMPORTEROLD");
 			toReturn = (String) importerSB.getAttribute("tmpFolder");
 			toReturn = GeneralUtilities.checkForSystemProperty(toReturn);
 			if (!toReturn.startsWith("/") && toReturn.charAt(1) != ':') {
@@ -2800,7 +2800,7 @@ public class ImportUtilities {
 		IImportManager toReturn = null;
 		try {
 			ConfigSingleton conf = ConfigSingleton.getInstance();
-			SourceBean importerSB = (SourceBean) conf.getAttribute("IMPORTEXPORT.IMPORTER");
+			SourceBean importerSB = (SourceBean) conf.getAttribute("IMPORTEXPORT.IMPORTEROLD");
 			// instance the importer class
 			String impClassName = (String) importerSB.getAttribute("class");
 			Class impClass = Class.forName(impClassName);
@@ -2816,7 +2816,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate kpi object.
-	 * 
+	 *
 	 * @param kpi
 	 *            kpi
 	 * @return the new hibernate parameter object
@@ -2851,7 +2851,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing kpi and make modifications as per the exported kpi in input
-	 * 
+	 *
 	 * @param exportedKpi
 	 *            the exported Kpi
 	 * @param sessionCurrDB
@@ -2892,7 +2892,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Kpi search new Ids
-	 * 
+	 *
 	 * @param exportedKpi
 	 *            the exported Kpi
 	 * @param sessionCurrDB
@@ -3000,7 +3000,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate kpi instance object.
-	 * 
+	 *
 	 * @param SbiKpiInstance
 	 *            kpiInst
 	 * @return the new hibernate parameter object
@@ -3027,7 +3027,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing kpi instance and make modifications as per the exported kpi instance in input
-	 * 
+	 *
 	 * @param exportedKpiInst
 	 *            the exported Kpi Instance
 	 * @param sessionCurrDB
@@ -3062,7 +3062,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Kpi Instamce search new Ids
-	 * 
+	 *
 	 * @param exportedKpiInstance
 	 *            the exported Kpi Instance
 	 * @param sessionCurrDB
@@ -3128,7 +3128,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate th value object.
-	 * 
+	 *
 	 * @param ThreasholdValue
 	 *            thValue
 	 * @return the new hibernate parameter object
@@ -3160,7 +3160,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing threshold Values and make modifications as per the exported thValue in input
-	 * 
+	 *
 	 * @param exportedThValue
 	 *            the exported Th value
 	 * @param sessionCurrDB
@@ -3199,7 +3199,7 @@ public class ImportUtilities {
 
 	/**
 	 * For ThresholdValues search new Ids
-	 * 
+	 *
 	 * @param exportedKpi
 	 *            the exported Kpi
 	 * @param sessionCurrDB
@@ -3249,7 +3249,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate th object.
-	 * 
+	 *
 	 * @param Threashold
 	 *            thresdold
 	 * @return the new hibernate parameter object
@@ -3276,7 +3276,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing threshold and make modifications as per the exported thValue in input
-	 * 
+	 *
 	 * @param exportedThValue
 	 *            the exported Th
 	 * @param sessionCurrDB
@@ -3308,7 +3308,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Threshold search new Ids
-	 * 
+	 *
 	 * @param exportedKpi
 	 *            the exported Kpi
 	 * @param sessionCurrDB
@@ -3339,7 +3339,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate model object.
-	 * 
+	 *
 	 * @param Model
 	 *            model
 	 * @return the new hibernate parameter object
@@ -3374,7 +3374,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Model and make modifications
-	 * 
+	 *
 	 * @param exportedModel
 	 *            the exported Model
 	 * @param sessionCurrDB
@@ -3409,7 +3409,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Model search new Ids
-	 * 
+	 *
 	 * @param exportedModel
 	 *            the exported Model
 	 * @param sessionCurrDB
@@ -3471,7 +3471,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate model instance object.
-	 * 
+	 *
 	 * @param ModelInst
 	 *            model instance
 	 * @return the new hibernate parameter object
@@ -3501,7 +3501,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Model Inst and make modifications
-	 * 
+	 *
 	 * @param exportedModelInst
 	 *            the exported Model Instance
 	 * @param sessionCurrDB
@@ -3538,7 +3538,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Model Instance search new Ids
-	 * 
+	 *
 	 * @param exportedModelInst
 	 *            the exported Model Instance
 	 * @param sessionCurrDB
@@ -3606,7 +3606,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiResource object.
-	 * 
+	 *
 	 * @param Resource
 	 *            resource
 	 * @return the new hibernate parameter object
@@ -3635,7 +3635,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing resource and make modifications as per the exported resource in input
-	 * 
+	 *
 	 * @param exportedResource
 	 *            the exported resource
 	 * @param sessionCurrDB
@@ -3671,7 +3671,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Resources search new Ids
-	 * 
+	 *
 	 * @param exportedRes
 	 *            the exported Resource
 	 * @param sessionCurrDB
@@ -3702,7 +3702,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate th value object.
-	 * 
+	 *
 	 * @param Model
 	 *            Resource modRes
 	 * @return the new hibernate parameter object
@@ -3725,7 +3725,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Model resource and make modifications as per the exported Model resource in input
-	 * 
+	 *
 	 * @param exported
 	 *            mOdel Resource the exported resource
 	 * @param sessionCurrDB
@@ -3756,7 +3756,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Model Resources search new Ids
-	 * 
+	 *
 	 * @param exported
 	 *            Model Res the exported Resource
 	 * @param sessionCurrDB
@@ -3801,7 +3801,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate th value object.
-	 * 
+	 *
 	 * @param Periodicity
 	 *            per
 	 * @return the new hibernate parameter object
@@ -3831,7 +3831,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing resource and make modifications as per the exported periodicity in input
-	 * 
+	 *
 	 * @param exportedPeriodicity
 	 *            the exported periodicity
 	 * @param sessionCurrDB
@@ -3868,7 +3868,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Periodicity search new Ids
-	 * 
+	 *
 	 * @param exportedRes
 	 *            the exported Periodicity
 	 * @param sessionCurrDB
@@ -3887,7 +3887,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate th value object.
-	 * 
+	 *
 	 * @param KpiInstPeriod
 	 *            kpiInstPeriod
 	 * @return the new hibernate parameter object
@@ -3912,7 +3912,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing KpiInstPeriod and make modifications as per the exported KpiInstPeriod in input
-	 * 
+	 *
 	 * @param exported
 	 *            mKpiInstPeriod the exported resource
 	 * @param sessionCurrDB
@@ -3944,7 +3944,7 @@ public class ImportUtilities {
 
 	/**
 	 * For KpiInstPeriod search new Ids
-	 * 
+	 *
 	 * @param exported
 	 *            KpiInstPeriod the exported KpiInstPeriod
 	 * @param sessionCurrDB
@@ -3990,7 +3990,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiAlarm object.
-	 * 
+	 *
 	 * @param Alarm
 	 *            alarm
 	 * @return the new hibernate parameter object
@@ -4021,7 +4021,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Alarm and make modifications as per the exported Alarm in input
-	 * 
+	 *
 	 * @param exportedAlarm
 	 *            the exported Alarm
 	 * @param sessionCurrDB
@@ -4059,7 +4059,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Alarm search new Ids
-	 * 
+	 *
 	 * @param exportedAlarm
 	 *            the exported Alarm
 	 * @param sessionCurrDB
@@ -4152,7 +4152,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiAlarmContact object.
-	 * 
+	 *
 	 * @param AlarmContact
 	 *            alarmContact
 	 * @return the new hibernate parameter object
@@ -4180,7 +4180,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Alarm Contact and make modifications as per the exported Alarm Contact in input
-	 * 
+	 *
 	 * @param exportedAlarm
 	 *            the exported Alarm Contact
 	 * @param sessionCurrDB
@@ -4215,7 +4215,7 @@ public class ImportUtilities {
 
 	/**
 	 * For Alarm Contacts search new Ids
-	 * 
+	 *
 	 * @param exportedAlarm
 	 *            the exported Alarm Contacts
 	 * @param sessionCurrDB
@@ -4232,7 +4232,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate kpi model attr object.
-	 * 
+	 *
 	 * @param SbiKpiModelAttr
 	 *            kpiModelAttr
 	 * @return the new hibernate parameter object
@@ -4243,17 +4243,17 @@ public class ImportUtilities {
 	 * importer){ logger.debug("IN"); SbiKpiModelAttr newKpiModelAttr = new SbiKpiModelAttr(); try{ newKpiModelAttr.setKpiModelAttrCd(
 	 * kpiModelAttr.getKpiModelAttrCd() ); newKpiModelAttr.setKpiModelAttrNm( kpiModelAttr.getKpiModelAttrNm() ); newKpiModelAttr.setKpiModelAttrDescr(
 	 * kpiModelAttr.getKpiModelAttrDescr() );
-	 * 
+	 *
 	 * // associations entitiesAssociationsSbiKpiModelAttr(kpiModelAttr, newKpiModelAttr, sessionCurrDB, metaAss, importer);
-	 * 
+	 *
 	 * logger.debug("OUT"); } catch (Exception e) { logger.error("Error inc reating new Model Attr with label "+newKpiModelAttr.getKpiModelAttrCd()); } finally{
-	 * 
+	 *
 	 * } return newKpiModelAttr; }
 	 */
 
 	/**
 	 * Load an existing kpiModelAttr and make modifications as per the exported kpiModelAttr in input
-	 * 
+	 *
 	 * @param exportedKpiModelAttr
 	 *            the exported KpiModelAttr
 	 * @param sessionCurrDB
@@ -4272,18 +4272,18 @@ public class ImportUtilities {
 	 * existingKpiModelAttr.setKpiModelAttrCd(exportedKpiModelAttr.getKpiModelAttrCd());
 	 * existingKpiModelAttr.setKpiModelAttrNm(exportedKpiModelAttr.getKpiModelAttrNm());
 	 * existingKpiModelAttr.setKpiModelAttrDescr(exportedKpiModelAttr.getKpiModelAttrDescr());
-	 * 
+	 *
 	 * // overwrite existging entities (maybe create a function speciic for domains, maybe not) entitiesAssociationsSbiKpiModelAttr(exportedKpiModelAttr,
 	 * existingKpiModelAttr, sessionCurrDB, metaAss, importer);
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * finally { logger.debug("OUT"); } return existingKpiModelAttr; }
 	 */
 
 	/**
 	 * For KpiModelAttr search new Ids
-	 * 
+	 *
 	 * @param exportedKpi
 	 *            the exported Kpi
 	 * @param sessionCurrDB
@@ -4296,7 +4296,7 @@ public class ImportUtilities {
 	/*
 	 * public void entitiesAssociationsSbiKpiModelAttr(SbiKpiModelAttr exportedKpiModelAttr, SbiKpiModelAttr existingKpiModelAttr,Session sessionCurrDB,
 	 * MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError { logger.debug("IN"); // overwrite existging entities
-	 * 
+	 *
 	 * Map domainIdAss=metaAss.getDomainIDAssociation(); if(exportedKpiModelAttr.getSbiDomains()!=null){ Integer
 	 * oldDomainId=exportedKpiModelAttr.getSbiDomains().getValueId(); Integer newDomainId=(Integer)domainIdAss.get(oldDomainId); if(newDomainId==null) {
 	 * logger.error("could not find domain between association"+exportedKpiModelAttr.getSbiDomains().getValueCd()); existingKpiModelAttr.setSbiDomains(null); }
@@ -4306,7 +4306,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate kpi model attr val object.
-	 * 
+	 *
 	 * @param SbiKpiModelAttr
 	 *            kpiModelAttrVal
 	 * @return the new hibernate parameter object
@@ -4316,19 +4316,19 @@ public class ImportUtilities {
 	 * public SbiKpiModelAttrVal makeNewSbiKpiModelAttrVal(SbiKpiModelAttrVal kpiModelAttrVal,Session sessionCurrDB, MetadataAssociations metaAss,
 	 * ImporterMetadata importer){ logger.debug("IN"); SbiKpiModelAttrVal newKpiModelAttrVal = new SbiKpiModelAttrVal(); try{ newKpiModelAttrVal.setValue(
 	 * kpiModelAttrVal.getValue() );
-	 * 
+	 *
 	 * // associations entitiesAssociationsSbiKpiModelAttrVal(kpiModelAttrVal, newKpiModelAttrVal, sessionCurrDB, metaAss, importer);
-	 * 
+	 *
 	 * logger.debug("OUT"); } catch (Exception e) {
 	 * logger.error("Error inc reating new Model Attr Val referring to model "+newKpiModelAttrVal.getSbiKpiModel().getKpiModelNm
 	 * ()+" an to attribute "+newKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm()); } finally{
-	 * 
+	 *
 	 * } return newKpiModelAttrVal; }
 	 */
 
 	/**
 	 * Load an existing kpiModelAttrVal and make modifications as per the exported kpiModelAttr in input
-	 * 
+	 *
 	 * @param exportedKpiModelAttrVal
 	 *            the exported KpiModelAttrVal
 	 * @param sessionCurrDB
@@ -4345,18 +4345,18 @@ public class ImportUtilities {
 	 * { // update th Value existingKpiModelAttrVal = (SbiKpiModelAttrVal) sessionCurrDB.load(SbiKpiModelAttrVal.class, existingId);
 	 * existingKpiModelAttrVal.setSbiKpiModel(exportedKpiModelAttrVal.getSbiKpiModel());
 	 * existingKpiModelAttrVal.setSbiKpiModelAttr(exportedKpiModelAttrVal.getSbiKpiModelAttr());
-	 * 
+	 *
 	 * // overwrite existging entities (maybe create a function speciic for domains, maybe not) entitiesAssociationsSbiKpiModelAttrVal(exportedKpiModelAttrVal,
 	 * existingKpiModelAttrVal, sessionCurrDB, metaAss, importer);
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * finally { logger.debug("OUT"); } return existingKpiModelAttrVal; }
 	 */
 
 	/**
 	 * KpiModelAttrVal association entities search new Ids
-	 * 
+	 *
 	 * @param exportedKpiMdelAtrVal
 	 *            the exported KpiModelATtrVal
 	 * @param sessionCurrDB
@@ -4369,15 +4369,15 @@ public class ImportUtilities {
 	/*
 	 * public void entitiesAssociationsSbiKpiModelAttrVal(SbiKpiModelAttrVal exportedKpiModelAttrVal, SbiKpiModelAttrVal existingKpiModelAttrVal,Session
 	 * sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError { logger.debug("IN"); // overwrite existging entities
-	 * 
+	 *
 	 * // set the model Map modelIdAss=metaAss.getModelIDAssociation(); if(exportedKpiModelAttrVal.getSbiKpiModel()!=null){ Integer
 	 * oldModelId=exportedKpiModelAttrVal.getSbiKpiModel().getKpiModelId(); Integer newModelId=(Integer)modelIdAss.get(oldModelId); if(newModelId==null) {
 	 * logger.error("could not find model associated with mdeol with label "+exportedKpiModelAttrVal.getSbiKpiModel().getKpiModelLabel());
 	 * existingKpiModelAttrVal.setSbiKpiModel(null); } else{ // I must get the new SbiKpiModel newSbiKpiModel= (SbiKpiModel)
 	 * sessionCurrDB.load(SbiKpiModel.class, newModelId); existingKpiModelAttrVal.setSbiKpiModel(newSbiKpiModel); } } else{
 	 * existingKpiModelAttrVal.setSbiKpiModel(null); }
-	 * 
-	 * 
+	 *
+	 *
 	 * // set the model attr Map modelAttrIdAss=metaAss.getSbiKpiModelAttrIDAssociation(); if(exportedKpiModelAttrVal.getSbiKpiModelAttr()!=null){ Integer
 	 * oldModelAttrId=exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrId(); Integer newModelAttrId=(Integer)modelAttrIdAss.get(oldModelAttrId);
 	 * if(newModelAttrId==null) {
@@ -4385,13 +4385,13 @@ public class ImportUtilities {
 	 * existingKpiModelAttrVal.setSbiKpiModelAttr(null); } else{ // I must get the new SbiKpiModelAttr newSbiKpiModelAttr= (SbiKpiModelAttr)
 	 * sessionCurrDB.load(SbiKpiModelAttr.class, newModelAttrId); existingKpiModelAttrVal.setSbiKpiModelAttr(newSbiKpiModelAttr); } } else{
 	 * existingKpiModelAttrVal.setSbiKpiModelAttr(null); }
-	 * 
+	 *
 	 * }
 	 */
 
 	/**
 	 * Creates a new hibernate ObjMetadata.
-	 * 
+	 *
 	 * @param ObjMetadata
 	 *            objMetadata
 	 * @return the new hibernate parameter object
@@ -4419,7 +4419,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing ObjMetadata and make modifications as per the exported ObjMetadata in input
-	 * 
+	 *
 	 * @param ObjMetadata
 	 *            objMetadata
 	 * @param sessionCurrDB
@@ -4454,7 +4454,7 @@ public class ImportUtilities {
 
 	/**
 	 * For ObjMetadata search new Ids
-	 * 
+	 *
 	 * @param exported
 	 *            metadata ObjMetadata
 	 * @param sessionCurrDB
@@ -4487,7 +4487,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiObjMetacontent object.
-	 * 
+	 *
 	 * @param iEngUserProfile
 	 * @param SbiObjectMetacontent
 	 *            metcontent
@@ -4514,7 +4514,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing ObjMetacontents and make modifications as per the exported ObjMetacontents in input
-	 * 
+	 *
 	 * @param exportedObjMetacontents
 	 *            the exported ObjMetacontents
 	 * @param sessionCurrDB
@@ -4549,7 +4549,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SBiObjMetacontents search new Ids
-	 * 
+	 *
 	 * @param exportedMetacontent
 	 *            the exported SbiObjMetacontent
 	 * @param sessionCurrDB
@@ -4626,7 +4626,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiKpiRel object.
-	 * 
+	 *
 	 * @param SbiKpiRel
 	 *            relation
 	 * @return the new hibernate parameter object
@@ -4649,7 +4649,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SbiKpiRel search new Ids
-	 * 
+	 *
 	 * @param exportedKpiRel
 	 *            the exported SbiKpiRel
 	 * @param sessionCurrDB
@@ -4696,7 +4696,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiUdp udp object.
-	 * 
+	 *
 	 * @param SbiUdp
 	 *            udp
 	 * @return the new hibernate parameter object
@@ -4722,7 +4722,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SbiUdp search new Ids
-	 * 
+	 *
 	 * @param exportedSbiUdp
 	 *            the exported SbiUdp
 	 * @param sessionCurrDB
@@ -4766,7 +4766,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Udp and make modifications as per the exported udp in input
-	 * 
+	 *
 	 * @param exportedUdp
 	 *            the exported SbiUdp
 	 * @param sessionCurrDB
@@ -4798,7 +4798,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Kpi Relation and make modifications as per the exported udp in input
-	 * 
+	 *
 	 * @param exportedKpiRel
 	 *            the exported SbiKpiRel
 	 * @param sessionCurrDB
@@ -4826,7 +4826,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiUdpValue udp value object.
-	 * 
+	 *
 	 * @param SbiUdpValue
 	 *            udp value
 	 * @return the new hibernate parameter object
@@ -4855,7 +4855,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SbiUdpValue search new Ids
-	 * 
+	 *
 	 * @param exportedSbiUdpValue
 	 *            the exported SbiUdpValue
 	 * @param sessionCurrDB
@@ -4918,7 +4918,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing Udp value and make modifications as per the exported udp in input
-	 * 
+	 *
 	 * @param exportedUdp
 	 *            the exported SbiUdp
 	 * @param sessionCurrDB
@@ -4952,7 +4952,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiOrgUnitGrant grant object.
-	 * 
+	 *
 	 * @param SbiOrgUnitGrant
 	 *            grant
 	 * @return the new hibernate parameter object
@@ -4979,7 +4979,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SbiOrgUnitGrant search new Ids
-	 * 
+	 *
 	 * @param exportedSbiUdpValue
 	 *            the exported SbiOrgUnitGrant
 	 * @param sessionCurrDB
@@ -5023,7 +5023,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing grant and make modifications as per the exported grant in input
-	 * 
+	 *
 	 * @param exportedGrant
 	 *            the exported grant
 	 * @param sessionCurrDB
@@ -5056,7 +5056,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate SbiOrgUnitGrantNodes grant node object.
-	 * 
+	 *
 	 * @param SbiOrgUnitGrantNodes
 	 *            grant node
 	 * @return the new hibernate parameter object
@@ -5078,7 +5078,7 @@ public class ImportUtilities {
 
 	/**
 	 * For SbiOrgUnitGrantNodes search new Ids
-	 * 
+	 *
 	 * @param exportedGrantNode
 	 *            the exported SbiOrgUnitGrantNodes
 	 * @param sessionCurrDB
@@ -5139,7 +5139,7 @@ public class ImportUtilities {
 
 	/**
 	 * Load an existing grant node and make modifications as per the exported grant node in input
-	 * 
+	 *
 	 * @param exportedGrantNode
 	 *            the exported grant node
 	 * @param sessionCurrDB
@@ -5168,7 +5168,7 @@ public class ImportUtilities {
 
 	/**
 	 * Creates a new hibernate authorizations (role) object.
-	 * 
+	 *
 	 * @param role
 	 *            old hibernate authorizations object
 	 * @return the new hibernate authorizations object

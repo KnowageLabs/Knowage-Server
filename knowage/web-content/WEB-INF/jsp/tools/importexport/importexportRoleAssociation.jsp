@@ -8,10 +8,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@ page import="it.eng.spago.navigation.LightNavigationManager,it.eng.spagobi.tools.importexport.ImportExportConstants,java.util.List,java.util.Iterator,it.eng.spagobi.commons.bo.Role" %>
+<%@ page import="it.eng.spago.navigation.LightNavigationManager,it.eng.spagobi.tools.importexportOLD.ImportExportConstants,java.util.List,java.util.Iterator,it.eng.spagobi.commons.bo.Role" %>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
-<%@page import="it.eng.spagobi.tools.importexport.*"%>
+<%@page import="it.eng.spagobi.tools.importexportOLD.*"%>
 
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
