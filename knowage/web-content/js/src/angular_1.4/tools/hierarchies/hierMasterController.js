@@ -531,6 +531,11 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 			var el = elements.shift();
 			el.checked = el.visible = el.expanded = el.type = el.sortDirection = undefined;
 			el.$parent=null;
+			for (var k in el){
+				if (el[k] instanceof Date){
+					el[k] = $scope.formatDate(el[k]);
+				}
+			}
 			if (el.children !== undefined && el.children.length > 0){
 				for (var i =0 ; i<el.children.length;i++){
 					if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true){
