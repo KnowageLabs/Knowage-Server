@@ -753,7 +753,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	}
 
 	, onColumnResize: function (ct, column, width, eOpts){
-		this.wconf.visibleselectfields[column.getIndex()].width = column.width;
+		Sbi.trace("[TableWidget.onColumnResize]: IN");
+		
+		var visibleselectfields = this.wconf.visibleselectfields;
+		var columnIndex = column.getIndex();
+		
+		if(columnIndex < visibleselectfields.length 
+				&& visibleselectfields[columnIndex].id === column.columnId) {
+			
+			visibleselectfields[columnIndex].width = column.width;
+		}
+		Sbi.trace("[TableWidget.onColumnResize]: OUT");
 	}
 
 	, onColumnMove: function (ct, column, fromIdx, toIdx, eOpts){
