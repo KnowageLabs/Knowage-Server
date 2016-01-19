@@ -292,6 +292,9 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
 			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
+	  		<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers.jsp" /> 
+				
 	  	</ITEM>	  	
 	</ITEM>
 	
