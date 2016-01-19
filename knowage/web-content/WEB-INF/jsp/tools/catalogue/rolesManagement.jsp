@@ -119,8 +119,11 @@
 				       <md-select  aria-label="dropdown" placeholder ="Role Type"
 				       	name ="dropdown" 
 				        ng-required = "true"
-				        ng-model="selectedRole.roleTypeCD"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="comboCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_TR}}</md-option>
+				        ng-model="selectedRole.roleTypeCD"
+				        ng-change="changeType(selectedRole.roleTypeCD)">    
+				        <md-option 
+				        ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_TR}}
+				        </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedRole.roleTypeCD== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -132,7 +135,7 @@
 				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder">
 				<div style="display: flex;">
-				<div style="width: 50%">
+				<div style="width: 50%; margin-right:5px;">
 
 				<md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
@@ -279,7 +282,14 @@
 			        <label>{{translate.load("sbi.roles.doMassiveExport")}}</label>
 			       </div>
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+			  
+			   
+
+				</div>
+				<!-- right column -->
+				<div style="flex-grow: 1; margin-left:5px; ">
+				
+				 <md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.manage");}}
 				</md-toolbar>
@@ -313,7 +323,8 @@
 			        <label>{{translate.load("sbi.roles.manageGlossaryTechnical")}}</label>
 			       </div> 
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
+				
+				<md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.edit");}}
 				</md-toolbar>
@@ -355,9 +366,7 @@
 			        <label>{{translate.load("sbi.roles.enableFederatedDataset")}}</label>
 			       </div> 
 			   </div>
-			   
-				</div>
-				<div style="flex-grow: 1;">
+				
 				 <md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.finalUserCan");}}
@@ -465,6 +474,14 @@
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.businessModels.categories");}}
 				</md-toolbar>
+				
+				<angular-table
+				layout-fill id="rolesCategories_id" ng-model="roleMetaModelCategories"
+				columns='[
+							{"label":"NAME","name":"VALUE_NM","size":"50px"}
+							 ]'
+				selected-item="category" highlights-selected-item=true
+				multi-select="true"> </angular-table>
 				
 			</md-content> </md-tab> </md-tabs> </md-content>
 		</div>

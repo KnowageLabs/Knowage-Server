@@ -89,9 +89,13 @@
 					functionality="LovsView"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
-			<ITEM	title="#menu.ParameterMan"
+			<ITEM	title="Analytical drivers management Old"
 					functionality="ParameterView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
+			<ITEM	title="#menu.ParameterMan"
+					functionality="ParameterView"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/analyticalDrivers.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
 			<ITEM	title="Constraints Management Old"
 					functionality="ConstraintView"
