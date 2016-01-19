@@ -179,7 +179,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
 		
-		
+		//it is important to activate the map rendering
+		$map.setSize($map.getSize());
+		$map.renderSync();
 
 	};
 	//start code for filters 
@@ -335,10 +337,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			delete $scope.multipleFilters[$scope.layerSelected.layerId];
 		}
 		
-
-
-
-
 		$timeout(function() {
 			$map.updateSize();
 		}, 500);

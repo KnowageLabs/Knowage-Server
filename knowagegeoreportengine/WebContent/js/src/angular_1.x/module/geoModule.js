@@ -609,6 +609,9 @@ geoM.service(
 					delete this.loadedLayer[layerConf.layerId];
 					delete this.loadedLayerOBJ[layerConf.layerId];
 					geoModule_template.layersLoaded[layerConf.label]=false;
+					$map.setSize($map.getSize());
+					$map.getView.setZoom($map.getView.getZoom());
+					$map.renderSync();
 				} else {
 					var layer = this.createLayer(layerConf, false);
 					if(layer.hasOwnProperty("$$state")){
@@ -649,7 +652,8 @@ geoM.service(
 			this.createLayer = function(layerConf, isBase) {
 				var tmpLayer;
 				var asyncCall;
-
+				var name = layerConf.layerName;
+				
 				switch (layerConf.type) {
 				case 'WMS':
 					tmpLayer = new ol.layer.Tile({
@@ -659,7 +663,8 @@ geoM.service(
 									params : JSON.parse(layerConf.layerParams),
 									options : JSON.parse(layerConf.layerOptions)
 								})),
-					crossOriginKeyword: 'anonymous'
+					crossOriginKeyword: 'anonymous',
+					name: name
 					});
 					break;
 
@@ -667,12 +672,14 @@ geoM.service(
 					var vectorSource = new ol.source.Vector({
 						url : layerConf.layerURL,
 						format : new ol.format.GeoJSON(),
+						name: name
 						// options : JSON.parse(layerConf.layerOptions)
 					});
 
 					tmpLayer = new ol.layer.Vector({
 						source : vectorSource,
-						style: layerServ.applyFilter
+						style: layerServ.applyFilter,
+						name: name
 					});
 					break;
 
@@ -692,7 +699,8 @@ geoM.service(
 							},
 
 						}),
-						crossOriginKeyword: 'anonymous'
+						crossOriginKeyword: 'anonymous',
+						name: name
 					});
 					break;
 
@@ -701,14 +709,15 @@ geoM.service(
 						source : new ol.source.MapQuest({
 							layer : 'osm',
 							crossOriginKeyword: 'anonymous'
-						})
+						}),
+						name: name
 					});
 					break;
 
 				case 'File':
 					
 					tmpLayer= this.getLayerFromFile(layerConf);
-					
+					tmpLayer.name= name
 					break;
 					
 				default:

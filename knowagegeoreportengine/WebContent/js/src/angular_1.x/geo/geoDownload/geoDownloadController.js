@@ -13,13 +13,12 @@ angular.module('geoModule')
 })
 
 function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_interaction,sbiModule_translate,geoModule_layerServices){
-
+	$scope.showCircular=false;
 	$scope.source = new ol.source.Vector();
 	var format = new ol.format.WKT();
+	var removed = [];
 	var dims = {
-			a0: [1189, 841],
-			a1: [841, 594],
-			a2: [594, 420],
+
 			a3: [420, 297],
 			a4: [297, 210],
 			a5: [210, 148]
@@ -62,11 +61,10 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 	}
 
 	$scope.downloadLayer = function(){
-       
-		document.body.style.cursor= 'progress';
+		$scope.showCircular=true;
 		var bool = false;
 		var raster;
-	
+
 		if(geoModule_layerServices.selectedBaseLayer.getSource().A!=undefined){
 			bool=false;
 			raster = new ol.layer.Tile({
@@ -77,7 +75,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 			$scope.showAction(sbiModule_translate.load("gisengine.downloadlayer.alertdonwload"));
 			raster = new ol.layer.Tile({
 				source: new ol.source.OSM()
-			
+
 			});
 		}
 
@@ -87,15 +85,27 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var j=1;
 		for(var i=0;i<$map.getLayers().getArray().length;i++){
 			if($map.getLayers().getArray()[i].getSource().A!=undefined){
-			
-				vector[j]=$map.getLayers().getArray()[i];
-				j++;
+
+				vector.push($map.getLayers().getArray()[i]);
+				//j++;
 			}else{
-				//Security Error
-			
+				removed.push($map.getLayers().getArray()[i]);
+
 			}
 		}
-		
+		var name = "";
+		var flag=false;
+		for(var i=0;i<removed.length;i++){
+			if( removed[i].get("name")!=undefined){
+				name = name+removed[i].get("name")+"  ";
+			} else{
+				flag=true;
+			}
+
+		}
+		if(flag){
+			name = name + "baseLayer";
+		}
 		var map = new ol.Map({
 			layers: vector,
 			target: 'map_fake',
@@ -112,7 +122,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 
 		map.setSize($map.getSize());
 		var dims = {
-			
+
 				a3: [420, 297],
 				a4: [297, 210],
 				a5: [210, 148]
@@ -128,7 +138,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var dim = dims[format];
 		var width = Math.round(dim[0] * resolution / 25.4);
 		var height = Math.round(dim[1] * resolution / 25.4);
-		//var size = /** @type {ol.Size} */ (map.getSize());
+		var size = /** @type {ol.Size} */ ($map.getSize());
 		var extent = $map.getView().calculateExtent($map.getSize());
 
 		var source = raster.getSource();
@@ -140,39 +150,42 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var tileLoadEnd = function() {
 			++loaded;
 			if (loading === loaded) {
-				
+
 				var canvas = this;
 				window.setTimeout(function() {
 					loading = 0;
 					loaded = 0;
 					var data;
-					
+
 					try{
 						data = canvas.toDataURL('image/png');
 					}catch(errr){
 						console.log("Catch error");
 						$scope.showAction(sbiModule_translate.load("gisengine.downloadlayer.error"));
-					
+
 					}
 					var doc = new jsPDF('landscape', undefined, format);
-					
-					
+
+
 					doc.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
 					if(bool){
-					//	console.log(0, dim[0],"Layer TMS removed");
-						
+						//	console.log(0, dim[0],"Layer TMS removed");
+
 						doc.setFontSize(16);
 						var msg = sbiModule_translate.load("gisengine.downloadlayer.removetms");
-						doc.text(msg);
+						doc.text(0,dim[1]-10,msg +":  "+ name);
 						doc.setTextColor("black");
 					}
-					
+
 					doc.save('map.pdf');
+					map.setSize(size);
+					map.getView().fit(extent, size);
+					map.renderSync();
 					source.un('tileloadstart', tileLoadStart);
 					source.un('tileloadend', tileLoadEnd, canvas);
 					source.un('tileloaderror', tileLoadEnd, canvas);
-	
-					document.body.style.cursor = 'auto';
+					$scope.showCircular=false;
+
 				}, 10000);
 			}
 		};
@@ -185,7 +198,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 
 		map.setSize([width, height]);
 		map.getView().fit(extent, map.getSize());
-	
+
 		map.renderSync();
 		$scope.close();
 
@@ -196,7 +209,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 	}
 	$scope.showAction = function(message) {
 		var toast = $mdToast.simple()
-		
+
 		.content(message)
 		.action('OK')
 		.highlightAction(false)

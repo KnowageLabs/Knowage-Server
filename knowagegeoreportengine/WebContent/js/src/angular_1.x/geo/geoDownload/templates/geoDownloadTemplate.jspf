@@ -32,6 +32,10 @@
   </form>
 </md-dialog>
 </script>
-<md-button  id="download" class="md-fab md-mini" ng-click="showOverlay($event)" aria-label="toggle menu" ng-disabled="disableButtons">
+
+<md-button  ng-show="!showCircular" id="download" class="md-fab md-mini" ng-click="showOverlay($event)" aria-label="toggle menu" ng-disabled="disableButtons">
 <i class="material-icons">get_app</i>
 </md-button>
+<div layout="row" layout-sm="column" id="download" layout-align="space-around" aria-label="toggle menu" ng-show="showCircular">
+     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+ </div>
