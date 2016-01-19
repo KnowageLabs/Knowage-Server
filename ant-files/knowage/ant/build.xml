@@ -97,6 +97,10 @@
 		<ant dir="../knowagedao/ant" />
 	</target>
 	
+	<target name="create.sbi.servermanager.jar" depends="create.sbi.dao.jar">
+		<ant dir="../knowageservermanager/ant" />
+	</target>
+	
 	<!--
 	<target name="create.sbi.oauth.security.jar" depends="create.sbi.utils.jar,create.sbi.dao.jar">
 		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
@@ -506,6 +510,8 @@
 		<delete dir="../../../knowageutils/dist"/>
 		<delete dir="../../../knowageutilsJSON/ant-build"/>
 		<delete dir="../../../knowageutilsJSON/dist"/>
+		<delete dir="../../../knowageservermanager/ant-build"/>
+		<delete dir="../../../knowageservermanager/dist"/>
 		<delete dir="../../../knowagedataminingengine/ant-build"/>
 		<delete dir="../../../knowagedataminingengine/dist"/>
 		<!--
