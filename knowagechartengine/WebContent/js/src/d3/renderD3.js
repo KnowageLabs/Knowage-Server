@@ -515,7 +515,7 @@ function renderWordCloud(chartConf){
 		.on("end", draw);
 			
 		layout.start();
-
+        console.log(chartConf);
 		function draw(words,e) {
 				
 			d3.select("body")
@@ -719,7 +719,7 @@ function renderWordCloud(chartConf){
 				
 			
     				
-				tooltip.text(" "+tooltipText.toFixed(2)+" ")				
+				tooltip.text(chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix)				
 					.style("left", (d3.event.pageX) + "px")     
 					.style("top", (d3.event.pageY - 25) + "px");
 				

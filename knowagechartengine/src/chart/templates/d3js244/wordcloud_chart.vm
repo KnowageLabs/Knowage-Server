@@ -110,7 +110,7 @@
     		#end
 		}
 	},
-	
+
 	subtitle:
 	{
 		text: '$chart.SUBTITLE.text',		
@@ -131,6 +131,14 @@
     		#end
 		}
 	},
+	
+	tooltip:
+	{
+       precision : '$chart.VALUES.SERIE.precision',
+	   prefix: '$chart.VALUES.SERIE.prefixChar',
+	   postfix: '$chart.VALUES.SERIE.postfixChar',
+	},
+	
     crossNavigation:
     {
     #if($crossNavigation != '') 

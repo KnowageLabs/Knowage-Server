@@ -57,8 +57,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					
 					var extractedNumberValueAsString = tempIdOrAlias.substring(
 							ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX.length );
-					
-					var extractedNumberValue = Number.parseInt(extractedNumberValueAsString);
+					//parseInt have to be removed because IE
+					var extractedNumberValue = Number(extractedNumberValueAsString);
 					if( !isNaN(extractedNumberValue) && 
 							(extractedNumberValue > ChartColumnsContainerManager.instanceIdFeed) ) {
 						ChartColumnsContainerManager.instanceIdFeed = extractedNumberValue;
@@ -831,7 +831,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			 */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
-			if (chartType == "SUNBURST" || chartType == "WORDCLOUD" ||
+			if (chartType == "SUNBURST" || 
 					chartType == "TREEMAP" || chartType == "PARALLEL" ||
 						chartType == "HEATMAP")
 			{
