@@ -1631,7 +1631,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  							 * check if that item inside the container is of type that is not
 	  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
 	  	  							 * is of DATE (Timestamp) type.
-	  	  							 * (danilo.ristovski@mht.net)
+	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  	  							 */
 	  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
 	  	  									data.records[0].data.categoryDataType != "Timestamp") {
@@ -1649,7 +1649,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  						else {
 	  	  							/**
 	  	    						 * Preventing rearranging categories if the chart type is the HEATMAP
-	  	    						 * (danilo.ristovski@mht.net)
+	  	    						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  	    						 */
 	  	  							return false;
   	  							}
@@ -1662,7 +1662,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  						 * @author: danristo (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
-  	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD")) {
+  	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD" || chartType == "PIE")) {
   	  							return false;
   							}  	  						
   	  						
@@ -1692,11 +1692,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			  	      				 * 						MUST HAVE the same set of values that are later going
 			  	      				 * 						to be arranged into the regular matrix form.
 			  	      				 * 
-			  	      				 * (danilo.ristovski@mht.net)
+			  	      				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			  	      				 */			  	      				
 			  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn') 
 			  	      						|| (this.store.data.length == 1 && 
-			  	      								(chartType == "RADAR" || chartType == "SCATTER")) 
+			  	      								(chartType == "RADAR" || chartType == "SCATTER" || chartType == "PIE")) 
 			  	      									|| (this.store.data.length == 2 && 
 			  	      											(chartType == "PARALLEL" || 
 			  	      													chartType == "HEATMAP" || 

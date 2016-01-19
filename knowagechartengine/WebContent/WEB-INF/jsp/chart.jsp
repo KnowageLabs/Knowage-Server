@@ -62,7 +62,7 @@ author:
 	String isTechnicalUser;
 	List<String> includes;
 	String datasetLabel;
-	
+	//System.out.println(ChartEngineConfig.getChartLibConf().get("sunburst").getName());
 	//from cockpit
 	boolean isCockpit = false;
 	String aggregations = "";
@@ -82,7 +82,7 @@ author:
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
-	template = engineInstance.getTemplate().toString(0);
+	template = engineInstance.getTemplate().toString(0);	
 	
 	if(env.get("EXECUTE_COCKPIT") != null){
 		isCockpit = true;
@@ -108,7 +108,7 @@ author:
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
-	
+		
 	boolean forceIE8Compatibility = false;
 	
 	boolean fromMyAnalysis = false;
@@ -119,6 +119,8 @@ author:
 	fromMyAnalysis = true;
 		}
 	}
+	
+	
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     Map driverParamsMap = new HashMap();
@@ -201,7 +203,7 @@ author:
 		var parallelTablePaddingBottom = 0;
 		var parallelTitleHeight = "";
 		var parallelSubtitleHeight = "";
-	
+				
 		function exportChart(exportType) {		
 			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
 			
@@ -213,10 +215,20 @@ author:
 			var chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, exporterContextName, serverPort, sbiExecutionId, userId); 			
 			
 			/* gets the template content */
+			/*
+				Since we are calling the rendering part and VM (before the rendering) from the Highcharts
+				Export web application (we clicked on the Export option in File dropdown on the page where
+				chart renders), we need to forward this information towards the belonging VM so it can adapt
+				its code (skipping of some parts of the initial (standard) implementation). This additional
+				property (data) is "exportWebApp".
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
 			var parameters = {
  						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 						exportWebApp: true,
  						driverParams: '<%=driverParams%>'
  			};
+			
 			chartServiceManager.run('jsonChartTemplate', parameters, [], 
 					function (response) {
 						var chartConf = response.responseText;
@@ -394,8 +406,7 @@ author:
  			var thisContextNameParam = thisContextName.replace('/', '');
 			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(
- 					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId);
- 			
+ 					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId); 			
  			
  			var parameters={};
  			
@@ -427,11 +438,12 @@ author:
  						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
  						driverParams: '<%=driverParams%>'
  					};
- 			}	
+ 			}
+ 			 			
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						 			 						
+ 						//console.log(response.responseText);		 					
  						var chartConf = Ext.JSON.decode(response.responseText, true);	
- 						
+ 						//console.log(chartConf);
  						var typeChart = chartConf.chart.type.toUpperCase();
  						 						
  						/* 

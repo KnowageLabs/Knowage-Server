@@ -515,7 +515,7 @@ function renderWordCloud(chartConf){
 		.on("end", draw);
 			
 		layout.start();
-        console.log(chartConf);
+
 		function draw(words,e) {
 				
 			d3.select("body")
