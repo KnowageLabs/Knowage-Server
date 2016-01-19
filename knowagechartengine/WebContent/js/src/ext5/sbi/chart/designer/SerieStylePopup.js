@@ -288,7 +288,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.name.emptyText")
 		});
 		this.serieFieldSet.add(this.serieNameTextField);
-	
+	    if(chartType=="WORDCLOUD"){
+	    	this.serieNameTextField.hide();
+	    }
+		
 		var serieType = null;
 		var serieTypes = null;
 		
@@ -333,7 +336,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * (danilo.ristovski@mht.net)
 		 */
 		if (chartType == "CHORD" || chartType == "GAUGE" || chartType == "PIE" 
-				|| chartType == "RADAR" || chartType == "SCATTER")
+				|| chartType == "RADAR" || chartType == "SCATTER" || chartType=="WORDCLOUD")
 		{
 			this.serieTypesComboBox.hide();
 		}	
@@ -345,7 +348,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (serieOrder && serieOrder.trim() != '') ? serieOrder.trim() : '',
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
-				
+			
+		if(chartType=="WORDCLOUD"){
+			this.serieOrderComboBox.hide();
+		}
+		
 		var serieColor = dataAtRow.get('serieColor');
 		this.serieColorPicker = {
 			xtype : 'fieldcontainer',
@@ -409,7 +416,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @author: danristo (danilo.ristovski@mht.net)  
 		 */
 		// TODO: I think there are more chart types whose serie popup should be refined !!!		
-		if (chartType == "PIE")
+		if (chartType == "PIE" || chartType=="WORDCLOUD")
 		{			
 			this.serieFieldSet.getComponent("serieColorFieldSet").hide();
 		}		
@@ -444,7 +451,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			this.serieShowAbsValue.show();
 			this.serieShowPercentage.show();
 			this.serieShowValue.hide();
-
+		}else if(chartType=="WORDCLOUD"){
+			this.serieShowAbsValue.hide();
+			this.serieShowPercentage.hide();
+			this.serieShowValue.hide();
+        
 		}else{
 			this.serieShowAbsValue.hide();
 			this.serieShowPercentage.hide();
@@ -610,6 +621,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
+		
+		if(chartType=="WORDCLOUD"){
+		  this.tooltipFieldSet.hide();	
+		}
 		
 		if (chartType == "GAUGE")
 		{
