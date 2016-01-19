@@ -313,6 +313,8 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 			
 			var crossNavigationDataParamListItems = crossNavigationData.PARAM_LIST.PARAM;
 			
+			
+			if(crossNavigationDataParamListItems){
 			var params = Array.isArray(crossNavigationDataParamListItems) ? 
 					crossNavigationDataParamListItems : [crossNavigationDataParamListItems];
 			
@@ -329,5 +331,6 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				this.documentParamStore.add(paramAsModel);
 			}
 		}
+		}	
 	}
 });
