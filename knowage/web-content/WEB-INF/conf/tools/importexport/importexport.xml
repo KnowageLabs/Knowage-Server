@@ -6,9 +6,9 @@
 	<IMPORTEROLD class="it.eng.spagobi.tools.importexportOLD.ImportManager" 
 			  tmpFolder="${java.io.tmpdir}/import"/>
 			  
-	<EXPORTER class="it.eng.spagobi.tools.importexport.ExportManager"
+	<EXPORTER class="it.eng.knowage.tools.servermanager.importexport.ExportManager"
 	          exportFolder="${java.io.tmpdir}/exports" />
-	<IMPORTER class="it.eng.spagobi.tools.importexport.ImportManager" 
+	<IMPORTER class="it.eng.knowage.tools.servermanager.importexport.ImportManager" 
 			  tmpFolder="${java.io.tmpdir}/import"/>
 	<TRANSFORMERS>
 		<TRANSFORM from="2.0.0" to="2.1.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_0_0To2_1_0" />

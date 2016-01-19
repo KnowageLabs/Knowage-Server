@@ -11,7 +11,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.tools.importexportOLD.ImportExportConstants" %>
-<%@page import="it.eng.spagobi.tools.importexport.ImportResultInfo"%>
+<%@page import="it.eng.spagobi.tools.importexportOLD.ImportResultInfo"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page import="java.util.Iterator"%>

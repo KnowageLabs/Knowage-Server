@@ -562,7 +562,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 				if (titleCode.equals("menu.ServerManager")) {
 					try {
-						Class.forName("it.eng.spagobi.tools.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 					} catch (ClassNotFoundException e) {
 						return tempMenuList;
 					}
