@@ -286,6 +286,7 @@
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 			<ITEM title="#menu.TemplateManagement" functionality="TemplateManagement"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
+				
 	
 			<ITEM title="#menu.ImpExpDocument" functionality="ImpExpDocument"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
