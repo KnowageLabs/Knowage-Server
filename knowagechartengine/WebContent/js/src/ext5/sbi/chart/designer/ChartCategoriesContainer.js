@@ -10,7 +10,6 @@ Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
     config:{
     	/**
     	 * Minimum height of the bottom X-axis (category) panel.
-    	 * 
     	 * @modifiedBy: danristo (danilo.ristovski@mht.net)
     	 */
 		minHeight: 100

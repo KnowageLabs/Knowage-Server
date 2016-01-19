@@ -9,7 +9,7 @@ var chartTypesStore = Ext.create
 	"Ext.data.Store", 
 	
 	{
-		fields: ["style", "styleAbbr"],
+		fields: ["style", "styleAbbr", "icon"],
 				
 		data: 
 		[
@@ -95,7 +95,7 @@ Ext.define
 	{
 		extend: "Ext.form.ComboBox",
 		id: "chartTypeCombobox",
-		margin: '0 15 15 0',
+		margin: '0 20 10 0',
 		store: chartTypesStore,
 		queryMode: 'local',
 	    displayField: 'style',
@@ -103,7 +103,7 @@ Ext.define
 	    //value: "bar",
 	    editable: false,
 	    padding: "5 0 0 0",
-	    width: 200,
+	    width: Sbi.settings.chart.leftDesignerContainer.widthPercentageOfItem,
 	    height: 40,
 	    
 	    /**
@@ -265,7 +265,15 @@ Ext.define
 			{
 				var compatibleChart = compatibilityAddDataLookup[newlySelectedType][i];
 				compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
-			}
+			}			
+
+			/**
+			 * Call the static function in order to update the empty text
+			 * in the series/categories container in the Designer, depending
+			 * on the chart type of the document.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			Sbi.chart.designer.Designer.emptyTextHandler(newlySelectedType.toLowerCase());
 			
 			/**
 			 * If previous and current chart types are not compatible.
@@ -409,7 +417,7 @@ Ext.define
 										globalScope.textfieldAxisTitle.hide();
 //										console.log("===");
 										// Hide the textfield dedicated for the title of the left (Y) axis
-										globalScope.titleTextfield.hide();	console.log("===");								
+										globalScope.titleTextfield.hide();	//console.log("===");								
 									}											
 //									console.log("===");
 									// Hide the plus tool on the toolbar of the left (Y) axis panel

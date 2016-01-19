@@ -14,12 +14,25 @@ Sbi.settings.cockpit = {
 };
 
 /**
- * Configurations for the Designer.
- * 
+ * Configurations for the Designer. 
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
 Sbi.settings.chart = 
 {
+	/**
+	 * Customization for the left panel of the Designer (on the left side 
+	 * of the separating line that splits the Designer into two parts) 
+	 * that contains the GUI elements for the chart style, chart type and
+	 * collections of measures and attributes.
+	 */
+	leftDesignerContainer:
+	{
+		/**
+		 * The width percentage of all GUI items in the left Designer's 
+		 * panel container. 
+		 */
+		widthPercentageOfItem: "100%"
+	},
 		
 	configurationStep:
 	{

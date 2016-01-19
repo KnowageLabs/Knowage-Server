@@ -44,7 +44,7 @@
 			</AXES_LIST>
 			
 			<VALUES>					
-				<SERIE color="#002E57" postfixChar="" precision="2" prefixChar="" showValue="true">
+				<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true">
 					<TOOLTIP backgroundColor=""
 						style="color:#C80752;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;" templateHtml=""/>
 				</SERIE>

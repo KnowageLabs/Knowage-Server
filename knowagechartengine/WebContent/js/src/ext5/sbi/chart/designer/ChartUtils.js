@@ -346,11 +346,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['CHART'] = CHART;
 
 //			console.log("-- After saving the chart: --");
-			//console.log(result);
+//			console.log(result);
 			//console.log("exportAsJson (END)");
-			
-			
-			
 			return result;
 		},
 
@@ -654,22 +651,59 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						.get('serieOrderType') != undefined ? serieAsMap
 						.get('serieOrderType')
 						 : '';
-					serie['postfixChar'] = serieAsMap
-						.get('seriePostfixChar') != undefined ? serieAsMap
-						.get('seriePostfixChar')
-						 : '';
-					serie['precision'] = serieAsMap
-						.get('seriePrecision') != undefined ? serieAsMap
-						.get('seriePrecision')
-						 : '';
-					serie['prefixChar'] = serieAsMap
-						.get('seriePrefixChar') != undefined ? serieAsMap
-						.get('seriePrefixChar')
-						 : '';
+					
+					/**
+					 * Depending on the value of the 'serieFormatOrPrecision' parameter
+					 * we will take an action of getting proper values for format/precision
+					 * for series.
+					 * 
+					 * @editedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					serie['serieFormat'] = '';	
+					
+					serie['postfixChar'] = '';
+					serie['precision'] = '';
+					serie['prefixChar'] = '';
+					
+					/**
+					 * If there is no data about the vlaue of the 'serieFormatOrPrecision'
+					 * property, set the value of "format", since this one is the default
+					 * one (the one that is picked whenever new serie item is dropped into
+					 * the Y-axis panel.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					serie['serieFormatOrPrecision'] = serieAsMap
+						.get('serieFormatOrPrecision') != undefined ? serieAsMap
+						.get('serieFormatOrPrecision')
+						 : 'format';
+						
+					if (serie['serieFormatOrPrecision'].toLowerCase() == "precision")
+					{
+						serie['postfixChar'] = serieAsMap
+							.get('seriePostfixChar') != undefined ? serieAsMap
+							.get('seriePostfixChar')
+							: '';
+						serie['precision'] = serieAsMap
+							.get('seriePrecision') != undefined ? serieAsMap
+							.get('seriePrecision')
+							 : '';
+						serie['prefixChar'] = serieAsMap
+							.get('seriePrefixChar') != undefined ? serieAsMap
+							.get('seriePrefixChar')
+							 : '';
+					}
+					else if (serie['serieFormatOrPrecision'].toLowerCase() == "format")
+					{
+						serie['serieFormat'] = serieAsMap
+							.get('serieFormat') != undefined ? serieAsMap
+							.get('serieFormat')
+							 : '';	
+					}						
+					
 					serie['showValue'] = serieAsMap
 						.get('serieShowValue') != undefined ? serieAsMap
 						.get('serieShowValue')
-						 : '';						
+						 : '';
 					serie['showAbsValue'] = serieAsMap
 						.get('serieShowAbsValue') != undefined ? serieAsMap
 						.get('serieShowAbsValue')
@@ -698,11 +732,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							.get('serieTooltipBackgroundColor') != undefined ? serieAsMap
 							.get('serieTooltipBackgroundColor')
 							 : '';
-
-						TOOLTIP['templateHtml'] = serieAsMap
-							.get('serieTooltipTemplateHtml') != undefined ? serieAsMap
-							.get('serieTooltipTemplateHtml')
-							 : '';
+						/**
+						 * This item is going to be removed since the serie tooltip HTML template
+						 * is handled by the velocity model of the appropriate chart type (this is
+						 * done staticly, "under the hood").
+						 * 
+						 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+//						TOOLTIP['templateHtml'] = serieAsMap
+//							.get('serieTooltipTemplateHtml') != undefined ? serieAsMap
+//							.get('serieTooltipTemplateHtml')
+//							 : '';
 
 						var tooltipStyle = '';
 						tooltipStyle += 'color:'
@@ -746,7 +786,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						var DATA_LABELS = {};
 						DATA_LABELS['yPositionDataLabels'] = serieAsMap.get("yPositionDataLabels") ? serieAsMap.get("yPositionDataLabels") : "";
 						DATA_LABELS['colorDataLabels'] = serieAsMap.get("colorDataLabels") ? serieAsMap.get("colorDataLabels") : "";
-						DATA_LABELS['formatDataLabels'] = serieAsMap.get("formatDataLabels") ? serieAsMap.get("formatDataLabels") : "";
+//						DATA_LABELS['formatDataLabels'] = serieAsMap.get("formatDataLabels") ? serieAsMap.get("formatDataLabels") : "";
 						serie['DATA_LABELS'] = DATA_LABELS;
 					}
 
@@ -1166,7 +1206,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				var legendTitleStyle = '';
 				var legendElementStyle = "";
-				
+
 				TITLE['text']=(chartModel.get('legendTitle') != undefined) ? chartModel
 						.get('legendTitle')
 						 : '';
@@ -1175,7 +1215,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * Parameters linked to the TITLE subtag of the LEGEND element (tag)
 				 * on the PARALLEL chart
 				 */
-				
 				legendTitleStyle += 'fontFamily:'
 				 + ((chartModel.get('parallelLegendTitleFontFamily') != undefined) ? chartModel
 					.get('parallelLegendTitleFontFamily')
@@ -1217,7 +1256,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				LEGEND['ELEMENT'] = ELEMENT;
 
 			} else {
-				
 				LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel
 				.get('showLegend')
 				 : false;
@@ -1271,8 +1309,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 : '';
 				LEGEND['y'] = (chartModel.get('legendY') != undefined) ? chartModel
 				.get('legendY')
-				 : '';
-
+				 : '';				
+				
 				/**
 				 * If we have a HEATMAP chart we need 'symbolHeight' parameter since it is necessary
 				 * for rendering of it's legend (the bar with the interval of 'temperatures'). This
@@ -1599,7 +1637,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				TOOLTIP['style'] = parallelTooltipStype;
 				CHART['TOOLTIP'] = TOOLTIP;
 				
-			}
+			}	
 			
 			return CHART;
 		},
@@ -1753,13 +1791,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'GAUGE';
 		},
-        
+
 		enableTooltipPanel: function(){
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'PARALLEL' || Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() == 'CHORD';
 		},
-		
 		createChartConfigurationModelFromJson : function (
 			jsonTemplate) {
 
@@ -1782,14 +1819,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.EMPTYMESSAGE.style) : {};
 
 			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND : {};
-			
+
 			var jsonLegendTitleText = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.TITLE && jsonTemplate.CHART.LEGEND.TITLE.text? 
 					jsonTemplate.CHART.LEGEND.TITLE.text : '';
-			
+
 			var jsonLegendTitleStyle = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.TITLE 
 						&& jsonTemplate.CHART.LEGEND.TITLE.style? 
 					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style) : {};
-			
+
 			var jsonLegendStyle = jsonTemplate.CHART.LEGEND && jsonTemplate.CHART.LEGEND.style?
 					Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.style) : {};
 
@@ -1843,7 +1880,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ?
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : '';
 			}
-			
+
 			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD') {
 				
 				jsonParallelTooltipStyle = jsonTemplate.CHART.TOOLTIP ? 
@@ -1994,14 +2031,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					legendLayout : chartLegend.layout,
 					legendFloating : chartLegend.floating,
 					legendX : chartLegend.x,
-					legendY : chartLegend.y,
+					legendY : chartLegend.y,					
 					legendAlign : jsonLegendStyle.align,
 					legendFont : jsonLegendStyle.fontFamily,
 					legendDimension : jsonLegendStyle.fontSize,
 					legendStyle : jsonLegendStyle.fontWeight,
 					legendBorderWidth : jsonLegendStyle.borderWidth,
 					legendColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
-					legendBackgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),
+					legendBackgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),	
 
 					colorPalette : colorPalette,
 

@@ -38,7 +38,15 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	seriePrefixCharTextField: null,
 	seriePostfixCharTextField: null,
 	
-	tooltipTemplateHtml: null,
+	/**
+	 * This item is going to be removed since the serie tooltip HTML template
+	 * is handled by the velocity model of the appropriate chart type (this is
+	 * done staticly, "under the hood").
+	 * 
+	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+//	tooltipTemplateHtml: null,
+	
 	tooltipColor: null,
 	tooltipBackgroundColor: null,
 	tooltipAlignComboBox: null,
@@ -261,20 +269,20 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				}
 			};
 			
-			this.formatDataLabels = Ext.create
-	    	(
-				{
-			        xtype: 'textfield',
-			        id: 'formatDataLabels',
-			        value: dataAtRow.get('formatDataLabels'),
-			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format"),
-			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText")
-			    }	
-	    	);
+//			this.formatDataLabels = Ext.create
+//	    	(
+//				{
+//			        xtype: 'textfield',
+//			        id: 'formatDataLabels',
+//			        value: dataAtRow.get('formatDataLabels'),
+//			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format"),
+//			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText")
+//			    }	
+//	    	);
 			
 			this.dataLabelsFieldSet.add(this.yPositionDataLabels);
 			this.dataLabelsFieldSet.add(this.colorDataLabels);
-			this.dataLabelsFieldSet.add(this.formatDataLabels);
+//			this.dataLabelsFieldSet.add(this.formatDataLabels);
 		}
 		
 		/* * * * * * * * * * SERIE FIELDS  * * * * * *  * * * * */
@@ -348,7 +356,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (serieOrder && serieOrder.trim() != '') ? serieOrder.trim() : '',
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
-			
+				
 		if(chartType=="WORDCLOUD"){
 			this.serieOrderComboBox.hide();
 		}
@@ -427,7 +435,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});		
-       
+
 		var showAbsValue = dataAtRow.get('serieShowAbsValue');
 		this.serieShowAbsValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showAbsValue != undefined) ? showAbsValue: true,
@@ -455,7 +463,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			this.serieShowAbsValue.hide();
 			this.serieShowPercentage.hide();
 			this.serieShowValue.hide();
-        
+
 		}else{
 			this.serieShowAbsValue.hide();
 			this.serieShowPercentage.hide();
@@ -465,6 +473,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
+			id: "seriePrecisionNumberField",
 			fieldLabel: LN('sbi.chartengine.designer.precision'),
 			selectOnFocus: true,
 			value: seriePrecision ? seriePrecision : '',
@@ -472,10 +481,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			minValue: 0,
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.precision.emptyText")
 		});
-		this.serieFieldSet.add(this.seriePrecisionNumberField);
+//		this.serieFieldSet.add(this.seriePrecisionNumberField);
 		
 		var prefixChar = dataAtRow.get('seriePrefixChar');
 		this.seriePrefixCharTextField = Ext.create('Ext.form.field.Text', {
+			id: "seriePrefixCharTextField",
 			name: 'name',
 			value: (prefixChar && prefixChar.trim() != '') ? prefixChar.trim() : '',
 			fieldLabel: LN('sbi.chartengine.designer.prefixtext'),
@@ -483,10 +493,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			allowBlank: true,
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.prefixText.emptyText")
 		});
-		this.serieFieldSet.add(this.seriePrefixCharTextField);
+//		this.serieFieldSet.add(this.seriePrefixCharTextField);
 		
 		var postfixChar = dataAtRow.get('seriePostfixChar'); 
 		this.seriePostfixCharTextField = Ext.create('Ext.form.field.Text', {
+			id: "seriePostfixCharTextField",
 			name: 'name',
 			value: (postfixChar && postfixChar.trim() != '') ? postfixChar.trim() : '',
 			fieldLabel: LN('sbi.chartengine.designer.postfixtext'),
@@ -494,19 +505,165 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			allowBlank: true,
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.postfixText.emptyText")
 		});
-		this.serieFieldSet.add(this.seriePostfixCharTextField);
+//		this.serieFieldSet.add(this.seriePostfixCharTextField);
+		
+		// Format: Danilo
+//		var postfixChar = dataAtRow.get('seriePostfixChar');
+		
+		/**
+		 * The value (string) of format modality of displaying of the
+		 * serie item. This string is inserted by the user into the 
+		 * text field on the popup (under the "Serie" fieldset.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var serieFormat = dataAtRow.get('serieFormat');
+		
+		this.serieFormatTextField = Ext.create
+		(
+			'Ext.form.field.Text', 
+			{
+				id: "serieFormatTextField",
+				name: 'name',
+				value: (serieFormat && serieFormat.trim() != '') ? serieFormat.trim() : '',
+				fieldLabel: "Format",	// TODO: LN()
+				selectOnFocus: true,
+				allowBlank: true,
+				emptyText: "Type the format"	// TODO: LN()
+			}
+		);
+		
+		var globalScope = this;
+		
+		// TODO: Srediti ovo - treba uraditi isto kao i za serieFormat
+		/**
+		 * Should be a string value that will give us info about the criteria 
+		 * that is used for formatting the serie value.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var serieFormatOrPrecision = dataAtRow.get('serieFormatOrPrecision');
+		
+		/**
+		 * The combo that will let user pick between two possible modalities
+		 * of displaying the serie item: format or precision.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		this.serieFormatOrPrecision = Ext.create
+		(
+			{
+				xtype: "combobox",
+				fieldLabel: "Precision or format",	// TODO: LN(),
 				
+				store:
+				{
+					fields: ["name","value"],
+					
+					data: 
+					[
+					 	{
+					 		name: "Precision",
+					 		value: "precision"
+					 	},
+					 	
+					 	{
+					 		name: "Format",
+					 		value: "format"
+					 	}
+					 ]
+				},
+				
+				value: (serieFormatOrPrecision) ? serieFormatOrPrecision : "format",
+				valueField: 'value',
+				displayField: 'name',
+				editable: false,
+				emptyText: "Choose between precision and format",	// TODO: LN()
+				
+				listeners:
+				{
+					change: function(combo,value,b)
+					{	
+						globalScope.seriePrecisionNumberField.setValue("");
+						globalScope.seriePrefixCharTextField.setValue("");
+						globalScope.seriePostfixCharTextField.setValue("");
+						globalScope.serieFormatTextField.setValue("");
+						
+						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);						
+						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
+						
+						if (value.toLowerCase() == "precision")
+						{
+							Ext.getCmp("serieFormatTextField").hide();
+							Ext.getCmp("seriePrecisionNumberField").show();
+							Ext.getCmp("seriePrefixCharTextField").show();							
+							Ext.getCmp("seriePostfixCharTextField").show();
+						}
+						
+						if (value.toLowerCase() == "format")
+						{
+							Ext.getCmp("seriePrecisionNumberField").hide();
+							Ext.getCmp("seriePrefixCharTextField").hide();							
+							Ext.getCmp("seriePostfixCharTextField").hide();
+							Ext.getCmp("serieFormatTextField").show();
+						}	
+						
+					},
+					
+					/**
+					 * This will run when the popup is opened.
+					 */
+					render: function(combo)
+					{
+						var value = combo.getValue();
+						
+						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);
+						
+						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
+						
+						if (value.toLowerCase() == "precision")
+						{
+							Ext.getCmp("serieFormatTextField").hide();
+						}
+						
+						if (value.toLowerCase() == "format")
+						{
+							Ext.getCmp("seriePrecisionNumberField").hide();
+							Ext.getCmp("seriePrefixCharTextField").hide();							
+							Ext.getCmp("seriePostfixCharTextField").hide();
+						}	
+					}
+					
+				}
+			}
+		);
+		
+		this.serieFieldSet.add(this.serieFormatOrPrecision);
+		
+//		if (chartType == "GAUGE")
+//		{
+//			this.serieFieldSet.add(this.precisionOrFormat);
+//		}
+				
+		/**
+		 * This item is going to be removed since the serie tooltip HTML template
+		 * is handled by the velocity model of the appropriate chart type (this is
+		 * done staticly, "under the hood").
+		 * 
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 		/* * * * * * * * * * TOOTLTIP FIELDS  * * * * * *  * * * * */
-		var templateHtml = dataAtRow.get('serieTooltipTemplateHtml');
-		this.tooltipTemplateHtml = Ext.create('Ext.form.field.TextArea',{
-			grow      : true,
-			name      : 'tooltipTemplateHtml',
-			value: (templateHtml && templateHtml.trim() != '') ? templateHtml.trim() : '',
-			fieldLabel: LN('sbi.chartengine.designer.templatehtml'),
-			anchor    : '100%',
-			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.tooltip.templateHtml.emptyText")
-		});
-		this.tooltipFieldSet.add(this.tooltipTemplateHtml);
+//		var templateHtml = dataAtRow.get('serieTooltipTemplateHtml');
+//		this.tooltipTemplateHtml = Ext.create('Ext.form.field.TextArea',{
+//			grow      : true,
+//			name      : 'tooltipTemplateHtml',
+//			value: (templateHtml && templateHtml.trim() != '') ? templateHtml.trim() : '',
+//			fieldLabel: LN('sbi.chartengine.designer.templatehtml'),
+//			anchor    : '100%',
+//			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.tooltip.templateHtml.emptyText")
+//		});
+//		this.tooltipFieldSet.add(this.tooltipTemplateHtml);
 		
 		var serieTooltipColor = dataAtRow.get('serieTooltipColor');
 		this.tooltipColor = {
@@ -634,6 +791,15 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	},
 	
     writeConfigsAndExit: function() {
+    	
+    	/**
+    	 * If there is some not valid entry, display the message in order
+    	 * to inform the user about that.
+    	 * 
+    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */
+    	var errorMessages = "";
+    	
 		var dataAtRow = store.getAt(rowIndex);
 		var serieName = this.serieNameTextField.getValue();
 		dataAtRow.set('axisName', serieName);
@@ -649,24 +815,83 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var showValue = this.serieShowValue.getValue();
 		dataAtRow.set('serieShowValue', showValue);
-		
+				
 		var showAbsValue = this.serieShowAbsValue.getValue();
 		dataAtRow.set('serieShowAbsValue', showAbsValue);
 		
 		var showPercentage = this.serieShowPercentage.getValue();
 		dataAtRow.set('serieShowPercentage', showPercentage);
+				
+		/**
+		 * A property that contains information about the modality of
+		 * displaying of a particular serie item. It can be a value of
+		 * "format" or "precision".
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */		
+		var serieFormatOrPrecision = this.serieFormatOrPrecision.getValue();
+		dataAtRow.set('serieFormatOrPrecision', serieFormatOrPrecision);
 		
-		var seriePrecision = this.seriePrecisionNumberField.getValue();
-		dataAtRow.set('seriePrecision', seriePrecision);
+		if (serieFormatOrPrecision.toLowerCase() == "precision")
+		{		
+			var seriePrecision = this.seriePrecisionNumberField.getValue();
+			
+			/**
+			 * Validation for value of precision if this modality is picked.
+			 */
+			if (seriePrecision < 0)
+			{
+				errorMessages += "The serie precision value cannot be less then <b>0</b>";	// TODO: LN()
+			}
+			else
+			{
+				dataAtRow.set('seriePrecision', seriePrecision);
+				
+				var prefixChar = this.seriePrefixCharTextField.getValue();
+				dataAtRow.set('seriePrefixChar', prefixChar);
+				
+				var postfixChar = this.seriePostfixCharTextField.getValue();
+				dataAtRow.set('seriePostfixChar', postfixChar);
+			}
+		}
+		else if (serieFormatOrPrecision.toLowerCase() == "format")
+		{
+			/**
+			 * Three possible way to construct an expression that should display
+			 * a serie item in certain way (how user defined through it).
+			 */
+			var onlyYString = "y";
+			var yString = "y:";
+			var pointYString = "point.y:";
+			
+			var serieFormat = this.serieFormatTextField.getValue();
+			
+			/**
+			 * We can have exactly one expression for the formatting of serie, so
+			 * if there is more than one, show the popup with the warning. 
+			 */
+			var numOfExprInFormatPointYString = (serieFormat.match(new RegExp("{"+pointYString, "g")) || []).length;
+			var numOfExprInFormatYString = (serieFormat.match(new RegExp("{"+yString, "g")) || []).length;
+			var numOfExprInFormatOnlyYString = (serieFormat.match(new RegExp("{"+onlyYString+"}", "g")) || []).length;
+					
+			var totalNumberOfExpressions = numOfExprInFormatPointYString+numOfExprInFormatYString+numOfExprInFormatOnlyYString;
+			
+			/**
+			 * Validation that takes care that there is exactly one expression that
+			 * serves for formatting of the particular serie item.
+			 */
+			if (numOfExprInFormatPointYString > 1 || numOfExprInFormatYString > 1 || numOfExprInFormatOnlyYString > 1 || 
+					totalNumberOfExpressions >= 2)
+			{
+				errorMessages += "Maximum one expression that formats the value of the serie (<b>y</b>, <b>y:</b> or <b>point.y:</b>) can be specified. Please try again or Cancel.";	// TODO: LN()
+			}
+			else
+			{
+				dataAtRow.set('serieFormat', serieFormat);
+			}			
+		}
 		
-		var prefixChar = this.seriePrefixCharTextField.getValue();
-		dataAtRow.set('seriePrefixChar', prefixChar);
-		
-		var postfixChar = this.seriePostfixCharTextField.getValue();
-		dataAtRow.set('seriePostfixChar', postfixChar);
-		
-		var templateHtml = this.tooltipTemplateHtml.getValue();
-		dataAtRow.set('serieTooltipTemplateHtml', templateHtml);
+//		var templateHtml = this.tooltipTemplateHtml.getValue();
+//		dataAtRow.set('serieTooltipTemplateHtml', templateHtml);
 		
 		var serieTooltipColor = this.tooltipColor.getColor();
 		dataAtRow.set('serieTooltipColor', serieTooltipColor);
@@ -708,11 +933,28 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			var colorDataLabels = this.colorDataLabels.getColor();
 			dataAtRow.set('colorDataLabels', colorDataLabels);
 			
-			var formatDataLabels = this.formatDataLabels.getValue();
-			dataAtRow.set('formatDataLabels', formatDataLabels);
+//			var formatDataLabels = this.formatDataLabels.getValue();
+//			dataAtRow.set('formatDataLabels', formatDataLabels);
 		}		
 		
-		this.destroy();
+		if (errorMessages)
+		{
+			Ext.Msg.show
+			(
+				{
+					title : LN("sbi.chartengine.validation.structure.massageWarning.headerTitle"),
+					message : errorMessages,
+					icon : Ext.Msg.WARNING,
+					closable : true,
+					buttons : Ext.Msg.OK
+				}
+			);
+		}			
+		else
+		{
+			this.destroy();
+		}
+		
 	},
 	
 	items: [],

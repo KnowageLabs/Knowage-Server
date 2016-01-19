@@ -224,10 +224,16 @@ function renderTreemap(chartConf) {
 		credits: 
         {
     		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
-		}
+		},
 		
-	
-
+		plotOptions:
+		{
+			series:
+				{
+					turboThreshold: chartConf.plotOptions.series.turboThreshold,
+					colorByPoint: chartConf.plotOptions.series.colorByPoint
+				}
+		}
 	});
      
       var getCrossParams= function(point){

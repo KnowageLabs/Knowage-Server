@@ -244,7 +244,8 @@
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#
-            turboThreshold: 5000
+            turboThreshold: 5000,
+            colorByPoint: false
 		}
 	},
 	

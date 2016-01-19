@@ -33,13 +33,29 @@ import org.json.JSONObject;
 @Path("/1.0/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
 
+	/**
+	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
+	 * than one category for the Highcharts chart (BAR, LINE).
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 *
+	 * @param jsonTemplate
+	 * @param exportWebApp
+	 *            Needed for the VM, since for Export web application we do not need some properties in it (the VM)
+	 *
+	 * @param driverParams
+	 * @param jsonData
+	 * @param servletResponse
+	 * @return
+	 */
 	@POST
 	@Path("/readChartTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
-	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("driverParams") String driverParams,
-			@FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
+	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
+			@FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
 		try {
 			ChartEngineInstance engineInstance = getEngineInstance();
 			IDataSet dataSet = engineInstance.getDataSet();
@@ -54,7 +70,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 			}
 
-			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp));
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
 			return ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);

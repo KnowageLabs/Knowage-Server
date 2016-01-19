@@ -109,11 +109,17 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var gearHidden = config.gearHidden ? config.gearHidden : false;
 			var plusHidden = config.plusHidden ? config.plusHidden : false;
 			
+			/**
+			 * Only the left Y-axis should possess the Info button (the one with the question mark).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			var infoHidden = config.infoHidden ? config.infoHidden : false;
+			
 			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
 				Ext.log('Maximum number of ChartColumnsContainer instances reached');
 				
 				/**
-				 * @author: danristo (danilo.ristovski@mht.net)
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				Ext.Msg.show({
   					title : LN("sbi.chartengine.structure.yAxisPanel.plusButton.maximumNumberOfAxisExceeded.information"),
@@ -152,14 +158,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
 					
-			var emptyTextForMeasures = LN('sbi.chartengine.designer.emptytext.dragdropmeasures');
+			/**
+			 * Set empty text inside all Y-axis panels on the Designer according to 
+			 * the chart type that is picked.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			var emptyTextForMeasures = LN('sbi.chartengine.designer.emptytext.dragdropmeasures.' + currentChartType.toLowerCase());							
 			
-//			if (currentChartType == "HEATMAP")
-//			{
-//				emptyTextForMeasures = "AAA";
-//			}
-					
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -256,8 +262,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 									chartType == 'TREEMAP' || chartType == 'HEATMAP' || chartType == "CHORD")) {
   	  							return false;
   							} 
-  	  					
-							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
+  	  						
+  	  						/**
+  	  						 * The maximum number of series for the PIE chart is 4.
+  	  						 * 
+  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  	  						 */
+							if ((enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) ||
+										((this.store.data.length+data.records.length) <= 4 && chartType == 'PIE')) {
 								// *_* The original code
 								if(data.view.id != this.id) {
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
@@ -330,8 +342,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										(!newRecordToDrop.get('seriePrefixChar')) ? newRecordToDrop.set('seriePrefixChar', serieTagParameters.prefixChar) : null;
 										(!newRecordToDrop.get('seriePostfixChar')) ? newRecordToDrop.set('seriePostfixChar', serieTagParameters.postfixChar) : null;
 										
-										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
-												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
+										/**
+										 * This item is going to be removed since the serie tooltip HTML template
+										 * is handled by the velocity model of the appropriate chart type (this is
+										 * done staticly, "under the hood").
+										 * 
+										 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 */
+//										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
+//												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
 										(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
 												newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
 												
@@ -412,7 +431,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					 * Provide a button that will let user remove all serie items from the 
 					 * appropriate Y-axis panel (according to its ID).
 					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					Ext.create
 					(
@@ -426,100 +445,137 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							
 							handler: function(a,b,c)
 							{
-								var indexOfHeader = c.id.indexOf("_header");
-								var axisId = c.id.substring(0,indexOfHeader);
-								Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
-
-								/**
-								 * The combo box for the "Serie as filter column" on the
-								 * Configuration tab's Limit panel.
-								 * 
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								var seriesColumnsOnYAxisCombo = Ext.getCmp("seriesColumnsOnYAxisCombo");
-																
-								if(seriesColumnsOnYAxisCombo && seriesColumnsOnYAxisCombo != null && seriesColumnsOnYAxisCombo.hidden == false) 
-								{	
-									/**
-									 * We need to clean the store that is assigned to the combo box
-									 * that holds all series that can be chosen for the serie item 
-									 * that will serve as a filter. 
-									 * 
-									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									 */
-									seriesColumnsOnYAxisCombo.getStore().removeAll();
-									
-									/**
-									 * Take current JSON structure, since we need to modify it
-									 * because of the removing of all of series, including the one
-									 * that belongs to the "serieFilterColumn" attribute in the 
-									 * 'style' property of the 'LIMIT' property of the JSON. needs
-									 * to be cleared (its value should be removed).
-									 * 
-									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									 */
-									
-									/**
-									 * The name of the attribute in the 'style' property of the CHART.LIMIT
-									 * property that keeps data about the serie that serves as the filter
-									 * column.  
-									 */
-									var propOfSerAsFiltCol = "serieFilterColumn:";
-									/**
-									 * The current JSON structure of the document. We need to change it so
-									 * we can have an actual situation - no serie as filter column item.
-									 */
-									var jsonOfCurrentDocStructure = Sbi.chart.designer.Designer.exportAsJson();
-									/**
-									 * Style property of the current JSON structure of the document (needed
-									 * for extracting the 'serieFilterColumn' attribute.
-									 */
-									var styleOfTheJson = Sbi.chart.designer.Designer.exportAsJson().CHART.LIMIT.style;
-									
-									/**
-									 * Take the part of the 'style' string that keeps the old (not actual) 
-									 * value for this ('serieFilterColumn') parameter, so we can have a 
-									 * substring that contains it.
-									 */
-									var styleBehindTheAttribute = styleOfTheJson.substring(styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length,
-											styleOfTheJson.length);
-									
-									/**
-									 * Find the index of the semicolon sign that is the edge if the odl value
-									 * for the parameter that was actual for the opened (old) document and
-									 * set of series that we previously had (before this removement of all
-									 * series).
-									 */
-									var indexOfEndOfSerieAsFiltCol = styleBehindTheAttribute.indexOf(";");
-									
-									/**
-									 * Part of the 'style' string that contains everything that precedes the 
-									 * value of this property. 
-									 */
-									var precedingStyle = styleOfTheJson.substring(0,styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length);
-									/**
-									 * Part of the 'style' string that contains everything that follows the 
-									 * value of this property. 
-									 */
-									var appendixStyle = styleBehindTheAttribute.substring(indexOfEndOfSerieAsFiltCol,styleBehindTheAttribute.length);
+								Ext.Msg.show
+								(
+									{
+										title : '',
+										
+										message : "You are about to remove all serie items. Continue?",	// TODO: LN()
 											
-									/**
-									 * Concatanate the preceding and appending part of the 'style', but now
-									 * without the old value - just an empty value.
-									 */
-									var finalString = precedingStyle + "" + appendixStyle;
-									
-									/**
-									 * Set this new 'style' string to appropriate JSON element (the one from
-									 * which we started this action). 
-									 */
-									jsonOfCurrentDocStructure.CHART.LIMIT.style = finalString;
-									
-									/**
-									 * Update the Designer so the change can be applied to the panel.
-									 */
-									Sbi.chart.designer.Designer.update(jsonOfCurrentDocStructure);	
-								}
+										icon : Ext.Msg.QUESTION,
+										closable : false,
+										buttons : Ext.Msg.OKCANCEL,
+										
+										buttonText : 
+										{
+											ok : LN('sbi.chartengine.generic.ok'),
+											cancel : LN('sbi.generic.cancel')
+										},
+										
+										fn : function(buttonValue, inputText, showConfig)
+										{
+											if (buttonValue == 'ok') 
+											{
+												var indexOfHeader = c.id.indexOf("_header");
+												var axisId = c.id.substring(0,indexOfHeader);
+												Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
+	
+												/**
+												 * The combo box for the "Serie as filter column" on the
+												 * Configuration tab's Limit panel.
+												 * 
+												 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+												 */
+												var seriesColumnsOnYAxisCombo = Ext.getCmp("seriesColumnsOnYAxisCombo");
+																				
+												if(seriesColumnsOnYAxisCombo && seriesColumnsOnYAxisCombo != null && seriesColumnsOnYAxisCombo.hidden == false) 
+												{	
+													/**
+													 * We need to clean the store that is assigned to the combo box
+													 * that holds all series that can be chosen for the serie item 
+													 * that will serve as a filter. 
+													 * 
+													 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+													 */
+													seriesColumnsOnYAxisCombo.getStore().removeAll();
+													
+													/**
+													 * Take current JSON structure, since we need to modify it
+													 * because of the removing of all of series, including the one
+													 * that belongs to the "serieFilterColumn" attribute in the 
+													 * 'style' property of the 'LIMIT' property of the JSON. needs
+													 * to be cleared (its value should be removed).
+													 * 
+													 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+													 */
+													
+													var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+													
+													/**
+													 * The current JSON structure of the document. We need to change it so
+													 * we can have an actual situation - no serie as filter column item.
+													 */
+													var jsonOfCurrentDocStructure = Sbi.chart.designer.Designer.exportAsJson();
+													
+													/**
+													 * Specific for the PARALLEL chart (removing of all items from the 
+													 * combo that contains all available series for serie item that 
+													 * should serve as a filter column.
+													 */
+													if(chartType == "PARALLEL")
+													{
+														/**
+														 * The name of the attribute in the 'style' property of the CHART.LIMIT
+														 * property that keeps data about the serie that serves as the filter
+														 * column.  
+														 */
+														var propOfSerAsFiltCol = "serieFilterColumn:";
+														
+														/**
+														 * Style property of the current JSON structure of the document (needed
+														 * for extracting the 'serieFilterColumn' attribute.
+														 */
+														var styleOfTheJson = Sbi.chart.designer.Designer.exportAsJson().CHART.LIMIT ? Sbi.chart.designer.Designer.exportAsJson().CHART.LIMIT.style : null;
+														
+														/**
+														 * Take the part of the 'style' string that keeps the old (not actual) 
+														 * value for this ('serieFilterColumn') parameter, so we can have a 
+														 * substring that contains it.
+														 */
+														var styleBehindTheAttribute = styleOfTheJson ? styleOfTheJson.substring(styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length,
+																styleOfTheJson.length) : null;
+														
+														/**
+														 * Find the index of the semicolon sign that is the edge if the odl value
+														 * for the parameter that was actual for the opened (old) document and
+														 * set of series that we previously had (before this removement of all
+														 * series).
+														 */
+														var indexOfEndOfSerieAsFiltCol = styleBehindTheAttribute ? styleBehindTheAttribute.indexOf(";") : null;
+														
+														/**
+														 * Part of the 'style' string that contains everything that precedes the 
+														 * value of this property. 
+														 */
+														var precedingStyle = styleOfTheJson.substring(0,styleOfTheJson.indexOf(propOfSerAsFiltCol) + propOfSerAsFiltCol.length);
+														/**
+														 * Part of the 'style' string that contains everything that follows the 
+														 * value of this property. 
+														 */
+														var appendixStyle = styleBehindTheAttribute.substring(indexOfEndOfSerieAsFiltCol,styleBehindTheAttribute.length);
+																
+														/**
+														 * Concatanate the preceding and appending part of the 'style', but now
+														 * without the old value - just an empty value.
+														 */
+														var finalString = precedingStyle + "" + appendixStyle;
+														
+														/**
+														 * Set this new 'style' string to appropriate JSON element (the one from
+														 * which we started this action). 
+														 */
+														jsonOfCurrentDocStructure.CHART.LIMIT.style = finalString;
+														
+														/**
+														 * Update the Designer so the change can be applied to the panel.
+														 */
+														Sbi.chart.designer.Designer.update(jsonOfCurrentDocStructure);	
+													}
+												}
+											}
+										}
+									}
+								);
 							}
 						}
 					),
@@ -564,6 +620,36 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	}					    	
 						}
 					}),
+					
+					/**
+					 * Y-axis panels' header Help button for providing necessary information 
+					 * about series items that should be specified for particular chart type (i.e.
+					 * the number of series that current chart type needs).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					{
+						type: "help",
+						padding: "3 0 0 0",
+						height: 22,
+					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
+					    hidden: infoHidden,	// For right Y-axis we should hide this tool
+					    
+					    handler: function()
+					    {
+					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toLowerCase();
+					    	
+							Sbi.exception.ExceptionHandler.showInfoMessage
+							(
+								LN("sbi.chartengine.designer.emptytext.dragdropmeasures." + chartType), 
+								
+								Sbi.locale.sobstituteParams
+								(
+      								LN('sbi.chartengine.designer.infoaboutseries'), 
+      								[chartType.charAt(0).toUpperCase() + chartType.slice(1)]
+  								)
+							);
+					    }
+					},
 					
 					// PLUS BUTTON
 					Ext.create('Ext.panel.Tool', {
@@ -835,8 +921,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					chartType == "TREEMAP" || chartType == "PARALLEL" ||
 						chartType == "HEATMAP")
 			{
-				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";				
-			}	
+				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";	
+			}
 			
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);
 			

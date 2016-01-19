@@ -48,7 +48,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     overflowY: "auto",
     
    // border: true,
-	//resizable:true, 
+	resizable:true, 
 	
 //    bodyBorder: false,
 //    defaults: {
@@ -66,4 +66,14 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         this.add(config.categoriesPicker ? config.categoriesPicker : this.categoriesPicker);
     },
     items: [],
+    
+    listeners:
+	{
+    	updateWidth: function(categoriesPicker,seriesPicker)
+    	{
+    		console.log("USPEO 2");
+    		console.log(categoriesPicker);
+    		console.log(seriesPicker);
+    	}
+	}
 });

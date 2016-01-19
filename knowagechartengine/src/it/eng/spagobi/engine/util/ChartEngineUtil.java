@@ -89,10 +89,17 @@ public class ChartEngineUtil {
 	}
 
 	public static VelocityContext loadVelocityContext(String jsonToConvert) {
-		return loadVelocityContext(jsonToConvert, null);
+		return loadVelocityContext(jsonToConvert, null, false);
 	}
 
-	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData) {
+	/**
+	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
+	 * than one category for the Highcharts chart (BAR, LINE).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData, boolean exportWebApp) {
 		VelocityContext velocityContext = new VelocityContext();
 
 		Map<String, Object> mapTemplate = null;
@@ -107,6 +114,16 @@ public class ChartEngineUtil {
 				mapData = convertJsonToMap(jsonData, false);
 				velocityContext.put("data", mapData);
 			}
+
+			/**
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
+			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
+			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			velocityContext.put("exportWebApp", exportWebApp);
+
 		} catch (IOException e) {
 			logger.error("Error in template to be converted: " + jsonToConvert, e);
 		}

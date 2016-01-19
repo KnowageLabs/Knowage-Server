@@ -927,8 +927,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			this.columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'center',
-//  				flex:  1,
-//  				margin: '0 15 5 0',
   				store: columnsPickerStore,
   				
   				/**
@@ -936,7 +934,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				 * inside of the AxisesPicker class (file) can be rendered 
   				 * only.
   				 * 
-  				 * @author: danristo (danilo.ristovski@mht.net)
+  				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   				 */
   				hideHeaders: true, 
   				title: LN('sbi.chartengine.designer.measureslist'),
@@ -967,22 +965,20 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			/** 
-			 * Type of the 'this.categoriesPicker' is the grid panel
-			 * 
-			 * @commentBy: danristo (danilo.ristovski@mht.net)
+			 * Type of the 'this.categoriesPicker' is the grid panel.
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			this.categoriesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'south',
-//  				flex: 1,
-//  				margin: '0 0 5 0',
+  				flex: 1,
+  				//margin: '0 0 5 0',
   				store: categoriesPickerStore,
-  				
+
   				/**
   				 * Hide non-collapsible header so the collapsible one defined 
   				 * inside of the AxisesPicker class (file) can be rendered 
-  				 * only.
-  				 * 
-  				 * @author: danristo (danilo.ristovski@mht.net)
+  				 * only.  				 
+  				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   				 */
   				hideHeaders: true,  				
   				title: LN('sbi.chartengine.designer.attributeslist'),
@@ -1052,8 +1048,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			});					
 			
 			/**
-			 * Manage text of labels for color elements of PARALLEL chart on the Step 2
-			 * danristo
+			 * Manage text of labels for color elements of PARALLEL chart on the Step 2.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var removeFlagsForMandatoryFields = function(chartType,jsonTemplate)
 			{				
@@ -1182,7 +1178,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    editable: false,
 			    // top,right,bottom,left
 			    padding: "5 0 5 0",
-			    width: 200,
+			    width: Sbi.settings.chart.leftDesignerContainer.widthPercentageOfItem,
 			    
 			    listConfig: {
 			    	listeners: {
@@ -1323,6 +1319,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							Ext.getCmp("chartColorPallete").height = (numberOfColors+1)*20+65;
 														
 							Ext.getCmp("chartColorPallete").update();
+							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
@@ -1340,13 +1337,24 @@ Ext.define('Sbi.chart.designer.Designer', {
   				stylePickerCombo: this.stylePickerCombo,
   				styleLabel: this.styleLabel,
   				categoriesPicker: this.categoriesPicker,
-  				region: 'west',
-  				//border: true,
-  		    	//bodyBorder: false,
-  		    	//resizable:true, 
+  				region: 'west'
   			});			
 
-			
+			/**
+			 * When the left container (panel) on the Designer page is resized, fire events
+			 * towards attribute/measure container panels so they can update their with.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			this.chartTypeColumnSelector.on
+			(
+				"resize",
+				
+				function()
+				{
+					globalThis.columnsPicker.fireEvent("updateWidth");
+					globalThis.categoriesPicker.fireEvent("updateWidth");
+				}
+			);
 			
 			var chartExportWebServiceManager = this.chartExportWebServiceManager;
 			var chartServiceManager = this.chartServiceManager;
@@ -1382,11 +1390,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}; 
 			
 			var previewTools = [{ xtype: 'tbfill' }, {
-	            xtype: 'tool',	// TODO: danristo (old value: "image")
-	            type: "refresh",	// TODO: danristo (did not exist)
-	            padding: "3 0 0 0", // TODO: danristo (did not exist)
-	            height: 22,	// TODO: danristo (did not exist)
-	            // TODO: danristo (those two were uncommented)
+				
+				/**
+				 * Old value was "image".
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */ 
+				xtype: 'tool',	
+	            type: "refresh",	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	            padding: "3 0 0 0", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	            height: 22,
+	            
+	            /**
+				 * These two parameters were not commented.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */ 
 	            // src: Sbi.chart.designer.Designer.relativePathReturn + '/img/refresh.png',
 	            //cls: 'tool-icon',
 	            listeners: {
@@ -1396,8 +1413,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            			
   							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);
 
-  							var parameters = {
-								jsonTemplate: Ext.JSON.encode(sbiJson)
+  							/**
+  							 * We added new property to the 'parameters', the 'exportWebApp'.
+  							 * This property is boolean value that will tell the VM that we
+  							 * are coming from the Highcharts Export web application and that
+  							 * it (the VM) should reconfigure its code according to that fact.
+  							 * E.g. some properties that VM initialy has should not be provided
+  							 * when previewing the chart in the Designer (in the Preview panel).
+  							 * 
+  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  							 */
+  							var parameters = 
+  							{
+								jsonTemplate: Ext.JSON.encode(sbiJson),
+								exportWebApp: true	
 							};
   							
 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
@@ -1475,9 +1504,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * 
 			 * TODO: This is needed for managing dynamic empty message in the X-axes panel
 			 * when it is empty.
-			 */
-			var emptyTextForAttributes = LN('sbi.chartengine.designer.emptytext.dragdropattributes');
+			 */			
 			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			var emptyTextForAttributes = LN('sbi.chartengine.designer.emptytext.dragdropattributes.' + currentChartType.toLowerCase());
+			
+			if(!emptyTextForAttributes || emptyTextForAttributes.length==0)
+			{
+				emptyTextForAttributes = LN('sbi.chartengine.designer.emptytext.dragdropattributes');
+			}
 			
 			/**
 			 * How many items is the edge when the bottom of the X-axis
@@ -1486,12 +1520,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var numberOfMaxItems = null;
-			
-			if (currentChartType == "HEATMAP")
-			{
-				emptyTextForAttributes = "Drag here exactly two categories, among which the first one " +
-						"must be of the DATE (Timestamp) type";
-			}
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
@@ -1512,7 +1540,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   						 */
   						drop: function(node, data, dropRec, dropPosition)
-  						{					  	
+  						{						
   							var numCategItemsInContainer = this.store.data.length;
   							var containersInitHeight = this.ownerCt.minHeight;  
   							
@@ -1534,6 +1562,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 							{
   								this.ownerCt.setHeight(containersInitHeight + (numCategItemsInContainer-numberOfMaxItems+1)*heightOfSingleItem);
 							}
+  						},  						
+  						
+  						/**
+						 * When the categories container (bottom X-axis panel) is populated
+						 * with all categories that chart posses, this event will be fired
+						 * and in this place catched in order to configure bottom panel's 
+						 * height (the height will be set according to the number of items
+						 * in the container). Since, we should basically fire the "drop"
+						 * event again since we need the exact same logic set there.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+  						categoriesLoaded: function()
+  						{  							
+  							this.fireEvent("drop");
   						},
   						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
@@ -1543,7 +1585,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  						/**
   	  						 * Taking care of the order of the categories (based on their type) for the 
   	  						 * HEATMAP chart type.
-  	  						 * (danilo.ristovski@mht.net)
+  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   	  						 */  	  						
   	  						if (chartType == "HEATMAP") {
 	  	  						if (this.store.data.length == 0 && data.records.length == 1) {
@@ -1552,7 +1594,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  								 * Show the message that tells user that he should firstly define
 	  	  								 * (drop) the item for the categories (attributes) container that
 	  	  								 * is of a DATE type (Timestamp).
-	  	  								 * (danilo.ristovski@mht.net)
 	  	  								 */
 		  	  							Ext.Msg.show({
 	  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
@@ -1668,7 +1709,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				},
   				
-  				emptyText: LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
+  				emptyText: emptyTextForAttributes,	
   				store: this.categoriesStore,
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
   				
@@ -1727,16 +1768,41 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							handler: function()
 							{
-								Sbi.chart.designer.Designer.cleanCategoriesAxis();
-								
-								/**
-								 * When removing all items from the category container (the bottom
-								 * X-axis panel), reset the height of it to the initial one - the 
-								 * minimum height that panel can take.
-								 * 
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								this.ownerCt.ownerCt.setHeight(this.ownerCt.ownerCt.minHeight);
+								Ext.Msg.show
+								(
+									{
+										title : '',
+										
+										message : "You are about to remove all categories items. Continue?",	// TODO: LN()
+											
+										icon : Ext.Msg.QUESTION,
+										closable : false,
+										buttons : Ext.Msg.OKCANCEL,
+										
+										buttonText : 
+										{
+											ok : LN('sbi.chartengine.generic.ok'),
+											cancel : LN('sbi.generic.cancel')
+										},
+										
+										fn : function(buttonValue, inputText, showConfig)
+										{
+											if (buttonValue == 'ok') 
+											{
+												Sbi.chart.designer.Designer.cleanCategoriesAxis();
+												
+												/**
+												 * When removing all items from the category container (the bottom
+												 * X-axis panel), reset the height of it to the initial one - the 
+												 * minimum height that panel can take.
+												 * 
+												 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+												 */
+												this.ownerCt.ownerCt.setHeight(this.ownerCt.ownerCt.minHeight);
+											}
+										}
+									}
+								);
 							}
 						}
 					),
@@ -1744,10 +1810,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					// STYLE POPUP
 					{
 					    type:'gear',
-					    padding: "3 0 0 0",// TODO: danristo (10.11)
-						height: 22,// TODO: danristo (10.11)
+					    padding: "3 0 0 0",// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						height: 22,		// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
-					    id: "stylePopupBottomPanel", // (danilo.ristovski@mht.net)
+					    id: "stylePopupBottomPanel", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    hidden: false, // *_*
 					    //flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
@@ -1762,7 +1828,38 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    	axisStylePopup.show();						    	
 					    	}					    		
 						}
-					}					
+					},
+					
+					/**
+					 * Bottom X-axis panel's header Help button for providing necessary information 
+					 * about category items that should be specified for particular chart type (e.g.
+					 * the number of categories that current chart type needs, type of data that 
+					 * attributes (categories) dropped represent etc.).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					{
+						type: "help",
+						padding: "3 0 0 0",
+						height: 22,
+					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
+					    hidden: false,
+					    
+					    handler: function()
+					    {
+					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toLowerCase();
+					    	
+							Sbi.exception.ExceptionHandler.showInfoMessage
+							(
+								LN("sbi.chartengine.designer.emptytext.dragdropattributes." + chartType), 
+								
+								Sbi.locale.sobstituteParams
+								(
+      								LN('sbi.chartengine.designer.infoaboutcategories'), 
+      								[chartType.charAt(0).toUpperCase() + chartType.slice(1)]
+  								)
+							);
+					    }
+					}
 				],
 			    
 				hideHeaders: true,
@@ -1846,7 +1943,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   				}
   				
   			});	
-			
 			
 			/**
 			 * Hiding the bottom (X) axis title textbox and gear tool
@@ -2214,14 +2310,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.crossNavigationPanel.setCrossNavigationData(jsonTemplate.CHART.DRILL);
 			/* END LOADING CROSS NAVIGATION DATA <<<<<<<<<<<<<<<<<<<< */
 						
-
 			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
 		},
 		
 		loadCategories: function(jsonTemplate) {
 			var categoriesStore = this.categoriesStore;
+			
 			// Reset categoriesStore
 			categoriesStore.loadData({});
+			
 			var chartType = jsonTemplate.CHART.type;
 						
 			if(!(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.CATEGORY)) {
@@ -2231,12 +2328,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
 			/**
-			 * 
-			 * (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			/**
 			 * MANAGE MULTIPLE CATEGORIES: if the chart type is on of following.
-			 * (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
 					chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" || 
@@ -2303,7 +2399,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 						categoriesStore.add(newCat);
 					});
 				}
-			}			
+			}	
+			
+			/**
+			 * When all categories are loaded into the categories container
+			 * (bottom X-axis panel), fire an event that will be detected by
+			 * the view of the grid panel (that container).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			Ext.getCmp("chartBottomCategoriesContainer").getView().fireEvent("categoriesLoaded",categoriesStore.data.length);
 		},			
 			
 		loadAxesAndSeries: function(jsonTemplate) {
@@ -2369,7 +2473,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 							"axis":axis, 
 							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
 							"gearHidden":hideGearTool, 
-							"plusHidden":hidePlusGear
+							"plusHidden":hidePlusGear,
+							
+							/**
+							 * The left Y-axis panel should posses the Info button (the one
+							 * with the  question mark), since we should provide information
+							 * about the structure of the data needed for this axis, i.e. 
+							 * information about series.
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							"infoHidden": false	
 						};
 						
 						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
@@ -2384,7 +2497,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 							"isDestructible":isDestructible, 
 							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
 							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-							"axis":axis
+							"axis":axis,
+							
+							/**
+							 * The right Y-axis panels should not posses the Info button, since 
+							 * we already provided information about the structure of series that
+							 * particular chart type is expecting on the main (left) Y-axis panel.
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							"infoHidden": true
 						};
 						
 						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
@@ -2454,8 +2575,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 									seriePrecision: serie.precision + '',
 									seriePrefixChar: serie.prefixChar,
 									seriePostfixChar: serie.postfixChar,
+									serieFormat: serie.serieFormat,
+									serieFormatOrPrecision: serie.serieFormatOrPrecision,
 									
-									serieTooltipTemplateHtml: tooltip.templateHtml,
+									/**
+									 * This item is going to be removed since the serie tooltip HTML template
+									 * is handled by the velocity model of the appropriate chart type (this is
+									 * done staticly, "under the hood").
+									 * 
+									 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									 */
+//									serieTooltipTemplateHtml: tooltip.templateHtml,
+									
 									serieTooltipBackgroundColor: tooltip.backgroundColor,
 									serieTooltipAlign: jsonTooltipStyle.align,
 									serieTooltipColor: jsonTooltipStyle.color,
@@ -2482,8 +2613,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 									seriePrecision: serie.precision + '',
 									seriePrefixChar: serie.prefixChar,
 									seriePostfixChar: serie.postfixChar,
+									serieFormat: serie.serieFormat,
+									serieFormatOrPrecision: serie.serieFormatOrPrecision,
 									
-									serieTooltipTemplateHtml: tooltip.templateHtml,
+//									serieTooltipTemplateHtml: tooltip.templateHtml,
 									serieTooltipBackgroundColor: tooltip.backgroundColor,
 									serieTooltipAlign: jsonTooltipStyle.align,
 									serieTooltipColor: jsonTooltipStyle.color,
@@ -2493,7 +2626,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								});
 							}
 							
-							// *_* 
+							// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							if(chartType == "PARALLEL") {
 								globalScope.seriesBeforeDropStore.add(newCol);
 							}
@@ -2701,22 +2834,31 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Designer page for particular chart type. Through the cModel
 			 * (viewModel) we are going to have up-to-date data (parameters)
 			 * about the chart that we are creating.
-			 * danristo (danilo.ristovski@mht.net)
+			 * 
+			 * @commentBy danristo (danilo.ristovski@mht.net)
 			 */
 			var chartViewModelData = this.cViewModel.data.configModel.data;
 			
 			var numberOfSerieItems = Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length;
 			
 			/**
+			 * The maximum number of series that the PIE chart can contain.
+			 * 
+			 * @author danristo (danilo.ristovski@mht.net)
+			 */
+			var maxNumOfSeriesForPieChart = 4; 
+			
+			/**
 			 * Validation for Step 1 if the mandatory items are not specified
+			 * 
 			 * @commentBy danristo (danilo.ristovski@mht.net)
 			 */
 			if (numberOfSerieItems == 0) {
 				
-				if (chartType == "TREEMAP")
+				if (chartType == "TREEMAP" || chartType == "WORDCLOUD" || chartType == "CHORD")
 				{
 					/**
-					 * TREEMAP chart needs exactly one serie item.
+					 * TREEMAP, WORDCLOUD and CHORD charts need exactly one serie item.
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.exactlyOne') + '<br>';
@@ -2760,7 +2902,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();				
 				
-				if ( chartType == "HEATMAP" || chartType == "CHORD")
+				if (chartType == "RADAR" || chartType == "SCATTER")
+				{
+					if (categoriesAsJson.length != 1)
+					{
+						errorMsg += "- " + LN("sbi.chartengine.validation.exactlyOneCategory") + '<br>'; 
+					}
+				}
+				else if (chartType == "HEATMAP" || chartType == "CHORD")
 				{
 					if (categoriesAsJson.length != 2)
 					{
@@ -4641,7 +4790,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				  //TODO insert message
 			    if(wordcloudMinAngleGUI>wordcloudMaxAngleGUI){
 			     errorMsg += Sbi.locale.sobstituteParams
 			     (
@@ -4902,10 +5050,35 @@ Ext.define('Sbi.chart.designer.Designer', {
 			return errorMsg != ''? errorMsg : false;
 		},
 		
+		/**
+		 * Static function that updates the empty text inside the series/categories 
+		 * container in the Designer, depending on the chart type of the document.
+		 * This function works for both attributes (categories) and measures (series).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		emptyTextHandler: function(chartType,dataType)
+		{
+			var bottomXAxisGridView = this.bottomXAxisesPanel.getView();
+			var oldEmptyText = bottomXAxisGridView.emptyText;
+			
+			var newEmptyTextBottomPanel = LN("sbi.chartengine.designer.emptytext.dragdropattributes." + chartType.toLowerCase());
+			var newEmptyTextYPanel = LN("sbi.chartengine.designer.emptytext.dragdropmeasures." + chartType.toLowerCase());
+			
+			/**
+			 * HTML template is figured out empirically (inspecting the element).
+			 * Dynamic extraction of the preciding and succeeding part of the HTML
+			 * of the old message is impossible, since we do not have information 
+			 * about the old chart type.
+			 */
+			bottomXAxisGridView.emptyText = '<div class="x-grid-empty">' + newEmptyTextBottomPanel + '</div>';
+			
+			bottomXAxisGridView.refresh();
+		},
+		
 		cleanAxesSeriesAndCategories: function() {
 			//Reset Series and Categories
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
-
+			
 			this.categoriesStore.removeAll();
 			
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
@@ -4913,8 +5086,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			for(i in serieStorePool) {
 				serieStorePool[i].removeAll();
 			}
-			
+		
 			this.rightYAxisesPanel.removeAll();
+			
+			//this.rightYAxisesPanel.update();
+			//this.rightYAxisesPanel.updateLayout();
 
 			var leftColumnsContainerId = this.leftYAxisesPanel.items.keys[0];
 			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
