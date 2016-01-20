@@ -246,6 +246,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							 * @author: danristo (danilo.ristovski@mht.net)
 							 */
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+							var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+							
 							var enableAddAndSum = 
 								(chartType != 'SUNBURST' 
 									&& chartType != 'WORDCLOUD' 
@@ -258,8 +260,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   	  						 * one of these chart types.
   	  						 * @author: danristo (danilo.ristovski@mht.net)
   	  						 */
-  	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
-									chartType == 'TREEMAP' || chartType == 'HEATMAP' || chartType == "CHORD")) {
+  	  						if ((data.records.length > 1 
+  	  								&& (chartType == 'SUNBURST' 
+  	  									|| chartType == 'WORDCLOUD' 
+  	  										|| chartType == 'TREEMAP' 
+  	  											|| chartType == 'HEATMAP' 
+  	  												|| chartType == "CHORD"))
+  	  								|| (this.store.data.length == 1 
+  	  										&& !(Sbi.chart.designer.ChartUtils.canDropMoreThanOneSerie())) ){
   	  							return false;
   							} 
   	  						
@@ -917,11 +925,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			 */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
-			if (chartType == "SUNBURST" || 
-					chartType == "TREEMAP" || chartType == "PARALLEL" ||
-						chartType == "HEATMAP")
+			if (chartType == "SUNBURST" || chartType == "TREEMAP" 
+				|| chartType == "PARALLEL" || chartType == "HEATMAP")
 			{
-				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";	
+				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";
 			}
 			
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);

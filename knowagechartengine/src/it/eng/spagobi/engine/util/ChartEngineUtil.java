@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +40,9 @@ public class ChartEngineUtil {
 	private static final String STYLE_TAG = "style";
 	private static final String STYLES_SEPARATOR = ";";
 	private static final String STYLE_KEY_VALUE_SEPARATOR = ":";
+	
+	private static final String MAP_STYLES_SEPARATOR = ",";
+	private static final String MAP_STYLE_KEY_VALUE_SEPARATOR = "=";
 
 	public static transient Logger logger = Logger.getLogger(ChartEngineUtil.class);
 
@@ -106,6 +110,8 @@ public class ChartEngineUtil {
 		Map<String, Object> mapData = null;
 		try {
 			velocityContext.put("datasettransformer", new DataSetTransformer());
+			velocityContext.put("ChartEngineUtil", ChartEngineUtil.class);
+			
 			if (jsonToConvert != null) {
 				mapTemplate = convertJsonToMap(jsonToConvert, true);
 				velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
@@ -134,8 +140,7 @@ public class ChartEngineUtil {
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
-		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
-		};
+		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {};
 
 		// TODO Aggiungere a questo livello StringEscapeUtils.escapeHtml per lettere
 		Map<String, Object> result = mapper.readValue(json, typeRef);
@@ -200,6 +205,19 @@ public class ChartEngineUtil {
 		return result;
 	}
 
+	public static LinkedHashMap<String, String> stylizeMapString(String value) {
+		LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
+		
+		String[] styles = value.split(MAP_STYLES_SEPARATOR);
+		
+		for (String styleKV : styles) {
+			String[] kv = styleKV.split(MAP_STYLE_KEY_VALUE_SEPARATOR);
+			result.put(kv[0], kv.length > 1 ? kv[1] : "");
+		}
+		
+		return result;
+	}
+	
 	public static String applyTemplate(Template velocityTemplate, VelocityContext velocityContext) {
 		StringWriter jsonChartTemplate = new StringWriter();
 		velocityTemplate.merge(velocityContext, jsonChartTemplate);
@@ -269,4 +287,74 @@ public class ChartEngineUtil {
 		return result;
 	}
 
+	public static String roundTo(double value, int nDigits ) {
+		double wholeValue = value *  Math.pow(10, nDigits);
+		
+		wholeValue = Math.round(wholeValue);
+
+		double resultValue = wholeValue / Math.pow(10, nDigits);
+		
+		String result = String.format(Locale.US, "%." + nDigits + "f", resultValue);
+		
+		return result;
+	}
+	
+	public static String roundTo(String value, String nDigits ) {
+		Double doubleValue = new Double(value);
+		Integer numberOfDecimals = new Integer(nDigits);
+		
+		String result = roundTo(doubleValue.doubleValue(), numberOfDecimals.intValue());
+		return result;
+	}
+	
+	public static String roundTo(Double value, String nDigits ) {
+		Integer numberOfDecimals = new Integer(nDigits);
+		
+		String result = roundTo(value, numberOfDecimals.intValue());
+		return result;
+	}
+	
+	public static String roundTo(String value) {
+		String result = roundTo(new Double(value), 1);
+		return result;
+	}
+	
+	public static Double roundToDouble(String value, String nDigits ) {
+		Double result = new Double(roundTo(value, nDigits));
+		return result;
+	}
+	
+	/**
+	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal digit [0-F])  
+	 * color returning the equivalent format "rgba(r, g, b, o)".
+	 * @param colorStr
+	 * @param opacity
+	 * @return css color in "rgba(r, g, b, o)" format
+	 */
+	public static String hex2Rgb(String colorStr, String opacity) {
+	    String inputColor = colorStr.replace("#","");
+	    String inputOpacity = opacity != null ? opacity : "100";
+	    
+	    float floatOpacity = Float.parseFloat(inputOpacity);
+	    
+	    Integer redValue = Integer.valueOf( inputColor.substring(0, 2), 16 );
+	    Integer greenValue = Integer.valueOf( inputColor.substring(2, 4), 16 );
+	    Integer blueValue = Integer.valueOf( inputColor.substring(4, 6), 16 );
+		
+	    String result = "rgba(" 
+	    		+ redValue.intValue() + "," 
+	    		+ greenValue.intValue() + "," 
+	    		+ blueValue.intValue() + "," 
+	    		+ (floatOpacity/100) + ")";
+	    
+	    return result;
+	}
+	
+	public static String hex2Rgb(String colorStr, Float opacity) {
+		return hex2Rgb(colorStr, opacity.toString());
+	}
+	
+	public static String hex2Rgb(String colorStr) {
+		return hex2Rgb(colorStr, "100");
+	}
 }

@@ -107,8 +107,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (axis.MAJORGRID) {
 				result['majorgridInterval'] = axis.MAJORGRID.interval && axis.MAJORGRID.interval != '' ? axis.MAJORGRID.interval : '';
 
-				var majorgridStyleAsMap = ChartUtils
-					.jsonizeStyle(axis.MAJORGRID.style);
+				var majorgridStyleAsMap = ChartUtils.jsonizeStyle(axis.MAJORGRID.style);
 				result['majorgridStyleTypeline'] = majorgridStyleAsMap.typeline
 					 && majorgridStyleAsMap.typeline != '' ? majorgridStyleAsMap.typeline
 					 : '';
@@ -117,8 +116,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 : '';
 			}
 			if (axis.MINORGRID) {
-				var minorgridStyleAsMap = ChartUtils
-					.jsonizeStyle(axis.MINORGRID.style);
+				var minorgridStyleAsMap = ChartUtils.jsonizeStyle(axis.MINORGRID.style);
 				result['minorgridInterval'] = axis.MINORGRID.interval
 					 && axis.MINORGRID.interval != '' ? axis.MINORGRID.interval
 					 : '';
@@ -135,8 +133,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 && axis.TITLE.text != '' ? axis.TITLE.text
 					 : '';
 
-				var titlegridStyleAsMap = ChartUtils
-					.jsonizeStyle(axis.TITLE.style);
+				var titlegridStyleAsMap = ChartUtils.jsonizeStyle(axis.TITLE.style);
 				
 				if (titlegridStyleAsMap.font)
 				{
@@ -249,11 +246,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var result = {};
 			var CHART = {};
 //console.log("exportAsJson (START)");
-			CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType();
+			CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
-			var chartData = ChartUtils
-				.getChartDataAsOriginaJson(chartModel);
+			var chartData = ChartUtils.getChartDataAsOriginaJson(chartModel);
 
 			Ext.apply(CHART, chartData);
 
@@ -266,19 +261,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * the AXES_LIST tag.
 			 * (danilo.ristovski@mht.net)
 			 */
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == "PARALLEL") {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == "PARALLEL") {
 				
 				var axesList = "";
 
 				axesList += 'axisColNamePadd:'
-				 + ((Number(chartModel.get('axisColNamePadd'))) ? Number(chartModel
-					.get('axisColNamePadd'))
+				 + ((Number(chartModel.get('axisColNamePadd'))) ? Number(chartModel.get('axisColNamePadd'))
 					 : '') + ';';
 
 				axesList += 'brushWidth:'
-				 + (Number((chartModel.get('brushWidth'))) ? Number(chartModel
-					.get('brushWidth'))
+				 + (Number((chartModel.get('brushWidth'))) ? Number(chartModel.get('brushWidth'))
 					 : '') + ';';
 
 				/**
@@ -288,14 +280,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 				 */
 				axesList += 'axisColor:'
-				 + ((chartModel.get('axisColor') != undefined && chartModel
-						.get('axisColor') != '' && chartModel.get('axisColor') != 'transparent') ? '#'
+				 + ((chartModel.get('axisColor') != undefined && chartModel.get('axisColor') != '' && chartModel.get('axisColor') != 'transparent') ? '#'
 					 + chartModel.get('axisColor')
 					 : '') + ';';
 
 				axesList += 'brushColor:'
-				 + ((chartModel.get('brushColor') != undefined && chartModel
-						.get('brushColor') != '' && chartModel.get('brushColor') != 'transparent') ? '#'
+				 + ((chartModel.get('brushColor') != undefined && chartModel.get('brushColor') != '' && chartModel.get('brushColor') != 'transparent') ? '#'
 					 + chartModel.get('brushColor')
 					 : '') + ';';
 
@@ -303,14 +293,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				CHART['AXES_LIST'] = AXES_LIST;
 			}
 
-//			console.log(AXIS);
-
 			/**
 			 * Only for the SCATTER chart type we will need these three parameters
 			 * (danilo.ristovski@mht.net)
 			 */
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == "SCATTER") {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == "SCATTER") {
 				AXIS[1]['startOnTick'] = chartModel.get('scatterStartOnTick');
 				AXIS[1]['endOnTick'] = chartModel.get('scatterEndOnTick');
 				AXIS[1]['showLastLabel'] = chartModel.get('scatterShowLastLabel');
@@ -321,14 +308,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var VALUES = {};
 
-			var SERIE = ChartUtils
-				.getSeriesDataAsOriginalJson();
+			var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
 
 			if (SERIE.length > 0) {
 				VALUES['SERIE'] = SERIE;
 			}
-			var CATEGORY = ChartUtils
-				.getCategoriesDataAsOriginalJson();
+			var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
 
 			if (CATEGORY && CATEGORY != null) {
 				VALUES['CATEGORY'] = CATEGORY;
@@ -355,8 +340,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var result = [];
 			//console.log("getAxesDataAsOriginalJson (START)");
 			
-			var chartType = Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType().toUpperCase();
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 
 			/* START Chart left and right axes data */
 			var leftAndRightAxisesContainers = [
@@ -627,25 +611,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					var serieAsMap = store.getAt(rowIndex);
 					var serie = {};
 
-					serie['id'] = serieAsMap.get('id') != undefined ? serieAsMap
-						.get('id')
+					serie['id'] = serieAsMap.get('id') != undefined ? serieAsMap.get('id')
 						 : '';
-
 					serie['axis'] = axisAlias;
-					serie['color'] = serieAsMap
-						.get('serieColor') != undefined ? serieAsMap
-						.get('serieColor')
+					serie['color'] = serieAsMap.get('serieColor') != undefined ? serieAsMap.get('serieColor')
 						 : '';
-					serie['column'] = serieAsMap
-						.get('serieColumn') != undefined ? serieAsMap
-						.get('serieColumn')
+					serie['column'] = serieAsMap.get('serieColumn') != undefined ? serieAsMap.get('serieColumn')
 						 : '';
-					serie['groupingFunction'] = serieAsMap
-						.get('serieGroupingFunction') != undefined ? serieAsMap
-						.get('serieGroupingFunction')
+					serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
 						 : '';
-					serie['name'] = serieAsMap.get('axisName') != undefined ? serieAsMap
-						.get('axisName')
+					serie['name'] = serieAsMap.get('axisName') != undefined ? serieAsMap.get('axisName')
 						 : '';
 					serie['orderType'] = serieAsMap
 						.get('serieOrderType') != undefined ? serieAsMap
@@ -718,7 +693,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 					var chartType = Sbi.chart.designer.Designer.chartTypeSelector
 						.getChartType();
-
+						
 					/**
 					 * (if-checking added by: danilo.ristovski@mht.net)
 					 */
@@ -728,9 +703,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 						var TOOLTIP = {};
 
-						TOOLTIP['backgroundColor'] = serieAsMap
-							.get('serieTooltipBackgroundColor') != undefined ? serieAsMap
-							.get('serieTooltipBackgroundColor')
+						TOOLTIP['backgroundColor'] = serieAsMap.get('serieTooltipBackgroundColor') != undefined ? 
+							serieAsMap.get('serieTooltipBackgroundColor')
 							 : '';
 						/**
 						 * This item is going to be removed since the serie tooltip HTML template
@@ -746,24 +720,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 						var tooltipStyle = '';
 						tooltipStyle += 'color:'
-						 + ((serieAsMap
-								.get('serieTooltipColor') != undefined) ? serieAsMap
-							.get('serieTooltipColor')
+						 + ((serieAsMap.get('serieTooltipColor') != undefined) ? serieAsMap.get('serieTooltipColor')
 							 : '') + ';';						
 						tooltipStyle += 'fontFamily:'
-						 + ((serieAsMap
-								.get('serieTooltipFont') != undefined) ? serieAsMap
-							.get('serieTooltipFont')
+						 + ((serieAsMap.get('serieTooltipFont') != undefined) ? serieAsMap.get('serieTooltipFont')
 							 : '') + ';';
 						tooltipStyle += 'fontWeight:'
-						 + ((serieAsMap
-								.get('serieTooltipFontWeight') != undefined) ? serieAsMap
-							.get('serieTooltipFontWeight')
+						 + ((serieAsMap.get('serieTooltipFontWeight') != undefined) ? serieAsMap.get('serieTooltipFontWeight')
 							 : '') + ';';
 						tooltipStyle += 'fontSize:'
-						 + ((serieAsMap
-								.get('serieTooltipFontSize') != undefined) ? serieAsMap
-							.get('serieTooltipFontSize')
+						 + ((serieAsMap.get('serieTooltipFontSize') != undefined) ? serieAsMap.get('serieTooltipFontSize')
 							 : '') + ';';
 
 						tooltipStyle += 'align:'
@@ -798,11 +764,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		getCategoriesDataAsOriginalJson : function () {//console.log("getCategoriesDataAsOriginalJson (START)");
-			var categoriesStore = Ext.data.StoreManager
-				.lookup('categoriesStore');
+			var categoriesStore = Ext.data.StoreManager.lookup('categoriesStore');
 
-			var chartType = Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType();
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
 			var result = [];
 
@@ -812,11 +776,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST"
-				 || chartType.toUpperCase() == "WORDCLOUD"
-				 || chartType.toUpperCase() == "TREEMAP"
-				 || chartType.toUpperCase() == "PARALLEL"
-				 || chartType.toUpperCase() == "HEATMAP"
-				 || chartType.toUpperCase() == "CHORD") {
+					|| chartType.toUpperCase() == "WORDCLOUD"
+				 		|| chartType.toUpperCase() == "TREEMAP"
+				 			|| chartType.toUpperCase() == "PARALLEL"
+				 				|| chartType.toUpperCase() == "HEATMAP"
+				 					|| chartType.toUpperCase() == "CHORD") {
 				for (var i = 0; i < categoriesStore.data.length; i++) {
 					var mainCategory = categoriesStore.getAt(i);
 
@@ -826,61 +790,39 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 					var category = {};
 
-					category['name'] = mainCategory
-						.get('axisName') != undefined ? mainCategory
-						.get('axisName')
-						 : mainCategory
-						.get('categoryColumn');
-					category['column'] = mainCategory
-						.get('categoryColumn') != undefined ? mainCategory
-						.get('categoryColumn')
+					category['name'] = mainCategory.get('axisName') != undefined ? mainCategory.get('axisName')
+						 : mainCategory.get('categoryColumn');
+					category['column'] = mainCategory.get('categoryColumn') != undefined ? mainCategory.get('categoryColumn')
 						 : '';
-					category['orderColumn'] = mainCategory
-						.get('categoryOrderColumn') != undefined ? mainCategory
-						.get('categoryOrderColumn')
+					category['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined ? mainCategory.get('categoryOrderColumn')
 						 : '';
-					category['orderType'] = mainCategory
-						.get('categoryOrderType') != undefined ? mainCategory
-						.get('categoryOrderType')
+					category['orderType'] = mainCategory.get('categoryOrderType') != undefined ? mainCategory.get('categoryOrderType')
 						 : '';
-					category['stackedType'] = mainCategory
-						.get('categoryOrderType') != undefined ? mainCategory
-						.get('categoryOrderType')
+					category['stackedType'] = mainCategory.get('categoryOrderType') != undefined ? mainCategory.get('categoryOrderType')
 						 : '';
-					category['stacked'] = mainCategory
-						.get('categoryStacked') != undefined ? mainCategory
-						.get('categoryStacked')
+					category['stacked'] = mainCategory.get('categoryStacked') != undefined ? mainCategory.get('categoryStacked')
 						 : '';
 //					category['categoryDataType'] = mainCategory
 //							.get('colType') != undefined ? mainCategory
 //							.get('colType')
 //							: '';
-//					console.log(mainCategory);
-//					console.log(mainCategory.get('categoryDataType'));
 					var categoriesStoreDataLength = categoriesStore.data.items.length;
 
 					var groupby = '';
 					var groupbyNames = '';
 					if (categoriesStoreDataLength > 1) {
 						for (var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
-							var categorieItem = categoriesStore
-								.getAt(rowIndex);
-							groupby += categorieItem
-							.get('categoryColumn') != undefined ? categorieItem
-							.get('categoryColumn')
+							var categorieItem = categoriesStore.getAt(rowIndex);
+							groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn')
 							 + ','
 							 : '';
-							groupbyNames += categorieItem
-							.get('axisName') != undefined ? categorieItem
-							.get('axisName')
+							groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName')
 							 + ','
 							 : '';
 						}
 					}
-					category['groupby'] = groupby.replace(
-							/\,$/, '');
-					category['groupbyNames'] = groupbyNames
-						.replace(/\,$/, '');
+					category['groupby'] = groupby.replace(/\,$/, '');
+					category['groupbyNames'] = groupbyNames.replace(/\,$/, '');
 
 					result.push(category);
 				}
@@ -892,29 +834,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				}
 
 				var result = {};
-				result['name'] = mainCategory.get('axisName') != undefined ? mainCategory
-					.get('axisName')
-					 : mainCategory.get('categoryColumn');
-				result['column'] = mainCategory
-					.get('categoryColumn') != undefined ? mainCategory
-					.get('categoryColumn')
-					 : '';
-				result['orderColumn'] = mainCategory
-					.get('categoryOrderColumn') != undefined ? mainCategory
-					.get('categoryOrderColumn')
-					 : '';
-				result['orderType'] = mainCategory
-					.get('categoryOrderType') != undefined ? mainCategory
-					.get('categoryOrderType')
-					 : '';
-				result['stackedType'] = mainCategory
-					.get('categoryOrderType') != undefined ? mainCategory
-					.get('categoryOrderType')
-					 : '';
-				result['stacked'] = mainCategory
-					.get('categoryStacked') != undefined ? mainCategory
-					.get('categoryStacked')
-					 : '';
+				result['name'] = mainCategory.get('axisName') != undefined ? 
+					mainCategory.get('axisName') : mainCategory.get('categoryColumn');
+				result['column'] = mainCategory.get('categoryColumn') != undefined ? 
+					mainCategory.get('categoryColumn') : '';
+				result['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined ? 
+					mainCategory.get('categoryOrderColumn') : '';
+				result['orderType'] = mainCategory.get('categoryOrderType') != undefined ?
+					mainCategory.get('categoryOrderType') : '';
+				result['stackedType'] = mainCategory.get('categoryOrderType') != undefined ? 
+					mainCategory.get('categoryOrderType') : '';
+				result['stacked'] = mainCategory.get('categoryStacked') != undefined ?
+					mainCategory.get('categoryStacked') : '';
 
 				var categoriesStoreDataLength = categoriesStore.data.items.length;
 
@@ -922,25 +853,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var groupbyNames = '';
 				if (categoriesStoreDataLength > 1) {
 					for (var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
-						var categorieItem = categoriesStore
-							.getAt(rowIndex);
-						groupby += categorieItem
-						.get('categoryColumn') != undefined ? categorieItem
-						.get('categoryColumn')
-						 + ','
-						 : '';
-						groupbyNames += categorieItem
-						.get('axisName') != undefined ? categorieItem
-						.get('axisName')
-						 + ','
-						 : '';
+						var categorieItem = categoriesStore.getAt(rowIndex);
+						groupby += categorieItem.get('categoryColumn') != undefined ? 
+							categorieItem.get('categoryColumn') + ',' : '';
+						groupbyNames += categorieItem.get('axisName') != undefined ? 
+							categorieItem.get('axisName') + ',' : '';
 					}
 				}
 				result['groupby'] = groupby.replace(/\,$/, '');
-				result['groupbyNames'] = groupbyNames.replace(
-						/\,$/, ''); ;
+				result['groupbyNames'] = groupbyNames.replace(/\,$/, ''); ;
 			}
-			//console.log("getCategoriesDataAsOriginalJson (END)");
 			return result;
 		},
 
@@ -949,12 +871,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			//console.log("getChartDataAsOriginaJson (START)");
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
-			CHART['height'] = (chartModel.get('height') != undefined) ? chartModel
-			.get('height')
-			 : '';
-			CHART['width'] = (chartModel.get('width') != undefined) ? chartModel
-			.get('width')
-			 : '';
+			CHART['height'] = (chartModel.get('height') != undefined) ? 
+				chartModel.get('height') : '';
+			CHART['width'] = (chartModel.get('width') != undefined) ? 
+				chartModel.get('width') : '';
 
 			CHART['isCockpitEngine'] = Sbi.chart.designer.ChartUtils.isCockpitEngine;
 
@@ -964,7 +884,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * (danilo.ristovski@mht.net)
 			 */
 			CHART['styleName'] = Sbi.chart.designer.Designer.styleName;
-			//							CHART['styleCustom'] = Sbi.chart.designer.Designer.styleCustom;
+//			CHART['styleCustom'] = Sbi.chart.designer.Designer.styleCustom;
 
 			/**
 			 * Parameter specific for the SCATTER chart only
@@ -1003,28 +923,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			if (chartType.toUpperCase() == "PARALLEL")
 			{
-				CHART['showTableParallel'] = chartModel.get('showTableParallel') ? chartModel.get('showTableParallel') : false;	
+				CHART['showTableParallel'] = chartModel.get('showTableParallel') ?
+					chartModel.get('showTableParallel') : false;
 			}
 			
 			if (chartModel.get('orientation') != undefined) {
-				CHART['orientation'] = (chartType.toUpperCase() != 'PIE') ? chartModel
-					.get('orientation')
-					 : '';
+				CHART['orientation'] = (chartType.toUpperCase() != 'PIE') ?
+					chartModel.get('orientation') : '';
 			}
 
 			var chartStyle = '';
 			chartStyle += 'fontFamily:'
-			 + ((chartModel.get('font') != undefined) ? chartModel
-				.get('font')
-				 : '') + ';';
-			chartStyle += 'fontSize:'
-			 + ((chartModel.get('fontDimension') != undefined) ? chartModel
-				.get('fontDimension')
-				 : '') + ';';
-			chartStyle += 'fontWeight:'
-			 + ((chartModel.get('fontWeight') != undefined) ? chartModel
-				.get('fontWeight')
-				 : '') + ';';
+			 + ((chartModel.get('font') != undefined) ? chartModel.get('font') : '') + ';';
+
+			chartStyle += 'fontSize:' + ((chartModel.get('fontDimension') != undefined) ? 
+				chartModel.get('fontDimension') : '') + ';';
+			chartStyle += 'fontWeight:' + ((chartModel.get('fontWeight') != undefined) ?
+				chartModel.get('fontWeight') : '') + ';';
 			
 			/**
 			 * Checking if the specified value for the background color of the chart is 'transparent'
@@ -1036,8 +951,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 			 */
 			chartStyle += 'backgroundColor:'
-			 + ((chartModel.get('backgroundColor') != undefined && chartModel
-					.get('backgroundColor') != '' && chartModel.get('backgroundColor')!="transparent") ? '#'
+			 + ((chartModel.get('backgroundColor') != undefined && chartModel.get('backgroundColor') != '' && chartModel.get('backgroundColor')!="transparent") ? '#'
 				 + chartModel.get('backgroundColor')
 				 : '') + ';';
 			
@@ -1045,30 +959,25 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var COLORPALETTE = {};
 			var COLOR = [];
-			var paletteStore = Ext.data.StoreManager
-				.lookup('chartConfigurationPaletteStore');
+			var paletteStore = Ext.data.StoreManager.lookup('chartConfigurationPaletteStore');
 			var colors = paletteStore.getData();
 			for (i in colors.items) {
 				var color = paletteStore.getAt(i);
 				var colorElement = {};
-				colorElement['id'] = color.get('id') != undefined ? color
-					.get('id')
-					 : '';
-				colorElement['gradient'] = color
-					.get('gradient') != undefined ? color
-					.get('gradient') : '';
-				colorElement['name'] = color.get('name') != undefined ? color
-					.get('name')
-					 : '';
-				colorElement['order'] = color.get('order') != undefined ? color
-					.get('order')
-					 : '';
+				colorElement['id'] = color.get('id') != undefined ? 
+					color.get('id') : '';
+				colorElement['gradient'] = color.get('gradient') != undefined ? 
+					color.get('gradient') : '';
+				colorElement['name'] = color.get('name') != undefined ? 
+					color.get('name') : '';
+				colorElement['order'] = color.get('order') != undefined ? 
+					color.get('order') : '';
 
-				var colorValue = color.get('value') != undefined ? color
-					.get('value')
-					 : '';
-				colorValue = colorValue.replace(
-						/^#?([\dA-Fa-f]+)/, '#$1');
+				var colorValue = color.get('value') != undefined ?
+					color.get('value') : '';
+					
+				colorValue = colorValue.replace(/^#?([\dA-Fa-f]+)/, '#$1');
+				
 				colorElement['value'] = colorValue;
 
 				COLOR.push(colorElement);
@@ -1078,15 +987,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			CHART['COLORPALETTE'] = COLORPALETTE;
 
 			var EMPTYMESSAGE = {};
-			EMPTYMESSAGE['text'] = (chartModel.get('nodata') != undefined) ? chartModel
-			.get('nodata')
-			 : '';
+			EMPTYMESSAGE['text'] = (chartModel.get('nodata') != undefined) ?
+				chartModel.get('nodata') : '';
 
 			var emptymessageStyle = '';
-			emptymessageStyle += 'align:'
-			 + ((chartModel.get('nodataAlign') != undefined) ? chartModel
-				.get('nodataAlign')
-				 : '') + ';';
+			
+			emptymessageStyle += 'align:' + ((chartModel.get('nodataAlign') != undefined) ?
+				chartModel.get('nodataAlign') : '') + ';';
 			
 			/**
 			 * Checking if the specified value for is 'transparent' is important since we must not 
@@ -1095,36 +1002,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 			 */
 			emptymessageStyle += 'color:'
-			 + ((chartModel.get('nodataColor') != undefined && chartModel
-					.get('nodataColor') != '' && chartModel.get('nodataColor') != 'transparent') ? '#'
-				 + chartModel.get('nodataColor')
-				 : '') + ';';
+			 + ((chartModel.get('nodataColor') != undefined && chartModel.get('nodataColor') != '' && chartModel.get('nodataColor') != 'transparent') ? '#'
+				 + chartModel.get('nodataColor') : '') + ';';
 			
-			emptymessageStyle += 'fontFamily:'
-			 + ((chartModel.get('font') != undefined) ? chartModel
-				.get('font')
-				 : '') + ';';
-			emptymessageStyle += 'fontWeight:'
-			 + ((chartModel.get('nodataStyle') != undefined) ? chartModel
-				.get('nodataStyle')
-				 : '') + ';';
+			emptymessageStyle += 'fontFamily:' + ((chartModel.get('font') != undefined) ? 
+			 	chartModel.get('font') : '') + ';';
+			emptymessageStyle += 'fontWeight:' + ((chartModel.get('nodataStyle') != undefined) ? 
+			 	chartModel.get('nodataStyle') : '') + ';';
 			emptymessageStyle += 'fontSize:'
-			 + ((chartModel.get('nodataDimension') != undefined) ? chartModel
-				.get('nodataDimension')
+			 + ((chartModel.get('nodataDimension') != undefined) ?
+			 	chartModel.get('nodataDimension')
 				 : '') + ';';
 			EMPTYMESSAGE['style'] = emptymessageStyle;
 
 			CHART['EMPTYMESSAGE'] = EMPTYMESSAGE;
 
 			var TITLE = {};
-			TITLE['text'] = (chartModel.get('title') != undefined) ? chartModel
-			.get('title')
+			TITLE['text'] = (chartModel.get('title') != undefined) ? chartModel.get('title')
 			 : '';
 
 			var titleStyle = '';
 			titleStyle += 'align:'
-			 + ((chartModel.get('titleAlign') != undefined) ? chartModel
-				.get('titleAlign')
+			 + ((chartModel.get('titleAlign') != undefined) ? chartModel.get('titleAlign')
 				 : '') + ';';
 			
 			/**
@@ -1134,37 +1033,30 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 			 */
 			titleStyle += 'color:'
-			 + ((chartModel.get('titleColor') != undefined && chartModel
-					.get('titleColor') != ''&& chartModel.get('titleColor') != 'transparent') ? '#'
+			 + ((chartModel.get('titleColor') != undefined && chartModel.get('titleColor') != ''&& chartModel.get('titleColor') != 'transparent') ? '#'
 				 + chartModel.get('titleColor') : '')
 			 + ';';
 			titleStyle += 'fontFamily:'
-			 + ((chartModel.get('titleFont') != undefined) ? chartModel
-				.get('titleFont')
+			 + ((chartModel.get('titleFont') != undefined) ? chartModel.get('titleFont')
 				 : '') + ';';
 			titleStyle += 'fontWeight:'
-			 + ((chartModel.get('titleStyle') != undefined) ? chartModel
-				.get('titleStyle')
+			 + ((chartModel.get('titleStyle') != undefined) ? chartModel.get('titleStyle')
 				 : '') + ';';
 			titleStyle += 'fontSize:'
-			 + ((chartModel.get('titleDimension') != undefined) ? chartModel
-				.get('titleDimension')
-				 : '') + ';';
+			 + ((chartModel.get('titleDimension') != undefined) ? 
+			 	chartModel.get('titleDimension') : '') + ';';
 
 			TITLE['style'] = titleStyle;
 
 			CHART['TITLE'] = TITLE;
 
 			var SUBTITLE = {};
-			SUBTITLE['text'] = (chartModel.get('subtitle') != undefined) ? chartModel
-			.get('subtitle')
-			 : '';
+			SUBTITLE['text'] = (chartModel.get('subtitle') != undefined) ?
+				chartModel.get('subtitle') : '';
 
 			var subtitleStyle = '';
-			subtitleStyle += 'align:'
-			 + ((chartModel.get('subtitleAlign') != undefined) ? chartModel
-				.get('subtitleAlign')
-				 : '') + ';';
+			subtitleStyle += 'align:' + ((chartModel.get('subtitleAlign') != undefined) ? 
+			 	chartModel.get('subtitleAlign') : '') + ';';
 			
 			 /**
 			  * Checking if the specified value for is 'transparent' is important since we must not 
@@ -1173,22 +1065,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			  * @modifiedBy: danristo (danilo.ristovski@mht.net)
 			  */
 			subtitleStyle += 'color:'
-			 + ((chartModel.get('subtitleColor') != undefined && chartModel
-					.get('subtitleColor') != '' && chartModel.get('subtitleColor') != 'transparent') ? '#'
+			 + ((chartModel.get('subtitleColor') != undefined && chartModel.get('subtitleColor') != '' && chartModel.get('subtitleColor') != 'transparent') ? '#'
 				 + chartModel.get('subtitleColor')
 				 : '') + ';';
 			
 			subtitleStyle += 'fontFamily:'
-			 + ((chartModel.get('subtitleFont') != undefined) ? chartModel
-				.get('subtitleFont')
+			 + ((chartModel.get('subtitleFont') != undefined) ? chartModel.get('subtitleFont')
 				 : '') + ';';
 			subtitleStyle += 'fontWeight:'
-			 + ((chartModel.get('subtitleStyle') != undefined) ? chartModel
-				.get('subtitleStyle')
+			 + ((chartModel.get('subtitleStyle') != undefined) ? chartModel.get('subtitleStyle')
 				 : '') + ';';
 			subtitleStyle += 'fontSize:'
-			 + ((chartModel.get('subtitleDimension') != undefined) ? chartModel
-				.get('subtitleDimension')
+			 + ((chartModel.get('subtitleDimension') != undefined) ? chartModel.get('subtitleDimension')
 				 : '') + ';';
 			SUBTITLE['style'] = subtitleStyle;
 
@@ -1216,18 +1104,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * on the PARALLEL chart
 				 */
 				legendTitleStyle += 'fontFamily:'
-				 + ((chartModel.get('parallelLegendTitleFontFamily') != undefined) ? chartModel
-					.get('parallelLegendTitleFontFamily')
+				 + ((chartModel.get('parallelLegendTitleFontFamily') != undefined) ? chartModel.get('parallelLegendTitleFontFamily')
 					 : '') + ';';
 
 				legendTitleStyle += 'fontSize:'
-				 + ((chartModel.get('parallelLegendTitleFontSize') != undefined) ? chartModel
-					.get('parallelLegendTitleFontSize')
+				 + ((chartModel.get('parallelLegendTitleFontSize') != undefined) ? chartModel.get('parallelLegendTitleFontSize')
 					 : '') + ';';
 
 				legendTitleStyle += 'fontWeight:'
-				 + ((chartModel.get('parallelLegendTitleFontWeight') != undefined) ? chartModel
-					.get('parallelLegendTitleFontWeight')
+				 + ((chartModel.get('parallelLegendTitleFontWeight') != undefined) ? chartModel.get('parallelLegendTitleFontWeight')
 					 : '') + ';';
 
 				/**
@@ -1235,18 +1120,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * on the PARALLEL chart
 				 */
 				legendElementStyle += 'fontFamily:'
-				 + ((chartModel.get('parallelLegendElementFontFamily') != undefined) ? chartModel
-					.get('parallelLegendElementFontFamily')
+				 + ((chartModel.get('parallelLegendElementFontFamily') != undefined) ? chartModel.get('parallelLegendElementFontFamily')
 					 : '') + ';';
 
 				legendElementStyle += 'fontSize:'
-				 + ((chartModel.get('parallelLegendElementFontSize') != undefined) ? chartModel
-					.get('parallelLegendElementFontSize')
+				 + ((chartModel.get('parallelLegendElementFontSize') != undefined) ? chartModel.get('parallelLegendElementFontSize')
 					 : '') + ';';
 
 				legendElementStyle += 'fontWeight:'
-				 + ((chartModel.get('parallelLegendElementFontWeight') != undefined) ? chartModel
-					.get('parallelLegendElementFontWeight')
+				 + ((chartModel.get('parallelLegendElementFontWeight') != undefined) ? chartModel.get('parallelLegendElementFontWeight')
 					 : '') + ';';
 
 				TITLE['style'] = legendTitleStyle;
@@ -1256,59 +1138,45 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				LEGEND['ELEMENT'] = ELEMENT;
 
 			} else {
-				LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel
-				.get('showLegend')
+				LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel.get('showLegend')
 				 : false;
 				
 				var TITLE={};
-				TITLE['text'] = (chartModel.get('legendTitle') != undefined) ? chartModel
-						.get('legendTitle')
+				TITLE['text'] = (chartModel.get('legendTitle') != undefined) ? chartModel.get('legendTitle')
 						 : '';
 				
 				var legendTitleStyle = '';
 				legendTitleStyle += 'align:'
-				 + ((chartModel.get('legendTitleAlign') != undefined) ? chartModel
-					.get('legendTitleAlign')
+				 + ((chartModel.get('legendTitleAlign') != undefined) ? chartModel.get('legendTitleAlign')
 					 : '') + ';';
 				legendTitleStyle += 'color:'
-				 + ((chartModel.get('legendTitleColor') != undefined && chartModel
-						.get('legendTitleColor') != ''&& chartModel.get('legendTitleColor') != 'transparent') ? '#'
+				 + ((chartModel.get('legendTitleColor') != undefined && chartModel.get('legendTitleColor') != ''&& chartModel.get('legendTitleColor') != 'transparent') ? '#'
 					 + chartModel.get('legendTitleColor') : '')
 				 + ';';
 				legendTitleStyle += 'fontFamily:'
-				 + ((chartModel.get('legendTitleFont') != undefined) ? chartModel
-					.get('legendTitleFont')
+				 + ((chartModel.get('legendTitleFont') != undefined) ? chartModel.get('legendTitleFont')
 					 : '') + ';';
 				legendTitleStyle += 'fontWeight:'
-				 + ((chartModel.get('legendTitleStyle') != undefined) ? chartModel
-					.get('legendTitleStyle')
+				 + ((chartModel.get('legendTitleStyle') != undefined) ? chartModel.get('legendTitleStyle')
 					 : '') + ';';
 				legendTitleStyle += 'fontSize:'
-				 + ((chartModel.get('legendTitleDimension') != undefined) ? chartModel
-					.get('legendTitleDimension')
+				 + ((chartModel.get('legendTitleDimension') != undefined) ? chartModel.get('legendTitleDimension')
 					 : '') + ';';
 
 				TITLE['style'] =legendTitleStyle;
 
 			    LEGEND['TITLE']=TITLE;
 			    
-				LEGEND['position'] = (chartModel
-					.get('legendPosition') != undefined) ? chartModel
-				.get('legendPosition')
+				LEGEND['position'] = (chartModel.get('legendPosition') != undefined) ? chartModel.get('legendPosition')
 				 : '';
-				LEGEND['layout'] = (chartModel.get('legendLayout') != undefined) ? chartModel
-				.get('legendLayout')
+				LEGEND['layout'] = (chartModel.get('legendLayout') != undefined) ? chartModel.get('legendLayout')
 				 : '';
-				LEGEND['floating'] = (chartModel
-					.get('legendFloating') != undefined) ? chartModel
-				.get('legendFloating')
+				LEGEND['floating'] = (chartModel.get('legendFloating') != undefined) ? chartModel.get('legendFloating')
 				 : '';
 				
-				LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel
-				.get('legendX')
+				LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel.get('legendX')
 				 : '';
-				LEGEND['y'] = (chartModel.get('legendY') != undefined) ? chartModel
-				.get('legendY')
+				LEGEND['y'] = (chartModel.get('legendY') != undefined) ? chartModel.get('legendY')
 				 : '';				
 				
 				/**
@@ -1318,30 +1186,24 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * (danilo.ristovski@mht.net)
 				 */
 				if (chartType.toUpperCase() == "HEATMAP") {
-					LEGEND['symbolHeight'] = (chartModel.get('symbolHeight') != undefined) ? chartModel
-					.get('symbolHeight') : 0;
+					LEGEND['symbolHeight'] = (chartModel.get('symbolHeight') != undefined) ? chartModel.get('symbolHeight') : 0;
 				}
 
 				var legendStyle = '';
 				legendStyle += 'align:'
-				 + ((chartModel.get('legendAlign') != undefined) ? chartModel
-					.get('legendAlign')
+				 + ((chartModel.get('legendAlign') != undefined) ? chartModel.get('legendAlign')
 					 : '') + ';';
 				legendStyle += 'fontFamily:'
-				 + ((chartModel.get('legendFont') != undefined) ? chartModel
-					.get('legendFont')
+				 + ((chartModel.get('legendFont') != undefined) ? chartModel.get('legendFont')
 					 : '') + ';';
 				legendStyle += 'fontSize:'
-				 + ((chartModel.get('legendDimension') != undefined) ? chartModel
-					.get('legendDimension')
+				 + ((chartModel.get('legendDimension') != undefined) ? chartModel.get('legendDimension')
 					 : '') + ';';
 				legendStyle += 'fontWeight:'
-				 + ((chartModel.get('legendStyle') != undefined) ? chartModel
-					.get('legendStyle')
+				 + ((chartModel.get('legendStyle') != undefined) ? chartModel.get('legendStyle')
 					 : '') + ';';
 				legendStyle += 'borderWidth:'
-				 + ((chartModel.get('legendBorderWidth') != undefined) ? chartModel
-					.get('legendBorderWidth')
+				 + ((chartModel.get('legendBorderWidth') != undefined) ? chartModel.get('legendBorderWidth')
 					 : '') + ';';
 				
 				/**
@@ -1351,16 +1213,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 				 */
 				legendStyle += 'color:'
-				 + ((chartModel.get('legendColor') != undefined && chartModel
-						.get('legendColor') != '' && chartModel.get('legendColor') != 'transparent') ? '#'
+				 + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '' && chartModel.get('legendColor') != 'transparent') ? '#'
 					 + chartModel.get('legendColor')
 					 : '') + ';';
 				
 				legendStyle += 'backgroundColor:'
-				 + ((chartModel.get('legendBackgroundColor') != undefined && chartModel
-						.get('legendBackgroundColor') != '' && chartModel.get('legendBackgroundColor') != 'transparent') ? '#'
-					 + chartModel
-					.get('legendBackgroundColor')
+				 + ((chartModel.get('legendBackgroundColor') != undefined && chartModel.get('legendBackgroundColor') != '' && chartModel.get('legendBackgroundColor') != 'transparent') ? '#'
+					 + chartModel.get('legendBackgroundColor')
 					 : '') + ';';
 
 				LEGEND['style'] = legendStyle;
@@ -1378,24 +1237,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var toolbarStyle = '';
 
 				toolbarStyle += 'position:'
-				 + ((chartModel.get('toolbarPosition')) ? chartModel
-					.get('toolbarPosition')
+				 + ((chartModel.get('toolbarPosition')) ? chartModel.get('toolbarPosition')
 					 : '') + ';';
 				toolbarStyle += 'height:'
-				 + ((Number(chartModel.get('toolbarHeight'))) ? Number(chartModel
-					.get('toolbarHeight'))
+				 + ((Number(chartModel.get('toolbarHeight'))) ? Number(chartModel.get('toolbarHeight'))
 					 : '') + ';';
 				toolbarStyle += 'width:'
-				 + (Number((chartModel.get('toolbarWidth'))) ? Number(chartModel
-					.get('toolbarWidth'))
+				 + (Number((chartModel.get('toolbarWidth'))) ? Number(chartModel.get('toolbarWidth'))
 					 : '') + ';';
 				toolbarStyle += 'spacing:'
-				 + (Number((chartModel.get('toolbarSpacing'))) ? Number(chartModel
-					.get('toolbarSpacing'))
+				 + (Number((chartModel.get('toolbarSpacing'))) ? Number(chartModel.get('toolbarSpacing'))
 					 : '') + ';';
 				toolbarStyle += 'tail:'
-				 + (Number((chartModel.get('toolbarTail'))) ? Number(chartModel
-					.get('toolbarTail'))
+				 + (Number((chartModel.get('toolbarTail'))) ? Number(chartModel.get('toolbarTail'))
 					 : '') + ';';
 
 				/**
@@ -1405,24 +1259,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 				 */
 				toolbarStyle += 'percFontColor:'
-				 + ((chartModel
-						.get('toolbarPercFontColor') != undefined && chartModel
-						.get('toolbarPercFontColor') != '' && chartModel.get('toolbarPercFontColor') != 'transparent') ? '#'
-					 + chartModel
-					.get('toolbarPercFontColor')
+				 + ((chartModel.get('toolbarPercFontColor') != undefined && chartModel.get('toolbarPercFontColor') != '' && chartModel.get('toolbarPercFontColor') != 'transparent') ? '#'
+					 + chartModel.get('toolbarPercFontColor')
 					 : '') + ';';
 				
 				toolbarStyle += 'fontFamily:'
-				 + ((chartModel.get('toolbarFontFamily')) ? chartModel
-					.get('toolbarFontFamily')
+				 + ((chartModel.get('toolbarFontFamily')) ? chartModel.get('toolbarFontFamily')
 					 : '') + ';';
 				toolbarStyle += 'fontWeight:'
-				 + ((chartModel.get('toolbarFontWeight')) ? chartModel
-					.get('toolbarFontWeight')
+				 + ((chartModel.get('toolbarFontWeight')) ? chartModel.get('toolbarFontWeight')
 					 : '') + ';';
 				toolbarStyle += 'fontSize:'
-				 + ((chartModel.get('toolbarFontSize')) ? chartModel
-					.get('toolbarFontSize')
+				 + ((chartModel.get('toolbarFontSize')) ? chartModel.get('toolbarFontSize')
 					 : '') + ';';
 
 				TOOLBAR['style'] = toolbarStyle;
@@ -1432,16 +1280,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var tipStyle = '';
 
 				tipStyle += 'fontFamily:'
-				 + ((chartModel.get('tipFontFamily')) ? chartModel
-					.get('tipFontFamily')
+				 + ((chartModel.get('tipFontFamily')) ? chartModel.get('tipFontFamily')
 					 : '') + ';';
 				tipStyle += 'fontWeight:'
-				 + ((chartModel.get('tipFontWeight')) ? chartModel
-					.get('tipFontWeight')
+				 + ((chartModel.get('tipFontWeight')) ? chartModel.get('tipFontWeight')
 					 : '') + ';';
 				tipStyle += 'fontSize:'
-				 + ((chartModel.get('tipFontSize')) ? chartModel
-					.get('tipFontSize')
+				 + ((chartModel.get('tipFontSize')) ? chartModel.get('tipFontSize')
 					 : '') + ';';
 				
 				/**
@@ -1451,22 +1296,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 				 */
 				tipStyle += 'color:'
-				 + ((chartModel.get('tipColor') != undefined && chartModel
-						.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
+				 + ((chartModel.get('tipColor') != undefined && chartModel.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
 					 + chartModel.get('tipColor')
 					 : '') + ';';
 				
 				tipStyle += 'align:'
-				 + ((chartModel.get('tipAlign')) ? chartModel
-					.get('tipAlign')
+				 + ((chartModel.get('tipAlign')) ? chartModel.get('tipAlign')
 					 : '') + ';';
 				tipStyle += 'width:'
-				 + ((chartModel.get('tipWidth')) ? chartModel
-					.get('tipWidth')
+				 + ((chartModel.get('tipWidth')) ? chartModel.get('tipWidth')
 					 : '') + ';';
 
-				TIP['text'] = (chartModel.get('tipText') != undefined) ? chartModel
-				.get('tipText')
+				TIP['text'] = (chartModel.get('tipText') != undefined) ? chartModel.get('tipText')
 				 : '';
 				TIP['style'] = tipStyle;
 				CHART['TIP'] = TIP;
@@ -1496,16 +1337,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var tipStyle = '';
 
 				tipStyle += 'fontFamily:'
-				 + ((chartModel.get('tipFontFamily')) ? chartModel
-					.get('tipFontFamily')
+				 + ((chartModel.get('tipFontFamily')) ? chartModel.get('tipFontFamily')
 					 : '') + ';';
 				tipStyle += 'fontWeight:'
-				 + ((chartModel.get('tipFontWeight')) ? chartModel
-					.get('tipFontWeight')
+				 + ((chartModel.get('tipFontWeight')) ? chartModel.get('tipFontWeight')
 					 : '') + ';';
 				tipStyle += 'fontSize:'
-				 + ((chartModel.get('tipFontSize')) ? chartModel
-					.get('tipFontSize')
+				 + ((chartModel.get('tipFontSize')) ? chartModel.get('tipFontSize')
 					 : '') + ';';
 				
 				/**
@@ -1515,14 +1353,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 				 */
 				tipStyle += 'color:'
-				 + ((chartModel.get('tipColor') != undefined && chartModel
-						.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
+				 + ((chartModel.get('tipColor') != undefined && chartModel.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
 					 + chartModel.get('tipColor')
 					 : '') + ';';
 				
 				tipStyle += 'align:'
-				 + ((chartModel.get('tipAlign')) ? chartModel
-					.get('tipAlign')
+				 + ((chartModel.get('tipAlign')) ? chartModel.get('tipAlign')
 					 : '') + ';';
 
 				TOOLTIP['style'] = tipStyle;
@@ -1539,17 +1375,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var limitStyle = '';
 
 				limitStyle += 'maxNumberOfLines:'
-				 + (Number((chartModel.get('maxNumberOfLines'))) ? Number(chartModel
-					.get('maxNumberOfLines'))
+				 + (Number((chartModel.get('maxNumberOfLines'))) ? Number(chartModel.get('maxNumberOfLines'))
 					 : '') + ';';
 				limitStyle += 'serieFilterColumn:'
-				 + ((chartModel.get('serieFilterColumn')) ? chartModel
-					.get('serieFilterColumn')
+				 + ((chartModel.get('serieFilterColumn')) ? chartModel.get('serieFilterColumn')
 					 : '') + ';';
 				limitStyle += 'orderTopMinBottomMax:'
-				 + ((chartModel
-						.get('orderTopMinBottomMax')) ? chartModel
-					.get('orderTopMinBottomMax')
+				 + ((chartModel.get('orderTopMinBottomMax')) ? chartModel.get('orderTopMinBottomMax')
 					 : '') + ';';
 
 				LIMIT['style'] = limitStyle;
@@ -1559,18 +1391,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var parallelTooltipStype = "";
 
 				parallelTooltipStype += 'fontFamily:'
-				 + ((chartModel
-						.get('parallelTooltipFontFamily')) ? chartModel
-					.get('parallelTooltipFontFamily')
+				 + ((chartModel.get('parallelTooltipFontFamily')) ? chartModel.get('parallelTooltipFontFamily')
 					 : '') + ';';
 				parallelTooltipStype += 'fontSize:'
-				 + ((chartModel
-						.get('parallelTooltipFontSize')) ? chartModel
-					.get('parallelTooltipFontSize')
+				 + ((chartModel.get('parallelTooltipFontSize')) ? chartModel.get('parallelTooltipFontSize')
 					 : '') + ';';
 				/*parallelTooltipStype += 'minWidth:'
-				 + (Number((chartModel
-						.get('parallelTooltipMinWidth'))) ? Number(chartModel
+				 + (Number((chartModel.get('parallelTooltipMinWidth'))) ? Number(chartModel
 					.get('parallelTooltipMinWidth'))
 					 : '') + ';';
 				parallelTooltipStype += 'maxWidth:'
@@ -1594,14 +1421,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('parallelTooltipPadding'))
 					 : '') + ';'; */
 				parallelTooltipStype += 'border:'
-				 + ((Number(chartModel
-						.get('parallelTooltipBorder'))) ? Number(chartModel
-					.get('parallelTooltipBorder'))
+				 + ((Number(chartModel.get('parallelTooltipBorder'))) ? Number(chartModel.get('parallelTooltipBorder'))
 					 : '') + ';';
 				parallelTooltipStype += 'borderRadius:'
-				 + ((Number(chartModel
-						.get('parallelTooltipBorderRadius'))) ? Number(chartModel
-					.get('parallelTooltipBorderRadius'))
+				 + ((Number(chartModel.get('parallelTooltipBorderRadius'))) ? Number(chartModel.get('parallelTooltipBorderRadius'))
 					 : '') + ';';
 
 				PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
@@ -1613,25 +1436,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var parallelTooltipStype = "";
 
 				parallelTooltipStype += 'fontFamily:'
-				 + ((chartModel
-						.get('parallelTooltipFontFamily')) ? chartModel
-					.get('parallelTooltipFontFamily')
+				 + ((chartModel.get('parallelTooltipFontFamily')) ? chartModel.get('parallelTooltipFontFamily')
 					 : '') + ';';
 				parallelTooltipStype += 'fontSize:'
-				 + ((chartModel
-						.get('parallelTooltipFontSize')) ? chartModel
-					.get('parallelTooltipFontSize')
+				 + ((chartModel.get('parallelTooltipFontSize')) ? chartModel.get('parallelTooltipFontSize')
 					 : '') + ';';
 				
 				parallelTooltipStype += 'border:'
-				 + ((Number(chartModel
-						.get('parallelTooltipBorder'))) ? Number(chartModel
-					.get('parallelTooltipBorder'))
+				 + ((Number(chartModel.get('parallelTooltipBorder'))) ? Number(chartModel.get('parallelTooltipBorder'))
 					 : '') + ';';
 				parallelTooltipStype += 'borderRadius:'
-				 + ((Number(chartModel
-						.get('parallelTooltipBorderRadius'))) ? Number(chartModel
-					.get('parallelTooltipBorderRadius'))
+				 + ((Number(chartModel.get('parallelTooltipBorderRadius'))) ? Number(chartModel.get('parallelTooltipBorderRadius'))
 					 : '') + ';';
 
 				TOOLTIP['style'] = parallelTooltipStype;
@@ -1668,137 +1483,193 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * of some graphical elements on the Designer's Step 2 tab) depending on the chart type.
 		 *
 		 * Methods are:
-		 * 		- enableToolbarAndTip
-		 * 		- enablePalette
-		 * 		- disableShowLegendCheck
-		 * 		- enableLegend
-		 * 		- disableXBottomContainer
-		 * 		- disableChartWidth
-		 * 		- disableChartOrientation
-		 * 		- enableOpacityMouseOver
-		 * 		- enableWordcloudPanel
-		 * 		- enableParallelPanel
-		 * 		- enableScatterElements
-		 * 		- enableHeatmapLegendAndTooltip
-		 * 		- enableGaugePane
+		 * 		- isToolbarAndTipEnabled
+		 * 		- isPaletteEnabled
+		 * 		- isShowLegendDisabled
+		 * 		- isLegendEnabled
+		 * 		- isXBottomContainerDisabled
+		 * 		- isChartWidthDisabled
+		 * 		- isChartOrientationDisabled
+		 * 		- isBottomAxisTextFieldDisabled
+		 * 		- isBottomAxisStyleButtonDisabled
+		 * 		- isSerieTooltipConfigurationDisabled
+		 * 		- isChartColumnsContainerPlusGearDisabled
+		 * 		- isOpacityMouseOverEnabled
+		 * 		- isWordcloudPanelEnabled
+		 * 		- isParallelPanelEnabled
+		 * 		- isScatterElementsEnabled
+		 * 		- isHeatmapLegendAndTooltipEnabled
+		 * 		- isGaugePaneEnabled
+		 * 		- isTooltipPanelEnabled
+		 * 		- canDropMoreThanOneSerie
 		 *
-		 * (danilo.ristovski@mht.net)
+		 * (danilo.ristovski@mht.net, benedetto.milazzo@eng.it)
 		 */
-		enableToolbarAndTip : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'SUNBURST';
+		isToolbarAndTipEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
 		},
 
-		enablePalette : function () {				
+		isPaletteEnabled : function () {				
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD' && 
 				Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'GAUGE';
 		},
 
-		disableShowLegendCheck : function () {
-			//console.log("disableShowLegendCheck (START)");
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'SUNBURST'
-			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'WORDCLOUD'
-			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'PARALLEL'
-			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'TREEMAP'
-			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'HEATMAP'
-			 || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'GAUGE'
-			|| Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'CHORD';
-			//console.log("disableShowLegendCheck (END)");
+		isShowLegendDisabled : function () {
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			
+			return (chartType == 'SUNBURST'
+				|| chartType == 'WORDCLOUD'
+					|| chartType == 'PARALLEL'
+						|| chartType == 'TREEMAP'
+							|| chartType == 'HEATMAP'
+								|| chartType == 'GAUGE'
+									|| chartType == 'CHORD');
 		},
 
-		enableLegend : function () {
-			//console.log("enableLegend (START)");
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'SUNBURST'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'WORDCLOUD'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'PARALLEL'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'TREEMAP'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'HEATMAP'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'GAUGE'
-			&& Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'CHORD';
-			//console.log("enableLegend (END)");
+		isLegendEnabled : function () {
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			
+			var isLegendEnabled = (chartType != 'SUNBURST'
+				&& chartType != 'WORDCLOUD'
+					&& chartType != 'PARALLEL'
+						&& chartType != 'TREEMAP'
+							&& chartType != 'HEATMAP'
+								&& chartType != 'GAUGE'
+									&& chartType != 'CHORD');
+			
+			return isLegendEnabled;
 		},
 
-		disableXBottomContainer : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'GAUGE';
+		isXBottomContainerDisabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE';
 		},
 
 		/**
 		 * If Designer is still not defined (created), i.e. in the process of running (creating) it
-		 * we need to prevent 'disableChartWidth' and 'disableChartOrientation' functions from taking
+		 * we need to prevent 'isChartWidthDisabled' and 'isChartOrientationDisabled' functions from taking
 		 * values of the undefined one (Designer = undefined).
 		 */
 
-		disableChartWidth : function () {
+		isChartWidthDisabled : function () {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
 		},
 
-		disableChartOrientation : function () {
+		isChartOrientationDisabled : function () {
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
 
-			return chartType == 'SUNBURST'
-			 || chartType == 'WORDCLOUD'
-			 || chartType == 'TREEMAP'
-			 || chartType == 'PARALLEL'
-			 || chartType == 'HEATMAP'
-				 || chartType == 'SCATTER'
-					 || chartType == 'GAUGE'
-						 || chartType == 'CHORD'
-							 || chartType == 'PIE'
-								 || chartType == 'RADAR';
+			var isOrientationDisabled = 
+				((chartType == 'SUNBURST'
+					|| chartType == 'WORDCLOUD'
+						|| chartType == 'TREEMAP'
+							|| chartType == 'PARALLEL'
+								|| chartType == 'HEATMAP'
+									|| chartType == 'SCATTER'
+										|| chartType == 'GAUGE'
+											|| chartType == 'CHORD'
+												|| chartType == 'PIE'
+													|| chartType == 'RADAR')
+				|| chartLibrary == 'chartJs');
+			
+			return isOrientationDisabled;
+		},
+		
+		isBottomAxisTextFieldDisabled: function(newChartType) {
+			var chartType = newChartType || Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+			
+			var isBottomAxisTextFieldDisabled = (chartLibrary == 'chartJs'); 
+			
+			return isBottomAxisTextFieldDisabled;
+		},
+		
+		isBottomAxisStyleButtonDisabled: function(newChartType) {
+			var chartType = newChartType || Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+
+			var isBottomAxisStyleButtonDisabled = (chartLibrary == 'chartJs'); 
+				
+			return isBottomAxisStyleButtonDisabled;
+		},
+		
+		isSerieTooltipConfigurationDisabled: function() {
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+
+			var isSerieTooltipDisabled = ((chartType == "WORDCLOUD") 
+					|| chartLibrary == 'chartJs'); 
+				
+			return isSerieTooltipDisabled;
+		},
+		
+		isChartColumnsContainerPlusGearDisabled : function() {
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+			
+			var isPlusGearButtonHidden = 
+				((chartType == "SUNBURST" 
+					|| chartType == "PARALLEL" 
+						|| chartType == "WORDCLOUD" 
+							|| chartType == "TREEMAP"
+								|| chartType == "CHORD"
+									|| chartType == "PIE"
+										|| chartType == "RADAR"
+											|| chartType == "SCATTER" 
+												|| chartType == "HEATMAP" 
+													|| chartType=="GAUGE")
+													|| chartLibrary == 'chartJs');
+			
+			return isPlusGearButtonHidden;
+		},
+		
+		isOpacityMouseOverEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
 		},
 
-		enableOpacityMouseOver : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'SUNBURST';
+		isWordcloudPanelEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD';
 		},
 
-		enableWordcloudPanel : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'WORDCLOUD';
+		isParallelPanelEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL';
 		},
 
-		enableParallelPanel : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'PARALLEL';
+		isScatterElementsEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SCATTER';
 		},
 
-		enableScatterElements : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'SCATTER';
+		isHeatmapLegendAndTooltipEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'HEATMAP';
 		},
 
-		enableHeatmapLegendAndTooltip : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'HEATMAP';
+		isGaugePaneEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE';
 		},
 
-		enableGaugePane : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'GAUGE';
+		isTooltipPanelEnabled: function(){
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			
+			var isTooltipEnabled = Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL' 
+				|| Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD';
+			
+			return isTooltipEnabled; 
 		},
-
-		enableTooltipPanel: function(){
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'PARALLEL' || Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() == 'CHORD';
+		
+		canDropMoreThanOneSerie : function() {
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+			
+			var canDropMoreThanOneSerie = (chartLibrary != 'chartJs'
+					|| (chartLibrary == 'chartJs'
+						&& chartType.toLowerCase() != 'pie'));
+			
+			return canDropMoreThanOneSerie;
 		},
-		createChartConfigurationModelFromJson : function (
-			jsonTemplate) {
+		/*
+		 * End check methods
+		 */
+		
+		createChartConfigurationModelFromJson : function (jsonTemplate) {
 
 			var jsonChartStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.style);
 
@@ -1896,8 +1767,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var jsonScatterEndOnTick = null;
 			var jsonScatterShowLastLabel = null;
 
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'SCATTER') {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SCATTER') {
 			
 				var numberOfAxes = jsonTemplate.CHART.AXES_LIST.AXIS.length;
 				var axisData = null;				
@@ -1924,8 +1794,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			
 			var labelsData = null;
 			
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-					.getChartType() == 'GAUGE')
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE')
 			{
 				axisData = jsonTemplate.CHART.AXES_LIST.AXIS[0]; 
 				labelsData = jsonTemplate.CHART.LABELS;
@@ -1937,8 +1806,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			var jsonHeatmapChartSybmolHeight = null;
 
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'HEATMAP') {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'HEATMAP') {
 				jsonHeatmapChartSybmolHeight = jsonTemplate.CHART.LEGEND.symbolHeight ? jsonTemplate.CHART.LEGEND.symbolHeight : '';
 			}
 
@@ -1950,8 +1818,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var jsonGaugeMaxAnglePane = null;
 			var jsonGaugeAxesListData = null;
 
-			if (Sbi.chart.designer.Designer.chartTypeSelector
-				.getChartType() == 'GAUGE') {
+			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE') {
 				jsonGaugeMinAnglePane = jsonTemplate.CHART.PANE.startAngle;
 				jsonGaugeMaxAnglePane = jsonTemplate.CHART.PANE.endAngle;
 				jsonGaugeAxesListData = axisData;
@@ -1960,227 +1827,213 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var colorPalette = [];
 			if (jsonTemplate.CHART.COLORPALETTE
 				 && jsonTemplate.CHART.COLORPALETTE.COLOR) {
-				Ext.Array
-				.each(
+				Ext.Array.each(
 					jsonTemplate.CHART.COLORPALETTE.COLOR,
 					function (color) {
-					colorPalette
-					.push({
-						'id' : color.id != undefined ? color.id
-						 : color.name,
-						'gradient' : color.gradient != undefined ? color.gradient
-						 : '',
+					colorPalette.push({
+						'id' : color.id != undefined ? 
+								color.id : color.name,
+						'gradient' : color.gradient != undefined ? 
+								color.gradient : '',
 						'name' : color.name,
 						'order' : color.order,
-						'value' : Sbi.chart.designer.ChartUtils
-						.removeStartingHash(color.value)
+						'value' : Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)
 					});
 				});
 			}
 			
-			var cModel = Ext
-				.create(
-					'Sbi.chart.designer.ChartConfigurationModel', {
-					/**
-					 * Generic parameters for charts. They are common for all chart types.
-					 * @commentBy: danristo (danilo.ristovski@mht.net)
-					 */
-					height : jsonTemplate.CHART.height,
-					width : jsonTemplate.CHART.width,
-					orientation : jsonTemplate.CHART.orientation ? jsonTemplate.CHART.orientation
-					 : 'vertical',
-					backgroundColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonChartStyle.backgroundColor),
-					font : jsonChartStyle.fontFamily,
-					fontDimension : jsonChartStyle.fontSize,
-					fontWeight : jsonChartStyle.fontWeight,
+			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
+				/**
+				 * Generic parameters for charts. They are common for all chart types.
+				 * @commentBy: danristo (danilo.ristovski@mht.net)
+				 */
+				height : jsonTemplate.CHART.height,
+				width : jsonTemplate.CHART.width,
+				orientation : jsonTemplate.CHART.orientation ? 
+						jsonTemplate.CHART.orientation : 'vertical',
+				backgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),
+				font : jsonChartStyle.fontFamily,
+				fontDimension : jsonChartStyle.fontSize,
+				fontWeight : jsonChartStyle.fontWeight,
 
-					title : jsonTitleText,
-					titleAlign : jsonTitleStyle.align,
-					titleColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonTitleStyle.color),
-					titleFont : jsonTitleStyle.fontFamily,
-					titleDimension : jsonTitleStyle.fontSize,
-					titleStyle : jsonTitleStyle.fontWeight,
+				title : jsonTitleText,
+				titleAlign : jsonTitleStyle.align,
+				titleColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTitleStyle.color),
+				titleFont : jsonTitleStyle.fontFamily,
+				titleDimension : jsonTitleStyle.fontSize,
+				titleStyle : jsonTitleStyle.fontWeight,
 
-					subtitle : jsonSubtitleText,
-					subtitleAlign : jsonSubtitleStyle.align,
-					subtitleColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonSubtitleStyle.color),
-					subtitleFont : jsonSubtitleStyle.fontFamily,
-					subtitleDimension : jsonSubtitleStyle.fontSize,
-					subtitleStyle : jsonSubtitleStyle.fontWeight,
+				subtitle : jsonSubtitleText,
+				subtitleAlign : jsonSubtitleStyle.align,
+				subtitleColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonSubtitleStyle.color),
+				subtitleFont : jsonSubtitleStyle.fontFamily,
+				subtitleDimension : jsonSubtitleStyle.fontSize,
+				subtitleStyle : jsonSubtitleStyle.fontWeight,
 
-					nodata : jsonEmptyMsgText,
-					nodataAlign : jsonEmptyMsgStyle.align,
-					nodataColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonEmptyMsgStyle.color),
-					nodataFont : jsonEmptyMsgStyle.fontFamily,
-					nodataDimension : jsonEmptyMsgStyle.fontSize,
-					nodataStyle : jsonEmptyMsgStyle.fontWeight,
+				nodata : jsonEmptyMsgText,
+				nodataAlign : jsonEmptyMsgStyle.align,
+				nodataColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonEmptyMsgStyle.color),
+				nodataFont : jsonEmptyMsgStyle.fontFamily,
+				nodataDimension : jsonEmptyMsgStyle.fontSize,
+				nodataStyle : jsonEmptyMsgStyle.fontWeight,
 
-					showLegend : chartLegend.show,
-					legendTitle : jsonLegendTitleText,
-					legendTitleAlign : jsonLegendTitleStyle.align,
-					legendTitleColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonLegendTitleStyle.color),
-					legendTitleFont : jsonLegendTitleStyle.fontFamily,
-					legendTitleDimension : jsonLegendTitleStyle.fontSize,
-					legendTitleStyle : jsonLegendTitleStyle.fontWeight,
-					legendPosition : chartLegend.position,
-					legendLayout : chartLegend.layout,
-					legendFloating : chartLegend.floating,
-					legendX : chartLegend.x,
-					legendY : chartLegend.y,					
-					legendAlign : jsonLegendStyle.align,
-					legendFont : jsonLegendStyle.fontFamily,
-					legendDimension : jsonLegendStyle.fontSize,
-					legendStyle : jsonLegendStyle.fontWeight,
-					legendBorderWidth : jsonLegendStyle.borderWidth,
-					legendColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
-					legendBackgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),	
+				showLegend : chartLegend.show,
+				legendTitle : jsonLegendTitleText,
+				legendTitleAlign : jsonLegendTitleStyle.align,
+				legendTitleColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendTitleStyle.color),
+				legendTitleFont : jsonLegendTitleStyle.fontFamily,
+				legendTitleDimension : jsonLegendTitleStyle.fontSize,
+				legendTitleStyle : jsonLegendTitleStyle.fontWeight,
+				legendPosition : chartLegend.position,
+				legendLayout : chartLegend.layout,
+				legendFloating : chartLegend.floating,
+				legendX : chartLegend.x,
+				legendY : chartLegend.y,
+				legendAlign : jsonLegendStyle.align,
+				legendFont : jsonLegendStyle.fontFamily,
+				legendDimension : jsonLegendStyle.fontSize,
+				legendStyle : jsonLegendStyle.fontWeight,
+				legendBorderWidth : jsonLegendStyle.borderWidth,
+				legendColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
+				legendBackgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),
 
-					colorPalette : colorPalette,
+				colorPalette : colorPalette,
 
-					/**
-					 * Added for the WORDCLOUD chart
-					 * (danilo.ristovski@mht.net)
-					 */
-					maxWords : jsonTemplate.CHART.maxWords,
-					maxAngle : jsonTemplate.CHART.maxAngle,
-					minAngle : jsonTemplate.CHART.minAngle,
-					maxFontSize : jsonTemplate.CHART.maxFontSize,
-					wordPadding : jsonTemplate.CHART.wordPadding,
-					sizeCriteria : jsonTemplate.CHART.sizeCriteria,
+				/**
+				 * Added for the WORDCLOUD chart
+				 * (danilo.ristovski@mht.net)
+				 */
+				maxWords : jsonTemplate.CHART.maxWords,
+				maxAngle : jsonTemplate.CHART.maxAngle,
+				minAngle : jsonTemplate.CHART.minAngle,
+				maxFontSize : jsonTemplate.CHART.maxFontSize,
+				wordPadding : jsonTemplate.CHART.wordPadding,
+				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
 
-					/**
-					 * Added for the SUNBURST chart.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					opacMouseOver : jsonTemplate.CHART.opacMouseOver,
-					
-					/**
-					 * Added for the PARALLEL chart.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					showTableParallel: jsonTemplate.CHART.showTableParallel,
+				/**
+				 * Added for the SUNBURST chart.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				opacMouseOver : jsonTemplate.CHART.opacMouseOver,
+				
+				/**
+				 * Added for the PARALLEL chart.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				showTableParallel: jsonTemplate.CHART.showTableParallel,
 
-					toolbarPosition : jsonToolbarStyle.position,
-					toolbarHeight : jsonToolbarStyle.height,
-					toolbarWidth : jsonToolbarStyle.width,
-					toolbarSpacing : jsonToolbarStyle.spacing,
-					toolbarTail : jsonToolbarStyle.tail,
-					toolbarPercFontColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonToolbarStyle.percFontColor),
+				toolbarPosition : jsonToolbarStyle.position,
+				toolbarHeight : jsonToolbarStyle.height,
+				toolbarWidth : jsonToolbarStyle.width,
+				toolbarSpacing : jsonToolbarStyle.spacing,
+				toolbarTail : jsonToolbarStyle.tail,
+				toolbarPercFontColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonToolbarStyle.percFontColor),
 
-					toolbarFontFamily : jsonToolbarStyle.fontFamily,
-					toolbarFontWeight : jsonToolbarStyle.fontWeight,
-					toolbarFontSize : jsonToolbarStyle.fontSize,
+				toolbarFontFamily : jsonToolbarStyle.fontFamily,
+				toolbarFontWeight : jsonToolbarStyle.fontWeight,
+				toolbarFontSize : jsonToolbarStyle.fontSize,
 
-					tipText : jsonTipText,
-					tipFontFamily : jsonTipStyle.fontFamily,
-					tipFontWeight : jsonTipStyle.fontWeight,
-					tipFontSize : jsonTipStyle.fontSize,
-					tipColor : Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonTipStyle.color),
-					tipWidth : jsonTipStyle.width,
+				tipText : jsonTipText,
+				tipFontFamily : jsonTipStyle.fontFamily,
+				tipFontWeight : jsonTipStyle.fontWeight,
+				tipFontSize : jsonTipStyle.fontSize,
+				tipColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color),
+				tipWidth : jsonTipStyle.width,
 
-					/**
-					 * Added for the PARALLEL chart (LIMIT tag)
-					 * (danilo.ristovski@mht.net)
-					 */
-					maxNumberOfLines : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : null,
-					serieFilterColumn : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : null,
-					orderTopMinBottomMax : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : null,
+				/**
+				 * Added for the PARALLEL chart (LIMIT tag)
+				 * (danilo.ristovski@mht.net)
+				 */
+				maxNumberOfLines : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : null,
+				serieFilterColumn : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : null,
+				orderTopMinBottomMax : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : null,
 
-					/**
-					 * Added for the PARALLEL chart (AXES_LINES tag)
-					 * (danilo.ristovski@mht.net)
-					 */
-					axisColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonParallelAxisStyle.axisColor) : null,
-					axisColNamePadd : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.axisColNamePadd : null,
-					brushColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils
-					.removeStartingHash(jsonParallelAxisStyle.brushColor) : null,
-					brushWidth : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.brushWidth : null,
+				/**
+				 * Added for the PARALLEL chart (AXES_LINES tag)
+				 * (danilo.ristovski@mht.net)
+				 */
+				axisColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.axisColor) : null,
+				axisColNamePadd : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.axisColNamePadd : null,
+				brushColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.brushColor) : null,
+				brushWidth : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.brushWidth : null,
 
-					/**
-					 * Added for the PARALLEL chart (TOOLTIP tag)
-					 * (danilo.ristovski@mht.net)
-					 */
-					parallelTooltipFontFamily : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontFamily : null,
-					parallelTooltipFontSize : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontSize : null,
-					parallelTooltipMinWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minWidth : null,
-					parallelTooltipMaxWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxWidth : null,
-					parallelTooltipMinHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minHeight : null,
-					parallelTooltipMaxHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxHeight : null,
-					parallelTooltipPadding : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.padding : null,
-					parallelTooltipBorder : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.border : null,
-					parallelTooltipBorderRadius : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.borderRadius : null,
+				/**
+				 * Added for the PARALLEL chart (TOOLTIP tag)
+				 * (danilo.ristovski@mht.net)
+				 */
+				parallelTooltipFontFamily : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontFamily : null,
+				parallelTooltipFontSize : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontSize : null,
+				parallelTooltipMinWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minWidth : null,
+				parallelTooltipMaxWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxWidth : null,
+				parallelTooltipMinHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minHeight : null,
+				parallelTooltipMaxHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxHeight : null,
+				parallelTooltipPadding : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.padding : null,
+				parallelTooltipBorder : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.border : null,
+				parallelTooltipBorderRadius : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.borderRadius : null,
 
-					/**
-					 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
-					 * (danilo.ristovski@mht.net)
-					 */
-					parallelLegendTitleFontFamily : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontFamily : null,
-					parallelLegendTitleFontSize : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontSize : null,
-					parallelLegendTitleFontWeight : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontWeight : null,
+				/**
+				 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
+				 * (danilo.ristovski@mht.net)
+				 */
+				parallelLegendTitleFontFamily : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontFamily : null,
+				parallelLegendTitleFontSize : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontSize : null,
+				parallelLegendTitleFontWeight : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontWeight : null,
 
-					/**
-					 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
-					 * (danilo.ristovski@mht.net)
-					 */
-					parallelLegendElementFontFamily : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontFamily : null,
-					parallelLegendElementFontSize : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontSize : null,
-					parallelLegendElementFontWeight : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontWeight : null,
+				/**
+				 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
+				 * (danilo.ristovski@mht.net)
+				 */
+				parallelLegendElementFontFamily : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontFamily : null,
+				parallelLegendElementFontSize : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontSize : null,
+				parallelLegendElementFontWeight : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontWeight : null,
 
-					/**
-					 * Added for the SCATTER chart
-					 * (danilo.ristovski@mht.net)
-					 */
-					scatterZoomType : (jsonScatterZoomType != null) ? jsonScatterZoomType : "",
-					scatterStartOnTick : (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : false,
-					scatterEndOnTick : (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : false,
-					scatterShowLastLabel : (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : false,
+				/**
+				 * Added for the SCATTER chart
+				 * (danilo.ristovski@mht.net)
+				 */
+				scatterZoomType : (jsonScatterZoomType != null) ? jsonScatterZoomType : "",
+				scatterStartOnTick : (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : false,
+				scatterEndOnTick : (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : false,
+				scatterShowLastLabel : (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : false,
 
-					/**
-					 * Added for the HEATMAP chart
-					 * (danilo.ristovski@mht.net)
-					 *
-					 */
-					symbolHeight : (jsonHeatmapChartSybmolHeight != null) ? jsonHeatmapChartSybmolHeight : null,
+				/**
+				 * Added for the HEATMAP chart
+				 * (danilo.ristovski@mht.net)
+				 *
+				 */
+				symbolHeight : (jsonHeatmapChartSybmolHeight != null) ? jsonHeatmapChartSybmolHeight : null,
 
-					/**
-					 * Added for the GAUGE chart. Mandatory parameters for the chart -
-					 * the document cannot be saved if these are not specified for this
-					 * chart type).
-					 * (danilo.ristovski@mht.net)
-					 */
-					startAnglePane : (jsonGaugeMinAnglePane != null) ? jsonGaugeMinAnglePane : null,
-					endAnglePane : (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : null,
+				/**
+				 * Added for the GAUGE chart. Mandatory parameters for the chart -
+				 * the document cannot be saved if these are not specified for this
+				 * chart type).
+				 * (danilo.ristovski@mht.net)
+				 */
+				startAnglePane : (jsonGaugeMinAnglePane != null) ? jsonGaugeMinAnglePane : null,
+				endAnglePane : (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : null,
 
-					gaugeMin : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : null,
-					gaugeMax : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : null,
-					gaugeLineColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : null,
-					//gaugeOffset : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
-					gaugeLineWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : null,
-					gaugeEndOnTick : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : null,
+				gaugeMin : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : null,
+				gaugeMax : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : null,
+				gaugeLineColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : null,
+				//gaugeOffset : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
+				gaugeLineWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : null,
+				gaugeEndOnTick : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : null,
 
-					gaugeTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPosition : null,
-					gaugeTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickColor : null,
-					gaugeTickPixelInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPixelInterval : null,
-					gaugeTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickWidth : null,
-					gaugeTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickLength : null,
+				gaugeTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPosition : null,
+				gaugeTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickColor : null,
+				gaugeTickPixelInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPixelInterval : null,
+				gaugeTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickWidth : null,
+				gaugeTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickLength : null,
 
-					gaugeMinorTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickColor : null,
-					gaugeMinorTickInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickInterval : null,
-					gaugeMinorTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickLength : null,
-					gaugeMinorTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : null,
-					gaugeMinorTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : null,
+				gaugeMinorTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickColor : null,
+				gaugeMinorTickInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickInterval : null,
+				gaugeMinorTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickLength : null,
+				gaugeMinorTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : null,
+				gaugeMinorTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : null,
 
-					gaugeDistance : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.distance != null) ? jsonGaugeAxesListData.LABELS.distance : null,
-					gaugeRotation : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.rotation != null) ? jsonGaugeAxesListData.LABELS.rotation : null
-				});
+				gaugeDistance : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.distance != null) ? jsonGaugeAxesListData.LABELS.distance : null,
+				gaugeRotation : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.rotation != null) ? jsonGaugeAxesListData.LABELS.rotation : null
+			});
 			
 			return cModel;
 		},
@@ -2191,59 +2044,58 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 || typeof element === 'string' || typeof element === 'number'));
 			};
 
-			var nivel = (level != undefined && typeof level === 'number') ? level
-			 : 0;
+			var innerLevel = (level != undefined && typeof level === 'number') ? 
+					level : 0;
 			var treeData = [];
 			
 			// TODO: danristo (for GAUGE: Step 1 -> Step 4 error of undefined)
 			if (data) {			
-			var keys = Object.keys(data);
-
-			for (index in keys) {
-				var key = keys[index];
-				if (Array.isArray(data[key])) {
-					var array = data[key];
-
-					for (var i = 0; i < array.length; i++) {
+				var keys = Object.keys(data);
+	
+				for (index in keys) {
+					var key = keys[index];
+					if (Array.isArray(data[key])) {
+						var array = data[key];
+	
+						for (var i = 0; i < array.length; i++) {
+							treeData.push({
+								key : key,
+								expanded : (innerLevel < 1),
+								isArray : 1,
+								children : ChartUtils.convertJsonToTreeFormat(
+									array[i],
+									innerLevel + 1),
+							});
+						}
+					} else if (isValue(data[key])) {
+						var type = 'object';
+						if (typeof data[key] === 'boolean')
+							type = 'boolean';
+						if (typeof data[key] === 'string')
+							type = 'string';
+						if (typeof data[key] === 'number')
+							type = 'number';
+	
 						treeData.push({
 							key : key,
-							expanded : (nivel < 1),
-							isArray : 1,
+							value : data[key],
+							type : type,
+							isArray : 0,
+							leaf : true
+						});
+					} else {
+						treeData.push({
+							key : key,
+							expanded : (innerLevel < 1),
+							isArray : 0,
 							children : ChartUtils.convertJsonToTreeFormat(
-								array[i],
-								nivel + 1),
+								data[key], innerLevel + 1)
 						});
 					}
-				} else if (isValue(data[key])) {
-					var type = 'object';
-					if (typeof data[key] === 'boolean')
-						type = 'boolean';
-					if (typeof data[key] === 'string')
-						type = 'string';
-					if (typeof data[key] === 'number')
-						type = 'number';
-
-					treeData.push({
-						key : key,
-						value : data[key],
-						type : type,
-						isArray : 0,
-						leaf : true
-					});
-				} else {
-					treeData.push({
-						key : key,
-						expanded : (nivel < 1),
-						isArray : 0,
-						children : ChartUtils
-						.convertJsonToTreeFormat(
-							data[key], nivel + 1)
-					});
 				}
 			}
-		}
 
-			if (nivel == 0) {
+			if (innerLevel == 0) {
 				var treeFormattedJson = {
 					expanded : true,
 					children : treeData
@@ -2319,8 +2171,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				for (i in data.children) {
 					var datum = data.children[i];
-					result[datum.key] = ChartUtils
-						.convertTreeFormatToJson(datum);
+					result[datum.key] = ChartUtils.convertTreeFormatToJson(datum);
 				}
 				return result;
 			} else if (data.children && data.children[0]

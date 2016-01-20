@@ -62,6 +62,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
         	margin: config.margin,
 			viewModel: this.viewModel
 		});
+        this.legend = legend;
+        
 		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
 			margin: config.margin,
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
@@ -248,7 +250,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 */
 		this.add(gaugePaneParameters);
 		
-		if (ChartUtils.enableLegend())
+		if (ChartUtils.isLegendEnabled())
 		{
 			this.getComponent("chartLegend").show();
 		}
@@ -257,16 +259,16 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartLegend").hide();
 		}
 		
-		if (ChartUtils.enablePalette())
+		if (ChartUtils.isPaletteEnabled())
 		{
-			this.getComponent("chartColorPallete").show();
+			this.getComponent("chartColorPalette").show();
 		}
 		else 
 		{
-			this.getComponent("chartColorPallete").hide();
+			this.getComponent("chartColorPalette").hide();
 		}	
 		
-		if (ChartUtils.enableToolbarAndTip())
+		if (ChartUtils.isToolbarAndTipEnabled())
 		{
 //			this.getComponent("chartToolbarAndTip").show();
 			this.getComponent("chartToolbar").show();
@@ -279,7 +281,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartTip").hide();
 		}
 		
-		if (ChartUtils.enableWordcloudPanel())
+		if (ChartUtils.isWordcloudPanelEnabled())
 		{
 			this.getComponent("wordcloudConfiguration").show();
 		}
@@ -288,7 +290,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("wordcloudConfiguration").hide();
 		}
 		
-		if (ChartUtils.enableParallelPanel())
+		if (ChartUtils.isParallelPanelEnabled())
 		{
 			this.getComponent("chartParallelLimit").show();
 			this.getComponent("chartParallelAxesLines").show();
@@ -305,13 +307,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartParallelLegendElement").hide();	
 		}
 		
-		if(ChartUtils.enableTooltipPanel()){
+		if(ChartUtils.isTooltipPanelEnabled()){
 			this.getComponent("chartParallelTooltip").show();
 		}else{
 			this.getComponent("chartParallelTooltip").hide();
 		}
 		
-		if (ChartUtils.enableHeatmapLegendAndTooltip())
+		if (ChartUtils.isHeatmapLegendAndTooltipEnabled())
 		{
 //			this.getComponent("chartHeatmapLegendAndTooltip").show();
 			this.getComponent("chartHeatmapLegend").show();
@@ -324,7 +326,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartHeatmapTooltip").hide();
 		}
 		
-		if (ChartUtils.enableScatterElements())
+		if (ChartUtils.isScatterElementsEnabled())
 		{
 			this.getComponent("chartScatterConfiguration").show();
 		}
@@ -333,7 +335,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartScatterConfiguration").hide();
 		}
 		
-		if (ChartUtils.enableGaugePane())
+		if (ChartUtils.isGaugePaneEnabled())
 		{
 			this.getComponent("gaugePaneConfiguration").show();
 		}

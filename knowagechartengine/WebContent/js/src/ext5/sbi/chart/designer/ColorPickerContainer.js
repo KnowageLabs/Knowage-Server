@@ -41,7 +41,7 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 			//fieldLabel : this.config.customLabel ? this.config.customLabel : LN('sbi.chartengine.configuration.color'),
 			fieldLabel: this.config.isColorMandatory ? 
 					label + Sbi.settings.chart.configurationStep.htmlForMandatoryFields : 
-						label,
+					label,
 			bind: {
 				fieldStyle : 'background-image: none; background-color: ' + this.config.fieldBind,
 			},
@@ -56,6 +56,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 				}
 			}
 		});
+		
+		this.field = field;
 		
 		/**
 		 * Important when this component is mandatory for the chart.

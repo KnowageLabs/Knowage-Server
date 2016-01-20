@@ -82,13 +82,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),    		
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
-    		hidden: ChartUtils.disableChartWidth()
+    		hidden: ChartUtils.isChartWidthDisabled()
     	};
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
     		bind : '{configModel.orientation}',    		
-    		hidden: ChartUtils.disableChartOrientation(),
+    		hidden: ChartUtils.isChartOrientationDisabled(),
     		padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields	// Danilo Ristovski
     	});
         
@@ -311,7 +311,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
  	    
  	    this.add(toolbarOpacMouseOver);
      	
-     	if (!ChartUtils.enableOpacityMouseOver()) {
+     	if (!ChartUtils.isOpacityMouseOverEnabled()) {
      		this.getComponent("opacityMouseOver").hide();
  		}     	
      	
@@ -319,7 +319,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			xtype: 'checkboxfield',
 			id: 'showLegend',
 			bind : '{configModel.showLegend}',
-			hidden: ChartUtils.disableShowLegendCheck(),	// danristo (danilo.ristovski@mht.net)
+			hidden: ChartUtils.isShowLegendDisabled(),	// danristo (danilo.ristovski@mht.net)
 				
 			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
 			layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
@@ -340,7 +340,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				xtype: 'checkboxfield',
 				id: 'showTableParallel',
 				bind : '{configModel.showTableParallel}',
-				hidden: !ChartUtils.enableParallelPanel(),	
+				hidden: !ChartUtils.isParallelPanelEnabled(),	
 					
 				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
 				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
@@ -352,7 +352,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	
     	this.add(checkboxShowTableParallel);  
     	
-    	if (!ChartUtils.enableParallelPanel())
+    	if (!ChartUtils.isParallelPanelEnabled())
 		{
     		this.getComponent("showTableParallel").hide();
 		}

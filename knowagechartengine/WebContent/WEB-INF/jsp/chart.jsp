@@ -62,7 +62,7 @@ author:
 	String isTechnicalUser;
 	List<String> includes;
 	String datasetLabel;
-	//System.out.println(ChartEngineConfig.getChartLibConf().get("sunburst").getName());
+	
 	//from cockpit
 	boolean isCockpit = false;
 	String aggregations = "";
@@ -116,11 +116,9 @@ author:
 		fromMyAnalysis = true;
 	}else{
 		if (request.getParameter("SBI_ENVIRONMENT") != null && request.getParameter("SBI_ENVIRONMENT").equalsIgnoreCase("MYANALYSIS")){
-	fromMyAnalysis = true;
+			fromMyAnalysis = true;
 		}
 	}
-	
-	
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     Map driverParamsMap = new HashMap();
@@ -224,98 +222,94 @@ author:
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
 			var parameters = {
- 						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
- 						exportWebApp: true,
- 						driverParams: '<%=driverParams%>'
+				jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+				exportWebApp: true,
+				driverParams: '<%=driverParams%>'
  			};
 			
 			chartServiceManager.run('jsonChartTemplate', parameters, [], 
-					function (response) {
-						var chartConf = response.responseText;
-						Ext.DomHelper.useDom = true; 
-						// need to use dom because otherwise an html string is composed as a string concatenation,
-				        // but, if a value contains a " character, then the html produced is not correct!!!
-				        // See source of DomHelper.append and DomHelper.overwrite methods
-				        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-				         var dh = Ext.DomHelper;
-						 var form = document.getElementById('export-chart-form');
-				          if (form === undefined || form === null) {
-					          var form = dh.append(Ext.getBody(), { 
-					        	// creating the hidden input in form
-					            id: 'export-chart-form'
-					          , tag: 'form'
-					          , method: 'post'
-					          , cls: 'export-form'					       
-					          });
-					       // creating the hidden inputs in form:
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'options'
-									, value: ''
-								});
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'content'
-									, value: '' 
-								});
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'type'
-									, value: '' 
-								});
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'width'
-									, value: ''
-								});
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'constr'
-									, value: '' 
-								});
-					          dh.append(form, {					
-									tag: 'input'
-									, type: 'hidden'
-									, name: 'async'
-									, value: ''
-								});
-				          }              				       	
-				         form.elements[0].value = chartConf;
-				         form.elements[1].value = 'options';
-				         form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
-				         form.elements[3].value = '600';
-				         form.elements[4].value = 'Chart';
-				         form.elements[5].value = 'false';
-				         form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
-				         form.target = '_blank'; // result into a new browser tab
-				         form.submit();
-				         document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
-					}					
+				function (response) {
+					var chartConf = response.responseText;
+					Ext.DomHelper.useDom = true; 
+					// need to use dom because otherwise an html string is composed as a string concatenation,
+			        // but, if a value contains a " character, then the html produced is not correct!!!
+			        // See source of DomHelper.append and DomHelper.overwrite methods
+			        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+					var dh = Ext.DomHelper;
+					var form = document.getElementById('export-chart-form');
+			        if (form === undefined || form === null) {
+			    		var form = dh.append(Ext.getBody(), { 
+				        	// creating the hidden input in form
+			            	id: 'export-chart-form'
+			          		, tag: 'form'
+			          		, method: 'post'
+			          		, cls: 'export-form'					       
+			          	});
+				       // creating the hidden inputs in form:
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'options'
+							, value: ''
+						});
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'content'
+							, value: '' 
+						});
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'type'
+							, value: '' 
+						});
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'width'
+							, value: ''
+						});
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'constr'
+							, value: '' 
+						});
+			          	dh.append(form, {					
+							tag: 'input'
+							, type: 'hidden'
+							, name: 'async'
+							, value: ''
+						});
+		          	}              				       	
+		         	form.elements[0].value = chartConf;
+		         	form.elements[1].value = 'options';
+		         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
+		         	form.elements[3].value = '600';
+		         	form.elements[4].value = 'Chart';
+		         	form.elements[5].value = 'false';
+					form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+		         	form.target = '_blank'; // result into a new browser tab
+		         	form.submit();
+		         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
+				}					
 			);
-		}
+		};
 		
 		/*  
 			Needed for the PARALLEL chart
 		*/
 		
-		function removePixelsFromFontSize(fontSize)
-		{
+		function removePixelsFromFontSize(fontSize) {
 			var indexOfPx = fontSize.indexOf('px');
 			
-			if (indexOfPx > 0)
-			{
+			if (indexOfPx > 0) {
 				return fontSize.substring(0,indexOfPx);
-			}
-			else
-			{
+			} else {
 				return fontSize;
 			}
-		}
+		};
 				
 	
  		Ext.onReady(function(){
@@ -326,10 +320,8 @@ author:
  				id: 'mainPanel',
  				width: '100%',
  			    height: '100%',
- 			   	//autoScroll: true,
-			  	//overflowX: 'scroll',
-			  	//overflowY: 'scroll',
- 			    renderTo: Ext.getBody()  
+				bodyStyle : 'background:transparent;',
+ 			    renderTo: Ext.getBody()
  			});
  			
  			var globalThis = this;
@@ -340,59 +332,49 @@ author:
  				the chart.
  				@author: danristo (danilo.ristovski@mht.net)
 			*/
- 			Ext.on
- 			(
- 				"resize",
- 				
- 				function(newWidth, newHeight)
- 				{ 	  					
- 					/*
- 						If there are chart dimension values (height and width) specified 
- 						for this chart (chart that relies on the D3 library), variable
- 						'chartConfiguration' will stay 'null', since we did not enter
- 						the part of code that specify this value (actual JSON file) that
- 						we receive from the server. This way, resize will not be applied 
- 						this chart and it will despite of resizing stay with the same 
- 						size as on the beginning (on the initial render of the chart).
- 					*/ 	 					
- 					if (chartConfiguration!=null)
-					{
- 						var chartType = chartConfiguration.chart.type.toUpperCase();
-		 				
-	 					/* 
-	 						Check if the chart (document) that we want to render (run) on the page 
-	 						usese D3 as a library for rendering.
+ 			Ext.on("resize", function(newWidth, newHeight) { 	  					
+				/*
+					If there are chart dimension values (height and width) specified 
+					for this chart (chart that relies on the D3 library), variable
+					'chartConfiguration' will stay 'null', since we did not enter
+					the part of code that specify this value (actual JSON file) that
+					we receive from the server. This way, resize will not be applied 
+					this chart and it will despite of resizing stay with the same 
+					size as on the beginning (on the initial render of the chart).
+				*/ 	 					
+				if (chartConfiguration!=null){
+					var chartType = chartConfiguration.chart.type.toUpperCase();
+	 				
+ 					/* 
+ 						Check if the chart (document) that we want to render (run) on the page 
+ 						usese D3 as a library for rendering.
+					*/
+					
+ 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
+							 					
+					if (isD3Chart) {
+ 						/* 
+ 							Set new values for the height and the width of the chart (the DIV
+ 							that contains the chart), as a consequence of a resizing the window
+ 							(panel). This will eventually affect on those chart elements that 
+ 							depend on these two parameters.
 						*/
 						
-	 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
- 							 					
- 						if (isD3Chart)
- 						{
- 	 						/* 
- 	 							Set new values for the height and the width of the chart (the DIV
- 	 							that contains the chart), as a consequence of a resizing the window
- 	 							(panel). This will eventually affect on those chart elements that 
- 	 							depend on these two parameters.
- 							*/
- 							
- 							if (isChartHeightEmpty==true)
-							{ 	
- 								chartConfiguration.chart.height = window.innerHeight-2; // sometimes is newHeight != window.innerHeight 								 								
-							}
- 	 						
- 	 						if (isChartWidthEmpty==true)
- 							{
- 								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth	 						 
- 							}				
- 	 						
- 	 						/* Re-render the chart after resizing the window (panel). */
- 	 						renderChart(chartConfiguration);
- 	 						Ext.getBody().unmask();
- 						}
+						if (isChartHeightEmpty==true) { 	
+							chartConfiguration.chart.height = window.innerHeight-2; // sometimes is newHeight != window.innerHeight 								 								
+						}
+ 						
+ 						if (isChartWidthEmpty==true) {
+							chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth	 						 
+						}				
+ 						
+ 						/* Re-render the chart after resizing the window (panel). */
+ 						renderChart(chartConfiguration);
+ 						Ext.getBody().unmask();
 					}
- 				}
- 			);
- 			
+				}
+ 			});
+ 				
  			initChartLibrary(
  					mainPanel.id, 
  					LN('sbi.chartengine.viewer.drilluptext'), 
@@ -406,7 +388,7 @@ author:
  			var thisContextNameParam = thisContextName.replace('/', '');
 			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(
- 					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId); 			
+ 					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId);
  			
  			var parameters={};
  			
@@ -419,9 +401,9 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
  				
 				var parameters = {
-						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
-						driverParams: '<%=driverParams%>',
-						jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
+					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+					driverParams: '<%=driverParams%>',
+					jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
 				};
 				//console.log(Sbi.chart.viewer.ChartTemplateContainer.metaData);
 				//console.log(<%=driverParams%>);
@@ -433,114 +415,100 @@ author:
 				});*/
  				
  			}else { 				
- 				
  				var parameters = {
- 						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
- 						driverParams: '<%=driverParams%>'
- 					};
+					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+					driverParams: '<%=driverParams%>'
+				};
  			}
- 			 			
- 					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						//console.log(response.responseText);		 					
- 						var chartConf = Ext.JSON.decode(response.responseText, true);	
- 						//console.log(chartConf);
- 						var typeChart = chartConf.chart.type.toUpperCase();
- 						 						
- 						/* 
- 							Set the initial size of the chart if the height and width are not 
- 							defined by the user (through the Designer). This is mandatory for
- 							rendering the chart. If not specified at all - error will appear.
- 							@author: danristo (danilo.ristovski@mht.net)
- 						*/
- 						var heightChart = chartConf.chart.height;
- 						var widthChart = chartConf.chart.width;
- 				 				
- 						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");		
- 						 						
- 						if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!=""))
-						{
- 							Ext.getBody().setStyle("position","absolute");
- 							Ext.getBody().setStyle("top","50%");
- 							Ext.getBody().setStyle("left","50%");
- 							Ext.getBody().setStyle("transform","translate(-50%, -50%)");
-						} 											
-							
-						/*
-							If type of the chart is one of those that rely on the D3 library
-							and dimensions of the chart that we are going to render for the
-							first time are not specified (empty), adapt size of the chart to
-							the size of the window (panel) in which it will be rendered. The
-							indicator for empty dimensions for the previous code (on.resize)
-							will be chartConfiguration=null, since we will not enter this 
-							if-statement.
-							@author: danristo (danilo.ristovski@mht.net)
-						*/
-						if (isD3Chart)
-						{	
-							if (typeChart == "PARALLEL")
- 							{
-								isChartParallel = true;
-								
-								// HEIGHT
-								parallelTableRowElements = chartConf.table.numberOfRows;
-								parallelTableRowHeight = chartConf.table.heightRow;
-								parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
-								parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
-								parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
-								parallelTablePaddingTop = chartConf.table.paddingTop;
- 								parallelTablePaddingBottom = chartConf.table.paddingBottom;
-								
-								// WIDTH
- 								parallelLegendWidth = chartConf.legend.width; 		 								
- 							}
-							
-							if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST")
-							{
-		 						if (heightChart == "")	
-		 						{
-		 							chartConf.chart.height = window.innerHeight-2;		 							
-		 							isChartHeightEmpty = true;		 							
-		 						}
-		 						else
-	 							{
-		 							isChartHeightEmpty = false;
-	 							}
-		 						
-		 						if (widthChart == "" || typeChart == "SUNBURST")	
-		 						{
-		 							chartConf.chart.width = window.innerWidth;		 							
-		 							isChartWidthEmpty = true;
-		 						}
-		 						else
-	 							{
-		 							isChartWidthEmpty = false;
-	 							}		 						
-							} 	
-							
-							chartConfiguration = chartConf;	
-	 						renderChart(chartConf);
-						} 
-						else
-						{	 						
-	 						/*
-	 							var typeChart = chartConf.chart.type.toUpperCase();	 							
-	 							(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
-	 							(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
-	 						*/
-	 						
-	 						chartConfiguration = chartConf;	
-	 						
-	 						renderChart(chartConf);
-						}				
- 						
- 						Ext.getBody().unmask();
- 					});
- 				
- 			 
+ 			
+			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+				 			 						
+				var chartConf = Ext.JSON.decode(response.responseText, true);	
+				
+				var typeChart = chartConf.chart.type.toUpperCase();
+				 						
+				/* 
+					Set the initial size of the chart if the height and width are not 
+					defined by the user (through the Designer). This is mandatory for
+					rendering the chart. If not specified at all - error will appear.
+					@author: danristo (danilo.ristovski@mht.net)
+				*/
+				var heightChart = chartConf.chart.height;
+				var widthChart = chartConf.chart.width;
+		 				
+				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");		
+				 						
+				/* 
+				if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!="")) {
+					Ext.getBody().setStyle("position","absolute");
+					Ext.getBody().setStyle("top","50%");
+					Ext.getBody().setStyle("left","50%");
+					Ext.getBody().setStyle("transform","translate(-50%, -50%)");
+				}
+				*/										
+				
+				/*
+					If type of the chart is one of those that rely on the D3 library
+					and dimensions of the chart that we are going to render for the
+					first time are not specified (empty), adapt size of the chart to
+					the size of the window (panel) in which it will be rendered. The
+					indicator for empty dimensions for the previous code (on.resize)
+					will be chartConfiguration=null, since we will not enter this 
+					if-statement.
+					@author: danristo (danilo.ristovski@mht.net)
+				*/
+				if (isD3Chart) {	
+					if (typeChart == "PARALLEL") {
+						isChartParallel = true;
+						
+						// HEIGHT
+						parallelTableRowElements = chartConf.table.numberOfRows;
+						parallelTableRowHeight = chartConf.table.heightRow;
+						parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
+						parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
+						parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
+						parallelTablePaddingTop = chartConf.table.paddingTop;
+						parallelTablePaddingBottom = chartConf.table.paddingBottom;
+						
+						// WIDTH
+						parallelLegendWidth = chartConf.legend.width; 		 								
+					}
+					
+					if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST") {
+						if (heightChart == "") {
+							chartConf.chart.height = window.innerHeight-2;		 							
+							isChartHeightEmpty = true;		 							
+						} else {
+							isChartHeightEmpty = false;
+						}
+						
+						if (widthChart == "" || typeChart == "SUNBURST") {
+							chartConf.chart.width = window.innerWidth;		 							
+							isChartWidthEmpty = true;
+						} else {
+							isChartWidthEmpty = false;
+						}		 						
+					} 	
+					
+					chartConfiguration = chartConf;	
+					renderChart(chartConf);
+					
+				} else {	 						
+					/*
+						var typeChart = chartConf.chart.type.toUpperCase();	 							
+						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
+						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
+					*/
+					
+					chartConfiguration = chartConf;	
+					renderChart(chartConf);
+				}			
+				
+				Ext.getBody().unmask();
+			});
  			
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
-
- 		  });
+	  	});
 
 	</script>
 <% } else {%>

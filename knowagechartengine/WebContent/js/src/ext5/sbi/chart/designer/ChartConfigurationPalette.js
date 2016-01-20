@@ -1,6 +1,6 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     alternateClassName: ['ChartConfigurationPalette'],
-    id: "chartColorPallete",
+    id: "chartColorPalette",
     
     /**
      * Extend the JS file with the common configuration for panels that are

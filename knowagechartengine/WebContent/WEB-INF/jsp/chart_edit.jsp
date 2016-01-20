@@ -185,13 +185,11 @@ author:
  			
  			var isCockpit = <%=isCockpit%>;
  			
-			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
+			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
-			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  // 'knowage';
+			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
 			var exporterContextName 	= 'highcharts-export-web';
  			
-			
-			
 			
  			Sbi.chart.designer.Designer.initialize(
  					sbiExecutionId, 
@@ -206,9 +204,9 @@ author:
  					thisContextName,
  					mainContextName,
  					exporterContextName
- 					);
+ 			);
  			
- 		  });
+		});
  		
  		</script>
  		

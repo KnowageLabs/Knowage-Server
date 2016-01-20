@@ -9,6 +9,10 @@ wordcloud: "d3js244"
 */
 
 var propertiesCatalogue = {
+		chartJs : {
+			CHART: {}
+		},
+		
 		highcharts414 : {
 			CHART: {
 				TITLE: {
@@ -29,8 +33,7 @@ var propertiesCatalogue = {
 			}
 		},
 
-		d3js244 : 
-		{
+		d3js244 : {
 			CHART: 
 			{
 //				height: 600,

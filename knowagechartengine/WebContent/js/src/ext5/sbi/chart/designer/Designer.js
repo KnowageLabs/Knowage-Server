@@ -146,39 +146,51 @@ Ext.define('Sbi.chart.designer.Designer', {
 			   return retTemplate;						
 		},
 				
-		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit, thisContextName, mainContextName, exporterContextName) {
+		initialize: function(sbiExecutionId, 
+				userId, 
+				hostName, 
+				serverPort, 
+				docLabel, 
+				jsonTemplate, 
+				datasetLabel, 
+				chartLibNamesConfig, 
+				isCockpit, 
+				thisContextName, 
+				mainContextName, 
+				exporterContextName) {
+			
 			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);	
 			
 			/**
 			 * Base JSON template that we will use when the new chart (document) is created
 			 */
 			var baseTemplate = {
-					CHART: {
-						type: 'BAR',
-						AXES_LIST: {
-							AXIS: [
-							       {alias:'Y', type: 'Serie'},
-							       {alias:'X', type: 'Category'}
-							       ]
-						},
-						VALUES: {
-							SERIE: []
-						},
-						COLORPALETTE: {
-							COLOR: [
-						        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
-						        {id:2 , order: 2, name: '434348', value: '434348' }, 
-						        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
-						        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
-						        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
-						        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
-						        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
-						        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
-						        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
-						        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
-					        ]
-						}
+				CHART: {
+					type: 'BAR',
+					AXES_LIST: {
+						AXIS: [
+					       {alias:'Y', type: 'Serie'},
+					       {alias:'X', type: 'Category'}
+				       ]
+					},
+					VALUES: {
+						SERIE: []
+					},
+					COLORPALETTE: {
+						COLOR: [
+					        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
+					        {id:2 , order: 2, name: '434348', value: '434348' }, 
+					        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
+					        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
+					        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
+					        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
+					        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
+					        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
+					        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
+					        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
+				        ]
 					}
+				}
 			};	
 			
 			var newChart = false;
@@ -450,7 +462,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					console.log( mainConfigurationPanel.getComponent("chartOrientationCombo"));
 					console.log(mainConfigurationPanel.getComponent("chartWidthNumberfield"));
 					console.log(mainConfigurationPanel.getComponent("opacityMouseOver"));
-					console.log(secondConfigurationPanel.getComponent("chartColorPallete"));
+					console.log(secondConfigurationPanel.getComponent("chartColorPalette"));
 					console.log(secondConfigurationPanel.getComponent("chartLegend"));
 					console.log(secondConfigurationPanel.getComponent("chartToolbar"));
 					console.log(secondConfigurationPanel.getComponent("chartTip"));
@@ -488,12 +500,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/**
 					 * The additional second configuration panel elements to show when the SUNBURST is selected.
 					 */
-					var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
+					var colorPalette = secondConfigurationPanel.getComponent("chartColorPalette");
 					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
 //					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
 					var sunburstToolbar = secondConfigurationPanel.getComponent("chartToolbar");
 					var sunburstTip = secondConfigurationPanel.getComponent("chartTip");
-					//console.log(colorPallete);
+					//console.log(colorPalette);
 					/**
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
 					 */
@@ -541,7 +553,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var isChartRadar= currentChartType == 'RADAR';
 					var isChartHeatmap = currentChartType == 'HEATMAP';	
 					var isChartChord = currentChartType == 'CHORD';	
-					var isChartGauge = currentChartType == 'GAUGE';	
+					var isChartGauge = currentChartType == 'GAUGE';
+					
+					var chartLibrary = globalThis.chartLibNamesConfig[currentChartType.toLowerCase()];
 					
 					/**
 					 * Show/hide the legend check box (show/hide the legend) on the 
@@ -575,10 +589,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Show/hide the orientation combo box on the main configuration panel
 					 * on the Step 2 tab of the Designer page.
 					 */
-					if (isChartSunburst || isChartWordCloud || isChartTreemap 
+					if ((isChartSunburst || isChartWordCloud || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge 
 								|| isChartChord || isChartPie || isChartRadar 
-									|| isChartScatter) {
+									|| isChartScatter)
+							|| chartLibrary == 'chartJs'){
 						//console.log(chartOrientation);
 						chartOrientation.hide();
 					} else {
@@ -616,11 +631,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Step 2 tab of the Designer page.
 					 */					
 					if (isChartWordCloud || isChartGauge) {	
-						//console.log(colorPallete);
-						colorPallete.hide();
+						//console.log(colorPalette);
+						colorPalette.hide();
 					} else {
-						//console.log(colorPallete);
-						colorPallete.show();
+						//console.log(colorPalette);
+						colorPalette.show();
 					}
 					
 					/**
@@ -802,10 +817,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */						
 					var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
-					//Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
+					//Ext.getCmp("chartColorPalette").fireEvent("chartTypeChanged",numberOfColors);
 					
-					Ext.getCmp("chartColorPallete").height = (numberOfColors+1)*20+65;
-					Ext.getCmp("chartColorPallete").update();
+					Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;
+					Ext.getCmp("chartColorPalette").update();
 					
 					/**
 					 * Update (refresh) the main configuration panel (the one on the top of 
@@ -1315,10 +1330,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */	
 							var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
-							Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged", numberOfColors);
-							Ext.getCmp("chartColorPallete").height = (numberOfColors+1)*20+65;
+							Ext.getCmp("chartColorPalette").fireEvent("chartTypeChanged", numberOfColors);
+							Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;
 														
-							Ext.getCmp("chartColorPallete").update();
+							Ext.getCmp("chartColorPalette").update();
 							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
@@ -1540,7 +1555,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   						 */
   						drop: function(node, data, dropRec, dropPosition)
-  						{						
+  						{
   							var numCategItemsInContainer = this.store.data.length;
   							var containersInitHeight = this.ownerCt.minHeight;  
   							
@@ -1741,7 +1756,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	xtype: 'textfield',
 				    	id: 'textfieldAxisTitle',
 						flex: 10,
-						hidden: false, // *_*
+						hidden: Sbi.chart.designer.ChartUtils.isBottomAxisTextFieldDisabled(), // *_*
 						allowBlank:  true,
 			            emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						selectOnFocus: true,
@@ -1814,7 +1829,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						height: 22,		// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
 					    id: "stylePopupBottomPanel", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					    hidden: false, // *_*
+					    hidden: Sbi.chart.designer.ChartUtils.isBottomAxisStyleButtonDisabled(), // *_*
 					    //flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -2349,7 +2364,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				else
 				{
-					for (var i=0; i<category.length; i++) {	
+					for (var i=0; i < category.length; i++) {	
 						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 							axisName: category[i].name ? category[i].name: category[i].column,
 							axisType: 'ATTRIBUTE', 
@@ -2399,7 +2414,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						categoriesStore.add(newCat);
 					});
 				}
-			}	
+			}
 			
 			/**
 			 * When all categories are loaded into the categories container
@@ -2444,13 +2459,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var hideGearTool = false;
 						var hidePlusGear = false;
 						
-						if (chartType == "SUNBURST" || chartType == "PARALLEL" ||
-								chartType == "WORDCLOUD" || chartType == "TREEMAP"
-									|| chartType == "CHORD" || chartType == "PIE" || chartType == "RADAR"
-										||chartType == "SCATTER" || chartType == "HEATMAP" || chartType=="GAUGE") {
+						if ( Sbi.chart.designer.ChartUtils.isChartColumnsContainerPlusGearDisabled() ) {
 							
-							if (chartType != "RADAR" && chartType != "HEATMAP" && chartType != "SCATTER" && chartType!="GAUGE")
-							{										
+							if (chartType != "RADAR" 
+								&& chartType != "HEATMAP" 
+									&& chartType != "SCATTER" 
+										&& chartType!="GAUGE") {										
+								
 								hideAxisTitleTextbox = true;
 								
 								if (chartType != "CHORD" && chartType != "PARALLEL")
@@ -2466,11 +2481,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var config = {
 							"idAxisesContainer":leftYAxisesPanel.id , 
 							"id": '', 
-							"panelWhereAddSeries":panelWhereAddSeries, 
-							"isDestructible":isDestructible, 
-							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
-							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-							"axis":axis, 
+							"panelWhereAddSeries": panelWhereAddSeries, 
+							"isDestructible": isDestructible, 
+							"dragGroup": Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+							"dropGroup": Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+							"axis": axis, 
 							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
 							"gearHidden":hideGearTool, 
 							"plusHidden":hidePlusGear,
@@ -2676,6 +2691,22 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 			
+			//Workaround for color picker resets
+			if(this.cModel.get('backgroundColor').trim() == '') {
+				this.cModel.set('backgroundColor', 'transparent');
+			};
+			if(this.cModel.get('legendColor').trim() == '') {
+				this.cModel.set('legendColor', 'transparent');
+			};
+			
+			if(this.cModel.get('legendBackgroundColor').trim() == '') {
+				this.cModel.set('legendBackgroundColor', 'transparent');
+			};
+			
+			if(this.cModel.get('legendTitleColor').trim() == '') {
+				this.cModel.set('legendTitleColor', 'transparent');
+			};
+			
 			this.cViewModel.setData({
 				configModel: this.cModel
 			});
@@ -2709,7 +2740,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
     		chartType = chartType.toLowerCase();
 			var library = this.chartLibNamesConfig[chartType];
-			var catalogue = propertiesCatalogue[library];
+			var catalogue = propertiesCatalogue[library] || {};
 			
 //			console.log("+++++++++");
 //			console.log(library);
@@ -4105,7 +4136,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * STEP 2 -> Palette panel
 				 */
-//				var itemsIncolorPalette = Ext.getCmp("chartColorPallete").paletteGrid.getStore().data.length;
+//				var itemsIncolorPalette = Ext.getCmp("chartColorPalette").paletteGrid.getStore().data.length;
 //				
 //				(itemsIncolorPalette < 2) ? 
 //						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	

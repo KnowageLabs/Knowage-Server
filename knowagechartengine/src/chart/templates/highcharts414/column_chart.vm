@@ -20,11 +20,6 @@
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
 
-/*
- $ crossNavigation:
- $crossNavigation
-*/
-
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
 #set($seriesMap = {}) ## conversion series metadata to map object
@@ -548,7 +543,7 @@
         }
     },*#
 
-    ## Axises selection
+    ## Axes selection
     #set($axisList = $chart.AXES_LIST.AXIS)
 
     #set($xAxisList = {}) ## X Axises list container
@@ -577,7 +572,7 @@
 	#end
 	
     xAxis:
-	 #foreach($xAxisKey in $xAxisList.keySet())
+	#foreach($xAxisKey in $xAxisList.keySet())
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	 
 	{
@@ -823,7 +818,7 @@
 		#if($relatedSerie.type)
 			#set($relatedSerieType = $relatedSerie.type)
 		#end
-		#if($relatedSerieType != '')		
+		#if($relatedSerieType != '')
 			#if($relatedSerieType == 'bar')
 				#set($relatedSerieType = 'column')
 			#end		
@@ -1069,7 +1064,7 @@
         	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
         	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
         	       	
-        	/*
+        	#*
         		======================================================
         		START: Part of the code that creates the template particular
         		serie item depending on the method used for structuring the
@@ -1078,14 +1073,14 @@
 					    		
 	    		Danilo Ristovski
         		======================================================
-        	*/
+        	*#
         	       	
-        	/*
+        	#*
         		Depending on font style chosen by the user for the serie tooltip
         		we will specify respective CSS attribute so it can be taken by the
         		tooltip.
         		@author: danristo (danilo.ristovski@mht.net)
-        	*/
+        	*#
         	var tooltipFontStyle = "";
         	
         	if (ttFontWeight == " underline")
@@ -1105,7 +1100,7 @@
         		tooltipFontStyle = "font-weight: normal;";
         	}
 	        
-	        /*
+	        #*
         		The user is free to choose between two modalities for displaying the
         		serie value: 
         		
@@ -1117,9 +1112,9 @@
         					(b) prefix + {point.y:.(some not negative number)f} + postfix
         					
         		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/        	
+        	*#        	
         	
-        	/*
+        	#*
         		=============================
         		CASE: Precision is specified
         		=============================
@@ -1129,12 +1124,12 @@
         		is over the particular serie. 
         		
         		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
+        	*#
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
         	
-        	/*
+        	#*
         		=============================
         		CASE: Format is specified
         		=============================
@@ -1146,37 +1141,37 @@
         		with expected results.
         		
         		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)        		
-        	*/
+        	*#
         	var format = this.series.tooltipOptions.format ? this.series.tooltipOptions.format : '';
         	
-        	/*
+        	#*
         		String that will contain which of two modalities the chart is 
         		going to parse and render afterwards: format or precision.
-        	*/  
+        	*#  
         	var formatOrPrecisionFinal = "";
         	
-        	/*
+        	#*
         		Indicator of drilling. If we entered drilling a specific logic
         		should be implemented, since we are lacking of necessary data,
         		in particular of the name of the initial item (category) from
         		which we started drilling.
-        	*/  
+        	*#  
         	var drilling = false;
         	 
-    	 	/*
+    	 	#*
     	 		If there is/was drilling (if we entered some inner layers).
-    	 	*/	        	
+    	 	*#	        	
         	if (this.series.chart.drilldownLevels && this.series.chart.drilldownLevels.length > 0)
         	{
-        		/*
+        		#*
         			All main (root) items (categories) that we had on the initial
         			(first, zeroth) level of the chart.
-        		*/
+        		*#
         		var allMainCategories = this.series.chart.drilldownLevels[0].seriesOptions.data;
         		
-        		/*
+        		#*
         			The name of the root item from which we started drilling.
-        		*/
+        		*#
         		var root = undefined;
         		
         		if (this.series.chart.drilldownLevels.length == 1 || this.series.chart.drilldownLevels.length == 2)
@@ -1188,11 +1183,11 @@
     				root = this.series.chart.drilldownLevels[1].seriesOptions.name;
     			}
         		
-        		/*
+        		#*
         			Find the object that contains property "name" with the value
         			of the "root" variable, so we can extract "dataLabels" property
         			that contains the "format" property.        			
-        		*/
+        		*#
         		var resultY = allMainCategories.filter
         		(
         			function(obj) 
@@ -1207,57 +1202,57 @@
         			drilling = true;
         		}
         		
-        		/*
+        		#*
         			Since we do not have information about the precision, prefix
         			and postfix for current serie, we can take the "format" value
         			because it is created basing on those three values.
-        		*/
+        		*#
         		formatOrPrecisionFinal = "format";
         	}       
         	else
         	{
-        		/*
+        		#*
         			If we are not drilling (we are on the initial (root) level of 
         			the chart) take information about the actual modality of 
         			displaying serie item.
-        		*/
+        		*#
         		formatOrPrecisionFinal = this.series.tooltipOptions.serieFormatOrPrecision.toLowerCase();
         	} 	
         	
-        	/*
+        	#*
         		If the actual modality is format and the format is an empty string,
         		set the default (by the Highcharts library) format so the code can
         		be executed without problem.
-        	*/
+        	*#
         	if ( (formatOrPrecisionFinal == "format" && format=="") || 
         			(formatOrPrecisionFinal == "precision" && this.series.tooltipOptions.valueDecimal == "") )
         	{
         		format = "{y}";
         	}
         	
-        	/*
+        	#*
         		The value of the serie that is hovered by the mouse.
-        	*/
+        	*#
         	var thisValue = this.y;
         	
-        	/*
+        	#*
         		Starting construction of the expression that is expected for the format
         		for the value of the serie. There are two possible constructions.
         		
         		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
+        	*#
         	var onlyYString = "y";
         	var onlyPointYString = "point.y";
         	var yString = "y:";
         	var pointYString = "point.y:";
         	
-        	/*
+        	#*
         		The starting and ending index of the expression of the format that is
         		first detected (if there is more than one expression) in the format string.
         		This is extracted for both possible constructions for the format separately. 
         		
         		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)        		
-        	*/
+        	*#
         	var yValueOnlyIndexStart = format.indexOf("{" + onlyYString);
         	var yValueOnlyIndexEnd = format.indexOf("}"); 
         	var pointYValueOnlyIndexStart = format.indexOf("{" + onlyPointYString);
@@ -1276,71 +1271,71 @@
         	var pointYValue = "";
         	var yValue = "";
         	
-        	/*
+        	#*
         		Predefined decimal point and separator of thousands values in the
         		Highcharts library.
         		
         		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
+        	*#
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
     			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
         
-        	/*
+        	#*
         		This is the way to inspect if there is more than one expression inside the
         		format string for the serie item.
         		
         		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-        	*/
+        	*#
         	//var numberOfDiffPointYFormats = (format.match(new RegExp("{"+pointYString, "g")) || []).length;
         	//var numberOfDiffYFormats = (format.match(new RegExp("{"+yString, "g")) || []).length;        
 			//console.log(format.match(new RegExp("{point.y:.([0-9]|[0-2][0-9]$)f", "g")));
-			/*
+			#*
 				If the starting part of the construction of the expression within the format 
 				of the serie's tooltip is specified via the "point.y:".
 				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-			*/
+			*#
 			if (pointYValueIndexStart >= 0)
         	{
-        		/*
+        		#*
         			Take the whole expression within the format.
-        		*/
+        		*#
         		pointYValue = format.substring(pointYValueIndexStart, pointYValueIndexEnd+1);
         		
-        		/*
+        		#*
         			Take the pure content of the expression - the format itself.
-        		*/
+        		*#
         		var formatPure = pointYValue.substring(pointYString.length+1,pointYValue.length-1); 
         		
-        		/*
+        		#*
         			Extract the precision (number of decimal points) from this string.
-        		*/
+        		*#
         		if(formatPure.indexOf(decimalPoint)>=0 && formatPure.indexOf("f")>=0)
         		{
         			precision = formatPure.substring(formatPure.indexOf(decimalPoint)+1,formatPure.indexOf("f"));
         		}
         		
-        		/*
+        		#*
         			Inspect if there is thousands separator within the expression.
-        		*/
+        		*#
         		if(formatPure.indexOf(thousandsSep)>=0)
         		{
         			separatorOfThousands = thousandsSep;
         		}
         		
-        		/*
+        		#*
         			Extract the prefix text and the postfix text from the whole format string.
-        		*/
+        		*#
         		prefixText = format.substring(0,pointYValueIndexStart);
         		postfixText = format.substring(pointYValueIndexEnd+1,format.length);
         	}
         	
-        	/*
+        	#*
 				If the starting part of the construction of the expression within the format 
 				of the serie's tooltip is specified via the "y:".
 				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-			*/
+			*#
         	else if (yValueIndexStart >= 0)
         	{
         		yValue = format.substring(yValueIndexStart, yValueIndexEnd+1);
@@ -1365,7 +1360,8 @@
         	{
         		//yValue = format.substring(yValueOnlyIndexStart, yValueOnlyIndexEnd+1);
         		
-        		/*var formatPure = yValue.substring(yString.length+1,yValue.length-1);     
+        		#*
+        		var formatPure = yValue.substring(yString.length+1,yValue.length-1);     
         		
         		if(formatPure.indexOf(decimalPoint)>=0 && formatPure.indexOf("f")>=0)
         		{
@@ -1375,7 +1371,8 @@
         		if(formatPure.indexOf(thousandsSep)>=0)
         		{
         			separatorOfThousands = thousandsSep;
-        		}*/
+        		}
+        		*#
         		
         		prefixText = format.substring(0,yValueOnlyIndexStart);
         		postfixText = format.substring(yValueOnlyIndexEnd+1,format.length);
@@ -1386,21 +1383,21 @@
         		prefixText = format.substring(0,pointYValueOnlyIndexStart);
         		postfixText = format.substring(pointYValueOnlyIndexEnd+1,format.length);
         	}
-        	/*
+        	#*
         		There is no expression for serie (y, y:, point.y)
-        	*/
+        	*#
         	else
         	{
         		prefixText = format.substring(0,format.length);
         		postfixText = "";
         	}
         	
-        	/*
+        	#*
         		Construct the final string for the serie tooltip depending on the user's 
         		choice on the modality of the display of the serie value in the tolltip - 
         		whether it is the Format or Precision (plus prefix/postfix). The if-part
         		is handling the case when the "Precision" is used.
-        	*/          	
+        	*#          	
         	if (formatOrPrecisionFinal == "precision" && !drilling)
         	{
 	        	if(valueDecimals > -1 ) 
@@ -1412,11 +1409,11 @@
         	}
         	else if (formatOrPrecisionFinal == "format" || drilling)
         	{    
-    			/*
+    			#*
     				In those three cases we are dealing with the pure serie value (without any
     				kind of formatting, since this is the default behavior within the Highcharts
     				library.
-    			*/
+    			*#
     			if ( format != "" 
     					&& format != ("{" + onlyYString + "}") 
     							&& format != ("{" + onlyPointYString + "}") )
@@ -1446,7 +1443,7 @@
     			}
         	}
         	
-        	/*
+        	#*
         		======================================================
         		END: Part of the code that creates the template particular
         		serie item depending on the method used for structuring the
@@ -1455,23 +1452,23 @@
 					    		
 	    		Danilo Ristovski
         		======================================================
-        	*/
+        	*#
         	
-        	/*
+        	#*
         		Separate font elements (family, size and weight (style)) so the tooltip
         		font characteristics can be separately (independently) specified by the user.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
-        	*/
+        	*#
             var result = 
             	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + " font-family: " + ttFont + "; "
             					+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
             
-            /*
+            #*
         		Removed bold font style (weight) as default one for the serie value, since
         		style of the fonts on the tooltip will be the same for every single font
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
-        	*/
+        	*#
             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
             return result;
         }

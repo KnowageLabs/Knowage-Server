@@ -63,9 +63,13 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
     // The fields
     defaultType: 'textfield',
 	constructor: function(config) {
+		var LABEL_WIDTH = 115;
+		
 		this.callParent(config);		
 		
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+		var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
+		
 		store = config.store,
 		
 		rowIndex = config.rowIndex;
@@ -76,7 +80,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			title: LN('sbi.chartengine.designer.series'),
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
-				labelWidth : 115
+				labelWidth : LABEL_WIDTH
 			},
 			layout: 'anchor',
 			items : []
@@ -87,70 +91,52 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			title: LN('sbi.chartengine.designer.tooltip'),
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
-				labelWidth : 115,
+				labelWidth : LABEL_WIDTH,
 			},
+			hidden : ChartUtils.isSerieTooltipConfigurationDisabled(),
 			layout: 'anchor',
 			items : []
 		});
-		
-		/**
-		 * Name of the current chart type.
-		 * (danilo.ristovski@mht.net)
-		 */		
-		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		
 		/**
 		 * Additional elements and functionalities inside the Serie style popup window
 		 * for the GAUGE chart type.
 		 * (danilo.ristovski@mht.net)
 		 */
-		if (chartType == "GAUGE")
-		{
+		if (chartType == "GAUGE") {
 			/**
 			 * DIAL field set for the GAUGE chart type
 			 */
-			this.dialFieldSet = Ext.create
-			(
-				'Ext.form.FieldSet', 
+			this.dialFieldSet = Ext.create('Ext.form.FieldSet', {
+				collapsible: true,
+				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
 				
-				{
-					collapsible: true,
-					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
-					
-					defaults: 
-					{
-						anchor: '100%',
-						labelAlign : 'left',
-						labelWidth : 115,
-					},
-					
-					layout: 'anchor',
-					items : []
-				}
-			);
+				defaults: {
+					anchor: '100%',
+					labelAlign : 'left',
+					labelWidth : LABEL_WIDTH,
+				},
+				
+				layout: 'anchor',
+				items : []
+			});
 			
 			/**
 			 * DATA_LABELS field set for the GAUGE chart type
 			 */
-			this.dataLabelsFieldSet = Ext.create
-			(
-				'Ext.form.FieldSet', 
+			this.dataLabelsFieldSet = Ext.create('Ext.form.FieldSet', {
+				collapsible: true,
+				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
 				
-				{
-					collapsible: true,
-					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
-					
-					defaults: 
-					{
-						anchor: '100%',
-						labelAlign : 'left',
-						labelWidth : 115,
-					},
-					
-					layout: 'anchor',
-					items : []
-				}
-			);
+				defaults: {
+					anchor: '100%',
+					labelAlign : 'left',
+					labelWidth : LABEL_WIDTH,
+				},
+				
+				layout: 'anchor',
+				items : []
+			});
 		
 			/**
 			 * Variables (GUI elements) for the DIAL and DATA LABELS of the GAUGE chart
@@ -172,7 +158,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 						fieldStyle : (backgroundColorDial && backgroundColorDial.trim() != '') ? 
 							'background-image: none; background-color: ' + backgroundColorDial.trim() : '',
 						fieldLabel : LN('sbi.chartengine.designer.color'),
-						labelWidth : 115,
+						labelWidth : LABEL_WIDTH,
 						readOnly : true,
 						flex: 15,
 						
@@ -238,7 +224,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 						fieldStyle : (colorDataLabels && colorDataLabels.trim() != '') ? 
 							'background-image: none; background-color: ' + colorDataLabels.trim() : '',
 						fieldLabel : LN('sbi.chartengine.designer.color'),
-						labelWidth : 115,
+						labelWidth : LABEL_WIDTH,
 						readOnly : true,
 						flex: 15,
 						
@@ -343,9 +329,14 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * Y-axis panel(s)
 		 * (danilo.ristovski@mht.net)
 		 */
-		if (chartType == "CHORD" || chartType == "GAUGE" || chartType == "PIE" 
-				|| chartType == "RADAR" || chartType == "SCATTER" || chartType=="WORDCLOUD")
-		{
+		if ((chartType == "CHORD"
+			|| chartType == "GAUGE" 
+				|| chartType == "PIE" 
+					|| chartType == "RADAR" 
+						|| chartType == "SCATTER"
+							|| chartType=="WORDCLOUD")
+				||(chartLibrary == 'chartJs')){
+		
 			this.serieTypesComboBox.hide();
 		}	
 		
@@ -383,7 +374,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 					fieldStyle : (serieColor && serieColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieColor.trim() : '',
 					fieldLabel : LN('sbi.chartengine.designer.color'),
-					labelWidth : 115,
+					labelWidth : LABEL_WIDTH,
 					readOnly : true,
 					flex: 15,
 					
@@ -433,6 +424,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showValue != undefined) ? showValue: true,
 			labelSeparator: '',
+			hidden: (chartLibrary == 'chartJs' || chartType == 'PIE' || chartType == 'WORDCLOUD'),
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});		
 
@@ -440,6 +432,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowAbsValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showAbsValue != undefined) ? showAbsValue: true,
 			labelSeparator: '',
+			hidden: (chartLibrary == 'chartJs' || chartType != 'PIE'),
 			fieldLabel: LN('sbi.chartengine.designer.showAbsValue'),
 		});		
         
@@ -447,6 +440,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowPercentage = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showPercentage != undefined) ? showPercentage: true,
 			labelSeparator: '',
+			hidden: (chartType != 'PIE' || chartType == "WORDCLOUD"),
 			fieldLabel: LN('sbi.chartengine.designer.showPercentage'),
 		});		
 
@@ -455,21 +449,19 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieFieldSet.add(this.serieShowAbsValue);
 		this.serieFieldSet.add(this.serieShowPercentage);
 		
-		if(chartType=="PIE"){
-			this.serieShowAbsValue.show();
-			this.serieShowPercentage.show();
-			this.serieShowValue.hide();
-		}else if(chartType=="WORDCLOUD"){
-			this.serieShowAbsValue.hide();
-			this.serieShowPercentage.hide();
-			this.serieShowValue.hide();
-
-		}else{
-			this.serieShowAbsValue.hide();
-			this.serieShowPercentage.hide();
-			this.serieShowValue.show();
-		}
-		
+//		if(chartType=="PIE"){
+//			this.serieShowAbsValue.show();
+//			this.serieShowPercentage.show();
+//			this.serieShowValue.hide();
+//		}else if(chartType=="WORDCLOUD"){
+//			this.serieShowAbsValue.hide();
+//			this.serieShowPercentage.hide();
+//			this.serieShowValue.hide();
+//		}else{
+//			this.serieShowAbsValue.hide();
+//			this.serieShowPercentage.hide();
+//			this.serieShowValue.show();
+//		}
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
@@ -488,6 +480,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			id: "seriePrefixCharTextField",
 			name: 'name',
 			value: (prefixChar && prefixChar.trim() != '') ? prefixChar.trim() : '',
+			hidden: (chartLibrary == 'chartJs'),
 			fieldLabel: LN('sbi.chartengine.designer.prefixtext'),
 			selectOnFocus: true,
 			allowBlank: true,
@@ -500,6 +493,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			id: "seriePostfixCharTextField",
 			name: 'name',
 			value: (postfixChar && postfixChar.trim() != '') ? postfixChar.trim() : '',
+			hidden: (chartLibrary == 'chartJs'),
 			fieldLabel: LN('sbi.chartengine.designer.postfixtext'),
 			selectOnFocus: true,
 			allowBlank: true,
@@ -547,99 +541,92 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * of displaying the serie item: format or precision.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		this.serieFormatOrPrecision = Ext.create
-		(
-			{
-				xtype: "combobox",
-				fieldLabel: "Precision or format",	// TODO: LN(),
+		this.serieFormatOrPrecision = Ext.create('Ext.form.ComboBox', {
+//			xtype: "combobox",
+			fieldLabel: "Precision or format", // TODO: LN(),
+			
+			store: {
+				fields: ["name","value"],
 				
-				store:
-				{
-					fields: ["name","value"],
+				data: [{
+			 		name: "Precision", // TODO: LN(),
+			 		value: "precision"
+			 	}, {
+			 		name: "Format", // TODO: LN(),
+			 		value: "format"
+			 	}]
+			},
+			
+			value: (serieFormatOrPrecision) ? serieFormatOrPrecision : "format",
+			valueField: 'value',
+			displayField: 'name',
+			editable: false,
+			emptyText: "Choose between precision and format",	// TODO: LN()
+			
+			listeners: {
+				change: function(combo,value,b) {	
+					globalScope.seriePrecisionNumberField.setValue("");
+					globalScope.seriePrefixCharTextField.setValue("");
+					globalScope.seriePostfixCharTextField.setValue("");
+					globalScope.serieFormatTextField.setValue("");
 					
-					data: 
-					[
-					 	{
-					 		name: "Precision",
-					 		value: "precision"
-					 	},
-					 	
-					 	{
-					 		name: "Format",
-					 		value: "format"
-					 	}
-					 ]
-				},
-				
-				value: (serieFormatOrPrecision) ? serieFormatOrPrecision : "format",
-				valueField: 'value',
-				displayField: 'name',
-				editable: false,
-				emptyText: "Choose between precision and format",	// TODO: LN()
-				
-				listeners:
-				{
-					change: function(combo,value,b)
-					{	
-						globalScope.seriePrecisionNumberField.setValue("");
-						globalScope.seriePrefixCharTextField.setValue("");
-						globalScope.seriePostfixCharTextField.setValue("");
-						globalScope.serieFormatTextField.setValue("");
-						
-						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
-						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
-						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);						
-						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
-						
-						if (value.toLowerCase() == "precision")
-						{
-							Ext.getCmp("serieFormatTextField").hide();
-							Ext.getCmp("seriePrecisionNumberField").show();
-							Ext.getCmp("seriePrefixCharTextField").show();							
-							Ext.getCmp("seriePostfixCharTextField").show();
-						}
-						
-						if (value.toLowerCase() == "format")
-						{
-							Ext.getCmp("seriePrecisionNumberField").hide();
-							Ext.getCmp("seriePrefixCharTextField").hide();							
-							Ext.getCmp("seriePostfixCharTextField").hide();
-							Ext.getCmp("serieFormatTextField").show();
-						}	
-						
-					},
+					globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+					globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+					globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);						
+					globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
 					
-					/**
-					 * This will run when the popup is opened.
-					 */
-					render: function(combo)
-					{
-						var value = combo.getValue();
-						
-						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
-						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
-						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);
-						
-						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
-						
-						if (value.toLowerCase() == "precision")
-						{
-							Ext.getCmp("serieFormatTextField").hide();
-						}
-						
-						if (value.toLowerCase() == "format")
-						{
-							Ext.getCmp("seriePrecisionNumberField").hide();
-							Ext.getCmp("seriePrefixCharTextField").hide();							
-							Ext.getCmp("seriePostfixCharTextField").hide();
-						}	
+					if (value.toLowerCase() == "precision") {
+						Ext.getCmp("serieFormatTextField").hide();
+						Ext.getCmp("seriePrecisionNumberField").show();
+						Ext.getCmp("seriePrefixCharTextField").show();							
+						Ext.getCmp("seriePostfixCharTextField").show();
 					}
 					
+					if (value.toLowerCase() == "format") {
+						Ext.getCmp("seriePrecisionNumberField").hide();
+						Ext.getCmp("seriePrefixCharTextField").hide();							
+						Ext.getCmp("seriePostfixCharTextField").hide();
+						Ext.getCmp("serieFormatTextField").show();
+					}	
+				},
+				
+				/**
+				 * This will run when the popup is opened.
+				 */
+				render: function(combo) {
+					var value = combo.getValue();
+					
+					globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+					globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+					globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);
+					
+					globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
+					
+					if (value.toLowerCase() == "precision") {
+						Ext.getCmp("serieFormatTextField").hide();
+					}
+					
+					if (value.toLowerCase() == "format") {
+						Ext.getCmp("seriePrecisionNumberField").hide();
+						Ext.getCmp("seriePrefixCharTextField").hide();							
+						Ext.getCmp("seriePostfixCharTextField").hide();
+					}	
 				}
 			}
-		);
+		});
 		
 		this.serieFieldSet.add(this.serieFormatOrPrecision);
+		
+		if(chartLibrary == 'chartJs') {
+			this.serieFormatOrPrecision.setValue("precision");
+			this.serieFormatOrPrecision.setDisabled(true);
+			
+			globalScope.seriePrefixCharTextField.setValue("");
+			globalScope.seriePostfixCharTextField.setValue("");
+			
+			globalScope.seriePrefixCharTextField.hide();
+			globalScope.seriePostfixCharTextField.hide();
+		}
 		
 //		if (chartType == "GAUGE")
 //		{
@@ -675,7 +662,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
                     fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
-					labelWidth : 115,
+					labelWidth : LABEL_WIDTH,
                     readOnly : true,
 					flex: 15,
 				
@@ -716,7 +703,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
 					fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
-					labelWidth : 115,
+					labelWidth : LABEL_WIDTH,
                     readOnly : true,
 					flex: 15,
 				
@@ -779,9 +766,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
 		
-		if(chartType=="WORDCLOUD"){
-		  this.tooltipFieldSet.hide();	
-		}
+//		if(chartType=="WORDCLOUD"){
+//		  this.tooltipFieldSet.hide();	
+//		}
 		
 		if (chartType == "GAUGE")
 		{

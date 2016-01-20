@@ -179,51 +179,58 @@ Ext.define
 			/* ------------------------------------------- */
 			/* ---------- BOTTOM (X) AXIS PANEL ---------- */
 			/* ------------------------------------------- */
-//			console.log("===");
+
 			// Show the gear tool on the toolbar of the bottom (X) axis panel
 			this.stylePopupBottomPanel = Ext.getCmp("stylePopupBottomPanel");
 //			console.log("===");
 			// Show the textfield dedicated for the title of the bottom (X) axis
 			this.textfieldAxisTitle = Ext.getCmp("textfieldAxisTitle");
-//			console.log("===");
+
 			/* ----------------------------------------- */
 			/* ---------- LEFT (Y) AXIS PANEL ---------- */
 			/* ----------------------------------------- */
 			
 			var leftContainerId = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id;
-//			console.log("===");
+			
 			// Show the gear tool on the toolbar of the left (Y) axis panel
 			this.stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_" + leftContainerId);
-//			console.log("===");
+
 			// Show the textfield dedicated for the title of the left (Y) axis
 			this.titleTextfield = Ext.getCmp(leftContainerId + "_TitleTextfield");
-//			console.log("===");
+
 			// Show the plus tool on the toolbar of the left (Y) axis panel		
 			this.plusLeftAxis = Ext.getCmp("plusLeftAxis_" + leftContainerId);
-//			console.log("===");
+
 			// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
 			this.actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_" + leftContainerId);
-//			console.log("===");	
-			this.stylePopupBottomPanel.show();		
-			this.textfieldAxisTitle.show();			
+			
+			if(Sbi.chart.designer.ChartUtils.isBottomAxisStyleButtonDisabled()) {
+				this.stylePopupBottomPanel.hide();
+			} else {
+				this.stylePopupBottomPanel.show();		
+			}
+				
+			if(Sbi.chart.designer.ChartUtils.isBottomAxisTextFieldDisabled()) {
+				this.textfieldAxisTitle.hide();
+			} else {
+				this.textfieldAxisTitle.show();
+			}
 			this.stylePopupLeftAxis.show();						
 			this.plusLeftAxis.show();				
 			this.titleTextfield.show();	
-//			console.log("===");
-			//console.log(leftContainerId);
 			
 			this.actionColumnLeftAxis.items[0].iconCls = "";
-//			console.log("===");
 		},
 		
 		/**
 		 * @param dataJustLoaded - If the data for the chart is just loaded
 		 */
-		customizeStep1AndStep2: function(newlySelectedType,previousChartType)
-		{			
+		customizeStep1AndStep2: function(newlySelectedType,previousChartType) {			
 			var globalScope = this;	
 						
 			var iconsPath = this.getChartTypesIcons();
+			
+			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[newlySelectedType.toLowerCase()];
 			
 			/**
 			 * Remove the icon in the chart type combo box when changing between two types
@@ -380,10 +387,10 @@ Ext.define
 								 * the case of PIE chart.
 								 * @author: danristo (danilo.ristovski@mht.net)
 								 */
-								if (newlySelectedType.toLowerCase()=="sunburst" || newlySelectedType.toLowerCase()=="wordcloud" || 
-										newlySelectedType.toLowerCase()=="treemap" || newlySelectedType.toLowerCase()=="parallel" ||
-										newlySelectedType.toLowerCase()=="heatmap" || newlySelectedType.toLowerCase()=="chord" || 
-											newlySelectedType.toLowerCase()=="pie") {
+								if (newlySelectedType.toLowerCase() == "sunburst" || newlySelectedType.toLowerCase() == "wordcloud" || 
+										newlySelectedType.toLowerCase() == "treemap" || newlySelectedType.toLowerCase() == "parallel" ||
+											newlySelectedType.toLowerCase() == "heatmap" || newlySelectedType.toLowerCase() == "chord" || 
+												newlySelectedType.toLowerCase() == "pie") {
 									
 									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 									var numberOfYAxis = chartColumnsContainerNew.length;
@@ -395,15 +402,14 @@ Ext.define
 //											console.log("===");
 											chartColumnsContainerNew[i+1].close();
 										}
-									} 									
-//									console.log("===");	
-//									console.log(newlySelectedType.toLowerCase());
-									if (newlySelectedType.toLowerCase()!="heatmap") 
-									{		
-//										console.log("===");
-										if (newlySelectedType.toLowerCase()!="chord" && newlySelectedType.toLowerCase()!="parallel")
-										{
-//											console.log("===");
+									}
+									
+									if (newlySelectedType.toLowerCase() != "heatmap") 
+									{
+									
+										if ((newlySelectedType.toLowerCase()!="chord" && newlySelectedType.toLowerCase()!="parallel")
+												|| chartLibrary == 'chartJs') {
+
 											/* ---------- BOTTOM (X) AXIS PANEL ---------- */
 											// Hide the gear tool on the toolbar of the bottom (X) axis panel		
 											globalScope.stylePopupBottomPanel.hide();
@@ -415,11 +421,11 @@ Ext.define
 										/* ---------- LEFT (Y) AXIS PANEL ---------- */	
 										// Hide the textfield dedicated for the title of the bottom (X) axis
 										globalScope.textfieldAxisTitle.hide();
-//										console.log("===");
+
 										// Hide the textfield dedicated for the title of the left (Y) axis
 										globalScope.titleTextfield.hide();	//console.log("===");								
-									}											
-//									console.log("===");
+									}
+
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									globalScope.plusLeftAxis.hide();
 									
@@ -434,14 +440,12 @@ Ext.define
 									 */
 									if (newlySelectedType.toLowerCase()!="pie" && newlySelectedType.toLowerCase()!="radar")
 									{
-//										console.log("===");
 										globalScope.actionColumnLeftAxis.items[0].iconCls = "x-hidden";
 									}
 								} 
 								
 								else if(newlySelectedType.toLowerCase()=="radar" || newlySelectedType.toLowerCase()=="scatter")
 								{
-//									console.log("===");
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									globalScope.plusLeftAxis.hide();
 								}
@@ -546,7 +550,7 @@ Ext.define
 					 */					
 					if ((previousChartType == "bar" || previousChartType == "line") && 
 							Ext.getCmp("chartBottomCategoriesContainer").store.data.length > 1) {
-//						console.log("===");
+
 						Ext.Msg.show ({
 							title : '',
 							message : LN("sbi.chartengine.designer.charttype.changetype.lossOfCategories"), 
@@ -560,20 +564,17 @@ Ext.define
 							},
 						
 							fn : function(buttonValue, inputText, showConfig) {
-								if (buttonValue == 'ok') {										
-//									console.log("===");		
-//									console.log(globalScope.plusLeftAxis);
-//									console.log(globalScope);
+								if (buttonValue == 'ok') {
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
-//									console.log("===");
+
 									/**
 									 * If there are some Y-axis panels created before on the Designer (other 
 									 * that the default (the left) one, remove them.
 									 */					
 									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 									var numberOfYAxis = chartColumnsContainerNew.length;
-//									console.log("===");
+
 									if (numberOfYAxis > 1) {						
 										for (var i=1; i<numberOfYAxis; i++) {
 											Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
@@ -587,7 +588,7 @@ Ext.define
 									 * the chart type as 'radar'. 
 									 */ 
 									globalScope.fireEvent("resetStep2");
-//									console.log("===");
+
 									/**
 									 * Clean the X-axis bottom panel for RADAR and SCATTER chart types
 									 */
@@ -596,15 +597,15 @@ Ext.define
 								} else if (buttonValue == 'cancel') {																
 									
 									globalScope.suspendEvents(false);
-//									console.log("===");
+
 									// Set previous chart type
 									globalScope.setValue(previousChartType);
-//									console.log("===");
+
 									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
-//									console.log("===");
+
 									// Resume events
 									globalScope.resumeEvents();
-//									console.log("===");
+
 									globalScope.fireEvent("cancel");
 								}
 							}	
@@ -615,26 +616,26 @@ Ext.define
 					 */
 					else 
 					{
-//						console.log("===");
+
 						globalScope.resetStep1();
 						// Hide the plus tool on the toolbar of the left (Y) axis panel
 						(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
-//						console.log("===");
+
 						/**
 						 * If there are some Y-axis panels created before on the Designer (other 
 						 * that the default (the left) one, remove them.
 						 */					
 						var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 						var numberOfYAxis = chartColumnsContainerNew.length;
-//						console.log("===");
+
 						if (numberOfYAxis > 1) {						
 							for (var i=1; i<numberOfYAxis; i++) {
 								Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
 							}
 						}	
-//						console.log("===");
+
 						Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
-//						console.log("===");
+
 						globalScope.fireEvent("resetStep2");
 					}
 				}
@@ -644,12 +645,10 @@ Ext.define
 				 */
 				else 
 				{
-					//console.log("BAR/LINE");
 					globalScope.resetStep1();
-//					console.log("===");
+
 					Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();console.log("===");
 					globalScope.fireEvent("resetStep2");
-//					console.log("===");
 				}
 			}	
 		},
@@ -779,11 +778,7 @@ Ext.define
 							fn: function(buttonValue, inputText, showConfig)
 							{
 								if (buttonValue == 'ok') 
-								{		
-//									console.log("=================");
-//									console.log("=== Chart type selector (START) ===");
-//									console.log("=================");
-									
+								{									
 									/**
 									 * If currentOrNewChartType is not null - if user did not click-down on the
 									 * chart type and then move mouse on some other chart type and make a click-up
@@ -803,7 +798,7 @@ Ext.define
 										 * 
 										 * @commentBy: danristo (danilo.ristovski@mht.net)
 										 */				
-//										console.log("===");
+
 										/**
 										 * The chart type that is actually picked (clicked). Newly selected chart type.
 										 * @commentBy: danristo (danilo.ristovski@mht.net)
@@ -868,21 +863,17 @@ Ext.define
 									 * customization made until the moment, we will cancel its change and keep current data.
 									 */
 									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
-//									console.log("===");
+
 									globalScope.suspendEvents(false);
-//									console.log("===");
+
 									// Set previous chart type
 									globalScope.setValue(Sbi.chart.designer.ChartTypeSelector_2.chartType);
-//									console.log("===");								
+
 									// Resume events
 									globalScope.resumeEvents();	
-//									console.log("===");
+
 									globalScope.fireEvent("cancel");
 								}
-								
-//								console.log("=================");
-//								console.log("=== Chart type selector (END) ===");
-//								console.log("=================");
 							}
 						}
 					);

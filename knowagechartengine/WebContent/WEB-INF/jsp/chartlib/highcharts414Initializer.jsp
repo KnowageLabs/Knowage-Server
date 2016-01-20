@@ -16,55 +16,55 @@
 <script>
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
 		Highcharts.setOptions({
-		    chart: {
-		 	   renderTo: panelId,
-		        backgroundColor: {
-		            linearGradient: [0, 0, 500, 500],
-		            stops: [
-		                [0, 'rgb(255, 255, 255)'],
-		                [1, 'rgb(240, 240, 255)']
-		            ]
-		        },
-		        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
-		        plotShadow: true,
-		        plotBorderWidth: 1
-		    },
-		   exporting: {
-			   
+			chart : {
+				renderTo : panelId,
+				backgroundColor : {
+					linearGradient : [ 0, 0, 500, 500 ],
+					stops : [ [ 0, 'rgb(255, 255, 255)' ],
+							[ 1, 'rgb(240, 240, 255)' ] ]
+				},
+				plotBackgroundColor : 'rgba(255, 255, 255, .9)',
+				plotShadow : true,
+				plotBorderWidth : 1
+			},
+			exporting : {
+
 				/**
 						Removing button on the top-right corner that offers us
 						printing of the chart.
 						
 						@author: danristo (danilo.ristovski@mht.net)
-				*/
-			   	enabled: false,
-			   
-		   		url: 'http://'+hostName+':'+serverPort+'/highcharts-export-web/'
-		    },
-		    lang: {
-	            drillUpText: drillUpText,
-	            decimalPoint: decimalPoint,
-	            thousandsSep: thousandsSep
-	        }
+				 */
+				enabled : false,
+
+				url : 'http://' + hostName + ':' + serverPort
+						+ '/highcharts-export-web/'
+			},
+			lang : {
+				drillUpText : drillUpText,
+				decimalPoint : decimalPoint,
+				thousandsSep : thousandsSep
+			}
 		});
 	};
 
-	function renderChart(chartConf){
-		if(chartConf.chart.type.toLowerCase() == 'treemap'){
-			renderTreemap(chartConf);	
-		}
-		else if (chartConf.chart.type.toLowerCase() == 'heatmap'){
-			console.log(chartConf);
-			renderHeatmap(chartConf);	
-		} 
+	function renderChart(chartConf) {
+		var chartType = chartConf.chart.type.toLowerCase();
 		
-		else{
+		if (chartType == 'treemap') {
+			renderTreemap(chartConf);
+		} else if (chartType == 'heatmap') {
+			console.log(chartConf);
+			renderHeatmap(chartConf);
+		}
+
+		else {
 			console.log("highcharts414Initializer.jspf (line 62)");
 			console.log(chartConf);
 			new Highcharts.Chart(chartConf);
 		}
 	};
-	
+
 	function handleDrilldown(e) {
 		if (!e.seriesOptions) {
 			var chart = this;
@@ -82,11 +82,11 @@
 			});
 		}
 	};
-	
+
 	function handleDrillup() {
 		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
 	}
-	
+
 	function handleCockpitSelection(e) {
 		if (!e.seriesOptions) {
 // 			debugger;
@@ -112,52 +112,45 @@
 			}		
 		}
 	};
-	
+
 	function handleCrossNavigationTo(e) {
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
-			
+
 			var categoryName = e.point.name;
 			var categoryValue = null;
-			
-			if(e.point.hasOwnProperty('value')){
-				categoryValue=e.point.value;
+
+			if (e.point.hasOwnProperty('value')) {
+				categoryValue = e.point.value;
 			}
 			var serieName = e.point.series.name;
 			var serieValue = null;
-			if(e.point.series.hasOwnProperty('value')){
-				serieValue=e.point.series.value;
+			if (e.point.series.hasOwnProperty('value')) {
+				serieValue = e.point.series.value;
 			}
-			
-			var groupingCategoryName=null;
-			var groupingCategoryValue=null;
-			
-			if(e.point.hasOwnProperty('group')){
-				groupingCategoryName=e.point.group.name;
-				groupingCategoryValue=e.point.group.value;
+
+			var groupingCategoryName = null;
+			var groupingCategoryValue = null;
+
+			if (e.point.hasOwnProperty('group')) {
+				groupingCategoryName = e.point.group.name;
+				groupingCategoryValue = e.point.group.value;
 			}
-			
-			
+
 			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-					e.point.crossNavigationDocumentName, 
-					e.point.crossNavigationDocumentParams,
-					categoryName,
-					categoryValue,
-					serieName,
-					serieValue,
-					groupingCategoryName,
-					groupingCategoryValue
-					);
-			
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+					e.point.crossNavigationDocumentName,
+					e.point.crossNavigationDocumentParams, categoryName,
+					categoryValue, serieName, serieValue, groupingCategoryName,
+					groupingCategoryValue);
+
+			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
+					.getChartWebServiceManager();
 			chart.hideLoading();
 		}
 	};
-	
+
 	function handleCrossNavigationFrom() {
 		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
-	
-	
 </script>
