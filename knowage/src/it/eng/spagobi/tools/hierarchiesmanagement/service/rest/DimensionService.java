@@ -125,11 +125,13 @@ public class DimensionService {
 
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
 
+			String dimensionName = dimension.getName();
+
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionLabel, metadataFields, validityDate, filterDate, filterHierarchy,
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, filterDate, filterHierarchy,
 					filterHierType, hierTableName, prefix);
 
 			// Create JSON for Dimension data from datastore
