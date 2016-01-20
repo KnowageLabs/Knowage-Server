@@ -11,7 +11,7 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidget = function(config) {
 	Sbi.trace("[ChartEngineWidget.constructor]: IN");
 	// init properties...
 	var defaultSettings = {
-
+			fieldsSelectionEnabled: true
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.chartengine.ChartEngineWidget', defaultSettings);

@@ -2078,6 +2078,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 							url: Sbi.config.serviceReg.getServiceUrl('v2/loadDataSetStorePost', {
 								pathParams: {datasetLabel: store.storeId}
 							}),
+							params: store.getProxy().extraParams,
 						    method: 'POST',
 						    jsonData: r,
 						    success : this.onAssociativeSelectionsApplied,

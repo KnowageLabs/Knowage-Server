@@ -343,12 +343,13 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStorePost(@PathParam("label") String label, String selections) {
+	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
+			@QueryParam("aggregations") String aggregations, String selections) {
 		logger.debug("IN");
 		try {
 			JSONObject response = new JSONObject();
 			response.put("label", label);
-			response.put("store", getDataStore(label, null, selections, null));
+			response.put("store", getDataStore(label, parameters, selections, aggregations));
 			return response.toString();
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
