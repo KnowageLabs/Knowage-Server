@@ -37,8 +37,8 @@ public class AssociativeLogicManager {
 	private Map<String, Set<EdgeGroup>> datasetToEdgeGroup;
 	private Map<EdgeGroup, Set<String>> edgeGroupToDataset;
 	private final Pseudograph<String, LabeledEdge<String>> graph;
-	private Map<String, String> datasetToCachedTable;
-	private Map<String, String> selections;
+	private final Map<String, String> datasetToCachedTable;
+	private final Map<String, String> selections;
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
 			Map<String, String> selections) {
@@ -193,7 +193,7 @@ public class AssociativeLogicManager {
 	private String getUnlimitedInClauseValues(Set<String> values) {
 		Set<String> newValues = new HashSet<String>();
 		for (String value : values) {
-			newValues.add(value.replaceFirst("(", "(1,"));
+			newValues.add(value.replaceFirst("\\(", "(1,"));
 		}
 		return StringUtils.join(newValues.iterator(), ",");
 	}
