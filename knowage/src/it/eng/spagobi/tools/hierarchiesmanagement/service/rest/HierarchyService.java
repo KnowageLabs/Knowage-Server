@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -648,6 +649,7 @@ public class HierarchyService {
 			Hierarchy hierarchy = hierarchies.getHierarchy(dimensionLabel);
 			Assert.assertNotNull(hierarchy, "Impossible to find a valid hierarchy with label [" + dimensionLabel + "]");
 
+			String dimensionName = dimension.getName();
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
 			String prefix = hierarchies.getPrefix(dimensionLabel);
 
@@ -656,8 +658,8 @@ public class HierarchyService {
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
 
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimension, dimensionLabel, metadataFields, validityDate, filterDate,
-					filterHierarchy, filterHierType, hierTableName, prefix);
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, filterDate, filterHierarchy,
+					filterHierType, hierTableName, prefix);
 
 			dbConnection.setAutoCommit(false);
 
@@ -667,7 +669,7 @@ public class HierarchyService {
 
 				IRecord record = (IRecord) iterator.next();
 				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metadataFields, metatadaFieldsMap, requestVal,
-						prefix);
+						prefix, dimensionName);
 
 			}
 
@@ -1731,7 +1733,8 @@ public class HierarchyService {
 	}
 
 	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
-			List<Field> generalFields, List<Field> metadataFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix) {
+			List<Field> generalFields, List<Field> metadataFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix,
+			String dimensionName) {
 
 		logger.debug("START");
 
@@ -1806,17 +1809,17 @@ public class HierarchyService {
 				JSONObject lvl = lvls.getJSONObject(lvlIndex);
 
 				// levels begin from 1, the array from 0
-				int tmpLvl = lvlIndex + 1;
+				int realLvl = lvlIndex + 1;
 
 				// columns for code and name level
-				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (tmpLvl), dataSource);
-				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (tmpLvl), dataSource);
+				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (realLvl), dataSource);
+				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (realLvl), dataSource);
 
 				// retrieve values to look for in dimension columns
 				String cdLvl = lvl.getString("CD");
 				String nmLvl = lvl.getString("NM");
 
-				logger.debug("In the level [" + tmpLvl + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
+				logger.debug("In the level [" + realLvl + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
 
 				// retrieve record fields looking at metafield position in the dimension
 				IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
@@ -1825,7 +1828,7 @@ public class HierarchyService {
 				String cdValue = (String) cdTmpField.getValue();
 				String nmValue = (String) nmTmpField.getValue();
 
-				logger.debug("For the level [" + tmpLvl + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
+				logger.debug("For the level [" + realLvl + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
 
 				// updating sql clauses for columns and values
 				columnsClause.append(cdColumn + "," + nmColumn + sep);
@@ -1843,7 +1846,7 @@ public class HierarchyService {
 				// this condition is needed to set leaf parent code and name values
 				if (lvlIndex == lvlsLength - 1) {
 
-					logger.debug("The level [" + tmpLvl + "] is the last specified from the user. We are going to use code [" + cdValue + "] and name ["
+					logger.debug("The level [" + realLvl + "] is the last specified from the user. We are going to use code [" + cdValue + "] and name ["
 							+ nmValue + "] for parent");
 
 					String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
@@ -1863,6 +1866,51 @@ public class HierarchyService {
 					index = index + 2;
 
 				}
+
+			}
+
+			/***********************************************************************
+			 * in this section we add a recursive logic to calculate parents levels*
+			 ***********************************************************************/
+
+			if (!requestVal.isNull("recursive")) {
+
+				// retrieve recursive object from request json
+				JSONObject recursive = requestVal.getJSONObject("recursive");
+
+				LinkedList<String> parentValuesList = new LinkedList<String>();
+
+				IField parentCdDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_CD_PARENT"));
+				IField parentNmDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_NM_PARENT"));
+
+				String parentCdDimValue = (String) parentCdDimField.getValue(); // Y444444444
+				String parentNmDimValue = (String) parentNmDimField.getValue(); // Architetture
+
+				String jsonRecursiveParendCd = recursive.getString("CD_PARENT"); // SEGMENT_CD
+				String jsonRecursiveParendNm = recursive.getString("NM_PARENT"); // SEGMENT_NM
+
+				String cdDimParentColumn = AbstractJDBCDataset.encapsulateColumnName("CDC_CD_PARENT", dataSource);
+				String nmDimParentColumn = AbstractJDBCDataset.encapsulateColumnName("CDC_NM_PARENT", dataSource);
+				String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendCd, dataSource);
+				String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendNm, dataSource);
+
+				String jsonRecursiveCd = recursive.getString("CD"); // CDC_CD
+				String jsonRecursiveNm = recursive.getString("NM"); // CDC_NM
+
+				// retrieve record fields looking at metafield position in the dimension
+				IField recursiveCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
+				IField recursiveNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveNm));
+
+				String recursiveCdValue = (String) recursiveCdField.getValue(); // Y88878p8089
+				String recursiveNmValue = (String) recursiveNmField.getValue(); // SpagoBI Labs
+
+				parentValuesList.addFirst(recursiveCdValue);
+				parentValuesList.addFirst(recursiveNmValue);
+
+				// if parent is null, stop recursion, else move on
+
+				recursiveParentSelect(dbConnection, parentValuesList, recursiveCdValue, recursiveNmValue, dimensionName, cdDimParentColumn, nmDimParentColumn,
+						cdParentColumn, nmParentColumn);
 
 			}
 
@@ -2003,5 +2051,38 @@ public class HierarchyService {
 		}
 
 		logger.debug("END");
+	}
+
+	private void recursiveParentSelect(Connection dbConnection, LinkedList<String> parentValuesList, String cdValue, String nmValue, String dimensionName,
+			String cdDimParentColumn, String nmDimParentColumn, String cdParentColumn, String nmParentColumn) throws SQLException {
+
+		String recursiveSelectClause = cdDimParentColumn + "," + nmDimParentColumn + "," + cdParentColumn + "," + nmParentColumn;
+
+		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + "WHERE CDC_CD = " + cdValue + " AND CDC_NM = " + nmValue;
+
+		PreparedStatement ps = dbConnection.prepareStatement(recurisveSelect);
+
+		ResultSet rs = ps.executeQuery();
+
+		if (rs != null) {
+
+			String parentCdValue = rs.getString(cdParentColumn);
+			String parentNmValue = rs.getString(nmParentColumn);
+
+			parentValuesList.addFirst(parentCdValue);
+			parentValuesList.addFirst(parentNmValue);
+
+			String tmpCode = rs.getString(cdDimParentColumn);
+			String tmpName = rs.getString(nmDimParentColumn);
+
+			if (tmpCode != null) {
+				recursiveParentSelect(dbConnection, parentValuesList, parentCdValue, parentNmValue, dimensionName, cdDimParentColumn, nmDimParentColumn,
+						cdParentColumn, nmParentColumn);
+			} else {
+				return;
+			}
+
+		}
+
 	}
 }

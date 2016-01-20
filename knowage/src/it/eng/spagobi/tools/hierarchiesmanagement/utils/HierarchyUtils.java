@@ -11,7 +11,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -276,10 +275,8 @@ public class HierarchyUtils {
 		return rootArray;
 	}
 
-	public static IDataStore getDimensionDataStore(IDataSource dataSource, Dimension dimension, String dimensionLabel, List<Field> metadataFields,
-			String validityDate, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
-
-		String dimensionName = dimension.getName();
+	public static IDataStore getDimensionDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
+			String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
 
 		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
 		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
