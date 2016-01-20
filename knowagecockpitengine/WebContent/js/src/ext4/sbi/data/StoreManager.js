@@ -2045,11 +2045,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	var selections = Ext.JSON.decode(options.params.selections);
     	
     	var stores = this.getStoresInAssociationGroup(associationGroup);
-    	for(var i = 0; i < stores.length; i++) {
-			var store = stores[i];
-			store.fireEvent('association', store, associationGroup, selections);
-		}
-
+    	var fireEventAssociation = true;
+    	
 		if(response !== undefined && response.statusText=="OK") {
     		var r = response.responseText || response.responseXML;
 			if(Sbi.isValorized(r)) {
@@ -2074,6 +2071,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						return;
 					}
 					
+					fireEventAssociation = false;
 					for(var i = 0; i < stores.length; i++) {
 						var store = stores[i];
 						Ext.Ajax.request({
@@ -2094,10 +2092,20 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 		}
+		
+		if (fireEventAssociation) {
+			for (var i = 0; i < stores.length; i++) {
+				var store = stores[i];
+				store.fireEvent('association', store, associationGroup, selections);
+			}
+		}
+		
 		Sbi.trace("[StoreManager.onAssociativeSelectionsLoaded]: OUT");
 	}
     , onAssociativeSelectionsApplied: function(response, options) {
     	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: IN");
+    	
+    	var fireEventAssociation = true;
     	
     	if(response !== undefined && response.statusText=="OK") {
     		var r = response.responseText || response.responseXML;
@@ -2123,6 +2131,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						return;
 					}
 					
+					fireEventAssociation = false;
 					var stores = this.getStoresById(response.label)
 					stores[0].loadData(Ext.JSON.decode(response.store).rows);
 				}
@@ -2131,6 +2140,11 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			}
 		} else {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+    	
+    	if (fireEventAssociation) {
+    		var stores = this.getStoresById(response.label)
+			stores[0].fireEvent('association', store, associationGroup, selections);
 		}
 
     	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: OUT");
