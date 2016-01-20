@@ -1194,68 +1194,22 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: store in assocition group are [" + stores.length + "]");
 
-		var storesNotAggregated = [];
-		var storesAggregated = [];
 		for(var i = 0; i < stores.length; i++) {
 			var store = stores[i];
 			store.fireEvent('beforeassociation', store, associationGroup, selections);
-
-			if(this.isStoreAggregated(store)) {
-				storesAggregations.push(this.getAggregationOnStore(store));
-				storesAggregated.push(this.getStoreId(store));
-			} else {
-				storesNotAggregated.push(this.getStoreId(store));
-			}
 		}
-
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: not agrregated stores are [" + storesNotAggregated.length + "][" + storesNotAggregated+ "]");
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: agrregated stores are [" + storesAggregated.length + "][" + storesAggregated + "]");
-
-		// add pareameters to params
-
-		var parameters = {};
-		for(var i = 0; i < stores.length; i++) {
-			var store = stores[i];
-			var storeId = this.getStoreId(store);
-			parameters[storeId] = this.getStoreParametersValues(storeId);
-		}
-
-		Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by [" + Sbi.toSource(storesNotAggregated) + "] " +
-				"not aggregated store(s)");
+		
 		Ext.Ajax.request({
-		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
+		    url: Sbi.config.serviceReg.getServiceUrl('v2/loadAssociativeSelections'),
 		    method: 'GET',
 		    params: {
 		    	associationGroup:  Ext.JSON.encode(associationGroup)
-		    	, parameters: Ext.JSON.encode( parameters )
 		        , selections: Ext.JSON.encode(selections)
-		        , datasets: Ext.JSON.encode(storesNotAggregated)
 		    },
-		    success : this.onAssociationGroupReloaded,
+		    success : this.onAssociativeSelectionsLoaded,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,
 			scope: this
 		});
-
-		for(var i = 0; i < storesAggregated.length; i++) {
-			var storeId = storesAggregated[i];
-			Sbi.trace("[StoreManager.loadStoresByAssociations]: Loading joined dataset used by aggregated store [" + storeId + "]");
-			var storeAggregations = storesAggregations[i];
-			storeAggregations.dataset = storeId;
-			Ext.Ajax.request({
-			    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
-			    method: 'GET',
-			    params: {
-			    	associationGroup:  Ext.JSON.encode(associationGroup)
-			    	, parameters: Ext.JSON.encode( parameters )
-			        , selections: Ext.JSON.encode(selections)
-			        , datasets: Ext.JSON.encode([storeId])
-			        , aggregations: Ext.JSON.encode(storeAggregations)
-			    },
-			    success : this.onAssociationGroupReloaded,
-				failure: Sbi.exception.ExceptionHandler.handleFailure,
-				scope: this
-			});
-		}
 
 		Sbi.trace("[StoreManager.loadStoresByAssociations]: OUT");
 	}
@@ -1719,7 +1673,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	var parameters = Ext.JSON.encode( p );
     	
     	var proxy = new Ext.data.HttpProxy({
-			url: Sbi.config.serviceReg.getServiceUrl('loadDataSetStore', {
+			url: Sbi.config.serviceReg.getServiceUrl('v2/loadDataSetStore', {
 				pathParams: {datasetLabel: storeConf.storeId}
 			})
 			, method: 'GET'
@@ -2056,7 +2010,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	var ids  = this.getStoreIds();
 
     	if(ids.length == 0){
-    		Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.cockpit.storeManager.noDatastoreToClean"), "Warning");
+    		Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.cockpit.StoreManager.noDatastoreToClean"), "Warning");
     	}
     	else {
 
@@ -2071,18 +2025,114 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		       requestParam: 'notInRequestBody'
 		    },
 		    success : function(){
-				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.cockpit.storeManager.cacheCleaned'), 'Info');
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.cockpit.StoreManager.cacheCleaned'), 'Info');
 		    },
 			failure: function(){
-				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.cockpit.storeManager.errorInCleaningCache'), 'Service Error');
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.cockpit.StoreManager.errorInCleaningCache'), 'Service Error');
 				},
 			scope: this
 		});
 
     	}
     }
+    , onAssociativeSelectionsLoaded: function(response, options) {
+    	Sbi.trace("[StoreManager.onAssociativeSelectionsLoaded]: IN");
 
+    	Sbi.trace("[StoreManager.onAssociativeSelectionsLoaded]: Options object contains the following properties: " + Sbi.toSource(options.params, true));
+    	Sbi.trace("[StoreManager.onAssociativeSelectionsLoaded]: Options object is equal to [" + Sbi.toSource(options.params, true) + "]");
 
+    	var associationGroup = Ext.JSON.decode(options.params.associationGroup);
+    	var selections = Ext.JSON.decode(options.params.selections);
+    	
+    	var stores = this.getStoresInAssociationGroup(associationGroup);
+    	for(var i = 0; i < stores.length; i++) {
+			var store = stores[i];
+			store.fireEvent('association', store, associationGroup, selections);
+		}
+
+		if(response !== undefined && response.statusText=="OK") {
+    		var r = response.responseText || response.responseXML;
+			if(Sbi.isValorized(r)) {
+				if(r.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					var valueSelections =  Ext.JSON.decode(r);
+					if(valueSelections.errors && valueSelections.errors.length > 0) {
+						var msg = "Impossible to load dataset(s) " + options.params.datasets + " due to the following service errors: <p><ul>";
+						for(var i = 0; i < valueSelections.errors.length; i++) {
+							msg += "<li>" + valueSelections.errors[i].message + ";";
+						}
+						msg += "</ul>";
+
+						Ext.Msg.show({
+							   title: "Service error",
+							   msg: msg,
+							   buttons: Ext.Msg.OK,
+							   icon: Ext.MessageBox.ERROR,
+							   modal: false
+						});
+						return;
+					}
+					
+					for(var i = 0; i < stores.length; i++) {
+						var store = stores[i];
+						Ext.Ajax.request({
+							url: Sbi.config.serviceReg.getServiceUrl('v2/loadDataSetStorePost', {
+								pathParams: {datasetLabel: store.storeId}
+							}),
+						    method: 'POST',
+						    jsonData: r,
+						    success : this.onAssociativeSelectionsApplied,
+							failure: Sbi.exception.ExceptionHandler.handleFailure,
+							scope: this
+						});
+					}
+				}
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+		Sbi.trace("[StoreManager.onAssociativeSelectionsLoaded]: OUT");
+	}
+    , onAssociativeSelectionsApplied: function(response, options) {
+    	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: IN");
+    	
+    	if(response !== undefined && response.statusText=="OK") {
+    		var r = response.responseText || response.responseXML;
+			if(Sbi.isValorized(r)) {
+				if(r.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					var response =  Ext.JSON.decode(r);
+					if(response.errors && response.errors.length > 0) {
+						var msg = "Impossible to load dataset(s) " + options.params.datasets + " due to the following service errors: <p><ul>";
+						for(var i = 0; i < response.errors.length; i++) {
+							msg += "<li>" + response.errors[i].message + ";";
+						}
+						msg += "</ul>";
+
+						Ext.Msg.show({
+							   title: "Service error",
+							   msg: msg,
+							   buttons: Ext.Msg.OK,
+							   icon: Ext.MessageBox.ERROR,
+							   modal: false
+						});
+						return;
+					}
+					
+					var stores = this.getStoresById(response.label)
+					stores[0].loadData(Ext.JSON.decode(response.store).rows);
+				}
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+
+    	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: OUT");
+    }
 });
-
-

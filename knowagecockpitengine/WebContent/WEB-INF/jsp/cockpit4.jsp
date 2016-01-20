@@ -246,12 +246,47 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	
 			//, absolute: false
 		});
+		
+		Sbi.config.serviceReg.addServiceBaseConf('v2/spagobiServiceConf', {
+			method: "GET"
+			
+			, baseUrlConf: {
+				protocol: '<%= request.getScheme()%>'     
+				, host: '<%= request.getServerName()%>'
+				, port: '<%= request.getServerPort()%>'
+				, contextPath:  Sbi.mainContextName
+			}
+			, controllerConf: {
+				controllerPath: 'restful-services'   
+				, serviceVersion: '2.0'
+				, serviceVersionParamType: 'path' 
+			}
+		
+			, basePathParams:{}
+			, baseQueryParams: params
+			, baseFormParams: {}
+	
+			//, absolute: false
+		});
 	
 		Sbi.config.serviceReg.registerService('loadDataSetStore', {
 			name: 'loadDataSetStore'
 			, description: 'Load the store of the specified dataset'
 			, resourcePath: 'datasets/{datasetLabel}/data'
 		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('v2/loadDataSetStore', {
+			name: 'loadDataSetStore'
+			, description: 'Load the store of the specified dataset'
+			, resourcePath: 'datasets/{datasetLabel}/data'
+		}, 'v2/spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('v2/loadDataSetStorePost', {
+			name: 'loadDataSetStorePost'
+			, description: 'Load the store of the specified dataset'
+			, resourcePath: 'datasets/{datasetLabel}/data'
+			, method: 'POST'
+		}, 'v2/spagobiServiceConf');
 		
 		Sbi.config.serviceReg.registerService('loadChartDataSetStore', {
 			name: 'loadChartDataSetStore'
@@ -349,6 +384,12 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'crosstab/sort'
 			, method: 'POST'
 		}, 'cockpitServiceConf');
+		
+		Sbi.config.serviceReg.registerService('v2/loadAssociativeSelections', {
+			name: 'loadAssociativeSelections'
+			, description: 'Load associative selections'
+			, resourcePath: 'datasets/loadAssociativeSelections'
+		}, 'v2/spagobiServiceConf');
 	
 		/*
 		var testUrl = service.getServiceUrl({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});
