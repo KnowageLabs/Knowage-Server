@@ -128,8 +128,8 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
 					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
 					var name = tenant.MULTITENANT_NAME;
-					var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
-					$scope.showAlert('INFO', message);
+					var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
+					$scope.showAlert('INFO - '+ name , message);
 				} else{
 					$scope.showAlert('ERROR', ' Impossible to insert Tenant');
 				}
@@ -166,7 +166,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 					var idx = $scope.indexOf($scope.tenants,$scope.tenantSelected)
 					$scope.tenants.splice(idx, 1);
 					$scope.resetForm(form);
-					$scope.showAlert('INFO', 'Tenant '+ toDelete.MULTITENANT_NAME + '_admin delete successful');
+					$scope.showAlert('INFO - ' + toDelete.MULTITENANT_NAME, $scope.translate.load('sbi.multitenant.deleted'));
 				}else{
 					$scope.showAlert('ERROR', ' Impossible to delete Tenant '+ toDelete.MULTITENANT_NAME + '_admin');
 				}
@@ -231,16 +231,16 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 					}else{
 						$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
 						var name = newTenant.MULTITENANT_NAME;
-						var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
-						$scope.showAlert('INFO', message);
+						var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
+						$scope.showAlert('INFO - '+ name , message);
 					}
 				}else{
 					//updating the table
 					var idx = $scope.indexOf($scope.tenants,newTenant);
 					$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
 					var name = newTenant.MULTITENANT_NAME;
-					var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
-					$scope.showAlert('INFO', message);
+					var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
+					$scope.showAlert('INFO - '+ name , message);
 					}
 			}else{
 				$scope.showAlert('ERROR', 'Impossible to save tenant');
