@@ -467,7 +467,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException {
+	protected List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException {
 		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
@@ -520,7 +520,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return projectionCriterias;
 	}
 
-	private List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
+	protected List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
 		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
 
 		for (int i = 0; i < categoriesObject.length(); i++) {
@@ -691,7 +691,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return toReturn;
 	}
 
-	private static Map<String, String> getParametersMap(String filters) {
+	protected static Map<String, String> getParametersMap(String filters) {
 		Map<String, String> toReturn = null;
 
 		if (filters != null) {
@@ -1121,7 +1121,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
-			if(dsType==null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)){
+			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
 					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
@@ -1166,7 +1166,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 * 
+	 *
 	 * @param association
 	 */
 
@@ -1198,7 +1198,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Persist a dataset list
-	 * 
+	 *
 	 * @param labels
 	 */
 

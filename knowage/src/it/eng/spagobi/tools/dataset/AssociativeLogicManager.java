@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,38 +38,35 @@ public class AssociativeLogicManager {
 	private Map<EdgeGroup, Set<String>> edgeGroupToDataset;
 	private final Pseudograph<String, LabeledEdge<String>> graph;
 	private Map<String, String> datasetToCachedTable;
-
-	private final String datasetSelected;
-	private final String filterSelected;
+	private Map<String, String> selections;
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			String datasetSelected, String filterSelected) {
-		this.dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
-		this.cache = SpagoBICacheManager.getCache();
+			Map<String, String> selections) {
 		this.graph = graph;
 		this.datasetToAssociations = datasetToAssociations;
-		this.datasetSelected = datasetSelected;
-		this.filterSelected = filterSelected;
+		this.selections = selections;
+
 		this.datasetToCachedTable = new HashMap<String, String>();
+		this.dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+		this.cache = SpagoBICacheManager.getCache();
 	}
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
-
 		if (dataSource == null) {
-			// eccezione
+			throw new NullPointerException("Unable to get cache datasource");
 		}
 		if (cache == null) {
-			// eccezione
+			throw new NullPointerException("Unable to get cache");
 		}
 
 		// (0) generate the starting set of values for each associations
 		init();
 
 		// (1) user click on widget -> selection!
-		calculateDatasets(datasetSelected, null, filterSelected);
-
-		// String inLastnameValues = "'" + StringUtils.join(associationValues.get("LNAME").iterator(), "','") + "'";
-		// System.out.println("LNAME [" + inLastnameValues + "]");
+		for (String datasetSelected : selections.keySet()) {
+			String filterSelected = selections.get(datasetSelected);
+			calculateDatasets(datasetSelected, null, filterSelected);
+		}
 
 		return edgeGroupValues;
 	}
@@ -89,11 +87,16 @@ public class AssociativeLogicManager {
 							datasetToEdgeGroup.get(v1).add(group);
 
 							String tableName = getCachedTableName(v1);
+
 							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
-							Statement stmt = dataSource.getConnection().createStatement();
 							String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
+							Connection connection = dataSource.getConnection();
+							Statement stmt = connection.createStatement();
 							ResultSet rs = stmt.executeQuery(query);
 							Set<String> tuple = getTupleOfValues(rs);
+							rs.close();
+							stmt.close();
+							connection.close();
 
 							if (!edgeGroupValues.containsKey(group)) {
 								edgeGroupValues.put(group, tuple);
@@ -139,50 +142,49 @@ public class AssociativeLogicManager {
 
 	@SuppressWarnings("unchecked")
 	private void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
-
 		Set<EdgeGroup> groups = datasetToEdgeGroup.get(dataset);
-		// ******* CHECK THIS ******* //
-		// no need to iterate over the incoming association -> TO BE CHECKED
-		// datasetAssociation.remove(fromAssociation);
-		// *******FINISH CHECK THIS ******* //
-
 		String tableName = getCachedTableName(dataset);
 
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
 			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
 			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
-			ResultSet rs = dataSource.getConnection().createStatement().executeQuery(query);
-			// ResultSetMetaData rsMetadata = rs.getMetaData(); // maybe we do not need it: we handle everything as strings
+			Connection connection = dataSource.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(query);
 			Set<String> distinctValues = getTupleOfValues(rs);
-
-			// Map<String, Class> classes = new HashMap<String, Class>(group.getEdgeNames().size());
-			// for (int i = 1; i < rsMetadata.getColumnCount(); i++) {
-			// String columnName = rsMetadata.getColumnName(i);
-			// Class columnClass = Class.forName(rsMetadata.getColumnClassName(i));
-			// classes.put(columnName, columnClass);
-			// }
+			rs.close();
+			statement.close();
+			connection.close();
 
 			Set<String> baseSet = edgeGroupValues.get(group);
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
-			if (!intersection.equals(baseSet) && intersection.size() > 0) {
-				edgeGroupValues.put(group, intersection);
-				String inClauseColumns;
-				String inClauseValues;
-				if (intersection.size() > IN_CLAUSE_LIMIT) {
-					inClauseColumns = "1," + columnNames;
-					inClauseValues = getUnlimitedInClauseValues(intersection);
-				} else {
-					inClauseColumns = columnNames;
-					inClauseValues = StringUtils.join(intersection.iterator(), ",");
-				}
+			if (!intersection.equals(baseSet)) {
+				if (intersection.size() > 0) {
+					edgeGroupValues.put(group, intersection);
 
-				String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
-				for (String datasetInvolved : edgeGroupToDataset.get(group)) {
-					if (!datasetInvolved.equals(dataset)) {
-						// it will skip the current dataset, from which the filter is fired
-						calculateDatasets(datasetInvolved, group, f);
+					String inClauseColumns;
+					String inClauseValues;
+					if (intersection.size() > IN_CLAUSE_LIMIT) {
+						inClauseColumns = "1," + columnNames;
+						inClauseValues = getUnlimitedInClauseValues(intersection);
+					} else {
+						inClauseColumns = columnNames;
+						inClauseValues = StringUtils.join(intersection.iterator(), ",");
 					}
+					String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
+					for (String datasetInvolved : edgeGroupToDataset.get(group)) {
+						if (!datasetInvolved.equals(dataset)) {
+							// it will skip the current dataset, from which the filter is fired
+							calculateDatasets(datasetInvolved, group, f);
+						}
+					}
+				} else {
+					Set<String> emptySet = new HashSet<String>();
+					for (EdgeGroup edgeGroup : edgeGroupValues.keySet()) {
+						edgeGroupValues.put(edgeGroup, emptySet);
+					}
+					return;
 				}
 			}
 		}
@@ -197,22 +199,22 @@ public class AssociativeLogicManager {
 	}
 
 	private Set<String> getTupleOfValues(ResultSet rs) throws SQLException {
-		String tupla;
+		String tuple;
 		String stringDelimiter = "'";
-		Set<String> tuple = new HashSet<String>();
+		Set<String> tuples = new HashSet<String>();
 		while (rs.next()) {
-			tupla = "(";
+			tuple = "(";
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
 				if (i != 1) {
-					tupla += ",";
+					tuple += ",";
 				}
 				Object item = rs.getObject(i);
-				tupla += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
+				tuple += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
 			}
-			tupla += ")";
-			tuple.add(tupla);
+			tuple += ")";
+			tuples.add(tuple);
 		}
-		return tuple;
+		return tuples;
 	}
 
 	// @SuppressWarnings("unused")

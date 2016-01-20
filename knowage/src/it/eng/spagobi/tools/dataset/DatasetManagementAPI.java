@@ -418,10 +418,19 @@ public class DatasetManagementAPI {
 			IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			if (cachedResultSet == null) {
-				dataStore = cache.refresh(dataSet, false);
-				// if result was not cached put refresh date as now
-				dataStore.setCacheDate(new Date());
-				dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
+				dataSet.loadData();
+				IDataStore baseDataStore = dataSet.getDataStore();
+				if (baseDataStore.getRecordsCount() > 10000) {
+					cache.put(dataSet, baseDataStore);
+					dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+					adjustMetadata((DataStore) dataStore, dataSet, null);
+					dataSet.decode(dataStore);
+				} else {
+					dataStore = cache.refresh(dataSet, false);
+					// if result was not cached put refresh date as now
+					dataStore.setCacheDate(new Date());
+					dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
+				}
 			} else {
 				dataStore = cachedResultSet;
 				addLastCacheDate(cache, dataStore, dataSet);
