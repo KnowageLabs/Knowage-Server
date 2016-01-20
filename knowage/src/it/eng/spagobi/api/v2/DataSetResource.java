@@ -348,7 +348,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		try {
 			JSONObject response = new JSONObject();
 			response.put("label", label);
-			response.put("store", super.getDataStore(label, null, selections, null));
+			response.put("store", getDataStore(label, null, selections, null));
 			return response.toString();
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
