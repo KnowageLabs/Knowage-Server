@@ -348,6 +348,9 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 			}else{
 				node[metadata[i].ID] = '';
 			}
+			if (metadata[i].FIX_VALUE && metadata[i].FIX_VALUE.length > 0){
+				node[metadata[i].ID] = metadata[i].FIX_VALUE;
+			}
 		}
 		node.children = [angular.copy($scope.fakeNode)];
 		node.expanded = false;
@@ -798,6 +801,9 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	    $scope.hierNew={};
 	    var level = 1;
 	    $scope.showWarningMessage = false;
+	    //force BEGIN_DT and END_DT in metadataTree
+	    $scope.metadataTree.push({"ID":"BEGIN_DT","NAME":"Begin Date","VISIBLE":true,"EDITABLE":true,"PARENT":false,"TYPE":"Date"});
+	    $scope.metadataTree.push({"ID":"END_DT","NAME":"End Date","VISIBLE":true,"EDITABLE":true,"PARENT":false,"TYPE":"Date"});
 	    
 	    $scope.removeElement = function (array, el){
     		var idx = $scope.indexOf(array, el);

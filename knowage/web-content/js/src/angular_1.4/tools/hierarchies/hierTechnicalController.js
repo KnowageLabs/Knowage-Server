@@ -257,6 +257,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			}else{
 				node[metadata[i].ID] = '';
 			}
+			if (metadata[i].FIX_VALUE && metadata[i].FIX_VALUE.length > 0){
+				node[metadata[i].ID] = metadata[i].FIX_VALUE;
+			}
 		}
 		node.children = [{fake:true,name:$scope.translate.load("sbi.hierarchies.new.empty"),id:'',visible:true,checked:false,expanded:false}];
 		node.expanded = false;
