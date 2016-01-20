@@ -56,11 +56,18 @@ public class HierarchyUtils {
 			result.put(HierarchyConstants.FIELD_NAME, field.getName());
 		logger.debug("Field [" + HierarchyConstants.FIELD_NAME + "] is " + field.getName());
 
+		if (field.getFixValue() != null)
+			result.put(HierarchyConstants.FIELD_FIX_VALUE, field.getFixValue());
+		logger.debug("Field [" + HierarchyConstants.FIELD_FIX_VALUE + "] is " + field.getFixValue());
+
 		result.put(HierarchyConstants.FIELD_VISIBLE, field.isVisible());
 		logger.debug("Field [" + HierarchyConstants.FIELD_VISIBLE + "] is " + field.isVisible());
 
 		result.put(HierarchyConstants.FIELD_EDITABLE, field.isEditable());
 		logger.debug("Field [" + HierarchyConstants.FIELD_EDITABLE + "] is " + field.isEditable());
+
+		result.put(HierarchyConstants.FIELD_PARENT, field.isParent());
+		logger.debug("Field [" + HierarchyConstants.FIELD_PARENT + "] is " + field.isParent());
 
 		if (field.getType() != null)
 			result.put(HierarchyConstants.FIELD_TYPE, field.getType());
@@ -383,7 +390,7 @@ public class HierarchyUtils {
 		}
 
 		// ...then we build a field for the others backup info
-		Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", true, false, false, true);
+		Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
 		result.add(bkpField);
 
 		logger.debug("END");

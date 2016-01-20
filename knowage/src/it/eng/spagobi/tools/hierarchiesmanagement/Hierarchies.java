@@ -203,6 +203,8 @@ public class Hierarchies {
 							.toString() : null;
 					String fieldType = sbField.getAttribute(HierarchyConstants.FIELD_TYPE) != null ? sbField.getAttribute(HierarchyConstants.FIELD_TYPE)
 							.toString() : null;
+					String fixValue = sbField.getAttribute(HierarchyConstants.FIELD_FIX_VALUE) != null ? sbField.getAttribute(
+							HierarchyConstants.FIELD_FIX_VALUE).toString() : null;
 					boolean fieldIsVisible = sbField.getAttribute(HierarchyConstants.FIELD_VISIBLE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_VISIBLE)) : false;
 					boolean fieldIsEditable = sbField.getAttribute(HierarchyConstants.FIELD_EDITABLE) != null ? Boolean.parseBoolean((String) sbField
@@ -211,8 +213,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
+					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 
-					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					Field field = new Field(fieldId, fieldName, fieldType, fixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
+							fieldIsParent);
 					metadataDimension.add(field);
 				}
 				toReturn.setMetadataFields(metadataDimension);
@@ -250,6 +255,8 @@ public class Hierarchies {
 							.toString() : null;
 					String fieldType = sbField.getAttribute(HierarchyConstants.FIELD_TYPE) != null ? sbField.getAttribute(HierarchyConstants.FIELD_TYPE)
 							.toString() : null;
+					String fieldFixValue = sbField.getAttribute(HierarchyConstants.FIELD_FIX_VALUE) != null ? sbField.getAttribute(
+							HierarchyConstants.FIELD_FIX_VALUE).toString() : null;
 					boolean fieldIsVisible = sbField.getAttribute(HierarchyConstants.FIELD_VISIBLE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_VISIBLE)) : false;
 					boolean fieldIsEditable = sbField.getAttribute(HierarchyConstants.FIELD_EDITABLE) != null ? Boolean.parseBoolean((String) sbField
@@ -258,8 +265,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
+					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 
-					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
+							fieldIsParent);
 					metadataGeneralHierarchy.add(field);
 				}
 				toReturn.setMetadataGeneralFields(metadataGeneralHierarchy);
@@ -275,6 +285,8 @@ public class Hierarchies {
 							.toString() : null;
 					String fieldType = sbField.getAttribute(HierarchyConstants.FIELD_TYPE) != null ? sbField.getAttribute(HierarchyConstants.FIELD_TYPE)
 							.toString() : null;
+					String fieldFixValue = sbField.getAttribute(HierarchyConstants.FIELD_FIX_VALUE) != null ? sbField.getAttribute(
+							HierarchyConstants.FIELD_FIX_VALUE).toString() : null;
 					boolean fieldIsVisible = sbField.getAttribute(HierarchyConstants.FIELD_VISIBLE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_VISIBLE)) : false;
 					boolean fieldIsEditable = sbField.getAttribute(HierarchyConstants.FIELD_EDITABLE) != null ? Boolean.parseBoolean((String) sbField
@@ -283,8 +295,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
+					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 
-					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
+							fieldIsParent);
 					metadataNodeHierarchy.add(field);
 				}
 				toReturn.setMetadataNodeFields(metadataNodeHierarchy);
@@ -300,6 +315,8 @@ public class Hierarchies {
 							.toString() : null;
 					String fieldType = sbField.getAttribute(HierarchyConstants.FIELD_TYPE) != null ? sbField.getAttribute(HierarchyConstants.FIELD_TYPE)
 							.toString() : null;
+					String fieldFixValue = sbField.getAttribute(HierarchyConstants.FIELD_FIX_VALUE) != null ? sbField.getAttribute(
+							HierarchyConstants.FIELD_FIX_VALUE).toString() : null;
 					boolean fieldIsVisible = sbField.getAttribute(HierarchyConstants.FIELD_VISIBLE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_VISIBLE)) : false;
 					boolean fieldIsEditable = sbField.getAttribute(HierarchyConstants.FIELD_EDITABLE) != null ? Boolean.parseBoolean((String) sbField
@@ -308,8 +325,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_REQUIRED)) : false;
 					boolean fieldIsSingleValue = sbField.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
+					boolean fieldParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 
-					Field field = new Field(fieldId, fieldName, fieldType, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue);
+					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
+							fieldParent);
 					metadataLeafHierarchy.add(field);
 				}
 				toReturn.setMetadataLeafFields(metadataLeafHierarchy);

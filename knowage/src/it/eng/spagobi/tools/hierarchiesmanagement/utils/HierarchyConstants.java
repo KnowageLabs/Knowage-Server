@@ -40,9 +40,11 @@ public class HierarchyConstants {
 	public final static String FIELD_ALIAS = "ALIAS";
 	public final static String FIELD_VISIBLE = "VISIBLE";
 	public final static String FIELD_EDITABLE = "EDITABLE";
+	public final static String FIELD_PARENT = "PARENT";
 	public final static String FIELD_TYPE = "TYPE";
 	public final static String FIELD_SINGLE_VALUE = "SINGLE_VALUE";
 	public final static String FIELD_REQUIRED = "REQUIRED";
+	public final static String FIELD_FIX_VALUE = "FIX_VALUE";
 
 	// dialects for correct definition of date's functions
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";

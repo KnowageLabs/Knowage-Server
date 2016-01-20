@@ -30,28 +30,33 @@ public class Field {
 	String id;
 	String name;
 	String type;
+	String fixValue;
 	boolean isVisible;
 	boolean isEditable;
 	boolean isRequired;
 	boolean isSingleValue;
+	boolean isParent;
 
 	/**
 	 * @param name
 	 * @param type
 	 */
 	public Field(String id, String name, String alias, String type) {
-		this(id, name, type, false, false, false, true);
+		this(id, name, type, null, false, false, false, true, false);
 	}
 
-	public Field(String id, String name, String type, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue) {
+	public Field(String id, String name, String type, String fixValue, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue,
+			boolean isParent) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.type = type;
+		this.fixValue = fixValue;
 		this.isVisible = isVisible;
 		this.isEditable = isEditable;
 		this.isEditable = isEditable;
 		this.isSingleValue = isSingleValue;
+		this.isParent = isParent;
 	}
 
 	public String getId() {
@@ -108,6 +113,22 @@ public class Field {
 
 	public void setSingleValue(boolean isSingleValue) {
 		this.isSingleValue = isSingleValue;
+	}
+
+	public String getFixValue() {
+		return fixValue;
+	}
+
+	public void setFixValue(String fixValue) {
+		this.fixValue = fixValue;
+	}
+
+	public boolean isParent() {
+		return isParent;
+	}
+
+	public void setParent(boolean isParent) {
+		this.isParent = isParent;
 	}
 
 }
