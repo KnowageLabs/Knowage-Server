@@ -1875,27 +1875,32 @@ public class HierarchyService {
 
 			if (!requestVal.isNull("recursive")) {
 
+				LinkedList<String> parentValuesList = new LinkedList<String>();
+
 				// retrieve recursive object from request json
 				JSONObject recursive = requestVal.getJSONObject("recursive");
 
-				LinkedList<String> parentValuesList = new LinkedList<String>();
+				// create columns for parent fields selected in the json
+
+				String jsonRecursiveParendCd = recursive.getString(HierarchyConstants.JSON_CD_PARENT);
+				String jsonRecursiveParendNm = recursive.getString(HierarchyConstants.JSON_NM_PARENT);
+
+				String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendCd, dataSource);
+				String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendNm, dataSource);
+
+				// create columns for recursive fields selected in the json
+
+				String jsonRecursiveCd = recursive.getString("CD");
+				String jsonRecursiveNm = recursive.getString("NM");
+
+				String cdRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveCd, dataSource);
+				String nmRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveNm, dataSource);
 
 				IField parentCdDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_CD_PARENT"));
 				IField parentNmDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_NM_PARENT"));
 
 				String parentCdDimValue = (String) parentCdDimField.getValue(); // Y444444444
 				String parentNmDimValue = (String) parentNmDimField.getValue(); // Architetture
-
-				String jsonRecursiveParendCd = recursive.getString("CD_PARENT"); // SEGMENT_CD
-				String jsonRecursiveParendNm = recursive.getString("NM_PARENT"); // SEGMENT_NM
-
-				String cdDimParentColumn = AbstractJDBCDataset.encapsulateColumnName("CDC_CD_PARENT", dataSource);
-				String nmDimParentColumn = AbstractJDBCDataset.encapsulateColumnName("CDC_NM_PARENT", dataSource);
-				String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendCd, dataSource);
-				String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendNm, dataSource);
-
-				String jsonRecursiveCd = recursive.getString("CD"); // CDC_CD
-				String jsonRecursiveNm = recursive.getString("NM"); // CDC_NM
 
 				// retrieve record fields looking at metafield position in the dimension
 				IField recursiveCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
@@ -1909,8 +1914,9 @@ public class HierarchyService {
 
 				// if parent is null, stop recursion, else move on
 
-				recursiveParentSelect(dbConnection, parentValuesList, recursiveCdValue, recursiveNmValue, dimensionName, cdDimParentColumn, nmDimParentColumn,
-						cdParentColumn, nmParentColumn);
+				// recursiveParentSelect(dbConnection, parentValuesList, recursiveCdValue, recursiveNmValue, dimensionName, cdDimParentColumn,
+				// nmDimParentColumn,
+				// cdParentColumn, nmParentColumn);
 
 			}
 

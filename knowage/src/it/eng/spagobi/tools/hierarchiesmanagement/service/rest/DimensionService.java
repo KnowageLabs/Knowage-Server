@@ -129,8 +129,8 @@ public class DimensionService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimension, dimensionLabel, metadataFields, validityDate, filterDate,
-					filterHierarchy, filterHierType, hierTableName, prefix);
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionLabel, metadataFields, validityDate, filterDate, filterHierarchy,
+					filterHierType, hierTableName, prefix);
 
 			// Create JSON for Dimension data from datastore
 			JSONArray rootArray = HierarchyUtils.createRootData(dataStore);

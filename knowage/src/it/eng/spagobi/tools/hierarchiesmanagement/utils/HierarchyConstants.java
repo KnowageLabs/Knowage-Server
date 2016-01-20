@@ -96,4 +96,7 @@ public class HierarchyConstants {
 	public final static String FIELD_TP_STRING = "String";
 	public final static String FIELD_TP_NUMBER = "Number";
 	public final static String FIELD_TP_DATE = "Date";
+
+	public final static String JSON_CD_PARENT = "CD_PARENT";
+	public final static String JSON_NM_PARENT = "NM_PARENT";
 }
