@@ -68,10 +68,10 @@
 						</md-content>
 						<md-content class="force-100width" layout="row" layout-align="space-between center" layout-padding style="height:40px" >
 							<md-select flex="45" ng-model="code" placeholder="{{translate.load('sbi.generic.code')}}" ng-disabled="!mtRecursive">
-								<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT != true">{{code.NAME}}</md-option>
+								<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT == true">{{code.NAME}}</md-option>
 							</md-select>
 							<md-select flex="45" ng-model="descr" placeholder="{{translate.load('sbi.generic.descr')}}" ng-disabled="!mtRecursive">
-								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="code.PARENT != true">{{descr.NAME}}</md-option>
+								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="code.PARENT == true">{{descr.NAME}}</md-option>
 							</md-select>
 						</md-content>
 					</md-content>
