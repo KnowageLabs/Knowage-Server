@@ -18,8 +18,12 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	$scope.engines = [];
 	$scope.datasources = [];
 	$scope.datasourcesDefault = [];
+	
+	$scope.datasourcesSelected = [];
+	$scope.productsSelected = [];
+	
 	$scope.idx_tab = 0;
-	$scope.showme = false;
+	$scope.showForm = false;
 	$scope.indexOf = function(myArray, myElement) {
 		for (var i = 0; i < myArray.length; i++) {
 			if (myArray[i].MULTITENANT_ID == myElement.MULTITENANT_ID) {
@@ -49,9 +53,6 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	sbiModule_restServices.get(path, "datasources", null).success(function(data) {
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.datasources= data.root;
-			for (var i=0;i<$scope.datasources.length;i++){
-				$scope.datasources[i].checkbox = '<md-checkbox ng-model=\"datasources[' + i+ '].CHECKED\"  aria-label=\"datasources	[' + i+ '].CHECKED\" ng-init=\"'+$scope.datasources[i].CHECKED+'\"></md-checkbox>';
-			}
 			$scope.datasourcesDefault= angular.fromJson(angular.toJson($scope.datasources));
 		}
 	});
@@ -59,9 +60,6 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	sbiModule_restServices.get(path, "producttypes").success(function(data) {
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.productTypes = data.root;
-			for (var i=0;i<$scope.productTypes.length;i++){
-				$scope.productTypes[i].checkbox = '<md-checkbox ng-model=\"productTypes[' + i+ '].CHECKED\"  aria-label=\"productTypes[' + i+ '].CHECKED\" ng-init=\"'+$scope.productTypes[i].CHECKED+'\"></md-checkbox>';
-			}
 			$scope.productTypesDefault = angular.fromJson(angular.toJson($scope.productTypes));
 		}
 	});
@@ -74,16 +72,17 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	
 	$scope.copyRowInForm = function(item,cell,listId) {
 		//not productTypes for this tenant? Get them!
+		$scope.datasourcesSelected.splice(0,$scope.datasourcesSelected.length);
+		$scope.productsSelected.splice(0,$scope.productsSelected.length);
 		if (item.productTypes === undefined){
 			$scope.item=item;
 			sbiModule_restServices.get(path, "producttypes", "TENANT="+item.MULTITENANT_NAME).success(function(data) {
 				$scope.item.productTypes = data.root;
-				for (var i=0;i<$scope.item.productTypes.length;i++){
-					$scope.item.productTypes[i].checkbox = '<md-checkbox ng-model=\"productTypes[' + i+ '].CHECKED\" ng-init=\"productTypes[' + i+ '].CHECKED='+$scope.item.productTypes[i].CHECKED+'\" aria-label=\"productTypes[' + i+ '].CHECKED\"></md-checkbox>';
-				}
+				$scope.copySelectedElement($scope.item.productTypes,$scope.productsSelected);
 				$scope.productTypes = $scope.item.productTypes;
 			});
 		} else{
+			$scope.copySelectedElement($scope.item.productTypes,$scope.productsSelected);
 			$scope.productTypes = item.productTypes;
 		}
 		//not datasources for this tenant? Get them!
@@ -91,28 +90,28 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			$scope.item=item;
 			sbiModule_restServices.get(path, "datasources", "TENANT="+item.MULTITENANT_NAME).success(function(data) {
 				$scope.item.datasources = data.root;
-				for (var i=0;i<$scope.item.datasources.length;i++){
-					$scope.item.datasources[i].checkbox = '<md-checkbox ng-model=\"datasources[' + i+ '].CHECKED\" ng-init=\"datasources[' + i+ '].CHECKED='+$scope.item.datasources[i].CHECKED+'\" aria-label=\"datasources[' + i+ '].CHECKED\"></md-checkbox>';
-				}
+				$scope.copySelectedElement($scope.item.datasources,$scope.datasourcesSelected);
 				$scope.datasources = $scope.item.datasources;
 			});
 		} else{
+			$scope.copySelectedElement($scope.item.datasources,$scope.datasourcesSelected);
 			$scope.datasources = item.datasources;
 		}
 		$scope.tenant = angular.fromJson(angular.toJson(item));
 		$scope.tenantSelected = item; 
-		$scope.showme = true;
+		$scope.showForm = true;
 	};
+	
+	$scope.copySelectedElement = function(source,selected){
+		for (var i = 0 ; i< source.length;i++){
+			selected.push(source[i]);
+		}
+	}
 	
 	$scope.resetForm = function(form){
 		$scope.productTypes = $scope.productTypesDefault;
-		for (var i = 0 ; i < $scope.productTypesDefault.length; i++ ){
-			$scope.productTypesDefault.CHECKED = false;
-		}
-		$scope.datasources = $scope.datasourcesDefault;
-		for (var i = 0 ; i < $scope.datasourcesDefault.length; i++ ){
-			$scope.datasourcesDefault[i].CHECKED = false;
-		}
+		$scope.datasourcesSelected.splice(0,$scope.datasourcesSelected.length);
+		$scope.productsSelected.splice(0,$scope.productsSelected.length);
 		$scope.tenant = {};
 		$scope.tenantSelected = undefined;
 		if (form !== undefined){
@@ -122,20 +121,15 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		$scope.idx_tab = 0;
 	};
 	
-	//toogle the tenant.CHECKED value if the checkbox is clicked
-	$scope.toogleCheckBox = function(item,cell,listId){
-		if (cell.indexOf("<md-checkbox") >= 0 ){
-			item.CHECKED = !item.CHECKED;
-		}
-	};
-	
 	$scope.solveMissingId = function (tenant){
 		sbiModule_restServices.get(path, tenant.MULTITENANT_NAME)
 			.success(function(data){
 				if (data.root.MULTITENANT_ID !== undefined){
 					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
 					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
-					$scope.showAlert('INFO', 'Tenant '+ tenant.MULTITENANT_NAME + '_admin save successful');
+					var name = tenant.MULTITENANT_NAME;
+					var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
+					$scope.showAlert('INFO', message);
 				} else{
 					$scope.showAlert('ERROR', ' Impossible to insert Tenant');
 				}
@@ -188,7 +182,15 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	$scope.formTenant = function(){
 		$scope.resetForm();
 		$scope.tenant = {};
-		$scope.showme=true;
+		//search default theme
+		var themeDefault = $scope.themes.find(function (element, index, array){
+			if (element.VALUE_CHECK == "sbi_default"){
+				return element;
+			}
+			return false;
+		});
+		$scope.tenant.MULTITENANT_THEME = themeDefault ? themeDefault.VALUE_CHECK : "sbi_default";
+		$scope.showForm=true;
 	}
 	
 	$scope.saveTenant = function(form){
@@ -206,16 +208,12 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			$scope.typeSave= "UPDATE";
 		}
 		newTenant.PRODUCT_TYPE_LIST = [];
-		for ( var i =0;i<$scope.productTypes.length;i++){
-			if ($scope.productTypes[i].CHECKED == true){
-				newTenant.PRODUCT_TYPE_LIST.push({ "ID" : ""+$scope.productTypes[i].ID, "LABEL" : ""+$scope.productTypes[i].LABEL});
-			}
+		for ( var i =0;i<$scope.productsSelected.length;i++){
+			newTenant.PRODUCT_TYPE_LIST.push({ "ID" : ""+$scope.productsSelected[i].ID, "LABEL" : ""+$scope.productsSelected[i].LABEL});
 		}
 		newTenant.DS_LIST= [];
-		for ( var i =0;i<$scope.datasources.length;i++){
-			if ($scope.datasources[i].CHECKED == true){
-				newTenant.DS_LIST.push({ "ID" : ""+$scope.datasources[i].ID, "LABEL" : ""+$scope.datasources[i].LABEL, "DESCRIPTION" : ""+$scope.datasources[i].DESCRIPTION });
-			}
+		for ( var i =0;i<$scope.datasourcesSelected.length;i++){
+			newTenant.DS_LIST.push({ "ID" : ""+$scope.datasourcesSelected[i].ID, "LABEL" : ""+$scope.datasourcesSelected[i].LABEL, "DESCRIPTION" : ""+$scope.datasourcesSelected[i].DESCRIPTION });
 		}
 		$scope.newTenant = newTenant;
 		sbiModule_restServices.post(path,"save",angular.toJson(newTenant)).success(function(data){
@@ -232,13 +230,17 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 						$scope.solveMissingId(newTenant);
 					}else{
 						$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
-						$scope.showAlert('INFO', 'Tenant '+ newTenant.MULTITENANT_NAME + '_admin save successful');
+						var name = newTenant.MULTITENANT_NAME;
+						var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
+						$scope.showAlert('INFO', message);
 					}
 				}else{
 					//updating the table
 					var idx = $scope.indexOf($scope.tenants,newTenant);
 					$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
-					$scope.showAlert('INFO', 'Tenant '+ newTenant.MULTITENANT_NAME + '_admin save successful');
+					var name = newTenant.MULTITENANT_NAME;
+					var message = 'The tenant "'+name+'" was successful created. The admin user is "'+name+'_admin" with password "'+name+'_admin';
+					$scope.showAlert('INFO', message);
 					}
 			}else{
 				$scope.showAlert('ERROR', 'Impossible to save tenant');
@@ -266,7 +268,8 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 				$mdDialog.alert()
 			        .parent(angular.element(document.body))
 			        .clickOutsideToClose(false)
-			        .title(message)
+			        .title(title)
+			        .content(message)
 			        .ok('Ok')
 		        );
 		}
