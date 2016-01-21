@@ -615,7 +615,6 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 		if ($scope.dim && $scope.dateDim){
 			var dialog = $scope.showCreateMaster();
 			dialog.then(function(newHier){
-				var hier = $scope.hierMaster;
 				var dateFormatted = $scope.formatDate($scope.dateDim);
 				var item = {
 						dimension : $scope.dim.DIMENSION_NM,
@@ -624,11 +623,11 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				if (filterDate !== undefined && filterDate !== null){
 					item.filterDate = $scope.formatDate(filterDate);
 				}
-				if (hier && filterHierarchy !== undefined && filterHierarchy !== null){
+				if (newHier && filterHierarchy !== undefined && filterHierarchy !== null){
 					item.filterHierType = $scope.hierType.toUpperCase();
 					item.filterHierarchy = hier.HIER_NM;
 				}
-				for (var k in hier){
+				for (var k in newHier){
 					item[k] = angular.copy(hier[k]);
 				}
 				var promise = $scope.restService.post('hierarchies','createHierarchyMaster',item);

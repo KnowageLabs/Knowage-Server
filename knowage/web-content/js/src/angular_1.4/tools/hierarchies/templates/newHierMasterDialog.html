@@ -24,7 +24,7 @@
 			<md-content layout="row" layout-align="space-around center" layout-padding>
 				<md-content class="list-container">
 					<md-list>
-						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim">
+						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim"  ng-if="mtDim.PARENT != true">
 							<span class="force-100width" ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}">{{mtDim.NAME}} </span>	
 						</md-list-item>
 					</md-list>
@@ -36,7 +36,7 @@
 				<md-content layout="column" space-align="space-between stretch">
 					<md-content class="list-container" style="height:11rem;">
 						<md-list layout-padding>
-							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport" ng-if="mtDimExp.PARENT != true">
+							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport" >
 								<md-content layout-fill layout="row" layout-align="space-between center">
 									<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
 										<span class="force-100width" ng-click="toggleItem(mtDimExp,'right')">
