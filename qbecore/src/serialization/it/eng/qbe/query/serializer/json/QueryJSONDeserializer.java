@@ -204,28 +204,28 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						 * IModelEntity temporalDimension = getTemporalDimension(dataSource); HierarchicalDimensionField hierarchicalDimensionByEntity =
 						 * temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType()); Hierarchy defaultHierarchy =
 						 * hierarchicalDimensionByEntity.getDefaultHierarchy();
-						 * 
+						 *
 						 * String entity = temporalDimension.getType(); String temporalCondition = " 1 = 1 "; String year = entity + ":" +
 						 * defaultHierarchy.getLevelByType("YEAR"); String month = entity + ":" + defaultHierarchy.getLevelByType("MONTH"); String
 						 * temporalDimensionDateField = "the_date";
-						 * 
-						 * 
+						 *
+						 *
 						 * if (temporalOperand.equals("YTD")) { Calendar startDate = new GregorianCalendar(); startDate.set(startDate.get(Calendar.YEAR), 0, 1,
 						 * 0, 0); Date today = new Date();
-						 * 
+						 *
 						 * temporalCondition = year + " = (select "+year+" from "+entity+" where "+temporalDimensionDateField+
 						 * " between :startDate and :endDate ) ";
-						 * 
+						 *
 						 * } else if (temporalOperand.equals("MTD")) {
-						 * 
+						 *
 						 * temporalCondition = year + " = 2015 " + " AND " + month + " = 'October'";
-						 * 
+						 *
 						 * }
-						 * 
+						 *
 						 * type = "STRING"; nature = "ATTRIBUTE";
-						 * 
+						 *
 						 * expression = "CASE WHEN " + temporalCondition + "THEN " + field.getUniqueName() + " ELSE NULL END"; slots = "";
-						 * 
+						 *
 						 * query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order,
 						 * funct);
 						 */
@@ -247,7 +247,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						if (fieldClaculationDescriptor.has(QuerySerializationConstants.FIELD_NATURE)) {
 							nature = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_NATURE);
 						}
-						expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
+						expression = "("+fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION)+")";
 						slots = fieldClaculationDescriptor.optString(QuerySerializationConstants.FIELD_SLOTS);
 						group = fieldJSON.getString(QuerySerializationConstants.FIELD_GROUP);
 						order = fieldJSON.getString(QuerySerializationConstants.FIELD_ORDER);
@@ -433,39 +433,39 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 
 	/*
 	 * private void deserializeFilters(JSONArray filtersJOSN, DataMartModel datamartModel, Query query) throws SerializationException {
-	 * 
+	 *
 	 * JSONObject filterJSON; DataMartField field; String fname; String fdesc; String fieldUniqueName; String operator; String operand; boolean isFree; String
 	 * operandDesc; String operandType; String boperator; String defaultValue; String lastValue;
-	 * 
+	 *
 	 * logger.debug("IN");
-	 * 
+	 *
 	 * try {
-	 * 
+	 *
 	 * logger.debug("Query [" + query.getId() + "] have [" + filtersJOSN.length() + "] to deserialize"); for(int i = 0; i < filtersJOSN.length(); i++) {
-	 * 
+	 *
 	 * try { filterJSON = filtersJOSN.getJSONObject(i); fieldUniqueName = filterJSON.getString(SerializationConstants.FILTER_ID); field =
 	 * datamartModel.getDataMartModelStructure().getField(fieldUniqueName); Assert.assertNotNull(field, "Impossible to load a field named [" + fieldUniqueName +
 	 * "] from datamart"); } catch (JSONException e) { throw new SerializationException("An error occurred while filter [" + filtersJOSN.toString() +
 	 * "] of query [" + query.getId() + "]", e); }
-	 * 
+	 *
 	 * try { fname = filterJSON.getString(SerializationConstants.FILTER_NAME); fdesc = filterJSON.getString( SerializationConstants.FILTER_NAME);
-	 * 
+	 *
 	 * operator = filterJSON.getString(SerializationConstants.FILTER_OPEARTOR); operand = filterJSON.getString(SerializationConstants.FILTER_OPEARND); isFree =
 	 * filterJSON.getBoolean(SerializationConstants.FILTER_IS_FREE); operandDesc = filterJSON.getString(SerializationConstants.FILTER_OPEARND_DESCRIPTION);
 	 * operandType = filterJSON.getString(SerializationConstants.FILTER_OPEARND_TYPE); boperator =
 	 * filterJSON.getString(SerializationConstants.FILTER_BOOLEAN_CONNETOR); defaultValue = filterJSON.getString(SerializationConstants.FILTER_DEFAULT_VALUE);
 	 * lastValue = filterJSON.getString(SerializationConstants.FILTER_LAST_VALUE); } catch (JSONException e) { throw new SerializationException(
 	 * "An error occurred while filter [" + filtersJOSN.toString() + "] of query [" + query.getId() + "]", e); }
-	 * 
-	 * 
+	 *
+	 *
 	 * Assert.assertTrue(!StringUtilities.isEmpty(operator), "Undefined operator for filter: " + filterJSON.toString());
 	 * Assert.assertTrue(!"NONE".equalsIgnoreCase(operator), "Undefined operator NONE for filter: " + filterJSON.toString());
-	 * 
-	 * 
+	 *
+	 *
 	 * query.addWhereFiled(fname, fdesc,field.getUniqueName(), operator, operand, operandType, operandDesc, boperator, isFree, defaultValue, lastValue); } }
 	 * catch(Throwable t) { throw new SerializationException("An error occurred while deserializing filters of query [" + query.getId() +"]", t); } finally {
 	 * logger.debug("OUT"); }
-	 * 
+	 *
 	 * }
 	 */
 
