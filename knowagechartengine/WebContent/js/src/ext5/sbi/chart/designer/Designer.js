@@ -826,7 +826,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
 					
-					console.log(Designer.getConfigurationForStyle(Designer.styleName));
+					//console.log(Designer.getConfigurationForStyle(Designer.styleName));
 					
 					if (Designer.getConfigurationForStyle(Designer.styleName) != null)
 					{
@@ -2828,18 +2828,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 			
 			//Workaround for color picker resets
-			if(this.cModel.get('backgroundColor').trim() == '') {
+			if(this.cModel.get('backgroundColor') && this.cModel.get('backgroundColor').trim() == '') {
 				this.cModel.set('backgroundColor', 'transparent');
 			};
-			if(this.cModel.get('legendColor').trim() == '') {
+			if(this.cModel.get('legendColor') && this.cModel.get('legendColor').trim() == '') {
 				this.cModel.set('legendColor', 'transparent');
 			};
 			
-			if(this.cModel.get('legendBackgroundColor').trim() == '') {
+			if(this.cModel.get('legendBackgroundColor') && this.cModel.get('legendBackgroundColor').trim() == '') {
 				this.cModel.set('legendBackgroundColor', 'transparent');
 			};
 			
-			if(this.cModel.get('legendTitleColor').trim() == '') {
+			if(this.cModel.get('legendTitleColor') && this.cModel.get('legendTitleColor').trim() == '') {
 				this.cModel.set('legendTitleColor', 'transparent');
 			};
 			

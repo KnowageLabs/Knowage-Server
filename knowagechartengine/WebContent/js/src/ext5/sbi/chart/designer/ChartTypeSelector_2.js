@@ -68,12 +68,10 @@ Ext.define
     	},
 	    
 	    getChartType: function() {
-//	    	console.log("===");
 			return this.getValue().toUpperCase();
 		},
 		
 		setChartType: function(newChartType) {
-//			console.log("===");
 			this.setValue(newChartType.toLowerCase());
 		},
 		
@@ -675,9 +673,7 @@ Ext.define
 										 */				
 										if (newlySelectedType != previousChartType)
 										{	
-//											console.log("===");
 											globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
-//											console.log("===");
 										}
 										/**
 										 * Previous and current chart type are the same: (1) the same chart type is chosen twice or
@@ -689,13 +685,7 @@ Ext.define
 											(
 												"axesSet",function() 
 												{
-													Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
-//													console.log("===");
-						//							if(Sbi.chart.designer.ChartTypeSelector_2.dataLoaded)
-						//							{	
-						//								//globalScope.resetStep1();
-						//								//globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
-						//							}
+													Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;
 												}
 											);					
 										}			
