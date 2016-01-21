@@ -291,6 +291,9 @@
 		<!-- IMAGES -->
 		<mapping resource="it/eng/spagobi/images/metadata/mapping/SbiImages.hbm.xml" />        
 
+        <!-- Cross Navigation -->
+        <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigation.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigationPar.hbm.xml" />
         
         <!-- end mapping -->
         
