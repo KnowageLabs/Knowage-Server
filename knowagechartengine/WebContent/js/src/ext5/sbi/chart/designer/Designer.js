@@ -17,6 +17,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     ],
 
     statics: {
+    	noStylePickedStyle: null,
     	tabChangeChecksFlag: true,
     	
 		jsonTemplate: null,
@@ -165,32 +166,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Base JSON template that we will use when the new chart (document) is created
 			 */
 			var baseTemplate = {
-				CHART: {
-					type: 'BAR',
-					AXES_LIST: {
-						AXIS: [
-					       {alias:'Y', type: 'Serie'},
-					       {alias:'X', type: 'Category'}
-				       ]
-					},
-					VALUES: {
-						SERIE: []
-					},
-					COLORPALETTE: {
-						COLOR: [
-					        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
-					        {id:2 , order: 2, name: '434348', value: '434348' }, 
-					        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
-					        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
-					        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
-					        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
-					        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
-					        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
-					        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
-					        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
-				        ]
+					CHART: {
+						type: 'BAR',
+						AXES_LIST: {
+							AXIS: [
+							       {alias:'Y', type: 'Serie'},
+							       {alias:'X', type: 'Category'}
+							       ]
+						},
+						VALUES: {
+							SERIE: []
+						},
+						COLORPALETTE: {
+							COLOR: [
+						        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
+						        {id:2 , order: 2, name: '434348', value: '434348' }, 
+						        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
+						        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
+						        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
+						        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
+						        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
+						        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
+						        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
+						        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
+					        ]
+						}
 					}
-				}
 			};	
 			
 			var newChart = false;
@@ -387,13 +388,90 @@ Ext.define('Sbi.chart.designer.Designer', {
 			        //margin: '5 3 3 0'
 			});
 			
+			/**
+			 * Create initial (empty) chart type store, so we can call the 
+			 * service for data about all chart types that are available 
+			 * inside the Designer.
+			 * 
+			 * Fields: 
+			 * 		chartType: 	The full name of the chart type that is going
+			 * 					to be displayed in the combo box (the name of 
+			 * 					the chart with the first letter in capitals).
+			 * 
+			 * 		chartTypeAbbr:	
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			var chartTypesStore = Ext.create 
+			( 
+				"Ext.data.Store", 
+				
+				{
+					fields: ["chartType", "chartTypeAbbr", "iconChartType"],
+							
+					data: []
+				}
+			);
 			
+			/**
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			Ext.Ajax.request
+			(
+				{
+				   method : 'GET',
+				   url : 'types',
+				   
+				   success: function(response) 
+				   {
+				        var obj = Ext.decode(response.responseText);
+				        chartTypesFromService = obj.types;
+				        
+				        for (i=0; i<chartTypesFromService.length; i++)
+			        	{
+			        		/**
+			        		 * Capitalize only the first letter for displaying the charts type name.
+			        		 */
+			        		var chartTypeDisplay = chartTypesFromService[i].charAt(0).toUpperCase() + chartTypesFromService[i].slice(1);
+			        		
+			        		chartTypesStore.add
+			        		(
+		        				{
+		        					"chartType": 		chartTypeDisplay,
+		        					"chartTypeAbbr": 	chartTypesFromService[i].toLowerCase(),
+		        					"iconChartType": 	Sbi.chart.designer.Designer.relativePathReturn + 
+					        								'/img/designer/chart/types/' + 
+					        									chartTypesFromService[i].toLowerCase() +
+					        										'.png'
+								}
+	        				);			        		
+			        	}
+				        
+				        globalThis.chartTypeSelector.fireEvent("chartTypesReady");
+				        
+				    },
+				    
+				    failure: function(response, opts) 
+				    {
+				    	console.log('server-side failure with status code ' + response.status);
+				    }
+				});
+			
+			/**
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector_2', 
 			{ 				
 				region: 'north',
  				
 				listeners:
  				{
+					chartTypesReady: function()
+					{
+						this.setStore(chartTypesStore);
+						this.fireEvent("setInitialIcon");						
+					},
+					
 					/**
 					 * Listen for the moment in which the item is rendered (this one)
 					 * so to be able to customize the combo properly (icon of the chart
@@ -410,7 +488,7 @@ Ext.define('Sbi.chart.designer.Designer', {
  						
  						for (i=0; i<this.store.data.length; i++)
 						{
- 							if (this.store.data.items[i].data.styleAbbr.toLowerCase() == chartTypeOfDocument.value.toLowerCase())
+ 							if (this.store.data.items[i].data.chartTypeAbbr.toLowerCase() == chartTypeOfDocument.value.toLowerCase())
 							{
  								iconPath = this.store.data.items[i].data.icon;
  								break;
@@ -434,9 +512,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			var onSelectJsonTemplate = "";					
 			
-			this.chartTypeSelector.on("chartTypeChanged", function() {
-				Sbi.chart.designer.Designer.chartTypeChanged = true;
-			});
+			this.chartTypeSelector.on
+			(
+				"chartTypeChanged", 
+				
+				function() 
+				{
+					Sbi.chart.designer.Designer.chartTypeChanged = true;
+					
+					/**
+					 * When the chart type is changed, remove the content from the Preview panel
+					 * so it will not be confused with the old image that was potentially rendered
+					 * within this panel in the Designer for some previous chart configuration and
+					 * potentially another chart type.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					globalThis.previewPanel.removeAll();
+				}
+			);
 
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
@@ -455,27 +549,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */					
 					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
 					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);	
-					
-					/*console.log(globalThis.stepsTabPanel.getComponent(1).getComponent(0));
-					console.log(globalThis.stepsTabPanel.getComponent(1).getComponent(1));
-					console.log(mainConfigurationPanel.getComponent("showLegend"));
-					console.log( mainConfigurationPanel.getComponent("chartOrientationCombo"));
-					console.log(mainConfigurationPanel.getComponent("chartWidthNumberfield"));
-					console.log(mainConfigurationPanel.getComponent("opacityMouseOver"));
-					console.log(secondConfigurationPanel.getComponent("chartColorPalette"));
-					console.log(secondConfigurationPanel.getComponent("chartLegend"));
-					console.log(secondConfigurationPanel.getComponent("chartToolbar"));
-					console.log(secondConfigurationPanel.getComponent("chartTip"));
-					console.log(secondConfigurationPanel.getComponent("wordcloudConfiguration"));
-					console.log(secondConfigurationPanel.getComponent("chartParallelLimit"));
-					console.log(secondConfigurationPanel.getComponent("chartParallelAxesLines"));
-					console.log(secondConfigurationPanel.getComponent("chartParallelTooltip"));
-					console.log(secondConfigurationPanel.getComponent("chartParallelLegendTitle"));
-					console.log(secondConfigurationPanel.getComponent("chartParallelLegendElement"));
-					console.log(secondConfigurationPanel.getComponent("chartScatterConfiguration"));
-					console.log(secondConfigurationPanel.getComponent("chartHeatmapLegend"));
-					console.log(secondConfigurationPanel.getComponent("chartHeatmapTooltip"));
-					console.log(secondConfigurationPanel.getComponent("gaugePaneConfiguration"));*/
 					
 					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
 //					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
@@ -553,7 +626,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var isChartRadar= currentChartType == 'RADAR';
 					var isChartHeatmap = currentChartType == 'HEATMAP';	
 					var isChartChord = currentChartType == 'CHORD';	
-					var isChartGauge = currentChartType == 'GAUGE';
+					var isChartGauge = currentChartType == 'GAUGE';	
 					
 					var chartLibrary = globalThis.chartLibNamesConfig[currentChartType.toLowerCase()];
 					
@@ -753,6 +826,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
 					
+					console.log(Designer.getConfigurationForStyle(Designer.styleName));
+					
+					if (Designer.getConfigurationForStyle(Designer.styleName) != null)
+					{
 					/**
 					 * Since we are dealing with the newly created chart which does not posses any 
 					 * serie item, in order to skip mergin the OBJECT (not an empty array!) in the 
@@ -817,7 +894,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */						
 					var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
-					//Ext.getCmp("chartColorPalette").fireEvent("chartTypeChanged",numberOfColors);
+					//Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
 					
 					Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;
 					Ext.getCmp("chartColorPalette").update();
@@ -827,7 +904,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * the Step 2 tab) after selecting the particular style.
 					 */
 		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
-					
+					}
 					//console.log("== RESET STEP 2 (end) ==");
 					//console.log("========================");
 				}
@@ -1555,7 +1632,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   						 */
   						drop: function(node, data, dropRec, dropPosition)
-  						{
+  						{						
   							var numCategItemsInContainer = this.store.data.length;
   							var containersInitHeight = this.ownerCt.minHeight;  
   							
@@ -1592,6 +1669,53 @@ Ext.define('Sbi.chart.designer.Designer', {
   						{  							
   							this.fireEvent("drop");
   						},
+  						
+  						/**
+						 * When the grid's view is ready, set the tooltip item in it so
+						 * it can listen for mouse over ('beforeshow' event) in order to
+						 * display the tooltip with appropriate content (the name of the
+						 * serie that mouse hovers in the Y-axis panel).
+						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+				        viewready: function (grid) {
+				        	
+				        	var view = grid;
+				            
+				            // record the current cellIndex
+				            grid.mon(view, {
+				                
+				            	uievent: function (type, view, cell, recordIndex, cellIndex, e) {
+				                	grid.cellIndex = cellIndex;
+				                    grid.recordIndex = recordIndex;
+				                }
+				            
+				            });
+			
+				            grid.tip = Ext.create('Ext.tip.ToolTip', {
+				               
+				        	   	target: view.el,
+				                delegate: '.x-grid-cell',
+				                trackMouse: true,
+				                renderTo: Ext.getBody(),
+				                
+				                listeners: {
+				                	
+				                    beforeshow: function updateTipBody(tip) {
+				                    	
+//						                        if (!Ext.isEmpty(grid.cellIndex) && grid.cellIndex !== -1) {
+			                            	var header = grid.headerCt.getGridColumns()[0];
+				                            var val = grid.getStore().getAt(grid.recordIndex).get(header.dataIndex);
+//						                            var isDateColumn = header.xtype == 'datecolumn';
+//						                            tip.update(isDateColumn ? Ext.util.Format.date(val, header.format) : val);
+				                            var stringTip = '<b>Category:</b></br>' + val;
+				                            tip.update(stringTip);
+//						                        }
+				                            
+				                    }
+				                }
+				            });
+				        },
   						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  						
@@ -1788,7 +1912,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									{
 										title : '',
 										
-										message : "You are about to remove all categories items. Continue?",	// TODO: LN()
+										message : "You are about to remove all categories in the panel. Continue?",	// TODO: LN()
 											
 										icon : Ext.Msg.QUESTION,
 										closable : false,
@@ -1805,6 +1929,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 											if (buttonValue == 'ok') 
 											{
 												Sbi.chart.designer.Designer.cleanCategoriesAxis();
+
+												var bottomXAxisPanel = globalThis.bottomXAxisesPanel;
 												
 												/**
 												 * When removing all items from the category container (the bottom
@@ -1813,7 +1939,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 												 * 
 												 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 												 */
-												this.ownerCt.ownerCt.setHeight(this.ownerCt.ownerCt.minHeight);
+												bottomXAxisPanel.setHeight(bottomXAxisPanel.minHeight);
 											}
 										}
 									}
@@ -2074,12 +2200,22 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			 * 
   		            			 * NOTE: Commented by Benedetto Milazzo and Danilo Ristovski: problem when saving chart
   		            			 * (document) while inside the Advanced editor tab
+  		            			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  		            			 * 
+  		            			 * NOTE: Uncommented since saving in the Advanced editor did not take
+  		            			 * changes that we provided to e.g. mandatory fields while we were on
+  		            			 * this tab. E.g. if we remove value of some mandatory field in the
+  		            			 * Advanced tab and then try to save the document, the validation will
+  		            			 * not be done appropriately - we will be able to save document even 
+  		            			 * without a value of the mandatory field.
+  		            			 * @date 20.01.2016.  		            			  
+  		            			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   		            			 */
-//  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-//  		            			if (activeTab.getId() == 'advancedEditor') {  	
-//  		            				var json = activeTab.getChartData(); 
-//  		            				Sbi.chart.designer.Designer.update(json);
-//  		            			}
+  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+  		            			if (activeTab.getId() == 'advancedEditor') {  	
+  		            				var json = activeTab.getChartData(); 
+  		            				Sbi.chart.designer.Designer.update(json);
+  		            			}
   		            			
   		            			//console.log(Sbi.chart.designer.Designer.exportAsJson());
     							//console.log(Sbi.chart.designer.Designer.exportAsJson(true));
@@ -2364,7 +2500,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				else
 				{
-					for (var i=0; i < category.length; i++) {	
+					for (var i=0; i<category.length; i++) {	
 						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 							axisName: category[i].name ? category[i].name: category[i].column,
 							axisType: 'ATTRIBUTE', 
@@ -2414,7 +2550,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						categoriesStore.add(newCat);
 					});
 				}
-			}
+			}	
 			
 			/**
 			 * When all categories are loaded into the categories container
@@ -2465,7 +2601,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								&& chartType != "HEATMAP" 
 									&& chartType != "SCATTER" 
 										&& chartType!="GAUGE") {										
-								
+							
 								hideAxisTitleTextbox = true;
 								
 								if (chartType != "CHORD" && chartType != "PARALLEL")
@@ -2481,11 +2617,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var config = {
 							"idAxisesContainer":leftYAxisesPanel.id , 
 							"id": '', 
-							"panelWhereAddSeries": panelWhereAddSeries, 
-							"isDestructible": isDestructible, 
-							"dragGroup": Sbi.chart.designer.ChartUtils.ddGroupMeasure,
-							"dropGroup": Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-							"axis": axis, 
+							"panelWhereAddSeries":panelWhereAddSeries, 
+							"isDestructible":isDestructible, 
+							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+							"axis":axis, 
 							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
 							"gearHidden":hideGearTool, 
 							"plusHidden":hidePlusGear,
@@ -4732,7 +4868,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (wordcloudMaxAngleGUI == null)
 				{
-					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel=="")
+					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel==="")
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
@@ -4778,7 +4914,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (wordcloudMinAngleGUI == null)
 				{
-					if (wordcloudMinAngleCModel == null || wordcloudMinAngleCModel=="")
+					if (wordcloudMinAngleCModel == null || wordcloudMinAngleCModel==="")
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(

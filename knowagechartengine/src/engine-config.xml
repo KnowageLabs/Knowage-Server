@@ -80,7 +80,12 @@
 		<chart type="bar" 		name="chartJs" 			vmName="bar_chart_chartJs.vm" 	/>
 		-->
 		
-		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm"	/>
+		<!-- 
+			Not needed, not handled by the Designer.
+			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm"	/> 
+		-->
+		
 		<chart type="line" 		name="highcharts414" 	vmName="column_chart.vm"	/> 
 		<chart type="pie"		name="highcharts414" 	vmName="pie_chart.vm"		/> 	
 		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" 	/>

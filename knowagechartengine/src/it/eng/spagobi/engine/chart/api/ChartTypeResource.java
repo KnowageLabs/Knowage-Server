@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@Path("/types")
+@Path("1.0/pages/types")
 public class ChartTypeResource {
 	static private Logger logger = Logger.getLogger(ChartTypeResource.class);
 

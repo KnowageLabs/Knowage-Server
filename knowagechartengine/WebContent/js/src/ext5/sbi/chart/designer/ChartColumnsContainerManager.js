@@ -166,6 +166,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			var emptyTextForMeasures = LN('sbi.chartengine.designer.emptytext.dragdropmeasures.' + currentChartType.toLowerCase());							
 			
+			var globalScope = this;
+			
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -237,7 +239,56 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						dragGroup: dragGroup,
 						dropGroup: dropGroup
 					},
+					
 					listeners: {
+							
+						/**
+						 * When the grid's view is ready, set the tooltip item in it so
+						 * it can listen for mouse over ('beforeshow' event) in order to
+						 * display the tooltip with appropriate content (the name of the
+						 * serie that mouse hovers in the Y-axis panel).
+						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+				        viewready: function (grid) {
+				        	
+				        	var view = grid;
+				            
+				            // record the current cellIndex
+				            grid.mon(view, {
+				                
+				            	uievent: function (type, view, cell, recordIndex, cellIndex, e) {
+				                	grid.cellIndex = cellIndex;
+				                    grid.recordIndex = recordIndex;
+				                }
+				            
+				            });
+			
+				            grid.tip = Ext.create('Ext.tip.ToolTip', {
+				               
+				        	   	target: view.el,
+				                delegate: '.x-grid-cell',
+				                trackMouse: true,
+				                renderTo: Ext.getBody(),
+				                
+				                listeners: {
+				                	
+				                    beforeshow: function updateTipBody(tip) {
+				                    	
+//					                        if (!Ext.isEmpty(grid.cellIndex) && grid.cellIndex !== -1) {
+				                    	var header = grid.headerCt.getGridColumns()[0];
+			                            var val = grid.getStore().getAt(grid.recordIndex).get(header.dataIndex);
+//					                            var isDateColumn = header.xtype == 'datecolumn';
+//					                            tip.update(isDateColumn ? Ext.util.Format.date(val, header.format) : val);
+			                            var stringTip = '<b>Serie:</b></br>' + val;
+			                            tip.update(stringTip);
+//					                        }
+				                            
+				                    }
+				                }
+				            });
+				        },
+					    
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
 							
 							/**
@@ -278,6 +329,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   	  						 */
 							if ((enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) ||
 										((this.store.data.length+data.records.length) <= 4 && chartType == 'PIE')) {
+							
 								// *_* The original code
 								if(data.view.id != this.id) {
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
@@ -317,15 +369,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 									 * if delete it afterwards and then re-renders the Designer, he will still
 									 * see the old (not existing) chart style, but when dropping serie items 
 									 * in the Y-axis panel it does not take serie parameterization of any
-									 * particular style (since the one set in the combo is not existing anymore). 
+									 * particular style (since the one set in the combo is not existing anymore).
+									 * 
+									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 									 */	
 									var configurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle);
+									
 									if (configurationForStyle != null) {
 										var genericJsonForStyle =  configurationForStyle.generic;
 										var specificJsonForStyle = configurationForStyle[chartType.toLowerCase()];
-										
+									
+										//console.log(genericJsonForStyle);
+										//console.log(specificJsonForStyle);
 										var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
-										
+										//console.log(combination);
 										/**
 										 * danristo (1) 
 										 */
@@ -340,12 +397,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										 */
 										(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
 										(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
-																					
+												
 										/**
-										 * danristo (7)
-										 */
+										 * If there is no property already defined inside the newly dropped serie item and if it exists
+										 * in the tag that describes customization of the SERIE item for this chart type and current style
+										 * (variable 'serieTagParameters'), set it so the model of the document can take it and display it
+										 * when the Serie style popup is opened for particular serie.
+										 * 
+										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 */										
 										(!newRecordToDrop.get('serieColor')) ? newRecordToDrop.set('serieColor', serieTagParameters.color) : null;									
 										(!newRecordToDrop.get('serieShowValue')) ? newRecordToDrop.set('serieShowValue', serieTagParameters.showValue) : null;
+										(!newRecordToDrop.get('serieShowAbsValue')) ? newRecordToDrop.set('serieShowAbsValue', serieTagParameters.showAbsValue) : null;
+										(!newRecordToDrop.get('serieShowPercentage')) ? newRecordToDrop.set('serieShowPercentage', serieTagParameters.showPercentage) : null;
 										(!newRecordToDrop.get('seriePrecision')) ? newRecordToDrop.set('seriePrecision', serieTagParameters.precision) : null;
 										(!newRecordToDrop.get('seriePrefixChar')) ? newRecordToDrop.set('seriePrefixChar', serieTagParameters.prefixChar) : null;
 										(!newRecordToDrop.get('seriePostfixChar')) ? newRecordToDrop.set('seriePostfixChar', serieTagParameters.postfixChar) : null;
@@ -401,7 +465,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										// DATA_LABELS properties
 										(!newRecordToDrop.get('yPositionDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
 										(!newRecordToDrop.get('formatDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
-										(!newRecordToDrop.get('colorDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;							
+										(!newRecordToDrop.get('colorDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;
 									}
 								}	
 								
@@ -814,7 +878,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						dataIndex: 'serieColumn',
 						flex: 12,
 						layout: 'fit',
-						sortable: false,
+						sortable: false,						
 					}), 
 					Ext.create('Ext.grid.column.Column', {
 						dataIndex: 'serieGroupingFunction',
@@ -928,7 +992,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			if (chartType == "SUNBURST" || chartType == "TREEMAP" 
 				|| chartType == "PARALLEL" || chartType == "HEATMAP")
 			{
-				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";
+				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";	
 			}
 			
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);

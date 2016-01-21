@@ -174,7 +174,7 @@ Ext.define
 						id: "wordcloudMaxFontSize",
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width : 280,
-						maxValue : '200',
+						maxValue : '500',
 						minValue : '30',
 						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxFontSize.emptyText"),
 						
