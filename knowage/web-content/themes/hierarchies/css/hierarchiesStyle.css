@@ -129,9 +129,9 @@ resizer {
 }
 
 .recursive-container{
-	width: inherit;
+	width: 19rem;
 	height : 5rem;
-	max-width: inherit;
+	max-width: 19rem;
 	max-height : 6rem;
 	border-style: inset;
     border-width: 3px;

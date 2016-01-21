@@ -40,11 +40,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 //	$scope.hierTreeTarget.push(angular.copy(dataJson));
 	
 	/*Drag and Drop option*/
-	$scope.treeTargetOptions = {
+	$scope.treeSrcOptions = {
 		beforeDrop : function(e){
-			//set dirty the tree and update the level of the object dragged
-			$scope.treeTargetDirty = true;
-			e.source.cloneModel.LEVEL = e.dest.nodesScope.$nodeScope.$modelValue.LEVEL + 1;
+			$scope.beforeDrop(e);
 		},
 		beforeDrag : function(sourceNodeScope){
 			if (sourceNodeScope.$treeScope.cloneEnabled==false){
@@ -53,6 +51,30 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			return true;
 		}
 	};
+	
+	$scope.treeTargetOptions = {
+			beforeDrop : function(e){
+				$scope.beforeDrop(e);
+			}
+		};
+	
+	$scope.beforeDrop = function(e){
+		//set dirty the tree and update the level of the object dragged
+		$scope.treeTargetDirty = true;
+		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+		$scope.removeFakeAndCorupt(dest.children);
+		e.source.nodeScope.$modelValue.LEVEL = dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
+	}
+	
+	/*remove elements dropped by ui-tree that are wrong. These elements are dropped though you cancel the confirm dialog [showListHierarchies]*/
+	$scope.removeFakeAndCorupt = function (array){
+		for (var i = 0;i< array.length ; i++){
+			if (array[i].fake == true || (!array[i].leaf && !array[i].children)){
+				array.splice(i,1);
+				i--;
+			}
+		}
+	}
 	
 	$scope.toogleSeeFilter= function(choose){
 		if (choose == 'src'){
@@ -247,7 +269,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			$scope.showAlert('Error','No metadata Node found for dimension '+ dimName );
 			return null;
 		}
-		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: type =="node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS;
+		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: (type =="node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS);
 		var node = {};
 		for (var i =0; i < metadata.length; i++){
 			if (metadata[i].TYPE == 'Number'){
@@ -545,8 +567,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : "HIER_CD";
 						newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : rootStructure.name;
 						newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : rootStructure.name;
-						newItem.root = true;
-						newItem.leaf = false;
+						newItem.HIER_TP = "TECHNICAL"
 						$scope.hierTreeTarget = [newItem];
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;

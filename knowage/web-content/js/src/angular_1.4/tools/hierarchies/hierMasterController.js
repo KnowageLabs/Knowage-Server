@@ -64,6 +64,13 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				destNodesScope.$treeScope.cloneEnabled = true;
 			}
 			return true;
+		},
+		beforeDrop : function(e){
+			$scope.treeDirty = true;
+			var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+			$scope.removeFakeAndCorupt(dest.children);
+			e.source.nodeScope.$modelValue.LEVEL = dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
+			return true;
 		}
 	}
 	/*Drag and Drop options from table to tree. Create node or leaf to insert in the tree if confirmed the list dialog*/
@@ -87,13 +94,8 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 						source.id = source[keyId];
 						source.leaf=true;
 						source.LEVEL = dest.LEVEL !== undefined ? dest.LEVEL + 1 : 1;
-						var tmp = angular.copy(nodeStructure);
-						if (dest.children.length > 0){
-							tmp.$parent = dest;
-							tmp.type = dest.children.length > 0 ? dest.children[0].type : 'biObject';
-						}else{
-							tmp.$parent = null;
-						}
+						var tmp = angular.copy($scope.createEmptyNode('leaf'));
+						tmp.$parent = dest;
 						var keys = Object.keys(tmp);
 						for (var i =0; i< keys.length;i++){
 							if (source[keys[i]] == undefined){
@@ -338,7 +340,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 			$scope.showAlert('Error','No metadata Node found for dimension '+ dimName );
 			return null;
 		}
-		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: type == "node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS;var metadata = metTmp.NODE_FIELDS;
+		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: (type == "node" ? metTmp.NODE_FIELDS  : metTmp.LEAF_FIELDS);
 		var node = {};
 		for (var i =0; i < metadata.length; i++){
 			if (metadata[i].TYPE == 'Number'){

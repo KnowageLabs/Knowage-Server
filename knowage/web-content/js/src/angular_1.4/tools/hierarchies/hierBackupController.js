@@ -53,7 +53,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
         	}
     	}];
 	
-	$scope.backupTable = angular.copy(backupTableFake);
+	
 	
 	$scope.indexOf = function(myArray, myElement, key) {
 		if (myArray ===undefined || myElement === undefined) return -1;
@@ -150,6 +150,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 					function(data, status, headers, config) {
 						if (data.errors === undefined){
 							$scope.createTable(data);
+							//$scope.backupTable = angular.copy(backupTableFake);
 						}else{
 							$scope.showAlert('ERROR',data.errors[0].message);
 						}
@@ -176,7 +177,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
-								$scope.createTable(data);
+								$scope.getBackupTable();
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
 							}
@@ -198,13 +199,14 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 					name: backup.HIER_NM
 					};
 			var title = $scope.translate.load("sbi.generic.confirmRestore");
-		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+		    var message =  $scope.translate.load("sbi.hierarchies.backup.restore.message");
 			var response = $scope.showConfirm(title,message);
 			response.then (function(){
 				$scope.restService.post("hierarchies","restoreHierarchy",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors !== undefined){
+								$scope.getBackupTable();
 								$scope.showAlert('INFO','Backup restored');
 							}else{
 								$scope.showAlert('ERROR',data.errors[0].message);
@@ -234,6 +236,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 					.success(
 							function(data, status, headers, config) {
 								if (data.errors === undefined){
+									$scope.getBackupTable();
 									$scope.showAlert('INFO','Backup deleted');
 									//TODO remove item from the table
 								}else{
@@ -261,24 +264,6 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			}
 		}
 		$scope.columnSearchTable = data.columns_search;
-	}
-	
-	
-	$scope.editNode = function(item,parent){
-	}
-	
-	$scope.addHier =  function(item,parent,event){
-		
-	}
-	
-	$scope.modifyHier =  function(item,parent,event){
-	}
-	
-	$scope.duplicateLeaf =  function(item,parent,event){
-
-	}
-	
-	$scope.deleteHier =  function(item,parent,event){
 	}
 	
 	$scope.menuOption = [{
@@ -337,14 +322,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		}
 	};
 	
-	
-	$scope.createTree = function(){
-	}
-	
-	$scope.saveTree = function(){
-	}
-	
-	$scope.formatData = function (date){
+	$scope.formatDate = function (date){
 		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
 	}
 };
