@@ -170,6 +170,10 @@
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
 			<ITEM title="#menu.SocialAnalysis" functionality="CreateSocialAnalysis"
 			url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
+			
+			<!--  TODO: fix permissions!!! -->
+			<ITEM	title="#menu.cross.definition" functionality="ManageCrossNavigation"
+			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
 		</ITEM>
 		
 		<ITEM	code="server_settings" 
