@@ -451,6 +451,8 @@ public class SpagoBIConstants {
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
+	
+	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";
 
 	public static final String CREATE_TIMESPAN = "CreateTimepan";
 
