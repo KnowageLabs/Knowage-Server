@@ -955,7 +955,7 @@ public class HierarchyService {
 						for (int f = 0, lf = generalFields.size(); f < lf; f++) {
 							Field fld = generalFields.get(f);
 							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
-							rootAttrs.put(fld.getId(), fldValue.getValue());
+							rootAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 						}
 						// root = new HierarchyTreeNode(data, nodeCode, rootAttrs);
 						root = new HierarchyTreeNode(data, (String) rootAttrs.get(HierarchyConstants.HIER_CD), rootAttrs);
@@ -986,7 +986,7 @@ public class HierarchyService {
 						for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
 							Field fld = nodeFields.get(f);
 							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
-							mapAttrs.put(fld.getId(), fldValue.getValue());
+							mapAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 						}
 						data.setAttributes(mapAttrs);
 						attachNodeToLevel(root, nodeCode, lastLevelFound, data, allNodeCodes);
@@ -1085,10 +1085,10 @@ public class HierarchyService {
 			String idFld = fld.getId();
 			if (!fld.isSingleValue()) {
 				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld + maxDepth));
-				mapAttrs.put(idFld, fldValue.getValue());
+				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 			} else {
 				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld));
-				mapAttrs.put(idFld, fldValue.getValue());
+				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 			}
 		}
 		data.setAttributes(mapAttrs);
