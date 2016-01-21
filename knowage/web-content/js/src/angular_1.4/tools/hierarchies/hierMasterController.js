@@ -503,6 +503,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	/*Context Menu of Tree*/
 	$scope.menuOptionTree = [{
 		label: $scope.translate.load('sbi.generic.add'),
+		icon: "fa fa-plus-circle",
 		showItem : function(item,event){
 			//visible if it is NOT a leaf
 			return item !== undefined && (item.leaf === undefined || item.leaf == false) && item.fake != true;
@@ -510,6 +511,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 		action: $scope.addHier
 		},{
 		label: $scope.translate.load('sbi.generic.clone'),
+		icon: "fa fa-clone",
 		showItem : function(item,event){
 			//visible if it IS a leaf
 			return item !== undefined && item.leaf !== undefined && item.leaf == true && item.fake != true;
@@ -517,12 +519,14 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 		action : $scope.duplicateLeaf
 		},{
 		label: $scope.translate.load('sbi.roles.edit'),
+		icon: "fa fa-pencil",
 		showItem : function(item,event){
 			return item !== undefined && item.fake != true;
 			},
 		action : $scope.modifyHier
 		},{
 		label: $scope.translate.load('sbi.generic.delete'),
+		icon: "fa fa-trash",
 		showItem : function(item,event){
 			return item !== undefined && item.fake != true;
 			},

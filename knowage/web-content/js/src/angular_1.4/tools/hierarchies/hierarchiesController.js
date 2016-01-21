@@ -1,4 +1,4 @@
-var app = angular.module('hierManager', ['ngMaterial','ng-context-menu','angular_list','angular_table','sbiModule','document_tree','ui.tree', 'angularUtils.directives.dirPagination']);
+var app = angular.module('hierManager', ['ngMaterial','angular_list','angular_table','sbiModule','document_tree','ui.tree', 'angularUtils.directives.dirPagination']);
 
 app.config(function($mdDateLocaleProvider) {
 	 $mdDateLocaleProvider.parseDate = function(date) {

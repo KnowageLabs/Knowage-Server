@@ -5,7 +5,7 @@
 var scripts = document.getElementsByTagName("script")
 var currentScriptPathDocumentTree = scripts[scripts.length-1].src;
 
-angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
+angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 .directive('documentTree',
 		function($compile) {
 	return {
@@ -23,7 +23,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree','ng-context-menu'])
 			, textSearch : "=?" //text to search
 			, fieldsSearch : '=?' //array of the fields on which apply the filter
 			, orderBy : '=?' //field on which order the array
-			, menuOption : "=?" //menu to open with right click
+			, menuOption : "=?" //menu to show on hover
 			, keys : '=?' //object of the keys 
 			, enableDrag:"=?"
 			, optionsDragDrop:"=?"

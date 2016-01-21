@@ -173,7 +173,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
 			response.then(function(){
-				$scope.restService.post("hierarchies","restoreHierarchy",item)
+				$scope.restService.post("hierarchies","modifyHierarchy",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
