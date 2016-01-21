@@ -124,6 +124,8 @@
         
         <DAO name="IFeaturesProviderFileDAO" implementation="it.eng.spagobi.georeport.dao.FeaturesProviderDAOFileImpl" />
 
+		<DAO name="CrossNavigationDAO" implementation="it.eng.spagobi.tools.crossnavigation.dao.CrossNavigationDAOImpl" />
+		
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->
