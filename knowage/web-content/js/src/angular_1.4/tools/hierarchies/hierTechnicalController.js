@@ -272,7 +272,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.addHier =  function(item,parent,event){
-		var promise = $scope.editNode({},parent);
+		var promise = $scope.editNode({},item);
 		promise //TODO correggere inserimento
 			.then(function(newItem){
 					var tmpItem = $scope.createEmptyNode('node');

@@ -363,7 +363,7 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 	
 	/*Add new hierarchy in the tree with context menu*/
 	$scope.addHier =  function(item,parent,event){
-		var promise = $scope.editNode({},parent);
+		var promise = $scope.editNode({},item);
 		if (promise !== null){
 			promise
 			.then(function(newItem){
@@ -625,10 +625,10 @@ function masterControllerFunction ($timeout,sbiModule_config,sbiModule_logger,sb
 				}
 				if (newHier && filterHierarchy !== undefined && filterHierarchy !== null){
 					item.filterHierType = $scope.hierType.toUpperCase();
-					item.filterHierarchy = hier.HIER_NM;
+					item.filterHierarchy = newHier.HIER_NM;
 				}
 				for (var k in newHier){
-					item[k] = angular.copy(hier[k]);
+					item[k] = angular.copy(newHier[k]);
 				}
 				var promise = $scope.restService.post('hierarchies','createHierarchyMaster',item);
 				promise
