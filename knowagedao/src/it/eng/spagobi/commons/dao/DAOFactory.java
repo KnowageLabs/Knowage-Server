@@ -65,6 +65,7 @@ import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -942,5 +943,17 @@ public class DAOFactory {
 	 */
 	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() throws EMFUserError {
 		return (IFeaturesProviderWFSDAO) createDAOInstance("IFeaturesProviderWFSDAO");
+	}
+	
+	/**
+	 * Gets the CrossNavigationDAO dao.
+	 *
+	 * @return the CrossNavigationDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ICrossNavigationDAO getCrossNavigationDAO() throws EMFUserError {
+		return (ICrossNavigationDAO) createDAOInstance("CrossNavigationDAO");
 	}
 }

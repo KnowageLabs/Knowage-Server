@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar" table="SBI_CROSS_NAVIGATION_PAR">
+        
+        <id name="id" column="ID" type="int" />
+        <!-- 
+        <property name="fromKey" type="int" column="FROM_KEY" not-null="true"/>
+        <property name="toKey" type="int" column="TO_KEY" not-null="true"/>
+         -->
+        <many-to-one name="fromKey" column="FROM_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" lazy="false" />
+        <many-to-one name="toKey" column="TO_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"  lazy="false" />
+        
+        <many-to-one name="sbiCrossNavigation" column="CN_ID" class="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" />
+        
+        <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="true" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>  			 
+		</component>
+		<filter name="tenantFilter" condition="organization=:tenant"/> 
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>
