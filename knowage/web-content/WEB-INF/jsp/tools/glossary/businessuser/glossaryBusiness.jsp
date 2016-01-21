@@ -95,7 +95,7 @@
 					<div class="md-toolbar-tools">
 
 						<div>{{translate.load("sbi.glossary.glossary");}}</div>
-						<md-button ng-click="ctrl.createNewGlossary($event)"
+						<md-button ng-click="ctrl.createNewGlossary()"
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px; top:0px;"> <md-icon
 							md-font-icon="fa fa-plus "

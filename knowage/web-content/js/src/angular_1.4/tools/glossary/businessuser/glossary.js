@@ -646,7 +646,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 	// glossary
 
-	ctr.CloneGloss = function(ev, gl) {
+	ctr.CloneGloss = function(gl) {
 		$mdDialog
 		.show({
 			controllerAs : 'gloCtrl',
@@ -728,8 +728,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 				}
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html',
-			targetEvent : ev,
+			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
 		})
 	};
 
@@ -786,7 +785,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		});
 	};
 
-	ctr.createNewGlossary = function(ev, gl) {
+	ctr.createNewGlossary = function(gl) {
 		$mdDialog.show({
 			scope : $scope,
 			preserveScope : true,
@@ -883,8 +882,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			},
 
 			// "/knowage/js/dialog-new-glossary.html"
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html',
-			targetEvent : ev
+			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
 		});
 	};
 	// <!-- tree -->
@@ -1861,14 +1859,14 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	ctr.glossMenuOpt = [ {
 		label : sbiModule_translate.load('sbi.generic.modify'),
 		action : function(item, event) {
-			ctr.createNewGlossary(event, item);
+			ctr.createNewGlossary(item);
 		}
 	},
 
 	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
 		action : function(item, event) {
-			ctr.CloneGloss(event, item);
+			ctr.CloneGloss(item);
 		}
 	},
 
@@ -1880,35 +1878,35 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	}
 
 	];
-
-	// ctr.glossSpeedMenuOpt = [
-	// {
-	// label : sbiModule_translate.load('sbi.generic.modify'),
-	// icon :'fa fa-pencil' ,
-	// backgroundColor:'red',
-	// action : function(item,event) {
-	// ctr.createNewGlossary(event,item);
-	// }
-	// },
-	//		               	
-	// {
-	// label : sbiModule_translate.load('sbi.generic.clone'),
-	// icon:"fa fa-files-o",
-	// backgroundColor:'green',
-	// action : function(item,event) {
-	// ctr.CloneGloss(event,item);
-	// }
-	// } ,
-	//		               	
-	// {
-	// label : sbiModule_translate.load('sbi.generic.delete'),
-	// icon:"fa fa-trash-o",
-	// backgroundColor:'blue',
-	// action : function(item,event) {
-	// ctr.deleteGlossary(item);
-	// }
-	// }
-	//		             
-	// ];
+//
+//	 ctr.glossSpeedMenuOpt = [
+//	 {
+//	 label : sbiModule_translate.load('sbi.generic.modify'),
+//	 icon :'fa fa-pencil' ,
+//	 backgroundColor:'red',
+//	 action : function(item,event) {
+//	 ctr.createNewGlossary(item);
+//	 }
+//	 },
+//			               	
+//	 {
+//	 label : sbiModule_translate.load('sbi.generic.clone'),
+//	 icon:"fa fa-files-o",
+//	 backgroundColor:'green',
+//	 action : function(item,event) {
+//	 ctr.CloneGloss(item);
+//	 }
+//	 } ,
+//			               	
+//	 {
+//	 label : sbiModule_translate.load('sbi.generic.delete'),
+//	 icon:"fa fa-trash-o",
+//	 backgroundColor:'blue',
+//	 action : function(item,event) {
+//	 ctr.deleteGlossary(item);
+//	 }
+//	 }
+//			             
+//	 ];
 
 }
