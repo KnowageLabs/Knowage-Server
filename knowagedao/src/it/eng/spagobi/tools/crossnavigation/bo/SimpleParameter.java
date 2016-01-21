@@ -45,17 +45,17 @@ public class SimpleParameter {
 	}
 
 	/**
-	 * @return the emptyList
+	 * @return the links
 	 */
-	public List<SimpleParameter> getEmptyList() {
+	public List<SimpleParameter> getLinks() {
 		return links;
 	}
 
 	/**
-	 * @param emptyList
-	 *            the emptyList to set
+	 * @param links
+	 *            the links to set
 	 */
-	public void setEmptyList(List<SimpleParameter> links) {
+	public void setLinks(List<SimpleParameter> links) {
 		this.links = links;
 	}
 
