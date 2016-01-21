@@ -36,7 +36,7 @@
 				<md-content layout="column" space-align="space-between stretch">
 					<md-content class="list-container" style="height:11rem;">
 						<md-list layout-padding>
-							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport">
+							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport" ng-if="mtDimExp.PARENT != true">
 								<md-content layout-fill layout="row" layout-align="space-between center">
 									<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
 										<span class="force-100width" ng-click="toggleItem(mtDimExp,'right')">
@@ -71,7 +71,7 @@
 								<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT == true">{{code.NAME}}</md-option>
 							</md-select>
 							<md-select flex="45" ng-model="descr" placeholder="{{translate.load('sbi.generic.descr')}}" ng-disabled="!mtRecursive">
-								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="code.PARENT == true">{{descr.NAME}}</md-option>
+								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="descr.PARENT == true">{{descr.NAME}}</md-option>
 							</md-select>
 						</md-content>
 					</md-content>
