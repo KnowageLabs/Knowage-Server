@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
@@ -24,8 +23,8 @@ import java.util.Set;
 
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.Pseudograph;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AssociativeLogicManagerTest {
@@ -34,7 +33,6 @@ public class AssociativeLogicManagerTest {
 	private static final String PRODUCT = "product";
 	private static final String SALES = "sales";
 	private static final String CUSTOMER = "customer";
-	private static final String WAREHOUSE = "warehouse";
 
 	private static final String Y = "Y";
 	private static final String W = "W";
@@ -54,54 +52,42 @@ public class AssociativeLogicManagerTest {
 	private static final String R6_COLUMN = "city";
 	private static final String R3_COLUMN = "product_id";
 
-	private static final String A1 = "A1";
 	private static final String A3 = "A3";
 	private static final String A4 = "A4";
-	private static final String A5 = "A5";
-	private static final String A6 = "A6";
 	private static final String A7 = "A7";
 	private static final String A8 = "A8";
 
-	private static final String A1_COLUMN = "time_id";
 	private static final String A3_COLUMN = "store_id";
 	private static final String A4_COLUMN = "product_id";
-	private static final String A5_COLUMN = "customer_id";
-	private static final String A6_COLUMN = "promotion_id";
 	private static final String STORE_A7_COLUMN = "store_city";
 	private static final String CUSTOMER_A7_COLUMN = "city";
 	private static final String STORE_A8_COLUMN = "store_country";
 	private static final String CUSTOMER_A8_COLUMN = "country";
 
-	@Before
-	public void setUp() throws Exception {
-		UtilitiesForTest.setUpMasterConfiguration();
-		UtilitiesDAOForTest.setUpDatabaseTestJNDI();
-		TenantManager.setTenant(new Tenant("SPAGOBI"));
+	private static ICache cache;
+	private static IDataSetDAO dataSetDAO;
 
-		ICache cache = SpagoBICacheManager.getCache();
+	@BeforeClass
+	public static void setUp() {
 		try {
-			IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
-			// checkDataSetInCache(cache, dataSetDAO, STORE);
-			// checkDataSetInCache(cache, dataSetDAO, PRODUCT);
-			// checkDataSetInCache(cache, dataSetDAO, SALES);
-			// checkDataSetInCache(cache, dataSetDAO, CUSTOMER);
-			// checkDataSetInCache(cache, dataSetDAO, X);
-			// checkDataSetInCache(cache, dataSetDAO, Y);
-			// checkDataSetInCache(cache, dataSetDAO, Z);
-			// checkDataSetInCache(cache, dataSetDAO, W);
-			// checkDataSetInCache(cache, dataSetDAO, K);
-		} catch (EMFUserError e) {
+			UtilitiesForTest.setUpMasterConfiguration();
+			UtilitiesDAOForTest.setUpDatabaseTestJNDI();
+			TenantManager.setTenant(new Tenant("SPAGOBI"));
+			cache = SpagoBICacheManager.getCache();
+			dataSetDAO = DAOFactory.getDataSetDAO();
+		} catch (Exception e) {
 			fail(e.toString());
 		}
-	}
 
-	private void checkDataSetInCache(ICache cache, IDataSetDAO dataSetDAO, String dataSetLabel) {
-		IDataSet dataSet;
-		dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
-		if (!cache.contains(dataSet)) {
-			dataSet.loadData();
-			cache.put(dataSet, dataSet.getDataStore());
-		}
+		loadDataSetInCache(STORE);
+		loadDataSetInCache(SALES);
+		loadDataSetInCache(PRODUCT);
+		loadDataSetInCache(CUSTOMER);
+		loadDataSetInCache(K);
+		loadDataSetInCache(W);
+		loadDataSetInCache(X);
+		loadDataSetInCache(Y);
+		loadDataSetInCache(Z);
 	}
 
 	@Test
@@ -119,12 +105,10 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumns);
 		datasetToAssociations.put(SALES, associationToColumns);
 
-		String[] datasets = new String[1];
-		datasets[0] = STORE;
-		String[] filters = new String[1];
-		filters[0] = "store_type = 'Small Grocery'";
+		Map<String, String> selections = new HashMap<String, String>();
+		selections.put(STORE, "store_type = 'Small Grocery'");
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, datasets, filters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -172,12 +156,10 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(PRODUCT, associationToColumnProduct);
 		datasetToAssociations.put(SALES, associationToColumnSales);
 
-		String[] datasets = new String[1];
-		datasets[0] = PRODUCT;
-		String[] filters = new String[1];
-		filters[0] = "brand_name= 'Queen'";
+		Map<String, String> selections = new HashMap<String, String>();
+		selections.put(PRODUCT, "brand_name= 'Queen'");
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, datasets, filters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -232,12 +214,10 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumnStore);
 		datasetToAssociations.put(CUSTOMER, associationToColumnCustomer);
 
-		String[] datasets = new String[1];
-		datasets[0] = CUSTOMER;
-		String[] filters = new String[1];
-		filters[0] = "gender = 'F'";
+		Map<String, String> selections = new HashMap<String, String>();
+		selections.put(CUSTOMER, "gender = 'F'");
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, datasets, filters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -273,22 +253,22 @@ public class AssociativeLogicManagerTest {
 		LabeledEdge<String> labeledEdgeWY = new LabeledEdge<String>(W, Y, R4);
 		graph.addEdge(W, Y, labeledEdgeWY);
 
-		LabeledEdge<String> labeledEdgeStoreCustomerYX1 = new LabeledEdge<String>(Y, X, R1);
-		graph.addEdge(Y, X, labeledEdgeStoreCustomerYX1);
-		LabeledEdge<String> labeledEdgeStoreCustomerYX5 = new LabeledEdge<String>(Y, X, R5);
-		graph.addEdge(Y, X, labeledEdgeStoreCustomerYX5);
+		LabeledEdge<String> labeledEdgeYX1 = new LabeledEdge<String>(Y, X, R1);
+		graph.addEdge(Y, X, labeledEdgeYX1);
+		LabeledEdge<String> labeledEdgeYX5 = new LabeledEdge<String>(Y, X, R5);
+		graph.addEdge(Y, X, labeledEdgeYX5);
 
-		LabeledEdge<String> labeledEdgeStoreCustomerYZ1 = new LabeledEdge<String>(Y, Z, R1);
-		graph.addEdge(Y, Z, labeledEdgeStoreCustomerYZ1);
-		LabeledEdge<String> labeledEdgeStoreCustomerYZ5 = new LabeledEdge<String>(Y, Z, R5);
-		graph.addEdge(Y, Z, labeledEdgeStoreCustomerYZ5);
+		LabeledEdge<String> labeledEdgeYZ1 = new LabeledEdge<String>(Y, Z, R1);
+		graph.addEdge(Y, Z, labeledEdgeYZ1);
+		LabeledEdge<String> labeledEdgeYZ5 = new LabeledEdge<String>(Y, Z, R5);
+		graph.addEdge(Y, Z, labeledEdgeYZ5);
 
-		LabeledEdge<String> labeledEdgeStoreCustomerXZ1 = new LabeledEdge<String>(X, Z, R1);
-		graph.addEdge(X, Z, labeledEdgeStoreCustomerXZ1);
-		LabeledEdge<String> labeledEdgeStoreCustomerXZ5 = new LabeledEdge<String>(X, Z, R5);
-		graph.addEdge(X, Z, labeledEdgeStoreCustomerXZ5);
-		LabeledEdge<String> labeledEdgeStoreCustomerXZ6 = new LabeledEdge<String>(X, Z, R6);
-		graph.addEdge(X, Z, labeledEdgeStoreCustomerXZ6);
+		LabeledEdge<String> labeledEdgeXZ1 = new LabeledEdge<String>(X, Z, R1);
+		graph.addEdge(X, Z, labeledEdgeXZ1);
+		LabeledEdge<String> labeledEdgeXZ5 = new LabeledEdge<String>(X, Z, R5);
+		graph.addEdge(X, Z, labeledEdgeXZ5);
+		LabeledEdge<String> labeledEdgeXZ6 = new LabeledEdge<String>(X, Z, R6);
+		graph.addEdge(X, Z, labeledEdgeXZ6);
 
 		LabeledEdge<String> labeledEdgeZK = new LabeledEdge<String>(Z, K, R3);
 		graph.addEdge(Z, K, labeledEdgeZK);
@@ -322,12 +302,10 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(Z, associationToColumnZ);
 		datasetToAssociations.put(K, associationToColumnK);
 
-		String[] datasets = new String[1];
-		datasets[0] = Z;
-		String[] filters = new String[1];
-		filters[0] = "country = 'USA'";
+		Map<String, String> selections = new HashMap<String, String>();
+		selections.put(Z, "country = 'USA'");
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, datasets, filters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -345,24 +323,29 @@ public class AssociativeLogicManagerTest {
 		assertTrue(edgeGroupToValues.containsKey(edgeGroup));
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		TenantManager.setTenant(new Tenant("SPAGOBI"));
+	@AfterClass
+	public static void tearDown() {
+		deleteDataSetFromCache(STORE);
+		deleteDataSetFromCache(SALES);
+		deleteDataSetFromCache(PRODUCT);
+		deleteDataSetFromCache(CUSTOMER);
+		deleteDataSetFromCache(K);
+		deleteDataSetFromCache(W);
+		deleteDataSetFromCache(X);
+		deleteDataSetFromCache(Y);
+		deleteDataSetFromCache(Z);
+	}
 
-		ICache cache = SpagoBICacheManager.getCache();
-		try {
-			IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
-			// cache.delete(dataSetDAO.loadDataSetByLabel(STORE));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(PRODUCT));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(SALES));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(CUSTOMER));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(K));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(W));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(Y));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(X));
-			// cache.delete(dataSetDAO.loadDataSetByLabel(Z));
-		} catch (EMFUserError e) {
-			fail(e.toString());
+	private static void loadDataSetInCache(String dataSetLabel) {
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
+		if (!cache.contains(dataSet)) {
+			dataSet.loadData();
+			cache.put(dataSet, dataSet.getDataStore());
 		}
+	}
+
+	private static void deleteDataSetFromCache(String dataSetLabel) {
+		IDataSet dataSet = dataSetDAO.loadDataSetByLabel(dataSetLabel);
+		cache.delete(dataSet);
 	}
 }
