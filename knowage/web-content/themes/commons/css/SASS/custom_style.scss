@@ -1,0 +1,108 @@
+ /*=================IMPORT====================*/
+@import 'variables',
+  'mixins',
+  'fonts',
+  'components/navbar';
+   
+ 
+// Toolbar elements  
+md-toolbar.md-knowage-theme {
+		min-height: 40px;
+		height: 40px;
+		background-color: $headerBackground !important;
+		color: $lightTextColor !important;
+		.md-toolbar-tools {
+			height: 40px;
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+			font-weight: $headerFontWeight;
+		}
+}
+
+.md-button.md-knowage-theme.md-fab {
+    background-color: $fabPrimaryColor !important;
+}
+
+.md-button.md-knowage-theme.md-fab md-icon {
+    font-size: $fabIconSize;
+    padding-top: 4px;
+}
+.md-button.md-knowage-theme.md-flat {
+	&:not([disabled]) {
+		color: white;
+		&:hover {
+			background-color: $secondaryColor;
+			color: $baseColor;
+		}
+	}
+}
+
+.md-button.md-knowage-theme.md-flat:not([disabled]):hover {
+    background-color: $secondaryColor;
+	color: $baseColor;
+}
+
+// Input fields
+
+md-input-container.md-knowage-theme  {
+	.md-input {
+		border-color: $inputLineColor;
+	}
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused .md-input {
+    border-color: $inputLineColor;
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
+    color: $inactiveLabelColor;
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
+    color: $activeLabelColor;
+}
+
+md-input-container.md-knowage-theme ng-messages :not(.md-char-counter), md-input-container.md-knowage-theme [ng-messages] :not(.md-char-counter), md-input-container.md-knowage-theme ng-message :not(.md-char-counter), md-input-container.md-knowage-theme data-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme x-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message-exp] :not(.md-char-counter) {
+    color: $fabPrimaryColor;
+}
+
+// Radio Buttons and Checkboxes
+
+md-checkbox.md-knowage-theme.md-checked .md-icon {
+    background-color: $baseColor;
+}
+
+md-checkbox.md-knowage-theme .md-icon {
+    border-color: $baseColor;
+}
+
+md-radio-button.md-knowage-theme .md-on {
+    background-color: $baseColor;
+}
+
+md-radio-button.md-knowage-theme .md-off {
+    border-color: $inactiveLabelColor;
+}
+
+md-radio-button.md-knowage-theme.md-checked .md-off {
+    border-color: $inactiveLabelColor;
+}
+
+// Comboboxes
+md-select.md-knowage-theme .md-select-value {
+    border-bottom-color: $baseColor;
+    .md-select-icon {
+    	color: $baseColor
+    }
+}
+
+// Tabs
+md-tabs.md-knowage-theme .md-tab.md-active, md-tabs.md-knowage-theme .md-tab.md-active md-icon, md-tabs.md-knowage-theme .md-tab.md-focused, md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
+    color: $baseColor;
+    font-weight: $tabFontWeight;
+}
+
+md-tabs.md-knowage-theme md-ink-bar {
+    color: $baseColor;
+    background: $baseColor;
+}	
