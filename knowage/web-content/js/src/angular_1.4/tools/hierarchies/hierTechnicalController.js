@@ -572,7 +572,10 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	
 	$scope.createTree = function(){
 		if ($scope.dimSrc){
-			var promise = $scope.editNode($scope.createEmptyNode("root"),null,true);
+			//crate new root and force it to have type TECHNICAL
+			var newNode = $scope.createEmptyNode("root");
+			newNode.HIER_TP = "TECHNICAL";
+			var promise = $scope.editNode(newNode,null,true);
 			promise
 				.then(function(newItem){
 					if (newItem !== null && newItem !== undefined){
@@ -580,7 +583,6 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 						var keyId = newItem.aliasId !== undefined ? newItem.aliasId : "HIER_CD";
 						newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : rootStructure.name;
 						newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : rootStructure.name;
-						newItem.HIER_TP = "TECHNICAL"
 						$scope.hierTreeTarget = [newItem];
 						$scope.treeTargetDirty = true;
 						$scope.targetIsNew = true;
