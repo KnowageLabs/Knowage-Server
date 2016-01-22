@@ -46,8 +46,57 @@
 <!-- 	angular time picker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
 
-<!-- 	angular 2 column template -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-2-col/angular2Col.js"></script>
+<!-- 	angular list dewtail template -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js"></script>
+
+<!-- deprecated angular 2 col -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js"></script>
+
+
+<style>
+
+    .md-container {
+      position: static;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      box-sizing: border-box;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+/*       z-index: 60; */
+      bottom: 0;
+/*       overflow: auto; */
+    }
+
+    /* ===============
+      queste classi sono per visualizzare le icone di fontawesome come anche lo stile che ne carica il cdn
+      diteci voi a quale libreria rifarci
+     =================*/
+
+    .s64 {
+      font-size:64px;
+    }
+
+    .s32 {
+      
+      font-size:24px;
+
+    }
+
+    md-icon.fa {
+      display:block;
+      padding-left:0px;
+    }
+
+    md-icon.s32 span {
+      padding-left:8px;
+    }
+    
+    .h100{
+    height: 100%;}
+
+  </style>
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	

@@ -1,12 +1,6 @@
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
-
-app.config(function($mdThemingProvider) {
-	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
-	'blue-grey');
-});
-
+                                               'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail']);
 
 
 var EmptyLayer = {
@@ -452,6 +446,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 		$scope.forms.contactForm.$setPristine();
 		$scope.forms.contactForm.$setUntouched();
+		$scope.showme=false;
 
 	}
 

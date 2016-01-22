@@ -27,9 +27,6 @@
          				<md-icon class="fa fa-search center-ico"></md-icon>
      				</md-button>
 		</div>
-		<div layout="row" >
-			<label>{{translate.load("impexp.savedAss","component_impexp_messages");}}</label>
-			<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.associationsFileImport"></file-upload>
-		</div>
+
     </div>
 </div>

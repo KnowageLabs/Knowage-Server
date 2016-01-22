@@ -3,25 +3,41 @@ var app = angular.module('importExportDocumentModule', ['ngMaterial','sbiModule'
 app.factory("importExportDocumentModule_importConf", function() {
 	return {
 		fileImport : {},
-		associationsFileImport : {},
 		associations : 'noAssociations',
 		fileAssociation : '',
 		roles : {
 			currentRoles : [],
 			exportedRoles : [],
-			associationsRole : {}
-		}
+			associatedRoles : {}
+		},
+		engines : {
+			currentEngines : [],
+			exportedEngines : [],
+			associatedEngines : {}
+		},
+		datasources : {
+			currentDatasources : [],
+			exportedDatasources : [],
+			associatedDatasources : {}
+		},
 	};
 });
 
 
-app.controller('importExportController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast",impExpFuncController]);
+app.controller('importExportController', ["$scope","sbiModule_translate","$mdToast",impExpFuncController]);
 app.controller('exportController', ['$http','sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast",exportFuncController]);
 app.controller('importController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf",importFuncController]);
 
-function impExpFuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast) {
+function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 	sbiModule_translate.addMessageFile("component_impexp_messages");
 	$scope.translate = sbiModule_translate;
+	
+	$scope.showToast=function(text, time) {
+		var timer = time == undefined ? 6000 : time;
+		console.log(text)
+		$mdToast.show($mdToast.simple().content(text).position('top').action(
+		'OK').highlightAction(false).hideDelay(timer));
+	}
 
 }
 
@@ -29,7 +45,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 
 
 function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast,importExportDocumentModule_importConf) {
-	$scope.stepItem=[{name:"step0"}];
+	$scope.stepItem=[{name:"file upload"}];
 	$scope.selectedStep=0;
 	$scope.stepControl;
 	$scope.IEDConf=importExportDocumentModule_importConf;
@@ -95,7 +111,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		sbiModule_restServices.post("1.0/serverManager/importExport/document","export",config)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				showToast(data.errors[0].message,4000);
+				$scope.showToast(data.errors[0].message,4000);
 			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
 				$scope.flags.viewDownload = true;
 				$scope.downloadedFileName=$scope.exportName;
@@ -103,7 +119,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			$scope.flags.waitExport=false;
 		}).error(function(data, status, headers, config) {
 			$scope.flags.waitExport=false;
-			showToast("ERRORS "+status,4000);
+			$scope.showToast("ERRORS "+status,4000);
 		})
 	}
 
@@ -122,13 +138,13 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadExportFile",data,config)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				showToast(data.errors[0].message,4000);
+				$scope.showToast(data.errors[0].message,4000);
 			}else if(status==200){
 				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
 				$scope.flags.viewDownload = false
 			}
 		}).error(function(data, status, headers, config) {
-			showToast("ERRORS "+status,4000);
+			$scope.showToast("ERRORS "+status,4000);
 		})
 	}
 
@@ -146,12 +162,6 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		//$scope.isEnabled = !$scope.isEnabled;
 	}
 
-	function showToast(text, time) {
-		var timer = time == undefined ? 6000 : time;
-
-		console.log(text)
-		$mdToast.show($mdToast.simple().content(text).position('top').action(
-		'OK').highlightAction(false).hideDelay(timer));
-	}
+	
 
 }

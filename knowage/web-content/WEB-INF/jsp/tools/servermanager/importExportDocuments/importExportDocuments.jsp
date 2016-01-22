@@ -10,12 +10,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportController.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importStep0Controller.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importStep1Controller.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importStep2Controller.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importStep3Controller.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importStep4Controller.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep0Controller.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep1Controller.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep2Controller.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep3Controller.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep4Controller.js"></script>
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
 
@@ -92,14 +92,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<md-tab id="importTab" >
 				<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 	      		<md-tab-body>
-	      			<md-content  ng-controller="importController" ng-cloak ng-switch="selectedStep">
+	      			<md-content  ng-controller="importController" layout="column" layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
 	      				<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep'  control='stepControl'></bread-crumb>
 	      			
-	      					<div ng-controller="importControllerStep0" ng-switch-when="0"><%@include file="./importDocumentsSteps/importDocumentsStep0.jsp"%></div>
-						    <div ng-controller="importControllerStep1" ng-switch-when="1"><%@include file="./importDocumentsSteps/importDocumentsStep1.jsp"%></div>
-						    <div ng-controller="importControllerStep2" ng-switch-when="2"><%@include file="./importDocumentsSteps/importDocumentsStep2.jsp"%></div>
-						    <div ng-controller="importControllerStep3" ng-switch-when="3"><%@include file="./importDocumentsSteps/importDocumentsStep3.jsp"%></div>
-						    <div ng-controller="importControllerStep4" ng-switch-when="4"><%@include file="./importDocumentsSteps/importDocumentsStep4.jsp"%></div>
+	      					<div flex ng-controller="importControllerStep0" ng-switch-when="0"><%@include file="./importDocumentsSteps/importDocumentsStep0.jsp"%></div>
+						    <div flex ng-controller="importControllerStep1" ng-switch-when="1"><%@include file="./importDocumentsSteps/importDocumentsStep1.jsp"%></div>
+						    <div flex ng-controller="importControllerStep2" ng-switch-when="2"><%@include file="./importDocumentsSteps/importDocumentsStep2.jsp"%></div>
+						    <div flex ng-controller="importControllerStep3" ng-switch-when="3"><%@include file="./importDocumentsSteps/importDocumentsStep3.jsp"%></div>
+						    <div flex ng-controller="importControllerStep4" ng-switch-when="4"><%@include file="./importDocumentsSteps/importDocumentsStep4.jsp"%></div>
 						
 						
 	      			</md-content>

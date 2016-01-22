@@ -36,7 +36,9 @@ function breadCrumbControllerFunction($scope){
 			s.selectedIndex=index;
 			s.selectedItem=item;
 			s.ngModel=s.ngModel.slice(0,index+1);
-			s.moveToCallback({item:item,index:index});
+			if(s.moveToCallback){
+				s.moveToCallback({item:item,index:index});
+			}
 		}
 	};
 	
