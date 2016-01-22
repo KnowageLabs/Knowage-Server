@@ -208,7 +208,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 								}
 								choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
 								choose =='src' ? $scope.hierTreeCacheSrc[keyMap] = angular.copy(data) : $scope.hierTreeCacheTarget[keyMap] = angular.copy(data);
-								$scope.targetIsNew = choose =='src' ? false : true;
+								$scope.targetIsNew = choose =='src' ? $scope.targetIsNew : false;
 							}else{
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert('ERROR',data.errors[0].message);
