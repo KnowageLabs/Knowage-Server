@@ -32,11 +32,6 @@ import com.jayway.restassured.http.ContentType;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
-	private static final String Y = "Y";
-	private static final String W = "W";
-	private static final String X = "X";
-	private static final String Z = "Z";
-	private static final String K = "K";
 	private static final String STORE = "store";
 	private static final String SALES = "sales";
 
@@ -97,10 +92,10 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void getDataStorePostTest() {
 		try {
-			String selections = URLEncoder.encode("{\"store\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}", encoding);
-			given().contentType(ContentType.JSON).body("{\"store\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}").when().post("/datasets/store/data")
-					.then().contentType(ContentType.JSON).statusCode(200).body("label", equalTo("store")).body("store", containsString("metaData"))
-					.body("store", containsString("results")).body("store", containsString("rows"));
+			String selections = "{\"store\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}";
+			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/store/data").then().contentType(ContentType.JSON).statusCode(200)
+					.body("label", equalTo("store")).body("store", containsString("metaData")).body("store", containsString("results"))
+					.body("store", containsString("rows"));
 		} catch (Exception e) {
 			fail(e.toString());
 		}
