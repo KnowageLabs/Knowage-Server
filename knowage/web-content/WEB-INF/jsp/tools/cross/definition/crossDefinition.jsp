@@ -97,34 +97,74 @@
 						columns-search='["name","fromDoc","toDoc"]'
 						show-search-bar=true
 						highlights-selected-item=true
-						click-function="ctrl.loadSelectedDataSource(item)"
-						selected-item="selectedDataSourceItems"
+						click-function="ctrl.loadSelectedNavigation(item)"
+						selected-item="selectedNavigationItem"
 						speed-menu-option="dsSpeedMenu"					
 					>						
 					</angular-table>
 			</div>
 		</div>
+		
+		
+		
 		<div layout="column" ng-if="ctrl.detail" flex>
-			{{ctrl.detail.name}}
-			<div layout="row">
-				<div layout="column" flex="50" style="padding:10px">
-					<h3 ng-model="ctrl.detail.fromDoc"></h3>
-				    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" style="padding:3px;">
-				      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
-				        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" style="padding: 2px"></li>
-				      </ol>
-				    </div>
+			
+			
+			<form name="tsForm" novalidate >			
+				<div layout="row" layout-wrap>
+					<div flex="50">
+						<md-input-container > <label>{{translate.load("sbi.crossnavigation.name");}}</label>
+						<input maxlength="100" type="text" ng-model="selectedNavigationItem.name"> </md-input-container>
+					</div>
 				</div>
-				<div layout="column" flex style="padding:10px">
-					<h3 ng-model="ctrl.detail.toDoc"></h3>
-				    <div ui-tree id="tree2-root" style="padding:3px">
-				      <ol ui-tree-nodes="" ng-model="ctrl.detail.toPars" >
-				        <li ng-repeat="par in ctrl.detail.toPars" ui-tree-node ng-include="'nodes_renderer2.html'" style="padding: 2px" 
-				        	ng-mouseenter="ctrl.selectItem($event)" ng-mouseleave="ctrl.unselectAll()" data-nodrag></li>
-				      </ol>
-				    </div>
+	
+				<div layout="row" >
+					<div flex="50">
+						<md-input-container > <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
+							<input maxlength="100" type="text" ng-model="selectedNavigationItem.fromDoc" readonly>
+						</md-input-container>
+						<md-button ng-click="ctrl.listDocuments('A')" class="md-fab" > 
+							<md-icon md-font-icon="fa fa-folder-open-o" style=" margin-top: 6px ; color: white;">
+							</md-icon> 
+						</md-button>
+					</div>
+				
+					<div flex="50">
+						<md-input-container > <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
+							<input maxlength="100" type="text" ng-model="selectedNavigationItem.toDoc" readonly> </md-input-container>
+						</md-input-container>
+						<md-button ng-click="ctrl.listDocuments('B')" class="md-fab" > 
+							<md-icon md-font-icon="fa fa-folder-open-o" style=" margin-top: 6px ; color: white;">
+							</md-icon> 
+						</md-button>
+					</div>
 				</div>
-			</div>
+			
+				<div layout="row">
+					<div layout="column" flex="50" style="padding:10px">
+						<h3 ng-model="ctrl.detail.fromDoc"></h3>
+					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" style="padding:3px;">
+					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
+					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" style="padding: 2px"></li>
+					      </ol>
+					    </div>
+					</div>
+					<div layout="column" flex style="padding:10px">
+						<h3 ng-model="ctrl.detail.toDoc"></h3>
+					    <div ui-tree id="tree2-root" style="padding:3px">
+					      <ol ui-tree-nodes="" ng-model="ctrl.detail.toPars" >
+					        <li ng-repeat="par in ctrl.detail.toPars" ui-tree-node ng-include="'nodes_renderer2.html'" style="padding: 2px" 
+					        	ng-mouseenter="ctrl.selectItem($event)" ng-mouseleave="ctrl.unselectAll()" data-nodrag></li>
+					      </ol>
+					    </div>
+					</div>
+				</div>
+				
+				
+			</form>
+			
+			
+			
 		</div>
 	</div>
 </body>

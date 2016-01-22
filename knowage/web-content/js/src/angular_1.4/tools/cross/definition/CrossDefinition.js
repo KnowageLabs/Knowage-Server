@@ -10,19 +10,27 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 		s.translate = sbiModule_translate;
 		
 		ctr.list = [];
+		ctr.listDoc = [];
 		ctr.detail = {};
 		
 		sbiModule_restServices.get('1.0/crossNavigation/listNavigation', "", null).success(function(data) {
 			ctr.list = data;
 		});
 		
-		ctr.loadSelectedDataSource = function(item){
+		ctr.loadSelectedNavigation = function(item){
 			console.log(item);
 			
 			sbiModule_restServices.get('1.0/crossNavigation/'+item.id+'/load', "", null).success(function(data) {
 				ctr.detail = data;
 			});
 		}
+		
+		ctr.listDocuments = function(){
+			sbiModule_restServices.get('2.0/documents/listDocument/', "", null).success(function(data) {
+				ctr.listDoc = data;
+			});
+		}
+		
 		
 		ctr.treeOptions = {
 //			accept: function() {return false;},
