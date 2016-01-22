@@ -6,8 +6,10 @@
 				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0)"  md-font-icon="{{iconFolder}}"></md-icon>				
 				<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0) " md-font-icon="{{iconFolderOpen}}"></md-icon>
 				<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined ||  (folder[subfoldersId].length == 0 && (folder.biObjects == undefiend || folder.biObjects.length == 0))" md-font-icon="{{iconLeaf}}"></md-icon>
-				<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
-				<md-icon ng-if='orderBy !== undefined && orderBy.length > 0 && folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
+				<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
+					<md-icon ng-if='folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
+					<md-icon ng-if='folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
+				</div>
 				<div ng-click='openFolder(folder)' class="line-container">
 					<span> &nbsp;{{folder[label]}}</span> 
 				</div>
@@ -23,15 +25,17 @@
 		<ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}" ui-tree-nodes="" ng-model="folder[subfoldersId]" ng-if="folder.expanded">
 			<li layout="column"  layout-align="start stretch"  ng-repeat="folder in folder[subfoldersId]"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'">
 			</li>
-			<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ng-show="biObject.visible" ui-tree-node >
+			<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="folder in folder.biObjects"  ng-show="folder.visible" ui-tree-node ng-include="'folders_renderer.html'" >
+			</li>
+			<!--<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0" ng-repeat="biObject in folder.biObjects"  ng-show="biObject.visible" ui-tree-node >
 				<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle>
 					<md-checkbox ng-if="multiSelect" ng-checked="biObject.checked" ng-click="toogleSelected(biObject)" aria-label="Checkbox"></md-checkbox>            
-					<md-button ng-class="{'md-primary':biObject.selected,'md-raised':biObject.selected}" ng-click="setSelected(biObject)" class="docs">
+					<md-button ng-class="{'md-primary':biObject.selected,'md-raised':biObject.selected}" ng-click="setSelected(biObject)">
 					<md-icon md-font-icon="fa fa-file-o" style="color: black;"></md-icon>
 						{{biObject.label}}	
 					</md-button>
 				</div>
-			</li>
+			</li>-->
 		</ol>
 </script>
 
