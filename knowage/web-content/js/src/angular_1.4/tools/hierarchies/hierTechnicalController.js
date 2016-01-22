@@ -11,6 +11,16 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	$scope.orderByFields = ['name','id'];
 	$scope.doBackup = true;
 	$scope.metadataMap = {};
+	$scope.fakeNode = {
+			fake : true,
+			name : $scope.translate.load("sbi.hierarchies.new.empty"),
+			id : '',
+			leaf: true,
+			root: false,
+			visible : true,
+			checked : false,
+			expanded : false
+		};
 	
 	/*Initialization Source variable*/
 	$scope.hierarchiesTypeSrc = ['MASTER','TECHNICAL'];
@@ -183,7 +193,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.getTree = function(choose,dateFilter,seeElement){
-		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
+		var type = choose == 'src' ? $scope.hierTypeSrc : 'TECHNICAL' ;
 		//var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
 		var dim = $scope.dimSrc ;
 		var date = choose == 'src' ? $scope.dateSrc : $scope.dateTarget;
@@ -411,7 +421,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 					var idx = $scope.indexOf(parent.children,item,'id');
 					parent.children.splice(idx,1);
 					if (parent.children.length == 0) {
-						parent.children.push($scope.createEmptyNode('leaf'));
+						parent.children.push(angular.copy($scope.fakeNode));
 					}
 				}else{
 					item = {};
