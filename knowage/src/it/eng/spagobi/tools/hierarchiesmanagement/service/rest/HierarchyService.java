@@ -1494,8 +1494,13 @@ public class HierarchyService {
 				if (!node.isNull(HierarchyConstants.END_DT)) {
 					nodeData.setEndDt(Date.valueOf(node.getString(HierarchyConstants.END_DT)));
 				}
-				String nodeParentCode = node.getString(HierarchyConstants.LEAF_PARENT_CD);
-				String nodeOriginalParentCode = node.getString(HierarchyConstants.LEAF_ORIG_PARENT_CD);
+				// set parent informations
+				String nodeParentCode = null;
+				String nodeOriginalParentCode = null;
+				if (!node.isNull(HierarchyConstants.LEAF_PARENT_CD))
+					nodeParentCode = node.getString(HierarchyConstants.LEAF_PARENT_CD);
+				if (!node.isNull(HierarchyConstants.LEAF_ORIG_PARENT_CD))
+					nodeOriginalParentCode = node.getString(HierarchyConstants.LEAF_ORIG_PARENT_CD);
 				// nodeData.setNodeCode(nodeCode.replaceFirst(nodeOriginalParentCode + "_", ""));
 				nodeData.setLeafParentCode(nodeParentCode);
 				nodeData.setLeafParentName(node.getString(HierarchyConstants.LEAF_PARENT_NM));
