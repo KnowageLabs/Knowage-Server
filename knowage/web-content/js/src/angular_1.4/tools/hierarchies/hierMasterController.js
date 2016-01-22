@@ -1,12 +1,8 @@
 var app = angular.module('hierManager');
 
-app.controller('hierMasterController', [ "$timeout", "sbiModule_config",
-		"sbiModule_logger", "sbiModule_translate", "$scope", "$mdDialog",
-		"sbiModule_restServices", "$mdDialog", masterControllerFunction ]);
+app.controller('hierMasterController',[ "$timeout","sbiModule_config","sbiModule_logger","sbiModule_translate","$scope","$mdDialog","sbiModule_restServices","$mdDialog",masterControllerFunction ]);
 
-function masterControllerFunction($timeout, sbiModule_config, sbiModule_logger,
-		sbiModule_translate, $scope, $mdDialog, sbiModule_restServices,
-		$mdDialog) {
+function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbiModule_translate,$scope,$mdDialog,sbiModule_restServices,$mdDialog) {
 	/* General initialization */
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
@@ -105,6 +101,7 @@ function masterControllerFunction($timeout, sbiModule_config, sbiModule_logger,
 									source[keys[i]] = tmp[keys[i]];
 								}
 							}
+							//force leaf to have some metadata keys
 							var matchingFields = $scope.metadataDimMap[dimName].MATCH_LEAF_FIELDS;
 							for (var k in matchingFields){
 								if (source[k]){
@@ -421,64 +418,56 @@ function masterControllerFunction($timeout, sbiModule_config, sbiModule_logger,
 	$scope.addHier = function(item, parent, event) {
 		var promise = $scope.editNode({}, item);
 		if (promise !== null) {
-			promise
-					.then(
-							function(newItem) {
-								var tmpItem = $scope.createEmptyNode("node");
-								for (key in newItem) {
-									tmpItem[key] = newItem[key];
-								}
-								var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName
-										: $scope.dim.DIMENSION_NM + "_NM_LEV";
-								var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId
-										: $scope.dim.DIMENSION_NM + "_CD_LEV";
-								tmpItem.name = tmpItem[keyName];
-								tmpItem.id = tmpItem[keyId];
-								tmpItem.$parent = item;
-								tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
-								if (item.children.length == 1
-										&& item.children[0].fake == true) {
-									item.children = [ tmpItem ];
-								} else {
-									item.children.splice(0, 0, tmpItem);
-								}
-								$scope.treeDirty = true;
-							}, function() {
-								// nothing to do, request cancelled.
-							});
+			promise.then(
+					function(newItem) {
+						var tmpItem = $scope.createEmptyNode("node");
+						for (key in newItem) {
+							tmpItem[key] = newItem[key];
+						}
+						var keyName = tmpItem.aliasName !== undefined ? tmpItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
+						var keyId = tmpItem.aliasId !== undefined ? tmpItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+						tmpItem.name = tmpItem[keyName];
+						tmpItem.id = tmpItem[keyId];
+						tmpItem.$parent = item;
+						tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
+						if (item.children.length == 1 && item.children[0].fake == true) {
+							item.children = [ tmpItem ];
+						} else {
+							item.children.splice(0, 0, tmpItem);
+						}
+						$scope.treeDirty = true;
+					}, function() {
+						// nothing to do, request cancelled.
+					});
 		}
 	}
 	/* Modify the hierarchy of the tree with context menu */
 	$scope.modifyHier = function(item, parent, event) {
 		var promise = $scope.editNode(item, parent);
-		promise
-				.then(
-						function(newItem) {
-							if (newItem !== null && newItem !== undefined) {
-								var keyName = newItem.aliasName !== undefined ? newItem.aliasName
-										: $scope.dim.DIMENSION_NM + "_NM_LEV";
-								var keyId = newItem.aliasId !== undefined ? newItem.aliasId
-										: $scope.dim.DIMENSION_NM + "_CD_LEV";
-								newItem.name = newItem[keyName] !== undefined ? newItem[keyName]
-										: item.name;
-								newItem.id = newItem[keyId] !== undefined ? newItem[keyId]
-										: item.name;
-								if (parent && parent.children) {
-									var idx = $scope.indexOf(parent.children,
-											item, "id");
-									if (idx > -1) {
-										// copy fields
-										for ( var k in newItem) {
-											parent.children[idx][k] = newItem[k];
-										}
-									}
-								} else {
-									$scope.hierTree = [ newItem ];
-								}
-								$scope.treeDirty = true;
-							}
-						}, function() {
-						});
+		promise.then(
+			function(newItem) {
+				if (newItem !== null && newItem !== undefined) {
+					var keyName = newItem.aliasName !== undefined ? newItem.aliasName: $scope.dim.DIMENSION_NM + "_NM_LEV";
+					var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dim.DIMENSION_NM + "_CD_LEV";
+					newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : item.name;
+					newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
+					newItem.$parent=item.$parent;
+					if (parent && parent.children) {
+						var idx = $scope.indexOf(parent.children,item, "id");
+						if (idx > -1) {
+							parent.children.splice(idx,1);						
+							parent.children.splice(idx,0,newItem);
+							/*for (var k in newItem){//copy fields
+								parent.children[idx][k] = angular.copy(newItem[k]);
+							}*/
+						}
+					} else {
+						$scope.hierTree = [ newItem ];
+					}
+					$scope.treeDirty = true;
+				}
+			}, function() {
+		});
 	}
 	/*
 	 * Clone the hierarchy of the tree with context menu. If the hier not allows

@@ -208,7 +208,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 								}
 								choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
 								choose =='src' ? $scope.hierTreeCacheSrc[keyMap] = angular.copy(data) : $scope.hierTreeCacheTarget[keyMap] = angular.copy(data);
-								$scope.targetIsNew = false;
+								$scope.targetIsNew = choose =='src' ? false : true;
 							}else{
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert('ERROR',data.errors[0].message);
@@ -334,13 +334,12 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				var keyId = newItem.aliasId !== undefined ? newItem.aliasId : $scope.dimSrc.DIMENSION_NM + "_CD_LEV";
 				newItem.name = newItem[keyName] !== undefined ? newItem[keyName] : item.name;
 				newItem.id = newItem[keyId] !== undefined ? newItem[keyId] : item.name;
+				newItem.$parent=item.$parent;
 				if (parent && parent.children){
 					var idx = $scope.indexOf(parent.children,item,"id");
 					if (idx > 0){
-						//copy fields
-						for (var k in newItem){
-							parent.children[idx][k] = newItem[k];
-						}
+						parent.children.splice(idx,1);						
+						parent.children.splice(idx,0,newItem);
 					}
 				}else{
 					//copy in the object directly
