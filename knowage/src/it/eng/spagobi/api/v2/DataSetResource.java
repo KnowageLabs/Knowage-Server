@@ -274,7 +274,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 			// get datasets from selections
 			Set<String> selectedDatasets = new HashSet<String>();
-			Map<String, String> selectionsMap = new HashMap<String, String>();
+			Map<String, String> filtersMap = new HashMap<String, String>();
+			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<String, Map<String, Set<String>>>();
 			Iterator<String> it = selectionsObject.keys();
 			while (it.hasNext()) {
 				String datasetDotColumn = it.next();
@@ -288,15 +289,31 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
 							String filter = column + " = ('" + value + "')";
-							selectionsMap.put(dataset, filter);
+							filtersMap.put(dataset, filter);
+
+							if (!selectionsMap.containsKey(dataset)) {
+								selectionsMap.put(dataset, new HashMap<String, Set<String>>());
+							}
+							Map<String, Set<String>> selection = selectionsMap.get(dataset);
+							if (!selection.containsKey(column)) {
+								selection.put(column, new HashSet<String>());
+							}
+							selection.get(column).add("('" + value + "')");
 						}
 					}
 				}
 			}
 
-			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, selectionsMap);
+			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap);
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
 			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, graph, egdegroupToValuesMap);
+
+			for (String d : selectionsMap.keySet()) {
+				if (!selections.containsKey(d)) {
+					selections.put(d, new HashMap<String, Set<String>>());
+				}
+				selections.get(d).putAll(selectionsMap.get(d));
+			}
 
 			String stringFeed = JsonConverter.objectToJson(selections, Map.class);
 			return stringFeed;
