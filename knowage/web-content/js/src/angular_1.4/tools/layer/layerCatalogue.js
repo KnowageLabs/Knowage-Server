@@ -336,7 +336,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					$scope.cancel();		
+					$scope.cancel(true);		
 
 				}, function() {
 					console.log('Annulla');
@@ -416,7 +416,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				})
 
 	}
-	$scope.cancel = function(){
+	$scope.cancel = function(notHide){
 		$scope.setTab('Layer');
 
 		if($scope.flag==true){
@@ -425,13 +425,13 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.selectedLayer = angular.copy($scope.object_temp);
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
 			$scope.filter_set = [];
+			if($scope.selectedLayer.properties!=null){
 			for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-				console.log($scope.selectedLayer.properties[i]);
 				var prop = $scope.selectedLayer.properties[i];
 				var obj={"property":prop};
 				$scope.filter_set.push(obj );
-				console.log(obj);
-			}
+			
+			}}
 
 
 		} else{
@@ -446,7 +446,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 		$scope.forms.contactForm.$setPristine();
 		$scope.forms.contactForm.$setUntouched();
-		$scope.showme=false;
+		if(notHide!=true){
+			$scope.showme=false;
+		}
+		
 
 	}
 
@@ -556,7 +559,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	};
 
 	$scope.exists = function (item, list) {
-
+if(list==undefined)return false;
 		return  $scope.indexInList(item, list)>-1;
 
 	};
