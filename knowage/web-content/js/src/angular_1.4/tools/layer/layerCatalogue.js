@@ -455,6 +455,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	$scope.menuLayer= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
+		 icon:'fa fa-trash' ,	 
+
 		action : function(item,event) {
 			$scope.selectedLayer = item;
 

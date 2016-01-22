@@ -1,6 +1,11 @@
 var sbiM=angular.module('sbiModule',[]);
-sbiM.config(function($mdThemingProvider) {
-	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
+//sbiM.config(function($mdThemingProvider) {
+//	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
+//});
+
+app.config(function($mdThemingProvider) {
+	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
+	'blue-grey');
 });
 
 sbiM.factory('sbiModule_user',function(){

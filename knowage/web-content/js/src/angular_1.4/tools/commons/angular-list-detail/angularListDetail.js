@@ -7,7 +7,7 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('angularListDetail',
 		function($compile) {
 	return {
-		template:'<div layout="row" layout-wrap layout-fill></div>',
+		template:'<div  class="kn-list-detail" layout="row" layout-wrap layout-fill></div>',
 		controller : templatesControllerFunction,
 		controllerAs : "ALD_controller",
 		transclude : true,
@@ -77,11 +77,11 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('list',
 		function($compile) {
 	return {
-		template:'<div flex="40" class="md-container">'+
+		template:'<div   flex="40" class="md-container kn-list">'+
 		' <md-toolbar>'+
 		'<div class="md-toolbar-tools">'+
 		' <h2 class="md-flex">{{AWD_listController.title}}</h2>'+
-		'<md-button  ng-disabled="ALD_controller.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && ALD_controller.showNewButton!=false" ng-click="newFuncName()" class="md-fab md-fab-top-right">'+
+		'<md-button  ng-disabled="ALD_controller.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && ALD_controller.showNewButton!=false" ng-click="newFuncName()" class="md-fab md-fab-top-right ">'+
 		' <md-icon md-font-icon="fa-plus" class="fa s32 md-primary md-hue-2" ></md-icon>'+
 		'</md-button>'+
 		'</div>'+
@@ -112,7 +112,7 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('detail',
 		function() {
 	return {
-		template:'<div flex class="md-container">'+
+		template:'<div flex class="md-container kn-list">'+
 		' <md-toolbar>'+
 		'<div class="md-toolbar-tools">'+
 		' <h2 class="flex">{{AWD_detailController.title}}</h2>'+

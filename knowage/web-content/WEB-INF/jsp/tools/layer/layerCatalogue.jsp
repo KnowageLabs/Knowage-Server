@@ -72,7 +72,7 @@
 		columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
 		columnsSearch='["name","type", "layerURL"]' show-search-bar=true
 		highlights-selected-item=true click-function="loadLayerList(item);"
-		menu-option=menuLayer scope-functions=tableFunction> </angular-table>
+		speed-menu-option=menuLayer scope-functions=tableFunction> </angular-table>
 
 	</list> 
 	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'>
