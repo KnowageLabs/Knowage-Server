@@ -17,7 +17,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 150,
+		height: 160,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),
 		bodyPadding: 10,
@@ -52,7 +52,8 @@ Ext.define
 				    fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 				    bind : '{configModel.serieFilterColumn}',
 				    id: "seriesColumnsOnYAxisCombo",
-				    width: 280,
+				    width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 				    store: this.storeForSeriesBeforeDrop,
 				    editable : false,
 				    queryMode: 'local',
@@ -109,7 +110,8 @@ Ext.define
 					 bind : '{configModel.maxNumberOfLines}',
 					 id: "parallelLimitMaxNumbOfRec",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: 280,
+					 width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 					 //value: "100",
 					 maxValue: '1000',
 					 minValue: '5',
@@ -140,7 +142,8 @@ Ext.define
 	         		xtype : 'combo',
 	         		queryMode : 'local',
 	         		//value : 'bottom',
-	         		width: 280,
+	         		width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 	         		triggerAction : 'all',
 	         		forceSelection : true,
 	         		editable : false,

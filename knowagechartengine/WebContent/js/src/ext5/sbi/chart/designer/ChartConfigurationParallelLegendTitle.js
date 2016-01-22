@@ -18,11 +18,11 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+		/*layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
-		},
+		},*/
 		
 		constructor: function(config) 
 		{
@@ -57,9 +57,10 @@ Ext.define
 								 * @author Danilo Ristovski (danristo,
 								 *         danilo.ristovski@mht.net)
 								 */
-								margin : Sbi.settings.chart.configurationStep.marginOfTopFieldset
+								//margin : Sbi.settings.chart.configurationStep.marginOfTopFieldset
 							},
-
+							width: Sbi.settings.chart.configurationStep.widthOfFields,
+		        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 							items : [
 									{
 										xtype : 'textfield',
@@ -80,7 +81,8 @@ Ext.define
 					{
 						bind: '{configModel.parallelLegendTitleFontWeight}',
 						fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-						
+						width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 						listeners:
 						{
 							fontStylePicked: function()
@@ -105,7 +107,8 @@ Ext.define
 	     			{
 	     				bind : '{configModel.parallelLegendTitleFontSize}',
 	     				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-						
+	     				width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 	     				listeners:
 						{
 	     					fontSizePicked: function()
@@ -130,7 +133,8 @@ Ext.define
 					{
 						bind: '{configModel.parallelLegendTitleFontFamily}',
 						fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-						
+						width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 						listeners:
 						{
 							fontFamilyPicked: function()

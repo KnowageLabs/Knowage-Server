@@ -18,11 +18,11 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+		/*layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
-		},
+		},*/
 		
 		constructor: function(config) 
 		{
@@ -38,7 +38,8 @@ Ext.define
 				{
 					bind: '{configModel.parallelLegendElementFontWeight}',
 					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 					listeners:
 					{
 						fontStylePicked: function()
@@ -63,7 +64,8 @@ Ext.define
      			{
      				bind: '{configModel.parallelLegendElementFontSize}',
      				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-     				
+     				width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
      				listeners:
 					{
      					fontSizePicked: function()
@@ -88,7 +90,8 @@ Ext.define
 				{
 					bind: '{configModel.parallelLegendElementFontFamily}',
 					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 					listeners:
 					{
 						fontFamilyPicked: function()

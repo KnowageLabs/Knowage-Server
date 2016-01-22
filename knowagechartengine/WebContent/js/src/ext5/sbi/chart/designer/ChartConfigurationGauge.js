@@ -11,7 +11,7 @@ Ext.define
 		title : LN("sbi.chartengine.configuration.gauge.panelTitle"),
 		bodyPadding : 10,
 		items : [],
-		height : 100,
+		height : 120,
 
 		fieldDefaults : {
 			anchor : '100%'
@@ -26,16 +26,19 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;
 
-			var item = 
-			[				
+			var item = {
+			xtype: 'fieldcontainer',
+			
+			items:[				
 				{
 					xtype : 'numberfield',
 					bind : '{configModel.startAnglePane}',
 					id: "gaugeStartAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.startAnglePane"),
-					width : 280,
+				    width: Sbi.settings.chart.configurationStep.widthOfFields,
 					maxValue : '360',
 					minValue : '-270',
+					padding: Sbi.settings.chart.configurationStep.paddingOfTopFields,
 					emptyText: LN("sbi.chartengine.configuration.gaugeStartAngle.emptyText")
 				},
 
@@ -44,12 +47,13 @@ Ext.define
 					bind : '{configModel.endAnglePane}',
 					id: "gaugeEndAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.endAnglePane"),
-					width : 280,
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
 					maxValue : '360',
 					minValue : '-270',
+					padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 					emptyText: LN("sbi.chartengine.configuration.gaugeEndAngle.emptyText")
 				}
-			];
+			]};
 
 			this.add(item);
 		}

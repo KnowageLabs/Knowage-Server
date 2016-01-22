@@ -29,10 +29,10 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+	/*	layout: 
 		{
 		     type: 'vbox'
-		},
+		},*/
 		
 		constructor: function(config) 
 		{
@@ -57,7 +57,8 @@ Ext.define
 					bind: '{configModel.parallelTooltipFontFamily}',
 					viewModel: this.viewModel,
 					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 					listeners:
 					{
 						fontFamilyPicked: function()
@@ -80,7 +81,8 @@ Ext.define
     			{
     				bind : '{configModel.parallelTooltipFontSize}',
     				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-    				
+    				width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
     				listeners:
 					{
     					fontSizePicked: function()
@@ -311,10 +313,11 @@ Ext.define
 					 bind : '{configModel.parallelTooltipBorder}',
 					 id: "parallelTooltipBorder",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: 280,
+					 width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 //					 value: "0",
 					 maxValue: '10',
-					 columnWidth: 1,
+					 //columnWidth: 1,
 					 minValue: '0',
 					//labelWidth: 100,
 					// labelPad: 10,
@@ -345,7 +348,8 @@ Ext.define
 					 bind : '{configModel.parallelTooltipBorderRadius}',
 					 id: "parallelTooltipBorderRadius",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: 280,
+					 width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 //					 value: "5",
 					 maxValue: '20',
 					 minValue: '0',
@@ -403,6 +407,9 @@ Ext.define
 			//this.add(tooltipWidth);
 			//this.add(tooltipHeight);
 			//this.add(this.tooltipPadding);
-			this.add(tooltipBorder);
+			//this.add(tooltipBorder);
+			this.add(this.tooltipBorder);
+			this.add(this.tooltipBorderRadius);
+			
 		}
 });

@@ -22,10 +22,6 @@ Ext.define
 		title: LN("sbi.chartengine.configuration.parallel.axesLines.title"), 
 		bodyPadding: 10,
 		items: [],
-		defaults : 
-		 {	
-			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
-		 },
 	    fieldDefaults: 
 	    {
 	        anchor: '100%'
@@ -56,6 +52,8 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			isColorMandatory: true, 
+        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
         			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
         			fieldBind: '{configModel.axisColor}',
         			initiator: "colorPickerAxisColor"
@@ -95,6 +93,8 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			isColorMandatory: true, 
+        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
         			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
         			fieldBind: '{configModel.brushColor}',	
         			initiator: "colorPickerBrushColor",
@@ -134,7 +134,8 @@ Ext.define
 					 bind : '{configModel.axisColNamePadd}',	
 					 id: "parallelAxisColNamePadd",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: 280,
+					 width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 					 maxValue: '30',
 					 minValue: '0',
 					 emptyText: LN("sbi.chartengine.configuration.parallelAxesLinesAxisColNamePadd.emptyText"),
@@ -164,7 +165,8 @@ Ext.define
 					 bind : '{configModel.brushWidth}',	
 					 id: "parallelBrushWidth",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: 280,
+					 width: Sbi.settings.chart.configurationStep.widthOfFields,
+	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 //					 value: "20",
 					 maxValue: '100',
 					 minValue: '5',

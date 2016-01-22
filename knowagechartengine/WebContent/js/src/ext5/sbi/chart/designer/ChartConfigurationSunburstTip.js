@@ -33,7 +33,7 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+		/*layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
@@ -41,7 +41,7 @@ Ext.define
 		defaults : 
 		 {	
 			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
-		 },
+		 },*/
 		
 		constructor: function(config) 
 		{
@@ -57,7 +57,8 @@ Ext.define
 				{
 					bind: '{configModel.tipFontWeight}',
 					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					width: 280,
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 					
 					/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
@@ -88,7 +89,8 @@ Ext.define
         		
         		{
         			viewModel: this.viewModel,
-        			width: 280,
+        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
         			fieldBind: '{configModel.tipColor}',
         			bodyPadding:10,
         			isColorMandatory: true,
@@ -132,7 +134,8 @@ Ext.define
     			{
     				bind : '{configModel.tipFontSize}',
     				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-    				width: 280,
+    				width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
     				
     				/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
@@ -163,7 +166,8 @@ Ext.define
 				{
 					bind: '{configModel.tipFontFamily}',
 					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					width: 280,
+					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 					
 					/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
@@ -240,12 +244,12 @@ Ext.define
 	       (
     		   {
                 	 xtype : 'fieldcontainer',
-                	 layout : 'hbox',
+                	 //layout : 'hbox',
                 	 
                 	 defaults : 
                 	 {
                 		 //labelWidth : '100%',
-                		 margin:'0 30 0 0'
+                		// margin:'0 30 0 0'
                 	 },
                 	 
                 	 items:
@@ -253,12 +257,13 @@ Ext.define
             		  	{
             		  		xtype: "textarea",
             		  		// (top, right, bottom, left)
-            		  		padding: "0 0 5 20",
+            		  		//padding: "0 0 5 20",
             		  		grow: true,
             		        name: 'tipText',
             		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
             		        //anchor: '100%',
-            		        width: 280,
+            		        width: Sbi.settings.chart.configurationStep.widthOfFields,
+                			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
             		        height: 120,
             		  		bind: '{configModel.tipText}',
             		  		emptyText: LN("sbi.chartengine.configuration.sunburstTipText.emptyText"),

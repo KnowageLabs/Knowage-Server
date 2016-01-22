@@ -32,11 +32,11 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+		/*layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
-		},
+		}, */
 		
 		constructor: function(config) 
 		{
@@ -54,7 +54,8 @@ Ext.define
         			fieldLabel: LN("sbi.chartengine.configuration.title.verticalAlignCombo") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
         			bind : '{configModel.legendAlign}',
         			emptyText: LN("sbi.chartengine.configuration.heatmapLegendVertAlign.emptyText"),
-        			width: 280,
+        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
         			listeners:
 					{
         				verticAlignPicked: function()
@@ -69,6 +70,19 @@ Ext.define
 					}
         		}
     		);
+			
+			var alignContainer= {
+					xtype:'fieldcontainer',
+	
+      				layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+
+					defaults : {
+						margin : Sbi.settings.chart.configurationStep.marginOfInnerFieldset,
+					},
+					items:[
+					       align
+					      ]
+			};
 	        
 	        var symbolHeight = Ext.create
 	        (
@@ -78,11 +92,11 @@ Ext.define
 	        		id: "heatmapLegendSymbolHeight",
            		 	bind : '{configModel.symbolHeight}',	
            		 	fieldLabel: LN("sbi.chartengine.configuration.heatmap.symbolHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-           		 	width: 280,
+           		 	width: Sbi.settings.chart.configurationStep.widthOfFields,
            		 	maxValue: '800',
            		 	minValue: '50',
            		 	emptyText: LN("sbi.chartengine.configuration.heatmapSymbolHeight.emptyText"),
-           		 	
+           		 	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
            		 	listeners:
            		 	{
            		 		change: function(thisEl, newValue, oldValue)
@@ -101,6 +115,19 @@ Ext.define
 	        	}
 	        );
 	        
+	        var symbolHeightContainer= {
+					xtype:'fieldcontainer',
+	
+      				layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+
+					defaults : {
+						margin : Sbi.settings.chart.configurationStep.marginOfInnerFieldset,
+					},
+					items:[
+					       symbolHeight
+					      ]
+			}
+	        
 	        this.stylePanelLegendTitle = Ext
 			.create(
 					'Sbi.chart.designer.StylePopup',
@@ -111,11 +138,13 @@ Ext.define
 						bindFont : '{configModel.legendTitleFont}',
 						bindFontDim : '{configModel.legendTitleDimension}',
 						bindFontStyle : '{configModel.legendTitleStyle}',
-						bindColor : '{configModel.legendTitleColor}'
+						bindColor : '{configModel.legendTitleColor}',
+		         
 					});
 	        var stylePanelLegendTitle=this.stylePanelLegendTitle;
-	        var item = [
-									{
+	        
+	        var item=[
+	        		             {
 										xtype : 'fieldcontainer',
 
 										/**
@@ -141,6 +170,8 @@ Ext.define
 										},
 
 										items : [
+										        
+										        
 												{
 													xtype : 'textfield',
 													width : Sbi.settings.chart.configurationStep.widthOfFields,
@@ -159,12 +190,16 @@ Ext.define
 													handler : function() {
 														stylePanelLegendTitle.show();
 													}
-												} ]
+												},
+												
+												]
 									}]
 	        
+	       
+	        
 	        this.add(item);
-        	this.add(align);
-        	this.add(symbolHeight);
+	        this.add(align);
+	        this.add(symbolHeight);
         	
 		}
 });

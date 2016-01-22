@@ -24,19 +24,19 @@ Ext.define
 		height: 170,
 		
 		title: LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title"),
-		bodyPadding: 10,
-		items: [],		
-	
+		bodyPadding: 10,	
+		
 	    fieldDefaults: 
 	    {
 	        anchor: '100%'
 		},
 		
-		layout: 
+		/*layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
 		},
+		*/
 		
 		constructor: function(config) 
 		{
@@ -45,12 +45,12 @@ Ext.define
 			
 			var globalScope = this;
 			
-			 var font = Ext.create('Sbi.chart.designer.FontCombo',{
+			var font = Ext.create('Sbi.chart.designer.FontCombo',{
 					viewModel: this.viewModel,
 					bind : '{configModel.tipFontFamily}',
 					fieldLabel :  
 							LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-							
+					padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,		
 					listeners:
 					{
 	 					fontFamilyPicked: function()
@@ -72,7 +72,7 @@ Ext.define
 		        	bind : '{configModel.tipFontSize}',
 		        	fieldLabel :  
 		        			LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-		        			
+		        	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,		
 	    			listeners:
 					{
 	 					fontSizePicked: function()
@@ -97,7 +97,7 @@ Ext.define
 		        	bind : '{configModel.tipFontWeight}',
 		        	fieldLabel :  
 		        			LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-		        			
+		        	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,		
 	    			listeners:
 					{
 	 					fontStylePicked: function()
@@ -121,8 +121,10 @@ Ext.define
 						viewModel: this.viewModel,
 						fieldBind : '{configModel.tipColor}', 
 						customLabel: LN("sbi.chartengine.configuration.color"),
+						padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 						isColorMandatory: true,
-						initiator: "heatmapTooltipColor"
+						initiator: "heatmapTooltipColor",
+						
 					}
 				);
 				
@@ -152,5 +154,19 @@ Ext.define
 	    		);
 				
 				this.add(this.colorPicker);
+				
+			/*	var item={
+						type:'fieldcontainer',
+						
+						items:[
+						       this.font,
+						       this.style,
+						       this.dim,
+						       this.colorPicker
+						       ]
+				}*/
+				
+				//this.add(item);
+				
 		}
 });
