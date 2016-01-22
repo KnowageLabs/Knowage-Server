@@ -333,12 +333,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
 			synchronized (session) {
-				if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters));
-				} else {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
-							projectionCriteria);
-				}
+				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
+						projectionCriteria);
 			}
 
 			Map<String, Object> properties = new HashMap<String, Object>();

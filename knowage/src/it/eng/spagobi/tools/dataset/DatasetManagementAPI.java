@@ -305,59 +305,6 @@ public class DatasetManagementAPI {
 	// }
 
 	/**
-	 *
-	 * @param label
-	 * @param offset
-	 * @param fetchSize
-	 * @param maxResults
-	 * @param parametersValues
-	 * @return
-	 */
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
-		try {
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			// checkQbeDataset(dataSet);
-
-			dataSet.setParamsMap(parametersValues);
-			List<JSONObject> parameters = getDataSetParameters(label);
-			if (parameters.size() > parametersValues.size()) {
-				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
-				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
-			}
-
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			IDataStore cachedResultSet = cache.get(dataSet);
-
-			IDataStore dataStore = null;
-			if (cachedResultSet == null) {
-				dataSet.setParamsMap(parametersValues);
-				dataStore = cache.refresh(dataSet, false);
-				// if result was not cached put refresh date as now
-				dataStore.setCacheDate(new Date());
-
-			} else {
-				dataStore = cachedResultSet;
-				addLastCacheDate(cache, dataStore, dataSet);
-			}
-
-			if (maxResults > 0 && dataStore.getRecordsCount() > maxResults) {
-				// building the limited DataStore....
-				// TODO: move this part in a lower component..
-				return dataStore.aggregateAndFilterRecords(generateQuery(maxResults));
-			} else {
-				return dataStore;
-			}
-		} catch (ParametersNotValorizedException p) {
-			throw new ParametersNotValorizedException(p.getMessage());
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	/**
 	 * insert into data store last cache date if present
 	 *
 	 * @param cache
@@ -438,16 +385,24 @@ public class DatasetManagementAPI {
 				 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
 				 * therefore we adjust its metadata
 				 */
-				this.adjustMetadata((DataStore) dataStore, dataSet, null);
+				adjustMetadata((DataStore) dataStore, dataSet, null);
 				dataSet.decode(dataStore);
 			}
-
+			limitDataStoreRecords((DataStore) dataStore, maxResults);
 			return dataStore;
 
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	protected void limitDataStoreRecords(DataStore dataStore, int maxResults) {
+		List records = dataStore.getRecords();
+		int size = records.size();
+		if (size > maxResults) {
+			records.subList(maxResults, size).clear();
 		}
 	}
 
