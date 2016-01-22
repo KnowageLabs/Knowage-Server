@@ -35,6 +35,14 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	$scope.showLoadingTarget = false;
 	
 	$scope.keys = {'subfolders' : 'children'};
+	$scope.fakeNode = {
+			fake : true,
+			name : $scope.translate.load("sbi.hierarchies.new.empty"),
+			id : '',
+			visible : true,
+			checked : false,
+			expanded : false
+		};
 	
 //	$scope.hierTreeSrc.push(angular.copy(dataJson));
 //	$scope.hierTreeTarget.push(angular.copy(dataJson));
@@ -283,7 +291,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				node[metadata[i].ID] = metadata[i].FIX_VALUE;
 			}
 		}
-		node.children = [{fake:true,name:$scope.translate.load("sbi.hierarchies.new.empty"),id:'',visible:true,checked:false,expanded:false}];
+		node.children = type == "leaf" ? [] : [ angular.copy($scope.fakeNode) ];
 		node.expanded = false;
 		node.visible=true;
 		node.type="folder";
@@ -596,9 +604,14 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 					el[k] = $scope.formatDate(el[k]);
 				}
 			}
-			if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true){
-				for (var i =0 ; i<el.children.length;i++){
-					elements.push(el.children[i]);
+			if (el.children !== undefined && el.children.length > 0) {
+				for (var i = 0; i < el.children.length; i++) {
+					if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true) {
+						el.children.splice(i, 1);
+						i--;
+					} else {
+						elements.push(el.children[i]);
+					}
 				}
 			}
 		}while(elements.length > 0);
