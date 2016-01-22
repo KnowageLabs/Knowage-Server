@@ -205,6 +205,10 @@ md-datepicker > div.md-datepicker-input-container{
 .force-100width {
 	width:100% !important;
 }
+
+#angularTableTemplate{
+	position: relative !important;
+}
 /*
 .table-object > div > md-content {
 	width: 30rem !important;
