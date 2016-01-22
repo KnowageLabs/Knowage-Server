@@ -401,6 +401,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				if (parent !== undefined && parent !== null){
 					var idx = $scope.indexOf(parent.children,item,'id');
 					parent.children.splice(idx,1);
+					if (parent.children.length == 0) {
+						parent.children.push($scope.createEmptyNode('leaf'));
+					}
 				}else{
 					item = {};
 				}
