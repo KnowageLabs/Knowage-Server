@@ -277,17 +277,17 @@ public class HierarchyService {
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			// String hierarchyCode = requestVal.getString("code");
-			String hierarchyName = requestVal.getString("name");
-			// String hierarchyDescription = requestVal.getString("description");
-			String hierarchyType = requestVal.getString("type");
+			// String hierarchyName = requestVal.getString("name");
+			// String hierarchyType = requestVal.getString("type");
 			String validityDate = (!requestVal.isNull("dateValidity")) ? requestVal.getString("dateValidity") : null;
 			boolean doBackup = (!requestVal.isNull("doBackup")) ? requestVal.getBoolean("doBackup") : new Boolean("false");
+			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
 			String dimension = requestVal.getString("dimension");
 
 			String root = requestVal.getString("root");
 			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
-			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
+			String hierarchyName = rootJSONObject.getString(HierarchyConstants.HIER_NM);
+			String hierarchyType = rootJSONObject.getString(HierarchyConstants.HIER_TP);
 
 			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension);
 
