@@ -114,7 +114,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			
 		});
 	
-	$scope.getHierarchies = function (choose){
+	$scope.getHierarchies = function (choose, forceGetHierarchies){
 		var type = choose == 'src' ? $scope.hierTypeSrc : 'Technical' ;
 		//var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
 		var dim = $scope.dimSrc;
@@ -125,7 +125,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'getHierarchiesMaster' : 'getHierarchiesTechnical';
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
-			if (map[keyMap] === undefined){
+			if (map[keyMap] === undefined || forceGetHierarchies==true){
 				$scope.toogleLoading(choose);
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
 					.success(
@@ -644,6 +644,10 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			promise
 				.success(function (data){
 					if (data.errors === undefined){
+						if ($scope.targetIsNew == true){
+							$scope.getHierarchies("src",true);
+							$scope.getHierarchies("target",true);
+						}
 						$scope.treeTargetDirty = false;
 						$scope.targetIsNew = false;
 						/*clean cache map*/
