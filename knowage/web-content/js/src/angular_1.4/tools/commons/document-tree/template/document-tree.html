@@ -12,10 +12,10 @@
 					<span> &nbsp;{{folder[label]}}</span> 
 				</div>
 			</div>
-			<div ng-if="menuOption.length!=0 && menuOption!=undefined" ng-show="folder.isHover" layout="row" layout-aling="end center">
+			<div class="menu-container" ng-if="menuOption.length!=0 && menuOption!=undefined" ng-show="folder.isHover" layout="row" layout-aling="end center">
 				<div class="icon-container" ng-repeat=" menuItem in menuOption" role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)' ng-if='menuItem.showItem === undefined || menuItem.showItem(folder,$event)' tabindex='{{$index}}' >
 					<md-icon md-font-icon="{{menuItem.icon}}"></md-idcon>
-					<md-tooltip md-direction="bottom">{{menuItem.label}}</md-tooltip>
+					<md-tooltip md-direction="left">{{menuItem.label}}</md-tooltip>
 				</div>
 			</div>
 		</div>		
@@ -55,6 +55,10 @@
 </md-content>
  
 <style>
+	.menu-container{
+		margin-left: 2rem;
+	}
+
 	.line-container{
 		font-family: Roboto,"Helvetica Neue",sans-serif;
 		font-size: 14px;
