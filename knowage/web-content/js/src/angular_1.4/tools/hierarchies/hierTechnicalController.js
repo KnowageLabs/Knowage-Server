@@ -71,7 +71,17 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		$scope.treeTargetDirty = true;
 		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
 		$scope.removeFakeAndCorupt(dest.children);
-		e.source.nodeScope.$modelValue.LEVEL = dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
+		var level =  dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
+		$scope.updateLevelRecursive(e.source.nodeScope.$modelValue, level);
+	}
+	
+	$scope.updateLevelRecursive = function(node, level){
+		node.LEVEL = level;
+		if (node.children && node.children.length > 0){
+			for (var i = 0; i< node.children.length;i++){
+				$scope.updateLevelRecursive(node.children[i],level+1);
+			}
+		}
 	}
 	
 	/*remove elements dropped by ui-tree that are wrong. These elements are dropped though you cancel the confirm dialog [showListHierarchies]*/
