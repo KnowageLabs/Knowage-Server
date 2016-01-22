@@ -90,15 +90,21 @@ public class HierarchyConstants {
 	public final static String LEAF_ID = "LEAF_ID";
 	public final static String MAX_DEPTH = "MAX_DEPTH";
 	public final static String TREE_NODE_ID = "TREE_NODE_ID";
-	public final static String TREE_NODE_NAME = "TREE_NODE_NAME";
+	public final static String TREE_NODE_CD = "TREE_NODE_CD";
+	public final static String TREE_NODE_NM = "TREE_NODE_NM";
 	public final static String TREE_LEAF_ID = "TREE_LEAF_ID";
-	public final static String TREE_LEAF_NAME = "TREE_LEAF_NAME";
+	public final static String TREE_LEAF_CD = "TREE_LEAF_CD";
+	public final static String TREE_LEAF_NM = "TREE_LEAF_NM";
+	public final static String DIMENSION_ID = "DIMENSION_ID";
+	public final static String DIMENSION_CD = "DIMENSION_CD";
+	public final static String DIMENSION_NM = "DIMENSION_NM";
 
 	// FIELDS TYPES
 	public final static String FIELD_TP_STRING = "String";
 	public final static String FIELD_TP_NUMBER = "Number";
 	public final static String FIELD_TP_DATE = "Date";
 
+	public final static String MATCH_LEAF_FIELDS = "MATCH_LEAF_FIELDS";
 	public final static String JSON_CD_PARENT = "CD_PARENT";
 	public final static String JSON_NM_PARENT = "NM_PARENT";
 }

@@ -400,13 +400,22 @@ public class Hierarchies {
 						toReturn.put(HierarchyConstants.ORIG_NODE, sbConfig.getAttribute(HierarchyConstants.ORIG_NODE));
 					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_ID))
 						toReturn.put(HierarchyConstants.TREE_NODE_ID, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_ID));
-					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NAME))
-						toReturn.put(HierarchyConstants.TREE_NODE_NAME, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NAME));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_CD))
+						toReturn.put(HierarchyConstants.TREE_NODE_CD, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_CD));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NM))
+						toReturn.put(HierarchyConstants.TREE_NODE_NM, sbConfig.getAttribute(HierarchyConstants.TREE_NODE_NM));
 					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_ID))
 						toReturn.put(HierarchyConstants.TREE_LEAF_ID, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_ID));
-					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NAME))
-						toReturn.put(HierarchyConstants.TREE_LEAF_NAME, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NAME));
-
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_CD))
+						toReturn.put(HierarchyConstants.TREE_LEAF_CD, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_CD));
+					if (null != sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NM))
+						toReturn.put(HierarchyConstants.TREE_LEAF_NM, sbConfig.getAttribute(HierarchyConstants.TREE_LEAF_NM));
+					if (null != sbConfig.getAttribute(HierarchyConstants.DIMENSION_ID))
+						toReturn.put(HierarchyConstants.DIMENSION_ID, sbConfig.getAttribute(HierarchyConstants.DIMENSION_ID));
+					if (null != sbConfig.getAttribute(HierarchyConstants.DIMENSION_CD))
+						toReturn.put(HierarchyConstants.DIMENSION_CD, sbConfig.getAttribute(HierarchyConstants.DIMENSION_CD));
+					if (null != sbConfig.getAttribute(HierarchyConstants.DIMENSION_NM))
+						toReturn.put(HierarchyConstants.DIMENSION_NM, sbConfig.getAttribute(HierarchyConstants.DIMENSION_NM));
 				}
 			}
 		}

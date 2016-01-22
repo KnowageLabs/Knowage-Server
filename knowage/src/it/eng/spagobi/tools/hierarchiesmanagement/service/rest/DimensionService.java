@@ -13,6 +13,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,9 +86,22 @@ public class DimensionService {
 		JSONObject result = new JSONObject();
 
 		try {
-
 			JSONArray jsonDimension = HierarchyUtils.createJSONArrayFromFieldsList(metadataFields, false);
 			result.put(HierarchyConstants.DIM_FIELDS, jsonDimension);
+
+			// adds columns matching configurations
+			HashMap configsMap = hierarchies.getConfig(dimensionLabel);
+			JSONObject matchDim = new JSONObject();
+			if (configsMap.get(HierarchyConstants.DIMENSION_ID) != null && configsMap.get(HierarchyConstants.TREE_LEAF_ID) != null) {
+				matchDim.put((String) configsMap.get(HierarchyConstants.DIMENSION_ID), (String) configsMap.get(HierarchyConstants.TREE_LEAF_ID));
+			}
+			if (configsMap.get(HierarchyConstants.DIMENSION_CD) != null && configsMap.get(HierarchyConstants.TREE_LEAF_CD) != null) {
+				matchDim.put((String) configsMap.get(HierarchyConstants.DIMENSION_CD), (String) configsMap.get(HierarchyConstants.TREE_LEAF_CD));
+			}
+			if (configsMap.get(HierarchyConstants.DIMENSION_NM) != null && configsMap.get(HierarchyConstants.TREE_LEAF_NM) != null) {
+				matchDim.put((String) configsMap.get(HierarchyConstants.DIMENSION_NM), (String) configsMap.get(HierarchyConstants.TREE_LEAF_NM));
+			}
+			result.put(HierarchyConstants.MATCH_LEAF_FIELDS, matchDim);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while creating dimensions json");
