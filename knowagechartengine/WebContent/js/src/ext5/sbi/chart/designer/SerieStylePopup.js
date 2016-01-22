@@ -103,40 +103,40 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * for the GAUGE chart type.
 		 * (danilo.ristovski@mht.net)
 		 */
-		if (chartType == "GAUGE") {
+		if (chartType == "GAUGE"){
 			/**
 			 * DIAL field set for the GAUGE chart type
 			 */
 			this.dialFieldSet = Ext.create('Ext.form.FieldSet', {
-				collapsible: true,
-				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
-				
+					collapsible: true,
+					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
+					
 				defaults: {
-					anchor: '100%',
-					labelAlign : 'left',
+						anchor: '100%',
+						labelAlign : 'left',
 					labelWidth : LABEL_WIDTH,
-				},
-				
-				layout: 'anchor',
-				items : []
-			});
+					},
+					
+					layout: 'anchor',
+					items : []
+				});
 			
 			/**
 			 * DATA_LABELS field set for the GAUGE chart type
 			 */
 			this.dataLabelsFieldSet = Ext.create('Ext.form.FieldSet', {
-				collapsible: true,
-				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
-				
-				defaults: {
-					anchor: '100%',
-					labelAlign : 'left',
+					collapsible: true,
+					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
+					
+					defaults: {
+						anchor: '100%',
+						labelAlign : 'left',
 					labelWidth : LABEL_WIDTH,
-				},
-				
-				layout: 'anchor',
-				items : []
-			});
+					},
+					
+					layout: 'anchor',
+					items : []
+				});
 		
 			/**
 			 * Variables (GUI elements) for the DIAL and DATA LABELS of the GAUGE chart
@@ -462,7 +462,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //			this.serieShowPercentage.hide();
 //			this.serieShowValue.show();
 //		}
-		
+
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
 			id: "seriePrecisionNumberField",
@@ -535,7 +535,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		var serieFormatOrPrecision = dataAtRow.get('serieFormatOrPrecision');
-		
+		 if(chartType=="WORDCLOUD"){
+			 serieFormatOrPrecision="precision";
+		 }
 		/**
 		 * The combo that will let user pick between two possible modalities
 		 * of displaying the serie item: format or precision.
@@ -543,79 +545,86 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 */
 		this.serieFormatOrPrecision = Ext.create('Ext.form.ComboBox', {
 //			xtype: "combobox",
-			fieldLabel: "Precision or format", // TODO: LN(),
-			
-			store: {
-				fields: ["name","value"],
+				fieldLabel: "Precision or format",	// TODO: LN(),
 				
+			store: {
+					fields: ["name","value"],
+					
 				data: [{
 			 		name: "Precision", // TODO: LN(),
-			 		value: "precision"
+					 		value: "precision"
 			 	}, {
 			 		name: "Format", // TODO: LN(),
-			 		value: "format"
+					 		value: "format"
 			 	}]
-			},
-			
-			value: (serieFormatOrPrecision) ? serieFormatOrPrecision : "format",
-			valueField: 'value',
-			displayField: 'name',
-			editable: false,
-			emptyText: "Choose between precision and format",	// TODO: LN()
-			
-			listeners: {
-				change: function(combo,value,b) {	
-					globalScope.seriePrecisionNumberField.setValue("");
-					globalScope.seriePrefixCharTextField.setValue("");
-					globalScope.seriePostfixCharTextField.setValue("");
-					globalScope.serieFormatTextField.setValue("");
-					
-					globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
-					globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
-					globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);						
-					globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
-					
-					if (value.toLowerCase() == "precision") {
-						Ext.getCmp("serieFormatTextField").hide();
-						Ext.getCmp("seriePrecisionNumberField").show();
-						Ext.getCmp("seriePrefixCharTextField").show();							
-						Ext.getCmp("seriePostfixCharTextField").show();
-					}
-					
-					if (value.toLowerCase() == "format") {
-						Ext.getCmp("seriePrecisionNumberField").hide();
-						Ext.getCmp("seriePrefixCharTextField").hide();							
-						Ext.getCmp("seriePostfixCharTextField").hide();
-						Ext.getCmp("serieFormatTextField").show();
-					}	
 				},
 				
-				/**
-				 * This will run when the popup is opened.
-				 */
-				render: function(combo) {
-					var value = combo.getValue();
-					
-					globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
-					globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
-					globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);
-					
-					globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
-					
+				value: (serieFormatOrPrecision) ? serieFormatOrPrecision : "format",
+				valueField: 'value',
+				displayField: 'name',
+				editable: false,
+				emptyText: "Choose between precision and format",	// TODO: LN()
+				
+			listeners: {
+				change: function(combo,value,b) {	
+						globalScope.seriePrecisionNumberField.setValue("");
+						globalScope.seriePrefixCharTextField.setValue("");
+						globalScope.seriePostfixCharTextField.setValue("");
+						globalScope.serieFormatTextField.setValue("");
+						
+						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);						
+						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
+						
 					if (value.toLowerCase() == "precision") {
-						Ext.getCmp("serieFormatTextField").hide();
+							Ext.getCmp("serieFormatTextField").hide();
+							Ext.getCmp("seriePrecisionNumberField").show();
+							Ext.getCmp("seriePrefixCharTextField").show();							
+							Ext.getCmp("seriePostfixCharTextField").show();
+						}
+						
+					if (value.toLowerCase() == "format") {
+							Ext.getCmp("seriePrecisionNumberField").hide();
+							Ext.getCmp("seriePrefixCharTextField").hide();							
+							Ext.getCmp("seriePostfixCharTextField").hide();
+							Ext.getCmp("serieFormatTextField").show();
+						}	
+						
+					},
+					
+					/**
+					 * This will run when the popup is opened.
+					 */
+				render: function(combo) {
+						var value = combo.getValue();
+						
+						globalScope.serieFieldSet.add(globalScope.seriePrecisionNumberField);
+						globalScope.serieFieldSet.add(globalScope.seriePrefixCharTextField);
+						globalScope.serieFieldSet.add(globalScope.seriePostfixCharTextField);
+						
+						globalScope.serieFieldSet.add(globalScope.serieFormatTextField);
+						
+					if (value.toLowerCase() == "precision") {
+							Ext.getCmp("serieFormatTextField").hide();
+						}
+						
+					if (value.toLowerCase() == "format") {
+							Ext.getCmp("seriePrecisionNumberField").hide();
+							Ext.getCmp("seriePrefixCharTextField").hide();							
+							Ext.getCmp("seriePostfixCharTextField").hide();
+						}	
 					}
 					
-					if (value.toLowerCase() == "format") {
-						Ext.getCmp("seriePrecisionNumberField").hide();
-						Ext.getCmp("seriePrefixCharTextField").hide();							
-						Ext.getCmp("seriePostfixCharTextField").hide();
-					}	
 				}
-			}
 		});
 		
 		this.serieFieldSet.add(this.serieFormatOrPrecision);
+		
+		if(chartType=="WORDCLOUD"){
+			this.serieFormatOrPrecision.hide();
+		}
+	
 		
 		if(chartLibrary == 'chartJs') {
 			this.serieFormatOrPrecision.setValue("precision");
