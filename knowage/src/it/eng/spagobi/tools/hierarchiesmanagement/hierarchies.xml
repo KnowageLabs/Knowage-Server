@@ -7,9 +7,13 @@
 				<CONFIG NUM_LEVELS="15" />
 				<CONFIG ALLOW_DUPLICATE="false" />
 				<CONFIG TREE_NODE_ID="CDC_CD_LEV" /> 	<!-- alias of the id used by the tree for the node -->
-				<CONFIG TREE_NODE_NAME="CDC_NM_LEV" /> 	<!-- alias of the name used by the tree for the node -->
-				<CONFIG TREE_LEAF_ID="CDC_CD_LEAF" /> 	<!-- alias of the id used by the tree for the leaf -->
-				<CONFIG TREE_LEAF_NAME="CDC_NM_LEAF" /> <!-- alias of the name used by the tree for the leaf -->
+				<CONFIG TREE_NODE_NM="CDC_NM_LEV" /> 	<!-- alias of the name used by the tree for the node -->
+				<CONFIG TREE_LEAF_ID="CDC_LEAF_ID" /> 	<!-- alias of the id used by the tree for the leaf -->
+				<CONFIG TREE_LEAF_CD="CDC_CD_LEAF" /> <!-- alias of the cd used by the tree for the leaf -->
+				<CONFIG TREE_LEAF_NM="CDC_NM_LEAF" /> <!-- alias of the name used by the tree for the leaf -->
+				<CONFIG DIMENSION_ID="CDC_ID" />
+				<CONFIG DIMENSION_CD="CDC_CD" />
+				<CONFIG DIMENSION_NM="CDC_NM" />
 				<CONFIG NODE="CDC_CD_LEV*|CDC_NM_LEV*|FORM_LIV*|ORDER_LEV*" />
 				<CONFIG LEAF="CDC_CD_LEAF|CDC_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
@@ -87,10 +91,14 @@
 			<CONFIGS>
 				<CONFIG NUM_LEVELS="15" />
 				<CONFIG ALLOW_DUPLICATE="true" />
-				<CONFIG TREE_NODE_ID="ACCOUNT_CD_LEV" />
-				<CONFIG TREE_NODE_NAME="ACCOUNT_NM_LEV" />
-				<CONFIG TREE_LEAF_ID="ACCOUNT_CD_LEAF" />
-				<CONFIG TREE_LEAF_NAME="ACCOUNT_NM_LEAF" />
+				<CONFIG TREE_NODE_CD="ACCOUNT_CD_LEV" />
+				<CONFIG TREE_NODE_NM="ACCOUNT_NM_LEV" />
+				<CONFIG TREE_LEAF_ID="ACCOUNT_LEAF_ID" />
+				<CONFIG TREE_LEAF_CD="ACCOUNT_CD_LEAF" />
+				<CONFIG TREE_LEAF_NM="ACCOUNT_NM_LEAF" />
+				<CONFIG DIMENSION_ID="ACCOUNT_ID" />
+				<CONFIG DIMENSION_CD="ACCOUNT_CD" />
+				<CONFIG DIMENSION_NM="ACCOUNT_NM" />
 				<CONFIG NODE="ACCOUNT_CD_LEV*|ACCOUNT_NM_LEV*|SIGN_LIV*|G_SIGN_LIV*" />
 				<CONFIG LEAF="ACCOUNT_CD_LEAF|ACCOUNT_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
