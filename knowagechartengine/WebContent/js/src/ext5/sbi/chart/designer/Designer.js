@@ -19,7 +19,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     statics: {
     	noStylePickedStyle: null,
     	tabChangeChecksFlag: true,
-    	
+    	jsonTemplateStyleExists: false,
 		jsonTemplate: null,
 		chartLibNamesConfig: null,
 		
@@ -126,25 +126,54 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
 		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		getConfigurationForStyle : function(style) {
+		getConfigurationForStyle : function(style,changeChartType) {
 		      
-			   var styles=JSON.parse(Sbi.chart.designer.Styles);
-			          
-			   /**
-			    * JSON template that keeps the predefined values for the different styles parameters. 
-			    * We will return this JSON object when needed (e.g. before merging old JSON template 
-			    * with the new one (that keeps the predefined style parameters), after changing the style).
-			    */
-			   var retTemplate=null;
-			   			   
-			   for(i=0;i<styles.length;i++){
-				   if(styles[i].STYLE.name===style){
-					   retTemplate=styles[i].TEMPLATE;
-					   break;
-				   } 
-			   } 			   
-			   
-			   return retTemplate;						
+			var styles = JSON.parse(Sbi.chart.designer.Styles);
+			
+
+			/**
+			 * JSON template that keeps the predefined values
+			 * for the different styles parameters. We will
+			 * return this JSON object when needed (e.g. before
+			 * merging old JSON template with the new one (that
+			 * keeps the predefined style parameters), after
+			 * changing the style).
+			 */
+			var retTemplate = null;
+
+			for (i = 0; i < styles.length; i++) {
+				if (styles[i].STYLE.name === style) {
+					retTemplate = styles[i].TEMPLATE;
+					break;
+				}
+			}
+			  
+			/**
+			 * if no style with given name exists return the
+			 * default one
+			 */
+			if (retTemplate == null) {
+				for (i = 0; i < styles.length; i++) {
+					if (styles[i].STYLE.name === "sfnas") {
+						
+						if(styles.length > 1 && style != "" && !changeChartType && !Sbi.chart.designer.Designer.backupStyleSet){
+							Sbi.exception.ExceptionHandler
+							.showInfoMessage(
+									LN("sbi.chartengine.designer.styleRemoved")
+
+							);
+						}
+
+						
+						Ext.getCmp("stylePickerComboId").setValue("");
+						Sbi.chart.designer.Designer.backupStyleSet = true;
+						retTemplate = styles[i].TEMPLATE;
+						break;
+					}
+				}
+
+			}
+			return retTemplate;
 		},
 				
 		initialize: function(sbiExecutionId, 
@@ -828,7 +857,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					//console.log(Designer.getConfigurationForStyle(Designer.styleName));
 					
-					if (Designer.getConfigurationForStyle(Designer.styleName) != null)
+					if (Designer.getConfigurationForStyle(Designer.styleName,true) != null)
 					{
 					/**
 					 * Since we are dealing with the newly created chart which does not posses any 
@@ -842,7 +871,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						
 						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
 						(
-							Designer.getConfigurationForStyle(Designer.styleName).generic,
+							Designer.getConfigurationForStyle(Designer.styleName,true).generic,
 							yAxisListIsEmpty
 						);	
 					
@@ -850,7 +879,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						
 						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
 						(
-							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()],
+							Designer.getConfigurationForStyle(Designer.styleName,true)[currentChartType.toLowerCase()],
 							yAxisListIsEmpty
 						);	
 					
@@ -1125,7 +1154,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 						styleAbbr: styles[i].STYLE.name, 
 						style: styles[i].STYLE.name
 					};
-					allStyles.push(style);
+					
+					if (jsonTemplate.CHART.styleName === styles[i].STYLE.name)
+					{
+						Sbi.chart.designer.Designer.jsonTemplateStyleExists = true;
+					}
+					
+					
+					
+					if (styles[i].STYLE.name !== "sfnas") {
+						allStyles.push(style);
+					}
 				}
 
 				return allStyles;
