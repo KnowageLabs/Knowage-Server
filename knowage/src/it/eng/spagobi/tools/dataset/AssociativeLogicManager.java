@@ -9,6 +9,7 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -53,10 +54,10 @@ public class AssociativeLogicManager {
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
 		if (dataSource == null) {
-			throw new NullPointerException("Unable to get cache datasource");
+			throw new SpagoBIException("Unable to get cache datasource, the value of [dataSource] is [null]");
 		}
 		if (cache == null) {
-			throw new NullPointerException("Unable to get cache");
+			throw new SpagoBIException("Unable to get cache, the value of [cache] is [null]");
 		}
 
 		// (0) generate the starting set of values for each associations
