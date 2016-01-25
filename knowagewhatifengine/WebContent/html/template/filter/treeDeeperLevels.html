@@ -1,0 +1,11 @@
+<li ng-repeat="item in item.nodes"  >
+	<div>
+		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed" ng-click="testtt(item)"> 
+		</md-icon>
+		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed" ng-click="testtt(item)"> 
+		</md-icon> 
+		{{item.title}}
+		<ul  ng-model="item.nodes" ng-show="item.collapsed" ng-include="templateListChild">
+		</ul>
+	</div>
+</li>

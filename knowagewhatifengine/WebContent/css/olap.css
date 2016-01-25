@@ -74,6 +74,10 @@
     height: 32px;
 }
 
+.dialog-toolbar{
+    padding: 0px 10px !important;
+}
+
 .icon{
     height:32px;
     min-width: 32px;
@@ -83,11 +87,14 @@
     color: #ffffff !important;
     border-radius: 10px 10px 0px 0px;
     padding-left: 10px;
+    line-height: 0;
 }
 
 .filter-card{
-    height: 13.3%;
     border-radius: 10px 10px;
+    width:20%;
+    height:10%;
+    -moz-height:5%;
 }
 
 .central-panel{
@@ -95,6 +102,10 @@
     height: -moz-calc(80% - 32px);
     width:60%;
     position:absolute;
+}
+
+.dialog-style{
+    padding: 10px;
 }
 
 table, th , td {
@@ -107,4 +118,54 @@ table tr:nth-child(odd) {
 }
 table tr:nth-child(even) {
   background-color: #ffffff;
+}
+
+/*.tree css*/
+
+.tree,
+.tree ul {
+  margin:0 0 0 1em; /* indentation */
+  padding:0;
+  list-style:none;
+  position:relative;
+}
+
+.tree ul {margin-left:.5em} /* (indentation/2) */
+
+.tree:before,
+.tree ul:before {
+  content:"";
+  display:block;
+  width:0;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  border-left:1px dotted #D3C1C1;
+}
+
+.tree li {
+  margin:0;
+  padding: 0px 0.8em;
+  line-height: 2.3em; /* default list item's `line-height` */
+  position:relative;
+}
+
+.tree li:before {
+  content:"";
+  display:block;
+  width:10px; /* same with indentation */
+  height:0;
+  border-top:1px dotted #D3C1C1;
+  margin-top:-1px; /* border top width */
+  position:absolute;
+  top:1em; /* (line-height/2) */
+  left:0;
+}
+
+.tree li:last-child:before {
+  background:white; /* same with body background */
+  height:auto;
+  top:1em; /* (line-height/2) */
+  bottom:0;
 }
