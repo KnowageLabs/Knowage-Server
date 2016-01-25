@@ -35,7 +35,7 @@
 
 	<div ng-controller="Controller " layout="column" layout-wrap layout-fill>
 
-			<md-toolbar style="font:Roboto; padding:14px;background:#3b678c;font-size:18px;text:#ffffff" >
+			<md-toolbar style="font:Roboto; padding:14px;background:#3b678c;font-size:18px;    color: #FFFFFF" >
 				
 			<div class="md-toolbar-tools">
 				<h2>{{translate.load("sbi.templatemanagemenent");}}</h2>

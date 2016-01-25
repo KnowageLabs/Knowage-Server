@@ -16,7 +16,13 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventsLog.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDomains.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventRole.hbm.xml" />  
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" />                    
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" /> 
+        
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUser.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUserAttributes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAttribute.hbm.xml" />
+      	<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtUserRoles.hbm.xml" /> 
+            
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParameters.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseDet.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuse.hbm.xml" />
