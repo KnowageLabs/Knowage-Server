@@ -112,7 +112,7 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('detail',
 		function() {
 	return {
-		template:'<div flex class="md-container kn-list">'+
+		template:'<div flex class="md-container kn-detail">'+
 		' <md-toolbar>'+
 		'<div class="md-toolbar-tools">'+
 		' <h2 class="flex">{{AWD_detailController.title}}</h2>'+
