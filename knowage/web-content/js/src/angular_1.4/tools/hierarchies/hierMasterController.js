@@ -67,9 +67,14 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		beforeDrop : function(e) {
 			$scope.treeDirty = true;
 			var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+			var source = e.source.nodeScope.$modelValue;
 			$scope.removeFakeAndCorupt(dest.children);
-			var level =  dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
-			$scope.updateLevelRecursive(e.source.nodeScope.$modelValue, level);
+			if (source.$parent.children.length == 1){
+				source.$parent.children.push(angular.copy($scope.fakeNode));
+			}
+			var level = dest.LEVEL && dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
+			$scope.updateLevelRecursive(source, level);
+			source.$parent = dest;
 			return true;
 		}
 	}
@@ -95,6 +100,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							var keyId = dimName + '_CD';
 							source.name = source[keyName];
 							source.id = source[keyId];
+							source.LEAF_PARENT_NM = dest[dest.aliasName];
+							source.LEAF_PARENT_CD = dest[dest.aliasId];
 							source.LEVEL = dest.LEVEL !== undefined ? dest.LEVEL + 1 : 1;
 							var tmp = angular.copy($scope.createEmptyNode('leaf'));
 							tmp.$parent = dest;
@@ -133,10 +140,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 	}
 	
-	/*
-	 * remove elements dropped by ui-tree that are wrong. These elements are
-	 * dropped though you cancel the confirm dialog [showListHierarchies]
-	 */
+	/*remove elements dropped by ui-tree that are wrong. These elements are dropped though you cancel the confirm dialog [showListHierarchies]*/
 	$scope.removeFakeAndCorupt = function(array) {
 		for (var i = 0; i < array.length; i++) {
 			if (array[i].fake == true || (!array[i].leaf && !array[i].children)) {
@@ -155,7 +159,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}).error(
 			function(data, status) {
 				var message = 'GET dimensions error of ' + data + ' with status :' + status;
-				$scope.showAlert('ERROR', message);
+				$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 
 		});
 	/* When selected a dimension, get the JSON to create the table */
@@ -192,12 +196,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 								$scope.dateFilterDim = undefined;
 							}
 						} else {
-							$scope.showAlert('ERROR', data.error[0].message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"), data.error[0].message);
 						}
 					}).error(
 							function(data, status) {
 								var message = 'GET dimension table error of '+ data + ' with status :' + status;
-								$scope.showAlert('ERROR', message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 							});
 		}
 		$scope.getDimMetadata($scope.dim);
@@ -214,13 +218,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							if (data.errors === undefined) {
 								$scope.metadataDimMap[dimName] = data;
 							} else {
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 						})
 						.error(
 							function(data, status) {
 								var message = 'GET hierarchies error of '+ type + '-' + dimName+ ' with status :' + status;
-								$scope.showAlert('ERROR', message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 							});
 			}
 		}
@@ -265,14 +269,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 								map[keyMap] = data;
 								$scope.hierarchiesMaster = angular.copy(data);
 							} else {
-								$scope.showAlert('ERROR',
-										data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 							$scope.toogleLoading();
 						})
 						.error(function(data, status) {
 								var message = 'GET hierarchies error of '+ type + '-' + dimName+ ' with status :' + status;
-								$scope.showAlert('ERROR', message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 								$scope.toogleLoading();
 							});
 			} else {
@@ -293,12 +296,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							if (data.errors === undefined) {
 								$scope.metadataTreeMap[dimName] = data;
 							} else {
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 						})
 						.error(function(data, status) {
 							var message = 'GET hierarchies error of '+ type + '-' + dimName+ ' with status :' + status;
-							$scope.showAlert('ERROR', message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 						});
 			}
 		}
@@ -342,7 +345,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 								$scope.IsNew = false;
 							} else {
 								var params = 'date = ' + date+ ' dimension = '+ dim.DIMENSION_NM + ' type = '+ type + ' hierachies = '+ hier.HIER_NM;
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 							$scope.toogleLoading();
 						})
@@ -350,7 +353,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						function(data, status) {
 							var params = 'date = ' + date+ ' dimension = '+ dim.DIMENSION_NM + ' type = '+ type + ' hierachies = '+ hier.HIER_NM;
 							var message = 'GET tree source error with parameters'+ params+ ' with status: "'+ status + '"';
-							$scope.showAlert('ERROR', message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 							$scope.toogleLoading();
 					});
 			} else {
@@ -363,7 +366,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : '';
 		var metTmp = $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined) {
-			$scope.showAlert('Error', 'No metadata Node found for dimension '+ dimName);
+			$scope.showAlert($scope.translate.load("sbi.generic.error"), 'No metadata Node found for dimension '+ dimName);
 			return null;
 		}
 		var metadata = type == "root" ? metTmp.GENERAL_FIELDS: (type == "node" ? metTmp.NODE_FIELDS : metTmp.LEAF_FIELDS);
@@ -472,7 +475,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							}
 							// if it is equal show Alert
 							if (isEqual) {
-								$show.alert('ERROR','The duplicate leaf can not be equal to the original');
+								$show.alert($scope.translate.load("sbi.generic.error"),'The duplicate leaf can not be equal to the original');
 							} else {
 								if (idx >= 0) {
 									parent.children.splice(idx, 0,newItem);
@@ -496,13 +499,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : '';
 		var metTmp = $scope.metadataTreeMap[dimName];
 		if (metTmp === undefined) {
-			$scope.showAlert('Error', 'No metadata found for dimension '+ dimName);
+			$scope.showAlert($scope.translate.load("sbi.generic.error"), 'No metadata found for dimension '+ dimName);
 			return null;
 		}
 		// take generals_fields if it is root[parent is null], leaf_fields if it
 		// is leaf or node_fields if it is node
-		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS
-				: item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
+		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
 		return $mdDialog.show({
 					templateUrl : sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 					parent : angular.element(document.body),
@@ -615,8 +617,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			// item.$parent.children[0] = item]
 			root.root = Array.isArray($scope.hierTree) ? $scope.cleanTree($scope.hierTree[0]) : $scope.cleanTree($scope.hierTree);
 			root.root.$parent = undefined;
-
 			var jsonString = angular.toJson(root);
+			$scope.toogleLoading();
 			var promise = $scope.restService.post('hierarchies','saveHierarchy', jsonString);
 			promise.success(
 					function(data) {
@@ -632,13 +634,15 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 								keyMap = keyMap + '_'+ $scope.seeHideLeafTree;
 							}
 							$scope.hierTreeCache[keyMap] = undefined;
-							$scope.showAlert('INFO','Succesfull upate');
+							$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.save.correct"));
 						} else {
-							$scope.showAlert('ERROR',data.errors[0].message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 						}
+						$scope.toogleLoading();
 					}).error(
 						function(data, status) {
-							$scope.showAlert('ERROR','Impossible to save the Tree');
+							$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Tree');
+							$scope.toogleLoading();
 					});
 		}
 	}
@@ -682,14 +686,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				promise
 					.success(function(data) {
 						if (data.errors === undefined) {
-							$scope.showAlert('INFO', 'Succesfull creation');
+							$scope.showAlert($scope.translate.load("sbi.generic.info"), 'Succesfull creation');
 						} else {
-							$scope.showAlert('ERROR', data.errors[0].message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
 						}
 					}).error(
 						function(data, status) {
-							$scope.showAlert('ERROR',
-									'Impossible to save the Master hierarchy');
+							$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Master hierarchy');
 						});
 				// TODO fix REST service connection
 			}, function() {
@@ -762,9 +765,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		if (date !== undefined) {
 			dateFormatted = $scope.formatDate(date);
 		}
-		// get the Tree if one off two filters are active
-		if ((seeElement !== undefined && seeElement != false) || (dateFormatted !== undefined && dateFormatted.length > 0)) {
+		// get the Tree if one off two filters are active. Else if the filters were applyed before, but not now, get the tree without them
+		if ((seeElement !== undefined && seeElement == true) || (dateFormatted !== undefined && dateFormatted.length > 0)) {
 			$scope.getTree(dateFormatted, seeElement);
+			$scope.hasFilterElementOrDate = true;
+		}else if ($scope.hasFilterElementOrDate == true){
+			$scope.getTree();
+			$scope.hasFilterElementOrDate = false;
 		}
 		// apply filter on source side (left) or Tree side (right)
 		$scope.filterByTreeTrigger = angular.copy($scope.filterByTree);
@@ -782,6 +789,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 		$scope.dateFilterTree = undefined;
 		$scope.seeHideLeafTree = false;
+		$scope.hasFilterElementOrDate = false;
 	}
 	// toggle the filters visibility when clicked the filter icon
 	$scope.toggleSeeFilter = function(choose) {
@@ -795,10 +803,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.hierSrcDialogController = function($scope, $mdDialog, translate, hier, metadata) {
 		$scope.translate = translate;
 		$scope.hier = angular.copy(hier);
-		$scope.hier.BEGIN_DT = hier.BEGIN_DT !== undefined ? new Date(
-				hier.BEGIN_DT) : new Date();
-		$scope.hier.END_DT = hier.END_DT !== undefined ? new Date(hier.END_DT)
-				: new Date();
+		$scope.hier.BEGIN_DT = hier.BEGIN_DT !== undefined ? new Date(hier.BEGIN_DT) : new Date();
+		$scope.hier.END_DT = hier.END_DT !== undefined ? new Date(hier.END_DT) : new Date();
 		$scope.metadata = metadata;
 		$scope.closeDialog = function() {
 			$mdDialog.cancel();
@@ -847,8 +853,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 	}
 
-	$scope.newHierarchyController = function($scope, $mdDialog, translate,
-			item, metadataDim, metadataTree) {
+	$scope.newHierarchyController = function($scope, $mdDialog, translate, item, metadataDim, metadataTree) {
 		$scope.translate = translate;
 		$scope.dim = {};
 		$scope.metadataDim = angular.copy(metadataDim);
@@ -899,13 +904,16 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		$scope.removeRecursive = function() {
 			var code = $scope.mtRecursive.code;
 			var name = $scope.mtRecursive.name;
+			var hasCopy = $scope.mtRecursive.hasCopy;
 			$scope.mtRecursive = undefined;
 			code.level = undefined;
 			name.level = undefined;
 			code.isSelected = undefined;
 			name.isSelected = undefined;
 			$scope.metadataDim.push(code);
-			$scope.metadataDim.push(name);
+			if (!hasCopy){
+				$scope.metadataDim.push(name);
+			}
 		}
 
 		$scope.moveToRecursive = function(item) {
@@ -920,10 +928,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 
 		$scope.toRight = function(source, dest, itemsSource) {
-			if (itemsSource.length == 2) {
+			//you can move to right if 1 or 2 elements are selcted. If only 1 item is selected, use it as 2° item and set flag hasCopy = true 
+			if (itemsSource.length == 2 || itemsSource.length == 1) {
 				var newLevel = {};
 				newLevel.code = itemsSource[0];
-				newLevel.name = itemsSource[1];
+				newLevel.name = itemsSource[1] !== undefined ? itemsSource[1] : angular.copy(itemsSource[0]);
+				newLevel.hasCopy = itemsSource[1] === undefined;
 				newLevel.code.level = angular.copy(level);
 				newLevel.name.level = angular.copy(level);
 				level++;
@@ -950,7 +960,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					itemsSource[i].code.level = undefined;
 					itemsSource[i].name.level = undefined;
 					dest.push(itemsSource[i].code);
-					dest.push(itemsSource[i].name);
+					if (!itemsSource[i].hasCopy){
+						dest.push(itemsSource[i].name);
+					}
 					itemsSource[i].isSelected = undefined;
 					$scope.removeElement(source, itemsSource[i]);
 				}

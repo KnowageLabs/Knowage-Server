@@ -71,12 +71,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 				if (data.errors === undefined){
 					$scope.dimensionBackup = angular.copy(data);
 				}else{
-					$scope.showAlert('ERROR',data.errors[0].message);
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 				}
 			})	
 		.error(function(data, status){
 			var message = 'GET dimensions error of ' + data + ' with status :' + status;
-			$scope.showAlert('ERROR',message);
+			$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 			
 		});
 	
@@ -98,12 +98,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 								map[keyMap] = data;
 								$scope.hierarchiesBackup = angular.copy(data);
 							}else{
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 						})
 					.error(function(data, status){
 						var message='GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
-						$scope.showAlert('ERROR',message);
+						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 						
 					});
 			}else{
@@ -123,12 +123,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 						if (data.errors === undefined){
 							$scope.metadataMap[dimName] = data;
 						}else{
-							$scope.showAlert('ERROR',data.errors[0].message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 						}
 				})
 				.error(function(data, status){
 					var message = 'GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 				});
 		}
 	}
@@ -152,12 +152,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 							$scope.createTable(data);
 							//$scope.backupTable = angular.copy(backupTableFake);
 						}else{
-							$scope.showAlert('ERROR',data.errors[0].message);
+							$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 						}
 					})	
 				.error(function(data, status){
 					var message = 'GET backup error of ' + data + ' with status :' + status;
-					$scope.showAlert('ERROR',message);
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 				});
 		}
 	}
@@ -179,12 +179,12 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 							if (data.errors === undefined){
 								$scope.getBackupTable();
 							}else{
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 						})	
 					.error(function(data, status){
 						var message = 'POST edit backup error of ' + data + ' with status :' + status;
-						$scope.showAlert('ERROR',message);
+						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 					})
 				,function(){}
 			});
@@ -205,16 +205,16 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 				$scope.restService.post("hierarchies","restoreHierarchy",item)
 					.success(
 						function(data, status, headers, config) {
-							if (data.errors !== undefined){
+							if (data.errors === undefined){
 								$scope.getBackupTable();
-								$scope.showAlert('INFO','Backup restored');
+								$scope.showAlert($scope.translate.load("sbi.generic.info"),'Backup restored');
 							}else{
-								$scope.showAlert('ERROR',data.errors[0].message);
+								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
 						})	
 					.error(function(data, status){
 						var message = 'POST restore backup error of ' + data + ' with status :' + status;
-						$scope.showAlert('ERROR',message);
+						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 					})
 				,function(){}
 			});
@@ -237,15 +237,15 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 							function(data, status, headers, config) {
 								if (data.errors === undefined){
 									$scope.getBackupTable();
-									$scope.showAlert('INFO','Backup deleted');
+									$scope.showAlert($scope.translate.load("sbi.generic.info"),'Backup deleted');
 									//TODO remove item from the table
 								}else{
-									$scope.showAlert('ERROR',data.errors[0].message);
+									$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 								}
 							})	
 					.error(function(data, status){
 						var message = 'POST delete backup error of ' + data + ' with status :' + status;
-						$scope.showAlert('ERROR',message);
+						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 					})
 				,function(){
 					
