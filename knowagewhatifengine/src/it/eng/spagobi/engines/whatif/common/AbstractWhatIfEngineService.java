@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
@@ -43,9 +42,6 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
 	@Context
 	protected HttpServletRequest servletRequest;
-
-	@Context
-	protected HttpServletResponse servletResponse;
 
 	/**
 	 * Renders the model and return the HTML table
@@ -153,11 +149,6 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	@Override
 	public String getEngineName() {
 		return WhatIfConstants.ENGINE_NAME;
-	}
-
-	@Override
-	public HttpServletResponse getServletResponse() {
-		return servletResponse;
 	}
 
 }
