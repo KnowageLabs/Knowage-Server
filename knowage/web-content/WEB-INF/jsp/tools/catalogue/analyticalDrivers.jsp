@@ -387,8 +387,8 @@
 						<md-checkbox 
 						ng-required = "associatedRoles.length== 0"
 						ng-checked="getCheckboxes(role , associatedRoles)"
-						ng-click="checkCheckboxes(role , associatedRoles)"> 
-						{{ role.name }} 
+						ng-click="checkCheckboxes(role , associatedRoles)">
+						{{ role.name }}
 						</md-checkbox>
 					</div>
 				    </div>

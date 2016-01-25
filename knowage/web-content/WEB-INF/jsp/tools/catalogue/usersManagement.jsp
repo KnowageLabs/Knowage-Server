@@ -155,14 +155,6 @@
 				selected-item="role" highlights-selected-item=true
 				multi-select="true">
 				 </angular-table>
-				
-				 <md-input-container class="small counter" >
-				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="role.length== 0">
-					<div ng-message="required">Please select at least one role</div>
-					</div>  
-				</md-input-container>
-				
-				
 				 </md-content> </md-tab> <md-tab
 				label='{{translate.load("sbi.users.attributes");}}'> <md-content
 				flex style="margin-left:20px; overflow:hidden"
