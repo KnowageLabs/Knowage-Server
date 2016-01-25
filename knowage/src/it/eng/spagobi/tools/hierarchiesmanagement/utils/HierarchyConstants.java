@@ -107,4 +107,9 @@ public class HierarchyConstants {
 	public final static String MATCH_LEAF_FIELDS = "MATCH_LEAF_FIELDS";
 	public final static String JSON_CD_PARENT = "CD_PARENT";
 	public final static String JSON_NM_PARENT = "NM_PARENT";
+
+	public final static String HIER_TP_MASTER = "MASTER";
+
+	public final static String HIER_MASTERS_CONFIG_TABLE = "HIER_MASTERS_CONFIG";
+	public final static String HIER_MASTERS_CONFIG = "CONFIGURATION";
 }

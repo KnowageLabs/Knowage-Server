@@ -588,15 +588,17 @@ public class HierarchyService {
 
 		logger.debug("START");
 
+		Connection dbConnection = null;
+
 		try {
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimensionLabel = requestVal.getString("dimension");
 			String validityDate = requestVal.getString("validityDate");
-			String filterDate = requestVal.getString("filterDate");
-			String filterHierarchy = requestVal.getString("filterHierarchy");
-			String filterHierType = requestVal.getString("filterHierType");
+			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
+			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
+			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
 
 			if ((dimensionLabel == null) || (validityDate == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
@@ -608,7 +610,7 @@ public class HierarchyService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 
-			Connection dbConnection = dataSource.getConnection();
+			dbConnection = dataSource.getConnection();
 
 			// JSONObject testJson = new JSONObject();
 			// testJson.put("HIER_CD", "pippoCD");
@@ -636,9 +638,12 @@ public class HierarchyService {
 			// testArray.put(obj2);
 			//
 			// testJson.put("levels", testArray);
-
-			// String dimensionLabel = req.getParameter("dimension");
-			// String validityDate = req.getParameter("validityDate");
+			// JSONObject obj3 = new JSONObject();
+			// obj3.put("CD", "CODE");
+			// obj3.put("NM", "NAME");
+			// obj3.put("CD_PARENT", "CDC_PARENT_CD");
+			// obj3.put("NM_PARENT", "CDC_PARENT_NM");
+			// testJson.put("recursive", obj3);
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
@@ -668,16 +673,20 @@ public class HierarchyService {
 			while (iterator.hasNext()) {
 
 				IRecord record = (IRecord) iterator.next();
-				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metadataFields, metatadaFieldsMap, requestVal,
-						prefix, dimensionName);
+				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
+						dimensionName, validityDate);
 
 			}
+
+			saveHierarchyMasterConfiguration(dbConnection, dataSource, requestVal);
 
 			dbConnection.commit();
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while retriving dimension data");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
+		} finally {
+			dbConnection.close();
 		}
 
 		logger.debug("END");
@@ -1738,8 +1747,7 @@ public class HierarchyService {
 	}
 
 	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
-			List<Field> generalFields, List<Field> metadataFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix,
-			String dimensionName) {
+			List<Field> generalFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix, String dimensionName, String validityDate) {
 
 		logger.debug("START");
 
@@ -1759,264 +1767,63 @@ public class HierarchyService {
 			Map<Integer, String> fieldsTypeMap = new HashMap<Integer, String>();
 
 			// this counter come across different logics to build the insert query and it's used to keep things sequential
-			int index = 0;
+			// int index = 0;
+
+			// used to keep track of levels for parent, leaf and max-depth
+			int lvlIndex = 1;
+
+			// DONT' CHANGE SECTIONS ORDER! Indexes to calculate lvls, leaf, parent, etc are ordered with the following logic
+			// So, if you need to change this code, be careful of indexes order!
 
 			/**********************************************************************************************************
 			 * in this section we add columns and values related to hierarchy general fields specified in request JSON*
 			 **********************************************************************************************************/
 
-			for (Field tmpField : generalFields) {
-
-				// retrieve id and type for the general field
-				String id = tmpField.getId();
-				String type = tmpField.getType();
-
-				logger.debug("Processing Hierarchy general field [" + id + "] of type [" + type + "]");
-
-				if (requestVal.isNull(id)) {
-					// this general field is missing from the request JSON
-					logger.debug("The general field [" + id + "] is not present in the request JSON");
-					continue;
-				}
-
-				// create a column from the the general field id and take the value from the request JSON
-				String column = AbstractJDBCDataset.encapsulateColumnName(id, dataSource);
-				String value = requestVal.getString(id);
-
-				logger.debug("The general field [" + id + "] has value [" + value + "] in the request JSON");
-
-				// updating sql clauses for columns and values
-				columnsClause.append(column + sep);
-				valuesClause.append("?" + sep);
-
-				// updating values and types maps
-				fieldsMap.put(index, value);
-				fieldsTypeMap.put(index, type);
-
-				index++;
-			}
+			manageGeneralFieldsSection(dataSource, generalFields, fieldsMap, fieldsTypeMap, requestVal, columnsClause, valuesClause, sep);
 
 			/****************************************************************************************
 			 * in this section we add columns and values related to levels specified in request JSON*
 			 ****************************************************************************************/
 
-			// retrieve levels from request json
-			JSONArray lvls = requestVal.getJSONArray("levels");
-
-			int lvlsLength = lvls.length();
-			logger.debug("The user has specified [" + lvlsLength + "] level/s");
-
-			// used to keep track of levels for parent, leaf and max-depth
-			int lvlIndex;
-
-			for (lvlIndex = 0; lvlIndex < lvlsLength; lvlIndex++) {
-
-				JSONObject lvl = lvls.getJSONObject(lvlIndex);
-
-				// levels begin from 1, the array from 0
-				int realLvl = lvlIndex + 1;
-
-				// columns for code and name level
-				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (realLvl), dataSource);
-				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (realLvl), dataSource);
-
-				// retrieve values to look for in dimension columns
-				String cdLvl = lvl.getString("CD");
-				String nmLvl = lvl.getString("NM");
-
-				logger.debug("In the level [" + realLvl + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
-
-				// retrieve record fields looking at metafield position in the dimension
-				IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
-				IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
-
-				String cdValue = (String) cdTmpField.getValue();
-				String nmValue = (String) nmTmpField.getValue();
-
-				logger.debug("For the level [" + realLvl + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
-
-				// updating sql clauses for columns and values
-				columnsClause.append(cdColumn + "," + nmColumn + sep);
-				valuesClause.append("?," + "?" + sep);
-
-				// updating values and types maps
-				fieldsMap.put(index, cdValue);
-				fieldsMap.put(index + 1, nmValue);
-
-				fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
-				fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
-
-				index = index + 2;
-
-				// this condition is needed to set leaf parent code and name values
-				if (lvlIndex == lvlsLength - 1) {
-
-					logger.debug("The level [" + realLvl + "] is the last specified from the user. We are going to use code [" + cdValue + "] and name ["
-							+ nmValue + "] for parent");
-
-					String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
-					String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
-
-					// updating sql clauses for columns and values
-					columnsClause.append(cdParentColumn + "," + nmParentColumn + sep);
-					valuesClause.append("?," + "?" + sep);
-
-					// updating values and types maps
-					fieldsMap.put(index, cdValue);
-					fieldsMap.put(index + 1, nmValue);
-
-					fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
-					fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
-
-					index = index + 2;
-
-				}
-
-			}
+			lvlIndex = manageLevelsSection(dataSource, record, metatadaFieldsMap, fieldsMap, fieldsTypeMap, requestVal, columnsClause, valuesClause, sep,
+					lvlIndex, prefix);
 
 			/***********************************************************************
 			 * in this section we add a recursive logic to calculate parents levels*
 			 ***********************************************************************/
 
-			if (!requestVal.isNull("recursive")) {
+			lvlIndex = manageRecursiveSection(dbConnection, dataSource, record, metatadaFieldsMap, fieldsMap, fieldsTypeMap, requestVal, columnsClause,
+					valuesClause, sep, lvlIndex, prefix, dimensionName, validityDate);
 
-				LinkedList<String> parentValuesList = new LinkedList<String>();
+			/******************************************************************************
+			 * in this section we add columns and values related to the parent of the leaf*
+			 ******************************************************************************/
 
-				// retrieve recursive object from request json
-				JSONObject recursive = requestVal.getJSONObject("recursive");
-
-				// create columns for parent fields selected in the json
-
-				String jsonRecursiveParendCd = recursive.getString(HierarchyConstants.JSON_CD_PARENT);
-				String jsonRecursiveParendNm = recursive.getString(HierarchyConstants.JSON_NM_PARENT);
-
-				String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendCd, dataSource);
-				String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParendNm, dataSource);
-
-				// create columns for recursive fields selected in the json
-
-				String jsonRecursiveCd = recursive.getString("CD");
-				String jsonRecursiveNm = recursive.getString("NM");
-
-				String cdRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveCd, dataSource);
-				String nmRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveNm, dataSource);
-
-				IField parentCdDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_CD_PARENT"));
-				IField parentNmDimField = record.getFieldAt(metatadaFieldsMap.get("CDC_NM_PARENT"));
-
-				String parentCdDimValue = (String) parentCdDimField.getValue(); // Y444444444
-				String parentNmDimValue = (String) parentNmDimField.getValue(); // Architetture
-
-				// retrieve record fields looking at metafield position in the dimension
-				IField recursiveCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
-				IField recursiveNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveNm));
-
-				String recursiveCdValue = (String) recursiveCdField.getValue(); // Y88878p8089
-				String recursiveNmValue = (String) recursiveNmField.getValue(); // SpagoBI Labs
-
-				parentValuesList.addFirst(recursiveCdValue);
-				parentValuesList.addFirst(recursiveNmValue);
-
-				// if parent is null, stop recursion, else move on
-
-				// recursiveParentSelect(dbConnection, parentValuesList, recursiveCdValue, recursiveNmValue, dimensionName, cdDimParentColumn,
-				// nmDimParentColumn,
-				// cdParentColumn, nmParentColumn);
-
-			}
-
-			/*****************************************************************************
-			 * in this section we add columns and values related to the level of the leaf*
-			 *****************************************************************************/
-
-			String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex + 1), dataSource);
-			String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex + 1), dataSource);
-
-			IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_CD"));
-			IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_NM"));
-
-			String cdValue = (String) cdTmpField.getValue();
-			String nmValue = (String) nmTmpField.getValue();
-
-			logger.debug("For the leaf level [" + lvlIndex + 1 + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
-
-			// updating sql clauses for columns and values
-			columnsClause.append(cdColumn + "," + nmColumn + sep);
-			valuesClause.append("?," + "?" + sep);
-
-			// updating values and types maps
-			fieldsMap.put(index, cdValue);
-			fieldsMap.put(index + 1, nmValue);
-
-			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
-			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
-
-			index = index + 2;
+			lvlIndex = manageParentLeafSection(dataSource, fieldsMap, fieldsTypeMap, columnsClause, valuesClause, sep, lvlIndex);
 
 			/********************************************************************************************************
 			 * in this section we add column and value related to the leaf id that comes from id in dimension record*
 			 ********************************************************************************************************/
 
-			String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_LEAF_ID", dataSource);
-			IField leafIdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_ID"));
-
-			Long leafIdValue = (Long) leafIdTmpField.getValue();
-
-			logger.debug("Leaf ID is [" + leafIdValue + "]");
-
-			// updating sql clauses for columns and values
-			columnsClause.append(leafIdColumn + sep);
-			valuesClause.append("?" + sep);
-
-			// updating values and types maps
-			fieldsMap.put(index, Long.toString(leafIdValue));
-			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
-
-			index++;
+			manageLeafIdSection(dataSource, metatadaFieldsMap, record, fieldsMap, fieldsTypeMap, columnsClause, valuesClause, sep, prefix);
 
 			/******************************************************************************
 			 * in this section we add columns and values related to the leaf code and name*
 			 ******************************************************************************/
 
-			String cdLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
-			String nmLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEAF", dataSource);
+			manageLeafSection(dataSource, record, metatadaFieldsMap, fieldsMap, fieldsTypeMap, columnsClause, valuesClause, sep, prefix);
 
-			IField cdLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_CD"));
-			IField nmLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_NM"));
+			/************************************************************************
+			 * in this section we add column and value related to the hierarchy type*
+			 ************************************************************************/
 
-			String cdLeafValue = (String) cdLeafTmpField.getValue();
-			String nmLeafValue = (String) nmLeafTmpField.getValue();
-
-			logger.debug("For the leaf we are going to insert code [" + cdLeafValue + "] and name [" + nmLeafValue + "]");
-
-			// updating sql clauses for columns and values
-			columnsClause.append(cdLeafColumn + sep + nmLeafColumn + sep);
-			valuesClause.append("?,?" + sep);
-
-			// updating values and types maps
-			fieldsMap.put(index, cdLeafValue);
-			fieldsMap.put(index + 1, nmLeafValue);
-
-			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
-			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
-
-			index = index + 2;
+			manageHierTypeSection(dataSource, fieldsMap, fieldsTypeMap, columnsClause, valuesClause, sep);
 
 			/******************************************************************************
 			 * in this section we add column and value related to the max depth of levels*
 			 ******************************************************************************/
 
-			String maxDepthColumn = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
-
-			logger.debug("Levels max depth is [" + lvlIndex + "]");
-
-			// updating sql clauses for columns and values
-			columnsClause.append(maxDepthColumn + ")");
-			valuesClause.append("?)");
-
-			// updating values and types maps
-			fieldsMap.put(index, String.valueOf(lvlIndex));
-			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
+			manageMaxDepthSection(dataSource, fieldsMap, fieldsTypeMap, columnsClause, valuesClause, lvlIndex);
 
 			/***************************************************************************************
 			 * put together clauses in order to create the insert prepared statement and execute it*
@@ -2036,6 +1843,7 @@ public class HierarchyService {
 				logger.debug("Set the insert prepared statement with a field of type [" + fieldType + "] and value [" + tmpValue + "]");
 
 				if (fieldType.equals(HierarchyConstants.FIELD_TP_STRING)) {
+
 					insertPs.setString(i + 1, tmpValue);
 				} else if (fieldType.equals(HierarchyConstants.FIELD_TP_NUMBER)) {
 					insertPs.setLong(i + 1, Long.valueOf(tmpValue));
@@ -2064,36 +1872,436 @@ public class HierarchyService {
 		logger.debug("END");
 	}
 
-	private void recursiveParentSelect(Connection dbConnection, LinkedList<String> parentValuesList, String cdValue, String nmValue, String dimensionName,
-			String cdDimParentColumn, String nmDimParentColumn, String cdParentColumn, String nmParentColumn) throws SQLException {
+	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, Map<Integer, String> fieldsMap,
+			Map<Integer, String> fieldsTypeMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException {
 
-		String recursiveSelectClause = cdDimParentColumn + "," + nmDimParentColumn + "," + cdParentColumn + "," + nmParentColumn;
+		int index = fieldsMap.size();
 
-		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + "WHERE CDC_CD = " + cdValue + " AND CDC_NM = " + nmValue;
+		for (Field tmpField : generalFields) {
 
-		PreparedStatement ps = dbConnection.prepareStatement(recurisveSelect);
+			// retrieve id and type for the general field
+			String id = tmpField.getId();
+			String type = tmpField.getType();
 
-		ResultSet rs = ps.executeQuery();
+			logger.debug("Processing Hierarchy general field [" + id + "] of type [" + type + "]");
 
-		if (rs != null) {
+			if (requestVal.isNull(id)) {
+				// this general field is missing from the request JSON
+				logger.debug("The general field [" + id + "] is not present in the request JSON");
+				continue;
+			}
 
-			String parentCdValue = rs.getString(cdParentColumn);
-			String parentNmValue = rs.getString(nmParentColumn);
+			// create a column from the the general field id and take the value from the request JSON
+			String column = AbstractJDBCDataset.encapsulateColumnName(id, dataSource);
+			String value = requestVal.getString(id);
 
-			parentValuesList.addFirst(parentCdValue);
-			parentValuesList.addFirst(parentNmValue);
+			logger.debug("The general field [" + id + "] has value [" + value + "] in the request JSON");
 
-			String tmpCode = rs.getString(cdDimParentColumn);
-			String tmpName = rs.getString(nmDimParentColumn);
+			// updating sql clauses for columns and values
+			columnsClause.append(column + sep);
+			valuesClause.append("?" + sep);
 
-			if (tmpCode != null) {
-				recursiveParentSelect(dbConnection, parentValuesList, parentCdValue, parentNmValue, dimensionName, cdDimParentColumn, nmDimParentColumn,
-						cdParentColumn, nmParentColumn);
+			// updating values and types maps
+			fieldsMap.put(index, value);
+			fieldsTypeMap.put(index, type);
+
+			index = index + 1;
+
+		}
+
+	}
+
+	private int manageLevelsSection(IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap, Map<Integer, String> fieldsMap,
+			Map<Integer, String> fieldsTypeMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep, int lvlIndex,
+			String prefix) throws JSONException {
+
+		// retrieve levels from request json
+		JSONArray lvls = requestVal.getJSONArray("levels");
+
+		int index = fieldsMap.size();
+
+		int lvlsLength = lvls.length();
+		logger.debug("The user has specified [" + lvlsLength + "] level/s");
+
+		for (int k = 0; k < lvlsLength; k++) {
+
+			JSONObject lvl = lvls.getJSONObject(k);
+
+			// columns for code and name level
+			String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + lvlIndex, dataSource);
+			String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + lvlIndex, dataSource);
+
+			// retrieve values to look for in dimension columns
+			String cdLvl = lvl.getString("CD");
+			String nmLvl = lvl.getString("NM");
+
+			logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
+
+			// retrieve record fields looking at metafield position in the dimension
+			IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
+			IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
+
+			String cdValue = (String) cdTmpField.getValue();
+			String nmValue = (String) nmTmpField.getValue();
+
+			logger.debug("For the level [" + lvlIndex + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(cdColumn + "," + nmColumn + sep);
+			valuesClause.append("?," + "?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, cdValue);
+			fieldsMap.put(index + 1, nmValue);
+
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+			index = index + 2;
+
+			lvlIndex++;
+
+		}
+
+		return lvlIndex;
+
+	}
+
+	private int manageRecursiveSection(Connection dbConnection, IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap,
+			Map<Integer, String> fieldsMap, Map<Integer, String> fieldsTypeMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
+			String sep, int lvlIndex, String prefix, String dimensionName, String validityDate) throws JSONException, SQLException {
+
+		int index = fieldsMap.size();
+
+		if (!requestVal.isNull("recursive")) {
+
+			LinkedList<String> recursiveValuesList = new LinkedList<String>();
+
+			// retrieve recursive object from request json
+			JSONObject recursive = requestVal.getJSONObject("recursive");
+
+			// create columns for parent fields selected in the json
+
+			String jsonRecursiveParentCd = recursive.getString(HierarchyConstants.JSON_CD_PARENT);
+			String jsonRecursiveParentNm = recursive.getString(HierarchyConstants.JSON_NM_PARENT);
+
+			logger.debug("Parent field selected are [" + jsonRecursiveParentCd + "] and [" + jsonRecursiveParentNm + "]");
+
+			// create columns for recursive fields selected in the json
+
+			String jsonRecursiveCd = recursive.getString("CD");
+			String jsonRecursiveNm = recursive.getString("NM");
+
+			logger.debug("Recursive field selected are [" + jsonRecursiveCd + "] and [" + jsonRecursiveNm + "]");
+
+			// get values from recursive selected fields
+
+			IField recursiveCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
+			IField recursiveNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveNm));
+
+			String recursiveCdValue = (String) recursiveCdField.getValue();
+			String recursiveNmValue = (String) recursiveNmField.getValue();
+
+			logger.debug("Recursive values are [" + recursiveCdValue + "] and [" + recursiveNmValue + "]");
+
+			// Be careful, LIFO logic!!
+			recursiveValuesList.addFirst(recursiveNmValue);
+			recursiveValuesList.addFirst(recursiveCdValue);
+
+			logger.debug("Recursive values added to recursive level list!");
+
+			// get values from parent fields
+
+			IField recursiveParentCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentCd));
+			IField recursiveParentNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentNm));
+
+			String recursiveParentCdValue = (String) recursiveParentCdField.getValue();
+			String recursiveParentNmValue = (String) recursiveParentNmField.getValue();
+
+			logger.debug("Parent values are [" + recursiveParentCdValue + "] and [" + recursiveParentNmValue + "]");
+
+			if (recursiveParentCdValue != null) {
+
+				recursiveParentSelect(dbConnection, dataSource, recursiveValuesList, recursiveParentCdValue, recursiveParentNmValue, recursiveCdValue,
+						dimensionName, jsonRecursiveCd, jsonRecursiveNm, jsonRecursiveParentCd, jsonRecursiveParentNm, validityDate);
+			}
+
+			int recursiveValuesSize = recursiveValuesList.size();
+
+			// we use i+2 because we need CD and NM
+			for (int i = 0; i < recursiveValuesSize; i = i + 2) {
+
+				// columns for code and name level
+				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex), dataSource);
+				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex), dataSource);
+
+				String cdValue = recursiveValuesList.get(i);
+				String nmValue = recursiveValuesList.get(i + 1);
+
+				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue + "] and the name [" + nmValue + "]");
+
+				// updating sql clauses for columns and values
+				columnsClause.append(cdColumn + "," + nmColumn + sep);
+				valuesClause.append("?," + "?" + sep);
+
+				// updating values and types maps
+				fieldsMap.put(index, cdValue);
+				fieldsMap.put(index + 1, nmValue);
+
+				fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+				fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+				index = index + 2;
+
+				if (i + 2 < recursiveValuesSize) {
+					lvlIndex++;
+				}
+
+			}
+
+		}
+
+		return lvlIndex;
+	}
+
+	private int manageParentLeafSection(IDataSource dataSource, Map<Integer, String> fieldsMap, Map<Integer, String> fieldsTypeMap, StringBuffer columnsClause,
+			StringBuffer valuesClause, String sep, int lvlIndex) {
+
+		int index = fieldsMap.size();
+
+		// if there is only one level, we don't have LEAF_PARENT_XX columns
+		if (lvlIndex > 1) {
+
+			// If we are here, we have at least two levels, for example, with (index = x):
+			// [CDC_CD_LVL1, CDC_NM_LVL1] -> [x, x+1]
+			// [CDC_CD_LVL2, CDC_NM_LVL2] -> [x+2, x+3]
+			// we need the leaf parent, so the level before the last. We can access to these values looking back in the values map
+			// Index now is ready for the next value, so:
+			// index-1 = CDC_NM_LVL2 value -> LEAF NM
+			// index -2 = CDC_CD_LVL2 value -> LEAF CD
+			// index - 3 = CDC_NM_LVL1 value -> PARENT_LEAF NM
+			// index - 4 = CDC_CD_LVL1 value -> PARENT_LEAF_CD
+			String leafParentCdValue = fieldsMap.get(index - 4);
+			String leafParentNmValue = fieldsMap.get(index - 3);
+
+			String cdLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
+			String nmLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
+
+			logger.debug("The level [" + lvlIndex + "] is the leaf parent. We are going to use code [" + leafParentCdValue + "] and name [" + leafParentNmValue
+					+ "] for parent");
+
+			// updating sql clauses for columns and values
+			columnsClause.append(cdLeafParentColumn + "," + nmLeafParentColumn + sep);
+			valuesClause.append("?," + "?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, leafParentCdValue);
+			fieldsMap.put(index + 1, leafParentNmValue);
+
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+			fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+		}
+
+		return lvlIndex;
+	}
+
+	private void manageLeafIdSection(IDataSource dataSource, Map<String, Integer> metatadaFieldsMap, IRecord record, Map<Integer, String> fieldsMap,
+			Map<Integer, String> fieldsTypeMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix) {
+
+		int index = fieldsMap.size();
+
+		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_LEAF_ID", dataSource);
+		IField leafIdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_ID"));
+
+		Long leafIdValue = (Long) leafIdTmpField.getValue();
+
+		logger.debug("Leaf ID is [" + leafIdValue + "]");
+
+		// updating sql clauses for columns and values
+		columnsClause.append(leafIdColumn + sep);
+		valuesClause.append("?" + sep);
+
+		// updating values and types maps
+		fieldsMap.put(index, Long.toString(leafIdValue));
+		fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
+
+	}
+
+	private void manageLeafSection(IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap, Map<Integer, String> fieldsMap,
+			Map<Integer, String> fieldsTypeMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix) {
+
+		int index = fieldsMap.size();
+
+		String cdLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
+		String nmLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEAF", dataSource);
+
+		IField cdLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_CD"));
+		IField nmLeafTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_NM"));
+
+		String cdLeafValue = (String) cdLeafTmpField.getValue();
+		String nmLeafValue = (String) nmLeafTmpField.getValue();
+
+		logger.debug("For the leaf we are going to insert code [" + cdLeafValue + "] and name [" + nmLeafValue + "]");
+
+		// updating sql clauses for columns and values
+		columnsClause.append(cdLeafColumn + sep + nmLeafColumn + sep);
+		valuesClause.append("?,?" + sep);
+
+		// updating values and types maps
+		fieldsMap.put(index, cdLeafValue);
+		fieldsMap.put(index + 1, nmLeafValue);
+
+		fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+		fieldsTypeMap.put(index + 1, HierarchyConstants.FIELD_TP_STRING);
+
+	}
+
+	private void manageHierTypeSection(IDataSource dataSource, Map<Integer, String> fieldsMap, Map<Integer, String> fieldsTypeMap, StringBuffer columnsClause,
+			StringBuffer valuesClause, String sep) {
+		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+
+		logger.debug("Hierarchy tipe is [" + HierarchyConstants.HIER_TP_MASTER + "]");
+
+		int index = fieldsMap.size();
+
+		// updating sql clauses for columns and values
+		columnsClause.append(hierTypeColumn + sep);
+		valuesClause.append("?" + sep);
+
+		// updating values and types maps
+		fieldsMap.put(index, HierarchyConstants.HIER_TP_MASTER);
+		fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_STRING);
+
+	}
+
+	private void manageMaxDepthSection(IDataSource dataSource, Map<Integer, String> fieldsMap, Map<Integer, String> fieldsTypeMap, StringBuffer columnsClause,
+			StringBuffer valuesClause, int lvlIndex) {
+
+		int index = fieldsMap.size();
+
+		String maxDepthColumn = AbstractJDBCDataset.encapsulateColumnName("MAX_DEPTH", dataSource);
+
+		logger.debug("Levels max depth is [" + lvlIndex + "]");
+
+		// updating sql clauses for columns and values
+		columnsClause.append(maxDepthColumn + ")");
+		valuesClause.append("?)");
+
+		// updating values and types maps
+		fieldsMap.put(index, String.valueOf(lvlIndex));
+		fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_NUMBER);
+	}
+
+	/**
+	 * This method looks for a parent in the dimension table. If a parent is found the values are saved and the process restarts
+	 *
+	 * @param dbConnection
+	 * @param parentValuesList
+	 * @param parentCdValue
+	 * @param parentNmValue
+	 * @param dimensionName
+	 * @param cdRecursiveColumn
+	 * @param nmRecursiveColumn
+	 * @param cdParentColumn
+	 * @param nmParentColumn
+	 * @param cdColumn
+	 * @param nmColumn
+	 * @throws SQLException
+	 */
+	private void recursiveParentSelect(Connection dbConnection, IDataSource dataSource, LinkedList<String> parentValuesList, String parentCdValue,
+			String parentNmValue, String oldCdValue, String dimensionName, String jsonRecursiveCd, String jsonRecursiveNm, String jsonRecursiveParentCd,
+			String jsonRecursiveParentNm, String validityDate) throws SQLException {
+
+		logger.debug("START");
+
+		String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParentCd, dataSource);
+		String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParentNm, dataSource);
+
+		String cdRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveCd, dataSource);
+		String nmRecursiveColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveNm, dataSource);
+
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+
+		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
+
+		String vDateWhereClause = vDateConverted + " >= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+
+		String recursiveSelectClause = cdRecursiveColumn + "," + nmRecursiveColumn + "," + cdParentColumn + "," + nmParentColumn;
+
+		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + " WHERE " + cdRecursiveColumn + " = \"" + parentCdValue
+				+ "\" AND " + nmRecursiveColumn + " = \"" + parentNmValue + "\" AND " + vDateWhereClause;
+
+		logger.debug("Select query is [" + recurisveSelect + "]");
+
+		Statement statement = dbConnection.createStatement();
+
+		logger.debug("Statment is using [" + parentCdValue + "] and [" + parentNmValue + "] with validity date [" + validityDate + "]");
+
+		ResultSet rs = statement.executeQuery(recurisveSelect);
+
+		if (rs.next()) {
+
+			String newRecursiveCdValue = rs.getString(jsonRecursiveCd);
+			String newRecursiveNmValue = rs.getString(jsonRecursiveNm);
+
+			// be careful, LIFO logic!!
+			parentValuesList.addFirst(newRecursiveNmValue);
+			parentValuesList.addFirst(newRecursiveCdValue);
+
+			logger.debug("Result found! Creating a new recursive level with values [" + newRecursiveCdValue + "] and [" + newRecursiveNmValue + "]");
+
+			String tmpParentCdValue = rs.getString(jsonRecursiveParentCd);
+			String tmpParentNmValue = rs.getString(jsonRecursiveParentNm);
+
+			if (tmpParentCdValue != null) {
+
+				logger.debug("Check values validity. New value is [" + tmpParentCdValue + "] and old is [" + oldCdValue + "]");
+
+				if (tmpParentCdValue.equals(oldCdValue)) {
+					logger.error("Impossible to create recursive levels. A cycle found during recursive selections");
+					throw new SQLException("Impossible to create recursive levels. A cycle found during recursive selections");
+				}
+
+				logger.debug("Look for another parent with values [" + tmpParentCdValue + "] and [" + tmpParentNmValue + "]");
+
+				recursiveParentSelect(dbConnection, dataSource, parentValuesList, tmpParentCdValue, tmpParentNmValue, newRecursiveCdValue, dimensionName,
+						jsonRecursiveCd, jsonRecursiveNm, jsonRecursiveParentCd, jsonRecursiveParentNm, validityDate);
 			} else {
+				logger.debug("No parent found!");
+				logger.debug("END");
 				return;
 			}
 
 		}
+
+	}
+
+	public void saveHierarchyMasterConfiguration(Connection dbConnection, IDataSource dataSource, JSONObject requestVal) throws SQLException, JSONException {
+
+		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+		String hierNmColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG, dataSource);
+
+		String insertClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
+
+		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause + ") VALUES (?,?,?)";
+
+		logger.debug("Insert query is [" + saveConfQuery + "]");
+
+		String hierCd = requestVal.getString(HierarchyConstants.HIER_CD);
+		String hierNm = requestVal.getString(HierarchyConstants.HIER_NM);
+		String configuration = requestVal.toString();
+
+		PreparedStatement ps = dbConnection.prepareStatement(saveConfQuery);
+		ps.setString(1, hierCd);
+		ps.setString(2, hierNm);
+		ps.setString(3, configuration);
+
+		ps.executeUpdate();
+
+		logger.debug("Hierarchy Master Configuration correctly saved!");
 
 	}
 }
