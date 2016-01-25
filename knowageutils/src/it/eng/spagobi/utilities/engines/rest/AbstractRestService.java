@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -113,8 +112,6 @@ public abstract class AbstractRestService {
 	 * @return the HttpServletRequest
 	 */
 	public abstract HttpServletRequest getServletRequest();
-
-	public abstract HttpServletResponse getServletResponse();
 
 	public HttpSession getHttpSession() {
 		return getServletRequest().getSession();
