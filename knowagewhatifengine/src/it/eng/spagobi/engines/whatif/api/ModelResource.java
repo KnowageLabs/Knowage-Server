@@ -48,11 +48,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,6 +73,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
+	@Context
+	private HttpServletResponse response;
 
 	// input parameters
 	public static final String EXPRESSION = "expression";
@@ -365,7 +369,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
 		getServletResponse().addHeader("Content-type", MediaType.APPLICATION_OCTET_STREAM);
-		getServletResponse().addHeader("content-disposition", "attachment; filename = " + getExportFileName() + ".pdf");
+		getServletResponse().addHeader("content-disposition", "filename = " + getExportFileName() + ".pdf");
 		return outputByte;
 	}
 
@@ -439,4 +443,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public void logErrorTransformations(CellTransformationsStack remaningTransformations) {
 		auditlogger.info("Error persisting the these modifications " + remaningTransformations.toString());
 	}
+
+	private HttpServletResponse getServletResponse() {
+		return response;
+	}
+
 }
