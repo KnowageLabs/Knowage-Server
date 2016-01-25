@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -100,16 +101,20 @@ public abstract class AbstractRestService {
 	}
 
 	/**
-	 * Gets the HttpServletRequest.. A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
+	 * Gets the HttpServletRequest.. A standard implementation is to get the
+	 * HttpServletRequest from the context.. The implementing class can be:
 	 *
 	 * public class XXXEngineService extends AbstractRestService{
 	 *
 	 * @Context protected HttpServletRequest servletRequest;
 	 *
-	 *          public HttpServletRequest getServletRequest(){ return servletRequest; }
+	 *          public HttpServletRequest getServletRequest(){ return
+	 *          servletRequest; }
 	 * @return the HttpServletRequest
 	 */
 	public abstract HttpServletRequest getServletRequest();
+
+	public abstract HttpServletResponse getServletResponse();
 
 	public HttpSession getHttpSession() {
 		return getServletRequest().getSession();
