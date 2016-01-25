@@ -7,6 +7,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $mdSidenav) {
 
   $scope.templateList = '/knowagewhatifengine/html/template/filter/treeFirstLevel.html';
   $scope.templateListChild = '/knowagewhatifengine/html/template/filter/treeDeeperLevels.html';
+  $scope.filterCard = '/knowagewhatifengine/html/template/filter/filterCard.html';
   //tree example data
   $scope.data = [
     {
@@ -97,8 +98,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $mdSidenav) {
     $mdDialog.hide();
   }
 
-  $scope.testtt = function(i){
-    console.log(i);
+  $scope.expandTree = function(i){
      firstLevelDrop(i.id);
   }
 
