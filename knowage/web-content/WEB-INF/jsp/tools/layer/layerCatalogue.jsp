@@ -16,6 +16,9 @@
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
+<!-- Styles -->
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
 
@@ -58,7 +61,7 @@
 </head>
 
 
-<body class="bodyStyle">
+<body class="bodyStyle kn-layerCatalogue">
 
 
 	<angular-list-detail ng-controller="Controller"
@@ -83,11 +86,12 @@
 			class="detailBody mozSize md-whiteframe-z1" novalidate>
 
 			<md-tabs md-select="Layer" class="mozScroll hideTabs h100"
-				md-border-bottom> <md-tab label="Layer"
+				md-border-bottom> 
+			<md-tab label="Layer"
 				md-on-select="setTab('Layer')" md-active="isSelectedTab('Layer')">
 			<md-content flex layout-fill
 				class=" ToolbarBox miniToolbar noBorder mozTable ">
-
+			<md-card>
 			<div layout="row" layout-wrap>
 				
 				<div flex=25>
@@ -312,17 +316,18 @@
 
 				</div>
 			</div>
+			</md-card>
+			
 			</md-content>
 		</form>
-
 		</md-tab>
 		<md-tab label="Filter" md-on-select="setTab('Filter')"
 			md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
-			
+		<md-card>	
 			<div layout="column" layout-wrap layout-fill>
 		<md-toolbar class="md-blue minihead "
 			style="border-bottom: 2px solid grey;">
-
+	
 		<div class="md-toolbar-tools" layout="row" layout-wrap >
 			<div flex=50 style="font-size: 16px;">
 				<h2>{{translate.load("sbi.layerfilter");}}</h2>
@@ -348,7 +353,7 @@
 			
 		</div>
 		</md-content> 
-		</div></md-tab>
+		</div></md-card></md-tab>
 		</md-tabs>
 	</div>
 

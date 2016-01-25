@@ -1,7 +1,7 @@
 <div layout="column" layout-fill  id="angularTableTemplate" class="{{id}}ItemBox" style="position:absolute;">
 
 <angular-table-actions layout="row" layout-align="end center">
-	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=false;"  >
+	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=true;"  >
 		<md-icon md-font-icon="fa fa-search" ng-click="showSearch=true;"></md-icon> 
 		<input  ng-show="showSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
 		<md-icon ng-show="showSearch" md-font-icon="fa fa-trash" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 

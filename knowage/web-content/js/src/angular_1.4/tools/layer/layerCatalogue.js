@@ -766,6 +766,12 @@ if(list==undefined)return false;
 
 };
 
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
 
 
 
