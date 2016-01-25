@@ -190,7 +190,7 @@
       						<!--<md-input-container > 
        							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
       						</md-input-container>-->
-      						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="checkChange()"></file-upload>
+      						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
       					</div>
      					     				
      					<!--<div layout="row" layout-wrap>
