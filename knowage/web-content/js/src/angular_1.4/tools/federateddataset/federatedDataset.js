@@ -5,9 +5,9 @@ var app = angular.module('federationDefinitionModule', ['ngMaterial','angular_li
 
 
 app.controller('federationDefinitionCTRL', ["$scope",
-                   		"$mdDialog", "$timeout", "sbiModule_translate","sbiModule_restServices",funkcija]);
+                   		"$mdDialog", "$timeout", "sbiModule_translate","sbiModule_restServices",federationDefinitionFunction]);
 
-function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_restServices) {
+function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_restServices) {
 	ctr = this;
 	
 	//creating translate variable that is accessible from the global scope, and can be used as an expression inside html
