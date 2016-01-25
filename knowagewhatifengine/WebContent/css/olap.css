@@ -1,0 +1,110 @@
+
+.knowage-blue {
+	background-color: #3b678c !important;
+    min-height: 0px !important;
+}
+
+.groupX {
+    font-size: 12px;
+    margin: 10px 0;
+    color:#000000 !important;
+    background-color: rgba(224, 224, 224, 0.96);
+    text-transform: none;
+    font-weight: 400;
+    line-height:1;
+    min-width:75px;
+    height: 25px;
+}
+
+.md-button.left {
+    border-radius: 20px 0 0 20px;
+}
+
+.md-button.middle {
+    border-radius: 0;
+    border-left: 1px solid rgba(230, 230, 230, 0.96);
+    border-right: 1px solid rgba(230, 230, 230, 0.96);
+}
+
+.md-button.right {
+    border-radius: 0 25px 25px 0;
+}
+
+.md-button:not([disabled]):hover {
+    background-color: rgba(193, 193, 193, 0.96);
+    transition: 0.3s;
+}
+
+.md-button.dimension-top{
+    background-color: rgba(59, 103, 140, 0.96);
+    height:25px;
+    font-size: 12px;
+    line-height: 1;
+    color:#ffffff !important;
+    border: 2px solid #ffffff;
+}
+
+.md-button.dimension-left{
+    background-color: rgba(59, 103, 140, 0.96);
+    height:25px;
+    font-size: 12px;
+    line-height: 1;
+    color:#ffffff !important;
+    transform: rotate(90deg);
+    margin-top: 55px;
+    margin-bottom: 20px;
+    margin-left:-29px;
+    border: 2px solid #ffffff;
+    padding: 4px;
+}
+
+.md-button{
+    min-height:0px;
+}
+
+.dimension-top-toolbar{
+    border-radius: 0px 7px 7px 0px;
+}
+
+.dimension-left-toolbar{
+    border-radius: 0px 0px 7px 7px;
+}
+
+.md-toolbar-tools{
+    height: 32px;
+}
+
+.icon{
+    height:32px;
+    min-width: 32px;
+}
+
+.filter-toolbar{
+    color: #ffffff !important;
+    border-radius: 10px 10px 0px 0px;
+    padding-left: 10px;
+}
+
+.filter-card{
+    height: 13.3%;
+    border-radius: 10px 10px;
+}
+
+.central-panel{
+    height:calc(80% - 32px);
+    height: -moz-calc(80% - 32px);
+    width:60%;
+    position:absolute;
+}
+
+table, th , td {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+table tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
