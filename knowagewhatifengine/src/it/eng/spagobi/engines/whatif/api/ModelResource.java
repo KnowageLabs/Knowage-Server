@@ -43,6 +43,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,6 @@ import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
-import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.ui.table.TableRenderer;
 
 @Path("/1.0/model")
@@ -75,7 +75,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	// input parameters
 	public static final String EXPRESSION = "expression";
 
-	private static final String exportFileName = "SpagoBIOlapExport";
+	private static final String exportFileName = "KnowageOlapExport";
 	private VersionManager versionManager;
 
 	private VersionManager getVersionBusiness() {
@@ -319,9 +319,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * @return the response with the file embedded
 	 */
 	@GET
-	@Path("/export/{format}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response export() {
+	@Path("/export/excel")
+	public byte[] exportExcel() {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -329,22 +328,45 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new ExcelExporter(out);
-		FopExporter exporter2 = new FopExporter(out);
-		// exporter2.renderContent(ei., label, value);
+		TableRenderer render = new TableRenderer();
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
-
-		exporter.renderContent(new TableRenderContext(model, new TableRenderer(), model.getTopBottomCount(), 5, 5, 5), "", 5.00); // render(model);
+		render.render(model, exporter);
 
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
 
-		Date d = new Date();
-		String fileName = exportFileName + d.getYear() + d.getMonth() + d.getDay() + "_" + d.getHours() + d.getMinutes() + ".xls";
+		getServletResponse().addHeader("Content-type", MediaType.APPLICATION_OCTET_STREAM);
+		getServletResponse().addHeader("content-disposition", "attachment; filename = " + getExportFileName() + ".xls");
+		return outputByte;
+	}
 
-		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+	@GET
+	@Path("/export/pdf")
+	public byte[] exportPdf() {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		FopExporter exporter = new FopExporter(out);
+
+		TableRenderer render = new TableRenderer();
+
+		// adds the calculated fields before rendering the model
+		model.applyCal();
+
+		render.render(model, exporter);
+
+		// restore the query without calculated fields
+		model.restoreQuery();
+		byte[] outputByte = out.toByteArray();
+		getServletResponse().addHeader("Content-type", MediaType.APPLICATION_OCTET_STREAM);
+		getServletResponse().addHeader("content-disposition", "attachment; filename = " + getExportFileName() + ".pdf");
+		return outputByte;
 	}
 
 	/**
@@ -387,6 +409,15 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String fileName = exportFileName + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+	}
+
+	private String getExportFileName() {
+		String fileName = "";
+		Date date = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
+
+		fileName = exportFileName + "_" + format.format(date);
+		return fileName;
 	}
 
 	public void logTransormations() {

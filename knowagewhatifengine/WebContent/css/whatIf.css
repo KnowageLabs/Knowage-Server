@@ -10,10 +10,33 @@
  ********************************************************************************************************/
 .x-pivot-header {
 	position: relative !important;
-	border-top-width: 1px !important;
-	border-right-width: 1px !important;
+	/*border-top-width: 1px !important;*/
+	/*border-right-width: 1px !important;*/
+	border-bottom: 1px solid #3b678c;
+	border-right: 1px solid #3b678c;
+	color: rgba(0,0,0,0.54);
+	font-size:18px;
+	padding:10px;
+	font-family: Verdana;
+	background: #f5f5f5;
+    
 }
 
+
+.x-pivot-header-column {
+	
+	/*border-top-width: 1px !important;*/
+	/*border-right-width: 1px !important;*/
+	border-bottom: 1px solid #3b678c;
+	border-right: 1px solid #3b678c;
+	color: rgba(0,0,0,0.54);
+	font-size:18px;
+	padding:10px;
+	font-family: Verdana;
+	background: #f5f5f5;
+   position: relative !important;
+	
+}
 .x-pivot-cell {
 	border-top-width: 1px !important;
 	border-right-width: 1px !important;
@@ -21,15 +44,25 @@
 	padding: 2px;
 	vertical-align: middle;
 	border-top-color: #d0d0d0;
+	font-family: Verdana;
+	border-bottom: 1px solid #3b678c;
+	border-right: 1px solid #3b678c;
+	
 }
 
 .x-pivot-table {
-	border-bottom-width: 1px !important;
+	/*border-bottom-width: 1px !important;
 	border-left-width: 1px !important;
 	border-right-width: 0px !important;
 	border-top-width: 0px !important;
 	margin: 0px !important;
-	padding: 0px !important;
+	padding: 0px !important;*/
+	
+	
+	table-layout: fixed;
+	color: #005080;
+	
+	
 }
 
 .rotate span {
@@ -121,7 +154,8 @@ td[contenteditable="true"]:focus {
 	background-color: #F6F6F7 !important;
 }
 .even-row td{
-	background-color: #FFF !important;
+	background-color: white !important;
+	
 }
 
 .odd-column{
@@ -305,3 +339,4 @@ background-image: url(../img/xls16.png);
 .internal-column-header {
 	margin-left: 1px !important;
 }
+
