@@ -397,15 +397,35 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			
 			var bmId = $scope.selectedBusinessModel.id;
 			var id = item.id;
-			sbiModule_restServices
-			.delete("2.0/businessmodels/"+bmId+"/versions/"+id,"")
-			.success(
-					function(){
-						removeFromBMs(id,"right");
-						$scope.getVersions(bmId);
-						$scope.showActionOK("Business Model Version deleted successfully");
-			});
+			
+			var confirm = $mdDialog
+			.confirm()
+			.title(sbiModule_translate.load("sbi.businessModelsCatalogue.confirm.versionDelete"))
+			.content(
+					sbiModule_translate
+					.load("sbi.businessModelsCatalogue.confirm.versionDelete.content"))
+					.ariaLabel('Lucky day').ok(
+							sbiModule_translate.load("sbi.general.continue")).cancel(
+									sbiModule_translate.load("sbi.general.cancel"));
 
+			$mdDialog.show(confirm).then(function() {
+
+				sbiModule_restServices
+				.delete("2.0/businessmodels/"+bmId+"/versions/"+id,"")
+				.success(
+						function(){
+							removeFromBMs(id,"right");
+							$scope.getVersions(bmId);
+							$scope.showActionOK(
+									sbiModule_translate.load("sbi.businessModelsCatalogue.versionDelete.done")
+									);
+				});
+				
+				
+			}, function() {
+				console.log('Canceled');
+			});
+		 
 		}
 		
 	 	//calling service for deleting BM @DELETE
