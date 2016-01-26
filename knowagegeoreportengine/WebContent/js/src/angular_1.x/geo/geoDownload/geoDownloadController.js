@@ -84,7 +84,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var vector=[raster];
 		var j=1;
 		for(var i=0;i<$map.getLayers().getArray().length;i++){
-			if($map.getLayers().getArray()[i].getSource().A!=undefined){
+			if($map.getLayers().getArray()[i].getSource().A!=undefined || $map.getLayers().getArray()[i].getSource().A==0){
 
 				vector.push($map.getLayers().getArray()[i]);
 				//j++;

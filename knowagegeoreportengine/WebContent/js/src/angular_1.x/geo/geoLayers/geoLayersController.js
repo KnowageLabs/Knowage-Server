@@ -188,8 +188,12 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.checkLayerWithoutFilter = function(layerConf){
 	
 		geoModule_layerServices.layerWithoutFilter=true;
-	//	if(!geoModule_layerServices.filters[layerConf.layerId]){ geoModule_layerServices.loadedLayer[layerConf.layerId]
-		if(!geoModule_layerServices.layerIsLoaded(layerConf) ){
+		var layer = geoModule_layerServices.createLayer(layerConf);
+		
+		try{if(layer.getSource().getFeatures().length==0){
+			geoModule_layerServices.layerWithoutFilter=false;
+		}}catch(errr){
+		if(!geoModule_layerServices.layerIsLoaded(layerConf)){
 			//add Layer
 			if(!$scope.multipleFilters[layerConf.layerId]){
 				//if layer haven't filters
@@ -225,7 +229,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				geoModule_layerServices.layerWithoutFilter=$scope.emptyLayer(layerConf.layerId);
 			}
 			
-		}
+		}}
 	}
 
 	$scope.checkFilterInthisLayer = function(layerConf){
