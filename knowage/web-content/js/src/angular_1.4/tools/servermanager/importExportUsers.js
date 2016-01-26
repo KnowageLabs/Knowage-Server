@@ -146,6 +146,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					$scope.download.getBlob(data,$scope.nameExport,'application/zip','zip');
 					$scope.viewDownload = false;
 					$scope.wait = false;
+					$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
 				}
 			}).error(function(data, status, headers, config) {
 				showToast("ERRORS "+status,4000);

@@ -45,6 +45,49 @@
 	<md-content layout="column" layout-wrap flex>
 		<md-tabs md-select="ImportExport" md-dynamic-height
 					class="mozScroll hideTabs" md-border-bottom> 
+				<md-tab label="Export" md-on-select="setTab('Export')"
+					md-active="isSelectedTab('Export')">
+					<div layout="row" layout-wrap>
+					<div flex=35>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+								<input class="input_class" ng-model="nameExport"
+									required maxlength="100" ng-maxlength="100" md-maxlength="100" />
+									
+						</md-input-container>
+					</div>
+					<div flex =10 >
+						<md-input-container class="small counter"> 
+							
+							<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download Users"
+								class="md-fab md-ExtraMini"  > <md-icon
+								md-font-icon="fa fa-download"  >
+							</md-icon> </md-button>
+							<div ng-show="wait">
+							<i  class="fa fa-spinner fa-spin fa-4x"></i>
+							</div>
+							
+							<!--  <md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>-->
+						</md-input-container>
+					</div>
+					</div>
+					<br>
+					<div id="lista" style="background:#eceff1">
+						<div layout="row" layout-wrap>
+							<div >
+							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()">Select All</md-checkbox>
+							</div>
+						</div>
+						<div layout="row" layout-wrap flex>
+							<div flex="90" ng-repeat="us in users">
+								<md-checkbox ng-checked="exists(us, usersSelected)"
+									ng-click="toggle(us, usersSelected)"> {{ us.userId }} </md-checkbox>
+		
+							</div>
+						</div>
+					</div>
+			
+					
+				</md-tab>
 				<md-tab	label="Import" md-on-select="setTab('Import')"
 					md-active="isSelectedTab('Import')">
 					<div  layout="column" layout-wrap>
@@ -142,45 +185,7 @@
 					
 					</div>
 				</md-tab>
-				<md-tab label="Export" md-on-select="setTab('Export')"
-					md-active="isSelectedTab('Export')">
-					<div layout="row" layout-wrap>
-					<div flex=35>
-						<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-								<input class="input_class" ng-model="nameExport"
-									required maxlength="100" ng-maxlength="100" md-maxlength="100" />
-									
-						</md-input-container>
-					</div>
-					<div flex =10 >
-						<md-input-container class="small counter"> 
-							<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download Users"
-								class="md-fab md-ExtraMini"  > <md-icon
-								md-font-icon="fa fa-download"  >
-							</md-icon> </md-button>
-							
-							<md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>
-						</md-input-container>
-					</div>
-					</div>
-					<br>
-					<div id="lista" style="background:#eceff1">
-						<div layout="row" layout-wrap>
-							<div >
-							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()">Select All</md-checkbox>
-							</div>
-						</div>
-						<div layout="row" layout-wrap flex>
-							<div flex="90" ng-repeat="us in users">
-								<md-checkbox ng-checked="exists(us, usersSelected)"
-									ng-click="toggle(us, usersSelected)"> {{ us.userId }} </md-checkbox>
-		
-							</div>
-						</div>
-					</div>
-			
-					
-				</md-tab>
+				
 			</md-tabs>
 			</md-content>
 			
