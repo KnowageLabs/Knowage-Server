@@ -190,9 +190,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		geoModule_layerServices.layerWithoutFilter=true;
 		var layer = geoModule_layerServices.createLayer(layerConf);
 		
-		try{if(layer.getSource().getFeatures().length==0){
-			geoModule_layerServices.layerWithoutFilter=false;
-		}}catch(errr){
+		try{
+			if(layer.getSource().getFeatures().length==0){
+				geoModule_layerServices.layerWithoutFilter=false;
+			}
+			}catch(errr){
 		if(!geoModule_layerServices.layerIsLoaded(layerConf)){
 			//add Layer
 			if(!$scope.multipleFilters[layerConf.layerId]){
