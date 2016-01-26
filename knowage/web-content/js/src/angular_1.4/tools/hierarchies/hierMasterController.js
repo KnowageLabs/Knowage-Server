@@ -427,7 +427,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	}
 	/* Modify the hierarchy of the tree with context menu */
 	$scope.modifyHier = function(item, parent, event) {
-		var promise = $scope.editNode(item, parent);
+		var promise = $scope.editNode(item, parent,true);
 		promise.then(
 			function(newItem) {
 				if (newItem !== null && newItem !== undefined) {
@@ -500,7 +500,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 	}
 	/* Visualize the edit dialog to modify the item with context menu */
-	$scope.editNode = function(item, parent) {
+	$scope.editNode = function(item, parent,forceEditable) {
 		var parentEl = angular.element(document.body);
 		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : '';
 		var metTmp = $scope.metadataTreeMap[dimName];
@@ -511,6 +511,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		// take generals_fields if it is root[parent is null], leaf_fields if it
 		// is leaf or node_fields if it is node
 		var metadata = parent == undefined || parent == null ? metTmp.GENERAL_FIELDS : item.leaf == true ? metTmp.LEAF_FIELDS : metTmp.NODE_FIELDS;
+		if (metadata && forceEditable == true){
+			 for (var i = 0 ; i < metadata.length; i++){
+				 metadata[i].EDITABLE=true;
+				 metadata[i].VISIBLE=true;
+			 }
+		 }
 		return $mdDialog.show({
 					templateUrl : sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/hierarchies/templates/hierSrcDialog.html',
 					parent : angular.element(document.body),
