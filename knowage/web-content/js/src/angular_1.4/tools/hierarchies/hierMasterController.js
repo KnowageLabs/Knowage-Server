@@ -389,6 +389,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				node[metadata[i].ID] = metadata[i].FIX_VALUE;
 			}
 		}
+		//force aliasId and aliasName
+		if (type == "root" || type == "node"){
+			node.aliasId = type == "root" ? "HIER_CD" : dimName+"_CD_LEV";
+			node.aliasName = type == "root" ? "HIER_NM" : dimName+"_NM_LEV";
+		}
 		node.children = type == "leaf" ? [] : [ angular.copy($scope.fakeNode) ];
 		node.expanded = false;
 		node.visible = true;
