@@ -1905,8 +1905,39 @@ public class HierarchyService {
 			fieldsMap.put(index, value);
 			fieldsTypeMap.put(index, type);
 
-			index = index + 1;
+			index++;
 
+		}
+
+		if (!requestVal.isNull(HierarchyConstants.BEGIN_DT)) {
+
+			String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+			String beginDtValue = requestVal.getString(HierarchyConstants.BEGIN_DT);
+
+			// updating sql clauses for columns and values
+			columnsClause.append(beginDtColumn + sep);
+			valuesClause.append("?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, beginDtValue);
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_DATE);
+
+			index++;
+
+		}
+
+		if (!requestVal.isNull(HierarchyConstants.END_DT)) {
+
+			String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+			String endDtValue = requestVal.getString(HierarchyConstants.END_DT);
+
+			// updating sql clauses for columns and values
+			columnsClause.append(endDtColumn + sep);
+			valuesClause.append("?" + sep);
+
+			// updating values and types maps
+			fieldsMap.put(index, endDtValue);
+			fieldsTypeMap.put(index, HierarchyConstants.FIELD_TP_DATE);
 		}
 
 	}
