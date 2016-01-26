@@ -34,12 +34,12 @@
       <div class="md-toolbar-tools">
         <h1>Select type of download</h1>
         <span flex></span>
-        <md-button  ng-click="closeFilter()">
-          <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
+        <md-button class="md-icon-button" ng-click="closeFilter()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
         </md-button>
       </div>
     </md-toolbar>
-    <md-dialog-content style="max-width:800px;max-height:810px; ">
+    <md-dialog-content >
      <div class="md-dialog-content">
 		 <md-radio-group ng-show="isWFS" ng-model="typeWFS">
      		 <md-radio-button  value="geojson" >GeoJSON</md-radio-button>
@@ -52,7 +52,7 @@
      </div>
     
 	<div class="footer">
-	<md-button style="margin-left:60%;" ng-click="getDownload(selectedLayer)"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
+	<md-button class="dialogButton" ng-click="getDownload(selectedLayer)" md-autofocus>Download <md-icon md-font-icon="fa fa-download buttonIcon" aria-label="Download"></md-icon></md-button>
 	</div>
    	 </md-dialog-content>
   </form>
@@ -80,7 +80,7 @@
 	</list> 
 	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'>
 
-	<div  layout-fill style="position: absolute;">
+	<div  layout-fill class="containerDiv">
 		<!-- 				ng-submit="forms.contactForm.$valid && saveLayer()" -->
 		<form name="forms.contactForm" layout-fill id="layerform"
 			class="detailBody mozSize md-whiteframe-z1" novalidate>
@@ -139,14 +139,9 @@
 			</div>
 
 			<div layout="row" layout-wrap>
-
-				<div flex=3 style="line-height: 40px">
-					<!-- <md-icon md-font-icon="fa fa-flag"></md-icon> -->
-					<label>{{translate.load("sbi.tools.layer.baseLayer")}}</label>
-				</div>
-
 				<md-input-container class="small counter"> <md-checkbox
 					ng-model="selectedLayer.baseLayer" aria-label="BaseLayer">
+					{{translate.load("sbi.tools.layer.baseLayer")}}
 				</md-checkbox> </md-input-container>
 
 			</div>
@@ -170,8 +165,6 @@
 			<div style="margin-top: 0px; margin-left: 15px;">
 				<md-select-label ng-show="!flagtype">{{selectedLayer.type}}</md-select-label>
 			</div>
-			<br>
-			<br>
 			<div layout="row" layout-wrap>
 				<!-- 
 					<div flex=3 style="margin-top: 30px;">
@@ -225,8 +218,7 @@
 				</div>
 			</div>
 			<br>
-			<div layout="row" layout-wrap ng-show="pathFileCheck"
-				style="margin-top: -15px;">
+			<div layout="row" layout-wrap ng-show="pathFileCheck">
 				<p>
 					{{translate.load("sbi.layer.pathfile")}}: <b>{{selectedLayer.pathFile}}</b>
 				</p>
@@ -325,26 +317,25 @@
 			md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
 		<md-card>	
 			<div layout="column" layout-wrap layout-fill>
-		<md-toolbar class="md-blue minihead "
-			style="border-bottom: 2px solid grey;">
+		<md-toolbar class="md-blue minihead ">
 	
 		<div class="md-toolbar-tools" layout="row" layout-wrap >
-			<div flex=50 style="font-size: 16px;">
+			<div flex=50 >
 				<h2>{{translate.load("sbi.layerfilter");}}</h2>
 			</div>
-			<div flex=50 style="font-size: 16px;">
+			<div flex=50 >
 				<h2>{{translate.load("sbi.layerfilteradded");}}</h2>
 			</div>
 		</div>
 		</md-toolbar>
-		 <md-content  layout="row" layout-wrap flex style="    overflow: hidden;">
+		 <md-content  layout="row" layout-wrap flex class="layerFilterContent">
 		
-			<div flex=50 style="padding-right: 15px;">
+			<div flex=50 class="layerFilter">
 				<angular-list class="mozSelect" 
 					layout-fill id='sx' ng-model=filter item-name='property'
 					click-function="addFilter(item)" show-search-bar=true />
 			</div>
-			<div flex=50 style="padding-right: 15px;">
+			<div flex=50 class="layerFilter">
 				<angular-list class="mozSelect" 
 					layout-fill id='right' ng-model=filter_set item-name='property'
 					click-function="removeFilter(item)" show-search-bar=true

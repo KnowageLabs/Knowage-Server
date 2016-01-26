@@ -2,6 +2,7 @@
 @import 'variables',
   'mixins',
   'fonts',
+  'components/layerCatalogue',
   'components/navbar';
    
  
@@ -21,25 +22,24 @@ md-toolbar.md-knowage-theme {
 
 .md-button.md-knowage-theme.md-fab {
     background-color: $fabPrimaryColor !important;
+    top: $fabTop;
 }
 
 .md-button.md-knowage-theme.md-fab md-icon {
     font-size: $fabIconSize;
     padding-top: 4px;
 }
-.md-button.md-knowage-theme.md-flat {
-	&:not([disabled]) {
-		color: white;
-		&:hover {
-			background-color: $secondaryColor;
-			color: $baseColor;
-		}
-	}
+md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
+        color: $toolbarButtonColor;
+        &:hover {
+            background-color: $secondaryColor;
+            color: $baseColor;
+        }
 }
-
-.md-button.md-knowage-theme.md-flat:not([disabled]):hover {
+​
+md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
     background-color: $secondaryColor;
-	color: $baseColor;
+    color: $baseColor;
 }
 
 // Input fields
@@ -50,8 +50,15 @@ md-input-container.md-knowage-theme  {
 	}
 }
 
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused .md-input {
-    border-color: $inputLineColor;
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused {
+
+    .md-input {
+        border-color: $inputLineColor;
+    }
+    
+    md-icon{
+        color: $baseColor;
+    }
 }
 
 md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
@@ -96,6 +103,18 @@ md-select.md-knowage-theme .md-select-value {
     }
 }
 
+md-select.md-knowage-theme:not([disabled]):focus .md-select-value {
+    border-bottom-color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected] {
+    color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected]:focus {
+    color: $baseColor;
+}
+
 // Tabs
 md-tabs.md-knowage-theme .md-tab.md-active, md-tabs.md-knowage-theme .md-tab.md-active md-icon, md-tabs.md-knowage-theme .md-tab.md-focused, md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
     color: $baseColor;
@@ -106,3 +125,19 @@ md-tabs.md-knowage-theme md-ink-bar {
     color: $baseColor;
     background: $baseColor;
 }	
+
+// Material Cards
+md-card.md-knowage-theme {
+    background-color: $tabBackground;
+    display: block; 
+    padding: $tabPadding;
+}
+
+md-tab-content md-content.md-knowage-theme {
+    background-color: transparent;
+}
+
+// Dialog Buttons
+a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
+    color: $baseColor;
+}
