@@ -400,7 +400,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 	/* Add new hierarchy in the tree with context menu */
 	$scope.addHier = function(item, parent, event) {
-		var promise = $scope.editNode({}, item);
+		var promise = $scope.editNode({}, item,true);
 		if (promise !== null) {
 			promise.then(
 				function(newItem) {
@@ -427,7 +427,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	}
 	/* Modify the hierarchy of the tree with context menu */
 	$scope.modifyHier = function(item, parent, event) {
-		var promise = $scope.editNode(item, parent,true);
+		var promise = $scope.editNode(item, parent);
 		promise.then(
 			function(newItem) {
 				if (newItem !== null && newItem !== undefined) {

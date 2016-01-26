@@ -329,7 +329,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.addHier =  function(item,parent,event){
-		var promise = $scope.editNode({},item);
+		var promise = $scope.editNode({},item,true);
 		promise //TODO correggere inserimento
 			.then(function(newItem){
 					var tmpItem = $scope.createEmptyNode('node');
@@ -354,7 +354,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.modifyHier =  function(item,parent,event){
-		var promise = $scope.editNode(item,parent,true);
+		var promise = $scope.editNode(item,parent);
 		promise.then(function (newItem){
 			if (newItem !== null && newItem !== undefined){
 				var keyName = newItem.aliasName !== undefined ? newItem.aliasName : $scope.dimSrc.DIMENSION_NM + "_NM_LEV";
