@@ -103,8 +103,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		$scope.wait = true;
 		if($scope.usersSelected.length == 0){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
+			$scope.wait = false;
 		} else if($scope.nameExport==""){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
+			$scope.wait = false;
 		}else{
 			//modulo download zip
 			var config={"USERS_LIST":$scope.usersSelected ,
@@ -141,6 +143,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					showToast(data.errors[0].message,4000);
+					$scope.wait = false;
 				}else if(status==200){
 					console.log(data);
 					$scope.download.getBlob(data,$scope.nameExport,'application/zip','zip');
@@ -150,6 +153,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				}
 			}).error(function(data, status, headers, config) {
 				showToast("ERRORS "+status,4000);
+				$scope.wait = false;
 			})
 		}
 	
