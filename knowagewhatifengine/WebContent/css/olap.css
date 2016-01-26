@@ -4,6 +4,16 @@
     min-height: 0px !important;
 }
 
+.top-alignment{
+	height:10%;
+}
+
+@-moz-document url-prefix() { 
+  .top-alignment {
+     height:15%;
+  }
+}
+
 .groupX {
     font-size: 12px;
     margin: 10px 0;
