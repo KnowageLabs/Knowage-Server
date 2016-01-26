@@ -90,11 +90,19 @@
     line-height: 0;
 }
 
-.filter-card{
+/*.filter-card{
     border-radius: 10px 10px;
     width:20%;
     height:10%;
     -moz-height:5%;
+}*/
+
+md-card{
+  border-radius: 10px 10px;
+}
+
+md-tabs .md-tab.md-active{
+  color:#3b678c !important;
 }
 
 .central-panel{
