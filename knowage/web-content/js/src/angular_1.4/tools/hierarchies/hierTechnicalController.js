@@ -717,7 +717,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.formatDate = function (date){
-		var mm = date.getMonth() < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
+		var mm = (date.getMonth()+1) < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
 		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
 	}
 	
