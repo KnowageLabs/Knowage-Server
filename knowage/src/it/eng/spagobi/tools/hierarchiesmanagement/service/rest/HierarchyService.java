@@ -806,6 +806,7 @@ public class HierarchyService {
 
 		// 3 - define select command
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		StringBuffer orderClauseBuffer = new StringBuffer(" ");
 		// general fields:
 		for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
 			Field f = generalMetadataFields.get(i);
@@ -821,11 +822,17 @@ public class HierarchyService {
 			if (f.isSingleValue()) {
 				column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 				selectClauseBuffer.append(column + sep);
+				// add first node column as order field:
+				if (i == 0)
+					orderClauseBuffer.append(column);
 			} else {
 				for (int i2 = 1, l2 = totalLevels; i2 <= l2; i2++) {
 					sep = ",";
 					column = AbstractJDBCDataset.encapsulateColumnName(f.getId() + i2, dataSource);
 					selectClauseBuffer.append(column + sep);
+					// add first node column as order field:
+					if (i == 0 && i2 == 1)
+						orderClauseBuffer.append(column);
 				}
 			}
 		}
@@ -874,6 +881,8 @@ public class HierarchyService {
 			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierarchyTable, hierNameColumn, optionHierarchy, hierTypeColumn,
 					optionHierType, dimFilterField, dimFilterField, vDateWhereClause));
 		}
+		// order cluase
+		query.append(" ORDER BY " + orderClauseBuffer.toString());
 
 		logger.debug("Query for get hierarchies: " + query);
 		return query.toString();
@@ -1327,6 +1336,7 @@ public class HierarchyService {
 			for (int i = 0; i < path.size(); i++) {
 				values = new HashMap();
 				node = path.get(i);
+				boolean isRoot = ((Boolean) node.getAttributes().get("isRoot")).booleanValue();
 				boolean isLeaf = ((Boolean) node.getAttributes().get("isLeaf")).booleanValue();
 				// if (node.getLeafId() != null && !node.getLeafId().equals("")) {
 				if (isLeaf) {
@@ -1344,7 +1354,7 @@ public class HierarchyService {
 						preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + node.getDepth()),
 								node.getNodeName());
 						values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeName());
-					} else if (!node.getNodeCode().equals(HierarchyConstants.ROOT)) {
+					} else if (!isRoot) {
 						logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
 						throw new SpagoBIServiceException("persistService", "Property LEVEL non found for leaf element with code " + node.getNodeCode()
 								+ " and name " + node.getNodeName());
@@ -1385,7 +1395,7 @@ public class HierarchyService {
 					Iterator iter = node.getAttributes().keySet().iterator();
 					String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
 					level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
-					if (level == 0 && !node.getNodeCode().equals(HierarchyConstants.ROOT)) {
+					if (level == 0 && !isRoot) {
 						logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
 						throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
 								+ " and name " + node.getNodeName());
@@ -1418,7 +1428,7 @@ public class HierarchyService {
 			preparedStatement.close();
 
 		} catch (Throwable t) {
-			String errMsg = "Error while inserting node with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
+			String errMsg = "Error while inserting element with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
 			if (values.size() > 0) {
 				errMsg += " with next values: [";
 				Iterator iter = values.keySet().iterator();
@@ -1497,6 +1507,10 @@ public class HierarchyService {
 					mapAttrs.put(idFld, node.getString(idFld));
 				}
 			}
+			// current node is a root?
+			boolean isRoot = (node.isNull("root")) ? false : node.getBoolean("root");
+			mapAttrs.put("isRoot", isRoot);
+
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");
 			mapAttrs.put("isLeaf", isLeaf);
