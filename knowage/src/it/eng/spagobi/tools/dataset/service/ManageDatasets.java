@@ -679,7 +679,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 								} catch (Exception e) {
 									logger.error("Error while recovering dataset metadata: check dataset definition ", e);
-									throw new SpagoBIServiceException(SERVICE_NAME, "Error while recovering dataset metadata: check dataset definition", e);
+									throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.metadata", e);
 								}
 
 								DatasetMetadataParser dsp = new DatasetMetadataParser();
