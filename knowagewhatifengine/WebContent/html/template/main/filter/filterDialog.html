@@ -1,0 +1,25 @@
+<md-dialog style='height:75%; width:25%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" flex=10>
+		<p>Insert title</p>
+	</md-toolbar>
+	
+	<md-content class="dialog-style" flex=90 >
+		<div ui-tree >
+			<ul ui-tree-nodes="" ng-model="data" class="tree" >
+				<div ng-include="templateList"></div>
+			</ul>
+		</div ui-tree>
+
+	</md-content>
+
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeFiltersDialog()">
+			Cancel
+		</md-button>
+		<md-button>
+			Save
+		</md-button>		
+	</md-dialog-actions>
+	
+</md-dialog>

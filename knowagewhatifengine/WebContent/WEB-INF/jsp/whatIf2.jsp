@@ -14,169 +14,27 @@
 
 </head>
 <body ng-controller="olapController">
-
-<div layout="row" >
-		<div flex=20>
-
-			<div>
-				<md-toolbar class='md-toolbar-tools knowage-blue'>Cubes</md-toolbar>
-				<md-content layout="row" layout-wrap style="height:15%">
-					<div flex=100>
-						<md-input-container> 
-							<label>Cubes</label>
-								<md-select ng-model="cubes"> 
-									<md-option ng-repeat="c in cubes" > 
-										{{c}} 
-									</md-option>
-								</md-select> 
-						</md-input-container>
-					</div>
-				</md-content>
-			</div>
-
-			<div>
-				<md-toolbar class='md-toolbar-tools knowage-blue'>Dimensions</md-toolbar>
-				<md-content layout="row" layout-wrap style="height:40%">
-					<div flex=100>
-						<md-list ng-repeat="d in dimensions">
-							<md-list-item md-ink-ripple class="md-clickable">
-								{{d}}
-							</md-list-item>
-						</md-list>
-					</div>
-				</md-content>
-			</div>
-
-			<div>
-				<md-toolbar class='md-toolbar-tools knowage-blue'>Mesuers</md-toolbar>
-				<md-content layout="row" layout-wrap style="height:40%">
-					<div flex=100 >
-						<md-list ng-repeat="d in dimensions">
-							<md-list-item md-ink-ripple class="md-clickable">
-								{{d}}
-							</md-list-item>
-						</md-list>
-					</div>
-				</md-content>
-			</div>
-			
+	<div layout="row">
+		<div flex=20 ng-include="leftPanel">
 		</div>
-		<!--<div flex=20></div> -->
+	
 		<div style="width:2px"></div>
-		<div flex=60>
-			<!-- <div style="height:5%; background-color: #E91E63;"> -->
-			<md-toolbar class='md-toolbar-tools knowage-blue'>
-				 <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-				      <md-button class="groupX left">Position</md-button>
-				      <md-button class="groupX middle">Member</md-button>
-				      <md-button class="groupX right">Replace</md-button>
-				      <md-button class="fa fa-table icon">
-				      	<md-tooltip md-direction="bottom">
-				      		Show parent
-				      	</md-tooltip>
-				  	  </md-button>
-				      <md-button class="fa fa-th-large icon">
-				      	<md-tooltip md-direction="bottom">
-				      		Hide
-				      	</md-tooltip>
-				  	  </md-button>
-				      <md-button class="fa fa-th-list icon">
-				      	<md-tooltip md-direction="bottom">
-				      		Show properties
-				      	</md-tooltip>
-				  	  </md-button>
-				      <md-button class="fa fa-cubes icon">
-				      	<md-tooltip md-direction="bottom">
-				      		Suppress empty rows
-				      	</md-tooltip>
-				  	  </md-button>
-				      <md-button class="fa fa-refresh icon">
-				      	<md-tooltip md-direction="bottom">
-				      		Reload
-				      	</md-tooltip>
-				  	  </md-button>
-   				 </section>
-   			</md-toolbar>
-			<!-- </div> -->
-			<!-- FILTERS -->
-			<div layout="row">
-				<md-card class="filter-card" ng-include="filterCard" flex=20>
-				</md-card>
+
+		<div layout="column" flex=60>
+			<div  ng-include="mainToolbar">
+			</div>
+		
+			<div layout="row" ng-include="filterPanel">
 			</div>
 
-			<div layout="column">
-				<div layout="row">
-					<md-toolbar flex=5 class='md-toolbar-tools knowage-blue'>
-						&nbsp;
-					</md-toolbar>
-					<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar'>
-						<md-button class="dimension-top">Measure <icon class="fa fa-filter"/></md-button>
-					</md-toolbar>
-				</div>
-				<div class="central-panel" layout="row" >
-					<div style="width:32px;" class='knowage-blue dimension-left-toolbar'>
-						<div layout="column">
-							<md-button class="dimension-left" >Product <icon class="fa fa-filter"/></md-button>
-
-							<md-button class="dimension-left" >Product1 <icon class="fa fa-filter"/></md-button>
-
-							<md-button class="dimension-left" >Product2 <icon class="fa fa-filter"/></md-button>
-						</div>	
-					</div>
-					<div>
-						<div ng-iclude="listTest.html"></div>
-						<table style=" margin-top: 10px; margin-left: 10px; width:100%">
-						  <tr>
-						    <td>Jill</td>
-						    <td>Smith</td> 
-						    <td>50</td>
-						  </tr>
-						  <tr>
-						    <td>Eve</td>
-						    <td>Jackson</td> 
-						    <td>94</td>
-						  </tr>
-						  <tr>
-						    <td>Eve</td>
-						    <td>Jackson</td> 
-						    <td>94</td>
-						  </tr>
-						  <tr>
-						    <td>Eve</td>
-						    <td>Jackson</td> 
-						    <td>94</td>
-						  </tr>
-						  <tr>
-						    <td>Eve</td>
-						    <td>Jackson</td> 
-						    <td>94</td>
-						  </tr>
-						</table>
-					</div>
-				</div>
+			<div layout="column" ng-include="olapPanel">
 			</div>
-
 		</div>
 
 		<div style="width:2px"></div>
-		<div flex=20>
-			<md-toolbar class='md-toolbar-tools knowage-blue'>Customization</md-toolbar>
-			<md-tabs >
-				  <md-tab label="Table">
-				  	<md-content >
-				  		Here goes the customization for table
-				  	</md-content>
-				  </md-tab>
-				  <md-tab label="Chart">
-				  	
-				  </md-tab>
-				  <md-tab label="Table & Chart">
-				  		Table and chart
-				  </md-tab>
-			</md-tabs>			
+		
+		<div flex=20 ng-include="rightPanel">						
 		</div>
 	</div>
-
 </body>
-
 </html>

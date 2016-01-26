@@ -1,0 +1,41 @@
+<div>
+	<md-toolbar class='md-toolbar-tools knowage-blue'>Cubes</md-toolbar>
+	<md-content layout="row" layout-wrap style="height:15%">
+	<div flex=100>
+		<md-input-container> 
+		<label>Cubes</label>
+		<md-select ng-model="cubes"> 
+		<md-option ng-repeat="c in cubes" > 
+		{{c}} 
+	</md-option>
+</md-select> 
+</md-input-container>
+</div>
+</md-content>
+</div>
+
+<div>
+	<md-toolbar class='md-toolbar-tools knowage-blue'>Dimensions</md-toolbar>
+	<md-content layout="row" layout-wrap style="height:40%">
+	<div flex=100>
+		<md-list ng-repeat="d in dimensions">
+		<md-list-item md-ink-ripple class="md-clickable">
+		{{d}}
+	</md-list-item>
+</md-list>
+</div>
+</md-content>
+</div>
+
+<div>
+	<md-toolbar class='md-toolbar-tools knowage-blue'>Mesuers</md-toolbar>
+	<md-content layout="row" layout-wrap style="height:40%">
+	<div flex=100 >
+		<md-list ng-repeat="d in dimensions">
+		<md-list-item md-ink-ripple class="md-clickable">
+		{{d}}
+	</md-list-item>
+</md-list>
+</div>
+</md-content>
+</div>
