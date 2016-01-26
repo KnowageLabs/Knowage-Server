@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height : 260,
+		height : 320,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding : 10,
