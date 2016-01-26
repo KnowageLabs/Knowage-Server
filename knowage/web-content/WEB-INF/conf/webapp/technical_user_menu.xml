@@ -284,16 +284,16 @@
 		</ITEM>
 		<ITEM code="menu_servermanager" title="#menu.ServerManager"	groupingMenu="true" iconCls="build">
 
-
 			<ITEM title="#menu.TenantMan" functionality="TenantManagement"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 			<ITEM title="#menu.TemplateManagement" functionality="TemplateManagement"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
-				
 	
 			<ITEM title="#menu.ImpExpDocument" functionality="ImpExpDocument"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
+			<ITEM title="#menu.ImpExpMenu" functionality="ImpExpMenu"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportMenu/importExportMenu.jsp" />
 			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
 	  		<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
@@ -306,8 +306,6 @@
 			title="#menu.RepositoryMng"
 			iconCls="repo">
 					
-
- 
 	</ITEM-->
  
 	<APPLICATION code="DocumentAdmin" 

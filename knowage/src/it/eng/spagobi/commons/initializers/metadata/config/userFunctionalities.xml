@@ -177,6 +177,7 @@
 		
 	<USER_FUNCTIONALITY productType="KnowageFake" name="TemplateManagement" description="TemplateManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpDocument" description="ImpExpDocument"/>	
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ManageCrossNavigation" description="ManageCrossNavigation" />

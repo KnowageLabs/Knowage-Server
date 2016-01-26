@@ -10,14 +10,16 @@
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
         <property name="hibernate.show_sql">false</property>
- <!-- <property name="hibernate.jdbc.batch_size">0</property>  -->      
+ <!-- 	<property name="hibernate.jdbc.batch_size">0</property>  -->      
 
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenu.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEvents.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventsLog.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDomains.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventRole.hbm.xml" />  
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventRole.hbm.xml" />
         
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenuRole.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUser.hbm.xml" /> 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUserAttributes.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAttribute.hbm.xml" />

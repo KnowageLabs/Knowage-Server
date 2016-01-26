@@ -300,7 +300,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="MODEL_ADMIN" />
-	
+
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="DEV_ROLE" />
@@ -314,15 +314,21 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FederationDefinition" roleType="MODEL_ADMIN" />
 	
-	
-	
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemplateManagement" roleType="ADMIN" />	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemplateManagement" roleType="ADMIN" />
+		
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpDocument" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpMenu" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpMenu" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpMenu" roleType="TEST_ROLE" />
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpResources" roleType="ADMIN" />
+
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpUsers" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="MODEL_ADMIN" />
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

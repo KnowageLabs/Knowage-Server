@@ -1,0 +1,60 @@
+<md-dialog aria-label="Mango (Fruit)" ng-cloak style="max-width:900px;max-height:900px;"> 
+	<md-toolbar class="miniheadimexsmall" layout-align>
+		<div class="md-toolbar-tools">
+			<i class="fa fa-list-alt fa-2x"></i>
+			<h2 class="md-flex" style="padding-left: 14px">{{translate.load('impexp.listAssFile','component_impexp_messages');}}</h2>
+			<span flex=""></span>					
+		</div>
+	</md-toolbar>
+	
+	<md-content flex layout-padding layout-wrap layout="column" layout-align="space-around stretch" ng-class="{ styleIE : isIE, contentIE: isIE}">			
+		
+		<!-- layout row for adding new file association -->
+		<div layout="row" space-align="start center" style="min-height: 60px;" ng-class="{'flex-15' : isIE, 'flex-10': !isIE}">
+			<md-button class="md-fab md-fab-mini" ng-click="toogleViewInsertForm()" aria-label="{{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}">
+				<md-icon ng-if="!viewInsertForm" class="fa fa-plus center-ico"></md-icon>
+				<md-icon ng-if="viewInsertForm" class="fa fa-minus center-ico"></md-icon>
+				<md-tooltip md-direction="right" >
+					{{translate.load('sbi.generic.add');}} {{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}
+				</md-tooltip>
+			</md-button>
+			
+			<div ng-if="viewInsertForm" layout="row" layout-align="space-around stretch">
+				<md-input-container flex-sm="90" flex="25"  md-no-float class="md-block">
+					<label>{{translate.load("sbi.generic.name");}}</label>
+					<input type="text" ng-model="form.name" required>
+				</md-input-container>
+				<md-input-container flex-sm="90" flex="25"  md-no-float class="md-block">
+					<label>{{translate.load("sbi.generic.descr");}}</label>
+					<input type="text" ng-model="form.description">
+				</md-input-container>
+				<file-upload flex-sm="90" flex="40" id="fileAssociationDialog" ng-model="form.file"></file-upload>
+				<md-button  ng-click="save()" ng-if="viewInsertForm" ng-disabled="form.name===undefined || form.name.length == 0 ||  || form.file ===undefined || form.file.fileName === undefined || form.file.fileName.length == 0" class="md-fab md-fab-mini" aria-label="{{translate.load('sbi.generic.update');}}">
+					<md-icon class="fa fa-floppy-o center-ico"></md-icon>
+				</md-button>
+			</div>
+		</div>
+		
+		<!-- table and buttons for select and cancel -->
+		
+			<angular-table  flex
+				id="listAssociation" ng-model="associations" 
+				columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"},{"label":"Creation Date","name":"creationDate"}]'
+				columns-search='["name","description","creationDate"]'
+				highlights-selected-item = "true"
+				show-search-bar="true"
+				selected-item="associationSelected"
+			></angular-table>
+		
+		<div layout="row" layout-align="end center">
+			<md-button class="md-raised md-ExtraMini" ng-click="selectAssociation()" ng-disabled="associationSelected.name === undefined || associationSelected.name.length === 0"> Select </md-button>
+			<md-button class="md-raised md-ExtraMini" ng-click="cancel()" > Cancel</md-button>
+		</div>
+	</md-content>
+</md-dialog>
+
+<style>
+.styleIE.contentIE{
+	min-height:300px;
+}
+</style>

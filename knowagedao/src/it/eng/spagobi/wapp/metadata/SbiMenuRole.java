@@ -18,7 +18,6 @@ public class SbiMenuRole  extends SbiHibernateModel {
 
 
     // Fields    
-
      private SbiMenuRoleId id;
      private SbiMenu sbiMenu;
      private SbiExtRoles sbiExtRoles;

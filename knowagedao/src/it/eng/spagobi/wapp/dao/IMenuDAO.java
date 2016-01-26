@@ -8,6 +8,7 @@ package it.eng.spagobi.wapp.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
 
 import java.util.List;
 
@@ -29,6 +30,19 @@ public interface IMenuDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public Menu loadMenuByID(Integer menuID) throws EMFUserError;
+	
+	/**
+	 * Loads all detail information for a menu identified by its <code>menuID</code>. All these information,
+	 * archived by a query to the DB, are stored into an <code>menu</code> object, which is
+	 * returned.
+	 * 
+	 * @param menuID The id for the menu to load
+	 * 
+	 * @return An <code>sbiMenu</code> object containing all loaded information
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public SbiMenu loadSbiMenuByID(Integer menuID) throws EMFUserError;
 	
 	/**
 	 * Loads all detail information for a menu identified by its <code>menuID</code>. All these information,

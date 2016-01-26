@@ -40,6 +40,9 @@
 <!-- document tree -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
 
+<!-- component tree -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/component-tree/componentTree.js"></script>
+
 <!-- file upload -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js"></script>
 
