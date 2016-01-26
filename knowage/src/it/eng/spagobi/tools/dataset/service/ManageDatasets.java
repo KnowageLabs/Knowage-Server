@@ -1478,7 +1478,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				JSONObject obj = (JSONObject) parsListJSON.get(i);
 				String name = obj.getString("name");
 				String type = obj.getString("type");
-				String defaultValue = obj.getString(DEFAULT_VALUE_PARAM);
+				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 
 				SourceBean b = new SourceBean("ROW");
 				b.setAttribute("NAME", name);
