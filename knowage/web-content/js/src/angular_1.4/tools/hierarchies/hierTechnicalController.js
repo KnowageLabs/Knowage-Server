@@ -257,7 +257,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	 $scope.editNode = function(item,parent,forceEditable){
 		 var parentEl = angular.element(document.body);
 		 var dimName = $scope.dimSrc  !== undefined ? $scope.dimSrc.DIMENSION_NM : '';
-		 var metTmp =  $scope.metadataMap[dimName];
+		 var metTmp =  angular.copy($scope.metadataMap[dimName]);
 		 if (metTmp === undefined){
 			 $scope.showAlert($scope.translate.load("sbi.generic.error"),'No metadata found for dimension '+ dimName );
 		 }

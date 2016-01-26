@@ -503,7 +503,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.editNode = function(item, parent,forceEditable) {
 		var parentEl = angular.element(document.body);
 		var dimName = $scope.dim !== undefined ? $scope.dim.DIMENSION_NM : '';
-		var metTmp = $scope.metadataTreeMap[dimName];
+		var metTmp = angular.copy($scope.metadataTreeMap[dimName]);
 		if (metTmp === undefined) {
 			$scope.showAlert($scope.translate.load("sbi.generic.error"), 'No metadata found for dimension '+ dimName);
 			return null;
