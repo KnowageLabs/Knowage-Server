@@ -277,8 +277,6 @@ public class HierarchyService {
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			// String hierarchyName = requestVal.getString("name");
-			// String hierarchyType = requestVal.getString("type");
 			String validityDate = (!requestVal.isNull("dateValidity")) ? requestVal.getString("dateValidity") : null;
 			boolean doBackup = (!requestVal.isNull("doBackup")) ? requestVal.getBoolean("doBackup") : new Boolean("false");
 			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
@@ -317,8 +315,6 @@ public class HierarchyService {
 			}
 
 			for (List<HierarchyTreeNodeData> path : paths) {
-				// persistCustomHierarchyPath(connection, hierarchyCode, hierarchyName, hierarchyDescription, hierarchyTable, hierarchyType, dataSource,
-				// hierarchyPrefix, hierarchyFK, path, isInsert, hierarchyFields, hierConfig);
 				persistCustomHierarchyPath(connection, hierarchyTable, dataSource, hierarchyPrefix, hierarchyFK, path, isInsert, hierarchyFields, hierConfig);
 			}
 			connection.commit();
@@ -1233,6 +1229,8 @@ public class HierarchyService {
 			List<HierarchyTreeNodeData> path, boolean isInsert, Hierarchy hierarchyFields, HashMap hierConfig) throws SQLException {
 
 		HashMap values = new HashMap();
+		String columns = "";
+		HierarchyTreeNodeData node = null;
 		try {
 			// 1 - get fields structure
 			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
@@ -1308,7 +1306,7 @@ public class HierarchyService {
 				}
 			}
 
-			String columns = sbColumns.toString();
+			columns = sbColumns.toString();
 
 			String insertQuery = "insert into " + hierarchyTable + "(" + columns + ") values (";
 			for (int c = 0, lc = totalColumns; c < lc; c++) {
@@ -1327,9 +1325,11 @@ public class HierarchyService {
 			// explore the path and set the corresponding columns
 			// keeps the column number
 			for (int i = 0; i < path.size(); i++) {
-				HierarchyTreeNodeData node = path.get(i);
-
-				if (node.getLeafId() != null && !node.getLeafId().equals("")) {
+				values = new HashMap();
+				node = path.get(i);
+				boolean isLeaf = ((Boolean) node.getAttributes().get("isLeaf")).booleanValue();
+				// if (node.getLeafId() != null && !node.getLeafId().equals("")) {
+				if (isLeaf) {
 					// it's a leaf
 					preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF), node.getNodeCode());
 					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF, node.getNodeCode());
@@ -1344,6 +1344,10 @@ public class HierarchyService {
 						preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + node.getDepth()),
 								node.getNodeName());
 						values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeName());
+					} else if (!node.getNodeCode().equals(HierarchyConstants.ROOT)) {
+						logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
+						throw new SpagoBIServiceException("persistService", "Property LEVEL non found for leaf element with code " + node.getNodeCode()
+								+ " and name " + node.getNodeName());
 					}
 					preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF), node.getNodeName());
 					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF, node.getNodeName());
@@ -1381,6 +1385,11 @@ public class HierarchyService {
 					Iterator iter = node.getAttributes().keySet().iterator();
 					String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
 					level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+					if (level == 0 && !node.getNodeCode().equals(HierarchyConstants.ROOT)) {
+						logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+						throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
+								+ " and name " + node.getNodeName());
+					}
 					while (iter.hasNext()) {
 						String key = (String) iter.next();
 						Object value = node.getAttributes().get(key);
@@ -1396,7 +1405,7 @@ public class HierarchyService {
 					}
 					if (level > 0) {
 						preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV + level), node.getNodeCode());
-						values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeName());
+						values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeCode());
 						preparedStatement.setString(getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + level), node.getNodeName());
 						values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV, node.getNodeName());
 					}
@@ -1409,16 +1418,19 @@ public class HierarchyService {
 			preparedStatement.close();
 
 		} catch (Throwable t) {
-			// logger.error("Error while inserting record: ");
-			String errMsg = "Error while inserting record: ";
-			Iterator iter = values.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = (String) iter.next();
-				Object value = values.get(key);
-				// logger.error(" key: " + key + " - value: " + value + ",");
-				errMsg += " key: " + key + " - value: " + value + ",";
+			String errMsg = "Error while inserting node with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
+			if (values.size() > 0) {
+				errMsg += " with next values: [";
+				Iterator iter = values.keySet().iterator();
+				while (iter.hasNext()) {
+					String key = (String) iter.next();
+					Object value = values.get(key);
+					errMsg += " key: " + key + " - value: " + value + ((iter.hasNext()) ? "," : "]");
+					// errMsg += "insert into " + hierarchyTable + "(" + columns + ") values (";
+					// errMsg += value + ((iter.hasNext()) ? "," : ")");
+				}
+				logger.error(errMsg, t);
 			}
-			logger.error(errMsg, t);
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage() + " - " + errMsg);
 		}
 	}
@@ -1449,11 +1461,10 @@ public class HierarchyService {
 		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<List<HierarchyTreeNodeData>>();
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			String hierarchyPrefix = hierarchies.getPrefix(dimension);
 
 			String nodeName = node.getString(HierarchyConstants.TREE_NAME);
 			String nodeCode = node.getString(HierarchyConstants.ID);
-
-			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID) : "0";
 
 			HashMap mapAttrs = new HashMap();
 			if (!node.isNull(HierarchyConstants.LEVEL)) {
@@ -1486,13 +1497,23 @@ public class HierarchyService {
 					mapAttrs.put(idFld, node.getString(idFld));
 				}
 			}
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "", mapAttrs);
-
 			// current node is a leaf?
 			boolean isLeaf = node.getBoolean("leaf");
+			mapAttrs.put("isLeaf", isLeaf);
+
+			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID) : "";
+			if (nodeLeafId.equals("")) {
+				nodeLeafId = (mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) != null) ? (String) mapAttrs.get(hierarchyPrefix + "_"
+						+ HierarchyConstants.LEAF_ID) : "";
+			}
+			if (nodeLeafId.equals("") && !node.isNull(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID)) {
+				nodeLeafId = node.getString(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID); // dimension id (ie: ACCOUNT_ID)
+			}
+			// create node
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "", mapAttrs);
+
 			if (isLeaf) {
 				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
-				String hierarchyPrefix = hierarchies.getPrefix(dimension);
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF))
 					nodeData.setNodeCode(node.getString(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF));
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF))
