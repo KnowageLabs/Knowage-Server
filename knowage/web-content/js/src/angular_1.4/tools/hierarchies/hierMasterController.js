@@ -72,6 +72,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			if (source.$parent.children.length == 1){
 				source.$parent.children.push(angular.copy($scope.fakeNode));
 			}
+			if (source.leaf == true){
+				source.LEAF_PARENT_NM = dest[dest.aliasName];
+				source.LEAF_PARENT_CD = dest[dest.aliasId];
+				source.LEAF_ORIG_PARENT_CD = dest[dest.aliasId];
+			}
 			var level = dest.LEVEL && dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
 			$scope.updateLevelRecursive(source, level);
 			source.$parent = dest;
@@ -102,6 +107,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							source.id = source[keyId];
 							source.LEAF_PARENT_NM = dest[dest.aliasName];
 							source.LEAF_PARENT_CD = dest[dest.aliasId];
+							source.LEAF_ORIG_PARENT_CD = dest[dest.aliasId];
 							source.LEVEL = dest.LEVEL !== undefined ? dest.LEVEL + 1 : 1;
 							var tmp = angular.copy($scope.createEmptyNode('leaf'));
 							tmp.$parent = dest;
@@ -407,7 +413,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					tmpItem.name = tmpItem[keyName];
 					tmpItem.id = tmpItem[keyId];
 					tmpItem.$parent = item;
-					tmpItem.LEVEL = tmpItem.$parent.LEVEL + 1;
+					tmpItem.LEVEL = item.LEVEL && item.LEVEL>=0 ? item.LEVEL + 1 : 1;
 					if (item.children.length == 1 && item.children[0].fake == true) {
 						item.children = [ tmpItem ];
 					} else {
