@@ -3,8 +3,13 @@ var app = angular.module('hierManager', ['ngMaterial','angular_list','angular_ta
 app.config(function($mdDateLocaleProvider) {
 	 $mdDateLocaleProvider.parseDate = function(date) {
 		 if (typeof date == "string"){
-			 var tmp = date.split('/');
-			 return new Date(tmp[2],tmp[1],tmp[0]);
+			 var re = /(\d{1,2})\/(\d{1,2})\/(\d{4})/; //RegExp for a date
+			 var result= date.match(re);
+			 if (result && result.length == 4){
+				 return new Date(result[3],result[2]-1,result[1]); //Date has month starting from 0, so result[2]-1 is the correct month
+			 }else{
+				 return null;
+			 }
 		 }else{
 		    return date;
 		 }

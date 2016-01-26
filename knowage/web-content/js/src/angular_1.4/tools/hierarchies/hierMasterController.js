@@ -89,15 +89,18 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			if (sourceNodeScope.$treeScope.cloneEnabled == false) {
 				sourceNodeScope.$treeScope.cloneEnabled = true;
 			}
+			
 			return true;
 		},
 		beforeDrop : function(e) {
 			var dest = e.dest.nodesScope.$nodeScope;
-			if (dest && dest.$modelValue
-					&& dest.$modelValue.children !== undefined) {
+			if (dest && dest.$modelValue && dest.$modelValue.children !== undefined) {
 				$scope.showListHierarchies()
 					.then(
 						function(data) {
+							if (!angular.equals(e.source.cloneModel,e.source.nodeScope.row)){
+								e.source.cloneModel = angular.copy(e.source.nodeScope.row);
+							}
 							var source = e.source.cloneModel;
 							var dest = e.dest.nodesScope.$nodeScope.$modelValue;
 							var dimName = $scope.dim.DIMENSION_NM;
