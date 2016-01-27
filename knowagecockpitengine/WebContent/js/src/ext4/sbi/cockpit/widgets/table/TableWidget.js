@@ -1107,12 +1107,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					: 'transparent';
 			
 			var alternateRowsFirst = clsClassCSS + ' .x-grid-row .x-grid-cell {' 
-					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
-							'background-color: ' + alternateRowsColorsFirst + ';' :
-								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
-										'background-color: #' + this.wconf.rowsBgColor + ';' :
-										'background-color: transparent;')
-				+'}';
+				+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
+						'background-color: ' + alternateRowsColorsFirst + ';' :
+							this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+									'background-color: #' + this.wconf.rowsBgColor + ';' :
+									'background-color: transparent;')
+			+'}';
 			
 			var alternateRowsSecondClassId = this.id + clsClass + 'Second';
 			var alternateRowsColorsSecond = 
@@ -1120,13 +1120,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 						'#' + this.wconf.alternateRowsColorsSecond
 						: 'transparent';
 			var alternateRowsSecond = clsClassCSS + ' .x-grid-row-alt .x-grid-cell {' 
-					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
-							'background-color: ' + alternateRowsColorsSecond + ';' :
-								
-							this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
-									'background-color: #' + this.wconf.rowsBgColor + ';' :
-									'background-color: transparent;')
-				+'}';
+				+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
+						'background-color: ' + alternateRowsColorsSecond + ';' :
+							
+						this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+								'background-color: #' + this.wconf.rowsBgColor + ';' :
+								'background-color: transparent;')
+			+'}';
 			
 			Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
 			Ext.util.CSS.createStyleSheet(alternateRowsFirst, alternateRowsFirstClassId);
@@ -1263,26 +1263,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
 		    }
 		    
-		    // setting header background color
-		    if(this.wconf.headerBgColor && this.wconf.headerBgColor != null && this.wconf.headerBgColor != ''){
-		    	var headerBgStyle = '#' + this.grid.id + ' .x-column-header .x-column-header-inner { ';
-		    	headerBgStyle += ' background-color: #' + this.wconf.headerBgColor;	
-		    	headerBgStyle += ' }';	
-		    	
-		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
-		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
-		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
-		    	} else {
-		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
-		    	}
-		    } else {
-		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
-		    }
-		    
 		    // setting table background color
-		    if(this.wconf.tableBgColor && this.wconf.tableBgColor != null && this.wconf.tableBgColor != ''){
+		    var tableBgColor = this.wconf.tableBgColor;
+		    if(tableBgColor && tableBgColor != null && tableBgColor != ''){
 		    	var tableBgStyle = '#' + this.grid.id + ' .x-grid-body { ';
-		    	tableBgStyle += ' background-color: #' + this.wconf.tableBgColor;	
+		    	tableBgStyle += ' background-color: #' + tableBgColor;	
 		    	tableBgStyle += ' }';	
 		    	
 		    	if(Ext.util.CSS.getRule(tableBgStyle) !== undefined || Ext.util.CSS.getRule(tableBgStyle) !== null){
@@ -1293,6 +1278,26 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		    	}
 		    } else {
 		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_tBgStyle');
+		    }
+		    
+		    // setting header background color
+		    var headerBgColor = (tableBgColor && tableBgColor != null && tableBgColor != '')? tableBgColor : null;
+		    if(this.wconf.headerBgColor && this.wconf.headerBgColor != null && this.wconf.headerBgColor != ''){ 
+		    	headerBgColor = this.wconf.headerBgColor;
+		    }
+		    if(headerBgColor != null){
+		    	var headerBgStyle = '#' + this.grid.id + ' .x-column-header .x-column-header-inner { ';
+		    	headerBgStyle += ' background-color: #' + headerBgColor;	
+		    	headerBgStyle += ' }';	
+		    	
+		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
+		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	} else {
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	}
+		    } else {
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
 		    }
 		    
 	    }
