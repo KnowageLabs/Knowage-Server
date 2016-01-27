@@ -110,15 +110,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			}
 		}
 	}
-	
-	$scope.toogleSeeFilter= function(choose){
-		if (choose == 'src'){
-			$scope.seeFilterSrc = !$scope.seeFilterSrc;
-		}else{
-			$scope.seeFilterTarget = !$scope.seeFilterTarget;
-		}
-	}
-	
+
 	$scope.indexOf = function(myArray, myElement, key) {
 		if (myArray ===undefined || myElement === undefined) return -1;
 		for (var i = 0; i < myArray.length; i++) {
@@ -560,7 +552,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			$scope.orderBySrcTrigger = "";
 			$scope.orderBySrc = "";
 			//get tree without filters if they were active
-			if (($scope.seeHideLeafSrc !== undefined &&  $scope.seeHideLeafSrc != false) || ($scope.dateFilterSrc !== undefined && $scope.dateFilterSrc.length>0)){
+			if (($scope.seeHideLeafSrc !== undefined &&  $scope.seeHideLeafSrc != false) || ($scope.dateFilterSrc !== undefined && $scope.dateFilterSrc.toString().length>0)){
 				$scope.getTree('src');
 			}
 			$scope.dateFilterSrc = undefined;
@@ -571,13 +563,22 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			$scope.orderByTargetTrigger = "";
 			$scope.orderByTarget = "";
 			//get tree without filters if they were active
-			if (($scope.seeHideLeafTarget !== undefined &&  $scope.seeHideLeafTarget != false) || ($scope.dateFilterTarget !== undefined && $scope.dateFilterTarget.length>0)){
+			if (($scope.seeHideLeafTarget !== undefined &&  $scope.seeHideLeafTarget != false) || ($scope.dateFilterTarget !== undefined && $scope.dateFilterTarget.toString().length>0)){
 				$scope.getTree('target');
 			}
 			$scope.dateFilterTarget = undefined;
 			$scope.seeHideLeafTarget = false;
 		}
+		$scope.toogleSeeFilter(choose);
 		$scope.hasFilterElementOrDate[choose] = false;
+	}
+	
+	$scope.toogleSeeFilter= function(choose){
+		if (choose == 'src'){
+			$scope.seeFilterSrc = !$scope.seeFilterSrc;
+		}else{
+			$scope.seeFilterTarget = !$scope.seeFilterTarget;
+		}
 	}
 	
 	$scope.showConfirm = function(hier) {

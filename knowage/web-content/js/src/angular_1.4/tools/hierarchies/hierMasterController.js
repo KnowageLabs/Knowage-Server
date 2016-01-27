@@ -172,9 +172,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 		});
 	/* When selected a dimension, get the JSON to create the table */
-	$scope.getDimensionsTable = function(filterDate, filterHierarchy, removeFilter) {
+	$scope.getDimensionsTable = function(filterDate, filterHierarchy, removeFilter, resetTree) {
 		if ($scope.dateDim && $scope.dim) {
-			var hasFilter = false;
 			var hier = $scope.hierMaster;
 			var dateFormatted = $scope.formatDate($scope.dateDim);
 			var config = {};
@@ -182,27 +181,26 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				dimension : $scope.dim.DIMENSION_NM,
 				validityDate : dateFormatted
 			}
-			if (filterDate !== undefined && filterDate !== null) {
+			if (filterDate !== undefined && filterDate !== null && filterDate.toString().length > 0) {
 				config.params.filterDate = $scope.formatDate(filterDate);
-				hasFilter = true;
 			}
-			if (hier && filterHierarchy !== undefined
-					&& filterHierarchy !== null) {
+			if (hier && (filterHierarchy=="true" || filterHierarchy==true)) {
 				config.params.filterHierType = $scope.hierType.toUpperCase();
 				config.params.filterHierarchy = hier.HIER_NM;
-				hasFilter = true;
 			}
 			$scope.restService.get("dimensions", "dimensionData", null, config)
 					.success(function(data, status, headers, config) {
 						if (data.error == undefined) {
 							$scope.createTable(data);
-							if (!hasFilter && !removeFilter) {
+							if (removeFilter == true) {
+								$scope.seeHideLeafDim = false;
+								$scope.dateFilterDim = undefined;
+								$scope.toggleSeeFilter('dim');
+							}
+							if (resetTree){
 								$scope.hierType = undefined;
 								$scope.hierarchiesMaster = [];
 								$scope.hierTree = [];
-							} else if (removeFilter == true) {
-								$scope.seeHideLeafDim = false;
-								$scope.dateFilterDim = undefined;
 							}
 						} else {
 							$scope.showAlert($scope.translate.load("sbi.generic.error"), data.error[0].message);
@@ -467,8 +465,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	 */
 	$scope.duplicateLeaf = function(item, parent, event) {
 		var newItem = angular.copy(item);
-		if ($scope.dim && $scope.dim.DIMENSION_NM
-				&& $scope.dim.DIMENSION_NM.length > 0) {
+		if ($scope.dim && $scope.dim.DIMENSION_NM && $scope.dim.DIMENSION_NM.length > 0) {
 			var idx = $scope.indexOf(parent.children, item, 'id');
 			var allowDuplicate = $scope.metadataTreeMap[$scope.dim.DIMENSION_NM].CONFIGS.ALLOW_DUPLICATE;
 			if (allowDuplicate == false || allowDuplicate == "false") {
@@ -804,12 +801,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		$scope.orderByTreeTrigger = "";
 		$scope.orderByTree = "";
 		// get tree without filters if they were active
-		if (($scope.seeHideLeafTree !== undefined && $scope.seeHideLeafTree != false) || ($scope.dateFilterTree !== undefined && $scope.dateFilterTree.length > 0)) {
+		if (($scope.seeHideLeafTree !== undefined && $scope.seeHideLeafTree != false) || ($scope.dateFilterTree !== undefined && $scope.dateFilterTree.toString().length > 0)) {
 			$scope.getTree();
 		}
 		$scope.dateFilterTree = undefined;
 		$scope.seeHideLeafTree = false;
 		$scope.hasFilterElementOrDate = false;
+		$scope.toggleSeeFilter(choose);
 	}
 	// toggle the filters visibility when clicked the filter icon
 	$scope.toggleSeeFilter = function(choose) {

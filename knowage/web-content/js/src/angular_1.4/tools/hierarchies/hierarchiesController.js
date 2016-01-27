@@ -4,6 +4,7 @@ app.config(function($mdDateLocaleProvider) {
 	 $mdDateLocaleProvider.parseDate = function(date) {
 		 if (typeof date == "string"){
 			 var re = /(\d{1,2})\/(\d{1,2})\/(\d{4})/; //RegExp for a date
+			 var re2=/^(((((0?[1-9]|[12][0-9]|30|31)\/(0?[13579]|10|12))|((0?[1-9]|[12][0-9]|30)\/(0?[469]|11))|((0?[1-9]|1[0-9]|2[0-8])\/(0?2)))\/((\d{2})?([0-9][13579]|[02468][26]|[13579][048])))|((((0?[1-9]|[12][0-9]|30|31)\/(0?[13579]|10|12))|((0?[1-9]|[12][0-9]|30)\/(0?[469]|11))|((0?[1-9]|1[0-9]|2[0-9])\/(0?2)))\/((\d{2})?([02468][048]|[13579][26]))))$/;
 			 var result = date.match(re);
 			 var dateCorrect = false;
 			 if (result && result.length == 4){
