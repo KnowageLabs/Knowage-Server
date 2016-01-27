@@ -373,24 +373,34 @@ public class HierarchyUtils {
 
 		List<Field> result = new ArrayList<Field>();
 
-		// first we take real fields from generic fields...
-		for (int i = 0; i < genFields.size(); i++) {
+		// // first we take real fields from generic fields...
+		// for (int i = 0; i < genFields.size(); i++) {
+		//
+		// Field tmpField = genFields.get(i);
+		//
+		// for (int j = 0; j < bkpGenFields.length; j++) {
+		//
+		// if (tmpField.getId().equals(bkpGenFields[j])) {
+		// result.add(tmpField);
+		// break;
+		// }
+		//
+		// }
+		//
+		// }
+		// // ...then we build a field for the others backup info
+		// Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
+		// result.add(bkpField);
 
-			Field tmpField = genFields.get(i);
-
-			for (int j = 0; j < bkpGenFields.length; j++) {
-
-				if (tmpField.getId().equals(bkpGenFields[j])) {
-					result.add(tmpField);
-					break;
-				}
-
-			}
-
-		}
-
+		// Create fixed fields (code, name, description and timestamp where only name and description are editable)
+		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false);
+		result.add(bkpField);
+		bkpField = new Field(HierarchyConstants.HIER_NM, "Name", "String", null, true, true, false, true, false);
+		result.add(bkpField);
+		bkpField = new Field(HierarchyConstants.HIER_DS, "Description", "String", null, true, true, false, true, false);
+		result.add(bkpField);
 		// ...then we build a field for the others backup info
-		Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
+		bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
 		result.add(bkpField);
 
 		logger.debug("END");
