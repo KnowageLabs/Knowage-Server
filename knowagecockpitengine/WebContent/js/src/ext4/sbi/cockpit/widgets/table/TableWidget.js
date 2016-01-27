@@ -1101,20 +1101,31 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			
 			
 			var alternateRowsFirstClassId = this.id + clsClass + 'First';
+			var alternateRowsColorsFirst = 
+				(this.wconf.alternateRowsColorsFirst && this.wconf.alternateRowsColorsFirst.trim() != '')?
+					'#' + this.wconf.alternateRowsColorsFirst
+					: 'transparent';
+			
 			var alternateRowsFirst = clsClassCSS + ' .x-grid-row .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
-							'background-color: #'+ this.wconf.alternateRowsColorsFirst + ';' :
+							'background-color: ' + alternateRowsColorsFirst + ';' :
 								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
-										'background-color: #'+ this.wconf.rowsBgColor + ';' :
+										'background-color: #' + this.wconf.rowsBgColor + ';' :
 										'background-color: transparent;')
 				+'}';
+			
 			var alternateRowsSecondClassId = this.id + clsClass + 'Second';
+			var alternateRowsColorsSecond = 
+				(this.wconf.alternateRowsColorsSecond && this.wconf.alternateRowsColorsSecond.trim() != '')?
+						'#' + this.wconf.alternateRowsColorsSecond
+						: 'transparent';
 			var alternateRowsSecond = clsClassCSS + ' .x-grid-row-alt .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
-							'background-color: #'+ this.wconf.alternateRowsColorsSecond + ';' :
-								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
-										'background-color: #'+ this.wconf.rowsBgColor + ';' :
-										'background-color: transparent;')
+							'background-color: ' + alternateRowsColorsSecond + ';' :
+								
+							this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+									'background-color: #' + this.wconf.rowsBgColor + ';' :
+									'background-color: transparent;')
 				+'}';
 			
 			Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
