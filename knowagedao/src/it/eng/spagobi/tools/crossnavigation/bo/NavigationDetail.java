@@ -8,7 +8,7 @@ public class NavigationDetail {
 	private SimpleNavigation simpleNavigation;
 	private List<SimpleParameter> fromPars = new ArrayList<>();
 	private List<SimpleParameter> toPars = new ArrayList<>();
-	private boolean isNewRecord;
+	private boolean newRecord;
 
 	/**
 	 * @return the fromPars
@@ -44,15 +44,15 @@ public class NavigationDetail {
 	 * @return the isNewRecord
 	 */
 	public boolean isNewRecord() {
-		return isNewRecord;
+		return newRecord;
 	}
 
 	/**
 	 * @param isNewRecord
 	 *            the isNewRecord to set
 	 */
-	public void setNewRecord(boolean isNewRecord) {
-		this.isNewRecord = isNewRecord;
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
 	}
 
 	/**

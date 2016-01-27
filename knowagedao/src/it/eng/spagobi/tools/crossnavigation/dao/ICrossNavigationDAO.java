@@ -12,6 +12,10 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 
 	public NavigationDetail loadNavigation(Integer id);
 
-	public void save(NavigationDetail nd);
+	public void update(NavigationDetail nd);
+
+	public void insert(NavigationDetail nd);
+
+	public void delete(Integer id);
 
 }
