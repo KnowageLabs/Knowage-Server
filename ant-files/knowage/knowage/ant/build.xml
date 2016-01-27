@@ -854,7 +854,8 @@
 		<delete file="${dist}/${war_name}" />
 
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
-
+		
+		<copy file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" todir="${dist}" overwrite="true" />
 
 	</target>
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
