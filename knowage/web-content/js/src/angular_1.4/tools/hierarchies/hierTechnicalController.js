@@ -684,7 +684,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
 			root.root.$parent = undefined;
 			var jsonString = angular.toJson(root);
-			$scope.toogleLoading(choose);
+			$scope.toogleLoading('target');
 			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
 			promise
 				.success(function (data){
@@ -708,11 +708,11 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 					}else{
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 					}
-					$scope.toogleLoading(choose);
+					$scope.toogleLoading('target');
 				})
 				.error(function(data,status){
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Tree');
-					$scope.toogleLoading(choose);
+					$scope.toogleLoading('target');
 				});
 		}
 	}
