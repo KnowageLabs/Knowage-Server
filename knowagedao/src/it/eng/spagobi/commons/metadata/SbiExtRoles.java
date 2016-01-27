@@ -37,7 +37,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param extRoleId
 	 *            the ext role id
 	 */
@@ -49,7 +49,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the ext role id.
-	 * 
+	 *
 	 * @return the ext role id
 	 */
 	public Integer getExtRoleId() {
@@ -58,7 +58,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the ext role id.
-	 * 
+	 *
 	 * @param extRoleId
 	 *            the new ext role id
 	 */
@@ -68,7 +68,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the role type.
-	 * 
+	 *
 	 * @return the role type
 	 */
 	public SbiDomains getRoleType() {
@@ -77,7 +77,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the role type.
-	 * 
+	 *
 	 * @param sbiDomains
 	 *            the new role type
 	 */
@@ -87,7 +87,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the role type code.
-	 * 
+	 *
 	 * @return the role type code
 	 */
 	public String getRoleTypeCode() {
@@ -96,7 +96,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the role type code.
-	 * 
+	 *
 	 * @param roleTypeCd
 	 *            the new role type code
 	 */
@@ -106,7 +106,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the code.
-	 * 
+	 *
 	 * @return the code
 	 */
 	public String getCode() {
@@ -115,7 +115,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the code.
-	 * 
+	 *
 	 * @param code
 	 *            the new code
 	 */
@@ -125,7 +125,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -134,7 +134,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the name.
-	 * 
+	 *
 	 * @param name
 	 *            the new name
 	 */
@@ -144,7 +144,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the descr.
-	 * 
+	 *
 	 * @return the descr
 	 */
 	public String getDescr() {
@@ -153,7 +153,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the descr.
-	 * 
+	 *
 	 * @param descr
 	 *            the new descr
 	 */
@@ -163,7 +163,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi func roles.
-	 * 
+	 *
 	 * @return the sbi func roles
 	 */
 	public Set getSbiFuncRoles() {
@@ -172,7 +172,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi func roles.
-	 * 
+	 *
 	 * @param sbiFuncRoles
 	 *            the new sbi func roles
 	 */
@@ -182,7 +182,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi paruse dets.
-	 * 
+	 *
 	 * @return the sbi paruse dets
 	 */
 	public Set getSbiParuseDets() {
@@ -191,7 +191,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi paruse dets.
-	 * 
+	 *
 	 * @param sbiParuseDets
 	 *            the new sbi paruse dets
 	 */
@@ -220,41 +220,6 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	public void setSbiAuthorizationsRoleses(Set sbiAuthorizationsRoleses) {
 		this.sbiAuthorizationsRoleses = sbiAuthorizationsRoleses;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SbiExtRoles other = (SbiExtRoles) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
 	}
 
 }

@@ -44,7 +44,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param parId
 	 *            the par id
 	 */
@@ -56,7 +56,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the par id.
-	 * 
+	 *
 	 * @return the par id
 	 */
 	public Integer getParId() {
@@ -65,7 +65,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the par id.
-	 * 
+	 *
 	 * @param parId
 	 *            the new par id
 	 */
@@ -75,7 +75,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the parameter type.
-	 * 
+	 *
 	 * @return the parameter type
 	 */
 	public SbiDomains getParameterType() {
@@ -84,7 +84,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the parameter type.
-	 * 
+	 *
 	 * @param sbiDomains
 	 *            the new parameter type
 	 */
@@ -94,7 +94,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the length.
-	 * 
+	 *
 	 * @return the length
 	 */
 	public Short getLength() {
@@ -103,7 +103,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the length.
-	 * 
+	 *
 	 * @param length
 	 *            the new length
 	 */
@@ -113,7 +113,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the parameter type code.
-	 * 
+	 *
 	 * @return the parameter type code
 	 */
 	public String getParameterTypeCode() {
@@ -122,7 +122,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the parameter type code.
-	 * 
+	 *
 	 * @param parTypeCd
 	 *            the new parameter type code
 	 */
@@ -132,7 +132,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the label.
-	 * 
+	 *
 	 * @return the label
 	 */
 	public String getLabel() {
@@ -141,7 +141,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the label.
-	 * 
+	 *
 	 * @param label
 	 *            the new label
 	 */
@@ -151,7 +151,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the mask.
-	 * 
+	 *
 	 * @return the mask
 	 */
 	public String getMask() {
@@ -160,7 +160,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the mask.
-	 * 
+	 *
 	 * @param mask
 	 *            the new mask
 	 */
@@ -170,7 +170,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the descr.
-	 * 
+	 *
 	 * @return the descr
 	 */
 	public String getDescr() {
@@ -179,7 +179,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the descr.
-	 * 
+	 *
 	 * @param descr
 	 *            the new descr
 	 */
@@ -189,7 +189,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi paruses.
-	 * 
+	 *
 	 * @return the sbi paruses
 	 */
 	public Set getSbiParuses() {
@@ -198,7 +198,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi paruses.
-	 * 
+	 *
 	 * @param sbiParuses
 	 *            the new sbi paruses
 	 */
@@ -208,7 +208,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi obj pars.
-	 * 
+	 *
 	 * @return the sbi obj pars
 	 */
 	public Set getSbiObjPars() {
@@ -217,7 +217,7 @@ public class SbiParameters extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi obj pars.
-	 * 
+	 *
 	 * @param sbiObjPars
 	 *            the new sbi obj pars
 	 */
@@ -326,41 +326,6 @@ public class SbiParameters extends SbiHibernateModel {
 	 */
 	public void setSelectedLayer(String selectedLayer) {
 		this.selectedLayer = selectedLayer;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((parId == null) ? 0 : parId.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SbiParameters other = (SbiParameters) obj;
-		if (parId == null) {
-			if (other.parId != null)
-				return false;
-		} else if (!parId.equals(other.parId))
-			return false;
-		return true;
 	}
 
 }

@@ -40,7 +40,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param functId
 	 *            the funct id
 	 */
@@ -52,7 +52,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the funct id.
-	 * 
+	 *
 	 * @return the funct id
 	 */
 	public Integer getFunctId() {
@@ -61,7 +61,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the funct id.
-	 * 
+	 *
 	 * @param functId
 	 *            the new funct id
 	 */
@@ -71,7 +71,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the funct type cd.
-	 * 
+	 *
 	 * @return the funct type cd
 	 */
 	public String getFunctTypeCd() {
@@ -80,7 +80,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the funct type cd.
-	 * 
+	 *
 	 * @param functTypeCd
 	 *            the new funct type cd
 	 */
@@ -90,7 +90,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the code.
-	 * 
+	 *
 	 * @return the code
 	 */
 	public String getCode() {
@@ -99,7 +99,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the code.
-	 * 
+	 *
 	 * @param code
 	 *            the new code
 	 */
@@ -109,7 +109,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -118,7 +118,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the name.
-	 * 
+	 *
 	 * @param name
 	 *            the new name
 	 */
@@ -128,7 +128,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the descr.
-	 * 
+	 *
 	 * @return the descr
 	 */
 	public String getDescr() {
@@ -137,7 +137,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the descr.
-	 * 
+	 *
 	 * @param descr
 	 *            the new descr
 	 */
@@ -147,7 +147,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the path.
-	 * 
+	 *
 	 * @return the path
 	 */
 	public String getPath() {
@@ -156,7 +156,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the path.
-	 * 
+	 *
 	 * @param path
 	 *            the new path
 	 */
@@ -166,7 +166,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi obj funcs.
-	 * 
+	 *
 	 * @return the sbi obj funcs
 	 */
 	public Set getSbiObjFuncs() {
@@ -175,7 +175,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi obj funcs.
-	 * 
+	 *
 	 * @param sbiObjFuncs
 	 *            the new sbi obj funcs
 	 */
@@ -185,7 +185,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi func roles.
-	 * 
+	 *
 	 * @return the sbi func roles
 	 */
 	public Set getSbiFuncRoles() {
@@ -194,7 +194,7 @@ public class SbiFunctions extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi func roles.
-	 * 
+	 *
 	 * @param sbiFuncRoles
 	 *            the new sbi func roles
 	 */
@@ -257,41 +257,6 @@ public class SbiFunctions extends SbiHibernateModel {
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SbiFunctions other = (SbiFunctions) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
 	}
 
 }

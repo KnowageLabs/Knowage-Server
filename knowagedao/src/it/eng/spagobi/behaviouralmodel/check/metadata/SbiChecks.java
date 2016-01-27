@@ -35,7 +35,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
+	 *
 	 * @param checkId
 	 *            the check id
 	 */
@@ -47,7 +47,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the check id.
-	 * 
+	 *
 	 * @return the check id
 	 */
 	public Integer getCheckId() {
@@ -56,7 +56,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the check id.
-	 * 
+	 *
 	 * @param checkId
 	 *            the new check id
 	 */
@@ -66,7 +66,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the check type.
-	 * 
+	 *
 	 * @return the check type
 	 */
 	public SbiDomains getCheckType() {
@@ -75,7 +75,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the check type.
-	 * 
+	 *
 	 * @param sbiDomains
 	 *            the new check type
 	 */
@@ -85,7 +85,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the value type cd.
-	 * 
+	 *
 	 * @return the value type cd
 	 */
 	public String getValueTypeCd() {
@@ -94,7 +94,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the value type cd.
-	 * 
+	 *
 	 * @param valueTypeCd
 	 *            the new value type cd
 	 */
@@ -104,7 +104,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the value1.
-	 * 
+	 *
 	 * @return the value1
 	 */
 	public String getValue1() {
@@ -113,7 +113,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the value1.
-	 * 
+	 *
 	 * @param value1
 	 *            the new value1
 	 */
@@ -123,7 +123,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the value2.
-	 * 
+	 *
 	 * @return the value2
 	 */
 	public String getValue2() {
@@ -132,7 +132,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the value2.
-	 * 
+	 *
 	 * @param value2
 	 *            the new value2
 	 */
@@ -142,7 +142,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the label.
-	 * 
+	 *
 	 * @return the label
 	 */
 	public String getLabel() {
@@ -151,7 +151,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the label.
-	 * 
+	 *
 	 * @param label
 	 *            the new label
 	 */
@@ -161,7 +161,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Gets the descr.
-	 * 
+	 *
 	 * @return the descr
 	 */
 	public String getDescr() {
@@ -170,7 +170,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/**
 	 * Sets the descr.
-	 * 
+	 *
 	 * @param descr
 	 *            the new descr
 	 */
@@ -195,41 +195,6 @@ public class SbiChecks extends SbiHibernateModel {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((checkId == null) ? 0 : checkId.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SbiChecks other = (SbiChecks) obj;
-		if (checkId == null) {
-			if (other.checkId != null)
-				return false;
-		} else if (!checkId.equals(other.checkId))
-			return false;
-		return true;
 	}
 
 }
