@@ -1,5 +1,13 @@
 var app = angular.module('importExportDocumentModule', ['ngMaterial','sbiModule','angular_table','document_tree','file_upload','bread_crumb']);
 
+
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
+
 app.factory("importExportDocumentModule_importConf", function() {
 	return {
 		fileImport : {},
