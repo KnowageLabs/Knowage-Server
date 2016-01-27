@@ -119,12 +119,16 @@ md-dialog.md-default-theme{
 resizer {
 	background-color: white !important; 
 }
-.new-master-dialog{
+.master-dialog{
 	min-width: 50rem;
     min-height: 33rem;
     max-width: 60rem;
     max-height: 50rem;
 }
+.master-dialog.list-dialog{
+	min-width: 35rem;
+}
+
 .list-container {
 	width: 19rem;
 	height : 16rem;

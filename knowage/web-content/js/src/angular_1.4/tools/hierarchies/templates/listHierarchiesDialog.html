@@ -1,12 +1,12 @@
-<md-dialog aria-label="Mango (Fruit)" ng-cloak style="min-width:600px;min-height:300px;max-width:900px;max-height:700px;" ng-cloak> 
+<md-dialog aria-label="Mango (Fruit)" ng-cloak class="master-dialog list-dialog" ng-cloak> 
 	<md-toolbar class="miniheadhiersmall">
 		<div class="md-toolbar-tools">
 			  <h2 class="md-flex">{{translate.load('sbi.hierarchies.hierTarget');}}</h2>
 		</div>
 	</md-toolbar> 
 	<md-dialog-content>
-		<md-content layout="column" layout-fill layout-align="space-between stretch" >
-			<md-content layout-wrap layout="row" layout-align = "left center" style="width:100%;max-height:500px">
+		<md-content layout="column" layout-align="space-between stretch" >
+			<md-content layout-wrap layout="row" layout-align = "left center" class="force-100width">
 				<md-list>
 					<md-list-item class="">
 						<md-checkbox ng-model="all" ng-click="selectAll()"></md-checkbox>{{translate.load("sbi.generic.select")}} {{translate.load("sbi.generic.all")}}

@@ -229,7 +229,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 					name: backup.HIER_NM
 					};
 			var title = $scope.translate.load("sbi.generic.delete");
-		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
+		    var message =  $scope.translate.load("sbi.hierarchies.backup.delete.message");
 			var response = $scope.showConfirm(title,message);
 			response.then (function(){
 				$scope.restService.post("hierarchies","deleteHierarchy",item)
