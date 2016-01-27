@@ -14,15 +14,30 @@
 
 #set($columnCouter = 0)
 
-   
 #foreach($value in $category) 
  #set($columnsNeeded[$columnCouter] = $value.column)
  #set($columnCouter = $columnCouter + 1)
 #end
 
-#set($serie = $chart.VALUES.SERIE.name)
+## class java.util.LinkedHashMap - collection when rendering the chart
+## class java.util.ArrayList - collection when exporting the chart (preview from the Designer)
 
-#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+#*
+	According to the collection that we have for series for HEATMAP
+	(an array or a map) we will take data from SERIE tag appropriately
+	and proceed with the execution of the VM code. Since we have a 
+	single serie item for this chart type, there will be no further
+	inconsistency.
+	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#if ($chart.VALUES.SERIE.class.name == 'java.util.LinkedHashMap')
+	#set($serie = $chart.VALUES.SERIE.name)
+	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)	
+#elseif ($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($serie = $chart.VALUES.SERIE[0].name)
+	#set($groupingFunction = $chart.VALUES.SERIE[0].groupingFunction)
+#end
 
 #set($serieName = $datasettransformer.getSerieName($serie))
 

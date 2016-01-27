@@ -309,7 +309,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
   	  						 * one of these chart types.
-  	  						 * @author: danristo (danilo.ristovski@mht.net)
+  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   	  						 */
   	  						if ((data.records.length > 1 
   	  								&& (chartType == 'SUNBURST' 
@@ -323,13 +323,23 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   							} 
   	  						
   	  						/**
+  	  						 * Prevent then user from dropping more than four serie items into the 
+  	  						 * Y-axis panel, since this is the maximum number of series that we can
+  	  						 * have for the PIE chart.
+  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  	  						 */
+  	  						if (this.store.data.length+data.records.length > 4 
+	  								&& chartType == 'PIE'){
+	  							return false;
+							} 
+  	  						
+  	  						/**
   	  						 * The maximum number of series for the PIE chart is 4.
   	  						 * 
   	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   	  						 */
-							if ((enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) ||
-										((this.store.data.length+data.records.length) <= 4 && chartType == 'PIE')) {
-							
+							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) 
+							{							
 								// *_* The original code
 								if(data.view.id != this.id) {
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);

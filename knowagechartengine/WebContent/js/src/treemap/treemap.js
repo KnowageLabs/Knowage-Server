@@ -1,33 +1,108 @@
 function renderTreemap(chartConf) {
+    
+    chartConf = prepareChartConfForTreemap(chartConf);
+    
+	new Highcharts.Chart(chartConf);
+     
+	var getCrossParams= function(point){
+		var params={
+				point:{
+					name: null, // category name
+					value: null, // category  value
+					crossNavigationDocumentName:null,
+					crossNavigationDocumentParams:null,
+
+					series:{ // serie name and value
+						name:null,
+						value: null	
+					},
+					group:{ // grouping category name and value
+						name:null,
+						value: null
+					}
+				}
+		};
+
+		params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+		params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+
+		params.point.value=point.name;
+
+		params.point.series.value=point.value;
+
+
+		return params;
+	}
+}
+
+function renderHeatmap(chartConf){
+    
+    chartConfig = prepareChartConfForHeatmap(chartConf); 
+    
+    var chart = new Highcharts.Chart(chartConfig);
+    
+    var getCrossParams= function(point){
+    	var params={
+    		point:{
+    			name: null, // category name
+    	        value: null, // category  value
+    	        crossNavigationDocumentName:null,
+    	        crossNavigationDocumentParams:null,
+    		
+    		series:{ // serie name and value
+    			name:null,
+    			value: null	
+    		},
+    		group:{ // grouping category name and value
+    			name:null,
+    			value: null
+    		}
+    		}
+    	};
+    	
+    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+    	params.point.name=chartConf.additionalData.columns[0].value;
+    	params.point.value= new Date(point.x);
+    	params.point.series.name=chartConf.additionalData.serie.value;
+    	params.point.series.value=point.value;
+    	params.point.group.name=chartConf.additionalData.columns[1].value;
+    	params.point.group.value=point.label;
+        
+    	return params;
+    };	
+}
+
+function prepareChartConfForTreemap(chartConf) {
 	
 	var points = [];
-
+	
 	var counter=0;
 	
 	for (var dataset in chartConf.data[0]){
-
+		
 		level = {
 				id: "id_" + counter,
 				name: dataset,
 				color: chartConf.colors[counter]
-				
+		
 		}
 		counter++;
 		points.push(level);
 		func(chartConf.data[0][dataset],dataset, level);
-
+		
 	}
-
+	
 	function func(resultData, nameds, dataValue){
 		var counter=0;
 		for (var resultRecord in resultData){
 			
 			level = {
-
+					
 					id: dataValue.id + "_" + counter,
 					name: resultRecord,
 					parent: dataValue.id
-			
+					
 			}
 			
 			if (resultData[resultRecord].value){
@@ -41,76 +116,68 @@ function renderTreemap(chartConf) {
 				func(resultData[resultRecord], resultRecord, level);
 				
 			}
-
+			
 			counter++;
 		}
-
+		
 	}
 	
 	var chartObject = null;
-    
-    if (chartConf.chart.height==""
-    		|| chartConf.chart.width=="")
+	
+	if (chartConf.chart.height==""
+		|| chartConf.chart.width=="")
 	{
-    	chartObject = 
-    	{
-    			renderTo: 'mainPanel',    			
+		chartObject = 
+		{
+				//renderTo: 'mainPanel',    			
 //    			height: (chartConf.chart.height!=undefined || chartConf.chart.height!="") ? chartConf.chart.height : "",
 //    			width: (chartConf.chart.width!=undefined || chartConf.chart.width!="") ? chartConf.chart.width : "",
-    			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-    			style: {
-    				fontFamily: chartConf.chart.style.fontFamily,
-    				fontSize: chartConf.chart.style.fontSize,
-    				fontWeight: chartConf.chart.style.fontWeight,    				
-    				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-    				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-    				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-    			},
-    			
-    			/**
-    			 * Leave some ebough space for the "Back" button for drill up.
-    			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    			 */
-    			marginBottom: chartConf.chart.marginBottom
+				marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
+						style: {
+							fontFamily: chartConf.chart.style.fontFamily,
+							fontSize: chartConf.chart.style.fontSize,
+							fontWeight: chartConf.chart.style.fontWeight,    				
+							fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+									textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+											fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+						}
 		};
-    	
-    	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
-    		chartObject.backgroundColor = chartConf.chart.backgroundColor;
+		
+		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
+			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
-    else if (chartConf.chart.height!=""
-    		&& chartConf.chart.width!="")
+	else if (chartConf.chart.height!=""
+		&& chartConf.chart.width!="")
 	{
-    	chartObject =     	
-    	{
-			renderTo: 'mainPanel',
-			height:  Number(chartConf.chart.height),
-			width:  Number(chartConf.chart.width),
-			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-			style: {
-				fontFamily: chartConf.chart.style.fontFamily,
-				fontSize: chartConf.chart.style.fontSize,
-				fontWeight: chartConf.chart.style.fontWeight,
-				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-			},
-			
-			marginBottom: chartConf.chart.marginBottom
+		chartObject =     	
+		{
+				//renderTo: 'mainPanel',
+				height:  Number(chartConf.chart.height),
+				width:  Number(chartConf.chart.width),
+				marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
+						style: {
+							fontFamily: chartConf.chart.style.fontFamily,
+							fontSize: chartConf.chart.style.fontSize,
+							fontWeight: chartConf.chart.style.fontWeight,
+							fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+									textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+											fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+						}
 		};
-    	
-    	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
-    		chartObject.backgroundColor = chartConf.chart.backgroundColor;
+		
+		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
+			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
-     
-    /**
+	
+	/**
 	 * Take drill up button (the "Back" button) setting from the VM.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
     var drillUpButtonSettings = chartConf.series[0].drillUpButton;
-        
-	var chart = new Highcharts.Chart({
+	
+	return 	{
 		chart: chartObject,
-		series: 
+		series:
 		[
          	{
          		/**
@@ -234,41 +301,11 @@ function renderTreemap(chartConf) {
 					colorByPoint: chartConf.plotOptions.series.colorByPoint
 				}
 		}
-	});
-     
-      var getCrossParams= function(point){
-    	  var params={
-    	    		point:{
-    	    			name: null, // category name
-    	    	        value: null, // category  value
-    	    	        crossNavigationDocumentName:null,
-    	    	        crossNavigationDocumentParams:null,
-    	    		
-    	    		series:{ // serie name and value
-    	    			name:null,
-    	    			value: null	
-    	    		},
-    	    		group:{ // grouping category name and value
-    	    			name:null,
-    	    			value: null
-    	    		}
-    	    		}
-    	    	};
-    	    	
-    	    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
-    	    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
-    	    	
-    	    	params.point.value=point.name;
-    	    	
-    	    	params.point.series.value=point.value;
-    	    	
-    	        
-    	    	return params;
-      }
+	};
 }
 
-function renderHeatmap(chartConf){
-    var start;
+function prepareChartConfForHeatmap(chartConf) {
+	var start;
     
     var startDate= new Date(chartConf.additionalData.dateresult[0]);
     var endDate= new Date(chartConf.additionalData.dateresult[1]);
@@ -388,7 +425,7 @@ function renderHeatmap(chartConf){
     
     var chartHeight = (chartConf.chart.height!="") ? chartConf.chart.height : window.innerHeight;
     
-    var chart = new Highcharts.Chart({
+    return {
        
     	chart: chartObject,
         title: {
@@ -546,21 +583,7 @@ function renderHeatmap(chartConf){
             layout: 'vertical',
             verticalAlign: chartConf.legend.style.align,
             //y: (Number(chartHeight)-Number(chartConf.legend.symbolHeight))/2,
-            symbolHeight: Number(chartConf.legend.symbolHeight),
-            
-            title:{
-            	text:chartConf.legend.title.text?chartConf.legend.title.text:"none",
-            	//align:chartConf.legend.title.style.align,
-            	style:{
-            		color: chartConf.legend.title.style.color?chartConf.legend.title.style.color:"none",
-                    fontSize: chartConf.legend.title.style.fontSize?chartConf.legend.title.style.fontSize:"none",
-                    fontFamily: chartConf.legend.title.style.fontFamily?chartConf.legend.title.style.fontFamily:"none",
-                    fontStyle: chartConf.legend.title.style.fontStyle ? chartConf.legend.title.style.fontStyle : "none",
-    				textDecoration: chartConf.legend.title.style.textDecoration ? chartConf.legend.title.style.textDecoration : "none",
-    				fontWeight: chartConf.legend.title.fontWeight ? chartConf.legend.title.fontWeight : "none"
-            	}	
-            }
-            
+            symbolHeight: Number(chartConf.legend.symbolHeight)
         },
         
         tooltip: {
@@ -599,37 +622,5 @@ function renderHeatmap(chartConf){
         {
     		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
 		}
-    });
-    
-    var getCrossParams= function(point){
-    	var params={
-    		point:{
-    			name: null, // category name
-    	        value: null, // category  value
-    	        crossNavigationDocumentName:null,
-    	        crossNavigationDocumentParams:null,
-    		
-    		series:{ // serie name and value
-    			name:null,
-    			value: null	
-    		},
-    		group:{ // grouping category name and value
-    			name:null,
-    			value: null
-    		}
-    		}
-    	};
-    	
-    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
-    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
-    	params.point.name=chartConf.additionalData.columns[0].value;
-    	params.point.value= new Date(point.x);
-    	params.point.series.name=chartConf.additionalData.serie.value;
-    	params.point.series.value=point.value;
-    	params.point.group.name=chartConf.additionalData.columns[1].value;
-    	params.point.group.value=point.label;
-        
-    	return params;
     };
-	
 }

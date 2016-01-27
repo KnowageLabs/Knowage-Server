@@ -4,7 +4,7 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	            'Sbi.chart.designer.ChartUtils'
 	            ],
 	queryMode : 'local',
-	value : 'vertical',
+	value: 'vertical',
 	triggerAction : 'all',
 	forceSelection : true,
 	editable : false,

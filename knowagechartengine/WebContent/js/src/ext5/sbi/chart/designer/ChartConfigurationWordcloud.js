@@ -95,6 +95,7 @@ Ext.define
 						xtype : 'numberfield',
 						bind : '{configModel.maxWords}',
 						id: "wordcloudMaxWords",
+						allowBlank: true,
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						width: Sbi.settings.chart.configurationStep.widthOfFields,
 	        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,

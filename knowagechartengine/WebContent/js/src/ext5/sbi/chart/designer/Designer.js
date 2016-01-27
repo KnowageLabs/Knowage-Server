@@ -128,26 +128,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 */
 		getConfigurationForStyle : function(style,changeChartType) {
 		      
-			var styles = JSON.parse(Sbi.chart.designer.Styles);
-			
-
-			/**
-			 * JSON template that keeps the predefined values
-			 * for the different styles parameters. We will
-			 * return this JSON object when needed (e.g. before
-			 * merging old JSON template with the new one (that
-			 * keeps the predefined style parameters), after
-			 * changing the style).
-			 */
-			var retTemplate = null;
-
-			for (i = 0; i < styles.length; i++) {
-				if (styles[i].STYLE.name === style) {
-					retTemplate = styles[i].TEMPLATE;
-					break;
-				}
-			}
-			  
+			   var styles=JSON.parse(Sbi.chart.designer.Styles);
+			          
+			   /**
+			 	* JSON template that keeps the predefined values
+			 	* for the different styles parameters. We will
+			 	* return this JSON object when needed (e.g. before
+			 	* merging old JSON template with the new one (that
+			 	* keeps the predefined style parameters), after
+			 	* changing the style).
+			    */
+			   var retTemplate=null;
+			   			   
+			   for(i=0;i<styles.length;i++){
+				   if(styles[i].STYLE.name===style){
+					   retTemplate=styles[i].TEMPLATE;
+					   break;
+				   } 
+			   } 			   
+			   
 			/**
 			 * if no style with given name exists return the
 			 * default one
@@ -173,7 +172,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 
 			}
-			return retTemplate;
+			   return retTemplate;						
 		},
 				
 		initialize: function(sbiExecutionId, 
@@ -825,7 +824,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						gaugePanePanel.hide();
 					}
 
-					// TODO: uncomment this to apply chosen style to any chart type we select (choose) 
 					/**
 					 * This is JSON template that we take form the Advance editor (previously, Step 3)
 					 * so we can be up-to-date with current structure of the document inside the Designer.
@@ -857,8 +855,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					//console.log(Designer.getConfigurationForStyle(Designer.styleName));
 					
-					if (Designer.getConfigurationForStyle(Designer.styleName,true) != null)
-					{
 					/**
 					 * Since we are dealing with the newly created chart which does not posses any 
 					 * serie item, in order to skip mergin the OBJECT (not an empty array!) in the 
@@ -933,7 +929,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * the Step 2 tab) after selecting the particular style.
 					 */
 		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
-					}
+					
 					//console.log("== RESET STEP 2 (end) ==");
 					//console.log("========================");
 				}
@@ -1163,8 +1159,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					
 					if (styles[i].STYLE.name !== "sfnas") {
-						allStyles.push(style);
-					}
+					allStyles.push(style);
+				}
 				}
 
 				return allStyles;
@@ -1509,9 +1505,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previewPanel.removeAll();
 				var previewImg = Ext.create('Ext.Img', {
 				    src: src,
+//				    shrinkWrap:true,
+//				    width: '100%',
+//				    height: '100%',
 					listeners: {
 			            render: function() {
 			                this.mon(this.getEl(), 'load', function(e) {
+//			                	this.setHeight(300-20);// set the height of the image
+//			                	previewPanel.setHeight(300);
 			                	previewPanel.setHeight(this.getHeight()+20);
 			                });
 			            }
@@ -1527,7 +1528,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */ 
 				xtype: 'tool',	
-	            type: "refresh",	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	            type: 'refresh',	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	            padding: "3 0 0 0", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	            height: 22,
 	            
@@ -1542,8 +1543,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            		element: 'el',
 	            		fn: function(){
 	            			
-  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);
-
+  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);  							
+  							
   							/**
   							 * We added new property to the 'parameters', the 'exportWebApp'.
   							 * This property is boolean value that will tell the VM that we
@@ -1563,6 +1564,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 								var chartConf = response.responseText;
 
+								/**
+								 * If chart types of documents (charts) that user wants to render in the
+								 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
+								 * HEATMAP we need to prepare data that we receive from the VM of that
+								 * chart type by sending them to the 'treemap.js'.
+								 * 
+								 * @author Daniele Davì
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+								 */
+								
+								/**
+								 * Conversion of JSON text (string) into the JSON object that we need for
+								 * the function that prepares all the data needed for the TREEMAP or
+								 * HEATMAP rendering-exporting engine.
+								 * 
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+								 */
+								var jsonChartConf = Ext.JSON.decode(chartConf);
+								
+								if(jsonChartConf.chart.type.toLowerCase() == 'treemap' && typeof(prepareChartConfForTreemap) == "function") {
+									chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
+								}
+								else if(jsonChartConf.chart.type.toLowerCase() == 'heatmap' && typeof(prepareChartConfForHeatmap) == "function") {
+									chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
+								}
+								
 								var parameters = {
       									options: chartConf,
       									content:'options',
@@ -1583,9 +1610,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
 	      								setPreviewImage(src);
 	      							}
-      							);
-
-								
+      							);								
 							}
 							,
   							function (response) {
@@ -3055,7 +3080,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var maxNumOfSeriesForPieChart = 4; 
 			
 			/**
-			 * Validation for Step 1 if the mandatory items are not specified
+			 * Validation for Step 1 if the mandatory items are not specified.
 			 * 
 			 * @commentBy danristo (danilo.ristovski@mht.net)
 			 */
@@ -3245,7 +3270,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var opacityOnMouseOverField = mainConfigurationPanel.getComponent("opacityMouseOver").items.items[0];			
 				var opacityOnMouseOverValue = opacityOnMouseOverField.value;
 				var opacityOnMouseOverViewModel = this.cViewModel.data.configModel.data.opacMouseOver;
-												
+																
 				if ((opacityOnMouseOverValue || parseInt(opacityOnMouseOverValue)==0) 
 						&& opacityOnMouseOverValue!="" && opacityOnMouseOverValue!=null)
 				{
@@ -4859,10 +4884,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						) : errorMsg;
-				
+											
 				if (wordcloudMaxWordsGUI == null)
 				{
-					if (wordcloudMaxWordsCModel == null || wordcloudMaxWordsCModel == "")
+					if (wordcloudMaxWordsCModel == null || wordcloudMaxWordsCModel === "")
 					{						
 						errorMsg += Sbi.locale.sobstituteParams
 						(
@@ -4873,7 +4898,36 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						);
-					}						
+					}		
+					else
+					{ 
+						if (wordcloudMaxWordsCModel < checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue)
+						{						
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.maxWords'),
+									checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudMaxWordsCModel > checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue)
+						{						
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.maxWords'),
+									checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
 				}
 				else 
 				{					
@@ -4918,7 +4972,36 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						);
-					}						
+					}
+					else
+					{
+						if (wordcloudMaxAngleCModel < checkParamValuesForCharts.wordcloud.maxWordAngle.minValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+									checkParamValuesForCharts.wordcloud.maxWordAngle.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudMaxAngleCModel > checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+									checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
 				}
 				else 
 				{					
@@ -4950,7 +5033,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				
 				if (wordcloudMinAngleGUI == null)
 				{
 					if (wordcloudMinAngleCModel == null || wordcloudMinAngleCModel==="")
@@ -4964,7 +5046,36 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						);
-					}						
+					}	
+					else
+					{
+						if (wordcloudMinAngleCModel < checkParamValuesForCharts.wordcloud.minWordAngle.minValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+									checkParamValuesForCharts.wordcloud.minWordAngle.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudMinAngleCModel > checkParamValuesForCharts.wordcloud.minWordAngle.maxValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+									checkParamValuesForCharts.wordcloud.minWordAngle.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
 				}
 				else 
 				{					
@@ -4996,18 +5107,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-			    if(wordcloudMinAngleGUI>wordcloudMaxAngleGUI){
-			     errorMsg += Sbi.locale.sobstituteParams
-			     (
-			      LN("sbi.chartengine.validation.configuration.notGreater"),
-			      
-			      [
-			       LN('sbi.chartengine.configuration.wordcloud.minAngle'),
-			       LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
-			       LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
-			      ]
-			     );
-			     
+			    if(wordcloudMinAngleGUI > wordcloudMaxAngleGUI)
+			    {
+				     errorMsg += Sbi.locale.sobstituteParams
+				     (
+					      LN("sbi.chartengine.validation.configuration.notGreater"),
+					      
+					      [
+						       LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+						       LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+						       LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+					      ]
+				     );			     
 			    }
 				
 				if (wordcloudMaxFontSizeGUI == null)
@@ -5023,7 +5134,36 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						);
-					}						
+					}	
+					else
+					{
+						if (wordcloudMaxFontSizeCModel < checkParamValuesForCharts.wordcloud.maxFontSize.minValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+									checkParamValuesForCharts.wordcloud.maxFontSize.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudMaxFontSizeCModel > checkParamValuesForCharts.wordcloud.maxFontSize.maxValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
+									checkParamValuesForCharts.wordcloud.maxFontSize.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
 				}
 				else 
 				{					
@@ -5068,7 +5208,36 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						);
-					}						
+					}
+					else
+					{
+						if (wordcloudWordPaddingCModel < checkParamValuesForCharts.wordcloud.wordPadding.minValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.wordPadding'),
+									checkParamValuesForCharts.wordcloud.wordPadding.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudWordPaddingCModel > checkParamValuesForCharts.wordcloud.wordPadding.maxValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.wordPadding'),
+									checkParamValuesForCharts.wordcloud.wordPadding.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
 				}
 				else 
 				{					

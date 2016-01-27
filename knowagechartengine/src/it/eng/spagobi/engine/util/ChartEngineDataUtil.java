@@ -121,9 +121,10 @@ public class ChartEngineDataUtil {
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**
-			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
-			 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
-			 * than one category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
+			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
+			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
+			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false);

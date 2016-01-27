@@ -26,14 +26,14 @@ Ext.define
 	     */
 	    tpl:
     	[
-	          	'<tpl for=".">',
-	          		'<div class="x-boundlist-item">',
+          	'<tpl for=".">',
+          		'<div class="x-boundlist-item">',
       				'<img src="{iconChartType}" width="30px" style="display:inline-block; vertical-align:middle; line-height:20px;"/>',
-          				'&nbsp;&nbsp;&nbsp;',
+      				'&nbsp;&nbsp;&nbsp;',
       				'<p style="display:inline-block; vertical-align:middle; line-height:20px;">{chartType}</p>',
-	          		'</div>',
-	          	'</tpl>'
-	          ],
+          		'</div>',
+          	'</tpl>'
+          ],
 	   	    
 	    statics:
     	{
@@ -120,13 +120,13 @@ Ext.define
 			if(Sbi.chart.designer.ChartUtils.isBottomAxisStyleButtonDisabled()) {
 				this.stylePopupBottomPanel.hide();
 			} else {
-				this.stylePopupBottomPanel.show();		
+			this.stylePopupBottomPanel.show();		
 			}
 				
 			if(Sbi.chart.designer.ChartUtils.isBottomAxisTextFieldDisabled()) {
 				this.textfieldAxisTitle.hide();
 			} else {
-				this.textfieldAxisTitle.show();
+			this.textfieldAxisTitle.show();			
 			}
 			this.stylePopupLeftAxis.show();						
 			this.plusLeftAxis.show();				
@@ -212,130 +212,130 @@ Ext.define
 			 * If previous and current chart types are not compatible.
 			 */
 			if(!compatibleTypes) 
-			{	
-								Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+			{							
+				Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 				
-								/**
-								 * Cleaning of axis panels since previous and current chart types are not compatible.
-								 */
-								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();
-								
-								/**
-								 * Since we approved changing of the chart type, we need to reset the GUI elements on
-								 * Step 1 and Step 2 of the Designer. 
-								 */
-								globalScope.resetStep1();
-								/**
-								 * Inform the Designer that it should take care of GUI elements on the Step 2 of the
-								 * Designer. It should hide excess GUI elements on the Step 2 and show those necessary
-								 * for the current chart type.
-								 */
-								globalScope.fireEvent("resetStep2");
-								
-								var bottomAxisPanel = Ext.getCmp("chartBottomCategoriesContainer");
-								
-								/**
-								 * If the newly selected chart type is PARALLEL we should remove all potential
-								 * content from the store that keeps all series available for the "Serie as 
-								 * filter column". This is important for the case in which we open the PARALLEL
-								 * chart, change the chart type and afterwards return back to the PARALLEL chart.
-								 * If this is not done, we are keeping the store that was actual for the previous
-								 * PARALLEL chart document.
-								 * 
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								if (newlySelectedType.toLowerCase() == "parallel")
-								{
-									/**
-									 * The combo box for the "Serie as filter column" on the
-									 * Configuration tab's Limit panel.
-									 * 
-									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									 */
-									var seriesColumnsOnYAxisCombo = Ext.getCmp("seriesColumnsOnYAxisCombo");
-									
-									if(seriesColumnsOnYAxisCombo && seriesColumnsOnYAxisCombo != null && seriesColumnsOnYAxisCombo.hidden == false) 
-									{
-										seriesColumnsOnYAxisCombo.getStore().removeAll();
-									}
-								}
-								
-								/** 
-								 * Hide axis title textbox and gear tool for both left (Y)
-								 * axis panel and bottom (X) axis panel and plus tool of the left
-								 * (Y) panel when new row is clicked. Hide also serie&tooltip icon 
-								 * for SERIE records inside the left (Y) panel. Hidding of the serie 
-								 * style configuration popup icon (serie&tooltip) will be excluded in
-								 * the case of PIE chart.
-								 * @author: danristo (danilo.ristovski@mht.net)
-								 */
-								if (newlySelectedType.toLowerCase() == "sunburst" || newlySelectedType.toLowerCase() == "wordcloud" || 
-										newlySelectedType.toLowerCase() == "treemap" || newlySelectedType.toLowerCase() == "parallel" ||
-											newlySelectedType.toLowerCase() == "heatmap" || newlySelectedType.toLowerCase() == "chord" || 
-												newlySelectedType.toLowerCase() == "pie") {
-									
-									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
-									var numberOfYAxis = chartColumnsContainerNew.length;
+				/**
+				 * Cleaning of axis panels since previous and current chart types are not compatible.
+				 */
+				Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();
+												
+				/**
+				 * Since we approved changing of the chart type, we need to reset the GUI elements on
+				 * Step 1 and Step 2 of the Designer. 
+				 */
+				globalScope.resetStep1();
+				/**
+				 * Inform the Designer that it should take care of GUI elements on the Step 2 of the
+				 * Designer. It should hide excess GUI elements on the Step 2 and show those necessary
+				 * for the current chart type.
+				 */
+				globalScope.fireEvent("resetStep2");
+				
+				var bottomAxisPanel = Ext.getCmp("chartBottomCategoriesContainer");
+				
+				/**
+				 * If the newly selected chart type is PARALLEL we should remove all potential
+				 * content from the store that keeps all series available for the "Serie as 
+				 * filter column". This is important for the case in which we open the PARALLEL
+				 * chart, change the chart type and afterwards return back to the PARALLEL chart.
+				 * If this is not done, we are keeping the store that was actual for the previous
+				 * PARALLEL chart document.
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (newlySelectedType.toLowerCase() == "parallel")
+				{
+					/**
+					 * The combo box for the "Serie as filter column" on the
+					 * Configuration tab's Limit panel.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					var seriesColumnsOnYAxisCombo = Ext.getCmp("seriesColumnsOnYAxisCombo");
+					
+					if(seriesColumnsOnYAxisCombo && seriesColumnsOnYAxisCombo != null && seriesColumnsOnYAxisCombo.hidden == false) 
+					{
+						seriesColumnsOnYAxisCombo.getStore().removeAll();
+					}
+				}
+				
+				/** 
+				 * Hide axis title textbox and gear tool for both left (Y)
+				 * axis panel and bottom (X) axis panel and plus tool of the left
+				 * (Y) panel when new row is clicked. Hide also serie&tooltip icon 
+				 * for SERIE records inside the left (Y) panel. Hidding of the serie 
+				 * style configuration popup icon (serie&tooltip) will be excluded in
+				 * the case of PIE chart.
+				 * @author: danristo (danilo.ristovski@mht.net)
+				 */
+				if (newlySelectedType.toLowerCase()=="sunburst" || newlySelectedType.toLowerCase()=="wordcloud" || 
+						newlySelectedType.toLowerCase()=="treemap" || newlySelectedType.toLowerCase()=="parallel" ||
+						newlySelectedType.toLowerCase()=="heatmap" || newlySelectedType.toLowerCase()=="chord" || 
+							newlySelectedType.toLowerCase()=="pie") {
+					
+					var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
+					var numberOfYAxis = chartColumnsContainerNew.length;
 //									
-									if (numberOfYAxis > 1) 
-									{
-										for (var i=0; i<numberOfYAxis; i++) 
-										{
-											chartColumnsContainerNew[i+1].close();
-										}
-									}
-									
-									if (newlySelectedType.toLowerCase() != "heatmap") 
-									{
-									
-										if ((newlySelectedType.toLowerCase()!="chord" && newlySelectedType.toLowerCase()!="parallel")
-												|| chartLibrary == 'chartJs') {
+					if (numberOfYAxis > 1) 
+					{
+						for (var i=0; i<numberOfYAxis; i++) 
+						{
+							chartColumnsContainerNew[i+1].close();
+						}
+					} 									
+					
+					if (newlySelectedType.toLowerCase()!="heatmap") 
+					{		
+					
+						if ((newlySelectedType.toLowerCase()!="chord" && newlySelectedType.toLowerCase()!="parallel")
+								|| chartLibrary == 'chartJs') {
 
-											/* ---------- BOTTOM (X) AXIS PANEL ---------- */
-											// Hide the gear tool on the toolbar of the bottom (X) axis panel		
-											globalScope.stylePopupBottomPanel.hide();
-											
-											// Hide the gear tool on the toolbar of the left (Y) axis panel
-											globalScope.stylePopupLeftAxis.hide();	
-										}
-										
-										/* ---------- LEFT (Y) AXIS PANEL ---------- */	
-										// Hide the textfield dedicated for the title of the bottom (X) axis
-										globalScope.textfieldAxisTitle.hide();
+							/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+							// Hide the gear tool on the toolbar of the bottom (X) axis panel		
+							globalScope.stylePopupBottomPanel.hide();
+							
+							// Hide the gear tool on the toolbar of the left (Y) axis panel
+							globalScope.stylePopupLeftAxis.hide();	
+						}
+						
+						/* ---------- LEFT (Y) AXIS PANEL ---------- */	
+						// Hide the textfield dedicated for the title of the bottom (X) axis
+						globalScope.textfieldAxisTitle.hide();
 
-										// Hide the textfield dedicated for the title of the left (Y) axis
-										globalScope.titleTextfield.hide();	//console.log("===");								
-									}
+						// Hide the textfield dedicated for the title of the left (Y) axis
+						globalScope.titleTextfield.hide();	//console.log("===");								
+					}											
 
-									// Hide the plus tool on the toolbar of the left (Y) axis panel
-									globalScope.plusLeftAxis.hide();
-									
-									/**
-									 * For PIE chart we will need serie style configuration popup
-									 * in order to define how the serie items should be displayed.
-									 * Foe example: with what color are serie (bars, lines, ...)
-									 * items going to be presented, what is the tooltip going to 
-									 * look like, etc. This is not common for other chart types in
-									 * this if-statement.
-									 * @author: danristo (danilo.ristovski@mht.net)
-									 */
-									if (newlySelectedType.toLowerCase()!="pie" && newlySelectedType.toLowerCase()!="radar")
-									{
-										globalScope.actionColumnLeftAxis.items[0].iconCls = "x-hidden";
-									}
-								} 
-								
-								else if(newlySelectedType.toLowerCase()=="radar" || newlySelectedType.toLowerCase()=="scatter")
-								{
-									// Hide the plus tool on the toolbar of the left (Y) axis panel
-									globalScope.plusLeftAxis.hide();
-								}
+					// Hide the plus tool on the toolbar of the left (Y) axis panel
+					globalScope.plusLeftAxis.hide();
+					
+					/**
+					 * For PIE chart we will need serie style configuration popup
+					 * in order to define how the serie items should be displayed.
+					 * Foe example: with what color are serie (bars, lines, ...)
+					 * items going to be presented, what is the tooltip going to 
+					 * look like, etc. This is not common for other chart types in
+					 * this if-statement.
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					if (newlySelectedType.toLowerCase()!="pie" && newlySelectedType.toLowerCase()!="radar")
+					{
+						globalScope.actionColumnLeftAxis.items[0].iconCls = "x-hidden";
+					}
+				} 
+				
+				else if(newlySelectedType.toLowerCase()=="radar" || newlySelectedType.toLowerCase()=="scatter")
+				{
+					// Hide the plus tool on the toolbar of the left (Y) axis panel
+					globalScope.plusLeftAxis.hide();
+				}
 			}	
 			/**
 			 * If previous and current chart types are compatible.
 			 */
 			else 
-			{						
+			{							
 				/**
 				 * If we come to RADAR chart from some chart type that is compatible with it 
 				 * (e.g. BAR and LINE), keep the data, but remove all other Y-axis panels that
@@ -371,7 +371,7 @@ Ext.define
 							},
 						
 							fn : function(buttonValue, inputText, showConfig) {
-								if (buttonValue == 'ok') {
+								if (buttonValue == 'ok') {										
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
 
@@ -603,8 +603,8 @@ Ext.define
 					else
 					{
 						messageTxt = (compatibleTypes) ? 
-								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConf") : 
-									LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");		
+							LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConf") : 
+								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");										
 					}													
 					
 					/**
@@ -632,7 +632,7 @@ Ext.define
 							fn: function(buttonValue, inputText, showConfig)
 							{
 								if (buttonValue == 'ok') 
-								{									
+								{		
 									/**
 									 * If currentOrNewChartType is not null - if user did not click-down on the
 									 * chart type and then move mouse on some other chart type and make a click-up
@@ -696,7 +696,7 @@ Ext.define
 											(
 												"axesSet",function() 
 												{
-													Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
+													Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;
 												}
 											);					
 										}			
