@@ -18,8 +18,6 @@
 			canSee=true;
 		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_CROSS_NAVIGATION});
 		}
-		//TODO rimuovere la seguente riga
-		canSee = true;
 %>
 
 <% if(canSee ){ %>
@@ -30,148 +28,155 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 
-<link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cross/definition/CrossDefinition.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/crossnavigation/css/cross-definition.css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cross/definition/CrossDefinition.js"></script>
 
-<style type="text/css">
-	.sss{border-bottom: 2px solid rgb(176, 190, 197)}
-</style>
 </head>
 
 <body class="bodyStyle" ng-app="crossDefinition" id="ng-app">
 
 <script type="text/ng-template" id="nodes_renderer1.html">
-  <div ui-tree-handle class="tree-node tree-node-content ">
-<div class="tree-node-content">
-    <div >
-	  <span class="fa fa-bars"></span>
-	  {{par.name}}
+<div class="tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
+    <div>
+		<span class="fa fa-bars"></span>
+	    {{par.name}}
     </div>
-    <div class="pull-right">
+	<span flex class="flex"></span>
+    <div >
         {{par.type}}
     </div>
 </div>
-  </div>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div class="tree-node tree-node-content" ng-if="!par.links">
+  <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
     <div >
 	  {{par.name}}
-	  <input type="hidden" ng-value="par.id" />
     </div>
-    <div class="pull-right">
+	<span flex class="flex"></span>
+    <div >
         {{par.type}}
     </div>
   </div>
-
-  <div class="tree-node tree-node-content" ng-if="par.links">
-    <div >
-	  {{par.emptyList[0].name}}
-	  <span class="fa fa-link"></span>
-	  {{par.toName}}
-    </div>
-    <div class="pull-right">
-       x
-    </div>
-  </div>
-
-	<ol ui-tree-nodes="" ng-model="par.emptyList" ng-class="{hidden: collapsed}" ng-hide="par.links" >
-      <li ng-repeat="node in par.emptyList" ui-tree-node >
+  <ol ui-tree-nodes="" ng-model="par.links" ng-class="{hidden: collapsed}" ng-if="!par.links.length" >
+      <li ng-repeat="node in par.links" ui-tree-node >
       </li>
-    </ol>
-  
+  </ol>
+
+  <div class="tree-node tree-node-content crossnavigation-parameter link" ng-if="par.links.length" layout="row">
+    <div >
+	  {{par.links[0].name}}
+	  <span class="fa fa-link"></span>
+	  {{par.name}}
+    </div>
+    <span flex class="flex"></span>
+    <i class="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></i>
+  </div>
+</script>
+<script type="text/ng-template" id="dialog1.tmpl.html">
+<md-dialog aria-label="Select document" ng-cloak>
+<form>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h1>Select document</h1>
+			<span flex></span>
+			<md-button ng-click="closeDialog()"> <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon> </md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content >
+		<div class="md-dialog-content">
+			<angular-list id="docList" 
+				ng-model="listDoc" item-name="DOCUMENT_NAME"
+				show-item-tooltip="false" highlights-selected-item="true"
+				show-search-bar="true"
+				no-pagination="true" click-function="clickOnSelectedDoc(item,listId,closeDialog)">
+			</angular-list>
+		</div>
+	</md-dialog-content>
+</form>
+</md-dialog>
 </script>
 
-
-	<div layout="row" ng-controller="navigationList as ctrl" layout-wrap layout-fill>
-		<div layout="column" flex="20">
-			<div layout="row">
-				<!-- ricerca -->
-				<angular-table 
-						layout-fill
-						id="dataSourceList"
-						ng-model="ctrl.list"
-						columns='[{"label":"Nav","name":"name","size":"50px"},{"label":"Doc A","name":"fromDoc","size":"70px"},{"label":"Doc B","name":"toDoc","size":"70px"}]'
-						columns-search='["name","fromDoc","toDoc"]'
-						show-search-bar=true
-						highlights-selected-item=true
-						click-function="ctrl.loadSelectedNavigation(item)"
-						selected-item="selectedNavigationItem"
-						speed-menu-option="dsSpeedMenu"					
-					>						
-					</angular-table>
+	<angular-list-detail ng-controller="navigationController as ctrl" new-function="ctrl.newNavigation" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc" >
+       <list label="translate.load('sbi.crossnavigation.lst')"  > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
+			<!-- ricerca -->
+			<angular-table 
+					layout-fill
+					id="dataSourceList"
+					ng-model="ctrl.list"
+					columns="ctrl.navigationList.columns"
+					columns-search="ctrl.navigationList.searchColumns"
+					show-search-bar=true
+					highlights-selected-item=true
+					click-function="ctrl.navigationList.loadSelectedNavigation(item)"
+					speed-menu-option="ctrl.navigationList.dsSpeedMenu"					
+				>						
+			</angular-table>
+			<div ng-show="ctrl.navigationList.loadingSpinner" class="loadingSpinner">
+				<i class="fa fa-spinner fa-pulse fa-4x"></i> 
 			</div>
-		</div>
+		</list>
 		
-		
-		
-		<div layout="column" ng-if="ctrl.detail" flex>
-			
-			
+        <detail label="ctrl.detail && ctrl.detail.simpleNavigation ? ctrl.detail.simpleNavigation.name : ''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">
 						<md-input-container > <label>{{translate.load("sbi.crossnavigation.name");}}</label>
-						<input maxlength="100" type="text" ng-model="selectedNavigationItem.name"> </md-input-container>
+						<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name"> </md-input-container>
 					</div>
 				</div>
 	
 				<div layout="row" >
-					<div flex="50">
-						<md-input-container > <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
-							<input maxlength="100" type="text" ng-model="selectedNavigationItem.fromDoc" readonly>
+					<div flex="50" layout="row">
+						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
+							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fromDoc" readonly>
 						</md-input-container>
 						<md-button ng-click="ctrl.listDocuments('A')" class="md-fab" > 
-							<md-icon md-font-icon="fa fa-folder-open-o" style=" margin-top: 6px ; color: white;">
+							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon" >
 							</md-icon> 
 						</md-button>
 					</div>
 				
-					<div flex="50">
-						<md-input-container > <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
-							<input maxlength="100" type="text" ng-model="selectedNavigationItem.toDoc" readonly> </md-input-container>
+					<div flex="50" layout="row">
+						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
+							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.toDoc" readonly> </md-input-container>
 						</md-input-container>
 						<md-button ng-click="ctrl.listDocuments('B')" class="md-fab" > 
-							<md-icon md-font-icon="fa fa-folder-open-o" style=" margin-top: 6px ; color: white;">
+							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon">
 							</md-icon> 
 						</md-button>
 					</div>
 				</div>
 			
 				<div layout="row">
-					<div layout="column" flex="50" style="padding:10px">
+					<div layout="column" flex="50" class="parametersList">
 						<h3 ng-model="ctrl.detail.fromDoc"></h3>
-					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" style="padding:3px;">
+					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" >
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
-					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" style="padding: 2px"></li>
+					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" ></li>
 					      </ol>
 					    </div>
 					</div>
-					<div layout="column" flex style="padding:10px">
+					<div layout="column" flex class="parametersList">
 						<h3 ng-model="ctrl.detail.toDoc"></h3>
-					    <div ui-tree id="tree2-root" style="padding:3px">
+					    <div ui-tree="ctrl.treeOptions2" id="tree2-root" data-empty-placeholder-enabled="false">
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.toPars" >
-					        <li ng-repeat="par in ctrl.detail.toPars" ui-tree-node ng-include="'nodes_renderer2.html'" style="padding: 2px" 
-					        	ng-mouseenter="ctrl.selectItem($event)" ng-mouseleave="ctrl.unselectAll()" data-nodrag></li>
+					        <li ng-repeat="par in ctrl.detail.toPars" ui-tree-node ng-include="'nodes_renderer2.html'"  data-nodrag></li>
 					      </ol>
 					    </div>
 					</div>
 				</div>
-				
-				
 			</form>
-			
-			
-			
-		</div>
-	</div>
+			<div ng-show="ctrl.detailLoadingSpinner" class="loadingSpinner">
+				<i class="fa fa-spinner fa-pulse fa-4x"></i> 
+			</div>
+		</detail>
+	</angular-list-detail>
 </body>
 </html>
 
 
 <%}else{ %>
-accesso negato
+Access Denied
 <%} %>
 
