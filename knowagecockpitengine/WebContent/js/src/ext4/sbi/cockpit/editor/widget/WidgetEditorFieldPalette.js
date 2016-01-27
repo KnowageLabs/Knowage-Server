@@ -179,6 +179,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 			store: this.store,
 			hideHeaders: true,
 			autoScroll: false,
+			multiSelect: true,
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
@@ -193,21 +194,21 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 					, flex: 1
 					, sortable: true
 					, dataIndex: 'alias'
-						, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-							Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
-							
-							var templateData = Ext.apply({}, {
-								id: Ext.id()
-								, text:  record.get("alias")
-								, iconCls: record.get("iconCls")
-							}, this.templateArgs);
-							var htmlFragment = this.template.apply(templateData);
-							
-							//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
-							Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
-							return htmlFragment;
-						}
-			, scope: this
+					, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+						Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
+						
+						var templateData = Ext.apply({}, {
+							id: Ext.id()
+							, text:  record.get("alias")
+							, iconCls: record.get("iconCls")
+						}, this.templateArgs);
+						var htmlFragment = this.template.apply(templateData);
+						
+						//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
+						Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
+						return htmlFragment;
+					}
+				, scope: this
 			}],
 			stripeRows: false
 		}));
