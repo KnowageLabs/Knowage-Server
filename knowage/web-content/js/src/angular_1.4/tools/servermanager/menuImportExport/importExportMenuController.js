@@ -72,13 +72,6 @@ function exportFuncController(
 		sbiModule_config,
 		$mdToast) {
 	
-//	$scope.pathRest = {
-//			vers: '2.0',
-//			folders : 'folders',
-//			includeDocs : 'includeDocs=true',
-//			urlTest : sbiModule_config.contextName + '/servlet/AdapterHTTP'
-//	};
-	
 	$scope.pathRest = { // /restful-services/1.0/menu/enduser
 		restfulServices : '1.0',
 		menuPath : 'menu/enduser',
@@ -101,46 +94,23 @@ function exportFuncController(
 		exportSnapshots : false
 	};
 	
-//	$scope.restServices.get($scope.pathRest.menuPath)
-//	sbiModule_restServices.get(
-//			$scope.pathRest.restfulServices,
-//			$scope.pathRest.menuPath)
-//	.success(function(data, status, headers, config){
-//		if (data.errors === undefined){
-//			$scope.customs = data.customMenu[0].menu || [];
-//		}else{
-//			$scope.customs = [];
-//		}
-//	})
-//	.error(function(data, status){
-//		$scope.customs = data;
-//		$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
-//	});
-	
 	$scope.exportFiles = function(){
-		var config = {
-//			'DOCUMENT_ID_LIST':[],
-			'EXPORT_FILE_NAME': $scope.exportName,
-//			'FILE_NAME': $scope.exportName,
-//			'EXPORT_SUB_OBJ': $scope.checkboxs.exportSubObj,
-//			'EXPORT_SNAPSHOT': $scope.checkboxs.exportSnapshots
-		};
-		
-//		for (var i = 0; i < $scope.selected.length; i++){
-//			if ($scope.selected[i].type == 'biObject'){
-//				config.DOCUMENT_ID_LIST.push('' + $scope.selected[i].id);
-//			}
-//		}
-//		
 		$scope.flags.waitExport = true;
 		
-		sbiModule_restServices.post('1.0/serverManager/importExport/menu', 'export', config)
+		sbiModule_restServices.post('1.0/serverManager/importExport/menu', 'export', 
+			{'EXPORT_FILE_NAME': $scope.exportName}, 
+			{'responseType': 'arraybuffer'}
+			)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty('errors')) {
 				showToast(data.errors[0].message,4000);
-			}else if(data.hasOwnProperty('STATUS') && data.STATUS=='OK'){
+			
+			}else if(status==200){
 				$scope.flags.enableDownload = true;
 				$scope.downloadedFileName = $scope.exportName;
+				
+				$scope.download.getBlob(data, $scope.exportName, 'application/zip', 'zip');
+				$scope.flags.enableDownload = false
 			}
 			$scope.flags.waitExport = false;
 		}).error(function(data, status, headers, config) {
@@ -155,22 +125,6 @@ function exportFuncController(
 	
 	$scope.toggleEnableDownload = function(){
 		$scope.flags.enableDownload = !$scope.flags.enableDownload;
-	};
-	
-	$scope.downloadFile= function(){
-		var data = {'FILE_NAME': $scope.downloadedFileName };
-		var config = {'responseType': 'arraybuffer'};
-		sbiModule_restServices.post('1.0/serverManager/importExport/document','downloadExportFile',data,config)
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty('errors')) {
-				showToast(data.errors[0].message,4000);
-			}else if(status==200){
-				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
-				$scope.flags.enableDownload = false
-			}
-		}).error(function(data, status, headers, config) {
-			showToast('ERRORS ' + status,4000);
-		})
 	};
 	
 	$scope.showAlert = function (title, message){
