@@ -6,7 +6,7 @@
 			<CONFIGS>
 				<CONFIG NUM_LEVELS="15" />
 				<CONFIG ALLOW_DUPLICATE="false" />
-				<CONFIG TREE_NODE_ID="CDC_CD_LEV" /> 	<!-- alias of the id used by the tree for the node -->
+				<CONFIG TREE_NODE_CD="CDC_CD_LEV" /> 	<!-- alias of the id used by the tree for the node -->
 				<CONFIG TREE_NODE_NM="CDC_NM_LEV" /> 	<!-- alias of the name used by the tree for the node -->
 				<CONFIG TREE_LEAF_ID="CDC_LEAF_ID" /> 	<!-- alias of the id used by the tree for the leaf -->
 				<CONFIG TREE_LEAF_CD="CDC_CD_LEAF" /> <!-- alias of the cd used by the tree for the leaf -->
@@ -61,10 +61,10 @@
 					<FIELD ID="SOURCE_SYSTEM"  NAME="Source System" VISIBLE="false" EDITABLE="false" REQUIRED="true" FIX_VALUE="Hierarchy editor" TYPE="String"/>
 				</GENERAL_FIELDS>
 				<NODE_FIELDS> <!-- dovrebbero essere sempre e multivalue (moltiplicati per gli X livelli) tutti e solo i nodi -->
-					<FIELD ID="CDC_CD_LEV" SINGLE_VALUE="false" NAME="Code" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String" />
-					<FIELD ID="CDC_NM_LEV" SINGLE_VALUE="false" NAME="Name" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String"/>
-					<FIELD ID="ORDER_LEV" SINGLE_VALUE="false"  NAME="Order" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="Number"/>
-					<FIELD ID="FORM_LIV" SINGLE_VALUE="false"  NAME="Form Liv." VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String"/>	
+					<FIELD ID="CDC_CD_LEV" SINGLE_VALUE="false" NAME="Code" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String" />
+					<FIELD ID="CDC_NM_LEV" SINGLE_VALUE="false" NAME="Name" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
+					<FIELD ID="ORDER_LEV" SINGLE_VALUE="false"  NAME="Order" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="Number"/>
+					<FIELD ID="FORM_LIV" SINGLE_VALUE="false"  NAME="Form Liv." VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>	
 <!--				<FIELD ID="ORIG_HIER_CD" SINGLE_VALUE="true"  NAME="Code hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
 					<FIELD ID="ORIG_HIER_NM" SINGLE_VALUE="true"  NAME="Name hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
 					<FIELD ID="ORIG_NODE_CD" SINGLE_VALUE="true"  NAME="Code node orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
@@ -76,7 +76,7 @@
 				<!--	<FIELD ID="HIER_ID"  VISIBLE="false" EDITABLE="false" required="true" TYPE="Number" /> -->
 					<FIELD ID="CDC_LEAF_ID"  NAME="Leaf Id." VISIBLE="false" EDITABLE="false" required="true" TYPE="Number" />
 					<FIELD ID="CDC_CD_LEAF"  NAME="Code" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String"/>
-					<FIELD ID="CDC_NM_LEAF"  NAME="Name" VISIBLE="true" EDITABLE="false"  REQUIRED="true" TYPE="String" />	
+					<FIELD ID="CDC_NM_LEAF"  NAME="Name" VISIBLE="true" EDITABLE="true"  REQUIRED="true" TYPE="String" />	
 					<FIELD ID="LEAF_PARENT_CD"  NAME="Parent Code" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String"/>					
 					<FIELD ID="LEAF_PARENT_NM"  NAME="Parent Name" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String"/>
 					<FIELD ID="BEGIN_DT"  NAME="Begin Date" VISIBLE="true"  EDITABLE="true" REQUIRED="true" TYPE="Date"/>
