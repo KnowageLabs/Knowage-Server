@@ -75,6 +75,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
 	private static final String HREF_MANAGE_GLOSSARY_TECHNICAL = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp";
 	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
+	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
 
 	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
 	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
@@ -320,6 +321,18 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(glossaryManagementTechnical);
 		}
 
+		//TODO configure authorization
+		if (isAbleTo(SpagoBIConstants.MANAGE_CROSS_NAVIGATION, funcs)) {
+			JSONObject o = new JSONObject();
+			o.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			o.put(TOOLTIP, messageBuilder.getMessage("menu.cross.definition", locale));
+			o.put(ICON_ALIGN, "top");
+			o.put(SCALE, "large");
+			o.put(TARGET, "_self");
+			o.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_CROSS_DEFINITION + "');");
+			tempMenuList.put(o);
+		}
+		
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
 			domainManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
