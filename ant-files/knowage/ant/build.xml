@@ -460,7 +460,11 @@
 	</target>
 
 
-	<target name="deploy.all.with.server.manager" >
+	<target name="deploy.all.with.server.manager" depends="deploy.all" >
+		<antcall target="add.server.manager" />
+	</target>
+	
+	<target name="add.server.manager">
 		<antcall target="create.sbi.servermanager.jar" />
 		<delete file="${tomcat.home}/webapps/knowage/WEB-INF/lib/sbi.servermanager-*.jar" />
 		<copy file="../../../knowageservermanager/dist/sbi.servermanager-${project.version}.jar" todir="${tomcat.home}/webapps/knowage/WEB-INF/lib" overwrite="true" />
