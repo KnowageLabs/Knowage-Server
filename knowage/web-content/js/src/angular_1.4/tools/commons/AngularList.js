@@ -4,7 +4,7 @@
  */
 
 angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angularUtils.directives.dirPagination','sbiModule'])
-.filter('filterBySpecificColumns', function(){
+.filter('filterBySpecificColumnAngularList', function(){
 	return function(items,searchFastVal,itemName,localSearch) { 
 		if(localSearch==false || localSearch=="false" ){
 			return items;
@@ -21,9 +21,9 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
 		};
 		return filtered;
 	}})
-.directive('angularList', function() {
+.directive('angularList', ['sbiModule_config',function(sbiModule_config) {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/angular-list.html',
+		templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/commons/templates/angular-list.jsp',
 		controller: ListControllerFunction,
 		replace:true,
 		scope: {
@@ -78,7 +78,7 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
 
 		}
 	}
-});
+}]);
 
 function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$timeout,$compile){
 
