@@ -1,91 +1,93 @@
-<md-dialog aria-label="Mango (Fruit)" ng-cloak style="min-width:700px;min-height:500px;max-width:900px;max-height:700px;" ng-cloak> 
+<md-dialog aria-label="Mango (Fruit)" ng-cloak class="new-master-dialog" ng-cloak> 
 	<md-toolbar class="miniheadhiersmall">
 		<div class="md-toolbar-tools">
 			  <h2 class="md-flex">{{translate.load("sbi.hierarchies.new.create.master");}}</h2>
 		</div>
 	</md-toolbar> 
-	<md-dialog-content layout="column" layout-align="space-between stretch">
-		<form name="hierForm" layout-fill>
-			<div flex layout-margin>
-				<md-grid-list layout-fill md-cols="2" md-row-height="50px"> 
-					<md-grid-tile md-colspan="1" ng-repeat='mt in metadataTree' ng-if="mt.VISIBLE && mt.EDITABLE">
-						<div>
-							<md-input-container ng-if="mt.VISIBLE && mt.EDITABLE && (mt.TYPE == 'String' || mt.TYPE == 'Number')" >
-								<label> {{mt.NAME}}</label>
-								<input type="text" ng-model="hierNew[mt.ID]" ng-disabled='!mt.EDITABLE' ng-required='true'></input>
-							</md-input-container>
-							<div ng-if="mt.VISIBLE && mt.EDITABLE && mt.TYPE == 'Date'">
-								<md-datepicker ng-model="hierNew[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='true'></md-datepicker> {{mt.NAME}}
+	<md-dialog-content>
+		<md-content  layout="column" class="layout-align-space-between-stretch">
+			<form name="hierForm">
+				<div flex layout-margin>
+					<md-grid-list class="force-100width" md-cols="2" md-row-height="50px"> 
+						<md-grid-tile md-colspan="1" ng-repeat='mt in metadataTree' ng-if="mt.VISIBLE && mt.EDITABLE">
+							<div>
+								<md-input-container ng-if="mt.VISIBLE && mt.EDITABLE && (mt.TYPE == 'String' || mt.TYPE == 'Number')" >
+									<label> {{mt.NAME}}</label>
+									<input type="text" ng-model="hierNew[mt.ID]" ng-disabled='!mt.EDITABLE' ng-required='true'></input>
+								</md-input-container>
+								<div ng-if="mt.VISIBLE && mt.EDITABLE && mt.TYPE == 'Date'">
+									<md-datepicker ng-model="hierNew[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='true'></md-datepicker> {{mt.NAME}}
+								</div>
 							</div>
-						</div>
-					</md-grid-tile>
-				</md-grid-list>
-			</div>
-			<md-content layout="row" layout-align="space-around center" layout-padding>
-				<md-content class="list-container">
-					<md-list>
-						<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim"  ng-if="mtDim.PARENT != true">
-							<span class="force-100width" ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}">{{mtDim.NAME}} </span>	
-						</md-list-item>
-					</md-list>
-				</md-content>
-				<md-content layout="column" layout-align="center center">
-					<md-button class="md-raised button-move" ng-click="moveTo('right')" ng-disabled="selectedItemsLeft.length==0"> &gt &gt</md-button>
-					<md-button class="md-raised button-move" ng-click="moveTo('left')"> &lt &lt</md-button>
-				</md-content>
-				<md-content layout="column" space-align="space-between stretch">
-					<md-content class="list-container" style="height:11rem;">
-						<md-list layout-padding>
-							<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport" >
-								<md-content layout-fill layout="row" layout-align="space-between center">
-									<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
-										<span class="force-100width" ng-click="toggleItem(mtDimExp,'right')">
-										<b>Lev.{{mtDimExp.code.level}}</b> {{mtDimExp.code.NAME}}, {{mtDimExp.name.NAME}} </span>
-									</md-content>
-									<md-content ng-if="mtDimExp.isLast && !mtRecursive">
-										<md-button ng-click="moveToRecursive(mtDimExp)" class="md-fab addButton-small" arial-label="{{translate.load('sbi.hierarchies.new.create.master.addrecursive');}}">
-											<md-icon class="fa fa-plus" style="width:10px;height:15px"></md-icon>
-										</md-button>	
-									</md-content>
-									<md-content layout="column" layout-align="space-between center" style="width:5%;min-height:30px">
-										<div ng-click="moveUp(mtDimExp)" style="height:15px">
-											<md-icon class="fa fa-caret-up"></md-icon>
-										</div>
-										<div ng-click="moveDown(mtDimExp)" style="height:15px">
-											<md-icon class="fa fa-caret-down"></md-icon>
-										</div>
-									</md-content>
-								</md-content>
+						</md-grid-tile>
+					</md-grid-list>
+				</div>
+				<md-content layout="row" layout-align="space-around center" layout-padding>
+					<md-content class="list-container">
+						<md-list>
+							<md-list-item class="list-item-small" ng-repeat="mtDim in metadataDim"  ng-if="mtDim.PARENT != true">
+								<span class="force-100width" ng-click="toggleItem(mtDim,'left')"  ng-class="{ 'list-item-small-selected' :mtDim.isSelected}">{{mtDim.NAME}} </span>	
 							</md-list-item>
 						</md-list>
 					</md-content>
-					<md-content layout="column" layout-align="space-around stretch" layout-padding class="recursive-container">
-						<md-content class="force-100width" layout="row" layout-align="space-between center">
-							<div class="text-container">
-								<span>Recursive: {{mtRecursive.code.NAME}} {{mtRecursive.name.NAME}}</span>
-							</div>
-							<md-icon ng-if="mtRecursive" class="fa fa-trash" ng-click="removeRecursive()" ng-disabled="!mtRecursive"></md-icon>
+					<md-content layout="column" layout-align="center center">
+						<md-button class="md-raised button-move" ng-click="moveTo('right')" ng-disabled="selectedItemsLeft.length==0"> &gt &gt</md-button>
+						<md-button class="md-raised button-move" ng-click="moveTo('left')"> &lt &lt</md-button>
+					</md-content>
+					<md-content layout="column" space-align="space-between stretch">
+						<md-content class="list-container" style="height:11rem;">
+							<md-list layout-padding>
+								<md-list-item class="list-item-small" ng-repeat="mtDimExp in metadataDimExport" >
+									<md-content class="force-100width" layout="row" layout-align="space-between center">
+										<md-content ng-class="{ 'list-item-small-selected' :mtDimExp.isSelected}" style="width:95%">
+											<span class="force-100width" ng-click="toggleItem(mtDimExp,'right')">
+											<b>Lev.{{mtDimExp.code.level}}</b> {{mtDimExp.code.NAME}}, {{mtDimExp.name.NAME}} </span>
+										</md-content>
+										<md-content ng-if="mtDimExp.isLast && !mtRecursive" class="hide-overflow">
+											<md-button ng-click="moveToRecursive(mtDimExp)" class="md-fab addButton-small" arial-label="{{translate.load('sbi.hierarchies.new.create.master.addrecursive');}}">
+												<md-icon class="fa fa-plus" style="width:10px;height:15px"></md-icon>
+											</md-button>	
+										</md-content>
+										<md-content layout="column" layout-align="space-between center" class="hide-overflow" style="width:5%;min-height:30px">
+											<div ng-click="moveUp(mtDimExp)" style="height:15px">
+												<md-icon class="fa fa-caret-up"></md-icon>
+											</div>
+											<div ng-click="moveDown(mtDimExp)" style="height:15px">
+												<md-icon class="fa fa-caret-down"></md-icon>
+											</div>
+										</md-content>
+									</md-content>
+								</md-list-item>
+							</md-list>
 						</md-content>
-						<md-content class="force-100width" layout="row" layout-align="space-between center" layout-padding style="height:40px" >
-							<md-select flex="45" ng-model="code" placeholder="{{translate.load('sbi.generic.code')}}" ng-disabled="!mtRecursive">
-								<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT == true">{{code.NAME}}</md-option>
-							</md-select>
-							<md-select flex="45" ng-model="descr" placeholder="{{translate.load('sbi.generic.descr')}}" ng-disabled="!mtRecursive">
-								<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="descr.PARENT == true">{{descr.NAME}}</md-option>
-							</md-select>
+						<md-content layout="column" layout-align="space-around stretch" layout-padding class="recursive-container">
+							<md-content class="force-100width text-container" layout="row" layout-align="space-between center">
+								<div class="text-container">
+									<span>Recursive: {{mtRecursive.code.NAME}} {{mtRecursive.name.NAME}}</span>
+								</div>
+								<md-icon ng-if="mtRecursive" class="fa fa-trash" ng-click="removeRecursive()" ng-disabled="!mtRecursive"></md-icon>
+							</md-content>
+							<md-content class="force-100width line-recursive-combo" layout="row" layout-align="space-between center">
+								<md-select flex="45" ng-model="code" placeholder="{{translate.load('sbi.generic.code')}}" ng-disabled="!mtRecursive">
+									<md-option ng-value="code" ng-repeat="code in codes" ng-if="code.PARENT == true">{{code.NAME}}</md-option>
+								</md-select>
+								<md-select flex="45" ng-model="descr" placeholder="{{translate.load('sbi.generic.descr')}}" ng-disabled="!mtRecursive">
+									<md-option ng-value="descr" ng-repeat="descr in descriptions" ng-if="descr.PARENT == true">{{descr.NAME}}</md-option>
+								</md-select>
+							</md-content>
 						</md-content>
 					</md-content>
 				</md-content>
-			</md-content>
-			<md-content layout="row" layout-align="space-around center" layout-padding ng-if = "showWarningMessage">
-				<md-input-container class="md-block" flex-gt-sm>
-					<div class="hint">You can select only two items</div>
-				</md-input-container>
-			</md-content>
-			<div layout="row" layout-align="space-around center">
-				<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier()" ng-disabled="hierForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
-				<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
-			</div> 
-		</form>
+				<md-content layout="row" layout-align="space-around center" layout-padding ng-if = "showWarningMessage">
+					<md-input-container class="md-block" flex-gt-sm>
+						<div class="hint">You can select only two items</div>
+					</md-input-container>
+				</md-content>
+				<div layout="row" layout-align="space-around center">
+					<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveHier()" ng-disabled="hierForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
+					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}} </md-button>
+				</div> 
+			</form>
+		</md-content>
 	</md-dialog-content> 
 </md-dialog>

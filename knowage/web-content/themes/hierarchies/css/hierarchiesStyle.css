@@ -119,7 +119,12 @@ md-dialog.md-default-theme{
 resizer {
 	background-color: white !important; 
 }
-
+.new-master-dialog{
+	min-width: 50rem;
+    min-height: 33rem;
+    max-width: 60rem;
+    max-height: 50rem;
+}
 .list-container {
 	width: 19rem;
 	height : 16rem;
@@ -129,7 +134,7 @@ resizer {
 }
 
 .recursive-container{
-	width: 19rem;
+	min-width: 19.35rem;
 	height : 5rem;
 	max-width: 19rem;
 	max-height : 6rem;
@@ -140,6 +145,11 @@ resizer {
 	top: -1px;
 }
 
+.line-recursive-combo{
+	overflow-y:hidden;
+	height: 3rem;	
+}
+
 .details-container {
 	width:95%;
 	heigth:100%;
@@ -148,6 +158,7 @@ resizer {
 
 .text-container{
 	overflow: hidden;
+	position: static;	
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: 18rem;
@@ -169,6 +180,10 @@ resizer {
 	background-color: #3B668C;
 	border-style: dotted;
 	border-width: 1px;
+}
+
+.hide-overflow {
+	overflow: hidden !important;
 }
 
 .hint{

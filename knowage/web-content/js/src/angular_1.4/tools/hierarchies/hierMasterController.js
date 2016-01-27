@@ -195,7 +195,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 							if (removeFilter == true) {
 								$scope.seeHideLeafDim = false;
 								$scope.dateFilterDim = undefined;
-								$scope.toggleSeeFilter('dim');
+								$scope.seeFilterDim = false;
 							}
 							if (resetTree){
 								$scope.hierType = undefined;
