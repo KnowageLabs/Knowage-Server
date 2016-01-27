@@ -1,19 +1,18 @@
-<md-dialog aria-label="Mango (Fruit)" ng-cloak style="max-width:900px;max-height:900px;"> 
-	<md-toolbar class="miniheadimexsmall" layout-align>
-		<div class="md-toolbar-tools">
-			<i class="fa fa-list-alt fa-2x"></i>
-			<h2 class="md-flex" style="padding-left: 14px">{{translate.load('impexp.listAssFile','component_impexp_messages');}}</h2>
-			<span flex=""></span>					
-		</div>
-	</md-toolbar>
-	
-	<md-content flex layout-padding layout-wrap layout="column"  ng-class="{ styleIE : isIE, contentIE: isIE}">			
-		
-		<!-- layout row for adding new file association -->
+<md-dialog aria-label="listfileass" style="height:70%; width:80%"  ng-cloak>
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load('impexp.listAssFile','component_impexp_messages');}}</h2>
+        <span flex></span>
+     </div>
+    </md-toolbar>
+    <md-dialog-content flex layout="column">
+     
+     <!-- layout row for adding new file association -->
 		<div layout="row" layout-wrap >
-			<md-button class="md-fab md-fab-mini" ng-click="toogleViewInsertForm()" aria-label="{{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}">
-				<md-icon ng-if="!viewInsertForm" class="fa fa-plus center-ico"></md-icon>
-				<md-icon ng-if="viewInsertForm" class="fa fa-minus center-ico"></md-icon>
+			<md-button class="md-fab md-mini" ng-click="toogleViewInsertForm()" aria-label="{{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}">
+				<md-icon ng-if="!viewInsertForm" class="fa fa-plus fa-2x"></md-icon>
+				<md-icon ng-if="viewInsertForm" class="fa fa-minus fa-2x"></md-icon>
 				<md-tooltip md-direction="right" >
 					{{translate.load('sbi.generic.add');}} {{translate.load('SBISet.importexport.fileAssociation','component_impexp_messages')}}
 				</md-tooltip>
@@ -30,14 +29,14 @@
 				</md-input-container>
 				<file-upload flex-sm="90" flex="40" id="fileAssociationDialog" ng-model="addAssociationForm.file"></file-upload>
 				<md-button  ng-click="saveListAssociationFile()" ng-if="viewInsertForm" ng-disabled="addAssociationForm.name===undefined || addAssociationForm.name.length == 0   || addAssociationForm.file ===undefined || addAssociationForm.file.fileName === undefined || addAssociationForm.file.fileName.length == 0" class="md-fab md-fab-mini" aria-label="{{translate.load('sbi.generic.update');}}">
-					<md-icon class="fa fa-floppy-o center-ico"></md-icon>
+					<md-icon class="fa fa-floppy-o fa-2x"></md-icon>
 				</md-button>
 			</div>
 		</div>
 			
 		
 		<!-- table and buttons for select and cancel -->
-		<div flex style="position:relative;padding:0;"">
+		<div flex style="position:relative;padding:0;">
 			<angular-table  style="position: absolute;    width: 100%;    height: 100%;"
 				id="listAssociation" ng-model="associations" 
 				columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"},{"label":"Creation Date","name":"localCreationDate"}]'
@@ -54,11 +53,26 @@
 			<md-button class="md-raised md-ExtraMini" ng-click="selectAssociation()" ng-disabled="associationSelected.name === undefined || associationSelected.name.length === 0"> Select </md-button>
 			<md-button class="md-raised md-ExtraMini" ng-click="cancel()" > Cancel</md-button>
 		</div>
-	</md-content>
+     
+    </md-dialog-content>
+   
+ 
 </md-dialog>
 
-<style>
-.styleIE.contentIE{
-	min-height:300px;
-}
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

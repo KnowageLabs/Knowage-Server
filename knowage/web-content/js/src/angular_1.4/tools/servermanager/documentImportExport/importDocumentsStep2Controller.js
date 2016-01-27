@@ -2,19 +2,6 @@ angular.module('importExportDocumentModule').controller('importControllerStep2',
 
 function importStep2FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
 
-	$scope.manageFirstAssociationsEngines=function(){
-		for(var i=0;i<importExportDocumentModule_importConf.engines.exportedEngines.length;i++){
-			var index=enginesInList(importExportDocumentModule_importConf.engines.exportedEngines[i],importExportDocumentModule_importConf.engines.currentEngines);
-			if(index!=-1){
-				importExportDocumentModule_importConf.engines.associatedEngines[importExportDocumentModule_importConf.engines.exportedEngines[i].id]=importExportDocumentModule_importConf.engines.currentEngines[index];
-				importExportDocumentModule_importConf.engines.associatedEngines[importExportDocumentModule_importConf.engines.exportedEngines[i].id].fixed=true;
-			}else{
-				importExportDocumentModule_importConf.engines.associatedEngines[importExportDocumentModule_importConf.engines.exportedEngines[i].id]={};
-			}
-
-		}
-	}
-
 	function enginesInList(engine,list){
 		for(var i in list){
 			if(list[i].name==engine.name){
@@ -53,8 +40,8 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 			else if(data.STATUS=="OK"){
 				importExportDocumentModule_importConf.datasources.currentDatasources=data.currentDatasources;
 				importExportDocumentModule_importConf.datasources.exportedDatasources=data.exportedDatasources;
-
-				$scope.stepControl.insertBread({name:"datasources"})
+				importExportDocumentModule_importConf.datasources.associatedDatasources=data.associatedDatasources;
+				$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedDS','component_impexp_messages')})
 			}
 		})
 		.error(function(data, status, headers, config) {

@@ -1,118 +1,145 @@
-@CHARSET "ISO-8859-1";
-
-.associations-container{
-	border: 2px solid #3B668C;
-	border-radius: 25px;
+.absolute{
+	position:absolute;
 }
 
-.miniheadimportexport {
-/*  position: absolute !important; */
-  	background-color: #3B668C !important;
-	color: white !important;	
+div.importSteps>md-content{
+	    height: calc(100% - 25px);
 }
 
-.miniheadassociations{
-	border-radius: 20px 20px 0px 0px;
-	background-color: #FFF !important;
-	color: #3B668C !important;
-	margin-top : -1px; 
-	min-height: 0px;
-	height: 35px;
+.sourceTargetToolbar{
+/* 	background-color: rgba(63, 81, 181, 0.38); */
+    text-align: center;
+    z-index: 4;
+        margin-bottom: 1px;
 }
 
-md-toolbar.miniheadimexsmall {
-	background-color: #3B668C;
-	color: #000000255255255;
-	height: 35px;
-	min-height: 0px;
+.importSteps .md-subheader-wrapper,.importSteps .md-subheader{
+	text-align: center;
 }
 
-.miniheadimexsmall{
-	background-color: #3B668C !important;
-	color: white !important;
-	height: 35px;
+.centerText{
+	 text-align: center;
 }
+ 
 
-.listBackground{
-	background-color: rgb(232, 232, 232) !important;
-}
 
-.createRelationButton {
-	background-color: 0094FF!important;
-	position
-}
+/* @CHARSET "ISO-8859-1"; */
 
-md-list-item.md-list-item-inner.relation {
-	height: 35px;
-	min-meight: 0px;
-}
-editedRelationButton {
-	backgtound-color: #009688 !important;
-}
+/* .associations-container{ */
+/* 	border: 2px solid #3B668C; */
+/* 	border-radius: 25px; */
+/* } */
 
-.docs {
-	text-align:left;
-}
+/* .miniheadimportexport { */
+/* /*  position: absolute !important; */ */
+/*   	background-color: #3B668C !important; */
+/* 	color: white !important;	 */
+/* } */
 
-.docs-list {
-	text-transform: none;
-	font-weight: normal;
-}
+/* .miniheadassociations{ */
+/* 	border-radius: 20px 20px 0px 0px; */
+/* 	background-color: #FFF !important; */
+/* 	color: #3B668C !important; */
+/* 	margin-top : -1px;  */
+/* 	min-height: 0px; */
+/* 	height: 35px; */
+/* } */
 
-.selected-doc {
-	background-color: #E8EAF6;
-}
+/* md-toolbar.miniheadimexsmall { */
+/* 	background-color: #3B668C; */
+/* 	color: #000000255255255; */
+/* 	height: 35px; */
+/* 	min-height: 0px; */
+/* } */
 
-.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+/* .miniheadimexsmall{ */
+/* 	background-color: #3B668C !important; */
+/* 	color: white !important; */
+/* 	height: 35px; */
+/* } */
 
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
-.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+/* .listBackground{ */
+/* 	background-color: rgb(232, 232, 232) !important; */
+/* } */
 
-/* border of document list view */
-.doc-list-border {
-	border-left:  1px solid rgba(0, 0, 0, 0.12);
-	border-bottom:  1px solid rgba(0, 0, 0, 0.12);
-}
+/* .createRelationButton { */
+/* 	background-color: 0094FF!important; */
+/* 	position */
+/* } */
 
-.toolbar-button-custom {
-	min-width: 50px;
-	width: 50px;
-}
+/* md-list-item.md-list-item-inner.relation { */
+/* 	height: 35px; */
+/* 	min-meight: 0px; */
+/* } */
+/* editedRelationButton { */
+/* 	backgtound-color: #009688 !important; */
+/* } */
 
-/* to remove border on selection*/
-.customTreeNode {
-	outline: none;
-    border: 0;
-}
+/* .docs { */
+/* 	text-align:left; */
+/* } */
 
-.md-fab.md-fab-mini {
-	width: 35px;
-	height: 30px;
-	background-color : #FAFAFA;
-}
+/* .docs-list { */
+/* 	text-transform: none; */
+/* 	font-weight: normal; */
+/* } */
 
-md-icon.center-ico{
-	margin-left: -0.1rem;
-	margin-top: 0.6rem;
-}
+/* .selected-doc { */
+/* 	background-color: #E8EAF6; */
+/* } */
 
-md-checkbox.little-check {
-  font-size: 12px;
+/* .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); } */
+/* .material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); } */
+
+/* .material-icons.md-light { color: rgba(255, 255, 255, 1); } */
+/* .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); } */
+
+/* /* border of document list view */ */
+/* .doc-list-border { */
+/* 	border-left:  1px solid rgba(0, 0, 0, 0.12); */
+/* 	border-bottom:  1px solid rgba(0, 0, 0, 0.12); */
+/* } */
+
+/* .toolbar-button-custom { */
+/* 	min-width: 50px; */
+/* 	width: 50px; */
+/* } */
+
+/* /* to remove border on selection*/ */
+/* .customTreeNode { */
+/* 	outline: none; */
+/*     border: 0; */
+/* } */
+
+/* .md-fab.md-fab-mini { */
+/* 	width: 35px; */
+/* 	height: 30px; */
+/* 	background-color : #FAFAFA; */
+/* } */
+
+/* md-icon.center-ico{ */
+/* 	margin-left: -0.1rem; */
+/* 	margin-top: 0.6rem; */
+/* } */
+
+/* md-checkbox.little-check { */
+/*   font-size: 12px; */
   	
-}
+/* } */
 
-md-dialog {
-    max-width: 95%;
-    max-height: 90%;
-    min-width: 70%;
-    min-height: 60%;
-}
+/* md-dialog { */
+/*     max-width: 95%; */
+/*     max-height: 90%; */
+/*     min-width: 70%; */
+/*     min-height: 60%; */
+/* } */
 
-.md-button.md-fab md-icon{
-	color: #000;
-}
+/* .md-button.md-fab md-icon{ */
+/* 	color: #000; */
+/* } */
 
-.little-check .md-container .md-icon {
+/* .little-check .md-container .md-icon { */
 
-}
+/* } */
+
+

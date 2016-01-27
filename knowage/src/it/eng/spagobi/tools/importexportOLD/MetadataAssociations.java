@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexportOLD;
 
@@ -111,7 +111,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if the metadata association is empty.
-	 * 
+	 *
 	 * @return boolean, true is associations are empty false otherwise
 	 */
 	public boolean isEmpty() {
@@ -283,7 +283,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isParameterAssEmpty() {
@@ -292,7 +292,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isRoleAssEmpty() {
@@ -301,7 +301,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isBIObjAssEmpty() {
@@ -310,7 +310,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isLovAssEmpty() {
@@ -319,7 +319,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isFunctAssEmpty() {
@@ -328,7 +328,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isEngineAssEmpty() {
@@ -337,7 +337,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isCheckAssEmpty() {
@@ -346,7 +346,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isParuseAssEmpty() {
@@ -355,7 +355,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isKpiEmpty() {
@@ -364,7 +364,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isModelEmpty() {
@@ -373,7 +373,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isModelInstanceEmpty() {
@@ -382,7 +382,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isThresholdInstanceEmpty() {
@@ -391,7 +391,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isThresholdValueInstanceEmpty() {
@@ -400,7 +400,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Checks if Associations for the specific object are empty.
-	 * 
+	 *
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
 	public boolean isKpiInstanceEmpty() {
@@ -409,7 +409,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported parameter ids.
-	 * 
+	 *
 	 * @return Map of assocaitions
 	 */
 	public Map getParameterIDAssociation() {
@@ -418,7 +418,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported parameters.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getParameterAssociation() {
@@ -427,7 +427,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of parameters into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -440,7 +440,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of parameter ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -452,7 +452,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported role ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getRoleIDAssociation() {
@@ -461,7 +461,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported roles.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getRoleAssociation() {
@@ -470,7 +470,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of roles into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -483,7 +483,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of role ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -495,7 +495,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported biobject ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getBIobjIDAssociation() {
@@ -504,7 +504,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported biobjects.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getBIObjAssociation() {
@@ -513,7 +513,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of biobjects into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -526,7 +526,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of biobject ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -538,7 +538,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported lovs ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getLovIDAssociation() {
@@ -547,7 +547,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported lovs.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getLovAssociation() {
@@ -556,7 +556,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of lovs into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -569,7 +569,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of lov ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -581,7 +581,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported functionality ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getFunctIDAssociation() {
@@ -590,7 +590,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported functionalities.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getFunctAssociation() {
@@ -599,7 +599,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of functionalities into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -611,7 +611,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of functionality ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -623,7 +623,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported engine ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getEngineIDAssociation() {
@@ -632,7 +632,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported engines.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getEngineAssociation() {
@@ -641,7 +641,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of engines into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -654,7 +654,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of engine ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -666,7 +666,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported check ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getCheckIDAssociation() {
@@ -675,7 +675,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported checks.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getCheckAssociation() {
@@ -684,7 +684,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of checks into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -697,7 +697,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of check ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -709,7 +709,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported parameter use ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getParuseIDAssociation() {
@@ -718,7 +718,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported parameter uses.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getParuseAssociation() {
@@ -727,7 +727,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of parameter uses into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -740,7 +740,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of parameter use ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -752,7 +752,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported domain id.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getDomainIDAssociation() {
@@ -761,7 +761,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported domains.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getDomainAssociation() {
@@ -770,7 +770,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of domains into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -782,7 +782,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of domain id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -794,7 +794,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported objpar id.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getObjparIDAssociation() {
@@ -803,7 +803,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported objpars.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getObjparAssociation() {
@@ -812,7 +812,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of objpar into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -824,7 +824,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of objpar id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -836,7 +836,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of objpar id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -848,7 +848,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported associations among dataset and object.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getObjDataSetAssociation() {
@@ -857,7 +857,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported datasources.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getDataSourceIDAssociation() {
@@ -866,7 +866,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of datasource id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -878,7 +878,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported datasets.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getDataSetIDAssociation() {
@@ -891,7 +891,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of dataset id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -903,7 +903,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of metaMdel id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -916,7 +916,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported metamodel.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getMetaModelIDAssociation() {
@@ -925,7 +925,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of artifacts id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -938,7 +938,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported artifact.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getArtifactIDAssociation() {
@@ -947,7 +947,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported maps.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getMapIDAssociation() {
@@ -956,7 +956,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of maps id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -968,7 +968,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported features.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getFeaturesIDAssociation() {
@@ -977,7 +977,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of features id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -989,7 +989,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpi.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getKpiIDAssociation() {
@@ -998,7 +998,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpi id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1010,7 +1010,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpi.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getKpiAssociation() {
@@ -1019,7 +1019,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpi id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1031,7 +1031,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpi instance.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getKpiInstanceIDAssociation() {
@@ -1040,7 +1040,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpi instanceid into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1052,7 +1052,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpi instance.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getKpiInstanceAssociation() {
@@ -1061,7 +1061,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpi instanceid into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1073,7 +1073,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported model.
-	 * 
+	 *
 	 * @return Map of models
 	 */
 	public Map getModelIDAssociation() {
@@ -1082,7 +1082,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1094,7 +1094,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported model.
-	 * 
+	 *
 	 * @return Map of models
 	 */
 	public Map getModelAssociation() {
@@ -1103,7 +1103,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1115,7 +1115,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported model instance.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getModelInstanceIDAssociation() {
@@ -1124,7 +1124,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model instanceid into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1136,7 +1136,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported model instance ID.
-	 * 
+	 *
 	 * @return Map of kpi
 	 */
 	public Map getModelInstanceAssociation() {
@@ -1145,7 +1145,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model instance into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1157,7 +1157,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported threshold.
-	 * 
+	 *
 	 * @return Map of threshold
 	 */
 	public Map getTresholdIDAssociation() {
@@ -1166,7 +1166,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of threshold into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1178,7 +1178,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported threshold.
-	 * 
+	 *
 	 * @return Map of threshold
 	 */
 	public Map getTresholdAssociation() {
@@ -1187,7 +1187,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of threshold into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1199,7 +1199,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported thresholdValue.
-	 * 
+	 *
 	 * @return Map of threshold
 	 */
 	public Map getTresholdValueIDAssociation() {
@@ -1208,7 +1208,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of threshold value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1220,7 +1220,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported thresholdValue.
-	 * 
+	 *
 	 * @return Map of threshold
 	 */
 	public Map getTresholdValueAssociation() {
@@ -1229,7 +1229,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of threshold value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1241,7 +1241,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Resources.
-	 * 
+	 *
 	 * @return Map of Resources
 	 */
 	public Map getResourcesIDAssociation() {
@@ -1250,7 +1250,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of resources value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1262,7 +1262,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Resources.
-	 * 
+	 *
 	 * @return Map of Resources
 	 */
 	public Map getResourcesAssociation() {
@@ -1271,7 +1271,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of resources into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1283,7 +1283,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ModelResources.
-	 * 
+	 *
 	 * @return Map of ModelResources
 	 */
 	public Map getModelResourcesIDAssociation() {
@@ -1292,7 +1292,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model resources value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1304,7 +1304,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Model Resources.
-	 * 
+	 *
 	 * @return Map of Model Resources
 	 */
 	public Map getModelResourcesAssociation() {
@@ -1313,7 +1313,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of model Resources into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1325,7 +1325,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Periodicity.
-	 * 
+	 *
 	 * @return Map of Periodicity
 	 */
 	public Map getPeriodicityIDAssociation() {
@@ -1334,7 +1334,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of periodicity value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1346,7 +1346,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Periodicity.
-	 * 
+	 *
 	 * @return Map of Periodicity
 	 */
 	public Map getPeriodicityAssociation() {
@@ -1355,7 +1355,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of Periodicity into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1367,7 +1367,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpiInstPeriod.
-	 * 
+	 *
 	 * @return Map of Periodicity
 	 */
 	public Map getKpiInstPeriodIDAssociation() {
@@ -1376,7 +1376,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpiInstPeriod value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1388,7 +1388,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpiInstPeriod.
-	 * 
+	 *
 	 * @return Map of kpiInstPeriod
 	 */
 	public Map getKpiInstPeriodAssociation() {
@@ -1397,7 +1397,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of kpiInstPeriod into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1409,7 +1409,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Alarms
-	 * 
+	 *
 	 * @return Map of Alarm
 	 */
 	public Map getAlarmIDAssociation() {
@@ -1418,7 +1418,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of Alarm value into the associations
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1430,7 +1430,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported Alarm.
-	 * 
+	 *
 	 * @return Map of Alarm
 	 */
 	public Map getAlarmAssociation() {
@@ -1439,7 +1439,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of alarm into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1451,7 +1451,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported AlarmsContact
-	 * 
+	 *
 	 * @return Map of AlarmContact
 	 */
 	public Map getAlarmContactIDAssociation() {
@@ -1460,7 +1460,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of Alarm Contact value into the associations
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1472,7 +1472,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported AlarmContact.
-	 * 
+	 *
 	 * @return Map of AlarmContact
 	 */
 	public Map getAlarmContactAssociation() {
@@ -1481,7 +1481,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of alarmContact into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1493,7 +1493,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetadata.
-	 * 
+	 *
 	 * @return Map of ObjMetadata
 	 */
 	public Map getObjMetadataAssociation() {
@@ -1502,7 +1502,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ObjMetadata into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1514,7 +1514,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetadata ID.
-	 * 
+	 *
 	 * @return Map of ObjMetadata
 	 */
 	public Map getObjMetadataIDAssociation() {
@@ -1523,7 +1523,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ObjMetadata ID into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1535,7 +1535,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetacontents.
-	 * 
+	 *
 	 * @return Map of ObjMetacontents
 	 */
 	public Map getObjMetacontentsAssociation() {
@@ -1544,7 +1544,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ObjMetacontents into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1556,7 +1556,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetacontents ID.
-	 * 
+	 *
 	 * @return Map of ObjMetacontents
 	 */
 	public Map getObjMetacontentsIDAssociation() {
@@ -1565,7 +1565,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ObjMetacontents ID into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1577,7 +1577,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported SubObjects ID.
-	 * 
+	 *
 	 * @return Map of SubObjects
 	 */
 	public Map getObjSubObjectIDAssociation() {
@@ -1586,7 +1586,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of SubObjects ID into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1598,7 +1598,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported kpi relation ID.
-	 * 
+	 *
 	 * @return Map of SubObjects
 	 */
 	public Map getKpiRelAssociation() {
@@ -1607,7 +1607,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of KpiRel ID into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1619,7 +1619,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported udp.
-	 * 
+	 *
 	 * @return Map of udp
 	 */
 	public Map getUdpAssociation() {
@@ -1628,7 +1628,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of Udp into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1640,7 +1640,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported udp value.
-	 * 
+	 *
 	 * @return Map of udp
 	 */
 	public Map getUdpValueAssociation() {
@@ -1649,7 +1649,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of Udp value into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1661,7 +1661,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ou.
-	 * 
+	 *
 	 * @return Map of ou
 	 */
 	public Map getOuAssociation() {
@@ -1670,7 +1670,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ou id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1682,7 +1682,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ou hierarchy.
-	 * 
+	 *
 	 * @return Map of hierarchies
 	 */
 	public Map getOuHierarchiesAssociation() {
@@ -1691,7 +1691,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ou hierarchy id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1703,7 +1703,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ou node.
-	 * 
+	 *
 	 * @return Map of ou nodes
 	 */
 	public Map getOuNodeAssociation() {
@@ -1712,7 +1712,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ou nodes id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1724,7 +1724,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ou grant.
-	 * 
+	 *
 	 * @return Map of ou grants
 	 */
 	public Map getOuGrantAssociation() {
@@ -1733,7 +1733,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ou Grant id into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1745,7 +1745,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported ou grant node.
-	 * 
+	 *
 	 * @return Map of ou grant nodes
 	 */
 	public Map getOuGrantNodesAssociation() {
@@ -1754,7 +1754,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of ou Grant node id objects into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1766,7 +1766,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported authorizations ids.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getAuthorizationsIDAssociation() {
@@ -1775,7 +1775,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Gets the Map of associations between current and exported authorizations.
-	 * 
+	 *
 	 * @return Map of associations
 	 */
 	public Map getAuthorizationsAssociation() {
@@ -1784,7 +1784,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of authorizations into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr
@@ -1796,7 +1796,7 @@ public class MetadataAssociations {
 
 	/**
 	 * Inserts a couple of authorizations ids into the associations.
-	 * 
+	 *
 	 * @param exp
 	 *            the exp
 	 * @param curr

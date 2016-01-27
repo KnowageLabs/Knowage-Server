@@ -2,21 +2,6 @@ angular.module('importExportDocumentModule').controller('importControllerStep1',
 
 function importStep1FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices ) {
 	
-	
-	$scope.manageFirstAssociationsRole=function(){
-		for(var i=0;i<importExportDocumentModule_importConf.roles.exportedRoles.length;i++){
-			var index=roleInList(importExportDocumentModule_importConf.roles.exportedRoles[i],importExportDocumentModule_importConf.roles.currentRoles);
-			if(index!=-1){
-				importExportDocumentModule_importConf.roles.associatedRoles[importExportDocumentModule_importConf.roles.exportedRoles[i].id]=importExportDocumentModule_importConf.roles.currentRoles[index];
-				importExportDocumentModule_importConf.roles.associatedRoles[importExportDocumentModule_importConf.roles.exportedRoles[i].id].fixed=true;
-//				importExportDocumentModule_importConf.roles.currentRoles.splice(index,1);
-			}else{
-				importExportDocumentModule_importConf.roles.associatedRoles[importExportDocumentModule_importConf.roles.exportedRoles[i].id]={};
-			}
-			
-		}
-	}
-	
 	function roleInList(role,list){
 		for(var i in list){
 			if(list[i].name==role.name){
@@ -52,9 +37,10 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 			else if(data.STATUS=="OK"){
 				importExportDocumentModule_importConf.engines.exportedEngines=data.exportedEngines;
 				importExportDocumentModule_importConf.engines.currentEngines=data.currentEngines;
-				importExportDocumentModule_importConf.engines.exportedEngines.push({"id":178,"criptable":0,"name":"Gianluca Engine","description":"Gianluca Engine è una particolare estensione che serve per....","url":"/knowagegianlucaengine/api/1.0/pages/execute","secondaryUrl":null,"dirUpload":null,"dirUsable":null,"driverName":"it.eng.spagobi.engines.drivers.gianluca.ChartDriver","label":"knowagegianlucaengine","className":"","biobjTypeId":null,"engineTypeId":null,"useDataSource":false,"useDataSet":false});
+				importExportDocumentModule_importConf.engines.associatedEngines=data.associatedEngines;
+//				importExportDocumentModule_importConf.engines.exportedEngines.push({"id":178,"criptable":0,"name":"Gianluca Engine","description":"Gianluca Engine è una particolare estensione che serve per....","url":"/knowagegianlucaengine/api/1.0/pages/execute","secondaryUrl":null,"dirUpload":null,"dirUsable":null,"driverName":"it.eng.spagobi.engines.drivers.gianluca.ChartDriver","label":"knowagegianlucaengine","className":"","biobjTypeId":null,"engineTypeId":null,"useDataSource":false,"useDataSet":false});
 				
-				$scope.stepControl.insertBread({name:"engines"})
+				$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedEngines','component_impexp_messages')})
 			}
 		})
 		.error(function(data, status, headers, config) {

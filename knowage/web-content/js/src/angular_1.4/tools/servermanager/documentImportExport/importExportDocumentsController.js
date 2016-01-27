@@ -20,6 +20,9 @@ app.factory("importExportDocumentModule_importConf", function() {
 			exportedDatasources : [],
 			associatedDatasources : {}
 		},
+		associationsFileName:"",
+		logFileName:"",
+		folderName:"",
 	};
 });
 
@@ -45,7 +48,7 @@ function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 
 
 function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast,importExportDocumentModule_importConf) {
-	$scope.stepItem=[{name:"file upload"}];
+	$scope.stepItem=[{name: $scope.translate.load('sbi.ds.file.upload.button')}];
 	$scope.selectedStep=0;
 	$scope.stepControl;
 	$scope.IEDConf=importExportDocumentModule_importConf;

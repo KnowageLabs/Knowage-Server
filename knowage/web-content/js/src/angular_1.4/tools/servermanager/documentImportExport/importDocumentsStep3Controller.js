@@ -2,20 +2,6 @@ angular.module('importExportDocumentModule').controller('importControllerStep3',
 
 function importStep3FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
 
-
-	$scope.manageFirstAssociationsDatasources=function(){
-		for(var i=0;i<importExportDocumentModule_importConf.datasources.exportedDatasources.length;i++){
-			var index=datasourcesInList(importExportDocumentModule_importConf.datasources.exportedDatasources[i],importExportDocumentModule_importConf.datasources.currentDatasources);
-			if(index!=-1){
-				importExportDocumentModule_importConf.datasources.associatedDatasources[importExportDocumentModule_importConf.datasources.exportedDatasources[i].dsId]=importExportDocumentModule_importConf.datasources.currentDatasources[index];
-				importExportDocumentModule_importConf.datasources.associatedDatasources[importExportDocumentModule_importConf.datasources.exportedDatasources[i].dsId].fixed=true;
-			}else{
-				importExportDocumentModule_importConf.datasources.associatedDatasources[importExportDocumentModule_importConf.datasources.exportedDatasources[i].dsId]={};
-			}
-
-		}
-	}
-
 	function datasourcesInList(datasource,list){
 		for(var i in list){
 			if(list[i].label==datasource.label){
@@ -52,10 +38,9 @@ function importStep3FuncController($scope,importExportDocumentModule_importConf,
 				$scope.showToast(data.ERROR,4000);
 			}
 			else if(data.STATUS=="OK"){
-				importExportDocumentModule_importConf.datasources.currentDatasources=data.currentDatasources;
-				importExportDocumentModule_importConf.datasources.exportedDatasources=data.exportedDatasources;
+				importExportDocumentModule_importConf.summary=data;
 
-				$scope.stepControl.insertBread({name:"riepilogo"})
+				$scope.stepControl.insertBread({name: $scope.translate.load('sbi.execution.executionpage.toolbar.metadata')})
 			}
 		})
 		.error(function(data, status, headers, config) {

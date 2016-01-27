@@ -6,7 +6,6 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 	
 	$scope.importFile = function(item){
 
-		console.log("step'0")
 			var fd = new FormData();
 				fd.append('exportedArchive', importExportDocumentModule_importConf.fileImport.file);
 				fd.append('importAssociationKind', importExportDocumentModule_importConf.associations);
@@ -23,12 +22,11 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 					else if(data.STATUS=="OK"){
 						importExportDocumentModule_importConf.roles.currentRoles=data.currentRoles;
 						importExportDocumentModule_importConf.roles.exportedRoles=data.exportedRoles;
-						importExportDocumentModule_importConf.roles.exportedRoles.push({"id":123,"name":"/spagobi/lucY","description":"/spagobi/lucy","roleTypeCD":"ADMIN","code":"","roleTypeID":32,"organization":null,"defaultRole":false,"roleMetaModelCategories":null,"ableToSeeNotes":false,"ableToSaveRememberMe":false,"ableToEditWorksheet":false,"ableToSeeMetadata":false,"ableToSeeSubobjects":false,"ableToSeeViewpoints":false,"ableToBuildQbeQuery":false,"ableToSeeSnapshots":false,"ableToSaveMetadata":false,"ableToSendMail":false,"ableToSaveSubobjects":false,"ableToSeeMyData":false,"ableToEditAllKpiComm":false,"ableToCreateSocialAnalysis":false,"ableToEditMyKpiComm":false,"ableToSeeDocumentBrowser":false,"ableToSeeSubscriptions":false,"ableToSeeToDoList":false,"ableToDeleteKpiComm":false,"ableToViewSocialAnalysis":false,"ableToSeeFavourites":false,"ableToDoMassiveExport":false,"ableToCreateDocuments":false,"ableToHierarchiesManagement":false,"ableToManageUsers":false,"ableToEnableDatasetPersistence":false,"ableToManageGlossaryBusiness":false,"ableToManageGlossaryTechnical":false,"ableToSaveIntoPersonalFolder":false,"ableToEnableFederatedDataset":false});
+						importExportDocumentModule_importConf.roles.associatedRoles=data.associatedRoles;
+//						importExportDocumentModule_importConf.roles.exportedRoles.push({"id":123,"name":"/spagobi/lucY","description":"/spagobi/lucy","roleTypeCD":"ADMIN","code":"","roleTypeID":32,"organization":null,"defaultRole":false,"roleMetaModelCategories":null,"ableToSeeNotes":false,"ableToSaveRememberMe":false,"ableToEditWorksheet":false,"ableToSeeMetadata":false,"ableToSeeSubobjects":false,"ableToSeeViewpoints":false,"ableToBuildQbeQuery":false,"ableToSeeSnapshots":false,"ableToSaveMetadata":false,"ableToSendMail":false,"ableToSaveSubobjects":false,"ableToSeeMyData":false,"ableToEditAllKpiComm":false,"ableToCreateSocialAnalysis":false,"ableToEditMyKpiComm":false,"ableToSeeDocumentBrowser":false,"ableToSeeSubscriptions":false,"ableToSeeToDoList":false,"ableToDeleteKpiComm":false,"ableToViewSocialAnalysis":false,"ableToSeeFavourites":false,"ableToDoMassiveExport":false,"ableToCreateDocuments":false,"ableToHierarchiesManagement":false,"ableToManageUsers":false,"ableToEnableDatasetPersistence":false,"ableToManageGlossaryBusiness":false,"ableToManageGlossaryTechnical":false,"ableToSaveIntoPersonalFolder":false,"ableToEnableFederatedDataset":false});
 						
-						$scope.stepControl.insertBread({name:"roles"})
-					}
-					
-					
+						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')})
+					} 
 				})
 				.error(function(data, status, headers, config) {
 					$scope.showToast(data,4000);
@@ -192,4 +190,44 @@ $scope.deleteAssociationsFile=function(item){
 		};
 	}
 
+	
+	$scope.downloadAssociationsFile=function(){
+
+		var data={"FILE_NAME":importExportDocumentModule_importConf.associationsFileName,
+				"FOLDER_NAME":importExportDocumentModule_importConf.folderName};
+		var config={"responseType": "arraybuffer"};
+		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadAssociationsFile",data,config)
+		.success(function(data, status, headers, config) {
+			if (data.hasOwnProperty("errors")) {
+				$scope.showToast(data.errors[0].message,4000);
+			}else if(status==200){
+				sbiModule_download.getBlob(data,importExportDocumentModule_importConf.associationsFileName,'application/xml','xml');
+//				$scope.flags.viewDownload = false
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.showToast("ERRORS "+status,4000);
+		})
+	
+	};
+	
+	$scope.downloadLogFile=function(){ 
+		var data={"FILE_NAME":importExportDocumentModule_importConf.logFileName,
+				"FOLDER_NAME":importExportDocumentModule_importConf.folderName};
+		var config={"responseType": "arraybuffer"};
+		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadLogFile",data,config)
+		.success(function(data, status, headers, config) {
+			if (data.hasOwnProperty("errors")) {
+				$scope.showToast(data.errors[0].message,4000);
+			}else if(status==200){
+				sbiModule_download.getBlob(data,importExportDocumentModule_importConf.logFileName,'application/log','log');
+//				$scope.flags.viewDownload = false
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.showToast("ERRORS "+status,4000);
+		}) 
+	};
+	
+	$scope.saveAssociationsFile=function(){
+		
+	};
 }
