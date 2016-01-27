@@ -57,29 +57,39 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	/*Drag and Drop option*/
 	$scope.treeSrcOptions = {
 		beforeDrop : function(e){
-			$scope.beforeDrop(e);
+			$scope.beforeDrop(e,false); //false because the Drop is not inside Tree, but is between two different trees
 		},
 		beforeDrag : function(sourceNodeScope){
 			if (sourceNodeScope.$treeScope.cloneEnabled==false){
 				sourceNodeScope.$treeScope.cloneEnabled = true;
 			}
 			return true;
+		},
+		dropped: function(e){
+			var ef=e;
 		}
 	};
 	
 	$scope.treeTargetOptions = {
 			beforeDrop : function(e){
-				$scope.beforeDrop(e);
+				$scope.beforeDrop(e,true); //true because the Drop is inside Tree
+			},
+			accept: function(sourceNodeScope, destNodesScope, destIndex){
+				if (destNodesScope.$treeScope.cloneEnabled==false){
+					destNodesScope.$treeScope.cloneEnabled = true;
+				}
+				return true;
 			}
 		};
 	
-	$scope.beforeDrop = function(e){
+	$scope.beforeDrop = function(e,isInsideTree){
 		//set dirty the tree and update the level of the object dragged
 		$scope.treeTargetDirty = true;
 		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
-		var source = e.source.cloneModel ? e.source.cloneModel : e.source.nodeScope.$modelValue;
+		//var source = e.source.cloneModel ? e.source.cloneModel : e.source.nodeScope.$modelValue;
+		var source =e.source.nodeScope.$modelValue;
 		$scope.removeFakeAndCorupt(dest.children);
-		if (source.$parent.children.length == 1){
+		if (source.$parent.children.length == 1 && isInsideTree){
 			source.$parent.children.push(angular.copy($scope.fakeNode));
 		}
 		if (source.leaf == true){
@@ -90,6 +100,11 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		var level =  dest.LEVEL && dest.LEVEL >= 0 ? dest.LEVEL + 1 : 1;
 		$scope.updateLevelRecursive(source, level);
 		source.$parent = dest;
+		if(e.source.cloneModel){
+			for (var k in source){
+				e.source.cloneModel[k] = angular.copy(source[k]);
+			}
+		}
 	}
 	
 	$scope.updateLevelRecursive = function(node, level){
@@ -145,7 +160,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined || forceGetHierarchies==true){
-				$scope.toogleLoading(choose);
+				$scope.toogleLoading(choose,true);
 				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
@@ -155,12 +170,12 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
-							$scope.toogleLoading(choose);
+							$scope.toogleLoading(choose,false);
 						})
 					.error(function(data, status){
 						var message='GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
-						$scope.toogleLoading(choose);
+						$scope.toogleLoading(choose,false);
 					});
 			}else{
 				choose == 'src' ? $scope.hierarchiesSrc = map[keyMap] : $scope.hierarchiesTarget = map[keyMap];
@@ -216,8 +231,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				keyMap = keyMap + '_' + seeElement;
 			}
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
-			if (hierMap[keyMap] === undefined){
-				$scope.toogleLoading(choose);
+			//in source tree force the download, because the D&D do a messy with the source tree. Is better to restart from the original
+			if (hierMap[keyMap] === undefined && choose !== "src"){ 
+				$scope.toogleLoading(choose,true);
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
 						function(data, status, headers, config) {
@@ -232,13 +248,13 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
-							$scope.toogleLoading(choose);
+							$scope.toogleLoading(choose,false);
 						})
 					.error(function(data, status){
 						var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 						var message='GET tree source error with parameters' + params + ' with status: "' + status+ '"';
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
-						$scope.toogleLoading(choose);
+						$scope.toogleLoading(choose,false);
 					});
 			}else{
 				choose =='src' ? $scope.hierTreeSrc = angular.copy($scope.hierTreeCacheSrc[keyMap]) : $scope.hierTreeTarget = angular.copy($scope.hierTreeCacheTarget[keyMap]);
@@ -647,6 +663,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		do{
 			var el = elements.shift();
 			el.checked = el.visible = el.expanded = el.type = undefined;
+			//el.LEVEL = el.$parent ? (el.$parent.LEVEL && el.$parent.LEVEL >= 0 ? el.$parent.LEVEL + 1 : 1) : undefined;
 			el.$parent=null;
 			for (var k in el){
 				if (el[k] instanceof Date){
@@ -659,6 +676,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 						el.children.splice(i, 1);
 						i--;
 					} else {
+				//		el.children[i].$parent = el;
 						elements.push(el.children[i]);
 					}
 				}
@@ -684,7 +702,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
 			root.root.$parent = undefined;
 			var jsonString = angular.toJson(root);
-			$scope.toogleLoading('target');
+			$scope.toogleLoading('target',true);
 			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
 			promise
 				.success(function (data){
@@ -708,11 +726,11 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 					}else{
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 					}
-					$scope.toogleLoading('target');
+					$scope.toogleLoading('target',false);
 				})
 				.error(function(data,status){
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Tree');
-					$scope.toogleLoading('target');
+					$scope.toogleLoading('target',false);
 				});
 		}
 	}
@@ -722,8 +740,13 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
 	}
 	
-	$scope.toogleLoading = function(choose){
-		var loading = choose ==  "src" ? $scope.showLoadingSrc : $scope.showLoadingTarget;
+	$scope.toogleLoading = function(choose, forceValue){
+		var loading;
+		if (forceValue !== undefined){
+			loading = !forceValue;
+		}else{
+			 loading = choose ==  "src" ? $scope.showLoadingSrc : $scope.showLoadingTarget;
+		}
 		if (loading){
 			$timeout(function(){
 				choose == "src" ? $scope.showLoadingSrc = false : $scope.showLoadingTarget = false;
