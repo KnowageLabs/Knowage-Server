@@ -453,13 +453,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public ArrayList<String> getProperties(int layerId) {
 		Session tmpSession = null;
-		Transaction tx = null;
 		ArrayList<String> keys = new ArrayList<String>();
 		try {
 			tmpSession = getSession();
-			tx = tmpSession.beginTransaction();
-			int i;
-
+			tmpSession.beginTransaction();
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 
@@ -478,9 +475,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					content = obj.getJSONArray("features");
 					for (int j = 0; j < content.length(); j++) {
 						obj = content.getJSONObject(j).getJSONObject("properties");
-						Iterator it = obj.keys();
+						Iterator<String> it = obj.keys();
 						while (it.hasNext()) {
-							String key = (String) it.next();
+							String key = it.next();
 							if (obj.get(key).getClass().equals(key.getClass())) {
 								if (!keys.contains(key)) {
 									keys.add(key);
@@ -505,7 +502,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				connection.connect();
 
 				int HttpResult = connection.getResponseCode();
-				StringBuilder sb = new StringBuilder();
 				if (HttpResult == HttpURLConnection.HTTP_OK) {
 
 					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
@@ -522,22 +518,23 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 								if (!keys.contains(val.get("name")) && "string".equals(val.optString("localType"))) {
 									keys.add(val.getString("name"));
 								}
-
 							}
-
 						}
-
 					}
 					br.close();
+					connection.disconnect();
 				} else {
 					System.out.println("http non ok");
 					System.out.println(connection.getResponseMessage());
 				}
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
 		}
 		return keys;
 	}
@@ -696,6 +693,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
 		}
 		return obj;
 	}
