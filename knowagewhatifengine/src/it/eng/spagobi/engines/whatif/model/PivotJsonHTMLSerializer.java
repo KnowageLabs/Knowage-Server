@@ -24,7 +24,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +94,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	public void serialize(PivotModel value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 
 		logger.debug("IN");
+
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "Serilize start " + format.format(new Date());
+		System.out.println(time);
 		String table = "";
 
 		logger.debug("Creating the renderer");
@@ -108,15 +114,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 												// title headers.
 
 		callback.setCellSpacing(0);
-		callback.setRowHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		callback.setColumnHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		callback.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
-		callback.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
-		callback.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
-		callback.setRowStyleClass(" generic-row-style ");
+		// callback.setRowHeaderStyleClass(" x-pivot-header ");
+		// callback.setColumnHeaderStyleClass(" x-pivot-header-column");
+		// callback.setCornerStyleClass(" x-pivot-header");
+		// callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
+		// callback.setTableStyleClass("x-pivot-table");
+		// callback.setRowStyleClass(" generic-row-style ");
 
-		callback.setEvenRowStyleClass(" even-row ");
-		callback.setOddRowStyleClass(" odd-row ");
+		// callback.setEvenRowStyleClass(" even-row ");
+		// callback.setOddRowStyleClass(" odd-row ");
 
 		// callback.setEvenColumnStyleClass(" even-column ");
 		// callback.setOddColumnStyleClass(" odd-column ");
@@ -182,8 +188,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		logger.debug("Rendering the model");
-
+		time = "Serilize render start " + format.format(new Date());
+		System.out.println(time);
 		renderer.render(value, callback);
+		time = "Serilize render end " + format.format(new Date());
+		System.out.println(time);
 
 		try {
 			writer.flush();
@@ -229,7 +238,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			logger.error("Error serializing the pivot table", e);
 			throw new SpagoBIRuntimeException("Error serializing the pivot table", e);
 		}
-
+		time = "Serilize end " + format.format(new Date());
+		System.out.println(time);
+		System.out.println();
+		System.out.println();
 		logger.debug("OUT");
 
 	}
@@ -309,11 +321,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * private void serializeFilters(String field, JsonGenerator jgen,
 	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 *
+	 * 
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 *
+	 * 
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 *
+	 * 
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -321,7 +333,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 *
+	 * 
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -330,7 +342,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 *
+	 * 
 	 * } } jgen.writeEndArray(); }
 	 */
 	public String formatQueryString(String queryString) {
