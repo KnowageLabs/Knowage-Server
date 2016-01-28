@@ -559,8 +559,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	}
 
 	, onShowAssociationEditorWizard: function(){
-		if (Sbi.storeManager.getStoreIds().length == 0){
-			alert('Per gestire le associazioni è necessario creare prima dei widget!');
+		if (Sbi.storeManager.getStoreIds().length < 2){
+			Ext.MessageBox.alert(LN('sbi.generic.info'), LN('sbi.cockpit.association.editor.msg.noWidgetDefined'));
 			return;
 		}
 		var config = {};
