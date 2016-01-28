@@ -65,7 +65,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				sbiModule_restServices.post('1.0/crossNavigation/save', "", ctr.detail).success(
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){
-							$scope.showActionOK("sbi.crossnavigation.save.ko");
+							$scope.showActionOK(data.errors);
 						}else{
 							$scope.showActionOK("sbi.crossnavigation.save.ok");
 							ctr.navigationList.loadNavigationList();
@@ -100,34 +100,27 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						closeDialog();
 					});
 				};
-				
-				sbiModule_restServices.get('2.0/documents/listDocument/', "", null).success(function(data) {
-					ctr.listDoc = data.item;
-					
-					$mdDialog.show({
-						controller: DialogController,
-						templateUrl: 'dialog1.tmpl.html',
-						parent: angular.element(document.body),
-						clickOutsideToClose:false,
-						locals: {
-							listDoc: ctr.listDoc,
-							clickOnSelectedDoc: ctr.clickOnSelectedDoc
-	        	        }
-					})
-					.then(function(answer) {
-						$scope.status = 'You said the information was "' + answer + '".';
-					}, function() {
-						$scope.status = 'You cancelled the dialog.';
-					});
-					
-					function DialogController(scope, $mdDialog, listDoc, clickOnSelectedDoc) {
-					    scope.closeDialog = function() {
-					    	$mdDialog.hide();
-					    };
-					    scope.listDoc = listDoc;
-					    scope.clickOnSelectedDoc = clickOnSelectedDoc;
+				$mdDialog.show({
+					controller: DialogController,
+					templateUrl: 'dialog1.tmpl.html',
+					parent: angular.element(document.body),
+					clickOutsideToClose:false,
+					locals: {
+						clickOnSelectedDoc: ctr.clickOnSelectedDoc
 					}
 				});
+				
+				function DialogController(scope, $mdDialog, /*listDoc,*/ clickOnSelectedDoc) {
+					scope.closeDialog = function() {
+						$mdDialog.hide();
+					};
+					scope.clickOnSelectedDoc = clickOnSelectedDoc;
+					scope.loading = true;
+					sbiModule_restServices.get('2.0/documents/listDocument/', "", null).success(function(data) {
+						scope.loading = false;
+						scope.listDoc = data.item;
+					});
+				}
 				
 			};
 			
@@ -176,11 +169,24 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			};
 			
 			$scope.showActionOK = function(msg) {
+				var delay = 3000;
+				var content = '';
+				if(Object.prototype.toString.call(msg) === '[object Array]'){
+					for(var i=0;i<msg.length;i++){
+						if(i!=0){
+							content += ' - ';
+							delay += 1000;
+						}
+						content += sbiModule_translate.load(msg[i]);
+					}
+				}else{
+					content = sbiModule_translate.load(msg);
+				}
 				var toast = $mdToast.simple()
-				.content(sbiModule_translate.load(msg))
+				.content(content)
 				.action('OK')
 				.highlightAction(false)
-				.hideDelay(3000)
+				.hideDelay(delay)
 				.position('top');
 
 				$mdToast.show(toast).then(function(response) {

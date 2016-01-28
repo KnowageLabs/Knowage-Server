@@ -9,6 +9,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
+import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -72,23 +73,6 @@ public class CrossNavigationService {
 		}
 	}
 
-	@GET
-	@Path("/{id}/associations")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
-	public String listAssociations(@PathParam("id") String id, @Context HttpServletRequest req) {
-		try {
-			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			dao.setUserProfile(profile);
-
-			// TODO
-			return "";
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
-		}
-	}
-
 	@POST
 	@Path("/save")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -101,22 +85,34 @@ public class CrossNavigationService {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
-			if (nd.isNewRecord()) {
-				try {
-					dao.insert(nd);
-				} catch (SpagoBIDOAException e) {
-					jo.put("Status", "NON OK");
-					jo.put("Message", "sbi.crossnavigation.error.duplicate");
-				}
-			} else {
-				try {
-					dao.update(nd);
-				} catch (SpagoBIDOAException e) {
-					jo.put("Status", "NON OK");
-					jo.put("Message", "sbi.crossnavigation.error.notExists");
+			boolean isAnyLink = false;
+			if (nd.getSimpleNavigation() == null || nd.getSimpleNavigation().getName() == null || nd.getSimpleNavigation().getName().isEmpty()) {
+				jo.append("errors", "sbi.crossnavigation.error.name");
+			} else if (nd.getToPars() != null && !nd.getToPars().isEmpty()) {
+				for (SimpleParameter sp : nd.getToPars()) {
+					if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
+						isAnyLink = true;
+						break;
+					}
 				}
 			}
-			jo.put("Status", "OK");
+			if (!isAnyLink) {
+				jo.append("errors", "sbi.crossnavigation.error.par");
+			} else {
+				if (nd.isNewRecord()) {
+					try {
+						dao.insert(nd);
+					} catch (SpagoBIDOAException e) {
+						jo.append("errors", "sbi.crossnavigation.error.duplicate");
+					}
+				} else {
+					try {
+						dao.update(nd);
+					} catch (SpagoBIDOAException e) {
+						jo.append("errors", "sbi.crossnavigation.error.notExists");
+					}
+				}
+			}
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", e);
 		}

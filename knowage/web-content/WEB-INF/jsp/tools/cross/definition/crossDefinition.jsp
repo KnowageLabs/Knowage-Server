@@ -94,6 +94,9 @@
 		</div>
 	</md-dialog-content>
 </form>
+<div ng-show="loading" class="loadingSpinner">
+    <i class="fa fa-spinner fa-pulse fa-4x"></i> 
+</div>
 </md-dialog>
 </script>
 
