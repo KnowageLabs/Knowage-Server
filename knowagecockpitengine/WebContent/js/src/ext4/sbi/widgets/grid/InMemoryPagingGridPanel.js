@@ -87,6 +87,15 @@ Ext.define('Sbi.widgets.grid.InMemoryPagingGridPanel', {
     	this.bbar.bindStore(this.store);
     	this.bbar.doLayout();
     	this.reconfigure(this.store); // , this.columnManager.columns);
+    	
+    	if(this.store.inMemoryData){
+    		if(this.store.inMemoryData.length < this.store.limit){
+				this.bbar.setVisible(false);
+			} else {
+				this.bbar.setVisible(true);
+			}
+		}
+    	
     	this.getView().refresh();
     	Sbi.debug('InMemoryPagingGridPanel updategrid OUT');
     }
