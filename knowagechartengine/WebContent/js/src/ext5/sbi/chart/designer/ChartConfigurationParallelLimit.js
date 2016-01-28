@@ -17,7 +17,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 160,
+		height: 150,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),
 		bodyPadding: 10,
@@ -29,10 +29,10 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
-		{
-		    type: 'vbox'
-		},
+//		layout: 
+//		{
+//		    type: 'vbox'
+//		},
 		
 		constructor: function(config) 
 		{
@@ -53,7 +53,7 @@ Ext.define
 				    bind : '{configModel.serieFilterColumn}',
 				    id: "seriesColumnsOnYAxisCombo",
 				    width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+        			//padding:Sbi.settings.chart.configurationStep.paddingOfBottomFields,
 				    store: this.storeForSeriesBeforeDrop,
 				    editable : false,
 				    queryMode: 'local',
@@ -111,7 +111,7 @@ Ext.define
 					 id: "parallelLimitMaxNumbOfRec",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: Sbi.settings.chart.configurationStep.widthOfFields,
-	        		 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+         		     padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,  
 					 //value: "100",
 					 maxValue: '1000',
 					 minValue: '5',

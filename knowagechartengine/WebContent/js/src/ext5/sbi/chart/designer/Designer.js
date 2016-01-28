@@ -1492,7 +1492,11 @@ Ext.define('Sbi.chart.designer.Designer', {
   				minHeight: 300,
   				title: LN('sbi.chartengine.preview'),
   				titleAlign: 'left',	// TODO: danristo: (old value: "center")
-  				tools:[]
+  				tools:[],
+  				layout : {
+  				    type  : 'hbox',
+  				    pack  : 'center'
+  				}
   				
   			});
   			
@@ -1505,15 +1509,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previewPanel.removeAll();
 				var previewImg = Ext.create('Ext.Img', {
 				    src: src,
-//				    shrinkWrap:true,
-//				    width: '100%',
-//				    height: '100%',
+				    shrinkWrap:true,
+				    width: '100%',
+				    height: '100%',
+				    style: {
+				        'display': 'block'
+				    },
 					listeners: {
 			            render: function() {
 			                this.mon(this.getEl(), 'load', function(e) {
-//			                	this.setHeight(300-20);// set the height of the image
-//			                	previewPanel.setHeight(300);
-			                	previewPanel.setHeight(this.getHeight()+20);
+			                	this.setHeight(300-30);// set the height of the image
+			                	previewPanel.setHeight(300);
+//			                	previewPanel.setHeight(this.getHeight()+20);
 			                });
 			            }
 			        }
@@ -1594,6 +1601,7 @@ Ext.define('Sbi.chart.designer.Designer', {
       									options: chartConf,
       									content:'options',
       									type:'image/png',
+      									height: 300,
       									width: previewPanel.getWidth(),
       									scale: undefined,
       									constr:'Chart',
@@ -1676,6 +1684,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var numberOfMaxItems = null;
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
@@ -1783,8 +1792,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  						
-  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();  	  						
-  	  						
+  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase(); 
+  	  							  						
   	  						/**
   	  						 * Taking care of the order of the categories (based on their type) for the 
   	  						 * HEATMAP chart type.
@@ -2078,6 +2087,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					text: LN('sbi.chartengine.designer.columnalias'), 
 					dataIndex: 'axisName',
+					hidden: true,	// Not used, so hidden (Danilo Ristovski)
 					sortable: false,
 					flex: 10,
 					editor: {

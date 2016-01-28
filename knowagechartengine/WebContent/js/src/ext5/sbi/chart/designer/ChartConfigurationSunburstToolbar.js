@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 350,
+		height: 320,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 		bodyPadding: 10,
@@ -51,73 +51,57 @@ Ext.define
 			
 			var toolbarPosition = Ext.create
         	(
-    			/* Horizontal line with just one combo - POSITION (top, bottom) */
-             	{ 
-             		xtype : 'fieldcontainer',
-             		//layout : 'hbox',
-             		width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-             		defaults : 
-             		{
-             			//labelWidth: '100%',
-             			// (top, right, bottom, left)
-             			//margin: '0 20 10 0'
-             		},
-	                    	 
-		        	 items: 
-	        		 [
-	        		  	/* Combobox for POSITION of the TOOLBAR (top, bottom) */
-        	         	{
-        	         		xtype : 'combo',
-        	         		queryMode : 'local',
-        	         		triggerAction : 'all',
-        	         		forceSelection : true,
-        	         		width:'280',
-        	         		editable : false,
-        	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-        	         		bind : '{configModel.toolbarPosition}',
-        	         		displayField : 'name',
-        	         		valueField : 'value',
-        	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipPosition.emptyText"),
-                    		 
-        	         		store: 
-        	         		{
-        	         			fields : ['name', 'value'],
-                			 
-        	         			data : 
-    	         				[ 
-        	         				 {
-        	         					 name : LN('sbi.chartengine.configuration.position.b'),
-        	         					 value : 'bottom'
-        	         				 }, 
-                				   
-        	         				 {
-        	         					 name : LN('sbi.chartengine.configuration.position.t'),
-        	         					 value : 'top'
-        	         				 }
-    	         				 ]
-        	         		},
-        	         		
-        	         		/**       				     
-        				     * @author: danristo (danilo.ristovski@mht.net)
-        				     */
-        				    listeners: 
-        				    {        				    	
-        				    	change: function(thisEl, newValue)
-        				    	{			
-        				    		if (newValue)
-        				    		{
-        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.position') + ":"); 
-        				    		}	
-        				    		else
-    				    			{
-        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
-    				    			}
-        				    	}
-        				    }
-        	         	}
-    	         	]		
-                 }
+    		  	/* Combobox for POSITION of the TOOLBAR (top, bottom) */
+	         	{
+	         		xtype : 'combo',
+	         		queryMode : 'local',
+	         		triggerAction : 'all',
+	         		forceSelection : true,
+	         		width: Sbi.settings.chart.configurationStep.widthOfFields,
+	         		padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+	         		editable : false,
+	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+	         		bind : '{configModel.toolbarPosition}',
+	         		displayField : 'name',
+	         		valueField : 'value',
+	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipPosition.emptyText"),
+            		 
+	         		store: 
+	         		{
+	         			fields : ['name', 'value'],
+        			 
+	         			data : 
+         				[ 
+	         				 {
+	         					 name : LN('sbi.chartengine.configuration.position.b'),
+	         					 value : 'bottom'
+	         				 }, 
+        				   
+	         				 {
+	         					 name : LN('sbi.chartengine.configuration.position.t'),
+	         					 value : 'top'
+	         				 }
+         				 ]
+	         		},
+	         		
+	         		/**       				     
+				     * @author: danristo (danilo.ristovski@mht.net)
+				     */
+				    listeners: 
+				    {        				    	
+				    	change: function(thisEl, newValue)
+				    	{			
+				    		if (newValue)
+				    		{
+				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.position') + ":"); 
+				    		}	
+				    		else
+			    			{
+				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+			    			}
+				    	}
+				    }
+	         	}
 			);
         	
         	this.add(toolbarPosition);
@@ -208,7 +192,7 @@ Ext.define
 	       	         			maxValue: '50',
 	       	         			minValue: '1',
 	       	         		    width: Sbi.settings.chart.configurationStep.widthOfFields,
-	       			    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
+	       	         		    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
 	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText"),
 	       	         			
 	       	         			/**       				     
@@ -440,7 +424,7 @@ Ext.define
         			initiator: "sunburstPercentageColor",
         			//bodyPadding:10
         			width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
         		}
     		);		 
 	        

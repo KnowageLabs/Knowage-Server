@@ -11,16 +11,16 @@ Ext.define
 		title : LN("sbi.chartengine.configuration.gauge.panelTitle"),
 		bodyPadding : 10,
 		items : [],
-		height : 120,
+		height: 100,
 
 		fieldDefaults : {
 			anchor : '100%'
 		},
 
-		layout : 
-		{
-			type : 'vbox'
-		},
+//		layout : 
+//		{
+//			type : 'vbox'
+//		},
 
 		constructor : function(config) {
 			this.callParent(config);
