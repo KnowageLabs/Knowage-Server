@@ -317,7 +317,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.HIERARCHIES_MANAGEMENT, funcs)) {
 			JSONObject hierarchiesManagement = new JSONObject();
-			hierarchiesManagement.put(ICON_CLS, "hierarchies_management");
+			hierarchiesManagement.put(ICON_CLS, "device_hub");
 			hierarchiesManagement.put(TOOLTIP, messageBuilder.getMessage("menu.HierarchiesManagement", locale));
 			hierarchiesManagement.put(ICON_ALIGN, "top");
 			hierarchiesManagement.put(SCALE, "large");
@@ -353,7 +353,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			glossaryManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(glossaryManagementTechnical);
 		}
-		
+
 		if (isAbleTo(SpagoBIConstants.MANAGE_CROSS_NAVIGATION, funcs)) {
 			JSONObject o = new JSONObject();
 			o.put(ICON_CLS, "spellcheck"); // TODO: change icon
