@@ -25,13 +25,26 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
 	var selectElement = document.getElementById("fieldTypeSelect");
 	if(!selectElement){
 		var select = '<select name="fieldTypeSelect" id="fieldTypeSelect" style="display: none;">'+
-    	'<option value="ATTRIBUTE">ATTRIBUTE</option>'+
+    	'<option value="ATTRIBUTE" selected="selected">ATTRIBUTE</option>'+
     	'<option value="MEASURE">MEASURE</option>'+
     	'</select>';
 		var bodyElement = document.getElementsByTagName('body');
 		Ext.DomHelper.append(bodyElement[0].id, select );
 	}
 
+	
+	var editorC = new Ext.form.ComboBox({
+    	typeAhead: true,
+        triggerAction: 'all',
+        // transform the data already specified in html
+        transform: 'fieldTypeSelect',
+        lazyRender: true,
+        listClass: 'x-combo-list-small',
+        allowBlank : false,
+        forceSelection : true
+    });
+	editorC.setValue("ATTRIBUTE");
+	
 	this.fieldsColumns =  [
 	    {
 	    	header: LN('sbi.ds.field.name'), 
@@ -43,14 +56,7 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
         	header: LN('sbi.ds.field.metadata'),
             dataIndex: 'fieldType',
            // width: 140, 
-            editor: new Ext.form.ComboBox({
-            	typeAhead: true,
-                triggerAction: 'all',
-                // transform the data already specified in html
-                transform: 'fieldTypeSelect',
-                lazyRender: true,
-                listClass: 'x-combo-list-small'
-            })
+            editor: editorC
         }			
 	];
     
@@ -139,6 +145,11 @@ Ext.extend(Sbi.qbe.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   	  						}
   	  					}
   					}
+  					// default value attribute
+  					if(columnObject.fieldType == undefined || columnObject.fieldType == '') {
+  						columnObject.fieldType = "ATTRIBUTE";
+  					}
+  						
   					columnsArray.push(columnObject);
 	  			}			
   				
