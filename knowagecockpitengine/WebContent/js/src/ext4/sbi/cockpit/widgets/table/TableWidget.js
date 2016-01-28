@@ -1117,15 +1117,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var alternateRowsSecondClassId = this.id + clsClass + 'Second';
 			var alternateRowsColorsSecond = 
 				(this.wconf.alternateRowsColorsSecond && this.wconf.alternateRowsColorsSecond.trim() != '')?
-						'#' + this.wconf.alternateRowsColorsSecond
-						: 'transparent';
+					'#' + this.wconf.alternateRowsColorsSecond
+					: 'transparent';
 			var alternateRowsSecond = clsClassCSS + ' .x-grid-row-alt .x-grid-cell {' 
 				+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
-						'background-color: ' + alternateRowsColorsSecond + ';' :
+					'background-color: ' + alternateRowsColorsSecond + ';' :
 							
-						this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
-								'background-color: #' + this.wconf.rowsBgColor + ';' :
-								'background-color: transparent;')
+					this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+						'background-color: #' + this.wconf.rowsBgColor + ';' :
+						'background-color: transparent;')
 			+'}';
 			
 			Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
@@ -1134,12 +1134,28 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
 			Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
 			
+			//Summary row style
 			var summaryRowClassId = this.id + clsClass + 'SummaryRow';
-			var summaryRowClass = clsClassCSS + ' .x-grid-row-summary .x-grid-cell {'
-				+ ( this.wconf.summaryRow != undefined && this.wconf.summaryRow == true ? 
-						'background-color: #'+ this.wconf.summaryRowBackgroundColor + ' !important;' :
-						'display: none;')
-			+'}';
+			var summaryRowClass = clsClassCSS + ' .x-grid-row-summary .x-grid-cell {';
+			
+			var summaryRowFlag = this.wconf.summaryRow;
+			if(summaryRowFlag != undefined && summaryRowFlag == true) {
+				if (this.wconf.summaryRowFont && this.wconf.summaryRowFont != '')
+					summaryRowClass += 'font-family: '+ this.wconf.summaryRowFont + ';';
+				if (this.wconf.summaryRowFontSize && this.wconf.summaryRowFontSize != '')
+					summaryRowClass += 'font-size: '+ this.wconf.summaryRowFontSize + 'px;';
+				if (this.wconf.summaryRowFontColor && this.wconf.summaryRowFontColor != '')
+					summaryRowClass += 'color: #'+ this.wconf.summaryRowFontColor + ';';
+				if (this.wconf.summaryRowFontWeight && this.wconf.summaryRowFontWeight != '')
+					summaryRowClass += 'font-weight: '+ this.wconf.summaryRowFontWeight + ';';
+				if (this.wconf.summaryRowFontDecoration && this.wconf.summaryRowFontDecoration != '')
+					summaryRowClass += 'text-decoration: '+ this.wconf.summaryRowFontDecoration + ';';
+				if (this.wconf.summaryRowBackgroundColor && this.wconf.summaryRowBackgroundColor != '')
+					summaryRowClass += 'background-color: #'+ this.wconf.summaryRowBackgroundColor + ' !important;';
+			} else {
+				summaryRowClass += 'display: none;';
+			}
+			summaryRowClass += '}';
 			
 			Ext.util.CSS.removeStyleSheet(summaryRowClassId);
 			Ext.util.CSS.createStyleSheet(summaryRowClass, summaryRowClassId);
@@ -1313,7 +1329,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
         };
     }
 });
-
 
 Sbi.registerWidget('table', {
 	name: 'Table'
