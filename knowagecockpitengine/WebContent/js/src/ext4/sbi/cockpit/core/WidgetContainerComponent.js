@@ -43,6 +43,28 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , y: 100
 	    , maximizable: true
 	    , resizable: true
+	    , listeners : {
+	    	beforeclose: function(){
+	    	    var me = this;
+	    	    if(!me.askForConfirm){
+	    	        me.askForConfirm = true;
+	    	        Ext.Msg.show({
+	    	            title: LN('sbi.cockpit.core.widgetcontainer.closeWidget.title'),
+	    	            msg: LN('sbi.cockpit.core.widgetcontainer.closeWidget.msg'),
+	    	            buttons: Ext.Msg.YESNO,
+	    	            icon: Ext.Msg.QUESTION,
+	    	            fn: function(btn, text) {
+		    	            	if (btn == 'yes'){
+		    	            		me.close();
+		    	            	}
+		    	            	delete me.askForConfirm;
+		    	        	}
+	    	       });
+	    	       return false;
+	    	    }
+	    	    return true;
+	    	}
+	    }
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetContainerComponent', defaultSettings);
