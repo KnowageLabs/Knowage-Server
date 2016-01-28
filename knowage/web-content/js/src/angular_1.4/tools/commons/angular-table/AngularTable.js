@@ -37,7 +37,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			showEmptyPlaceholder :"=?",
 			noDropEnabled:"=?",
 			allowEdit : "=?",
-			editFunction : "&",
+			editFunction : "&?",
 			allowEditFunction: "&?"
 		},
 		compile: function (tElement, tAttrs, transclude) {
@@ -468,6 +468,7 @@ function TableBodyControllerFunction($scope){
 				if ($scope.editFunction){
 					var response = $scope.editFunction({
 						item : row,
+						itemOld : oldObj,
 						cell : cell,
 						listId : $scope.id,
 						row : row,
