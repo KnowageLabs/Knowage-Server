@@ -120,12 +120,16 @@
 			</div>
 		</list>
 		
-        <detail label="ctrl.detail && ctrl.detail.simpleNavigation ? ctrl.detail.simpleNavigation.name : ''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+        <detail label="ctrl.detail.title || ''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">
 						<md-input-container > <label>{{translate.load("sbi.crossnavigation.name");}}</label>
-						<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name"> </md-input-container>
+							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name" required > 
+							<div ng-messages="tsForm.ctrl.detail.simpleNavigation.name.$error" ng-show="tsForm.ctrl.detail.simpleNavigation.name.$dirty">
+						    	<div ng-message="required">This is required!</div>
+						    </div>
+						</md-input-container>
 					</div>
 				</div>
 	

@@ -14,7 +14,6 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			s.translate = sbiModule_translate;
 			
 			ctr.list = [];
-			ctr.listDoc = [];
 			ctr.detail = newRecord();
 			ctr.dragging = false;
 			ctr.selectedItem = '';
@@ -37,6 +36,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					sbiModule_restServices.get('1.0/crossNavigation/'+item.id+'/load', "", null).success(function(data) {
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
+						ctr.detail.title = data.simpleNavigation.name;
 					});
 				},
 				dsSpeedMenu :  [{
@@ -110,7 +110,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					}
 				});
 				
-				function DialogController(scope, $mdDialog, /*listDoc,*/ clickOnSelectedDoc) {
+				function DialogController(scope, $mdDialog, clickOnSelectedDoc) {
 					scope.closeDialog = function() {
 						$mdDialog.hide();
 					};
