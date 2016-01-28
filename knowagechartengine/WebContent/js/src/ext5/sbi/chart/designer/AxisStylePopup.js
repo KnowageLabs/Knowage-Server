@@ -288,14 +288,15 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisFieldSet.add(this.styleAlignComboBox);
 		}
 		
-		var axisStyleColor = this.axisData.styleColor;
+		var axisStyleColor = this.axisData.styleColor;		
+				
 		this.styleColor = {
 			xtype : 'fieldcontainer',
             layout : 'hbox',
             items: [
                 Ext.create('Ext.form.field.Base', {
                 	id: 'styleColorField',
-					fieldStyle : (axisStyleColor && axisStyleColor.trim() != '') ? 
+					fieldStyle : (axisStyleColor && axisStyleColor.trim() != '' && axisStyleColor.trim() != 'transparent') ? 
 						'background-image: none; background-color: ' + axisStyleColor.trim() : '',
                     fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
 					labelWidth : 115,
@@ -1500,7 +1501,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 
 		var styleAlign = this.styleAlignComboBox.getValue();
 		this.axisData.styleAlign = styleAlign;
-
+		
 		var axisStyleColor = this.styleColor.getColor();
 		this.axisData.styleColor = axisStyleColor;
 
