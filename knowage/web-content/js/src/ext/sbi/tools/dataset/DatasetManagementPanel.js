@@ -1794,6 +1794,11 @@ Ext
 							validationEvent : true,
 							name : 'ckanFileType'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanFileType,                 
+						    text: LN('sbi.ds.ckanFileType.tooltip'),
+						    enabled: true
+						});
 
 						// this.detailCkanFileName = new Ext.form.TextField({
 						// maxLength : 250, minLength : 1, width : 350,
@@ -1813,6 +1818,11 @@ Ext
 							validationEvent : true,
 							name : 'ckanCsvDelimiter'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanCsvDelimiter,                 
+						    text: LN('sbi.ds.ckanCsvDelimiter.tooltip'),
+						    enabled: true
+						});
 
 						this.detailCkanCsvQuote = new Ext.form.TextField({
 							maxLength : 250,
@@ -1824,6 +1834,11 @@ Ext
 							validationEvent : true,
 							name : 'ckanCsvQuote'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanCsvQuote,                 
+						    text: LN('sbi.ds.ckanCsvQuote.tooltip'),
+						    enabled: true
+						});
 
 						this.detailCkanCsvEncoding = new Ext.form.TextField({
 							maxLength : 250,
@@ -1833,6 +1848,11 @@ Ext
 							fieldLabel : LN('sbi.ds.ckanCsvEncoding'),
 							allowBlank : true, // validationEvent : true,
 							name : 'ckanCsvEncoding'
+						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanCsvEncoding,                 
+						    text: LN('sbi.ds.ckanCsvEncoding.tooltip'),
+						    enabled: true
 						});
 
 						this.detailCkanSkipRows = new Ext.form.TextField({
@@ -1844,6 +1864,11 @@ Ext
 							allowBlank : true, // validationEvent : true,
 							name : 'ckanSkipRows'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanSkipRows,                 
+						    text: LN('sbi.ds.ckanSkipRows.tooltip'),
+						    enabled: true
+						});
 
 						this.detailCkanLimitRows = new Ext.form.TextField({
 							maxLength : 250,
@@ -1854,9 +1879,13 @@ Ext
 							allowBlank : true, // validationEvent : true,
 							name : 'ckanLimitRows'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanLimitRows,                 
+						    text: LN('sbi.ds.ckanLimitRows.tooltip'),
+						    enabled: true
+						});
 
-						this.detailckanXslSheetNumber = new Ext.form.TextField(
-								{
+						this.detailckanXslSheetNumber = new Ext.form.TextField({
 									maxLength : 250,
 									minLength : 1,
 									width : 350,
@@ -1865,7 +1894,12 @@ Ext
 									allowBlank : true, // validationEvent :
 														// true,
 									name : 'ckanXslSheetNumber'
-								});
+						});
+						Ext.QuickTips.register({
+							target:  this.detailckanXslSheetNumber,                 
+						    text: LN('sbi.ds.ckanXslSheetNumber.tooltip'),
+						    enabled: true
+						});
 
 						this.detailCkanId = new Ext.form.TextField({
 							maxLength : 250,
@@ -1877,6 +1911,11 @@ Ext
 							validationEvent : true,
 							name : 'ckanId'
 						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanId,                 
+						    text: LN('sbi.ds.ckanId.tooltip'),
+						    enabled: true
+						});
 
 						this.detailCkanUrl = new Ext.form.TextField({
 							maxLength : 250,
@@ -1887,6 +1926,11 @@ Ext
 							allowBlank : false,
 							validationEvent : true,
 							name : 'ckanUrl'
+						});
+						Ext.QuickTips.register({
+							target:  this.detailCkanUrl,                 
+						    text: LN('sbi.ds.ckanUrl.tooltip'),
+						    enabled: true
 						});
 
 						var getFieldSet=function(detailItems) {
