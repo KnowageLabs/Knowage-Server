@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -246,10 +245,13 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				for (int j = 0; j < metadataArray.length(); j++) {
+
+					String fieldAlias = ifmd.getAlias() != null ? ifmd.getAlias() : "";
 					// remove dataset source
 					String fieldName = ifmd.getName().substring(ifmd.getName().indexOf(':') + 1);
 
-					if (fieldName.equals((metadataArray.getJSONObject(j)).getString("name"))) {
+					if (fieldAlias.equals((metadataArray.getJSONObject(j)).getString("name"))
+							|| fieldName.equals((metadataArray.getJSONObject(j)).getString("name"))) {
 						if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 						} else {
