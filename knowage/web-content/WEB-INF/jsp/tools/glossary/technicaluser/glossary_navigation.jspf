@@ -34,7 +34,7 @@
 						
 						<p class="wrapText">{{ word.WORD | uppercase}}</p>
 						
-						<md-icon class="md-secondary " ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+						<md-icon class="md-secondary " ng-click="ctrl.showInfoWORD(word.WORD_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
 					
 					</md-list-item> 
 				</md-list>

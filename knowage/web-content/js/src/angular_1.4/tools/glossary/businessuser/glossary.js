@@ -587,7 +587,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				sbiModule_translate.load("sbi.glossary.word.delete")).content(
 						sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
 						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
-								sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(ev);
+								sbiModule_translate.load("sbi.myanalysis.delete.cancel"));
 
 		var wds = ctr.words;
 		var nw = ctr.newWord;
@@ -739,7 +739,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				sbiModule_translate.load("sbi.glossary.delete")).content(
 						sbiModule_translate.load("sbi.glossary.delete.message")).ariaLabel(
 						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
-								sbiModule_translate.load("sbi.ds.wizard.cancel")).targetEvent(ev);
+								sbiModule_translate.load("sbi.ds.wizard.cancel"));
 
 		var wds = ctr.glossary;
 		$mdDialog.show(confirm)
@@ -1303,14 +1303,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 	ctr.removeContents = function(ev) {
 
-		console.log(ev)
-
-		var confirm = $mdDialog.confirm().title(
-				sbiModule_translate.load("sbi.glossary.content.delete")).content(
-						sbiModule_translate.load("sbi.glossary.content.delete.message"))
-						.ariaLabel('Lucky day')
-						.ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
-								sbiModule_translate.load("sbi.general.cancel")).targetEvent(ev);
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.glossary.content.delete"))
+		.content(sbiModule_translate.load("sbi.glossary.content.delete.message"))
+		.ariaLabel('Lucky day')
+		.ok(sbiModule_translate.load("sbi.generic.delete"))
+		.cancel(sbiModule_translate.load("sbi.general.cancel"));
 
 		var req = "";
 		if (ev.$modelValue.hasOwnProperty("CONTENT_ID")) {
@@ -1583,7 +1581,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 	// <!-- fine tree -->
 
-	ctr.showInfoWORD = function(ev, wordid) {
+	ctr.showInfoWORD = function(wordid) {
 		$mdDialog
 		.show({
 			controllerAs : 'infCtrl',
@@ -1615,7 +1613,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 										})
 			},
 			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
-			targetEvent : ev,
 			clickOutsideToClose : true
 		});
 	}
@@ -1850,7 +1847,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	{
 		label : sbiModule_translate.load('sbi.generic.details'),
 		action : function(item, event) {
-			ctr.showInfoWORD(event, item.WORD_ID);
+			ctr.showInfoWORD(item.WORD_ID);
 		}
 	}
 

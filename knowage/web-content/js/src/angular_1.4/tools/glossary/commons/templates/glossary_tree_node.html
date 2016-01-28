@@ -13,7 +13,7 @@
 					class="dragged-icon-tree fa fa-bars fa-2x"></i>
 
 			<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon"
-					aria-label="More" ng-click="showInfoNode($event,item.CONTENT_ID)">
+					aria-label="More" ng-click="showInfoNode(item.CONTENT_ID)">
 				<md-icon aria-label="info" md-font-icon="fa fa-info"></md-icon> 
 			</md-button>
 
@@ -37,7 +37,7 @@
 		<i ng-if="dragWordNode==true" class="dragged-icon-tree fa fa-bars fa-2x"></i>
 
 		<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon"
-				aria-label="More" ng-click="showInfoWORD($event,item.WORD_ID)">
+				aria-label="More" ng-click="showInfoWORD(item.WORD_ID)">
 			<md-icon aria-label="info" md-font-icon="fa fa-info"></md-icon> 
 		</md-button>
 
@@ -68,13 +68,13 @@
 				tabindex="4">
 			<p>{{translate.load("sbi.generic.modify");}}</p>
 		</md-list-item> 
-		<md-list-item ng-click='showInfoNode($event,item.CONTENT_ID)'
+		<md-list-item ng-click='showInfoNode(item.CONTENT_ID)'
 				role="menuitem"
 				ng-if=" isDefined('showInfoMenu') && item.CONTENT_NM != undefined"
 				tabindex="4">
 			<p>{{translate.load("sbi.generic.info");}}</p>
 		</md-list-item> 
-		<md-list-item ng-click='showInfoWORD($event,item.WORD_ID)'
+		<md-list-item ng-click='showInfoWORD(item.WORD_ID)'
 				role="menuitem"
 				ng-if=" isDefined('showInfoMenu') && item.WORD_ID != undefined"
 				tabindex="4">

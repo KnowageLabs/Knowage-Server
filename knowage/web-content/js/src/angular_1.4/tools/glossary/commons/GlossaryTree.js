@@ -216,7 +216,7 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 		angular.element(document.getElementById(tree)).scope().expandAll();
 	}
 	
-	$scope.showInfoWORD=function(ev,wordid){
+	$scope.showInfoWORD=function(wordid){
 		$mdDialog
 		.show({  
 			controllerAs : 'infCtrl',
@@ -237,12 +237,11 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 						})
 			},
 			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
-			targetEvent : ev,
 			clickOutsideToClose :true
 		})
 	}
 	
-	$scope.showInfoNode=function(ev,contentid){
+	$scope.showInfoNode=function(contentid){
 		$mdDialog
 		.show({  
 			controllerAs : 'infCtrl',
@@ -263,7 +262,6 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 						})
 			},
 			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_content.html',
-			targetEvent : ev,
 			clickOutsideToClose :true
 		})
 	}

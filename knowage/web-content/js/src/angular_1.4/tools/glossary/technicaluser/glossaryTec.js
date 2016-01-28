@@ -201,7 +201,7 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 				sbiModule_translate.load("sbi.glossary.word.delete")).content(
 						sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
 						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
-								sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(event);
+								sbiModule_translate.load("sbi.myanalysis.delete.cancel"));
 
 		$mdDialog.show(confirm).then(
 				function() {
@@ -656,7 +656,7 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 				sbiModule_translate.load("sbi.glossary.word.delete")).content(
 						sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
 						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
-								sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(item);
+								sbiModule_translate.load("sbi.myanalysis.delete.cancel"));
 
 		$mdDialog.show(confirm).then(
 				function() {
@@ -1243,7 +1243,7 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 		navi.loadNavItem("pagination",pagin_item.item_type);
 	};
 
-	navi.showInfoWORD=function(ev,wordid){
+	navi.showInfoWORD=function(wordid){
 		console.log("showInfo");
 		console.log(event)
 		console.log(wordid)
@@ -1267,7 +1267,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 						})
 			},
 			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
-			targetEvent : ev,
 			clickOutsideToClose :true
 		})
 	}
