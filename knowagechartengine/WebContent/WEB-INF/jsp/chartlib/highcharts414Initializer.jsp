@@ -66,20 +66,35 @@
 	};
 
 	function handleDrilldown(e) {
-		if (!e.seriesOptions) {
-			var chart = this;
-			chart.showLoading('Loading...');
-			Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
-			var parameters = {
-				breadcrumb: Ext.JSON.encode(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb),
-				jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate
-			};
-			chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
-				var series = Ext.JSON.decode(response.responseText, true);
-	            chart.addSeriesAsDrilldown(e.point, series);
-				chart.hideLoading();
-			});
+		if (!e.seriesOptions) 
+		{			
+			/*
+				Disable drill down when user clicks on the hyperlink that points to
+				the category value (on X-axis). Drill down is enabled only when user				
+				clicks on single serie within one category value (group). Detection
+				of clicking on the category hyperlink is done via checking if the
+				appropriate property in input parameter of the listener is not a 
+				number. If it is, the hyperlink is clicked and we have a ordinal
+				number of the category on which user clicked.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			if (isNaN(e.category))
+			{
+				var chart = this;
+				chart.showLoading('Loading...');
+				Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+				var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+				var parameters = {
+					breadcrumb: Ext.JSON.encode(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb),
+					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate
+				};
+				chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
+					var series = Ext.JSON.decode(response.responseText, true);
+		            chart.addSeriesAsDrilldown(e.point, series);
+					chart.hideLoading();
+				});
+			}
 		}
 	};
 
