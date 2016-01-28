@@ -260,9 +260,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			msgTarget: 		'qtip', 
 			fallback: 		true,
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.bgColor'),
-			afterLabelTextTpl : '<span class="help" data-qtip="'
-	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//			afterLabelTextTpl : '<span class="help" data-qtip="'
+//	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			name: 			'tableBgColorPicker',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTHS,
@@ -328,9 +328,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			msgTarget: 	'qtip', 
 			fallback: 		true,
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
-			afterLabelTextTpl : '<span class="help" data-qtip="'
-	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//			afterLabelTextTpl : '<span class="help" data-qtip="'
+//	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			name: 			'headerFontColor',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTHS,
@@ -378,9 +378,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			msgTarget: 		'qtip', 
 			fallback: 		true,
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.bgColor'),
-			afterLabelTextTpl : '<span class="help" data-qtip="'
-	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//			afterLabelTextTpl : '<span class="help" data-qtip="'
+//	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			name: 			'headerBgColorPicker',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTHS,
@@ -432,9 +432,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			msgTarget: 		'qtip', 
 			fallback: 		true,
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
-			afterLabelTextTpl : '<span class="help" data-qtip="'
-	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//			afterLabelTextTpl : '<span class="help" data-qtip="'
+//	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			name: 			'rowsFontColor',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTHS,
@@ -483,9 +483,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			msgTarget: 		'qtip', 
 			fallback: 		true,
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.bgColor'),
-			afterLabelTextTpl : '<span class="help" data-qtip="'
-	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//			afterLabelTextTpl : '<span class="help" data-qtip="'
+//	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			name: 			'rowsBgColorPicker',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTHS,
