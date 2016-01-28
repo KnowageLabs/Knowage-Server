@@ -33,15 +33,15 @@ Ext.define
 	        anchor: '100%'
 		},
 		
-		layout: 
+	/*	layout: 
 		{
 		    type: 'vbox',
 		    //align: 'center'
-		},
-		defaults : 
+		},*/
+		/*defaults : 
 		 {	
 			margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
-		},
+		},*/
 		constructor: function(config) 
 		{
 			this.callParent(config);
@@ -54,8 +54,9 @@ Ext.define
     			/* Horizontal line with just one combo - POSITION (top, bottom) */
              	{ 
              		xtype : 'fieldcontainer',
-             		layout : 'hbox',
-             		
+             		//layout : 'hbox',
+             		width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
              		defaults : 
              		{
              			//labelWidth: '100%',
@@ -123,173 +124,308 @@ Ext.define
         	
 //        	if (this.config.bindToolbarSpacing && this.config.bindToolbarTail)
 //         	{
- 	        	this.toolbarSpacingAndTail = Ext.create
- 	        	(
-         			/* Horizontal line with two number fields - SPACING and TAIL */
-                     {            
- 	                   	 xtype : 'fieldcontainer',
- 	                   	 layout : 'vbox',
- 	                   	defaults : 
- 	  				 {	
- 	      				//margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
- 	  				 },
- 	                    fieldDefaults: 
- 	           	    {
- 	           	        anchor: '100%'
- 	           		},
- 	   	                width:'280',     	 
- 	                   	 items: 
- 	               		 [		                    	         
- 	           	         	{
- 	           	         		xtype: 'numberfield',
- 	           	         		bind : '{configModel.toolbarSpacing}',	
- 	           	         		id: "sunburstToolbarSpacing",
- 	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	       	         			//maxWidth: '120',
- 	       	         			maxValue: '50',
- 	       	         			minValue: '1',
- 	       	         			width:'280',
- 	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText"),
- 	       	         			
- 	       	         			/**       				     
- 	        				     * @author: danristo (danilo.ristovski@mht.net)
- 	        				     */
- 	        				    listeners: 
- 	        				    {        				    	
- 	        				    	change: function(thisEl, newValue)
- 	        				    	{			
- 	        				    		if (newValue || parseInt(newValue)==0)
- 	        				    		{
- 	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + ":"); 
- 	        				    		}	
- 	        				    		else
- 	    				    			{
- 	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
- 	    				    			}
- 	        				    	}
- 	        				    }
- 	       	         		},
- 	       	         		
- 	       	         		{
- 	   	                		 xtype: 'numberfield',
- 	   	                		 bind : '{configModel.toolbarTail}',
- 	   	                		 id: "sunburstToolbarTail",
- 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	   	                		 width: '280',
- 	   	                		// maxWidth: '120',
- 	   	                		 maxValue: '100',
- 	   	                		 minValue: '10',
- 	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipTail.emptyText"),
- 	   	                		 
- 	   	                		 /**       				     
- 	   	                		  * @author: danristo (danilo.ristovski@mht.net)
- 	   	                		  */
- 	   	                		 listeners: 
- 	   	                		 {        				    	
- 	   	                			 change: function(thisEl, newValue)
- 	   	                			 {			
- 	   	                				 if (newValue || parseInt(newValue)==0)
- 	   	                				 {
- 	   	                					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + ":"); 
- 	   	                				 }	
- 	   	                				 else
- 	   	                				 {
- 	   	                					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
- 	   	                				 }
- 	   	                			 }	
- 	   	                		 }
- 	   	                	}
- 	   	         		]		                     
-                     }
- 	        	);
+ 	    
+//        	this.toolbarSpacingAndTail = Ext.create
+// 	        	(
+//         			/* Horizontal line with two number fields - SPACING and TAIL */
+//                     {            
+// 	                   	 xtype : 'fieldcontainer',   
+// 	                   	 items: 
+// 	               		 [		                    	         
+// 	           	         	{
+// 	           	         		xtype: 'numberfield',
+// 	           	         		bind : '{configModel.toolbarSpacing}',	
+// 	           	         		id: "sunburstToolbarSpacing",
+// 	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+// 	       	         			//maxWidth: '120',
+// 	       	         			maxValue: '50',
+// 	       	         			minValue: '1',
+// 	       	         		    width: Sbi.settings.chart.configurationStep.widthOfFields,
+// 	       			    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
+// 	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText"),
+// 	       	         			
+// 	       	         			/**       				     
+// 	        				     * @author: danristo (danilo.ristovski@mht.net)
+// 	        				     */
+// 	        				    listeners: 
+// 	        				    {        				    	
+// 	        				    	change: function(thisEl, newValue)
+// 	        				    	{			
+// 	        				    		if (newValue || parseInt(newValue)==0)
+// 	        				    		{
+// 	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + ":"); 
+// 	        				    		}	
+// 	        				    		else
+// 	    				    			{
+// 	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+// 	    				    			}
+// 	        				    	}
+// 	        				    }
+// 	       	         		},
+// 	       	         		
+// 	       	         		{
+// 	   	                		 xtype: 'numberfield',
+// 	   	                		 bind : '{configModel.toolbarTail}',
+// 	   	                		 id: "sunburstToolbarTail",
+// 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+// 	   	                		 width: Sbi.settings.chart.configurationStep.widthOfFields,
+// 	   	    			         padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
+// 	   	                		// maxWidth: '120',
+// 	   	                		 maxValue: '100',
+// 	   	                		 minValue: '10',
+// 	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipTail.emptyText"),
+// 	   	                		 
+// 	   	                		 /**       				     
+// 	   	                		  * @author: danristo (danilo.ristovski@mht.net)
+// 	   	                		  */
+// 	   	                		 listeners: 
+// 	   	                		 {        				    	
+// 	   	                			 change: function(thisEl, newValue)
+// 	   	                			 {			
+// 	   	                				 if (newValue || parseInt(newValue)==0)
+// 	   	                				 {
+// 	   	                					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + ":"); 
+// 	   	                				 }	
+// 	   	                				 else
+// 	   	                				 {
+// 	   	                					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+// 	   	                				 }
+// 	   	                			 }	
+// 	   	                		 }
+// 	   	                	}
+// 	   	         		]		                     
+//                     }
+// 	        	);
  	        	
- 	        	this.add(this.toolbarSpacingAndTail);
+ 	        	var toolbarSpacing=Ext.create({            
+                   		                    	         
+	           	         	
+	           	         		xtype: 'numberfield',
+	           	         		bind : '{configModel.toolbarSpacing}',	
+	           	         		id: "sunburstToolbarSpacing",
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+	       	         			//maxWidth: '120',
+	       	         			maxValue: '50',
+	       	         			minValue: '1',
+	       	         		    width: Sbi.settings.chart.configurationStep.widthOfFields,
+	       			    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
+	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText"),
+	       	         			
+	       	         			/**       				     
+	        				     * @author: danristo (danilo.ristovski@mht.net)
+	        				     */
+	        				    listeners: 
+	        				    {        				    	
+	        				    	change: function(thisEl, newValue)
+	        				    	{			
+	        				    		if (newValue || parseInt(newValue)==0)
+	        				    		{
+	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + ":"); 
+	        				    		}	
+	        				    		else
+	    				    			{
+	        				    			this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.spacing') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+	    				    			}
+	        				    	}
+	        				    }
+	       	         		});
+ 	        	
+ 	        	var toolbarTail=Ext.create({
+ 	        		
+   
+		 xtype: 'numberfield',
+		 bind : '{configModel.toolbarTail}',
+		 id: "sunburstToolbarTail",
+		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+		 width: Sbi.settings.chart.configurationStep.widthOfFields,
+        padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,  
+		// maxWidth: '120',
+		 maxValue: '100',
+		 minValue: '10',
+		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipTail.emptyText"),
+		 
+		 /**       				     
+		  * @author: danristo (danilo.ristovski@mht.net)
+		  */
+		 listeners: 
+		 {        				    	
+			 change: function(thisEl, newValue)
+			 {			
+				 if (newValue || parseInt(newValue)==0)
+				 {
+					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + ":"); 
+				 }	
+				 else
+				 {
+					 this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.tail') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+				 }
+			 }	
+		 }
+	
+ 	        		
+ 	        	});
+ 	        	
+ 	        //	this.add(this.toolbarSpacingAndTail);
+ 	        	
+ 	        	this.add(toolbarSpacing);
+ 	        	this.add(toolbarTail);
 //         	}
  	        
 // 	        if (this.config.bindToolbarHeight && this.config.bindToolbarWidth)
 //         	{
- 	        	this.toolbarHeightAndWidth = Ext.create
- 	        	(
-         			/* Horizontal line with two number fields - HEIGHT and WIDTH */
-                     {            
- 	                   	 xtype : 'fieldcontainer',
- 	                   	 layout : 'vbox',
- 	                  
- 	                   	defaults : 
- 	  				 {	
- 	      				//margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		            
- 	  				 },
- 	                    fieldDefaults: 
- 	           	      {
- 	           	        anchor: '100%'
- 	           		  },   	 
- 	                   	 items: 
- 	               		 [		                    	         
- 	           	         	{
- 	           	         		xtype: 'numberfield',
- 	           	         		bind : '{configModel.toolbarHeight}',	
- 	           	         		id: "sunburstToolbarHeight",
- 	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	           	         		//maxWidth: '120',
- 	           	         		maxValue: '100',
- 	           	         		minValue: '10',
- 	           	         		width:'280',
- 	           	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipHeight.emptyText"),
- 	           	         		
- 	           	         		/**       				     
-	   	                		  * @author: danristo (danilo.ristovski@mht.net)
-	   	                		  */
- 	           	         		listeners: 
- 	           	         		{        				    	
- 	           	         			change: function(thisEl, newValue)
- 	           	         			{			
- 	           	         				if (newValue || parseInt(newValue)==0)
- 	           	         				{
- 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + ":"); 
- 	           	         				}	
- 	           	         				else
- 	           	         				{
- 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
- 	           	         				}
- 	           	         			}	
- 	           	         		}
- 	       	         		},
- 	       	         		
- 	       	         		{
- 	   	                		 xtype: 'numberfield',
- 	   	                		 bind : '{configModel.toolbarWidth}',	
- 	   	                		 id: "sunburstToolbarWidth",
- 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
- 	   	                		// maxWidth: '120',
- 	   	                		 maxValue: '200',
- 	   	                		 minValue: '10',
-                                 width:'280',
- 	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipWidth.emptyText"),
- 	   	                		 
- 	   	                		 /**       				     
-	   	                		  * @author: danristo (danilo.ristovski@mht.net)
-	   	                		  */
- 	           	         		listeners: 
- 	           	         		{        				    	
- 	           	         			change: function(thisEl, newValue)
- 	           	         			{			
- 	           	         				if (newValue || parseInt(newValue)==0)
- 	           	         				{
- 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + ":"); 
- 	           	         				}	
- 	           	         				else
- 	           	         				{
- 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
- 	           	         				}
- 	           	         			}	
- 	           	         		}
- 	   	                	}
- 	   	         		]		                     
-                     }	
+// 	        	this.toolbarHeightAndWidth = Ext.create
+// 	        	(
+//         			/* Horizontal line with two number fields - HEIGHT and WIDTH */
+//                     {            
+// 	                   	 xtype : 'fieldcontainer',
+// 	                   //	layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+// 	   				     defaults:{
+// 	   				    	margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset
+// 	   				     },
+// 	                    fieldDefaults: 
+// 	           	      {
+// 	           	        anchor: '100%'
+// 	           		  },   
+// 	           		
+// 	                   	 items: 
+// 	               		 [		                    	         
+// 	           	         	{
+// 	           	         		xtype: 'numberfield',
+// 	           	         		bind : '{configModel.toolbarHeight}',	
+// 	           	         		id: "sunburstToolbarHeight",
+// 	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+// 	           	         		//maxWidth: '120',
+// 	           	         		maxValue: '100',
+// 	           	         		minValue: '10',
+// 	           	         		width:Sbi.settings.chart.configurationStep.widthOfFields,
+// 	           	         	    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields, 
+// 	           	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipHeight.emptyText"),
+// 	           	         		
+// 	           	         		/**       				     
+//	   	                		  * @author: danristo (danilo.ristovski@mht.net)
+//	   	                		  */
+// 	           	         		listeners: 
+// 	           	         		{        				    	
+// 	           	         			change: function(thisEl, newValue)
+// 	           	         			{			
+// 	           	         				if (newValue || parseInt(newValue)==0)
+// 	           	         				{
+// 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + ":"); 
+// 	           	         				}	
+// 	           	         				else
+// 	           	         				{
+// 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+// 	           	         				}
+// 	           	         			}	
+// 	           	         		}
+// 	       	         		},
+// 	       	         		
+// 	       	         		{
+// 	   	                		 xtype: 'numberfield',
+// 	   	                		 bind : '{configModel.toolbarWidth}',	
+// 	   	                		 id: "sunburstToolbarWidth",
+// 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+// 	   	                		// maxWidth: '120',
+// 	   	                		 maxValue: '200',
+// 	   	                		 minValue: '10',
+//                                 width:Sbi.settings.chart.configurationStep.widthOfFields,
+//                                 padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields, 
+//                                 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipWidth.emptyText"),
+// 	   	                		 
+// 	   	                		 /**       				     
+//	   	                		  * @author: danristo (danilo.ristovski@mht.net)
+//	   	                		  */
+// 	           	         		listeners: 
+// 	           	         		{        				    	
+// 	           	         			change: function(thisEl, newValue)
+// 	           	         			{			
+// 	           	         				if (newValue || parseInt(newValue)==0)
+// 	           	         				{
+// 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + ":"); 
+// 	           	         				}	
+// 	           	         				else
+// 	           	         				{
+// 	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+// 	           	         				}
+// 	           	         			}	
+// 	           	         		}
+// 	   	                	}
+// 	   	         		]		                     
+//                     }	
+// 	        	);
+ 	        	
+ 	        	
+ 	        	var toolbarHeight=Ext.create(
+ 	        			{
+	           	         		xtype: 'numberfield',
+	           	         		bind : '{configModel.toolbarHeight}',	
+	           	         		id: "sunburstToolbarHeight",
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+	           	         		//maxWidth: '120',
+	           	         		maxValue: '100',
+	           	         		minValue: '10',
+	           	         		width:Sbi.settings.chart.configurationStep.widthOfFields,
+	           	         	    padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields, 
+	           	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipHeight.emptyText"),
+	           	         		
+	           	         		/**       				     
+   	                		  * @author: danristo (danilo.ristovski@mht.net)
+   	                		  */
+	           	         		listeners: 
+	           	         		{        				    	
+	           	         			change: function(thisEl, newValue)
+	           	         			{			
+	           	         				if (newValue || parseInt(newValue)==0)
+	           	         				{
+	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + ":"); 
+	           	         				}	
+	           	         				else
+	           	         				{
+	           	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.height') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+	           	         				}
+	           	         			}	
+	           	         		}
+	       	         		}	
  	        	);
  	        	
- 	        	this.add(this.toolbarHeightAndWidth);
-//         	}
+ 	        	var toolbarWidth=Ext.create({
+               		 xtype: 'numberfield',
+                		 bind : '{configModel.toolbarWidth}',	
+                		 id: "sunburstToolbarWidth",
+                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
+                		// maxWidth: '120',
+                		 maxValue: '200',
+                		 minValue: '10',
+                     width:Sbi.settings.chart.configurationStep.widthOfFields,
+                     padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields, 
+                     emptyText: LN("sbi.chartengine.configuration.sunburstTooltipWidth.emptyText"),
+                		 
+                		 /**       				     
+               		  * @author: danristo (danilo.ristovski@mht.net)
+               		  */
+    	         		listeners: 
+    	         		{        				    	
+    	         			change: function(thisEl, newValue)
+    	         			{			
+    	         				if (newValue || parseInt(newValue)==0)
+    	         				{
+    	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + ":"); 
+    	         				}	
+    	         				else
+    	         				{
+    	         					this.labelEl.update(LN('sbi.chartengine.configuration.sunburst.toolbar.width') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+    	         				}
+    	         			}	
+    	         		}
+                	});
+ 	        	
+ 	        	
+ 	        	//this.add(this.toolbarHeightAndWidth);
+ 	        	
+ 	        	this.add(toolbarHeight);
+ 	        	this.add(toolbarWidth);
+ 	        	
+ 	        	//         	}
  	        
  	        /* Color picker drop-down matrix (table) */
 	        this.colorPicker = Ext.create
@@ -303,6 +439,8 @@ Ext.define
         			fieldBind: '{configModel.toolbarPercFontColor}',
         			initiator: "sunburstPercentageColor",
         			//bodyPadding:10
+        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
         		}
     		);		 
 	        
@@ -340,7 +478,8 @@ Ext.define
  				{
  					bind: '{configModel.toolbarFontFamily}',
  					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
- 					
+ 					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
  					/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
 				     */
@@ -370,7 +509,8 @@ Ext.define
  				{
  					bind: '{configModel.toolbarFontWeight}',
  					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
- 					
+ 					width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
  					/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
 				     */
@@ -400,7 +540,8 @@ Ext.define
      			{
      				bind : '{configModel.toolbarFontSize}',
      				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-     				
+     				width: Sbi.settings.chart.configurationStep.widthOfFields,
+        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
      				/**       				     
 				     * @author: danristo (danilo.ristovski@mht.net)
 				     */
