@@ -67,3 +67,6 @@
 	
 	Ext.override(Ext.data.proxy.Ajax, { 
 		timeout:600000});
+	
+	Ext.override(Ext.window.Window, { 
+		onEsc: Ext.emptyFn});
