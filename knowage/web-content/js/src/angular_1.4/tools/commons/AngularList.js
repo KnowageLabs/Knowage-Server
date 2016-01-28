@@ -23,7 +23,7 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
 	}})
 .directive('angularList', ['sbiModule_config',function(sbiModule_config) {
 	return {
-		templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/commons/templates/angular-list.html',
+		templateUrl: sbiModule_config.contextName +'/js/src/angular_1.4/tools/commons/templates/angular-list.jsp',
 		controller: ListControllerFunction,
 		replace:true,
 		scope: {
