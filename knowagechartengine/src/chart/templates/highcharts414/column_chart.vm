@@ -46,6 +46,7 @@
 	},
 
     chart: {
+        
     	#set($chartTypeToPrint = 'column')
     	#if($chartType == 'line' || $chartType == 'radar')
     		#set($chartTypeToPrint = 'line')
@@ -1487,7 +1488,22 @@
     
     #if($enableDrilldown)
     drilldown: {
-        series: []
+        series: [],
+        
+        #*
+        	Customize the value of the category on the X-axis of the chart,
+        	the one that previously was in a form of hyperlink. The hyperlink
+        	will be removed in order to skip confusion.
+        	
+        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        activeAxisLabelStyle: 
+        {
+			cursor: 'pointer',
+			color: '#0d233a',
+			fontWeight: 'bold',
+			textDecoration: 'none'			
+		}
     },
     #end
     
