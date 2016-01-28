@@ -129,18 +129,25 @@ function prepareChartConfForTreemap(chartConf) {
 	{
 		chartObject = 
 		{
-				//renderTo: 'mainPanel',    			
+			//renderTo: 'mainPanel',    			
 //    			height: (chartConf.chart.height!=undefined || chartConf.chart.height!="") ? chartConf.chart.height : "",
 //    			width: (chartConf.chart.width!=undefined || chartConf.chart.width!="") ? chartConf.chart.width : "",
-				marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-						style: {
-							fontFamily: chartConf.chart.style.fontFamily,
-							fontSize: chartConf.chart.style.fontSize,
-							fontWeight: chartConf.chart.style.fontWeight,    				
-							fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-									textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-											fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-						}
+			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
+					
+			/**
+			 * Leave some ebough space for the "Back" button for drill up.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			marginBottom: chartConf.chart.marginBottom ? chartConf.chart.marginBottom : undefined,
+					
+			style: {
+				fontFamily: chartConf.chart.style.fontFamily,
+				fontSize: chartConf.chart.style.fontSize,
+				fontWeight: chartConf.chart.style.fontWeight,    				
+				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+						textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+								fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+			}
 		};
 		
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
