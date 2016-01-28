@@ -64,3 +64,9 @@ svg {
 	height: 15px;	
 }
  
+.md-button.md-fab md-icon.center-ico{ 
+	color: black;
+	width: 100%;
+	display: inherit;
+	margin-top: 8px;
+}

@@ -155,7 +155,7 @@ author:...
 					<input type='text' disabled ng-model="fileName"/>
 				</md-input-container>
 				<md-button class="md-fab md-raised" arial-label="Upload File" ng-click="uploadFile(cmd)">
-					<md-icon class="fa fa-upload"></md-icon>
+					<md-icon class="fa fa-upload center-ico"></md-icon>
 					<md-tooltip md-direction="bottom">
          					Upload File
        				</md-tooltip>
