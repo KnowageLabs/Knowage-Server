@@ -866,16 +866,70 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return result;
 		},
 
+		/**
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		checkValuesOfModelOrGUI: function(valueModel,valueGUI)
+		{
+			var valueToReturn = null;
+			
+			if ((valueModel==null || valueModel==="") && valueGUI==null)
+			{
+				valueToReturn = "";
+			}
+			else
+			{
+				if (valueModel!=null && valueModel!=="")
+				{
+					valueToReturn = valueModel;
+				}
+				else 
+				{
+					valueToReturn = valueGUI;
+				}					
+			}
+			
+			return valueToReturn;
+		},
+		
 		getChartDataAsOriginaJson : function (chartModel) {
 			var CHART = {};
 			//console.log("getChartDataAsOriginaJson (START)");
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
+			/**
+			 * Old implementation (the changes in the Configuration tab of the Designer
+			 * are not synchronized with the JSON structure displayed in the Advanced
+			 * editor tab.
+			 * 
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			CHART['height'] = (chartModel.get('height') != undefined) ? 
 				chartModel.get('height') : '';
 			CHART['width'] = (chartModel.get('width') != undefined) ? 
 				chartModel.get('width') : '';
-
+				
+			/**
+			 * Set the visibility state of the border of the chart depending on the 
+			 * boolean value of the parameter.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if (chartType.toUpperCase() == "BAR" || chartType.toUpperCase() == "LINE" 
+					|| chartType.toUpperCase() == "RADAR" || chartType.toUpperCase() == "SCATTER")
+			{
+				CHART['borderVisible'] = Sbi.settings.chart.borderVisible;
+			}			
+			
+//			/**
+//			 * New implementation (the Configuration and Advanced editor tabs are 
+//			 * synchronized).
+//			 * 
+//			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+//			 */
+//			CHART['height'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('height'),Ext.getCmp("chartHeightNumberfield").value);
+//			CHART['width'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('width'),Ext.getCmp("chartWidthNumberfield").value);
+				
 			CHART['isCockpitEngine'] = Sbi.chart.designer.ChartUtils.isCockpitEngine;
 
 			/**
@@ -888,7 +942,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			/**
 			 * Parameter specific for the SCATTER chart only
-			 * (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SCATTER") {
 				CHART['zoomType'] = (chartModel.get('scatterZoomType')) ? chartModel.get('scatterZoomType') : '';
@@ -896,16 +950,46 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			/**
 			 * Parameter specific for the WORDCLOUD chart only
-			 * (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "WORDCLOUD") 
 			{
-				CHART['sizeCriteria'] = (chartModel.get('sizeCriteria')) ? chartModel.get('sizeCriteria') : '';
+				CHART['sizeCriteria'] = chartModel.get('sizeCriteria') ? chartModel.get('sizeCriteria') : '';
+				
 				CHART['maxWords'] = (Number(chartModel.get('maxWords'))) ? Number(chartModel.get('maxWords')) : 0;
 				CHART['maxAngle'] = (Number(chartModel.get('maxAngle'))) ? Number(chartModel.get('maxAngle')) : 0;
 				CHART['minAngle'] = (Number(chartModel.get('minAngle'))) ? Number(chartModel.get('minAngle')) : 0;
 				CHART['maxFontSize'] = (Number(chartModel.get('maxFontSize'))) ? Number(chartModel.get('maxFontSize')) : 0;
 				CHART['wordPadding'] = (Number(chartModel.get('wordPadding'))) ? Number(chartModel.get('wordPadding')) : 0;
+				
+				// TODO: commented since it is not completely tested
+				/*console.log("AAA",chartModel.get('maxAngle')&&!chartModel.get('maxAngle')==="");
+				console.log(isNaN(chartModel.get('maxWords')));
+				
+				if (chartModel.get('maxAngle')!=undefined)
+				{
+					if (!isNaN(chartModel.get('maxAngle')))
+					{
+						CHART['maxAngle'] = Number(chartModel.get('maxAngle'));
+					}
+					else
+					{
+						CHART['maxAngle'] = chartModel.get('maxAngle');
+					}
+				}
+				
+				
+				
+				//CHART['maxAngle'] = (chartModel.get('maxAngle')&&!chartModel.get('maxAngle')==="") ? chartModel.get('maxAngle') : "";
+				CHART['minAngle'] = chartModel.get('minAngle') ? chartModel.get('minAngle') : "";
+				CHART['maxFontSize'] = chartModel.get('maxFontSize') ? chartModel.get('maxFontSize') : "";
+				CHART['wordPadding'] = chartModel.get('wordPadding') ? chartModel.get('wordPadding') : "";	*/
+				
+//				CHART['maxWords'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('maxWords'), Ext.getCmp("wordcloudMaxWords").value);		
+//				CHART['maxAngle'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('maxAngle'), Ext.getCmp("wordcloudMaxAngle").value);	
+//				CHART['minAngle'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('minAngle'), Ext.getCmp("wordcloudMinAngle").value);	
+//				CHART['maxFontSize'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('maxFontSize'), Ext.getCmp("wordcloudMaxFontSize").value);	
+//				CHART['wordPadding'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('wordPadding'), Ext.getCmp("wordcloudWordPadding").value);				
 			}
 
 			/**
@@ -915,6 +999,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (chartType.toUpperCase() == "SUNBURST") {
 
 				CHART['opacMouseOver'] = (Number(chartModel.get('opacMouseOver'))) ? Number(chartModel.get('opacMouseOver')) : 100;
+//				CHART['opacMouseOver'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('opacMouseOver'), Ext.getCmp("opacityMouseOver").value);	
 			}
 
 			/**

@@ -50,6 +50,16 @@
         #if($chart.width != '')
     	width: $chart.width,
     	#end
+    	
+    	#*
+        	Remove border around the chart if this property is set to true.
+        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        #if ($chart.borderVisible == false)
+	        plotBackgroundColor: null,
+	        plotBorderWidth: null,
+	        plotShadow: false,
+        #end
         
         borderColor: '$chart.style.backgroundColor',
     	style:{

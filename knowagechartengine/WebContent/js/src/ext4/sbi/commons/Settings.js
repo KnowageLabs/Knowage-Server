@@ -20,6 +20,12 @@ Sbi.settings.cockpit = {
 Sbi.settings.chart = 
 {
 	/**
+	 * Set the visibility state of the charts' border. This is used for 
+	 * BAR, LINE, RADAR and SCATTER chart types.
+	 */
+	borderVisible: false,
+		
+	/**
 	 * Customization for the left panel of the Designer (on the left side 
 	 * of the separating line that splits the Designer into two parts) 
 	 * that contains the GUI elements for the chart style, chart type and

@@ -77,8 +77,18 @@
         #if($chart.width != '')
     	width: $chart.width,
     	#end
-        
-        borderColor: '$chart.style.backgroundColor',
+    	        
+        #*
+        	Remove border around the chart if this property is set to true.
+        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        #if ($chart.borderVisible == false)
+	        plotBackgroundColor: null,
+	        plotBorderWidth: null,
+	        plotShadow: false,
+        #end
+       	
+       	borderColor: '$chart.style.backgroundColor',
     	style:{
     		#foreach($styleName in $chart.style.keySet())
     			#set ($chartStyleValue = $chart.style[$styleName])
@@ -838,6 +848,7 @@
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+					
 					{
 						##drilldown: $enableDrilldown,
 						drilldown: $drilldownEnabledFlag,
