@@ -84,10 +84,14 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		$scope.treeTargetDirty = true;
 		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
 		//var source = e.source.cloneModel ? e.source.cloneModel : e.source.nodeScope.$modelValue;
-		var source =e.source.nodeScope.$modelValue;
+		var source = e.source.nodeScope.$modelValue;
 		$scope.removeFakeAndCorupt(dest.children);
-		if (isInsideTree && source.$parent.children.length == 1){
-			source.$parent.children.push(angular.copy($scope.fakeNode));
+		if (isInsideTree && source.$parent.children.length <= 1){
+			//ui-tree work in a copy object. Need to find the real parent in the tree
+			var realParent = $scope.findRealParent(source.$parent);
+			if (realParent){
+				realParent.children.push(angular.copy($scope.fakeNode));
+			}
 		}
 		if (source.leaf == true){
 			source.LEAF_PARENT_NM = dest[dest.aliasName];
@@ -102,6 +106,20 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				e.source.cloneModel[k] = angular.copy(source[k]);
 			}
 		}
+	}
+	
+	$scope.findRealParent = function(node){
+		var elements = [$scope.hierTreeTarget[0]];
+		do{
+			var el = elements.shift();
+			if (el[el.aliasName] == node[node.aliasName] && el[el.aliasId] == node[node.aliasId]){
+				return el;
+			}
+			for (var i = 0 ; el.children && i<el.children.length;i++){
+				elements.push(el.children[i]);
+			}
+		}while(elements.length>0);
+		return null;
 	}
 	
 	$scope.updateLevelRecursive = function(node, level){

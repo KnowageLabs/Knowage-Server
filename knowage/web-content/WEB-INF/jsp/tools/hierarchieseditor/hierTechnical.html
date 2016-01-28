@@ -2,7 +2,7 @@
 	<md-content layout="row" layout-wrap>
 		<div class="div-container" flex style="margin-right: 20px;" >
 			
-			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;" ng-click='debug()'>
+			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list"></i>
 					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.hierarchies.hierSrc");}}</h2>
@@ -161,6 +161,7 @@
 						order-by='orderByTargetTrigger' 
 						menu-option='menuTargetOption' 
 						enable-drag='true' 
+						no-drop-enabled='false' 
 						enable-clone='true'
 						show-empty-placeholder="true" 	
 						options-drag-drop="treeTargetOptions" 
