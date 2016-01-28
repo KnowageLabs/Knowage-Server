@@ -47,6 +47,7 @@ author:...
        String spagobiServerHost = null;
        String spagobiContext = null;
        String documentLabel = null;
+       String sbiExecutionID = null;
        
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
@@ -74,6 +75,8 @@ author:...
 	          } 
 	  
 	   // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+	   
+	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );
 %>
 
 <%@include file="../../commons/includeMessageResource.jspf"%>

@@ -20,6 +20,9 @@
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 	
+	<!-- angular-sanitize  -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-sanitize/angular-sanitize.js"></script>
+	
 	<!-- context menu -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
 	
@@ -30,6 +33,6 @@
 	<!-- angular tree -->
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-	
+
 
 

@@ -1,8 +1,8 @@
-var olapMod = angular.module('olapManager', [ 'ngMaterial','ui.tree']);
-olapMod.controller("olapController", [ "$scope", "$timeout", "$window","$mdDialog",
+var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize']);
+olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",
 		olapFunction ]);
 
-function olapFunction($scope, $timeout, $window,$mdDialog, $mdSidenav) {
+function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 
 
   $scope.templateList = '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html';
@@ -13,6 +13,43 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $mdSidenav) {
   $scope.olapPanel = '/knowagewhatifengine/html/template/main/olap/olapPanel.html';
   $scope.leftPanel = '/knowagewhatifengine/html/template/left/leftPanel.html';
   $scope.rightPanel = '/knowagewhatifengine/html/template/right/rightPanel.html';
+  
+  
+  $scope.sendMdxQuery = function() {
+	  $http({
+		  method: 'POST',
+		  url: '/knowagewhatifengine/restful-services/1.0/model/'+$scope.mdxQuery+'/?SBI_EXECUTION_ID='+JSsbiExecutionID,
+		  
+		}).then(function successCallback(response) {
+		    // this callback will be called asynchronously
+		    // when the response is available
+			
+			$scope.table = response.data.table;
+			console.log($http.url);
+		  }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			console.log("Error!")
+		  });
+  }
+  
+  console.log(JSsbiExecutionID);
+    
+  $http({
+	  method: 'POST',
+	  url: '/knowagewhatifengine/restful-services/1.0/model/null/?SBI_EXECUTION_ID='+JSsbiExecutionID,
+	  
+	}).then(function successCallback(response) {
+	    // this callback will be called asynchronously
+	    // when the response is available
+		
+		
+		$scope.table = response.data.table;
+	  }, function errorCallback(response) {
+	    // called asynchronously if an error occurs
+	    // or server returns response with an error status.
+	  });
+     
   //tree example data
   $scope.data = [
     {
@@ -94,6 +131,17 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $mdSidenav) {
       preserveScope: true,
       controllerAs:'olapCtrl',
       templateUrl:'/knowagewhatifengine/html/template/main/filter/filterDialog.html',
+      targetEvent:ev,
+      clickOutsideToClose:true
+    });
+  }
+  
+  $scope.openMdxQueryDialog = function(ev){
+    $mdDialog.show({
+      scope: $scope,
+      preserveScope: true,
+      controllerAs:'olapCtrl',
+      templateUrl:'/knowagewhatifengine/html/template/main/toolbar/sendMdx.html',
       targetEvent:ev,
       clickOutsideToClose:true
     });
