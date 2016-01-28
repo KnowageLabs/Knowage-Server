@@ -64,9 +64,6 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				sourceNodeScope.$treeScope.cloneEnabled = true;
 			}
 			return true;
-		},
-		dropped: function(e){
-			var ef=e;
 		}
 	};
 	
@@ -89,7 +86,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		//var source = e.source.cloneModel ? e.source.cloneModel : e.source.nodeScope.$modelValue;
 		var source =e.source.nodeScope.$modelValue;
 		$scope.removeFakeAndCorupt(dest.children);
-		if (source.$parent.children.length == 1 && isInsideTree){
+		if (isInsideTree && source.$parent.children.length == 1){
 			source.$parent.children.push(angular.copy($scope.fakeNode));
 		}
 		if (source.leaf == true){
@@ -232,7 +229,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			}
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
 			//in source tree force the download, because the D&D do a messy with the source tree. Is better to restart from the original
-			if (hierMap[keyMap] === undefined && choose !== "src"){ 
+			if (hierMap[keyMap] === undefined || choose == "src"){ 
 				$scope.toogleLoading(choose,true);
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
