@@ -485,7 +485,7 @@ function prepareChartConfForHeatmap(chartConf) {
             	
             	style:
         		{
-            		color: (chartConf.xaxis.title.style.color!=undefined && chartConf.xaxis.title.style.color!="") ? chartConf.xaxis.title.style.color : '',	
+            		color: (chartConf.xaxis.title.style.color!=undefined && chartConf.xaxis.title.style.color!="" && chartConf.xaxis.title.style.color!="transparent") ? chartConf.xaxis.title.style.color : '',	
     				fontStyle: (chartConf.xaxis.title.style.fontStyle!=undefined && chartConf.xaxis.title.style.fontStyle!="") ? chartConf.xaxis.title.style.fontStyle : '',
 					textDecoration: (chartConf.xaxis.title.style.textDecoration!=undefined && chartConf.xaxis.title.style.textDecoration!="") ? chartConf.xaxis.title.style.textDecoration : '',
 					fontSize: (chartConf.xaxis.title.style.fontSize!=undefined && chartConf.xaxis.title.style.fontSize!="") ? chartConf.xaxis.title.style.fontSize : '',
@@ -500,11 +500,11 @@ function prepareChartConfForHeatmap(chartConf) {
                 rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
                 align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : '',	
                 style:{
-                	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="") ? chartConf.xaxis.labels.style.color : "",
+                	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
                     fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
                     textDecoration: (chartConf.xaxis.labels.style.textDecoration!=undefined && chartConf.xaxis.labels.style.textDecoration!="") ? chartConf.xaxis.labels.style.textDecoration : '',
-                    fontSize: (chartConf.xaxis.labels.style.fontSize!=undefined && chartConf.xaxis.labels.style.fontSize!="") ? chartConf.xaxis.labels.style.fontSize : "",
-                    fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : "",
+                    fontSize: (chartConf.xaxis.labels.style.fontSize!=undefined && chartConf.xaxis.labels.style.fontSize!="") ? chartConf.xaxis.labels.style.fontSize : '',
+                    fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : '',
            	}	
             },
             tickInterval:30*24*3600*1000,
@@ -517,7 +517,7 @@ function prepareChartConfForHeatmap(chartConf) {
         	title:
         	{
         		text: (chartConf.yaxis.title.text!=undefined && chartConf.yaxis.title.text!="") ? chartConf.yaxis.title.text : undefined,	
-            	align: chartConf.yaxis.title.align,
+            	align:(chartConf.yaxis.title.align!=undefined && chartConf.yaxis.title.align!="")?chartConf.yaxis.title.align:'',
             	
             	/**
             	 * Fixed value for margin of the Y-axis title. If the alignment of labels of the Y-axis
@@ -530,7 +530,7 @@ function prepareChartConfForHeatmap(chartConf) {
             	
     			style:
         		{
-            		color: (chartConf.yaxis.title.style.color!=undefined && chartConf.yaxis.title.style.color!="") ? chartConf.yaxis.title.style.color : '',	
+            		color: (chartConf.yaxis.title.style.color!=undefined && chartConf.yaxis.title.style.color!="" && chartConf.yaxis.title.style.color!="transparent" ) ? chartConf.yaxis.title.style.color : '',	
     				fontStyle: (chartConf.yaxis.title.style.fontStyle!=undefined && chartConf.yaxis.title.style.fontStyle!="") ? chartConf.yaxis.title.style.fontStyle : '',
 					textDecoration: (chartConf.yaxis.title.style.textDecoration!=undefined && chartConf.yaxis.title.style.textDecoration!="") ? chartConf.yaxis.title.style.textDecoration : '',
 					fontSize: (chartConf.yaxis.title.style.fontSize!=undefined && chartConf.yaxis.title.style.fontSize!="") ? chartConf.yaxis.title.style.fontSize : '',
@@ -547,10 +547,13 @@ function prepareChartConfForHeatmap(chartConf) {
         		 * 
         		 * @author: danristo (danilo.ristovski@mht.net)
         		 */
-        		x: 0,
+                /**
+                 * makes padding when the alignment is right 
+                 */		
+        		x:-10,
                 		
             	style:{            		
-            		 color: (chartConf.yaxis.labels.style.color!=undefined && chartConf.yaxis.labels.style.color!="") ? chartConf.yaxis.labels.style.color : "",
+            		 color: (chartConf.yaxis.labels.style.color!=undefined && chartConf.yaxis.labels.style.color!="" && chartConf.yaxis.labels.style.color!="transparent" ) ? chartConf.yaxis.labels.style.color : undefined,
                      fontStyle:(chartConf.yaxis.labels.style.fontStyle!=undefined && chartConf.yaxis.labels.style.fontStyle!="") ? chartConf.yaxis.labels.style.fontStyle : '',
                      textDecoration: (chartConf.yaxis.labels.style.textDecoration!=undefined && chartConf.yaxis.labels.style.textDecoration!="") ? chartConf.yaxis.labels.style.textDecoration : '',
                      fontSize: (chartConf.yaxis.labels.style.fontSize!=undefined && chartConf.yaxis.labels.style.fontSize!="") ? chartConf.yaxis.labels.style.fontSize : "",

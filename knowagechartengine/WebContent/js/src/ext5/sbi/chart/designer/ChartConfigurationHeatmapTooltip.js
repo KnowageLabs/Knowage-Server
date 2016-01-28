@@ -49,7 +49,7 @@ Ext.define
 					viewModel: this.viewModel,
 					bind : '{configModel.tipFontFamily}',
 					fieldLabel :  
-							LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+							LN('sbi.chartengine.configuration.font'),
 					padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,		
 					listeners:
 					{
@@ -60,7 +60,7 @@ Ext.define
 				
 						fontFamilyEmpty: function()
 						{
-							this.labelEl.update(LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							this.labelEl.update(LN('sbi.chartengine.configuration.font') + ":");
 						}
 					}
 				});
@@ -71,7 +71,7 @@ Ext.define
 		        	viewModel: this.viewModel,
 		        	bind : '{configModel.tipFontSize}',
 		        	fieldLabel :  
-		        			LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+		        			LN('sbi.chartengine.configuration.fontsize'),
 		        	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,		
 	    			listeners:
 					{
@@ -82,7 +82,7 @@ Ext.define
 				
 						fontSizeEmpty: function()
 						{
-							this.labelEl.update(LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							this.labelEl.update(LN('sbi.chartengine.configuration.fontsize') +  ":");
 						}
 					}
 		        });
@@ -96,7 +96,7 @@ Ext.define
 		        	viewModel: this.viewModel,
 		        	bind : '{configModel.tipFontWeight}',
 		        	fieldLabel :  
-		        			LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+		        			LN('sbi.chartengine.configuration.fontstyle'),
 		        	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,		
 	    			listeners:
 					{
@@ -107,7 +107,7 @@ Ext.define
 				
 						fontStyleEmpty: function()
 						{
-							this.labelEl.update(LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							this.labelEl.update(LN('sbi.chartengine.configuration.fontstyle') + ":");
 						}
 					}
 		        });
@@ -147,7 +147,7 @@ Ext.define
 	    					{
 	        					globalScope.colorPicker.items.items[0]
 	    							.labelEl.update(LN('sbi.chartengine.configuration.color')
-	    												+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+	    												+  ":");
 	    					}
 	    				}        			
 	    			}

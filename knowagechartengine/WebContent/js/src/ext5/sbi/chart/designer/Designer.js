@@ -1792,8 +1792,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  						
-  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase(); 
-  	  							  						
+  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();  	  						
+  	  						
   	  						/**
   	  						 * Taking care of the order of the categories (based on their type) for the 
   	  						 * HEATMAP chart type.
@@ -5289,7 +5289,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var heatmapTooltip = Ext.getCmp("chartHeatmapTooltip");
 				
 				// HEATMAP fields (parameters) values from the GUI 	
-//				var heatmapLegendVertAlignGUI = heatmapLegend.items.items[0].value;
+				var heatmapLegendVertAlignGUI = heatmapLegend.items.items[0].value;
 				var heatmapLegendSymbolHeightGUI = heatmapLegend.items.items[1].value;
 //				var heatmapTooltipFontFamilyGUI = heatmapTooltip.items.items[0].value;
 //				var heatmapTooltipFontSizeGUI = heatmapTooltip.items.items[1].value;
@@ -5299,10 +5299,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var heatmapLegendVertAlignCModel = chartViewModelData.legendAlign;
 				var heatmapLegendSymbolHeightCModel = chartViewModelData.symbolHeight;
 				
-				var heatmapTooltipFontFamilyCModel = chartViewModelData.tipFontFamily;
-				var heatmapTooltipFontSizeCModel = chartViewModelData.tipFontSize;
-				var heatmapTooltipFontStyleCModel = chartViewModelData.tipFontWeight;
-				var heatmapTooltipFontColorCModel = chartViewModelData.tipColor;
+//				var heatmapTooltipFontFamilyCModel = chartViewModelData.tipFontFamily;
+//				var heatmapTooltipFontSizeCModel = chartViewModelData.tipFontSize;
+//				var heatmapTooltipFontStyleCModel = chartViewModelData.tipFontWeight;
+//				var heatmapTooltipFontColorCModel = chartViewModelData.tipColor;
 								
 				(heatmapLegendVertAlignCModel=="" || heatmapLegendVertAlignCModel==null || heatmapLegendVertAlignCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5362,49 +5362,49 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}	
 				
-				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-							]
-						) : errorMsg;
-				
-				(heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-							]
-						) : errorMsg;
-				
-				(heatmapTooltipFontColorCModel=="transparent" || heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.color'),
-								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-							]
-						) : errorMsg;
-							
-				(heatmapTooltipFontStyleCModel=="" ||  heatmapTooltipFontStyleCModel==null ||  heatmapTooltipFontStyleCModel==undefined) ? 
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.fontstyle'),
-								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-							]
-						) : errorMsg;
+//				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.font'),
+//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
+//							]
+//						) : errorMsg;
+//				
+//				(heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.fontsize'),
+//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
+//							]
+//						) : errorMsg;
+//				
+//				(heatmapTooltipFontColorCModel=="transparent" || heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.color'),
+//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
+//							]
+//						) : errorMsg;
+//							
+//				(heatmapTooltipFontStyleCModel=="" ||  heatmapTooltipFontStyleCModel==null ||  heatmapTooltipFontStyleCModel==undefined) ? 
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.fontstyle'),
+//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
+//							]
+//						) : errorMsg;
 			}
 
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();
