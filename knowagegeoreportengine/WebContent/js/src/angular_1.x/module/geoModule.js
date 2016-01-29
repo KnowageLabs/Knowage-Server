@@ -257,8 +257,6 @@ geoM.service(
 							layerServ.selectedFeatures = selection;
 							geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
-							console.log("layerServ.selectedFeatures (dragBox)-> ",layerServ.selectedFeatures);
-							console.log("geo_interaction.selectedFilterType -> ",geo_interaction.selectedFilterType);
 						});
 
 				// clear selection when drawing a new box and when
@@ -314,10 +312,7 @@ geoM.service(
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
-					
-					console.log("layerServ.selectedFeatures (dragBox)-> ",layerServ.selectedFeatures);
-					console.log("geo_interaction.selectedFilterType -> ",geo_interaction.selectedFilterType);
-
+			
 				});
 				// clear selection when drawing a new box and when
 				// clicking on the map
@@ -437,9 +432,7 @@ geoM.service(
 
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-					
-					console.log("layerServ.selectedFeatures (near)-> ",layerServ.selectedFeatures);
-					console.log("geo_interaction.selectedFilterType -> ",geo_interaction.selectedFilterType);
+			
 				}
 
 

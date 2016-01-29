@@ -54,9 +54,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class LayerCRUD {
 
 	static private Logger logger = Logger.getLogger(LayerCRUD.class);
-	private static final String FILE = "File";
-	private static final String PROPS_FILE = "propsFile";
-	private static final String fileValidationError = "error.mesage.description.layer.validation.file";
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
 	public static final String LAYER_URL = "layerUrl";
@@ -76,7 +73,7 @@ public class LayerCRUD {
 			logger.debug("No layer found");
 			return "{root:[]}";
 		}
-		System.out.println("Contengo " + layers.toString());
+
 		logger.debug("Serializing the layers");
 		ObjectMapper mapper = new ObjectMapper();
 		String s = "[]";
@@ -132,7 +129,6 @@ public class LayerCRUD {
 		try {
 
 			id = req.getParameter("id");
-			System.out.println(id);
 			if (id == null || id.equals("")) {
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
@@ -187,25 +183,25 @@ public class LayerCRUD {
 		return "" + content + "";
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/getroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getRoles(@Context HttpServletRequest req) throws JSONException, IOException {
 
 		// get roles from database
-		List roles = null;
+		List<Role> roles = null;
 		Role aRole = null;
 		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
 		try {
 			roles = DAOFactory.getRoleDAO().loadAllRoles();
-			System.out.println(roles.toString());
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 		}
 		logger.debug("OUT");
 
-		for (Iterator it = roles.iterator(); it.hasNext();) {
-			aRole = (Role) it.next();
+		for (Iterator<Role> it = roles.iterator(); it.hasNext();) {
+			aRole = it.next();
 			JSONObject jo = new JSONObject();
 			try {
 				jo.put("id", aRole.getId());
@@ -232,7 +228,6 @@ public class LayerCRUD {
 		try {
 
 			id = req.getParameter("id");
-			System.out.println(id);
 			if (id == null || id.equals("")) {
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
@@ -257,13 +252,13 @@ public class LayerCRUD {
 		return s;
 	}
 
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/postitem")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String postItem(@Context HttpServletRequest req) throws EMFUserError, JSONException {
 
 		JSONObject requestBodyJSON = null;
-		Integer id;
 		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
 		try {
 			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
@@ -272,19 +267,18 @@ public class LayerCRUD {
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
 		// get roles for item selected from database
-		List roles = new ArrayList<>();
+		List<Role> roles = new ArrayList<>();
 		Role aRole = null;
 		try {
 			roles = DAOFactory.getRoleDAO().loadRolesItem(requestBodyJSON);
-			System.out.println(roles);
 
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 		}
 		logger.debug("OUT");
 
-		for (Iterator it = roles.iterator(); it.hasNext();) {
-			aRole = (Role) it.next();
+		for (Iterator<Role> it = roles.iterator(); it.hasNext();) {
+			aRole = it.next();
 			JSONObject jo = new JSONObject();
 			try {
 				jo.put("id", aRole.getId());
@@ -309,9 +303,7 @@ public class LayerCRUD {
 		Integer layerId = null;
 
 		try {
-
 			id = req.getParameter("id");
-			System.out.println(id);
 			if (id == null || id.equals("")) {
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
@@ -382,22 +374,14 @@ public class LayerCRUD {
 			}
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
 			// get File
-
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
 
-				if (inputPart.getBodyAsString().contains("zip")) {
-					System.out.println("zip beccato");
-					bool = true;
-				}
-
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
 
 				String path = layerServices.getResourcePath(data);
@@ -424,7 +408,6 @@ public class LayerCRUD {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteRole(@Context HttpServletRequest req) throws JSONException {
 		JSONObject requestBodyJSON = null;
-		Integer id;
 		Integer id_role = null;
 		Integer layerid = null;
 
@@ -454,7 +437,6 @@ public class LayerCRUD {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String modifyLayerwithFile(MultipartFormDataInput input, @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON = null;
-		Integer id;
 
 		try {
 
@@ -465,7 +447,6 @@ public class LayerCRUD {
 			}
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
 			// load File
@@ -474,13 +455,7 @@ public class LayerCRUD {
 			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
 
-				if (inputPart.getBodyAsString().contains("zip")) {
-					System.out.println("zip beccato");
-
-				}
-
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
 
 				String path = layerServices.getResourcePath(data);
@@ -602,7 +577,6 @@ public class LayerCRUD {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
 			IOException {
-		ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// TODO check if profile is null

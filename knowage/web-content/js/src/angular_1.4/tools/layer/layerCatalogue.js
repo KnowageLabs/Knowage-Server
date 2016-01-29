@@ -66,8 +66,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 			download: function(item,evt){
 				evt.stopPropagation();
-				console.log("Download .....");
-				console.log(item);
 				$scope.showDetails(item);
 			}
 	}
@@ -119,8 +117,13 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.saveLayer = function(){
 
 		$scope.selectedLayer.roles = $scope.rolesItem;
+		if($scope.filter_set.length==0){
+			//load filter_set
+			$scope.loadFilterAdded();
+		}
 		$scope.selectedLayer.properties = $scope.filter_set;
-		console.log($scope.selectedLayer.properties);
+		
+		
 		if($scope.flag){
 
 			//case: modify layer
@@ -129,10 +132,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				sbiModule_restServices.put("layers", '', $scope.selectedLayer).success(
 
 						function(data, status, headers, config) {
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
-								console.log("layer non Ottenuti");
 								$scope.showActionError();
 								$scope.closeForm();
 
@@ -160,8 +161,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				sbiModule_restServices.put("layers", 'updateData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
 
 						function(data, status, headers, config) {
-							console.log(data)
-
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
@@ -186,17 +185,14 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			}
 		}else{
 			//add new Layer
-			console.log($scope.selectedLayer.layerFile);
 			var fd = new FormData();
 			fd.append('data', angular.toJson($scope.selectedLayer));
 			fd.append('layerFile', $scope.selectedLayer.layerFile);
 
 			if($scope.selectedLayer.layerFile == null || $scope.selectedLayer.layerFile == undefined){
-				console.log($scope.selectedLayer);
 				//add layer without upload file
 				sbiModule_restServices.post("layers",'',$scope.selectedLayer).success(
 						function(data, status, headers, config) {
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
@@ -225,7 +221,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				sbiModule_restServices.post("layers", 'addData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
 
 						function(data, status, headers, config) {
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
@@ -287,10 +282,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				$mdDialog.show(confirm).then(function() {
 					if(item.pathFile!=null){
 						//if pathfile!=null enable the visualization of filename
-						console.log("true");
 						$scope.pathFileCheck =true;
 					} else{
-						console.log("false");
 						$scope.pathFileCheck = false;
 					}
 					$scope.flag=true;
@@ -302,16 +295,13 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 
 				}, function() {
-					console.log('Annulla');
 				});
 
 			}  else {
 				if(item.pathFile!=null){
 					//if pathfile!=null enable the visualization of filename
-					console.log("true");
 					$scope.pathFileCheck =true;
 				} else{
-					console.log("false");
 					$scope.pathFileCheck = false;
 				}
 				$scope.flag = true;
@@ -339,7 +329,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					$scope.cancel(true);		
 
 				}, function() {
-					console.log('Annulla');
+
 				});
 
 			} else if($scope.selectedLayer == null ) {
@@ -358,7 +348,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
 				function(data, status, headers, config) {
 
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
@@ -389,7 +378,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 		if($scope.selectedLayer.properties){
 			for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-				console.log($scope.selectedLayer.properties[i]);
+
 				var prop = $scope.selectedLayer.properties[i];
 				var obj={"property":prop};
 				$scope.filter_set.push(obj );
@@ -408,7 +397,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 					} else {
 						$scope.rolesItem = data;
-						console.log($scope.rolesItem);
 					}
 				}).error(function(data, status, headers, config) {
 					console.log("error");
@@ -482,11 +470,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}];	
 
 	$scope.deleteLayer = function(){
-		console.log($scope.selectedLayer);
+
 		sbiModule_restServices.remove("layers", 'deleteLayer',"id="+$scope.selectedLayer.layerId).success(
 
 				function(data, status, headers, config) {
-					console.log(data)
+
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {

@@ -303,7 +303,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		Transaction tx = null;
 		Integer id;
 		JSONObject layerDef = new JSONObject();
-		ArrayList<String> properties = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -350,7 +349,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					OutputStreamWriter out;
 					String name = aLayer.getLabel();
 					out = new FileWriter(path + name);
-					System.out.println("prima " + aLayer.getFilebody().toString());
 					String content = new String(aLayer.getFilebody());
 					content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
 					out.write(content);
@@ -371,16 +369,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			} else {
 				layerDef.put("layer_file", "null");
-
 			}
-
 			if (aLayer.getLayerURL() != null) {
-
 				layerDef.put("layer_url", aLayer.getLayerURL());
-
 			} else {
 				layerDef.put("layer_url", "null");
-
 			}
 
 			layerDef.put("layer_zoom", "null");
@@ -410,7 +403,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (aLayer.getRoles() != null) {
 				for (SbiExtRoles r : aLayer.getRoles()) {
 					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(id, r.getExtRoleId().intValue());
-
 					updateSbiCommonInfo4Insert(hibLayRol);
 					tmpSession.save(hibLayRol);
 
@@ -459,7 +451,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession.beginTransaction();
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
-
+			if (aLayer.getType().equals("WMS") || aLayer.getType().equals("Google") || aLayer.getType().equals("TMS")) {
+				return new ArrayList<String>();
+			}
 			// load properties of file
 			if (!layerDef.get("layer_file").equals("null")) {
 				File doc = new File(layerDef.getString("layer_file"));
@@ -471,25 +465,28 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 				do {
 					c = br.readLine();
-					JSONObject obj = new JSONObject(c);
-					content = obj.getJSONArray("features");
-					for (int j = 0; j < content.length(); j++) {
-						obj = content.getJSONObject(j).getJSONObject("properties");
-						Iterator<String> it = obj.keys();
-						while (it.hasNext()) {
-							String key = it.next();
-							if (obj.get(key).getClass().equals(key.getClass())) {
-								if (!keys.contains(key)) {
-									keys.add(key);
+					if (c != null) {
+						JSONObject obj = new JSONObject(c);
+						content = obj.getJSONArray("features");
+						for (int j = 0; j < content.length(); j++) {
+							obj = content.getJSONObject(j).getJSONObject("properties");
+							Iterator<String> it = obj.keys();
+							while (it.hasNext()) {
+								String key = it.next();
+								if (obj.get(key).getClass().equals(key.getClass())) {
+									if (!keys.contains(key)) {
+										keys.add(key);
+									}
 								}
 							}
 						}
 					}
+
 				} while (c != null);
 			}
 
 			// load properties of wfs
-			if (!layerDef.get("layer_url").equals(null)) {
+			if (!(layerDef.get("layer_url").equals("null"))) {
 				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
 				URL url = new URL(urlDescribeFeature);
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -524,7 +521,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					br.close();
 					connection.disconnect();
 				} else {
-					System.out.println("http non ok");
 					System.out.println(connection.getResponseMessage());
 				}
 			}
@@ -626,13 +622,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public JSONObject getContentforDownload(int layerId, String typeWFS) {
 		Session tmpSession = null;
-		Transaction tx = null;
 
 		JSONObject obj = null;
 		try {
 			tmpSession = getSession();
-			tx = tmpSession.beginTransaction();
-			int i;
 
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
@@ -648,7 +641,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					c = br.readLine();
 
 					obj = new JSONObject(c);
-					System.out.println(obj);
 				} while (c != null);
 			}
 			// load properties of wfs
@@ -675,7 +667,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				// connection.setReadTimeout(30 * 1000);
 				connection.connect();
 				int HttpResult = connection.getResponseCode();
-				StringBuilder sb = new StringBuilder();
 				if (HttpResult == HttpURLConnection.HTTP_OK) {
 
 					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
@@ -686,7 +677,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					}
 					br.close();
 				} else {
-					System.out.println("http non ok");
 					System.out.println(connection.getResponseMessage());
 				}
 
@@ -716,6 +706,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#loadAllEngines()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException {
 		Session tmpSession = null;

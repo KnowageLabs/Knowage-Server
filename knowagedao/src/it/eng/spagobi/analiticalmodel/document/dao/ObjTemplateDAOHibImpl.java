@@ -196,10 +196,11 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		return templates;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException {
+	public List<ObjTemplate> getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException {
 		// select * from sbi_object_templates where active=0
-		List templates = new ArrayList();
+		List<ObjTemplate> templates = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -220,10 +221,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				// query.setString(0, data);
 			}
 
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiObjTemplates> result = query.list();
+			Iterator<SbiObjTemplates> it = result.iterator();
 			while (it.hasNext()) {
-				templates.add(toObjTemplate((SbiObjTemplates) it.next()));
+				templates.add(toObjTemplate(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -246,7 +247,6 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		for (int i = 0; i < documents.length(); i++) {
 			Session aSession = null;
 			Transaction tx = null;
-			Integer maxProg = null;
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();

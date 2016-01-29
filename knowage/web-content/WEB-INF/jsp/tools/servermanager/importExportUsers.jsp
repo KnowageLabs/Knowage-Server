@@ -74,7 +74,7 @@
 					<div id="lista" style="background:#eceff1">
 						<div layout="row" layout-wrap>
 							<div >
-							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()">Select All</md-checkbox>
+							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()">{{translate.load("sbi.importusers.selectall");}}</md-checkbox>
 							</div>
 						</div>
 						<div layout="row" layout-wrap flex>
@@ -93,7 +93,7 @@
 					<div  layout="column" layout-wrap>
 					<div layout="row" layout-wrap>
 						<div flex = 15 >
-							<h3>Import a document</h3>
+							<h3>{{translate.load("sbi.importusers.import");}}</h3>
 						</div>
 						
 						<div flex=20 >
@@ -112,13 +112,13 @@
 						
 						<div flex =15>
 							<md-radio-group layout="row" ng-model="typeSaveUser">
-						      <md-radio-button value="Override" >Override</md-radio-button>
-						      <md-radio-button value="Missing"> Add Missing </md-radio-button>
+						      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
+						      <md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
 						    </md-radio-group>
 						</div>
 							<span flex=2></span>				
 						<md-input-container class="small counter"> 
-							<md-button ng-click="save($event)" aria-label="upload Users" > Start Import</md-button>
+							<md-button ng-click="save($event)" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 						</md-input-container>
 					</div>
 

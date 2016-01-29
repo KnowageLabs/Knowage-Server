@@ -31,6 +31,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 </head>
 <body class="bodyStyle" ng-app="importExportMenuModule" >
 	<div ng-controller="importExportMenuController " layout="column" layout-fill layout-wrap class="contentdemoBasicUsage">
+	
+	
 		<md-toolbar class="miniheadimportexport" style="height:4%">
 			<div class="md-toolbar-tools">
 				<i class="fa fa-exchange fa-2x"></i>
@@ -50,6 +52,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<md-tab-label>{{translate.load("SBISet.export", "component_impexp_messages")}}</md-tab-label>
 					<md-tab-body>
 						<md-content	ng-controller="exportController">
+						
 							<div ng-if="flags.waitExport" layout="column" layout-padding layout-align="space-around center">
 								<h3 class="md-subhead">
 									{{translate.load('SBISet.importexport.opProg', 'component_impexp_messages')}}
@@ -57,24 +60,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								<i class="fa fa-spinner fa-spin fa-5x"></i>
 							</div>
 					
-							<%--
-							<h3 ng-if="flags.enableDownload" class="md-body-2">
-								<md-button aria-label="Close" ng-click="toggleEnableDownload()"
-										style="min-width: 24px;min-height:24px;width:24px;height:24px">
-									<md-icon class="fa fa-times"
-											style="margin-top: 0.3rem;margin-left: -0.3rem;"></md-icon>
-								</md-button>
-								
-								<span>{{translate.load('SBISet.importexport.opComplete', 'component_impexp_messages')}}</span>
-								<md-button ng-click="downloadFile()">
-									{{translate.load('Sbi.download', 'component_impexp_messages')}}{{downloadedFileName}}.zip
-								</md-button>
-								<br> 
-								<span>
-									{{translate.load('SBISet.importexport.exportCompleteResourcesWarning', 'component_impexp_messages')}}
-								</span>
-							</h3>
-							--%>
 					
 							<div layout="column" layout-padding layout-wrap>
 								<div layout="row" layout-wrap style="width: 100%;">
@@ -91,24 +76,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									</md-button>
 					
 								</div>
-								<%--
-								<div layout-padding layout-gt-sm="row"
-										layout-align-gt-sm="start center" layout-sm="column"
-										layuout-align-sm="start start">
-									<md-checkbox class="little-check" ng-model="checkboxs.exportSubObj" aria-label="Export sub views">
-										{{translate.load('SBISet.importexport.expSubView', 'component_impexp_messages')}}
-									</md-checkbox>
-									<md-checkbox class="little-check" ng-model="checkboxs.exportSnapshots" aria-label="Export snapshots">
-										{{translate.load('SBISet.importexport.expSnapshots', 'component_impexp_messages')}}
-									</md-checkbox>
-								</div>
 								
-								<div layout-padding>
-									<component-tree ng-model="customs" create-tree="true" 
-											subnode-key="menu" text-to-show-key="text"
-											selected-item="selected" multi-select="true" show-files="true"></component-tree>
-								</div>
-								--%>
 							</div>
 						</md-content>
 					</md-tab-body> 
@@ -117,21 +85,57 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<md-tab id="importTab" > 
 					<md-tab-label>{{translate.load("SBISet.import", "component_impexp_messages")}}</md-tab-label>
 					<md-tab-body> 
-						<md-content ng-controller="importController" ng-cloak ng-switch="selectedStep">
-							<bread-crumb ng-model=stepItem item-name='name'
-								selected-index='selectedStep' control='stepControl'></bread-crumb>
-							<div ng-controller="importMenuStep0" ng-switch-when="0">
-								<%@include file="./importMenuSteps/importMenuStep0.jsp"%></div>
-							<%--
-							<div ng-controller="importMenuStep1" ng-switch-when="1">
-								<%@include file="./importMenuSteps/importMenuStep1.jsp"%></div>
-							<div ng-controller="importMenuStep2" ng-switch-when="2">
-								<%@include file="./importMenuSteps/importMenuStep2.jsp"%></div>
-							<div ng-controller="importMenuStep3" ng-switch-when="3">
-								<%@include file="./importMenuSteps/importMenuStep3.jsp"%></div>
-							<div ng-controller="importMenuStep4" ng-switch-when="4">
-								<%@include file="./importMenuSteps/importMenuStep4.jsp"%></div>
-							--%>
+						<md-content ng-cloak>
+							<div layout="row" layout-wrap>
+								<div flex = 15 >
+									<h3>{{translate.load("sbi.importusers.import")}}</h3>
+								</div>
+								
+								<div flex=20 >
+									<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+								</div>
+								
+								<div flex =10 >
+								<md-input-container class="small counter"> 
+									<md-button ng-click="upload($event)" aria-label="upload Menu"
+										class="md-fab md-mini"  > <md-icon
+										md-font-icon="fa fa-upload"  >
+									</md-icon> </md-button>
+								</md-input-container>
+								</div>
+								<span flex=20></span>
+								<div flex =20>
+								
+								
+									<md-radio-group layout="row" ng-model="typeSaveMenu">
+								      <md-radio-button value="Override" ng-click="reloadTree()">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+								      <md-radio-button value="Missing" ng-click="reloadTree()">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+								    </md-radio-group>
+								 
+								</div>
+								<div flex=10>
+								<md-input-container>
+									<md-button ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+								</md-input-container>
+								</div>
+							</div>
+						
+							<div layout="row" layout-wrap>
+							<span flex></span>
+								<div flex=30  >
+									<h4>{{translate.load("sbi.importusers.userimport");}}</h4>
+									<component-tree ng-model="tree" subnode-key="children" text-to-show-key="name" > </component-tree>
+								</div>
+								<span flex=10>
+							
+								</span>
+								<div flex=30>
+									<h4>{{translate.load("sbi.importusers.userimporting");}}</h4>
+									<component-tree ng-model="treeInTheDB" subnode-key="children" text-to-show-key="name" > </component-tree>
+								</div>
+							<span flex></span>
+								
+							</div>
 						</md-content>
 					</md-tab-body>
 				</md-tab>

@@ -37,8 +37,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							console.log("layer non Ottenuti");
 							$scope.flagSelect=false;
 						} else {
-							console.log(data);
-				
 							$scope.documents=data;
 							$scope.flagSelect=true;
 						}
@@ -62,10 +60,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			var month=$scope.data_format.getMonth()+1;
 			var day=$scope.data_format.getDate();
 			$scope.data_format=year+"-"+month+"-"+day;
-			console.log($scope.data_format);
 		}else{
 			$scope.data_format = null;
-			console.log($scope.data_format);
 		}
 		
 	}
@@ -97,7 +93,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						var obj={id:$scope.docChecked[i], data:$scope.data_format};
 						request.push(obj);
 					}
-					console.log(request);
 					sbiModule_restServices.post("template",'deleteTemplate',request).success(
 							function(data, status, headers, config) {
 								if (data.hasOwnProperty("errors")) {

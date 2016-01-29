@@ -200,7 +200,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			if(!$scope.multipleFilters[layerConf.layerId]){
 				//if layer haven't filters
 				geoModule_layerServices.layerWithoutFilter=true;
-				console.log("Layer senza filtri");
+				console.log("Layer without filters");
 			}else{
 			
 				geoModule_layerServices.layerWithoutFilter=$scope.checkFilterInthisLayer(layerConf);

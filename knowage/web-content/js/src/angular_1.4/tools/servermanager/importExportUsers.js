@@ -50,9 +50,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
-						
 						$scope.users = data;
-						console.log($scope.users);
 					}
 
 				}).error(function(data, status, headers, config) {
@@ -68,10 +66,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			var fd = new FormData();
 		
 			fd.append('exportedArchive', $scope.importFile.file);
-			console.log(fd);
 			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
-				console.log("role--->",data)
 				if(data.STATUS=="NON OK"){
 					$mdToast.show($mdToast.simple().content("data.ERROR").position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
@@ -145,7 +141,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					showToast(data.errors[0].message,4000);
 					$scope.wait = false;
 				}else if(status==200){
-					console.log(data);
 					$scope.download.getBlob(data,$scope.nameExport,'application/zip','zip');
 					$scope.viewDownload = false;
 					$scope.wait = false;
@@ -167,10 +162,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		}else{
 			if($scope.typeSaveUser == 'Missing'){
 				//missing user
-				console.log("save");
 				sbiModule_restServices.post("1.0/serverManager/importExport/users","missingusers",$scope.exportingUser)
 				.success(function(data, status, headers, config) {
-					console.log("Saved ok");
+				
 					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
 					
 				}).error(function(data, status, headers, config) {
@@ -178,10 +172,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				})
 			}else{
 				//override
-				console.log("save");
+			
 				sbiModule_restServices.post("1.0/serverManager/importExport/users","overrideusers",$scope.exportingUser)
 				.success(function(data, status, headers, config) {
-					console.log("Saved ok");
+				
 					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
 				}).error(function(data, status, headers, config) {
 					showToast("ERRORS "+status,4000);
@@ -206,7 +200,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.showConfirm = function() {
 	    // Appending dialog to document.body to cover sidenav in docs app
 	    var confirm = $mdDialog.alert()
-	          .title('There is a role that missing in your Database... Import failed')
+	          .title(sbiModule_translate.load("sbi.importusers.importfailed"))
 	          .ariaLabel('Lucky day')
 	          .ok('Ok')
 	         
@@ -368,7 +362,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 	
 	$scope.setTab = function(Tab){
-		console.log(Tab);
+
 		if(Tab=='Export'){
 			$scope.loadAllUsers();
 		}

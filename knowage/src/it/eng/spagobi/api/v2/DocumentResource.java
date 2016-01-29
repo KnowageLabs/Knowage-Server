@@ -94,6 +94,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/withData")
 	public Response getDocumentsBeforeDate(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @Context HttpServletRequest req)
@@ -108,7 +109,6 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		boolean isFolderFilterValid = functionalityId != null;
 
 		data = req.getParameter("data");
-		System.out.println(data);
 		if (data == null || data.equals("")) {
 			throw new SpagoBIRuntimeException("The data passed in the request is null or empty");
 		}
@@ -133,6 +133,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{id}/roles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -295,6 +296,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		return Response.ok().build();
 	}
 
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("{label}/content")
 	@Produces("application/pdf")
@@ -429,6 +431,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@GET
 	@Path("/searchDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -530,6 +533,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

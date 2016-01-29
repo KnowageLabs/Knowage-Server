@@ -113,6 +113,7 @@ public class GeoLayer {
 				this.setLayerIdentify(layerDefJson.getString("layerId"));
 				this.setLayerLabel(layerDefJson.getString("layerLabel"));
 				this.setLayerName(layerDefJson.getString("layerName"));
+
 				if (!layerDefJson.getString("properties").isEmpty()) {
 					List<String> prop = new ArrayList<>();
 					JSONArray obj = layerDefJson.getJSONArray("properties");
@@ -136,12 +137,10 @@ public class GeoLayer {
 					this.setLayerParams(layerDefJson.getString("layer_params"));
 				}
 				if (!layerDefJson.getString("layer_options").equals("null")) {
-					this.setLayerOptions(layerDefJson
-							.getString("layer_options"));
+					this.setLayerOptions(layerDefJson.getString("layer_options"));
 
 					if (!layerDefJson.getString("layer_order").equals("null")) {
-						this.setLayerOrder(new Integer(layerDefJson
-								.getString("layer_order")));
+						this.setLayerOrder(new Integer(layerDefJson.getString("layer_order")));
 
 					}
 				}
