@@ -1,0 +1,122 @@
+.federatedDataset {
+
+	.md-container {
+      position: static;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      box-sizing: border-box;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      z-index: 60;
+	  height:100%;
+      bottom: 0;
+      overflow: auto;
+    }
+	.contentdemoBasicUsage {
+		background: $federatedDatasetBackground;
+	}
+	.miniheadfederation {
+		height: 40px; 
+		h2 {
+			padding-left: 14px;
+		}
+	}
+	.miniheadfedsmall {
+		background-color: $secondaryColor !important;
+		h2 {
+			padding-left: 14px
+		}
+	}
+	md-content {
+		padding: 20px;
+	}
+	md-list-item {
+		min-height:35px;
+	}
+	
+	.buttonR{
+	    position:fixed;
+	    right:10px;
+	    bottom:10px;
+	}
+
+	.buttonL{
+	    position:fixed;
+	    right:170px;
+	    bottom:10px;
+	}
+
+	.datasetBox{
+		padding: 10px;
+	}
+
+	.mainContainer{
+		background: transparent;
+		min-height: 400px;
+		height: 100%;
+	}
+
+	.angularListTemplate .searchBarList input {
+	    margin: 0px;
+	    padding-left: 18px;
+	    height: initial;
+  	}
+
+ 	.md-button.md-knowage-theme.md-fab {
+	    top: 0px;
+
+	    md-icon {
+	      font-size: inherit;
+	      padding-top: inherit;
+	    }
+    }
+
+    .angularListTemplate {
+    	font-family: Roboto,Verdana, Geneva, Arial, Helvetica, sans-serif;
+    }
+
+    .associationsBox {
+    	 padding: 5px;
+    	 height:41%;
+    }
+
+    .datasetInAssociationBox {
+    	width: 250px;
+    	float: left; 
+    	padding: 5px;
+    }
+
+    .listBox {
+    	height:85%;
+    }
+
+    .createRelationButton {
+    	top: 20 !important;
+    	right: 15;
+    	font-size: 18px !important;
+    	padding-top: 4px !important;
+    }
+
+    .md-button.deleteIcon {
+	    line-height: 25px;
+	    width: 25px;
+	    height: 25px;
+	    min-height: 0;
+	    z-index: 0;
+	}
+
+	.associationItem {
+	    min-height: 35px;
+	    border-style: dashed;
+	    border-width: 1px;
+	    margin-bottom: 3px;
+	    padding: 2px;
+	    border-color: #A9C3DB;
+	}
+
+	.trashcan-background{
+		background-color: $baseColor !important;
+	}
+}

@@ -3,7 +3,8 @@
   'mixins',
   'fonts',
   'components/layerCatalogue',
-  'components/navbar';
+  'components/navbar',
+  'components/federatedDataset';
    
  
 // Toolbar elements  
@@ -140,4 +141,15 @@ md-tab-content md-content.md-knowage-theme {
 // Dialog Buttons
 a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
     color: $baseColor;
+}
+
+//Raised Button
+.md-button.md-knowage-theme.md-raised {
+    color: $baseColor;
+    background-color: $secondaryColor;
+}
+
+.md-button.md-knowage-theme.md-raised:not([disabled]):hover {
+    background-color: $baseColor;
+    color: white;
 }

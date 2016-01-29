@@ -16,9 +16,12 @@
 		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
+		<!-- 
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
-
+		--> 
+		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<%
 			String relString = "";
@@ -44,34 +47,33 @@
 		<script>
 			var value = '<%= lisOfDSL %>';
 			var valueRelString = '<%= relString  %>';
-		</script>
-	 
+		</script> 
 	</head>
 
-	<body class="bodyStyle" ng-app="federationDefinitionModule" id="ng-app">
+	<body class="federatedDataset" ng-app="federationDefinitionModule" id="ng-app">
 		
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
-		<div ng-controller="federationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
-		
-			<md-toolbar class="miniheadfederation" style="height:4%">
+		<div ng-controller="federationDefinitionCTRL as ctrl" layout-fill class="contentdemoBasicUsage">		
+		  <div class ="md-container" >
+			<md-toolbar class="miniheadfederation" >
 				<div class="md-toolbar-tools">
 					<i class="fa fa-connectdevelop fa-2x"></i>
-					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.title");}}</h2>
+					<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.title");}}</h2>
 				</div>
 			</md-toolbar>
 	
-			<md-content layout-padding style="height: 96%; padding: 20px;">
+			<md-content layout-padding class="mainContainer" >
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
-				<div ng-show="ctrl.state" layout="row" layout-sm="column" layout-wrap">
+				<div ng-show="ctrl.state" layout="row" >
 					
 					<!-- Avaliable datasets -->
-					<div  flex flex-sm="100" style="margin-right: 20px;">
-					
-						<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
+					<div flex class="datasetBox">
+					  <md-card>	
+						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
 								<i class="fa fa-bars "></i>
-								<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>
+								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>
 								<span flex=""></span>					
 							</div>
 						</md-toolbar>
@@ -89,30 +91,30 @@
 							>					
 							</angular-list>
 						</md-content>
-						
+					 </md-card>	
 					</div>
 				
 					<!-- Selected datasets -->
-					<div  flex flex-sm="100">
-				
-					<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
-						<div class="md-toolbar-tools">
-							<i class="fa fa-bars"></i>
-							<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.datasets.selected");}}</h2>
-							<span flex=""></span>					
-						</div>
-					</md-toolbar>
-				
-					<md-content layout-padding >
-						<angular-list layout-fill 
-						id="selectedDatasets" 
-						ng-model="ctrl.listaNew" 
-						item-name="name" 
-						speed-menu-option=ctrl.fdsSpeedMenuOpt
-						>					
-						</angular-list>
-					</md-content>
+					<div  flex class="datasetBox">
+					 <md-card>
+						<md-toolbar class="miniheadfedsmall"  >
+							<div class="md-toolbar-tools">
+								<i class="fa fa-bars"></i>
+								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.selected");}}</h2>
+								<span flex=""></span>					
+							</div>
+						</md-toolbar>
 					
+						<md-content layout-padding >
+							<angular-list layout-fill 
+							id="selectedDatasets" 
+							ng-model="ctrl.listaNew" 
+							item-name="name" 
+							speed-menu-option=ctrl.fdsSpeedMenuOpt
+							>					
+							</angular-list>
+						</md-content>
+					</md-card>
 				</div>
 				
 				</div>
@@ -121,26 +123,26 @@
 				<div ng-hide="ctrl.state">
 					
 					<!-- Associations editor -->
-					<md-toolbar class="miniheadfedsmall" style="">
+				 <md-card>	
+					<md-toolbar >
 						<div class="md-toolbar-tools">
 							<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
 							<span flex=""></span>
 						</div>
 					</md-toolbar>
 					
-					<md-content	style=" padding: 5px;  height:41%">
+					<md-content	class="associationsBox">
 						<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
 						<div ng-repeat="dataset in ctrl.listaNew track by $index">
-							<div style="width: 250px; float: left; padding: 5px;">
+							<div class="datasetInAssociationBox">
 								<!-- Datset name-->
-								<md-toolbar class="miniheadfedsmall"
-									style="">
+								<md-toolbar class="miniheadfedsmall">
 								<div class="md-toolbar-tools">
 									<h2 class="md-flex">{{dataset.name | uppercase}}</h2>
 								</div>
 								</md-toolbar>
 								
-								<md-content ng-show="true" style=" height:85%;" layout="column">
+								<md-content ng-show="true" class="listBox" layout="column">
 									<angular-list
 										layout-fill
 										id='{{dataset.label}}'
@@ -156,20 +158,22 @@
 							</div>
 						</div>
 					</md-content>
+				 </md-card>	
 				</div>
-		
-				<div ng-hide="ctrl.state" style="padding-top: 5px">
-					<md-toolbar class="miniheadfedsmall"
-						style="">
+				
+			   	
+				<div ng-hide="ctrl.state">
+				 <md-card>
+					<md-toolbar >
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
-							></md-icon></md-button> 
+						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
+						</md-icon></md-button> 
 					</div>
 		
 		
 					</md-toolbar>
-					<md-content style=" height:40%">
+					<md-content class="associationsBox">
 		
 						<div>
 							
@@ -178,7 +182,7 @@
 								<md-list >
 									<div ng-repeat="k in ctrl.multiArray track by $index">
 										
-										<md-list-item style="min-height:35px">
+										<md-list-item class="associationItem">
 											
 											<div ng-style="myStyle"  ng-click="ctrl.retrieveSelections(k)" ng-repeat="bla in k track by $index">
 											<span>
@@ -189,8 +193,8 @@
 											</div>
 											<span flex=""></span>
 											 
-											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background" ng-click="ctrl.deleteFromMultiArray(k)">
-														 <i class="fa fa-trash" ></i>
+											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background deleteIcon" ng-click="ctrl.deleteFromMultiArray(k)">
+														 <i class="fa fa-times-circle" ></i>
 													</md-button>
 										
 									</md-list-item>
@@ -204,11 +208,14 @@
 						</div>
 					
 					</md-content>
+			 </md-card>
 			</div>
+
+			
 			
 				<div ng-show="ctrl.state">
 					<md-button class="md-raised buttonR" aria-label="btn_next_step"
-						style=" margin-top: 20px; float:right;" ng-click="ctrl.toggle();">{{translate.load("sbi.federationdefinition.button.nextStep");}}
+						ng-click="ctrl.toggle();">{{translate.load("sbi.federationdefinition.button.nextStep");}}
 					</md-button>
 				</div>
 			
@@ -217,6 +224,8 @@
 					<md-button  class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">{{translate.load("sbi.federationdefinition.button.saveFederation");}}</md-button>	
 				</div>
 			</md-content>
+		 <!-- end div container -->
+		 </div>	
 		</div>
 	
 	</body>

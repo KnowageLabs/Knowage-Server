@@ -743,5 +743,10 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 	
 }
 
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
 
