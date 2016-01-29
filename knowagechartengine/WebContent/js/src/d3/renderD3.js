@@ -70,6 +70,7 @@ function removePixelsFromFontSize(fontSize)
 function renderWordCloud(chartConf){
     
 	var maxic = 0;
+	var minValue=0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
 		
@@ -79,8 +80,16 @@ function renderWordCloud(chartConf){
 			
 		}
 		
+		
+        if (chartConf.data[0][i].value < minValue){
+			
+			minValue = chartConf.data[0][i].value;
+			
+		}
+		
 	}
-
+    
+    
 		(function() {
                
 			function cloud() {
@@ -493,12 +502,16 @@ function renderWordCloud(chartConf){
 		})();    
 
 		var maxfontsize=chartConf.chart.maxFontSize;
+		var minfontsize=chartConf.chart.minFontSize;
 		var fill = d3.scale.category20();
-
+        
+		var wordFontSize= d3.scale.linear().domain([minValue,maxic]).range([minfontsize,maxfontsize]);
+		
 		var layout=d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
-			 return {text: d.name, size: d.value/(maxic/maxfontsize)};
+			 wordSize= wordFontSize(d.value);
+			 return {text: d.name, size: wordSize};
 		}))
 		.padding(chartConf.chart.wordPadding)
 		.rotate(function() {

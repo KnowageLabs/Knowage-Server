@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 250,
+		height: 300,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding : 10,
@@ -250,6 +250,47 @@ Ext.define
 	    								else
 	    								{
 	    									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+	    								}
+	    							}
+	    						}
+    	         			}
+    	         		]
+                	 },
+                	 
+                	 {            
+	                	 xtype : 'fieldcontainer',
+	                	 layout : 'hbox',
+	                	 
+	                	 defaults : 
+	                	 {
+//	                		 labelWidth : '100%',
+	                		 margin:'0 30 0 0'
+	                	 },
+		                    	 
+	                	 items: 
+	            		 [	
+	    	         		{
+	    	         			xtype : 'numberfield',
+	    						bind : '{configModel.minFontSize}',
+	    						id: "wordcloudMinFontSize",
+	    						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+	    						width: Sbi.settings.chart.configurationStep.widthOfFields,
+	    	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+	    						maxValue : '200',
+	    						minValue : '5',
+	    						emptyText: LN("sbi.chartengine.configuration.wordcloudMinFontSize.emptyText"),
+	    						
+	    						listeners:
+	    						{
+	    							change: function(a,currentValue)
+	    							{								
+	    								if (currentValue || parseInt(currentValue)==0)
+	    								{
+	    									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.minFontSize") + ":");
+	    								}
+	    								else
+	    								{
+	    									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.minFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
 	    								}
 	    							}
 	    						}

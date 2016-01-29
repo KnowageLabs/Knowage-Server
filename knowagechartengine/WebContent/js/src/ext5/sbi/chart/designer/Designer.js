@@ -3564,6 +3564,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 						maxValue: Ext.getCmp("wordcloudMaxFontSize").maxValue
 					},
 					
+					minFontSize:
+					{
+						minValue: Ext.getCmp("wordcloudMinFontSize").minValue,
+						maxValue: Ext.getCmp("wordcloudMinFontSize").maxValue
+					},
+					
 					wordPadding:
 					{
 						minValue: Ext.getCmp("wordcloudWordPadding").minValue,
@@ -4871,6 +4877,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var wordcloudMaxAngleGUI = Ext.getCmp("wordcloudMaxAngle").value;
 				var wordcloudMinAngleGUI = Ext.getCmp("wordcloudMinAngle").value;
 				var wordcloudMaxFontSizeGUI = Ext.getCmp("wordcloudMaxFontSize").value;
+				var wordcloudMinFontSizeGUI = Ext.getCmp("wordcloudMinFontSize").value;
 				var wordcloudWordPaddingGUI = Ext.getCmp("wordcloudWordPadding").value;
 			
 				/* ================================================================================= */
@@ -4881,8 +4888,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var wordcloudMaxAngleCModel = chartViewModelData.maxAngle;
 				var wordcloudMinAngleCModel = chartViewModelData.minAngle;
 				var wordcloudMaxFontSizeCModel = chartViewModelData.maxFontSize;
+				var wordcloudMinFontSizeCModel = chartViewModelData.minFontSize;
 				var wordcloudWordPaddingCModel = chartViewModelData.wordPadding;
 				
+				
+				var wordcloudMinAngle;
+				var wordcloudMaxAngle;
+				var wordcloudMaxFont;
+				var wordcloudMinFont;
 				
 				(wordcloudSizeCriteriaCModel=="" || wordcloudSizeCriteriaCModel==null || wordcloudSizeCriteriaCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
@@ -4970,7 +4983,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				
 				if (wordcloudMaxAngleGUI == null)
-				{
+				{  
 					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel==="")
 					{
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5012,6 +5025,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							);
 						}
 					}
+					wordcloudMaxAngle=wordcloudMaxAngleCModel;
 				}
 				else 
 				{					
@@ -5041,6 +5055,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
+					
+					wordcloudMaxAngle=wordcloudMaxAngleGUI;
 				}
 				
 				if (wordcloudMinAngleGUI == null)
@@ -5086,6 +5102,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							);
 						}
 					}
+					
+					wordcloudMinAngle=wordcloudMinAngleCModel;
 				}
 				else 
 				{					
@@ -5115,9 +5133,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 							]
 						);
 					}
+					
+					wordcloudMinAngle=wordcloudMinAngleCModel;
 				}
 				
-			    if(wordcloudMinAngleGUI > wordcloudMaxAngleGUI)
+			    if(wordcloudMinAngle > wordcloudMaxAngle)
 			    {
 				     errorMsg += Sbi.locale.sobstituteParams
 				     (
@@ -5133,6 +5153,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (wordcloudMaxFontSizeGUI == null)
 				{
+					wordcloudMaxFont=wordcloudMaxFontSizeCModel;
 					if (wordcloudMaxFontSizeCModel == null || wordcloudMaxFontSizeCModel=="")
 					{
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5174,9 +5195,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 							);
 						}
 					}
+					
+					
 				}
 				else 
-				{					
+				{
+					wordcloudMaxFont=wordcloudMaxFontSizeGUI;
 					if (wordcloudMaxFontSizeGUI < checkParamValuesForCharts.wordcloud.maxFontSize.minValue)
 					{
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5204,6 +5228,98 @@ Ext.define('Sbi.chart.designer.Designer', {
 						);
 					}
 				}				
+				
+				if (wordcloudMinFontSizeGUI == null)
+				{
+					wordcloudMinFont=wordcloudMinFontSizeCModel;
+					if (wordcloudMinFontSizeCModel == null || wordcloudMinFontSizeCModel=="")
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
+					}	
+					else
+					{
+						if (wordcloudMinFontSizeCModel < checkParamValuesForCharts.wordcloud.minFontSize.minValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.minValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+									checkParamValuesForCharts.wordcloud.maxFontSize.minValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+						else if (wordcloudMinFontSizeCModel > checkParamValuesForCharts.wordcloud.minFontSize.maxValue)
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.configuration.maxValue"),
+								
+								[
+									LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+									checkParamValuesForCharts.wordcloud.minFontSize.maxValue,
+									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+								]
+							);
+						}
+					}
+				}
+				else 
+				{	
+					wordcloudMinFont=wordcloudMinFontSizeGUI;
+					if (wordcloudMinFontSizeGUI < checkParamValuesForCharts.wordcloud.minFontSize.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+								checkParamValuesForCharts.wordcloud.minFontSize.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
+					}
+					else if (wordcloudMinFontSizeGUI > checkParamValuesForCharts.wordcloud.minFontSize.maxValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+								checkParamValuesForCharts.wordcloud.minFontSize.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
+					}
+				}
+				
+				 if(wordcloudMinFont > wordcloudMaxFont)
+				    {
+					     errorMsg += Sbi.locale.sobstituteParams
+					     (
+						      LN("sbi.chartengine.validation.configuration.notGreater"),
+						      
+						      [
+							       LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+							       LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
+							       LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+						      ]
+					     );			     
+				    }
+				
+				
 				
 				if (wordcloudWordPaddingGUI == null)
 				{

@@ -960,6 +960,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				CHART['maxAngle'] = (Number(chartModel.get('maxAngle'))) ? Number(chartModel.get('maxAngle')) : 0;
 				CHART['minAngle'] = (Number(chartModel.get('minAngle'))) ? Number(chartModel.get('minAngle')) : 0;
 				CHART['maxFontSize'] = (Number(chartModel.get('maxFontSize'))) ? Number(chartModel.get('maxFontSize')) : 0;
+				CHART['minFontSize'] = (Number(chartModel.get('minFontSize'))) ? Number(chartModel.get('minFontSize')) : 0;
 				CHART['wordPadding'] = (Number(chartModel.get('wordPadding'))) ? Number(chartModel.get('wordPadding')) : 0;
 				
 				// TODO: commented since it is not completely tested
@@ -1992,6 +1993,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				maxAngle : jsonTemplate.CHART.maxAngle,
 				minAngle : jsonTemplate.CHART.minAngle,
 				maxFontSize : jsonTemplate.CHART.maxFontSize,
+				minFontSize : jsonTemplate.CHART.minFontSize,
 				wordPadding : jsonTemplate.CHART.wordPadding,
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
 
