@@ -1,7 +1,5 @@
 package it.eng.spagobi.engine.chart.api;
 
-import it.eng.spagobi.engine.chart.ChartEngineConfig;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,7 +14,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.XML;
+
+import it.eng.spagobi.engine.chart.ChartEngineConfig;
+import it.eng.spagobi.json.Xml;
 
 @Path("/style")
 public class StyleResource {
@@ -70,7 +70,9 @@ public class StyleResource {
 		br.close();
 
 		try {
-			JSONObject obj = XML.toJSONObject(fileContent.toString());
+
+			String template = fileContent.toString();
+			JSONObject obj = new JSONObject(Xml.xml2json(template));
 
 			// if empty json object is returned it would not be added to styles
 			if (!obj.toString().equals(new JSONObject().toString())) {

@@ -32,7 +32,6 @@ author:
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="org.json.XML"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>

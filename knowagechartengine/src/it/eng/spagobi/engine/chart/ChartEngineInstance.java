@@ -5,10 +5,19 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.chart;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
@@ -21,15 +30,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONObject;
-import org.json.XML;
-
 /**
  * @author
  */
@@ -39,9 +39,10 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 	AssociationManager associationManager;
 
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
-			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
-			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE",
+			"SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", "SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID",
+			"DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION",
+			"SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
 			"DOCUMENT_VERSION", };
 
 	public ChartEngineInstance(String template, Map env) {
@@ -50,7 +51,7 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 			if (template == null) {
 				template = "";
 			}
-			this.template = XML.toJSONObject(template);
+			this.template = new JSONObject(Xml.xml2json(template));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);
 		}
@@ -164,20 +165,17 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 			String parameterName = (String) it.next();
 			Object parameterValue = getEnv().get(parameterName);
 			// test necessary for don't pass complex objects like proxy,...
-			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
+			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String")
+					&& isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
 
-
 		}
 
-		UserProfile prfile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		if(prfile!=null){
+		UserProfile prfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		if (prfile != null) {
 			toReturn.put(SpagoBIConstants.USER_ID, prfile.getUserId());
 		}
-
-
-
 
 		return toReturn;
 	}

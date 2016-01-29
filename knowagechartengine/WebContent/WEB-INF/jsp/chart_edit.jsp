@@ -32,7 +32,6 @@ author:
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="org.json.XML"%>
 <%@page import="org.json.JSONArray"%>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -152,6 +151,9 @@ author:
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 -->
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>		
+				
+				<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
+				
     </head>
 	
 	<%-- == BODY ========================================================== --%>
