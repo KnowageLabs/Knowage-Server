@@ -72,7 +72,20 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 		Sbi.trace("[ImageWidgetDesigner.validate]");
 		return Sbi.cockpit.widgets.image.ImageWidgetDesigner.superclass.validate(this, validFields);
 	}
-
+	
+	, updateSelected: function(){
+		var itemUp = this.imagePanel.lastUploaded;
+		var store = Ext.data.StoreManager.lookup('imagesDataStore');
+		for(i in store.data.items){
+			var item = store.data.items[i].data; 
+			if(item && item.name==itemUp){
+				this.imagePanel.itemSelected=item;
+				this.imagePanel.refreshPanelTitle();
+				break;
+			}
+		}
+	}
+	
 	, initImagePanel: function (){
 		var imageStore = Ext.create('Ext.data.Store', {
 		    storeId:'imagesDataStore',
@@ -96,6 +109,10 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 		    model: 'ImageDataModel'
 		});
 		imageStore.load();
+		
+		imageStore.on('load', this.updateSelected, this);
+		
+		
 		this.imagePanel = Ext.create('Ext.Panel', {
 			id: 'mainImagePanel',
 			tools:[{xtype:'label',html:'Order by',padding:'0 5 0 0'},
@@ -131,6 +148,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 			}],
 			sort: {'name':'desc','timeIn':'desc'},
 	        itemSelected: null,
+	        lastUploaded: null,
 	        layout: {type: 'hbox',align:'stretch'},
 	        frame: false,
 	        bodyStyle: {border: 0},
@@ -210,6 +228,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 					                    success: function(fp, o) {
 					                    	Ext.data.StoreManager.lookup('imagesDataStore').load();
 					                    	Ext.getCmp('galleryView').refresh();
+					                    	Ext.getCmp('mainImagePanel').lastUploaded = o.result.fileName;
 					                        Ext.Msg.alert('Success', LN(o.result.msg));
 					                    },
 					                    failure: function(fp, o) {

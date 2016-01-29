@@ -1,5 +1,16 @@
 package it.eng.spagobi.images;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.images.dao.IImagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO.Direction;
+import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
+import it.eng.spagobi.images.metadata.SbiImages;
+import it.eng.spagobi.tools.glossary.util.Util;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,17 +39,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.images.dao.IImagesDAO;
-import it.eng.spagobi.images.dao.IImagesDAO.Direction;
-import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
-import it.eng.spagobi.images.metadata.SbiImages;
-import it.eng.spagobi.tools.glossary.util.Util;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -115,6 +115,7 @@ public class ImagesService {
 	public String addImage(MultipartFormDataInput input, @Context HttpServletRequest req) {
 		boolean success = true;
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
+		String fileName = "";
 		try {
 			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -124,7 +125,7 @@ public class ImagesService {
 			List<InputPart> inputParts = uploadForm.get("uploadedImage");
 			for (InputPart inputPart : inputParts) {
 				MultivaluedMap<String, String> header = inputPart.getHeaders();
-				String fileName = getFileName(header);
+				fileName = getFileName(header);
 				try {
 					InputStream inputStream = inputPart.getBody(InputStream.class, null);
 					byte[] data = IOUtils.toByteArray(inputStream);
@@ -171,6 +172,7 @@ public class ImagesService {
 			JSONObject ret = new JSONObject();
 			ret.put("success", success);
 			ret.put("msg", msg);
+			ret.put("fileName", fileName);
 			return ret.toString();
 		} catch (JSONException e) {
 			return "{\"success\":false,\"msg\":\"JSON Error\"}";

@@ -72,7 +72,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 	createContent: function() {
     	Sbi.trace("[ImageWidget.createContent]: IN");
 		this.widgetContent = Ext.create('Ext.Img',{
-			src: this.wconf.itemSelected.url,
+			src: this.wconf.itemSelected?this.wconf.itemSelected.url:'',
 			cls: this.imageWidgetCSSClass,
 		});
 		
