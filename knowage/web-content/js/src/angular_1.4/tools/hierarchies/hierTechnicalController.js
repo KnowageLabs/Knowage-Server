@@ -172,11 +172,12 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			var dimName = dim.DIMENSION_NM;
 			var keyMap = type+'_'+dimName; 
 			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'getHierarchiesMaster' : 'getHierarchiesTechnical';
+			var service = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'hierarchiesMaster' : 'hierarchiesTechnical';
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined || forceGetHierarchies==true){
 				$scope.toogleLoading(choose,true);
-				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
+				$scope.restService.get(service,serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){

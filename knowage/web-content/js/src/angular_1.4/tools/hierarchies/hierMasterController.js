@@ -264,12 +264,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			var dimName = dim.DIMENSION_NM;
 			var keyMap = type + '_' + dimName;
 			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER') ? 'getHierarchiesMaster': 'getHierarchiesTechnical';
+			var service = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'hierarchiesMaster' : 'hierarchiesTechnical';
 
 			// if the hierarchies[dim][type] is not defined, get the hierarchies
 			// and save in the map. Else, get them from the map
 			if (map[keyMap] === undefined) {
 				$scope.toogleLoading();
-				$scope.restService.get("hierarchies", serviceName,"dimension=" + dimName)
+				$scope.restService.get(service, serviceName,"dimension=" + dimName)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined) {
@@ -699,7 +700,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				for ( var k in newHier) {
 					item[k] = angular.copy(newHier[k]);
 				}
-				var promise = $scope.restService.post('hierarchies','createHierarchyMaster', item);
+				var promise = $scope.restService.post('hierarchiesMaster','createHierarchyMaster', item);
 				promise
 					.success(function(data) {
 						if (data.errors === undefined) {

@@ -89,10 +89,11 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var dimName = dim.DIMENSION_NM;
 			var keyMap = type+'_'+dimName; 
 			var serviceName = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'getHierarchiesMaster' : 'getHierarchiesTechnical';
+			var service = (type.toUpperCase() == 'AUTO' || type.toUpperCase() == 'MASTER' )? 'hierarchiesMaster' : 'hierarchiesTechnical';
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined){
-				$scope.restService.get("hierarchies",serviceName,"dimension="+dimName)
+				$scope.restService.get(service,serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
@@ -146,7 +147,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 						hierarchyType: type
 					}
 			};
-			$scope.restService.get("hierarchies","getHierarchyBkps",null,config)
+			$scope.restService.get("hierarchiesBackup","getHierarchyBkps",null,config)
 				.success(
 					function(data, status, headers, config) {
 						if (data.errors === undefined){
@@ -177,7 +178,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
 			response.then(function(){
-				$scope.restService.post("hierarchies","modifyHierarchy",item)
+				$scope.restService.post("hierarchiesBackup","modifyHierarchyBkps",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){
@@ -207,7 +208,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.restore.message");
 			var response = $scope.showConfirm(title,message);
 			response.then (function(){
-				$scope.restService.post("hierarchies","restoreHierarchy",item)
+				$scope.restService.post("hierarchiesBackup","restoreHierarchyBkps",item)
 					.success(
 						function(data, status, headers, config) {
 							if (data.errors === undefined){

@@ -97,17 +97,20 @@
 		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionData" businessProcess="HierarchiesManagement" />
 		
 		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyTree" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/nodeMetadata" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchyMetadata" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesMaster" businessProcess="HierarchiesManagement" />	
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchiesTechnical" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyTree" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteHierarchy" businessProcess="HierarchiesManagement" />				 						 						
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyHierarchy" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/restoreHierarchy" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyBkps" businessProcess="HierarchiesManagement" />
-		<MAP_REST_SERVICE serviceUrl="/hierarchies/createHierarchyMaster" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveHierarchy" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteHierarchy" businessProcess="HierarchiesManagement" />
+		
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/getHierarchiesMaster" businessProcess="HierarchiesManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/createHierarchyMaster" businessProcess="HierarchiesManagement" />
+		
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesTechnical/getHierarchiesTechnical" businessProcess="HierarchiesManagement" />
+						 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/modifyHierarchyBkps" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/restoreHierarchyBkps" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/getHierarchyBkps" businessProcess="HierarchiesManagement" />
 				
 		<!-- 			
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />			
