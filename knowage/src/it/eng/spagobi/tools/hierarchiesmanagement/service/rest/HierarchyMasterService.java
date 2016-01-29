@@ -46,7 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /*
- * This class contains all REST services used MASTER hierarchy types
+ * This class contains all REST services used for specific MASTER hierarchy types
  */
 
 @Path("/hierarchiesMaster")

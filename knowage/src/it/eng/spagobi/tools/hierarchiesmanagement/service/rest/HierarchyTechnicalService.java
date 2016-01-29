@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /*
- * This class contains all REST services used TECHNICAL hierarchy types
+ * This class contains all REST services used for specific TECHNICAL hierarchy types
  */
 
 @Path("/hierarchiesTechnical")
