@@ -170,14 +170,14 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	}
 	
 	$scope.openFolder = function (folder){
-		if (folder[$scope.subfoldersId] && folder[$scope.subfoldersId].length >= 20){
+		if (folder[$scope.subfoldersId] && folder[$scope.subfoldersId].length >= 15){
 			//if many children (>=20), show the loading message for n_child*125 milliseconds
 			$scope.seeTree=false;
 			folder.expanded = !folder.expanded;
 			$scope.setSelected(folder);
 			$timeout(function(){
 				$scope.seeTree = true;
-				},folder[$scope.subfoldersId].length*125,true);
+				},folder[$scope.subfoldersId].length*100,true);
 		}else{
 			folder.expanded = !folder.expanded;
 			$scope.setSelected(folder);
