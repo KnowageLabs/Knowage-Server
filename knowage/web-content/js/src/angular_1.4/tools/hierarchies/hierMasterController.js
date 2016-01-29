@@ -846,9 +846,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 
 		$scope.selectAll = function() {
-			$scope.all = !$scope.all;
+			var checked = !$scope.all;
 			for (var i = 0; i < $scope.listHierarchies.length; i++) {
-				$scope.listHierarchies[i].checked = $scope.all;
+				$scope.listHierarchies[i].checked = checked;
 			}
 		}
 		
