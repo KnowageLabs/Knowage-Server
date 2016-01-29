@@ -197,4 +197,39 @@ public class SbiChecks extends SbiHibernateModel {
 		this.name = name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((checkId == null) ? 0 : checkId.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiChecks other = (SbiChecks) obj;
+		if (checkId == null) {
+			if (other.checkId != null)
+				return false;
+		} else if (!checkId.equals(other.checkId))
+			return false;
+		return true;
+	}
+
 }

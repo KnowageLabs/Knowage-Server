@@ -222,4 +222,39 @@ public class SbiExtRoles extends SbiHibernateModel {
 		this.sbiAuthorizationsRoleses = sbiAuthorizationsRoleses;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((extRoleId == null) ? 0 : extRoleId.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiExtRoles other = (SbiExtRoles) obj;
+		if (extRoleId == null) {
+			if (other.extRoleId != null)
+				return false;
+		} else if (!extRoleId.equals(other.extRoleId))
+			return false;
+		return true;
+	}
+
 }

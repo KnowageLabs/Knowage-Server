@@ -259,4 +259,39 @@ public class SbiFunctions extends SbiHibernateModel {
 		this.prog = prog;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((functId == null) ? 0 : functId.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiFunctions other = (SbiFunctions) obj;
+		if (functId == null) {
+			if (other.functId != null)
+				return false;
+		} else if (!functId.equals(other.functId))
+			return false;
+		return true;
+	}
+
 }
