@@ -1,7 +1,10 @@
 <!-- openlayer import -->
 
-<link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
-<script src="http://openlayers.org/en/v3.10.1/build/ol.js" type="text/javascript"></script>
+<!-- <link rel="stylesheet" href="http://openlayers.org/en/v3.13.0/css/ol.css" type="text/css"> -->
+<!-- <script src="http://openlayers.org/en/v3.13.0/build/ol.js" type="text/javascript"></script> -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.13.0/ol.js"></script> 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.13.0/ol.css" type="text/css">
+
 
 <script src="${pageContext.request.contextPath}/js/lib/chartjs/Chart.js"></script>
 
@@ -30,6 +33,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDownload/geoDownloadController.js"></script>
  
  
- <script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js"></script>
-<script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>	
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>
+<!--  <script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js"></script> -->
+<!-- <script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>	 -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css">

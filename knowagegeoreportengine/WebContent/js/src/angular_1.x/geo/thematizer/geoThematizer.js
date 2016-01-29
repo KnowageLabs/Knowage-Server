@@ -501,7 +501,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}
 	}
 	this.updateLegend=function(type){
-		if(!geoModule_template.selectedIndicator.hasOwnProperty("name")){
+		if(geoModule_template.selectedIndicator==null || !geoModule_template.selectedIndicator.hasOwnProperty("name")){
 			return;
 		}
 		if(type==undefined){
