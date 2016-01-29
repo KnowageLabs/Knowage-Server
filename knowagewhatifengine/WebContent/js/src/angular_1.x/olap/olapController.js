@@ -14,6 +14,48 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   $scope.leftPanel = '/knowagewhatifengine/html/template/left/leftPanel.html';
   $scope.rightPanel = '/knowagewhatifengine/html/template/right/rightPanel.html';
   
+  $scope.toolbarButtons=[];
+  $scope.filterCardList = [{"name":"name1"},{"name":"name2"},{"name":"name3"},{"name":"name4"},{"name":"name5"},{"name":"name6"},{"name":"name7"}];
+  $scope.numVisibleFilters = 5;
+  $scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters? true : false; 
+  
+  console.log("*********************************")
+  console.log(test);
+  
+  filterXMLResult = function(res){
+	  var regEx = /([A-Z]+_*)+/g;
+	  var i;
+	  
+	  while(i = regEx.exec(res))
+		  $scope.toolbarButtons.push(messageResource.get("sbi.olap.toolbar."+i[0],'messages'));
+	  
+	  console.log($scope.toolbarButtons);
+  }
+  
+  filterXMLResult(test);
+  
+  $scope.filterShift = function(direction){
+	  var length = $scope.filterCardList.length;
+	  
+	  var first = $scope.filterCardList[0];
+	  var last = $scope.filterCardList[length-1];
+	  
+	  
+	  if(direction == "left"){
+		  for(var i=0; i<length;i++){
+			  $scope.filterCardList[i] = $scope.filterCardList[i+1];
+		  }
+		  
+		  $scope.filterCardList[length-1] = first;
+	  }
+	  else{
+		  for(var i=length-2; i>=0;i--){
+			  $scope.filterCardList[i+1] = $scope.filterCardList[i];
+		  }
+		  $scope.filterCardList[0] = last;
+	  }
+
+  }
   
   $scope.sendMdxQuery = function() {
 	  $http({

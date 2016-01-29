@@ -1,16 +1,20 @@
-<md-card ng-include="filterCard" flex=20>
-</md-card>
+<md-button class="md-icon-button" flex=10 aria-label="Favorite" ng-click="filterShift('left')" style="margin:auto" ng-show="shiftNeeded">
+	<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
+</md-button>
 
-
-<md-card flex=20 class="filter-card">
+<md-card ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" flex=15>
 	<md-card-title class="knowage-blue filter-toolbar">
-		<md-card-title-text>
-			<span>Customers</span>
+		<md-card-title-text >
+			<span>{{filter.name}}</span>
 		</md-card-title-text>
 	</md-card-title>
 	<md-card-actions layout="row" layout-align="end">
 		<md-button class="md-icon-button" style="bottom:0;" aria-label="Favorite" ng-click="openFiltersDialog(e)">
 			<md-icon md-font-icon="fa fa-filter"></md-icon>
 		</md-button>
-	</md-card-actions>
+	</md-card-actions>   
 </md-card>
+
+<md-button class="md-icon-button" flex=10 aria-label="Favorite" ng-click="filterShift('right')" style="margin:auto" ng-show="shiftNeeded">
+	<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x"></md-icon>
+</md-button>

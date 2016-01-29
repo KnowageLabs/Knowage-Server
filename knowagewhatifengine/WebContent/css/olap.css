@@ -72,6 +72,11 @@
     min-height:0px;
 }
 
+.main-toolbar-button{
+	min-width:0px;
+	min-height:0px;
+	height:32px;
+}
 .dimension-top-toolbar{
     border-radius: 0px 7px 7px 0px;
 }

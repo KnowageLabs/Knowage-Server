@@ -10,14 +10,14 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/olap/olapController.js"></script>
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/olap.css">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/whatIf.css">
 <title>OLAP</title>
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
+	var test = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
 </script>
 </head>
 <body ng-controller="olapController">
-
-	
 	<div layout="row">
 		<div flex=20 ng-include="leftPanel">
 		</div>
@@ -28,7 +28,7 @@
 			<div  ng-include="mainToolbar">
 			</div>
 		
-			<div layout="row" ng-include="filterPanel">
+			<div layout="row" ng-include="filterPanel" class="top-alignment">
 			</div>
 
 			<div layout="column" ng-include="olapPanel">
