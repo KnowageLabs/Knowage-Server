@@ -7,7 +7,7 @@
 <%-- the JSP variable are present in angularResources.jsp--%>
 var template;
 geoM.factory('geoModule_template',function(geoReportCompatibility){
-	
+	console.log("------------->template")
 	 template= <%= template %>;
 	
 	if(template.hasOwnProperty('role')) {
@@ -37,6 +37,9 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     template.executionContext = executionContext;
     geoReportCompatibility.resolveCompatibility(template);
   
+    if(!template.hasOwnProperty("analysisType")){
+    	template.analysisType = "choropleth";
+    }
     if(!template.hasOwnProperty("selectedIndicator")){
     	template.selectedIndicator = null;
     }
@@ -56,8 +59,12 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     	template.analysisConf={};
     }
     
+    if(!template.hasOwnProperty("layersLoaded")){
+    	template.layersLoaded={};
+    }
+    
     if(!template.analysisConf.hasOwnProperty("choropleth")){
-    	template.analysisConf.choropleth={"method":"CLASSIFY_BY_EQUAL_INTERVALS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
+    	template.analysisConf.choropleth={"method":"CLASSIFY_BY_QUANTILS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
     }
     
     if(!template.analysisConf.hasOwnProperty("proportionalSymbol")){
