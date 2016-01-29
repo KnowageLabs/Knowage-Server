@@ -102,6 +102,11 @@
 		<CHART type="HEATMAP">
 			<LEGEND symbolHeight='' style="align:"/>
 			<TOOLTIP style="fontFamily:;fontSize:;color:transparent;fontWeight:"/>
+			<COLORPALETTE>
+				<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
+				<COLOR id='7' order='7' name="e4d354" value="#e4d354"/>
+				<COLOR id='9' order='9' name="f45b5b" value="#f45b5b"/>
+			</COLORPALETTE>
 		</CHART>
 	</heatmap>
 	
