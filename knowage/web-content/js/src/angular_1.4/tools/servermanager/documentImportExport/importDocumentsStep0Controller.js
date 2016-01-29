@@ -228,6 +228,44 @@ $scope.deleteAssociationsFile=function(item){
 	};
 	
 	$scope.saveAssociationsFile=function(){
-		
+		 $mdDialog.show({
+		      controller: function($scope, $mdDialog, translate) { 
+		          $scope.translate = translate;
+		          $scope.closeDialog = function() {
+		            $mdDialog.hide();
+		          }
+		        },
+		      template:
+		           '<md-dialog aria-label="List dialog">' +
+		           '  <md-dialog-content>'+
+		           '   <md-input-container>' +
+		           '  <label> {{translate.load("sbi.generic.name");}}</label>' +
+		           '  <input ng-model="name">' +
+		           ' </md-input-container>' +
+		           '    <md-input-container>' +
+		           '  <label> {{translate.load("sbi.generic.descr");}}</label>' +
+		           '    <input ng-model="description">' +
+		           '  </md-input-container>' +
+		           '<div layout="row" layout-wrap>'+
+		           '    <md-button flex="40" ng-click="closeDialog()" class="md-primary">' +
+		           '     {{translate.load("sbi.general.cancel");}}' +
+		           '    </md-button>' + 
+		          ' <md-button flex="40" ng-click="closeDialog()" class="md-primary">' +
+		           '     {{translate.load("sbi.generic.update");}}' +
+		           '    </md-button>' +
+		           '  </md-dialog-content>' + 
+		           '</md-dialog>',
+		      parent: angular.element(document.body),
+		      locals: {
+		           translate: $scope.translate
+		         },
+		      clickOutsideToClose:false
+		    })
+		    .then(function(answer) {
+		      $scope.status = 'You said the information was "' + answer + '".';
+		    }, function() {
+		      $scope.status = 'You cancelled the dialog.';
+		    });
+		 
 	};
 }
