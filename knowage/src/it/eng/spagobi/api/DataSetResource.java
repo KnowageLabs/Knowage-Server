@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
@@ -332,6 +333,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
+
 			synchronized (session) {
 				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
 						projectionCriteria);
@@ -800,7 +802,12 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	public String getMyDataDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
-			List<IDataSet> dataSets = getDatasetManagementAPI().getMyDataDataSet();
+			List<IDataSet> dataSets;
+			if (UserUtilities.isAdministrator(getUserProfile())) {
+				dataSets = getDatasetManagementAPI().getAllDataSet();
+			} else {
+				dataSets = getDatasetManagementAPI().getMyDataDataSet();
+			}
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);

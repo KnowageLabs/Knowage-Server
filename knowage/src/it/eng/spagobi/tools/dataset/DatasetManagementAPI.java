@@ -733,6 +733,17 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	public List<IDataSet> getAllDataSet() {
+		try {
+			List<IDataSet> dataSets = getDataSetDAO().loadDataSets();
+			return dataSets;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	public List<IDataSet> getEnterpriseDataSet() {
 		try {
 			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets();
