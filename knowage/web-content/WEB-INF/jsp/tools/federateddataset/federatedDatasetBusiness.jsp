@@ -81,7 +81,7 @@
 							layout-fill 
 							id="availableDatasets" 
 							ng-model="ctrl.list" 
-							item-name="label"
+							item-name="name"
 							show-search-bar=true
 							speed-menu-option=ctrl.fdsSpeedMenuOptAD
 							click-function="ctrl.moveToListNew(item)"
@@ -107,7 +107,7 @@
 						<angular-list layout-fill 
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
-						item-name="label" 
+						item-name="name" 
 						speed-menu-option=ctrl.fdsSpeedMenuOpt
 						>					
 						</angular-list>
@@ -136,7 +136,7 @@
 								<md-toolbar class="miniheadfedsmall"
 									style="">
 								<div class="md-toolbar-tools">
-									<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
+									<h2 class="md-flex">{{dataset.name | uppercase}}</h2>
 								</div>
 								</md-toolbar>
 								
