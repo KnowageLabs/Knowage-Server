@@ -121,9 +121,9 @@ resizer {
 }
 .master-dialog{
 	min-width: 50rem;
-    min-height: 33rem;
+    min-height: 70%;
     max-width: 60rem;
-    max-height: 50rem;
+    max-height: 90%;
 }
 .master-dialog.list-dialog{
 	min-width: 35rem;
