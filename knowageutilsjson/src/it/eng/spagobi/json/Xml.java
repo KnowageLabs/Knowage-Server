@@ -13,9 +13,20 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Xml {
 
 	public static String xml2json(String xml) throws TransformerFactoryConfigurationError, TransformerException {
+
+		// Fastest way to check if a big string is a JSONObject
+		// don't do this at home...
+		try {
+			new JSONObject(xml);
+			return xml;
+		} catch (JSONException e) {
+		}
 
 		String json = "{}";
 
