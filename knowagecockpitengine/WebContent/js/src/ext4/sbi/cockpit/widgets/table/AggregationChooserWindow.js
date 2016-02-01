@@ -438,9 +438,9 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   		msgTarget: 		'qtip', 
 	   		fallback: 		true,
 	   		fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
-	   		afterLabelTextTpl : '<span class="help" data-qtip="'
-	   				+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
-	   				+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//	   		afterLabelTextTpl : '<span class="help" data-qtip="'
+//	   				+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//	   				+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			allowBlank: 	true,
 			labelWidth:		LABEL_WIDTH,
 			width:			FIELD_WIDTH

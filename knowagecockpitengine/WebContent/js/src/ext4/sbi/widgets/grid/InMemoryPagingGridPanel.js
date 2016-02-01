@@ -70,7 +70,7 @@ Ext.define('Sbi.widgets.grid.InMemoryPagingGridPanel', {
 			width: 400,
             store: this.store,
             displayInfo: true,
-            displayMsg: 'Displaying  {0} - {1} of {2}',
+            displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
             emptyMsg: "No rows to display"
         };
 		defaultPagingConfig = Ext.apply(defaultPagingConfig,config.pagingConfig );
