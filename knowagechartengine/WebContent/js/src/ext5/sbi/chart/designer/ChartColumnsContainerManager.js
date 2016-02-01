@@ -292,196 +292,206 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
 							
 							/**
-							 * Prevent user from defining multiple serie items; if this part is 
-							 * not provided, error appears
-							 * @author: danristo (danilo.ristovski@mht.net)
+							 * Prevent drag&drop more than one measure (serie) per time.
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
-							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
-							var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
-							
-							var enableAddAndSum = 
-								(chartType != 'SUNBURST' 
-									&& chartType != 'WORDCLOUD' 
-										&& chartType != 'TREEMAP' 
-											&& chartType != 'HEATMAP' 
-												&& chartType != "CHORD");													
-														
-							/**
-  	  						 * Prevent taking more than one serie from the container when we have
-  	  						 * one of these chart types.
-  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  	  						 */
-  	  						if ((data.records.length > 1 
-  	  								&& (chartType == 'SUNBURST' 
-  	  									|| chartType == 'WORDCLOUD' 
-  	  										|| chartType == 'TREEMAP' 
-  	  											|| chartType == 'HEATMAP' 
-  	  												|| chartType == "CHORD"))
-  	  								|| (this.store.data.length == 1 
-  	  										&& !(Sbi.chart.designer.ChartUtils.canDropMoreThanOneSerie())) ){
-  	  							return false;
-  							} 
-  	  						
-  	  						/**
-  	  						 * Prevent then user from dropping more than four serie items into the 
-  	  						 * Y-axis panel, since this is the maximum number of series that we can
-  	  						 * have for the PIE chart.
-  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  	  						 */
-  	  						if (this.store.data.length+data.records.length > 4 
-	  								&& chartType == 'PIE'){
-	  							return false;
-							} 
-  	  						
-  	  						/**
-  	  						 * The maximum number of series for the PIE chart is 4.
-  	  						 * 
-  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  	  						 */
-							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) 
-							{							
-								// *_* The original code
-								if(data.view.id != this.id) {
-									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
-									var newRecordToDrop = data.records[0];
-									
-									if (!newRecordToDrop.get('serieGroupingFunction')) {
-										newRecordToDrop.set('serieGroupingFunction', 'SUM');
-									}
-									
-									/**
-									 * danristo (4) - serieColumn
-									 */
-									if( !newRecordToDrop.get('axisName')) {
-										var serieColumn = newRecordToDrop.get('serieColumn');
-										
-										newRecordToDrop.set('axisName', serieColumn);
-										
-										// (danilo.ristovski@mht.net)	
-										var chartParallelLimit = Ext.getCmp("chartParallelLimit");
-										if(chartParallelLimit && 
-												chartParallelLimit != null &&
-												chartParallelLimit.hidden == false ) {
-											chartParallelLimit.addItem(newRecordToDrop);
-										}										
-									}
-									
-									/**
-									 * Style chosen by the user (the one already set in the Designer).
-									 * 
-									 * @commentBy: danristo (danilo.ristovski@mht.net)
-									 */
-									var chosenStyle = Sbi.chart.designer.Designer.styleName;
-									
-									/**
-									 * If for the current document is defined some chart style that does not
-									 * exist anymore. If user defined some chart style for the document and
-									 * if delete it afterwards and then re-renders the Designer, he will still
-									 * see the old (not existing) chart style, but when dropping serie items 
-									 * in the Y-axis panel it does not take serie parameterization of any
-									 * particular style (since the one set in the combo is not existing anymore).
-									 * 
-									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-									 */	
-									var configurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle);
-									
-									if (configurationForStyle != null) {
-										var genericJsonForStyle =  configurationForStyle.generic;
-										var specificJsonForStyle = configurationForStyle[chartType.toLowerCase()];
-									
-										//console.log(genericJsonForStyle);
-										//console.log(specificJsonForStyle);
-										var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
-										//console.log(combination);
-										/**
-										 * danristo (1) 
-										 */
-										var serieTagExists = combination.CHART.VALUES && combination.CHART.VALUES.SERIE;
-										var serieTooltipTagExists = serieTagExists && combination.CHART.VALUES.SERIE.TOOLTIP;
-										
-										var serieTagParameters = null;
-										var serieTooltipTagParameters = null;
-										
-										/**
-										 * danristo (2)
-										 */
-										(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
-										(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
-												
-										/**
-										 * If there is no property already defined inside the newly dropped serie item and if it exists
-										 * in the tag that describes customization of the SERIE item for this chart type and current style
-										 * (variable 'serieTagParameters'), set it so the model of the document can take it and display it
-										 * when the Serie style popup is opened for particular serie.
-										 * 
-										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-										 */										
-										(!newRecordToDrop.get('serieColor')) ? newRecordToDrop.set('serieColor', serieTagParameters.color) : null;									
-										(!newRecordToDrop.get('serieShowValue')) ? newRecordToDrop.set('serieShowValue', serieTagParameters.showValue) : null;
-										(!newRecordToDrop.get('serieShowAbsValue')) ? newRecordToDrop.set('serieShowAbsValue', serieTagParameters.showAbsValue) : null;
-										(!newRecordToDrop.get('serieShowPercentage')) ? newRecordToDrop.set('serieShowPercentage', serieTagParameters.showPercentage) : null;
-										(!newRecordToDrop.get('seriePrecision')) ? newRecordToDrop.set('seriePrecision', serieTagParameters.precision) : null;
-										(!newRecordToDrop.get('seriePrefixChar')) ? newRecordToDrop.set('seriePrefixChar', serieTagParameters.prefixChar) : null;
-										(!newRecordToDrop.get('seriePostfixChar')) ? newRecordToDrop.set('seriePostfixChar', serieTagParameters.postfixChar) : null;
-										
-										/**
-										 * This item is going to be removed since the serie tooltip HTML template
-										 * is handled by the velocity model of the appropriate chart type (this is
-										 * done staticly, "under the hood").
-										 * 
-										 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-										 */
-//										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
-//												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
-										(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
-												newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
-												
-										var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
-										
-										for (j=0; j<splitSerieTooltipStyle.length; j++)
-										{
-											(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !newRecordToDrop.get('serieTooltipColor')) ? 
-													(newRecordToDrop.set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
-													
-											(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !newRecordToDrop.get('serieTooltipFont')) ? 
-													(newRecordToDrop.set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
-													
-											(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !newRecordToDrop.get('serieTooltipFontWeight')) ? 
-													(newRecordToDrop.set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
-													
-											(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !newRecordToDrop.get('serieTooltipFontSize')) ? 
-													(newRecordToDrop.set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
-													
-											(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !newRecordToDrop.get('serieTooltipAlign')) ? 
-													(newRecordToDrop.set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
-										}	
-										
-										/**
-										 * danristo (8)
-										 * If the chart type is GAUGE: we have additional tags in the style XML
-										 */
-										var serieDialTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DIAL;
-										var serieDataLabelsTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DATA_LABELS;
-										
-										var serieDialTagParameters = null;
-										var serieDataLabelsTagParameters = null;
-										
-										(serieDialTagExists) ? (serieDialTagParameters = serieTagParameters.DIAL) : null;
-										(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
-										
-										// DIAL properties
-										(!newRecordToDrop.get('backgroundColorDial') && serieDialTagExists) ? newRecordToDrop.set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
-										
-										// DATA_LABELS properties
-										(!newRecordToDrop.get('yPositionDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
-										(!newRecordToDrop.get('formatDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
-										(!newRecordToDrop.get('colorDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;
-									}
-								}	
+							if (data.records.length == 1)
+							{
+								/**
+								 * Prevent user from defining multiple serie items; if this part is 
+								 * not provided, error appears
+								 * @author: danristo (danilo.ristovski@mht.net)
+								 */
+								var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+								var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
 								
-							} else  {								
-								return false;
+								var enableAddAndSum = 
+									(chartType != 'SUNBURST' 
+										&& chartType != 'WORDCLOUD' 
+											&& chartType != 'TREEMAP' 
+												&& chartType != 'HEATMAP' 
+													&& chartType != "CHORD");													
+															
+								/**
+	  	  						 * Prevent taking more than one serie from the container when we have
+	  	  						 * one of these chart types.
+	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  						 */
+	  	  						if ((data.records.length > 1 
+	  	  								&& (chartType == 'SUNBURST' 
+	  	  									|| chartType == 'WORDCLOUD' 
+	  	  										|| chartType == 'TREEMAP' 
+	  	  											|| chartType == 'HEATMAP' 
+	  	  												|| chartType == "CHORD"))
+	  	  								|| (this.store.data.length == 1 
+	  	  										&& !(Sbi.chart.designer.ChartUtils.canDropMoreThanOneSerie())) ){
+	  	  							return false;
+	  							} 
+	  	  						
+	  	  						/**
+	  	  						 * Prevent then user from dropping more than four serie items into the 
+	  	  						 * Y-axis panel, since this is the maximum number of series that we can
+	  	  						 * have for the PIE chart.
+	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  						 */
+	  	  						if (this.store.data.length+data.records.length > 4 
+		  								&& chartType == 'PIE'){
+		  							return false;
+								} 
+	  	  						
+	  	  						/**
+	  	  						 * The maximum number of series for the PIE chart is 4.
+	  	  						 * 
+	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  						 */
+								if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) 
+								{							
+									// *_* The original code
+									if(data.view.id != this.id) {										
+										
+										data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
+										var newRecordToDrop = data.records[0];
+										
+										if (!newRecordToDrop.get('serieGroupingFunction')) {
+											newRecordToDrop.set('serieGroupingFunction', 'SUM');
+										}
+										
+										/**
+										 * danristo (4) - serieColumn
+										 */
+										if( !newRecordToDrop.get('axisName')) {
+											var serieColumn = newRecordToDrop.get('serieColumn');
+											
+											newRecordToDrop.set('axisName', serieColumn);
+											
+											// (danilo.ristovski@mht.net)	
+											var chartParallelLimit = Ext.getCmp("chartParallelLimit");
+											if(chartParallelLimit && 
+													chartParallelLimit != null &&
+													chartParallelLimit.hidden == false ) {
+												chartParallelLimit.addItem(newRecordToDrop);
+											}										
+										}
+										
+										/**
+										 * Style chosen by the user (the one already set in the Designer).
+										 * 
+										 * @commentBy: danristo (danilo.ristovski@mht.net)
+										 */
+										var chosenStyle = Sbi.chart.designer.Designer.styleName;
+										
+										/**
+										 * If for the current document is defined some chart style that does not
+										 * exist anymore. If user defined some chart style for the document and
+										 * if delete it afterwards and then re-renders the Designer, he will still
+										 * see the old (not existing) chart style, but when dropping serie items 
+										 * in the Y-axis panel it does not take serie parameterization of any
+										 * particular style (since the one set in the combo is not existing anymore).
+										 * 
+										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+										 */											
+										var configurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle);										
+										
+										if (configurationForStyle != null) {
+											var genericJsonForStyle =  configurationForStyle.generic;
+											var specificJsonForStyle = configurationForStyle[chartType.toLowerCase()];
+											
+											var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
+											
+											/**
+											 * danristo (1) 
+											 */
+											var serieTagExists = combination.CHART.VALUES && combination.CHART.VALUES.SERIE;
+											var serieTooltipTagExists = serieTagExists && combination.CHART.VALUES.SERIE.TOOLTIP;
+											
+											var serieTagParameters = null;
+											var serieTooltipTagParameters = null;
+											
+											/**
+											 * danristo (2)
+											 */
+											(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
+											(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
+													
+											/**
+											 * If there is no property already defined inside the newly dropped serie item and if it exists
+											 * in the tag that describes customization of the SERIE item for this chart type and current style
+											 * (variable 'serieTagParameters'), set it so the model of the document can take it and display it
+											 * when the Serie style popup is opened for particular serie.
+											 * 
+											 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+											 */										
+											(!newRecordToDrop.get('serieColor')) ? newRecordToDrop.set('serieColor', serieTagParameters.color) : null;									
+											(!newRecordToDrop.get('serieShowValue')) ? newRecordToDrop.set('serieShowValue', serieTagParameters.showValue) : null;
+											(!newRecordToDrop.get('serieShowAbsValue')) ? newRecordToDrop.set('serieShowAbsValue', serieTagParameters.showAbsValue) : null;
+											(!newRecordToDrop.get('serieShowPercentage')) ? newRecordToDrop.set('serieShowPercentage', serieTagParameters.showPercentage) : null;
+											(!newRecordToDrop.get('seriePrecision')) ? newRecordToDrop.set('seriePrecision', serieTagParameters.precision) : null;
+											(!newRecordToDrop.get('seriePrefixChar')) ? newRecordToDrop.set('seriePrefixChar', serieTagParameters.prefixChar) : null;
+											(!newRecordToDrop.get('seriePostfixChar')) ? newRecordToDrop.set('seriePostfixChar', serieTagParameters.postfixChar) : null;
+											
+											/**
+											 * This item is going to be removed since the serie tooltip HTML template
+											 * is handled by the velocity model of the appropriate chart type (this is
+											 * done staticly, "under the hood").
+											 * 
+											 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+											 */
+	//										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
+	//												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
+											(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
+													newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
+													
+											var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
+											
+											for (j=0; j<splitSerieTooltipStyle.length; j++)
+											{
+												(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !newRecordToDrop.get('serieTooltipColor')) ? 
+														(newRecordToDrop.set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
+														
+												(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !newRecordToDrop.get('serieTooltipFont')) ? 
+														(newRecordToDrop.set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
+														
+												(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !newRecordToDrop.get('serieTooltipFontWeight')) ? 
+														(newRecordToDrop.set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
+														
+												(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !newRecordToDrop.get('serieTooltipFontSize')) ? 
+														(newRecordToDrop.set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
+														
+												(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !newRecordToDrop.get('serieTooltipAlign')) ? 
+														(newRecordToDrop.set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
+											}	
+											
+											/**
+											 * danristo (8)
+											 * If the chart type is GAUGE: we have additional tags in the style XML
+											 */
+											var serieDialTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DIAL;
+											var serieDataLabelsTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DATA_LABELS;
+											
+											var serieDialTagParameters = null;
+											var serieDataLabelsTagParameters = null;
+											
+											(serieDialTagExists) ? (serieDialTagParameters = serieTagParameters.DIAL) : null;
+											(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
+											
+											// DIAL properties
+											(!newRecordToDrop.get('backgroundColorDial') && serieDialTagExists) ? newRecordToDrop.set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
+											
+											// DATA_LABELS properties
+											(!newRecordToDrop.get('yPositionDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
+											(!newRecordToDrop.get('formatDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
+											(!newRecordToDrop.get('colorDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;
+										}
+									}	
+									
+								} else  {								
+									return false;
+								}
 							}
+							else
+				        	{
+					        	return false;
+				        	}
 						}
 					}
 				},

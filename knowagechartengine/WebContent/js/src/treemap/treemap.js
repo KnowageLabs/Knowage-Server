@@ -498,7 +498,7 @@ function prepareChartConfForHeatmap(chartConf) {
                 y: 15,
                 format: '{value:%B %Y}',// long month
                 rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
-                align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : '',	
+                align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
                 style:{
                 	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
                     fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
@@ -517,7 +517,7 @@ function prepareChartConfForHeatmap(chartConf) {
         	title:
         	{
         		text: (chartConf.yaxis.title.text!=undefined && chartConf.yaxis.title.text!="") ? chartConf.yaxis.title.text : undefined,	
-            	align:(chartConf.yaxis.title.align!=undefined && chartConf.yaxis.title.align!="")?chartConf.yaxis.title.align:'',
+            	align:(chartConf.yaxis.title.align!=undefined && chartConf.yaxis.title.align!="")?chartConf.yaxis.title.align:undefined,
             	
             	/**
             	 * Fixed value for margin of the Y-axis title. If the alignment of labels of the Y-axis

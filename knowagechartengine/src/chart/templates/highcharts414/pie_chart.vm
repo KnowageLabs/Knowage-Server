@@ -58,6 +58,12 @@
         		#end
         	#end
         },
+        
+        #*
+        	Setting for removing (hiding of) the charts border when it is
+        	rendering.
+        	@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+        *#
         plotBackgroundColor: null,
         plotBorderWidth: null,
         plotShadow: false
@@ -541,40 +547,51 @@
 						
 						#set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
 						#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
-						#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage)
+						#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage)						
+						
+						#if ($relatedSerie.precision == "")
+							#set($precision = 0)
+						#else
+							#set($precision = $relatedSerie.precision)
+						#end
 						
 						#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false)
-						dataLabels: {
-		                    enabled: true,
-		                    
-		                    #set ($precisionValueAsString = '')
-		                    #if ($relatedSerie.precision != '')
-			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
-							#end
 							
-		                  format: '<b>{point.name}</b>: {y$precisionValueAsString}'
-		                }
-		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true )
-		                dataLabels: {
-		                    enabled: true,    
-		                    format: '<b>{point.name}</b>: {point.percentage:.'+$relatedSerie.precision+'f}%'
-		                }
+							dataLabels: 
+							{							
+			                    enabled: true,
+			                    	                    
+			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+			                    			                    
+			                    format: '<b>{point.name}</b>: {y$precisionValueAsString}'
+			                }
+			                
+		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true)
+			              	
+			                dataLabels: 
+							{							
+			                    enabled: true,			                    
+			                    format: '<b>{point.name}</b>: {point.percentage:.' + $precision + 'f}%'
+			                }
 		                
 		                #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true)
-						dataLabels: {
-		                    enabled: true,
-		                    
-		                    #set ($precisionValueAsString = '')
-		                    #if ($relatedSerie.precision != '')
-			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
-							#end
-							
-		                    format: '<b>{point.name}</b>: {y$precisionValueAsString} ({point.percentage:.'+$relatedSerie.precision+'f}%)'
-		                }
-		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == false)
-		                dataLabels: {
-		                enabled: false
-		                }
+		                
+							dataLabels: 
+							{
+			                    enabled: true,
+			                    
+			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
+								
+			                   	format: '<b>{point.name}</b>: {y$precisionValueAsString} ({point.percentage:.' + $precision + 'f}%)'
+			                }
+			                
+		                #else
+		                
+			                dataLabels: 
+			                {
+			                	enabled: false
+			                }
+			                
 						#end
 					},
 				#end
@@ -714,20 +731,19 @@
         	else
         	{
         		tooltipFontStyle = "font-weight: normal;";
-        	}
+        	}        	
         	
-        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
         	
         	var thisValue = this.y;
         	
-        	if(valueDecimals > -1 ) {
-        		var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
+        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
         			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
         			
-        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
-        	}
+    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
+    		
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
             #*

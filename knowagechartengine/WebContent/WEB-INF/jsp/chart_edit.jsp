@@ -74,22 +74,7 @@ author:
 	if(env.get("EDIT_COCKPIT") != null){
 		datasetLabel = (String)env.get(EngineConstants.ENV_DATASET_LABEL);
 		isCockpit = true;
-	}else{
-		
-		
-		/*
-		// Danilo (for handling missing dataset for the document)
-		if (engineInstance.getDataSet() == null)
-		{
-			datasetLabel = null;
-		}
-		else
-		{
-
-			datasetLabel = engineInstance.getDataSet().getLabel();
-		}
-		*/
-		
+	}else{				
 		datasetLabel = engineInstance.getDataSet().getLabel();
 	}
 	
@@ -151,9 +136,6 @@ author:
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 -->
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>		
-				
-				<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
-				
     </head>
 	
 	<%-- == BODY ========================================================== --%>
@@ -203,19 +185,8 @@ author:
  			var serverPort = '<%=request.getServerPort()%>';
  			var docLabel = '<%= docLabel %>';
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
- 			var datasetLabel  = '<%=datasetLabel%>';
- 			
- 			/*
- 			// Danilo (for handling missing dataset for the document)
- 			if (datasetLabel == 'null')
- 			{
- 				Sbi.exception.ExceptionHandler.showInfoMessage
-				(					
-					"You need to specify dataset in order to specify document",
-					"Dataset missing"
-				);
- 			}*/
- 			
+ 			var datasetLabel  = '<%=datasetLabel%>'; 			
+ 			 			
  			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
  			
  			var isCockpit = <%=isCockpit%>;

@@ -331,7 +331,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['CHART'] = CHART;
 
 //			console.log("-- After saving the chart: --");
-//			console.log(result);
+			//console.log(result);
 			//console.log("exportAsJson (END)");
 			return result;
 		},
@@ -625,68 +625,41 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					serie['orderType'] = serieAsMap
 						.get('serieOrderType') != undefined ? serieAsMap
 						.get('serieOrderType')
-						 : '';
+						 : '';					
 					
-					/**
-					 * Depending on the value of the 'serieFormatOrPrecision' parameter
-					 * we will take an action of getting proper values for format/precision
-					 * for series.
-					 * 
-					 * @editedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					serie['serieFormat'] = '';	
-					
+						/**
+						 * Prefix, precision and postfix for formatting of the serie value.						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
 					serie['postfixChar'] = '';
 					serie['precision'] = '';
-					serie['prefixChar'] = '';
+					serie['prefixChar'] = '';			
 					
-					/**
-					 * If there is no data about the vlaue of the 'serieFormatOrPrecision'
-					 * property, set the value of "format", since this one is the default
-					 * one (the one that is picked whenever new serie item is dropped into
-					 * the Y-axis panel.
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					serie['serieFormatOrPrecision'] = serieAsMap
-						.get('serieFormatOrPrecision') != undefined ? serieAsMap
-						.get('serieFormatOrPrecision')
-						 : 'format';
-						
-					if (serie['serieFormatOrPrecision'].toLowerCase() == "precision")
-					{
-						serie['postfixChar'] = serieAsMap
-							.get('seriePostfixChar') != undefined ? serieAsMap
-							.get('seriePostfixChar')
-							: '';
-						serie['precision'] = serieAsMap
-							.get('seriePrecision') != undefined ? serieAsMap
-							.get('seriePrecision')
-							 : '';
-						serie['prefixChar'] = serieAsMap
-							.get('seriePrefixChar') != undefined ? serieAsMap
-							.get('seriePrefixChar')
-							 : '';
-					}
-					else if (serie['serieFormatOrPrecision'].toLowerCase() == "format")
-					{
-						serie['serieFormat'] = serieAsMap
-							.get('serieFormat') != undefined ? serieAsMap
-							.get('serieFormat')
-							 : '';	
-					}						
+					serie['postfixChar'] = serieAsMap
+						.get('seriePostfixChar') != undefined ? serieAsMap
+						.get('seriePostfixChar')
+						: '';
+					serie['precision'] = serieAsMap
+						.get('seriePrecision') != undefined ? serieAsMap
+						.get('seriePrecision')
+						 : '';
+					serie['prefixChar'] = serieAsMap
+						.get('seriePrefixChar') != undefined ? serieAsMap
+						.get('seriePrefixChar')
+						 : '';
 					
 					serie['showValue'] = serieAsMap
 						.get('serieShowValue') != undefined ? serieAsMap
 						.get('serieShowValue')
-						 : '';
+						 : false;
 					serie['showAbsValue'] = serieAsMap
 						.get('serieShowAbsValue') != undefined ? serieAsMap
 						.get('serieShowAbsValue')
-						 : '';	
+						 : false;	
 					serie['showPercentage'] = serieAsMap
 						.get('serieShowPercentage') != undefined ? serieAsMap
 						.get('serieShowPercentage')
-						 : '';	
+						 : false;	
 					serie['type'] = serieAsMap.get('serieType') != undefined ? serieAsMap
 						.get('serieType')
 						 : '';

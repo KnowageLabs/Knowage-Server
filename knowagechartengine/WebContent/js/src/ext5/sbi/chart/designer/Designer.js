@@ -112,7 +112,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			for(i=0;i<styles.length;i++){
 				if(styles[i].STYLE.isDefault===true){
-					retTemplate=styles[i].TEMPLATE;
+					
+					/**
+				    * TEMPLATE tag is now positioned inside of the main, STYLE tag.
+				    * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				    */
+					retTemplate=styles[i].STYLE.TEMPLATE;
 				}
 			}
 
@@ -129,7 +134,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		getConfigurationForStyle : function(style,changeChartType) {
 		      
 			   var styles=JSON.parse(Sbi.chart.designer.Styles);
-			          
+			        
 			   /**
 			 	* JSON template that keeps the predefined values
 			 	* for the different styles parameters. We will
@@ -141,9 +146,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			   var retTemplate=null;
 			   			   
 			   for(i=0;i<styles.length;i++){
-				   if(styles[i].STYLE.name===style){
-					   retTemplate=styles[i].TEMPLATE;
-					   break;
+				   
+				   if(styles[i].STYLE.name === style){	
+					   /**
+					    * TEMPLATE tag is now positioned inside of the main, STYLE tag.
+					    * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					    */
+					   retTemplate=styles[i].STYLE.TEMPLATE;
+					   break;					   
 				   } 
 			   } 			   
 			   
@@ -152,7 +162,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * default one
 			 */
 			if (retTemplate == null) {
+				
 				for (i = 0; i < styles.length; i++) {
+					
 					if (styles[i].STYLE.name === "sfnas") {
 						
 						if(styles.length > 1 && style != "" && !changeChartType && !Sbi.chart.designer.Designer.backupStyleSet){
@@ -162,11 +174,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 							);
 						}
-
 						
 						Ext.getCmp("stylePickerComboId").setValue("");
 						Sbi.chart.designer.Designer.backupStyleSet = true;
-						retTemplate = styles[i].TEMPLATE;
+						
+						/**
+					    * TEMPLATE tag is now positioned inside of the main, STYLE tag.
+					    * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					    */
+						retTemplate = styles[i].STYLE.TEMPLATE;
 						break;
 					}
 				}
@@ -453,11 +469,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 				   success: function(response) 
 				   {
 				        var obj = Ext.decode(response.responseText);
-				        chartTypesFromService = obj.types;
+				        
+				        /**
+				         * Take all available chart types and add them to the chart type combo's 
+				         * store in ascending alphabetical order.
+				         * 
+				         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				         */
+				        chartTypesFromService = obj.types.sort();
 				        
 				        for (i=0; i<chartTypesFromService.length; i++)
-			        	{
-			        		/**
+			        	{				        	
+				        	/**
 			        		 * Capitalize only the first letter for displaying the charts type name.
 			        		 */
 			        		var chartTypeDisplay = chartTypesFromService[i].charAt(0).toUpperCase() + chartTypesFromService[i].slice(1);
@@ -1156,9 +1179,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						Sbi.chart.designer.Designer.jsonTemplateStyleExists = true;
 					}
 					
-					
-					
-					if (styles[i].STYLE.name !== "sfnas") {
+					if (styles[i].STYLE.name !== "sfnas") {						
 					allStyles.push(style);
 				}
 				}
@@ -1441,7 +1462,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * 
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */	
-							var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
+							var numberOfColors = jsonTemplate.CHART.COLORPALETTE ? jsonTemplate.CHART.COLORPALETTE.COLOR.length : 0;
 							Ext.getCmp("chartColorPalette").fireEvent("chartTypeChanged", numberOfColors);
 							Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;
 														
@@ -1548,7 +1569,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            listeners: {
 	            	click: {
 	            		element: 'el',
-	            		fn: function(){
+	            		fn: function(){			
+	            			
+	            			/**
+	            			 * Set the "Loading preview..." image at the beginning of export,
+	            			 * so the user cna know that request is sent.
+	            			 * 
+	            			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	            			 */
+	            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png');
 	            			
   							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);  							
   							
@@ -1569,8 +1598,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							};
   							
 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-								var chartConf = response.responseText;
-
+								var chartConf = response.responseText;								
+								
 								/**
 								 * If chart types of documents (charts) that user wants to render in the
 								 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
@@ -1588,14 +1617,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 								 * 
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 								 */
-								var jsonChartConf = Ext.JSON.decode(chartConf);
+								var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 								
-								if(jsonChartConf.chart.type.toLowerCase() == 'treemap' && typeof(prepareChartConfForTreemap) == "function") {
-									chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
-								}
-								else if(jsonChartConf.chart.type.toLowerCase() == 'heatmap' && typeof(prepareChartConfForHeatmap) == "function") {
-									chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
-								}
+								if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
+								{
+									var jsonChartConf = Ext.JSON.decode(chartConf);
+									
+									if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
+										chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
+									}
+									else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
+										chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
+									}
+								}								
 								
 								var parameters = {
       									options: chartConf,
@@ -1615,17 +1649,35 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      								setPreviewImage(src);
 	      							},
 	      							function (response) {
+	      									      								
 	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-	      								setPreviewImage(src);
+	      								setPreviewImage(src);	
+	      								
+	      								if (response.status == 0)
+      									{
+	      									Sbi.exception.ExceptionHandler.showErrorMessage
+		    								(
+		    									LN("sbi.chartengine.preview.error.wrongData.bodyText"),
+		    									LN("sbi.chartengine.preview.error.title")
+		    								);
+      									}
+	      								
 	      							}
-      							);								
+      							);
 							}
 							,
   							function (response) {
+								
   								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
   								setPreviewImage(src);
+  								
+  								Sbi.exception.ExceptionHandler.showErrorMessage
+								(
+									LN("sbi.chartengine.preview.error.missingData.bodyText"),
+									LN("sbi.chartengine.preview.error.title")
+								);
+  								
   							});
-  							
 	            		}
 	            	}
 	            },
@@ -1792,132 +1844,143 @@ Ext.define('Sbi.chart.designer.Designer', {
   						
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  						
-  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();  	  						
-  	  						
   	  						/**
-  	  						 * Taking care of the order of the categories (based on their type) for the 
-  	  						 * HEATMAP chart type.
-  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  	  						 */  	  						
-  	  						if (chartType == "HEATMAP") {
-	  	  						if (this.store.data.length == 0 && data.records.length == 1) {
-	  	  							if (data.records[0].data.categoryDataType != "Timestamp") {	  	  								
-	  	  								/**
-	  	  								 * Show the message that tells user that he should firstly define
-	  	  								 * (drop) the item for the categories (attributes) container that
-	  	  								 * is of a DATE type (Timestamp).
-	  	  								 */
-		  	  							Ext.Msg.show({
-	  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
-	  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
-	  		            					icon : Ext.Msg.WARNING,
-	  		            					closable : false,
-	  		            					buttons : Ext.Msg.OK,
-	  		            					minWidth: 200,
-	  		            					
-	  		            					buttonText : {
-	  		            						ok : LN('sbi.chartengine.generic.ok')
-	  		            					}
-  	  									});	
-	  	  								
-	  	  								return false;
-  	  								}	  	  								
-  	  							}
-	  	  						else if (this.store.data.length == 1 && data.records.length == 1) {	  	  	
-	  	  							if (dropPosition == "after" && data.records[0].data.categoryDataType == "Timestamp" ||
-	  	  								dropPosition == "before" && data.records[0].data.categoryDataType != "Timestamp") {
-		  	  							Ext.Msg.show ({
-	  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.title"),	
-	  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.warningmessage"),	
-	  		            					icon : Ext.Msg.WARNING,
-	  		            					closable : false,
-	  		            					buttons : Ext.Msg.OK
-  										});
-	  	  								
+							 * Prevent drag&drop more than one attribute (category) per time.
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							if (data.records.length == 1)
+							{  	  						
+	  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase(); 
+	  	  							  						
+	  	  						/**
+	  	  						 * Taking care of the order of the categories (based on their type) for the 
+	  	  						 * HEATMAP chart type.
+	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  						 */  	  						
+	  	  						if (chartType == "HEATMAP") {
+		  	  						if (this.store.data.length == 0 && data.records.length == 1) {
+		  	  							if (data.records[0].data.categoryDataType != "Timestamp") {	  	  								
+		  	  								/**
+		  	  								 * Show the message that tells user that he should firstly define
+		  	  								 * (drop) the item for the categories (attributes) container that
+		  	  								 * is of a DATE type (Timestamp).
+		  	  								 */
+			  	  							Ext.Msg.show({
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK,
+		  		            					minWidth: 200,
+		  		            					
+		  		            					buttonText : {
+		  		            						ok : LN('sbi.chartengine.generic.ok')
+		  		            					}
+	  	  									});	
+		  	  								
+		  	  								return false;
+	  	  								}	  	  								
+	  	  							}
+		  	  						else if (this.store.data.length == 1 && data.records.length == 1) {	  	  	
+		  	  							if (dropPosition == "after" && data.records[0].data.categoryDataType == "Timestamp" ||
+		  	  								dropPosition == "before" && data.records[0].data.categoryDataType != "Timestamp") {
+			  	  							Ext.Msg.show ({
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.title"),	
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.warningmessage"),	
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK
+	  										});
+		  	  								
+			  	  							return false;
+	  	  								}	 
+		  	  							
+		  	  							/**
+		  	  							 * If we already have one item in the CATEGORY (X-axis) container 
+		  	  							 * and we want to add the second (the last one) item, we should
+		  	  							 * check if that item inside the container is of type that is not
+		  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
+		  	  							 * is of DATE (Timestamp) type.
+		  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  	  							 */
+		  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
+		  	  									data.records[0].data.categoryDataType != "Timestamp") {
+		  	  								Ext.Msg.show({
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK
+	  										});
+		  	  								
+		  	  								return false;
+	  	  								}
+	  	  							}
+		  	  						else {
+		  	  							/**
+		  	    						 * Preventing rearranging categories if the chart type is the HEATMAP
+		  	    						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  	    						 */
 		  	  							return false;
-  	  								}	 
-	  	  							
-	  	  							/**
-	  	  							 * If we already have one item in the CATEGORY (X-axis) container 
-	  	  							 * and we want to add the second (the last one) item, we should
-	  	  							 * check if that item inside the container is of type that is not
-	  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
-	  	  							 * is of DATE (Timestamp) type.
-	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	  	  							 */
-	  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
-	  	  									data.records[0].data.categoryDataType != "Timestamp") {
-	  	  								Ext.Msg.show({
-	  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
-	  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
-	  		            					icon : Ext.Msg.WARNING,
-	  		            					closable : false,
-	  		            					buttons : Ext.Msg.OK
-  										});
-	  	  								
-	  	  								return false;
-  	  								}
-  	  							}
-	  	  						else {
-	  	  							/**
-	  	    						 * Preventing rearranging categories if the chart type is the HEATMAP
-	  	    						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	  	    						 */
+	  	  							}
+	  							}  	  
+	  	  						
+	  	  						/**
+	  	  						 * Prevent taking more than one category from the container when we have
+	  	  						 * one of these chart types.
+	  	  						 *   	  						
+	  	  						 * @author: danristo (danilo.ristovski@mht.net)
+	  	  						 */
+	  	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
+	  	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD" || chartType == "PIE")) {
 	  	  							return false;
-  	  							}
-  							}  	  
-  	  						
-  	  						/**
-  	  						 * Prevent taking more than one category from the container when we have
-  	  						 * one of these chart types.
-  	  						 *   	  						
-  	  						 * @author: danristo (danilo.ristovski@mht.net)
-  	  						 */
-  	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
-  	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD" || chartType == "PIE")) {
-  	  							return false;
-  							}  	  						
-  	  						
-  	  						if(dropRec && data.view.id != this.id) { // if the dropping item comes from another container
-	  	  						var thisStore = dropRec.store;
-		  	  					var storeCategoriesLength = thisStore.data.items.length;		  	  					
-		  	  					
-		  	  					for(var rowIndex = 0; rowIndex < storeCategoriesLength; rowIndex++) {
-			  	      				var categoryItem = thisStore.getAt(rowIndex);
-			  	      				 		  	      				
-			  	      				/**
-			  	      				 * (0)	Any chart: 		If we already have category that we are trying to 
-			  	      				 * 						drop in this panel for any - prevent dropping.
-			  	      				 * 
-			  	      				 * (1) 	RADAR chart: 	If we already have one category column inside the 
-			  	      				 * 						X-axis panel (bottom panel, category container). It
-			  	      				 * 						must have exactly one category inside the X-axis panel.
-			  	      				 * 
-			  	      				 * (2) 	SCATTER chart: 	also MUST have only one category
-			  	      				 * 
-			  	      				 * (3) 	PARALLEL and  chart: MUST have exactly 2 categories. For the HEATMAP
-			  	      				 * 		chart we MUST HAVE exactly two categories among which we must have a
-			  	      				 * 		time data type (timestamp) as the first one, while the other one can
-			  	      				 * 		be of any data type.
-			  	      				 * 
-			  	      				 * (4) 	CHORD chart:	We must have exactly two categories. Those categories
-			  	      				 * 						MUST HAVE the same set of values that are later going
-			  	      				 * 						to be arranged into the regular matrix form.
-			  	      				 * 
-			  	      				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			  	      				 */			  	      				
-			  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn') 
-			  	      						|| (this.store.data.length == 1 && 
-			  	      								(chartType == "RADAR" || chartType == "SCATTER" || chartType == "PIE")) 
-			  	      									|| (this.store.data.length == 2 && 
-			  	      											(chartType == "PARALLEL" || 
-			  	      													chartType == "HEATMAP" || 
-			  	      														chartType == "CHORD"))) {
-			  	      					return false;
-			  	      				}
-			  	      			}
-	  	  					}
-  						}
+	  							}  	  						
+	  	  						
+	  	  						if(dropRec && data.view.id != this.id) { // if the dropping item comes from another container
+		  	  						var thisStore = dropRec.store;
+			  	  					var storeCategoriesLength = thisStore.data.items.length;		  	  					
+			  	  					
+			  	  					for(var rowIndex = 0; rowIndex < storeCategoriesLength; rowIndex++) {
+				  	      				var categoryItem = thisStore.getAt(rowIndex);
+				  	      				 		  	      				
+				  	      				/**
+				  	      				 * (0)	Any chart: 		If we already have category that we are trying to 
+				  	      				 * 						drop in this panel for any - prevent dropping.
+				  	      				 * 
+				  	      				 * (1) 	RADAR chart: 	If we already have one category column inside the 
+				  	      				 * 						X-axis panel (bottom panel, category container). It
+				  	      				 * 						must have exactly one category inside the X-axis panel.
+				  	      				 * 
+				  	      				 * (2) 	SCATTER chart: 	also MUST have only one category
+				  	      				 * 
+				  	      				 * (3) 	PARALLEL and  chart: MUST have exactly 2 categories. For the HEATMAP
+				  	      				 * 		chart we MUST HAVE exactly two categories among which we must have a
+				  	      				 * 		time data type (timestamp) as the first one, while the other one can
+				  	      				 * 		be of any data type.
+				  	      				 * 
+				  	      				 * (4) 	CHORD chart:	We must have exactly two categories. Those categories
+				  	      				 * 						MUST HAVE the same set of values that are later going
+				  	      				 * 						to be arranged into the regular matrix form.
+				  	      				 * 
+				  	      				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				  	      				 */			  	      				
+				  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn') 
+				  	      						|| (this.store.data.length == 1 && 
+				  	      								(chartType == "RADAR" || chartType == "SCATTER" || chartType == "PIE")) 
+				  	      									|| (this.store.data.length == 2 && 
+				  	      											(chartType == "PARALLEL" || 
+				  	      													chartType == "HEATMAP" || 
+				  	      														chartType == "CHORD"))) {
+				  	      					return false;
+				  	      				}
+				  	      			}
+		  	  					}
+	  						}
+							else
+				        	{
+					        	return false;
+				        	}
+  	  					}				        
   					}
   				},
   				
@@ -4983,7 +5046,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				
 				if (wordcloudMaxAngleGUI == null)
-				{  
+				{
 					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel==="")
 					{
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5195,11 +5258,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							);
 						}
 					}
-					
-					
 				}
 				else 
-				{
+				{					
 					wordcloudMaxFont=wordcloudMaxFontSizeGUI;
 					if (wordcloudMaxFontSizeGUI < checkParamValuesForCharts.wordcloud.maxFontSize.minValue)
 					{

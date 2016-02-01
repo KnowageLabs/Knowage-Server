@@ -710,116 +710,31 @@
 						name: '$serieCategoryName',
 						y: $serieValue,
 						
+						#set($relatedSerieShowValue = $relatedSerie.showValue)
+						#if ($relatedSerieShowValue != '')
 						dataLabels: {
-		                    #*
-					    		======================================================================
-					    		======================================================================
-					    		START: Part of the code that handles whether the data lebels are going to
-					    		be presented via the format or via the prefix+precision+postfix.
-					    		
-					    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					    		======================================================================
-					    		======================================================================
-					    	*#
-			
-					    	#set($formatDataLabels = '')
-					    	
-					    	#*
-					    		If the "Show value" option is checked for the particular serie item
-					    		the format or prefix+precision+postfix will be shown. The decision
-					    		which of those two aspects will be taken is going to be made based
-					    		on the value of the "serieFormatOrPrecision" parameter.
-					    	*#
-					    	#set($relatedSerieShowValue = $relatedSerie.showValue)
-					    	#set($relatedSerieFormatOrPrecision = $relatedSerie.serieFormatOrPrecision)				
-				
-							#if ($relatedSerieShowValue != '')
-				                
-				                enabled: $relatedSerieShowValue,
-				               
-				                #*
-				                	If the user took the format as the criteria of displaying the
-				                	serie value in the belonging data label, take the format that
-				                	is specified and simply display value as formatted.
-				                	
-				                	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)                	
-				                *#
-				                #if ($relatedSerieFormatOrPrecision.toLowerCase() == "format")
-				                	
-				                	#*
-				                		If the format string is empty we will take the default 
-				                		string that Highcharts API prescribes: '{y}'. 
-				                	*#
-				                	#if ($relatedSerie.serieFormat == '')
-				                		format: '{y}',
-				                	#else				                	
-						    			format: '$relatedSerie.serieFormat',
-					    			#end
-						    		
-						    	#elseif ($relatedSerieFormatOrPrecision.toLowerCase() == "precision")
-						    		
-						    		#set ($postfixValueAsString = '')
-						    		
-						    		#set($emptyPrecision = false)
-						    		
-						    		#if ($relatedSerie.precision != '')
-						    		#end
-						    		
-					                #if ($relatedSerie.postfixChar != '')
-					                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
-									#end
-					                
-					                #set ($prefixValueAsString = '')
-					                
-					                #if ($relatedSerie.prefixChar != '')
-					                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
-									#end
-					                
-					                #set ($precisionValueAsString = '')
-					                
-					                #*
-					                	This is the template for the precision: "{y:,.(x)f}".
-					                	
-					                	'y:': 		The value of related serie that is going to be presented
-					                	',': 		The comma is used for separating thousands in 'y' numeric value.
-					                	'.(x)f': 	The precision is used from the configuration user specified.
-					                *#
-					                #if ($relatedSerie.precision != '')
-					                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
-									#end
-					                
-					                #set ($formatDataLabels = ${prefixValueAsString} + '{y' + $precisionValueAsString + '}' + ${postfixValueAsString})
-					                
-					                format: '$formatDataLabels',
-						    		
-						    	#end
-				                
-							#end    	
-					    		  
-					    	#*
-					    		Commented by Danilo Ristovski
-					    		
-					    		Take the format of the serie item for their data label
-					    	*#  	
-					    	#*
-						    	#if($relatedSerie.DATA_LABELS.formatDataLabels && $relatedSerie.DATA_LABELS.formatDataLabels != '')
-						    		format: '$relatedSerie.DATA_LABELS.formatDataLabels',
-						    	#else
-						    		format: '$formatDataLabels',
-						    	#end
-					    	*#	    	
-					    	
-					    	#*
-					    		======================================================================
-					    		======================================================================
-					    		END: Part of the code that handles whether the data lebels are going to
-					    		be presented via the format or via the prefix+precision+postfix.
-					    		
-					    		Danilo Ristovski
-					    		======================================================================
-					    		======================================================================
-					    	*#
+		                    enabled: $relatedSerieShowValue,
+		                    
+		                    #set ($postfixValueAsString = '')
+		                    #if ($relatedSerie.postfixChar != '')
+			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+							#end
+		                    
+		                    #set ($prefixValueAsString = '')
+		                    #if ($relatedSerie.prefixChar != '')
+			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+							#end
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
+		                   	#else
+		                   		#set ($precisionValueAsString = ':,.0f')
+							#end
+		                    
+		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}'
 		                },
+						#end
 		                
 						 #if($crossNavigation != '') 
 						crossNavigationDocumentName: '$crossNavigation.document',
@@ -848,31 +763,20 @@
 						#end  
 					},
 	    	
-	    	tooltip: 
-	    	{ 
-				serieFormatOrPrecision: '$relatedSerieFormatOrPrecision.toLowerCase()',
-			        	
-        	 	#if ($relatedSerieFormatOrPrecision.toLowerCase() == "format")
-                
-		    		format: '$relatedSerie.serieFormat',
-		    		
-		    	#elseif ($relatedSerieFormatOrPrecision.toLowerCase() == "precision")
-		    	
-					#set($seriePrefix = $relatedSerie.prefixChar)
-					#if($seriePrefix)
-						valuePrefix: '$seriePrefix',
-					#end
-						
-					#set($seriePostfix = $relatedSerie.postfixChar)
-					#if($seriePostfix)
-						valueSuffix: '$seriePostfix',
-					#end				
-						
-					#if ($relatedSerie.precision)
-						valueDecimals: '$relatedSerie.precision',
-					#end
-					
-				#end
+	    	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
 				
 			#*
 				If background color for the serie tooltip is not defined (empty)
@@ -945,327 +849,27 @@
         		tooltipFontStyle = "font-weight: normal;";
         	}
         	
-        	/*
-        		======================================================
-        		START: Part of the code that creates the template particular
-        		serie item depending on the method used for structuring the
-        		data that should be displayed in the tooltip (format or
-        		precision).
-					    		
-	    		Danilo Ristovski
-        		======================================================
-        	*/
-        	       	
-        	/*
-        		Depending on font style chosen by the user for the serie tooltip
-        		we will specify respective CSS attribute so it can be taken by the
-        		tooltip.
-        		@author: danristo (danilo.ristovski@mht.net)
-        	*/
-        	var tooltipFontStyle = "";
-        	
-        	if (ttFontWeight == " underline")
-        	{
-        		tooltipFontStyle = " text-decoration: underline;";
-        	}
-        	else if (ttFontWeight == " italic")
-        	{
-        		tooltipFontStyle = "font-style: italic;";
-        	}
-        	else if (ttFontWeight == " bold")
-        	{
-        		tooltipFontStyle = "font-weight: bold;";
-        	}
-        	else
-        	{
-        		tooltipFontStyle = "font-weight: normal;";
-        	}
-        	
-        	/*
-        		Old implementation, with just precision option (and potentialy prefix and postfix).        		
-        		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
-        	/*
-	        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
-	        	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
-	        	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
-	        	
-	        	var thisValue = this.y;
-	        	if(valueDecimals > -1 ) {
-	        		var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
-	        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-	        			
-	        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
-	        	}
-	        	thisValue = valuePrefix + thisValue + valueSuffix;
-	        */
-	        
-	        /*
-        		The user is free to choose between two modalities for displaying the
-        		serie value: 
-        		
-        			(1) precision potentially with its prefix and/or postfix: 
-        					prefix + serie value with given number of decimals + postfix
-        					
-        			(2) format string (must follow the Highcharts format):
-        					(a) prefix + {y:.(some not negative number)f} + postfix
-        					(b) prefix + {point.y:.(some not negative number)f} + postfix
-        					
-        		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/        	
-        	
-        	/*
-        		=============================
-        		CASE: Precision is specified
-        		=============================
-        		If user specified precision for the serie value potentially with its
-        		prefix and/or postfix, take those values in order to construct the 
-        		string that will be displayed in the tooltip that appears when mouse
-        		is over the particular serie. 
-        		
-        		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
-        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
         	
-        	/*
-        		=============================
-        		CASE: Format is specified
-        		=============================
-        		If user specified format as modality of the displaying of the serie
-        		value, take that string of the format and parse it in order to take
-        		all constituents (prefix + separator for thousands + number of decimal 
-        		points + postfix). All of those values are optional, but must be defined
-        		in a proper way (with valid values) in order to display the tooltip
-        		with expected results.
-        		
-        		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)        		
-        	*/
-        	var format = this.series.tooltipOptions.format ? this.series.tooltipOptions.format : '';
-        	
-        	/*
-        		The value of the serie that is hovered by the mouse.
-        	*/
         	var thisValue = this.y;
         	
         	/*
-        		Starting construction of the expression that is expected for the format
-        		for the value of the serie. There are two possible constructions.
+        		When there is no precision set by the user, force the precison of
+        		value zero, since it has the same effect whether is set or not, but
+        		it helps for other situations in which the value is not zero. 
         		
-        		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-        	*/
-        	var onlyYString = "y";
-        	var onlyPointYString = "point.y";
-        	var yString = "y:";
-        	var pointYString = "point.y:";
-        	
-        	/*
-        		The starting and ending index of the expression of the format that is
-        		first detected (if there is more than one expression) in the format string.
-        		This is extracted for both possible constructions for the format separately. 
+        		Also, always set the thousands separator, no matter what.
         		
-        		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)        		
-        	*/
-        	var yValueOnlyIndexStart = format.indexOf("{" + onlyYString);
-        	var yValueOnlyIndexEnd = format.indexOf("}"); 
-        	var pointYValueOnlyIndexStart = format.indexOf("{" + onlyPointYString);
-        	var pointYValueOnlyIndexEnd = format.indexOf("}");       	
-        	var yValueIndexStart = format.indexOf("{" + yString);
-        	var yValueIndexEnd = format.indexOf("}");
-        	var pointYValueIndexStart = format.indexOf("{" + pointYString);
-        	var pointYValueIndexEnd = format.indexOf("}");
-        	        	
-        	var prefixText = "";
-        	var postfixText = "";  
-        	
-        	var precision = -1;
-        	var separatorOfThousands = "";
-        	
-        	var pointYValue = "";
-        	var yValue = "";
-        	
-        	/*
-        		Predefined decimal point and separator of thousands values in the
-        		Highcharts library.
-        		
-        		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         	*/
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
-    			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-        
-        	/*
-        		This is the way to inspect if there is more than one expression inside the
-        		format string for the serie item.
-        		
-        		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-        	*/
-        	//var numberOfDiffPointYFormats = (format.match(new RegExp("{"+pointYString, "g")) || []).length;
-        	//var numberOfDiffYFormats = (format.match(new RegExp("{"+yString, "g")) || []).length;        
-			//console.log(format.match(new RegExp("{point.y:.([0-9]|[0-2][0-9]$)f", "g")));
-			/*
-				If the starting part of the construction of the expression within the format 
-				of the serie's tooltip is specified via the "point.y:".
-				
-				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-			*/
-			if (pointYValueIndexStart >= 0)
-        	{
-        		/*
-        			Take the whole expression within the format.
-        		*/
-        		pointYValue = format.substring(pointYValueIndexStart, pointYValueIndexEnd+1);
-        		
-        		/*
-        			Take the pure content of the expression - the format itself.
-        		*/
-        		var formatPure = pointYValue.substring(pointYString.length+1,pointYValue.length-1); 
-        		
-        		/*
-        			Extract the precision (number of decimal points) from this string.
-        		*/
-        		if(formatPure.indexOf(decimalPoint)>=0 && formatPure.indexOf("f")>=0)
-        		{
-        			precision = formatPure.substring(formatPure.indexOf(decimalPoint)+1,formatPure.indexOf("f"));
-        		}
-        		
-        		/*
-        			Inspect if there is thousands separator within the expression.
-        		*/
-        		if(formatPure.indexOf(thousandsSep)>=0)
-        		{
-        			separatorOfThousands = thousandsSep;
-        		}
-        		
-        		/*
-        			Extract the prefix text and the postfix text from the whole format string.
-        		*/
-        		prefixText = format.substring(0,pointYValueIndexStart);
-        		postfixText = format.substring(pointYValueIndexEnd+1,format.length);
-        	}
+        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        			
+    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
         	
-        	/*
-				If the starting part of the construction of the expression within the format 
-				of the serie's tooltip is specified via the "y:".
-				
-				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-			*/
-        	else if (yValueIndexStart >= 0)
-        	{
-        		yValue = format.substring(yValueIndexStart, yValueIndexEnd+1);
-        		
-        		var formatPure = yValue.substring(yString.length+1,yValue.length-1);     
-        		
-        		if(formatPure.indexOf(decimalPoint)>=0 && formatPure.indexOf("f")>=0)
-        		{
-        			precision = formatPure.substring(formatPure.indexOf(decimalPoint)+1,formatPure.indexOf("f"));
-        		}
-        		
-        		if(formatPure.indexOf(thousandsSep)>=0)
-        		{
-        			separatorOfThousands = thousandsSep;
-        		}
-        		
-        		prefixText = format.substring(0,yValueIndexStart);
-        		postfixText = format.substring(yValueIndexEnd+1,format.length);
-        	}
-        	
-        	else if (yValueOnlyIndexStart >= 0)
-        	{
-        		//yValue = format.substring(yValueOnlyIndexStart, yValueOnlyIndexEnd+1);
-        		
-        		/*var formatPure = yValue.substring(yString.length+1,yValue.length-1);     
-        		
-        		if(formatPure.indexOf(decimalPoint)>=0 && formatPure.indexOf("f")>=0)
-        		{
-        			precision = formatPure.substring(formatPure.indexOf(decimalPoint)+1,formatPure.indexOf("f"));
-        		}
-        		
-        		if(formatPure.indexOf(thousandsSep)>=0)
-        		{
-        			separatorOfThousands = thousandsSep;
-        		}*/
-        		
-        		prefixText = format.substring(0,yValueOnlyIndexStart);
-        		postfixText = format.substring(yValueOnlyIndexEnd+1,format.length);
-        	}
-        	
-        	else if (pointYValueOnlyIndexStart >= 0)
-        	{
-        		prefixText = format.substring(0,pointYValueOnlyIndexStart);
-        		postfixText = format.substring(pointYValueOnlyIndexEnd+1,format.length);
-        	}
-        	/*
-        		There is no expression for serie (y, y:, point.y)
-        	*/
-        	else
-        	{
-        		prefixText = format.substring(0,format.length);
-        		postfixText = "";
-        	}
-        	
-        	/*
-        		Construct the final string for the serie tooltip depending on the user's 
-        		choice on the modality of the display of the serie value in the tolltip - 
-        		whether it is the format or precision (plus prefix/postfix). The if-part
-        		is handling the case when precision is used.
-        	*/
-        	if (this.series.tooltipOptions.serieFormatOrPrecision.toLowerCase() == "precision")
-        	{
-	        	if(valueDecimals > -1 ) 
-	        	{
-	        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
-	        	}
-	        	
-	        	thisValue = valuePrefix + thisValue + valueSuffix;
-        	}
-        	else if (this.series.tooltipOptions.serieFormatOrPrecision.toLowerCase() == "format")
-        	{    
-    			/*
-    				In those three cases we are dealing with the pure serie value (without any
-    				kind of formatting, since this is the default behavior within the Highcharts
-    				library.
-    			*/
-    			
-    			if ( format != "" 
-    					&& format != ("{" + onlyYString + "}") 
-    							&& format != ("{" + onlyPointYString + "}") )
-    			{
-    				if (format.indexOf("{" + yString)>=0 || format.indexOf("{" + pointYString)>=0)
-					{											
-						if (precision >= 0)
-		    			{				
-		    				thisValue = Highcharts.numberFormat(thisValue, precision, decimalPoint, separatorOfThousands);    				
-		    				thisValue = prefixText+thisValue+postfixText;
-		    			}
-		    			else
-		    			{
-		    				thisValue = prefixText + " " + postfixText;
-		    			}
-					}
-    				else if (format.indexOf("{" + onlyYString + "}")>=0 || format.indexOf("{" + onlyPointYString + "}")>=0)
-    				{
-    					precision = 0;	// Highcharts default
-    					thisValue = Highcharts.numberFormat(thisValue, precision, decimalPoint, separatorOfThousands);
-	    				thisValue = prefixText+thisValue+postfixText;
-    				}
-    				else
-    				{
-    					thisValue = prefixText+postfixText;
-    				}
-    			}
-        	}
-        	
-        	/*
-        		======================================================
-        		END: Part of the code that creates the template particular
-        		serie item depending on the method used for structuring the
-        		data that should be displayed in the tooltip (format or
-        		precision).
-					    		
-	    		Danilo Ristovski
-        		======================================================
-        	*/
+        	thisValue = valuePrefix + thisValue + valueSuffix;
         	
         	#*
         		Separate font elements (family, size and weight (style)) so the tooltip

@@ -1,195 +1,196 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<STYLE name="blue" isDefault="false"> </STYLE>
+<STYLE name="blue" isDefault="false">
 
-<TEMPLATE>
-
-	<generic>
-		
-		<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Verdana;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" styleName="blue">
-
-			<TITLE style="align:center;fontFamily:Verdana;fontSize:16px;fontWeight:bold;color:#006699;" text=""/>
+	<TEMPLATE>
+	
+		<generic>
 			
-			<SUBTITLE style="align:center;color:#006699;fontFamily:Verdana;fontWeight:italic;fontSize:14px;" text=""/>
-			
-			<EMPTYMESSAGE style="align:left;color:#FF0000;fontFamily:Verdana;fontWeight:bold;fontSize:18px;" text=""/>
-			
-			<LEGEND floating='' layout="" position="top" show='false' style= "align:center;fontFamily:Verdana;fontSize:12px;fontWeight:normal;;borderWidth:1;color:#006699;backgroundColor:transparent;" x='' y= ''/>
-			
-			<COLORPALETTE>
-				<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
-				<COLOR id='2' order='2' name="434348" value="#434348"/>
-				<COLOR id='3' order='3' name="90ed7d" value="#90ed7d"/>
-				<COLOR id='4' order='4' name="f7a35c" value="#f7a35c"/>
-				<COLOR id='5' order='5' name="8085e9" value="#8085e9"/>
-				<COLOR id='6' order='6' name="f15c80" value="#f15c80"/>
-				<COLOR id='7' order='7' name="e4d354" value="#e4d354"/>
-				<COLOR id='8' order='8' name="2b908f" value="#2b908f"/>
-				<COLOR id='9' order='9' name="f45b5b" value="#f45b5b"/>
-				<COLOR id='10' order='10' name="91e8e1" value="#91e8e1"/>
-			</COLORPALETTE>
-			
-			<AXES_LIST>
+			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Verdana;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" styleName="blue">
+	
+				<TITLE style="align:center;fontFamily:Verdana;fontSize:16px;fontWeight:bold;color:#006699;" text=""/>
 				
-				<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
-					<MAJORGRID interval="" style="typeline:;color:#D8D8D8;"/>
-					<MINORGRID interval="" style="typeline:;color:#E0E0E0;"/>
-					<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text="Title for Y axis"/>
-				</AXIS>
-   
-				<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;">
-					<TITLE style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text="Title for X axis"/>
-				</AXIS>
-			
-			</AXES_LIST>
-			
-			<VALUES>					
-				<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true">
-					<TOOLTIP backgroundColor="" style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;" templateHtml=""/>
-				</SERIE>
-			</VALUES>
-		
-		</CHART>
-	
-	</generic>
-	
-	<wordcloud>
-		<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' maxWords='60' minAngle='45' sizeCriteria='serie' wordPadding='5'/>
-	</wordcloud>
-
-	<bar>
-		<CHART type="BAR"/>
-	</bar>
-	
-	<line>
-		<CHART type="LINE"/>
-	</line>
-
-	<pie>
-		<CHART type="PIE"/>
-	</pie>
-	
-	<treemap>
-		<CHART type="TREEMAP"/>
-	</treemap>
-
-	<parallel>
-		
-		<CHART type="PARALLEL">
-			
-			<AXES_LIST style="axisColNamePadd:16;brushWidth:10;axisColor:#006699;brushColor:#006699;">
-			
-				<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;"/>
+				<SUBTITLE style="align:center;color:#006699;fontFamily:Verdana;fontWeight:italic;fontSize:14px;" text=""/>
 				
-				<AXIS type='Category' style="color:#006699;fontFamily:Verdana;fontWeight:italic;fontSize:12px;"/>
-			
-			</AXES_LIST>
-
-			<LIMIT style="maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"/>
+				<EMPTYMESSAGE style="align:left;color:#FF0000;fontFamily:Verdana;fontWeight:bold;fontSize:18px;" text=""/>
 				
-			<PARALLEL_TOOLTIP style="fontFamily:Verdana;fontSize:18px;minWidth:10;maxWidth:250;minHeight:5;maxHeight:200;padding:1;border:1;borderRadius:1;"/>
+				<LEGEND floating='' layout="" position="top" show='false' style= "align:center;fontFamily:Verdana;fontSize:12px;fontWeight:normal;;borderWidth:1;color:#006699;backgroundColor:transparent;" x='' y= ''/>
 				
-			<LEGEND>
-				<TITLE style="fontFamily:Verdana;fontSize:12px;fontWeight:bold;"/>
-				<ELEMENT style="fontFamily:Verdana;fontSize:10px;fontWeight:normal;"/>
-			</LEGEND>
-		
-		</CHART>
-		
-	</parallel>
-	
-	<heatmap>
-		<CHART type="HEATMAP">
-			<LEGEND symbolHeight='400' style="align:middle;"/>
-			<TOOLTIP style="fontFamily:Verdana;fontSize:12px;color:#006699;fontWeight:bold;"/>
-			<COLORPALETTE>
-				<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
-				<COLOR id='7' order='7' name="e4d354" value="#e4d354"/>
-				<COLOR id='9' order='9' name="f45b5b" value="#f45b5b"/>
-			</COLORPALETTE>
-		</CHART>
-	</heatmap>
-	
-	<radar>
-		<CHART type="RADAR"/>
-	</radar>
-	
-	<scatter>
-		
-		<CHART type="SCATTER" zoomType="xy">
-		
-			<AXES_LIST>
-			
-				<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
-					<MAJORGRID interval="", style="typeline:;color:#D8D8D8;"/>
-					<MINORGRID interval="" typeline="typeline:;color:#E0E0E0;"/>
-					<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
-				</AXIS>
+				<COLORPALETTE>
+					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
+					<COLOR id='2' order='2' name="434348" value="#434348"/>
+					<COLOR id='3' order='3' name="90ed7d" value="#90ed7d"/>
+					<COLOR id='4' order='4' name="f7a35c" value="#f7a35c"/>
+					<COLOR id='5' order='5' name="8085e9" value="#8085e9"/>
+					<COLOR id='6' order='6' name="f15c80" value="#f15c80"/>
+					<COLOR id='7' order='7' name="e4d354" value="#e4d354"/>
+					<COLOR id='8' order='8' name="2b908f" value="#2b908f"/>
+					<COLOR id='9' order='9' name="f45b5b" value="#f45b5b"/>
+					<COLOR id='10' order='10' name="91e8e1" value="#91e8e1"/>
+				</COLORPALETTE>
 				
-				<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;" startOnTick="false" showLastLabel="true" endOnTick="false">
-					<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
-				</AXIS>
-			
-			</AXES_LIST>
-		
-		</CHART>
-
-	</scatter>
-	
-	<gauge>
-	
-		<CHART type="GAUGE">
-	
-			<AXES_LIST>
-	
-				<AXIS lineColor="" lineWidth="" max=""  min="" minorTickColor="" minorTickLength="" minorTickPosition="inside" minorTickWidth="1"
-		         offset="" minorTickInterval="" tickColor="#006699" tickLength="" type='Serie'
-		         tickPixelInterval="" tickPosition="inside" tickWidth="2" style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
+				<AXES_LIST>
 					
-					<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
-			
-					<LABELS distance="" rotation=""/>
-			
-					<PLOTBANDS>
-						<PLOT color="" from="" to=""/>
-					</PLOTBANDS>
+					<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
+						<MAJORGRID interval="" style="typeline:;color:#D8D8D8;"/>
+						<MINORGRID interval="" style="typeline:;color:#E0E0E0;"/>
+						<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text="Title for Y axis"/>
+					</AXIS>
+	   
+					<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;">
+						<TITLE style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text="Title for X axis"/>
+					</AXIS>
 				
-				</AXIS>
-		
-				<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;">
-					<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
-				</AXIS>
-		
-			</AXES_LIST>
-	
-			<PANE endAngle="121" startAngle="-121"/>
-	
-			<VALUES>
-
-				<SERIE animation="true" color="" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend="true"
-	                   showValue="true">
-					<TOOLTIP backgroundColor="#EEDDAA" style="color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;align:left" templateHtml="AAA"/>
-					<DIAL backgroundColorDial=""/>
-					<DATA_LABELS colorDataLabels="" formatDataLabels="" yPositionDataLabels=""/>
-				</SERIE>
+				</AXES_LIST>
+				
+				<VALUES>					
+					<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true">
+						<TOOLTIP backgroundColor="" style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;" templateHtml=""/>
+					</SERIE>
+				</VALUES>
 			
-			</VALUES>
+			</CHART>
 		
-		</CHART>
+		</generic>
 		
-	</gauge>
+		<wordcloud>
+			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' maxWords='60' minAngle='45' sizeCriteria='serie' wordPadding='5'/>
+		</wordcloud>
 	
-	<sunburst>
-		<CHART type="SUNBURST" opacMouseOver="10">
-			<TOOLBAR  style="position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:14px;"/>
-			<TIP style="fontFamily:Verdana;fontWeight:bold;fontSize:14px;color:#006699;align:;width:200;" text="Insert text here"/>
-		</CHART>
-	</sunburst>
+		<bar>
+			<CHART type="BAR"/>
+		</bar>
+		
+		<line>
+			<CHART type="LINE"/>
+		</line>
 	
-	<chord>
-		<CHART type="CHORD">
-			<TOOLTIP style="fontFamily:Verdana;fontSize:16px;border:1;borderRadius:1;"/>
-		</CHART>
-	</chord>
-
-</TEMPLATE>
+		<pie>
+			<CHART type="PIE"/>
+		</pie>
+		
+		<treemap>
+			<CHART type="TREEMAP"/>
+		</treemap>
+	
+		<parallel>
+			
+			<CHART type="PARALLEL">
+				
+				<AXES_LIST style="axisColNamePadd:16;brushWidth:10;axisColor:#006699;brushColor:#006699;">
+				
+					<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;"/>
+					
+					<AXIS type='Category' style="color:#006699;fontFamily:Verdana;fontWeight:italic;fontSize:12px;"/>
+				
+				</AXES_LIST>
+	
+				<LIMIT style="maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"/>
+					
+				<PARALLEL_TOOLTIP style="fontFamily:Verdana;fontSize:18px;minWidth:10;maxWidth:250;minHeight:5;maxHeight:200;padding:1;border:1;borderRadius:1;"/>
+					
+				<LEGEND>
+					<TITLE style="fontFamily:Verdana;fontSize:12px;fontWeight:bold;"/>
+					<ELEMENT style="fontFamily:Verdana;fontSize:10px;fontWeight:normal;"/>
+				</LEGEND>
+			
+			</CHART>
+			
+		</parallel>
+		
+		<heatmap>
+			<CHART type="HEATMAP">
+				<LEGEND symbolHeight='400' style="align:middle;"/>
+				<TOOLTIP style="fontFamily:Verdana;fontSize:12px;color:#006699;fontWeight:bold;"/>
+				<COLORPALETTE>
+					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
+					<COLOR id='7' order='7' name="e4d354" value="#e4d354"/>
+					<COLOR id='9' order='9' name="f45b5b" value="#f45b5b"/>
+				</COLORPALETTE>
+			</CHART>
+		</heatmap>
+		
+		<radar>
+			<CHART type="RADAR"/>
+		</radar>
+		
+		<scatter>
+			
+			<CHART type="SCATTER" zoomType="xy">
+			
+				<AXES_LIST>
+				
+					<AXIS type='Serie' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
+						<MAJORGRID interval="" style="typeline:;color:#D8D8D8;"/>
+						<MINORGRID interval="" typeline="typeline:;color:#E0E0E0;"/>
+						<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
+					</AXIS>
+					
+					<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;" startOnTick="false" showLastLabel="true" endOnTick="false">
+						<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
+					</AXIS>
+				
+				</AXES_LIST>
+			
+			</CHART>
+	
+		</scatter>
+		
+		<gauge>
+		
+			<CHART type="GAUGE">
+		
+				<AXES_LIST>
+		
+					<AXIS lineColor="" lineWidth="" max=""  min="" minorTickColor="" minorTickLength="" minorTickPosition="inside" minorTickWidth="1"
+			         offset="" minorTickInterval="" tickColor="#006699" tickLength="" type='Serie'
+			         tickPixelInterval="" tickPosition="inside" tickWidth="2" style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:12px;opposite:false;">
+						
+						<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
+				
+						<LABELS distance="" rotation=""/>
+				
+						<PLOTBANDS>
+							<PLOT color="" from="" to=""/>
+						</PLOTBANDS>
+					
+					</AXIS>
+			
+					<AXIS type='Category' style="rotate:;align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;">
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					</AXIS>
+			
+				</AXES_LIST>
+		
+				<PANE endAngle="121" startAngle="-121"/>
+		
+				<VALUES>
+	
+					<SERIE animation="true" color="" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend="true"
+		                   showValue="true">
+						<TOOLTIP backgroundColor="#EEDDAA" style="color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;align:left" templateHtml="AAA"/>
+						<DIAL backgroundColorDial=""/>
+						<DATA_LABELS colorDataLabels="" formatDataLabels="" yPositionDataLabels=""/>
+					</SERIE>
+				
+				</VALUES>
+			
+			</CHART>
+			
+		</gauge>
+		
+		<sunburst>
+			<CHART type="SUNBURST" opacMouseOver="10">
+				<TOOLBAR  style="position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:14px;"/>
+				<TIP style="fontFamily:Verdana;fontWeight:bold;fontSize:14px;color:#006699;align:;width:200;" text="Insert text here"/>
+			</CHART>
+		</sunburst>
+		
+		<chord>
+			<CHART type="CHORD">
+				<TOOLTIP style="fontFamily:Verdana;fontSize:16px;border:1;borderRadius:1;"/>
+			</CHART>
+		</chord>
+	
+	</TEMPLATE>
+</STYLE>
