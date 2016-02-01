@@ -108,8 +108,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								
 								
 									<md-radio-group layout="row" ng-model="typeSaveMenu">
-								      <md-radio-button value="Override" ng-click="reloadTree()">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-								      <md-radio-button value="Missing" ng-click="reloadTree()">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+								      <md-radio-button value="Override" ng-click="reloadTree('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+								      <md-radio-button value="Missing" ng-click="reloadTree('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
 								    </md-radio-group>
 								 
 								</div>

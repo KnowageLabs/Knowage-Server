@@ -201,10 +201,10 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			console.log("ERRORS "+status,4000);
 		})
 	}
-	$scope.reloadTree = function(){
+	$scope.reloadTree = function(value){
 
 		
-		if($scope.typeSaveMenu == 'Override'){
+		if(value == 'Missing'){
 			for(var i=0;i<$scope.menu.length;i++){
 				var index = $scope.indexInList($scope.menu[i],$scope.currentMenu );
 				if(index==-1){
