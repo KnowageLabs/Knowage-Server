@@ -527,6 +527,10 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		return -1;
 	}
 	
+	$scope.disableSelectedRoles = function( item ) {
+		
+	}
+	
 	// this function is called when clicking on plus button in use mode table
 	$scope.createUseModes =function(){ 
 		$scope.selectedParUse = {};

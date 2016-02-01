@@ -112,11 +112,12 @@
 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
 								<div style="position: absolute; right: 0px" class="h100">
 									
-									<md-button type="button" tabindex="-1" aria-label="cancel"
-										class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-										ng-click="cancel()" >
-										{{translate.load("sbi.browser.defaultRole.cancel");}}
-									</md-button>
+								<md-button id="cancel" type="button"
+								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground"
+								style=" margin-top: 2px;"
+								ng-click="cancel()">
+								{{translate.load("sbi.generic.cancel");}} 
+								</md-button>
 									
 									<md-button  type="submit" ng-disabled="!isDirty"
 										aria-label="save layer" class="md-raised md-ExtraMini "

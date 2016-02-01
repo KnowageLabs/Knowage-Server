@@ -88,7 +88,7 @@
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 						<div style="position: absolute; right: 0px" class="h100">
 						
-							<md-button id="saveorUpdateDataSourceBtn" type="submit"
+							<md-button id="cancel" type="button"
 								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-click="closeForm()">

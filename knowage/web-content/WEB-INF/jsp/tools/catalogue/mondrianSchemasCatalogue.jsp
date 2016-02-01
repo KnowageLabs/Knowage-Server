@@ -125,24 +125,22 @@
 						<div style="position: absolute; right: 0px" class="h100">
 						
 <!-- /////////////// CANCEL BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
-						<md-button 	type="button" 
-									tabindex="-1" 
-									aria-label="cancel"
-									class="md-raised md-ExtraMini " 
-									style=" margin-top: 2px;"
-									ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-								
+						<md-button id="cancel" type="button"
+								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground"
+								style=" margin-top: 2px;"
+								ng-click="cancel()">
+								{{translate.load("sbi.generic.cancel");}} 
 						</md-button>
 
 <!-- /////////////// SAVE BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
-						<md-button 	ng-click="saveMondrianCatalogue()"
-									aria-label="save layer"
-									class="md-raised md-ExtraMini " 
-									style=" margin-top: 2px;"
-									ng-disabled = "selectedMondrianSchema.modelLocked"
-									>
-									{{translate.load("sbi.browser.defaultRole.save");}} 
-					
+
+						
+						<md-button  type="submit"
+										aria-label="save layer" class="md-raised md-ExtraMini "
+										style=" margin-top: 2px;" 
+										ng-click="saveMondrianCatalogue()"
+										ng-disabled = "selectedMondrianSchema.modelLocked">
+										{{translate.load("sbi.browser.defaultRole.save");}} 
 						</md-button>
 					
 					</div>

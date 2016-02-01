@@ -14,7 +14,7 @@
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
-<!-- Styles -->
+<!-- Scripts -->
 <script type="text/javascript" src=" "></script> 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/modalitiesCheck.js"></script>
 

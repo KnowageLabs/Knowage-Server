@@ -231,7 +231,7 @@
 				
 					
 					<md-radio-group ng-model="selectedParUse.valueSelection" ng-init="selectedParUse.valueSelection = man_in"  layout="row">
-				      <md-radio-button value="lov" class="md-primary">
+				      <md-radio-button value="lov">
 				      
 				      {{translate.load("sbi.analytical.drivers.usemode.lovdate")}}
 					
@@ -326,7 +326,7 @@
     				<label>{{translate.load("sbi.generic.defaultValue")}}</label>
     				<md-radio-group ng-model="selectedParUse.defaultrg" layout="row">
     				
-				      <md-radio-button value="none" class="md-primary">
+				      <md-radio-button value="none">
 				      {{translate.load("sbi.analytical.drivers.usemode.none")}}
 				      
 				      </md-radio-button>

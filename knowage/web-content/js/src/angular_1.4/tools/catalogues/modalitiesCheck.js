@@ -1,6 +1,8 @@
-var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"]);
-app.controller("ModalitiesCheckController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout",ModalitiesCheckFunction]);
-function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout){
+
+var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","toastr"])
+app.controller("ModalitiesCheckController",ModalitiesCheckFunction);
+ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","toastr"];
+function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,toastr){
 	
 	//VARIABLES
 	
@@ -261,12 +263,16 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		sbiModule_restServices.get("2.0", "predefinedChecks").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
+						toastr.error(data.errors[0].message, 'Error');
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.PredefinedList = data;
+						toastr.success('Hello world!', 'Toastr fun!');
 					}
 				}).error(function(data, status, headers, config) {
+					
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					  
 
 				})	
 	}
@@ -325,4 +331,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 
 				})	
 	}
+
 };
+
+
