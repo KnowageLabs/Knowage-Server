@@ -451,7 +451,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession.beginTransaction();
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
-			if (aLayer.getType().equals("WMS") || aLayer.getType().equals("Google") || aLayer.getType().equals("TMS")) {
+			if (aLayer.getType().equals("WMS") || aLayer.getType().equals("Google") || aLayer.getType().equals("TMS") || aLayer.getType().equals("OSM")) {
 				return new ArrayList<String>();
 			}
 			// load properties of file
