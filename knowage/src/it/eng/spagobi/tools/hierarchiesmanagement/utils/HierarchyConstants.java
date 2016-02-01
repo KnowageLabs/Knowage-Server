@@ -112,4 +112,7 @@ public class HierarchyConstants {
 
 	public final static String HIER_MASTERS_CONFIG_TABLE = "HIER_MASTERS_CONFIG";
 	public final static String HIER_MASTERS_CONFIG = "CONFIGURATION";
+
+	public final static int CD_VALUE_POSITION = 0;
+	public final static int NM_VALUE_POSITION = 1;
 }
