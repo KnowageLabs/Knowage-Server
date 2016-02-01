@@ -19,35 +19,35 @@ import org.json.JSONObject;
 public class Xml {
 
 	public static String xml2json(String xml) throws TransformerFactoryConfigurationError, TransformerException {
-
-		// Fastest way to check if a big string is a JSONObject
-		// don't do this at home...
-		try {
-			new JSONObject(xml);
-			return xml;
-		} catch (JSONException e) {
-		}
-
 		String json = "{}";
 
-		byte[] bytes = xml.getBytes();
-		InputStream inputStream = new ByteArrayInputStream(bytes);
+		if (xml != null && !"".equals(xml)) {
+			// Fastest way to check if a big string is a JSONObject
+			// don't do this at home...
+			try {
+				new JSONObject(xml);
+				return xml;
+			} catch (JSONException e) {
+			}
 
-		TransformerFactory factory = TransformerFactory.newInstance();
+			byte[] bytes = xml.getBytes();
+			InputStream inputStream = new ByteArrayInputStream(bytes);
 
-		InputStream resourceAsStream = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("it/eng/spagobi/json/xml2Json.xslt");
+			TransformerFactory factory = TransformerFactory.newInstance();
 
-		StreamSource source = new StreamSource(resourceAsStream);
-		Templates template = factory.newTemplates(source);
-		Transformer transformer = template.newTransformer();
+			InputStream resourceAsStream = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream("it/eng/spagobi/json/xml2Json.xslt");
 
-		OutputStream os = new ByteArrayOutputStream();
+			StreamSource source = new StreamSource(resourceAsStream);
+			Templates template = factory.newTemplates(source);
+			Transformer transformer = template.newTransformer();
 
-		transformer.transform(new StreamSource(inputStream), new StreamResult(os));
+			OutputStream os = new ByteArrayOutputStream();
 
-		json = os.toString();
+			transformer.transform(new StreamSource(inputStream), new StreamResult(os));
 
+			json = os.toString();
+		}
 		return json;
 	}
 
