@@ -16,10 +16,10 @@ sbiM.factory('sbiModule_config',function(){
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
-		<%-- 		 localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',  // the date format localized according to user language and country --%>
-		<%-- localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country --%>
-		<%-- clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server --%>
-		<%-- clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server --%>
+ 		localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',  // the date format localized according to user language and country 
+		localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country
+		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
+		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
@@ -45,6 +45,77 @@ sbiM.factory('sbiModule_config',function(){
 
 	};
 });
+
+sbiM.config(function($mdDateLocaleProvider) {
+	this.localizedDateFormat= '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>';  // the date format localized according to user language and country 
+	
+	$mdDateLocaleProvider.parseDate = function(date) {
+		 if (typeof date == "string" && date.length > 0){
+			 var formats = localizedDateFormat.split('/');
+			 var reString='';
+			 //create regex based on localizedDateFormat
+			 for (var i =0; i<formats.length;i++){
+				if (formats[i].toUpperCase().indexOf('D')>=0 || formats[i].toUpperCase().indexOf('M')>=0){
+					reString+="(\\d{1,2})\/";
+				}else if (formats[i].toUpperCase().indexOf('Y')>=0){
+					reString+="(\\d{2}|\\d{4})\/";
+				}
+			 }
+			 var re = new RegExp('^'+reString.substring(0,reString.length-1)+'$');
+			 var result = re.exec(date);
+			 var dateCorrect = false;
+			 if (result && result.length == 4){
+				 var day,mm,yy;
+				 for (var i =0; i<formats.length;i++){
+					if (formats[i].toUpperCase().indexOf('D')>=0){
+						day=result[i+1];
+					}else if (formats[i].toUpperCase().indexOf('M')>=0){
+						mm=result[i+1];
+					}else if (formats[i].toUpperCase().indexOf('Y')>=0){
+						yy=result[i+1];
+					}
+				 }
+				 if (mm>=1 && mm<=12 && day>=1 && day <= 31){
+					 if ( (mm == 11 || mm == 4 || mm == 6 || mm == 9) && day<=30){
+						 dateCorrect = true;	
+					 }else if ( mm == 2 && ( ((yy % 4) == 0 && day<=29) || ((yy % 4) != 0 && day<=28))){
+						 dateCorrect = true;
+					 }else if (mm == 1 || mm == 3 || mm == 5  || mm == 7 || mm == 8 || mm == 10 || mm == 12){
+						 dateCorrect = true;
+					 }
+				 }
+			 }
+			 return dateCorrect == true ? new Date(result[3],result[2]-1,result[1]) : null; //Date has month starting from 0, so result[2]-1 is the correct month
+		 }else{
+		    return date;
+		 }
+	};
+	
+	$mdDateLocaleProvider.formatDate = function(date){
+		if (date){
+			var formats = localizedDateFormat.split('/');
+			var dateResult='';
+			for (var time in formats){
+				var partOfDate='';
+				if (formats[time].toUpperCase().indexOf('D')>=0){
+					partOfDate+=date.getDay();
+				}else if (formats[time].toUpperCase().indexOf('M')>=0){
+					partOfDate+=(date.getMonth()+1);
+				}else if (formats[time].toUpperCase().indexOf('Y')>=0){
+					partOfDate+=date.getFullYear();
+				}
+				if (partOfDate.length == 1 && formats[time].length == 2){
+					partOfDate = '0'+partOfDate;
+				}else if (partOfDate.length==4 && formats[time].length == 2){
+					partOfDate=partOfDate.substring(2);
+				}
+				dateResult+=partOfDate+'/';
+			}
+			return dateResult.substring(0, dateResult.length - 1);
+		}
+	};
+});
+
 
 sbiM.factory('sbiModule_user',function(){
 	
