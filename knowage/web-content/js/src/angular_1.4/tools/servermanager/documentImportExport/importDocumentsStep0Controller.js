@@ -233,10 +233,35 @@ $scope.deleteAssociationsFile=function(item){
 		          $scope.translate = translate;
 		          $scope.closeDialog = function() {
 		            $mdDialog.hide();
-		          }
+		          };
+		          $scope.saveAssFile = function() {
+		        	  
+		      		var data={"FILE_NAME":importExportDocumentModule_importConf.logFileName,
+		      				"FOLDER_NAME":importExportDocumentModule_importConf.folderName,
+		      				"NAME":$scope.name,
+		      				"DESCRIPTION":$scope.description}; 
+		      		sbiModule_restServices.post("1.0/serverManager/importExport/document","associationsList/save",data)
+		      		.success(function(data, status, headers, config) {
+		      			if (data.hasOwnProperty("errors")) {
+		      				$scope.showToast(data.errors[0].message,4000);
+		      			}else if(status==200){
+		      				$mdDialog.hide(); 
+		      			}
+		      		}).error(function(data, status, headers, config) {
+		      			$scope.showToast("ERRORS "+status,4000);
+		      		}) 
+		      	
+			          }
+		          
 		        },
 		      template:
 		           '<md-dialog aria-label="List dialog">' +
+		          ' <md-toolbar>' +
+		         '  <div class="md-toolbar-tools">' +
+		           '  <h2>{{translate.load("impexp.saveAss","component_impexp_messages");}}</h2>' +
+		           '  <span flex></span>' +
+		          ' </div>' +
+		        ' </md-toolbar>' +
 		           '  <md-dialog-content>'+
 		           '   <md-input-container>' +
 		           '  <label> {{translate.load("sbi.generic.name");}}</label>' +
@@ -250,7 +275,7 @@ $scope.deleteAssociationsFile=function(item){
 		           '    <md-button flex="40" ng-click="closeDialog()" class="md-primary">' +
 		           '     {{translate.load("sbi.general.cancel");}}' +
 		           '    </md-button>' + 
-		          ' <md-button flex="40" ng-click="closeDialog()" class="md-primary">' +
+		          ' <md-button flex="40" ng-click="saveAssFile()" class="md-primary" ng-disabled="name==undefined || name==\'\'">' +
 		           '     {{translate.load("sbi.generic.update");}}' +
 		           '    </md-button>' +
 		           '  </md-dialog-content>' + 
@@ -260,12 +285,7 @@ $scope.deleteAssociationsFile=function(item){
 		           translate: $scope.translate
 		         },
 		      clickOutsideToClose:false
-		    })
-		    .then(function(answer) {
-		      $scope.status = 'You said the information was "' + answer + '".';
-		    }, function() {
-		      $scope.status = 'You cancelled the dialog.';
-		    });
+		    }) ;
 		 
 	};
 }

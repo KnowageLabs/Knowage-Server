@@ -34,7 +34,7 @@
    			
 		 </h3>
 		
-		<h3 ng-if="IEDConf.associationsFileName!='' " class="md-body-2">
+		<h3 ng-if="IEDConf.associationsFileName!=''" class="md-body-2">
 		<span>{{translate.load("impexp.saveAss","component_impexp_messages");}}</span>
 		
 		<md-button class="md-fab md-mini"   aria-label="download" ng-click="saveAssociationsFile()">
