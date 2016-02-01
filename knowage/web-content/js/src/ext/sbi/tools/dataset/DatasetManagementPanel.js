@@ -2844,7 +2844,7 @@ Ext
 								{
 									width : 400,
 									value : '-',
-									fieldLabel : LN('sbi.ds.persist.cron.schedulingline'),
+									fieldLabel : LN('sbi.ds.persist.cron.nextfire'),
 									labelSeparator : ':',
 									readOnly : true,
 									allowBlank : true,
