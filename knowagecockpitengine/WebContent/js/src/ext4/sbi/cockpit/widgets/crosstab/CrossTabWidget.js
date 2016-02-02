@@ -47,7 +47,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-	crosstabDefinitionvar: null
+	crosstabDefinition: null
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	, crosstab: null
 	, calculatedFields: null
@@ -68,7 +68,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	, load: function(crosstabDefinition, filters) {
 		Sbi.trace("[CrossTabWidget.load]: IN");
 
-		this.crosstabDefinitionvar = this.getCrosstabDefinition();
+		this.crosstabDefinition = this.getCrosstabDefinition();
 		var datasetLabelEncoded = this.getStoreId();
 
 		this.requestParameters = {

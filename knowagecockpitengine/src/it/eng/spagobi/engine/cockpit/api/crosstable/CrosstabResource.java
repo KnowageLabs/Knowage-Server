@@ -174,8 +174,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		while (mapIter.hasNext()) {
 			String field = mapIter.next();
-			String order = (String) sortKeyMap.get(field);
-			if (order.equals("-1")) {
+			Object order = sortKeyMap.get(field);
+			if (order.toString().equals("-1")) {
 				sortKeys.put(new Integer(field), DESC);
 			} else {
 				sortKeys.put(new Integer(field), ASC);

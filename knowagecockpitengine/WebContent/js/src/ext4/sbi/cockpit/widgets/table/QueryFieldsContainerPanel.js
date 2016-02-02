@@ -124,7 +124,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'backgroundColor', type: 'string'}
 	      , {name: 'columnWidth', type: 'string'}
 	      , {name: 'fontType', type: 'string'}
-	      , {name: 'fontSize', type: 'int'}
+	      , {name: 'fontSize', type: 'string'}
 	      , {name: 'fontWeight', type: 'string'}
 	      , {name: 'fontColor', type: 'string'}
 	      , {name: 'fontDecoration', type: 'string'}
