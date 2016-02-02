@@ -66,8 +66,8 @@
 							<div class="md-toolbar-tools h100 ">
 								<div style="text-align: center; font-size: 24px;">Tenant</div>
 								<div style="position: absolute; right: 0px" class="h100">							
-									    <md-button tabindex="-1" aria-label="Add Tenant" class="md-raised md-ExtraMini mozilla " style=" margin-top: 2px;" class="md-raised md-ExtraMini" ng-click="resetForm(tenantForm)" type="reset">{{translate.load("sbi.generic.search.clear")}}</md-button>
-									<md-button tabindex="-1" aria-label="Add Tenant" class="md-raised md-ExtraMini mozilla " style=" margin-top: 2px;" ng-click="saveTenant(tenantForm)" ng-disabled = "!tenant.MULTITENANT_NAME || !tenant.MULTITENANT_THEME || datasourcesSelected.length==0 || productsSelected.length==0">{{translate.load("sbi.generic.save")}}</md-button>
+								    <md-button tabindex="-1" aria-label="Add Tenant" class="md-raised md-ExtraMini mozilla color-black " style=" margin-top: 2px;" ng-click="resetForm(tenantForm)" type="reset">{{translate.load("sbi.generic.search.clear")}}</md-button>
+									<md-button tabindex="-1" aria-label="Add Tenant" class="md-raised md-ExtraMini mozilla color-black " style=" margin-top: 2px;" ng-click="saveTenant(tenantForm)" ng-disabled = "!tenant.MULTITENANT_NAME || !tenant.MULTITENANT_THEME || datasourcesSelected.length==0 || productsSelected.length==0">{{translate.load("sbi.generic.save")}}</md-button>
 								</div>
 							</div>	
 						</md-toolbar>
@@ -105,7 +105,7 @@
 													highlights-selected-item = "true"
 													show-search-bar="true"
 													no-pagination="true"
-													click-function = "toogleCheckBox(item,cell,listId)"  
+													click-function = "toggleCheckBox(item,cell,listId)"  
 													multi-select = "true"
 													selected-item = "productsSelected"
 												></angular-table>
@@ -127,7 +127,7 @@
 													highlights-selected-item = "true"
 													show-search-bar="true"
 													no-pagination="true"
-													click-function = "toogleCheckBox(item,cell,listId)"
+													click-function = "toggleCheckBox(item,cell,listId)"
 													multi-select = "true"
 													selected-item = "datasourcesSelected"
 												></angular-table>

@@ -53,29 +53,28 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	sbiModule_restServices.get(path, "datasources", null).success(function(data) {
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.datasources= data.root;
-			$scope.datasourcesDefault= angular.fromJson(angular.toJson($scope.datasources));
+			$scope.datasourcesDefault= angular.copy($scope.datasources);
 		}
 	});
 
 	sbiModule_restServices.get(path, "producttypes").success(function(data) {
 		if (data.root !== undefined && data.root.length > 0){
 			$scope.productTypes = data.root;
-			$scope.productTypesDefault = angular.fromJson(angular.toJson($scope.productTypes));
+			$scope.productTypesDefault = angular.copy($scope.productTypes);
 		}
 	});
 	
-	$scope.toogle = function(){
-		var result = !this.CHECKED;
-		return result;
-		
-	};
+	$scope.toggleCheckBox = function(item,cell,listId){
+		item.CHECKED=!item.CHECKED;
+	}
 	
 	$scope.copyRowInForm = function(item,cell,listId) {
-		//not productTypes for this tenant? Get them!
+		//Empty the form data sources and products type
 		$scope.datasourcesSelected.splice(0,$scope.datasourcesSelected.length);
 		$scope.productsSelected.splice(0,$scope.productsSelected.length);
+		//not productTypes for this tenant? Get them!
+		$scope.item=item;
 		if (item.productTypes === undefined){
-			$scope.item=item;
 			sbiModule_restServices.get(path, "producttypes", "TENANT="+item.MULTITENANT_NAME).success(function(data) {
 				$scope.item.productTypes = data.root;
 				$scope.copySelectedElement($scope.item.productTypes,$scope.productsSelected);
@@ -83,11 +82,10 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			});
 		} else{
 			$scope.copySelectedElement($scope.item.productTypes,$scope.productsSelected);
-			$scope.productTypes = item.productTypes;
+			$scope.productTypes = $scope.item.productTypes;
 		}
 		//not datasources for this tenant? Get them!
 		if (item.datasources === undefined){
-			$scope.item=item;
 			sbiModule_restServices.get(path, "datasources", "TENANT="+item.MULTITENANT_NAME).success(function(data) {
 				$scope.item.datasources = data.root;
 				$scope.copySelectedElement($scope.item.datasources,$scope.datasourcesSelected);
@@ -95,16 +93,19 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			});
 		} else{
 			$scope.copySelectedElement($scope.item.datasources,$scope.datasourcesSelected);
-			$scope.datasources = item.datasources;
+			$scope.datasources = $scope.item.datasources;
 		}
-		$scope.tenant = angular.fromJson(angular.toJson(item));
-		$scope.tenantSelected = item; 
+		$scope.tenant = $scope.item;
+		$scope.tenantSelected = $scope.item; 
 		$scope.showForm = true;
 	};
 	
+	//Each AngularTable has an array of selected item. Insert the elements selected in this array
 	$scope.copySelectedElement = function(source,selected){
 		for (var i = 0 ; i< source.length;i++){
-			selected.push(source[i]);
+			if(source[i].CHECKED == true){
+				selected.push(source[i]);
+			}
 		}
 	}
 	
@@ -126,7 +127,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			.success(function(data){
 				if (data.root.MULTITENANT_ID !== undefined){
 					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
-					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
+					$scope.tenants.splice(0,0,angular.copy(tenant));
 					var name = tenant.MULTITENANT_NAME;
 					var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
 					$scope.showAlert('INFO - '+ name , message);
@@ -229,7 +230,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 					if ( newTenant.MULTITENANT_ID === undefined ){
 						$scope.solveMissingId(newTenant);
 					}else{
-						$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
+						$scope.tenants.splice(0,0,angular.copy(newTenant));
 						var name = newTenant.MULTITENANT_NAME;
 						var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
 						$scope.showAlert('INFO - '+ name , message);
@@ -237,7 +238,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 				}else{
 					//updating the table
 					var idx = $scope.indexOf($scope.tenants,newTenant);
-					$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
+					$scope.tenants[idx]=angular.copy(newTenant);
 					var name = newTenant.MULTITENANT_NAME;
 					var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name+'"';
 					$scope.showAlert('INFO - '+ name , message);

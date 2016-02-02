@@ -68,3 +68,7 @@ md-content.ToolbarBox.miniToolbar {
   .thMoz{text-align:left !important;}
   .mozSize{width:100% !important; }
 }
+
+.color-black > span{
+	color:black;
+}
