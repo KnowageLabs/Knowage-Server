@@ -232,6 +232,43 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
+	 * Returns the specific node if exists into the input hierarchy
+	 *
+	 * @param key
+	 *            : element key
+	 * @param theLast
+	 *            : boolean: if true returns the last element, otherwise the first
+	 *
+	 * @return the node
+	 */
+	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast) {
+		HierarchyTreeNode toReturn = this;
+		HierarchyTreeNode treeNode = null;
+		for (Iterator<HierarchyTreeNode> treeIterator = this.iterator(); treeIterator.hasNext();) {
+			treeNode = treeIterator.next();
+			if (treeNode.getKey().equals(key)) {
+				toReturn = treeNode;
+				if (!theLast)
+					break;
+			}
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Returns the last node of the hierarchy
+	 * 
+	 * @return the node
+	 */
+	public HierarchyTreeNode getLastChild() {
+		HierarchyTreeNode toReturn = this;
+		for (Iterator<HierarchyTreeNode> treeIterator = this.iterator(); treeIterator.hasNext();) {
+			toReturn = treeIterator.next();
+		}
+		return toReturn;
+	}
+
+	/**
 	 * Returns the index of the specified child in this node's child array. If the specified node is not a child of this node, returns <code>-1</code>. This
 	 * method performs a linear search and is O(n) where n is the number of children.
 	 *
@@ -249,7 +286,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
