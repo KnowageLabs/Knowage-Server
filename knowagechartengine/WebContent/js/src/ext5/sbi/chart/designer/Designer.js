@@ -754,7 +754,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Show/hide the color pallete on the second configuration panel on the 
 					 * Step 2 tab of the Designer page.
 					 */					
-					if (isChartWordCloud || isChartGauge) {	
+//					if (isChartWordCloud || isChartGauge) {	
+					if (isChartWordCloud) {	
 						//console.log(colorPalette);
 						colorPalette.hide();
 					} else {
@@ -940,8 +941,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * order to update its layout on the Configuration tab (prev. Step 2).
 					 * 
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */						
-					var numberOfColors = jsonTemplate.CHART.COLORPALETTE.COLOR.length;
+					 */
+					var numberOfColors = (jsonTemplate.CHART.COLORPALETTE.COLOR) ? jsonTemplate.CHART.COLORPALETTE.COLOR.length : 0;					
+					
 					//Ext.getCmp("chartColorPallete").fireEvent("chartTypeChanged",numberOfColors);
 					
 					Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;

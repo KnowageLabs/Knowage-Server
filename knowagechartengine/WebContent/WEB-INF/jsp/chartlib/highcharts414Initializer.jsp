@@ -66,6 +66,7 @@
 	};
 
 	function handleDrilldown(e) {
+		
 		if (!e.seriesOptions) 
 		{			
 			/*

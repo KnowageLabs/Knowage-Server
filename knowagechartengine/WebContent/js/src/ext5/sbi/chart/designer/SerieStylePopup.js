@@ -124,19 +124,19 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //			/**
 //			 * DATA_LABELS field set for the GAUGE chart type
 //			 */
-			this.dataLabelsFieldSet = Ext.create('Ext.form.FieldSet', {
-				collapsible: true,
-				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
-				
-				defaults: {
-					anchor: '100%',
-					labelAlign : 'left',
-					labelWidth : LABEL_WIDTH,
-				},
-				
-				layout: 'anchor',
-				items : []
-			});
+//			this.dataLabelsFieldSet = Ext.create('Ext.form.FieldSet', {
+//				collapsible: true,
+//				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
+//				
+//				defaults: {
+//					anchor: '100%',
+//					labelAlign : 'left',
+//					labelWidth : LABEL_WIDTH,
+//				},
+//				
+//				layout: 'anchor',
+//				items : []
+//			});
 //		
 //			/**
 //			 * Variables (GUI elements) for the DIAL and DATA LABELS of the GAUGE chart
@@ -197,16 +197,16 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //			 * 			- Y position of the panel
 //			 */	
 //			
-			this.yPositionDataLabels = Ext.create
-	    	(
-				{
-			        xtype: 'numberfield',
-			        id: 'yPositionDataLabels',
-			        value: dataAtRow.get('yPositionDataLabels'),
-			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition"),
-			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.yPosition.emptyText")
-			    }	
-	    	);
+//			this.yPositionDataLabels = Ext.create
+//	    	(
+//				{
+//			        xtype: 'numberfield',
+//			        id: 'yPositionDataLabels',
+//			        value: dataAtRow.get('yPositionDataLabels'),
+//			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition"),
+//			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.yPosition.emptyText")
+//			    }	
+//	    	);
 //			
 //			/**
 //			 * DATA LABELS: 
@@ -266,7 +266,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 ////			    }	
 ////	    	);
 //			
-			this.dataLabelsFieldSet.add(this.yPositionDataLabels);
+			//this.dataLabelsFieldSet.add(this.yPositionDataLabels);
 //			//this.dataLabelsFieldSet.add(this.colorDataLabels);
 ////			this.dataLabelsFieldSet.add(this.formatDataLabels);
 		}
@@ -727,7 +727,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		if (chartType == "GAUGE")
 		{
 			//this.add(this.dialFieldSet);
-			this.add(this.dataLabelsFieldSet);
+			//this.add(this.dataLabelsFieldSet);
 		}
 	},
 	
@@ -817,11 +817,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //			var backgroundColorDial = this.backgroundColorDial.getColor();
 //			dataAtRow.set('backgroundColorDial', backgroundColorDial);
 			
-			/**
-			 * DATA LABELS
-			 */		
-			var yPositionDataLabels = this.yPositionDataLabels.getValue();
-			dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
+//			/**
+//			 * DATA LABELS
+//			 */		
+//			var yPositionDataLabels = this.yPositionDataLabels.getValue();
+//			dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
 			
 //			var colorDataLabels = this.colorDataLabels.getColor();
 //			dataAtRow.set('colorDataLabels', colorDataLabels);
