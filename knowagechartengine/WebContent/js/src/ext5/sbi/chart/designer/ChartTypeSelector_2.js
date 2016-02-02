@@ -45,26 +45,31 @@ Ext.define
 	    	chartType: null,
 	    	
 	    	/**
-			 * Lookup for checking the compatibility of the chart types when we are determining
-			 * should all the data that exists in the current chart within the X and Y panels
-			 * be removed (cleared). 
-			 * @author: danristo (danilo.ristovski@mht.net)
-			 */
-			compatibilityAddDataLookup:
-			{
-				bar: 		['line','radar','scatter'],
-				line: 		['bar','radar','scatter'],
-				pie: 		[],
-				sunburst: 	[],
-				wordcloud: 	[],
-				treemap: 	[],
-				parallel: 	[],
-				radar: 		['bar','line','scatter'],
-				scatter:	['bar','line','radar'],
-				heatmap:	[],
-				chord: 		[],
-				gauge:		[]
-			}
+	    	 * Removing the compatibility among chart types.
+	    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+	    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+//	    	/**
+//			 * Lookup for checking the compatibility of the chart types when we are determining
+//			 * should all the data that exists in the current chart within the X and Y panels
+//			 * be removed (cleared). 
+//			 * @author: danristo (danilo.ristovski@mht.net)
+//			 */
+//			compatibilityAddDataLookup:
+//			{
+//				bar: 		['line','radar','scatter'],
+//				line: 		['bar','radar','scatter'],
+//				pie: 		[],
+//				sunburst: 	[],
+//				wordcloud: 	[],
+//				treemap: 	[],
+//				parallel: 	[],
+//				radar: 		['bar','line','scatter'],
+//				scatter:	['bar','line','radar'],
+//				heatmap:	[],
+//				chord: 		[],
+//				gauge:		[]
+//			}
     	},
 	    
 	    getChartType: function() {
@@ -164,28 +169,38 @@ Ext.define
     		);							
 		
 			/**
-			 * Lookup for checking the compatibility of the chart types when we are determining
-			 * should all the data that exists in the current chart within the X and Y panels
-			 * be removed (cleared). 
-			 * @author: danristo (danilo.ristovski@mht.net)
-			 */
-			var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
+	    	 * Removing the compatibility among chart types.
+	    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+	    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+//			/**
+//			 * Lookup for checking the compatibility of the chart types when we are determining
+//			 * should all the data that exists in the current chart within the X and Y panels
+//			 * be removed (cleared). 
+//			 * @author: danristo (danilo.ristovski@mht.net)
+//			 */
+//			var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
 
 			/**
-			 * With this foreach-loop check if the previous and the newly chosen chart type 
-			 * are compatible (in a manner of their quantity and quality criteria for the
-			 * serie and category items). If not compatible, 'compatibleTypes' variable is
-			 * going to be 'false'.
-			 * 
-			 * @author: danristo (danilo.ristovski@mht.net)
-			 */
-			var compatibleTypes = false;
-			
-			for(i in compatibilityAddDataLookup[newlySelectedType]) 
-			{
-				var compatibleChart = compatibilityAddDataLookup[newlySelectedType][i];
-				compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
-			}			
+	    	 * Removing the compatibility among chart types.
+	    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+	    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+//			/**
+//			 * With this foreach-loop check if the previous and the newly chosen chart type 
+//			 * are compatible (in a manner of their quantity and quality criteria for the
+//			 * serie and category items). If not compatible, 'compatibleTypes' variable is
+//			 * going to be 'false'.
+//			 * 
+//			 * @author: danristo (danilo.ristovski@mht.net)
+//			 */
+//			var compatibleTypes = false;
+//			
+//			for(i in compatibilityAddDataLookup[newlySelectedType]) 
+//			{
+//				var compatibleChart = compatibilityAddDataLookup[newlySelectedType][i];
+//				compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
+//			}			
 
 			/**
 			 * Call the static function in order to update the empty text
@@ -209,10 +224,15 @@ Ext.define
 			globalScope.fireEvent("chartTypeChanged");	
 			
 			/**
-			 * If previous and current chart types are not compatible.
-			 */
-			if(!compatibleTypes) 
-			{							
+	    	 * Removing the compatibility among chart types.
+	    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+	    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+//			/**
+//			 * If previous and current chart types are not compatible.
+//			 */
+//			if(!compatibleTypes) 
+//			{							
 				Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 				
 				/**
@@ -330,134 +350,139 @@ Ext.define
 					// Hide the plus tool on the toolbar of the left (Y) axis panel
 					globalScope.plusLeftAxis.hide();
 				}
-			}	
 			/**
-			 * If previous and current chart types are compatible.
-			 */
-			else 
-			{							
-				/**
-				 * If we come to RADAR chart from some chart type that is compatible with it 
-				 * (e.g. BAR and LINE), keep the data, but remove all other Y-axis panels that
-				 * were potentially defined earlier for those compatible chart types and hide
-				 * the plus tool placed on the left Y-axis panels header. For RADAR chart we
-				 * can have only one Y-axis.
-				 * 
-				 * @author: danristo (danilo.ristovski@mht.net)
-				 */				
-				if (newlySelectedType.toLowerCase() == "radar" || newlySelectedType.toLowerCase() == "scatter") {								
-					
-					/**
-					 * We need confirmation from user for removing all the items (categories) from the
-					 * bottom X-axis panel when moving from the BAR/LINE to RADAR/SCATTER chart type.
-					 * Removing those items inside the X-axis panel is necessary because we can have
-					 * multiple categories for BAR/LINE chart type, whilst we can have ONLY ONE CATEGORY
-					 * for RADAR/SCATTER chart type.
-					 * @author: danristo (danilo.ristovski@mht.net)
-					 */					
-					if ((previousChartType == "bar" || previousChartType == "line") && 
-							Ext.getCmp("chartBottomCategoriesContainer").store.data.length > 1) {
-
-						Ext.Msg.show ({
-							title : '',
-							message : LN("sbi.chartengine.designer.charttype.changetype.lossOfCategories"), 
-							icon : Ext.Msg.QUESTION,
-							closable : false,
-							buttons : Ext.Msg.OKCANCEL,
-							
-							buttonText : {
-								ok : LN('sbi.chartengine.generic.ok'),
-								cancel : LN('sbi.generic.cancel')
-							},
-						
-							fn : function(buttonValue, inputText, showConfig) {
-								if (buttonValue == 'ok') {										
-									// Hide the plus tool on the toolbar of the left (Y) axis panel
-									(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
-
-									/**
-									 * If there are some Y-axis panels created before on the Designer (other 
-									 * that the default (the left) one, remove them.
-									 */					
-									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
-									var numberOfYAxis = chartColumnsContainerNew.length;
-
-									if (numberOfYAxis > 1) {						
-										for (var i=1; i<numberOfYAxis; i++) {
-											Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
-										}
-									}
-									
-									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
-									
-									/** 
-									 * Set active type chart as the one that we chosen now (in other words, set 
-									 * the chart type as 'radar'. 
-									 */ 
-									globalScope.fireEvent("resetStep2");
-
-									/**
-									 * Clean the X-axis bottom panel for RADAR and SCATTER chart types
-									 */
-									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
-																		
-								} else if (buttonValue == 'cancel') {																
-									
-									globalScope.suspendEvents(false);
-
-									// Set previous chart type
-									globalScope.setValue(previousChartType);
-
-									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
-
-									// Resume events
-									globalScope.resumeEvents();
-
-									globalScope.fireEvent("cancel");
-								}
-							}	
-						});
-					} 
-					/**
-					 * If previous chart type was not RADAR or SCATTER
-					 */
-					else 
-					{
-
-						globalScope.resetStep1();
-						// Hide the plus tool on the toolbar of the left (Y) axis panel
-						(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
-
-						/**
-						 * If there are some Y-axis panels created before on the Designer (other 
-						 * that the default (the left) one, remove them.
-						 */					
-						var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
-						var numberOfYAxis = chartColumnsContainerNew.length;
-
-						if (numberOfYAxis > 1) {						
-							for (var i=1; i<numberOfYAxis; i++) {
-								Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
-							}
-						}	
-
-						Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
-
-						globalScope.fireEvent("resetStep2");
-					}
-				}
-				
-				/**
-				 * If newly selected chart type is not RADAR, GAUGE nor SCATTER (currently: BAR or LINE)
-				 */
-				else 
-				{
-					globalScope.resetStep1();
-
-					Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();console.log("===");
-					globalScope.fireEvent("resetStep2");
-				}
-			}	
+	    	 * Removing the compatibility among chart types.
+	    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+	    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+//			}	
+//			/**
+//			 * If previous and current chart types are compatible.
+//			 */
+//			else 
+//			{							
+//				/**
+//				 * If we come to RADAR chart from some chart type that is compatible with it 
+//				 * (e.g. BAR and LINE), keep the data, but remove all other Y-axis panels that
+//				 * were potentially defined earlier for those compatible chart types and hide
+//				 * the plus tool placed on the left Y-axis panels header. For RADAR chart we
+//				 * can have only one Y-axis.
+//				 * 
+//				 * @author: danristo (danilo.ristovski@mht.net)
+//				 */				
+//				if (newlySelectedType.toLowerCase() == "radar" || newlySelectedType.toLowerCase() == "scatter") {								
+//					
+//					/**
+//					 * We need confirmation from user for removing all the items (categories) from the
+//					 * bottom X-axis panel when moving from the BAR/LINE to RADAR/SCATTER chart type.
+//					 * Removing those items inside the X-axis panel is necessary because we can have
+//					 * multiple categories for BAR/LINE chart type, whilst we can have ONLY ONE CATEGORY
+//					 * for RADAR/SCATTER chart type.
+//					 * @author: danristo (danilo.ristovski@mht.net)
+//					 */					
+//					if ((previousChartType == "bar" || previousChartType == "line") && 
+//							Ext.getCmp("chartBottomCategoriesContainer").store.data.length > 1) {
+//
+//						Ext.Msg.show ({
+//							title : '',
+//							message : LN("sbi.chartengine.designer.charttype.changetype.lossOfCategories"), 
+//							icon : Ext.Msg.QUESTION,
+//							closable : false,
+//							buttons : Ext.Msg.OKCANCEL,
+//							
+//							buttonText : {
+//								ok : LN('sbi.chartengine.generic.ok'),
+//								cancel : LN('sbi.generic.cancel')
+//							},
+//						
+//							fn : function(buttonValue, inputText, showConfig) {
+//								if (buttonValue == 'ok') {										
+//									// Hide the plus tool on the toolbar of the left (Y) axis panel
+//									(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
+//
+//									/**
+//									 * If there are some Y-axis panels created before on the Designer (other 
+//									 * that the default (the left) one, remove them.
+//									 */					
+//									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
+//									var numberOfYAxis = chartColumnsContainerNew.length;
+//
+//									if (numberOfYAxis > 1) {						
+//										for (var i=1; i<numberOfYAxis; i++) {
+//											Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
+//										}
+//									}
+//									
+//									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+//									
+//									/** 
+//									 * Set active type chart as the one that we chosen now (in other words, set 
+//									 * the chart type as 'radar'. 
+//									 */ 
+//									globalScope.fireEvent("resetStep2");
+//
+//									/**
+//									 * Clean the X-axis bottom panel for RADAR and SCATTER chart types
+//									 */
+//									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
+//																		
+//								} else if (buttonValue == 'cancel') {																
+//									
+//									globalScope.suspendEvents(false);
+//
+//									// Set previous chart type
+//									globalScope.setValue(previousChartType);
+//
+//									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+//
+//									// Resume events
+//									globalScope.resumeEvents();
+//
+//									globalScope.fireEvent("cancel");
+//								}
+//							}	
+//						});
+//					} 
+//					/**
+//					 * If previous chart type was not RADAR or SCATTER
+//					 */
+//					else 
+//					{
+//
+//						globalScope.resetStep1();
+//						// Hide the plus tool on the toolbar of the left (Y) axis panel
+//						(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
+//
+//						/**
+//						 * If there are some Y-axis panels created before on the Designer (other 
+//						 * that the default (the left) one, remove them.
+//						 */					
+//						var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
+//						var numberOfYAxis = chartColumnsContainerNew.length;
+//
+//						if (numberOfYAxis > 1) {						
+//							for (var i=1; i<numberOfYAxis; i++) {
+//								Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1].close();	
+//							}
+//						}	
+//
+//						Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+//
+//						globalScope.fireEvent("resetStep2");
+//					}
+//				}
+//				
+//				/**
+//				 * If newly selected chart type is not RADAR, GAUGE nor SCATTER (currently: BAR or LINE)
+//				 */
+//				else 
+//				{
+//					globalScope.resetStep1();
+//
+//					Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();console.log("===");
+//					globalScope.fireEvent("resetStep2");
+//				}
+//			}	
 		},
 				
 		listeners:
@@ -574,37 +599,55 @@ Ext.define
 		        		}
 		    		);
 					
-					var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
-					
 					/**
-					 * With this foreach-loop check if the previous and the newly chosen chart type 
-					 * are compatible (in a manner of their quantity and quality criteria for the
-					 * serie and category items). If not compatible, 'compatibleTypes' variable is
-					 * going to be 'false'.
-					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
-					 */
-					var compatibleTypes = false;
-					
-					for(i in compatibilityAddDataLookup[currentOrNewChartType]) 
-					{
-						var compatibleChart = compatibilityAddDataLookup[currentOrNewChartType][i];
-						compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
-					}
+			    	 * Removing the compatibility among chart types.
+			    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+			    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			    	 */
+//					var compatibilityAddDataLookup = Sbi.chart.designer.ChartTypeSelector_2.compatibilityAddDataLookup;
+//					
+//					/**
+//					 * With this foreach-loop check if the previous and the newly chosen chart type 
+//					 * are compatible (in a manner of their quantity and quality criteria for the
+//					 * serie and category items). If not compatible, 'compatibleTypes' variable is
+//					 * going to be 'false'.
+//					 * 
+//					 * @author: danristo (danilo.ristovski@mht.net)
+//					 */
+//					var compatibleTypes = false;
+//					
+//					for(i in compatibilityAddDataLookup[currentOrNewChartType]) 
+//					{
+//						var compatibleChart = compatibilityAddDataLookup[currentOrNewChartType][i];
+//						compatibleTypes = compatibleTypes || compatibleChart == previousChartType;
+//					}
 					
 					var messageTxt = "";
-					
+//					
 					if (!Sbi.chart.designer.Designer.jsonTemplateStyleExists && !Sbi.chart.designer.Designer.backupStyleSet)
 					{
-						messageTxt = (compatibleTypes) ? 
-								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategorAndStyle") : 
-									LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndStyle");
+						/**
+				    	 * Removing the compatibility among chart types.
+				    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+				    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				    	 */
+//						messageTxt = (compatibleTypes) ? 
+//								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategorAndStyle") : 
+//									LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndStyle");
+						messageTxt = LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategorAndStyle")
 					}
 					else
 					{
-						messageTxt = (compatibleTypes) ? 
-							LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConf") : 
-								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");										
+						/**
+				    	 * Removing the compatibility among chart types.
+				    	 * JIRA issue: https://production.eng.it/jira/browse/KNOWAGE-516
+				    	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				    	 */
+//						messageTxt = (compatibleTypes) ? 
+//							LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConf") : 
+//								LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");
+						
+						messageTxt = LN("sbi.chartengine.designer.charttype.changetype.lossOfAxesSerStyleConfAndSeriesCategor");	
 					}													
 					
 					/**

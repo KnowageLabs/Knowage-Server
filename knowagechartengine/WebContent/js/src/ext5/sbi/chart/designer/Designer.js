@@ -20,6 +20,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     	noStylePickedStyle: null,
     	tabChangeChecksFlag: true,
     	jsonTemplateStyleExists: false,
+    	backupStyleSet: false,
 		jsonTemplate: null,
 		chartLibNamesConfig: null,
 		
