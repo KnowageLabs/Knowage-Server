@@ -91,20 +91,27 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			item += "&WORD=" + searchValue;
 		}
 		ctr.showSearchPreloader = true;
-		sbiModule_restServices.get("1.0/glossary", "listWords", item)
-		.success(function(data, status, headers, config) {
-			console.log(data)
-			if (data.hasOwnProperty("errors")) {
-				console.log("word non Ottenuti");
-			} else {
-				ctr.words = data.item;
-				ctr.totalWord = data.itemCount;
+		sbiModule_restServices.promiseGet("1.0/glossary", "listWords", item)
+		.then(function(response) {
+			
+			// AVAILABLE FIELDS
+			var data = response.data;
+			var status = response.status;
+			var headers = response.headers;
+			var config = response.config;
 
-			}
+			ctr.words = data.item;
+			ctr.totalWord = data.itemCount;
 			ctr.showSearchPreloader = false;
 
-		}).error(function(data, status, headers, config) {
-			console.log("word non Ottenuti " + status);
+		}, function(response) {
+			
+			// AVAILABLE FIELDS
+			var data = response.data;
+			var status = response.status;
+			var headers = response.headers;
+			var config = response.config;
+			
 			ctr.showSearchPreloader = false;
 		});
 	};
