@@ -17,23 +17,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.label = "";
 	$scope.ItemList = []; // array that hold custom list
 	$scope.listType = []; // array that hold dropdown list from domain
-	$scope.showActionOK = function(msg) {
-		  var toast = $mdToast.simple() 
-		  .content(msg)
-		  .action('OK')
-		  .highlightAction(false)
-		  .hideDelay(3000)
-		  .position('top')
-
-		  $mdToast.show(toast).then(function(response) {
-
-		   if ( response == 'ok' ) {
-
-
-		   }
-		  });
-		 };
-		 
+			 
 		 $scope.ccSpeedMenu= [
 		                         {
 		                            label:sbiModule_translate.load("sbi.generic.delete"),
@@ -162,53 +146,40 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		
 		if($scope.SelectedConstraint.hasOwnProperty("checkId")){ // if item already exists do update PUT
 			
-			sbiModule_restServices
-		    .put("2.0/customChecks",$scope.SelectedConstraint.checkId,$scope.SelectedConstraint).success(
-					function(data, status, headers, config) {
-						console.log(data);
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.ItemList=[];
-							$timeout(function(){								
-								$scope.getCustom();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
-							$scope.SelectedConstraint={};
-							$scope.showme=false;
-							$scope.dirtyForm=false;	
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})	
+			sbiModule_restServices.promisePut("2.0/customChecks",$scope.SelectedConstraint.checkId,$scope.SelectedConstraint)
+			.then(function(response) {
+				$scope.ItemList=[];
+				$timeout(function(){								
+					$scope.getCustom();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.SelectedConstraint={};
+				$scope.showme=false;
+				$scope.dirtyForm=false;
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});	
 			
 		}else{ // create new item in database POST
 			console.log($scope.SelectedConstraint);
-			sbiModule_restServices
-		    .post("2.0/customChecks","",angular.toJson($scope.SelectedConstraint)).success(
-					function(data, status, headers, config) {
-						console.log(data);
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.ItemList=[];
-							$timeout(function(){								
-								$scope.getCustom();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
-							$scope.SelectedConstraint={};
-							$scope.showme=false;
-							$scope.dirtyForm=false;
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})	
-			
-			
+			sbiModule_restServices.promisePost("2.0/customChecks","",angular.toJson($scope.SelectedConstraint))
+			.then(function(response) {
+				$scope.ItemList=[];
+				$timeout(function(){								
+					$scope.getCustom();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				$scope.SelectedConstraint={};
+				$scope.showme=false;
+				$scope.dirtyForm=false;
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});			
 		}
-		
 	}
 	
 	/*
@@ -260,71 +231,53 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		}
 	
 	$scope.getPredefined = function(){ // service that gets predefined list GET		
-		sbiModule_restServices.promiseGet("2.0", "predefinedCheck")
+		sbiModule_restServices.promiseGet("2.0", "predefinedChecks")
 		.then(function(response) {
 			$scope.PredefinedList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
 			
+		});	
+	}
+	
+	
+	$scope.getCustom = function(){ // service that gets user created list GET
+		sbiModule_restServices.promiseGet("2.0", "customChecks")
+		.then(function(response) {
+			$scope.ItemList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
+	}
+			
+	$scope.getDomainType = function(){ // service that gets domain types for dropdown GET
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=CHECK")
+		.then(function(response) {
+			$scope.listType = response.data;
+			$scope.addTranslation();
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
+	}
+	
+	$scope.deleteConstraint = function(item){ // this function is called when clicking on delete button
+		sbiModule_restServices.promiseDelete("2.0/customChecks",item.checkId)
+		.then(function(response) {
+			$scope.ItemList=[];
+			$timeout(function(){								
+				$scope.getCustom();
+			}, 1000);
+			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			$scope.SelectedConstraint={};
+			$scope.showme=false;
+			$scope.dirtyForm=false;
 
 		}, function(response) {
 			toastr.error(response.data.errors[0].message, 'Error');
 			
 		});
-		
-}
-	
-	
-	$scope.getCustom = function(){ // service that gets user created list GET
-		sbiModule_restServices.get("2.0", "customChecks").success(
-				function(data, status, headers, config) {
-					console.log(data);
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.ItemList = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
-	}
-			
-	
-	$scope.getDomainType = function(){ // service that gets domain types for dropdown GET
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=CHECK").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.listType = data;
-						$scope.addTranslation();
-						console.log($scope.listType);
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
-	}
-	
-	$scope.deleteConstraint = function(item){ // this function is called when clicking on delete button
-		sbiModule_restServices.delete("2.0/customChecks",item.checkId).success(
-				function(data, status, headers, config) {
-					console.log(data);
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.ItemList=[];
-						$timeout(function(){								
-							$scope.getCustom();
-						}, 1000);
-						$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
-						$scope.SelectedConstraint={};
-						$scope.showme=false;
-						$scope.dirtyForm=false;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
 	}
 
 };

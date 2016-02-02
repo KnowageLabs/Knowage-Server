@@ -226,14 +226,10 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
 		/* STEFAN: ADD GENERAL BEHAVIOUR */
-		console.log("IN GENERIC");
-		console.log(data);
   		deferred.reject(data, status, headers, config);
 	};
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
-		console.log("IN HANDLE RESPONSE");
-		console.log(data);
 		if (data.data.hasOwnProperty("errors")) {
 			/* STEFAN: HANDLE OTHER ERRORS e.g. you should check also data.status  */
 			
