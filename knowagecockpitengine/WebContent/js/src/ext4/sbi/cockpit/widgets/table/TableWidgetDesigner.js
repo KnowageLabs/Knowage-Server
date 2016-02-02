@@ -61,24 +61,22 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	
 
 	// propagate events
-	this.tableDesigner.on(
-		'attributeDblClick' ,
+	this.tableDesigner.on('attributeDblClick' ,
 		function (thePanel, attribute) {
 			//this.fireEvent("attributeDblClick", this, attribute);
 			this.attributeDblClickHandler(attribute, thePanel);
 		},
 		this
 	);
-	this.tableDesigner.on(
-		'attributeRemoved' ,
+	
+	this.tableDesigner.on('attributeRemoved' ,
 		function (thePanel, attribute) {
 			this.fireEvent("attributeRemoved", this, attribute);
 		},
 		this
 	);
 
-	this.tableDesigner.on(
-		'beforerender' ,
+	this.tableDesigner.on('beforerender' ,
 		function (thePanel, attribute) {
 			
 			var state = {};
@@ -96,6 +94,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 			state.alternateRowsColorsFirst = this.alternateRowsColorsFirst;
 			state.alternateRowsColorsSecond = this.alternateRowsColorsSecond;
 			state.summaryRow = this.summaryRow;
+			state.summaryRowText = this.summaryRowText;
 			state.summaryRowFont = this.summaryRowFont;
 			state.summaryRowFontSize = this.summaryRowFontSize;
 			state.summaryRowFontColor = this.summaryRowFontColor;
@@ -185,6 +184,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	
 	//fields to set the summary row style
 	, summaryRowChBox: null
+	, summaryRowTextField: null
 	, summaryRowFontCombo: null
 	, summaryRowFontSizeCombo: null
 	, summaryRowFontColorField: null
@@ -677,7 +677,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRow
 		this.summaryRowChBox = Ext.create('Ext.form.field.Checkbox', {
-			name: 				'summaryRowChBox',
+			name: 				'summaryRow',
 			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.summaryrow'),
 			labelWidth:			tableOptionsLabelWidths,
 			width:				tableOptionsWidths,
@@ -685,8 +685,19 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		});
 		this.summaryRowFieldSet.add(this.summaryRowChBox);
 		
+		// state.summaryRowText
+		this.summaryRowTextField = Ext.create('Ext.form.field.Text', {
+			name: 				'summaryRowText',
+			fieldLabel: 		LN('sbi.cockpit.widgets.text.textWidgetDesigner.text'),
+			labelWidth:			tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:				tableOptionsMargins
+		});
+		this.summaryRowFieldSet.add(this.summaryRowTextField);
+		
 		// state.summaryRowFont
 		this.summaryRowFontCombo = Ext.create('Ext.form.ComboBox',{
+			name:			'summaryRowFont',
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
 			queryMode:      'local',
 			triggerAction:  'all',
@@ -698,7 +709,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			store: 			fontFamilyStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'headerFontType',
 			margin:			tableOptionsMargins,
 			labelWidth:		tableOptionsLabelWidths,
 			width:			tableOptionsWidths
@@ -707,6 +717,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRowFontSize
 		this.summaryRowFontSizeCombo = Ext.create('Ext.form.ComboBox',{
+			name:			'summaryRowFontSize',
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
 			triggerAction:  'all',
@@ -718,7 +729,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			store: 			fontSizeStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'fontSize',
 			margin:			tableOptionsMargins,
 			labelWidth:		tableOptionsLabelWidths,
 			width:			tableOptionsWidths
@@ -727,7 +737,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRowFontColor
 		this.summaryRowFontColorField = Ext.create('Ext.ux.FontColorField', { 
-			name: 				'gridColor',
+			name: 				'summaryRowFontColorField',
 			msgTarget: 			'qtip', 
 			fallback: 			true,
 			allowBlank: 		true,
@@ -740,6 +750,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRowFontWeight
 		this.summaryRowFontWeightCombo = Ext.create('Ext.form.ComboBox',{
+			name:			'summaryRowFontWeight',
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
 			queryMode:      'local',
 			triggerAction:  'all',
@@ -751,7 +762,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			store: 			fontWeightStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'headerFontWeight',
 			labelWidth:		tableOptionsLabelWidths,
 			width:			tableOptionsWidths,
 			margin:			tableOptionsMargins
@@ -760,6 +770,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRowFontDecoration
 		this.summaryRowFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
+			name:			'summaryRowFontDecoration',
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
 			queryMode:      'local',
 			triggerAction:  'all',
@@ -771,7 +782,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			store: 			fontDecorationStore, 
 			valueField: 	'name',
 			displayField: 	'description',
-			name:			'headerFontDecoration',
 			labelWidth:		tableOptionsLabelWidths,
 			width:			tableOptionsWidths,
 			margin:			tableOptionsMargins
@@ -780,7 +790,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		// state.summaryRowBackgroundColor
 		this.summaryRowBackgroundColorField = Ext.create('Ext.ux.FontColorField', { 
-			name: 				'summaryRowBackgroundColorField',
+			name: 				'summaryRowBackgroundColor',
 			fieldLabel: 		LN('sbi.qbe.selectgridpanel.backgroundcolor.label'),
 			labelWidth:			tableOptionsLabelWidths,
 			width:				tableOptionsWidths,
@@ -791,6 +801,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		});
 		this.summaryRowFieldSet.add(this.summaryRowBackgroundColorField);
 		
+		var summaryRowTextField = this.summaryRowTextField;
 		var summaryRowFontCombo = this.summaryRowFontCombo;
 		var summaryRowFontSizeCombo = this.summaryRowFontSizeCombo;
 		var summaryRowFontColorField = this.summaryRowFontColorField;
@@ -799,6 +810,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var summaryRowBackgroundColorField = this.summaryRowBackgroundColorField;
 
 		this.summaryRowChBox.on('change', function(chBox){
+			summaryRowTextField.setDisabled(!chBox.getValue());
 			summaryRowFontCombo.setDisabled(!chBox.getValue());
 			summaryRowFontSizeCombo.setDisabled(!chBox.getValue());
 			summaryRowFontColorField.setDisabled(!chBox.getValue());
@@ -829,8 +841,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
 		state.wtype = 'table';
 		if(this.tableDesigner.rendered === true) {
-			this.tableDesigner.tableDesigner.store.clearFilter();
-			
 			state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
 		} else {
 			state.visibleselectfields =  this.visibleselectfields;
@@ -845,6 +855,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		state.alternateRowsColorsFirst = this.alternateRowsColorsFirstColorField.getValue();
 		state.alternateRowsColorsSecond = this.alternateRowsColorsSecondColorField.getValue();
 		state.summaryRow = this.summaryRowChBox.getValue();
+		state.summaryRowText = this.summaryRowTextField.getValue();
 		state.summaryRowFont = this.summaryRowFontCombo.getValue();
 		state.summaryRowFontSize = this.summaryRowFontSizeCombo.getValue();
 		state.summaryRowFontColor = this.summaryRowFontColorField.getValue();
@@ -924,6 +935,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		if (state.summaryRow != undefined) {
 			this.summaryRowChBox.setValue(state.summaryRow);
 			
+			this.summaryRowTextField.setDisabled(!state.summaryRow);
 			this.summaryRowFontCombo.setDisabled(!state.summaryRow);
 			this.summaryRowFontSizeCombo.setDisabled(!state.summaryRow);
 			this.summaryRowFontColorField.setDisabled(!state.summaryRow);
@@ -931,6 +943,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			this.summaryRowFontDecorationCombo.setDisabled(!state.summaryRow);
 			this.summaryRowBackgroundColorField.setDisabled(!state.summaryRow);
 		}
+		if (state.summaryRowText) this.summaryRowTextField.setValue(state.summaryRowText);
 		if (state.summaryRowFont) this.summaryRowFontCombo.setValue(state.summaryRowFont);
 		if (state.summaryRowFontSize) this.summaryRowFontSizeCombo.setValue(state.summaryRowFontSize);
 		if (state.summaryRowFontColor) this.summaryRowFontColorField.setValue(state.summaryRowFontColor);

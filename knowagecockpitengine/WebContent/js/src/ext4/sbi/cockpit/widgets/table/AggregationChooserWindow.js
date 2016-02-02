@@ -45,9 +45,6 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, nameFieldVisible: true
 		, descriptionFieldVisible: true
 		, hasBuddy: false
-//		, fieldAlias: defAlias
-//		, funct: defAggregation
-//		, fieldNature: defNature
 		, fieldAlias: defFormState.alias
 		, funct: defFormState.funct
 		, fieldNature: defFormState.nature
@@ -55,6 +52,7 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, typeSecondary: defFormState.typeSecondary
 		, decimals: defFormState.decimals
 		, scale: defFormState.scale
+		, showSummaryValue: defFormState.showSummaryValue
 		, backgroundColor: defFormState.backgroundColor
 		, columnWidth: defFormState.columnWidth
 		, fontType: defFormState.fontType
@@ -62,8 +60,6 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, fontWeight: defFormState.fontWeight
 		, fontColor: defFormState.fontColor
 		, fontDecoration: defFormState.fontDecoration
-//		, calculatedFieldFlag: defFormState.calculatedFieldFlag
-//		, calculatedFieldFormula: defFormState.calculatedFieldFormula
 	};
 
 	Ext.apply(this, c);
@@ -94,8 +90,9 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 
     start: 0
+    , modal: true
     , limit: 20
-	, attribute 	: null // the json object representing the attribute: it must be in the constructor input object
+	, attribute : null // the json object representing the attribute: it must be in the constructor input object
 	, params : null // the json object with the parameters for store loading: it must be in the constructor input object
 	
 	, statics : {
@@ -138,7 +135,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     	items.push(this.aliasTextField);
 		
     	if(this.fieldNature == 'measure'){
-			 
+
 	    	var aggregationComboBoxData = [
                 ['NONE',LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.name.none')],
 	    		['SUM',LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.name.sum')],
@@ -248,6 +245,14 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     		width:			FIELD_WIDTH
     	});
     	
+    	this.showSummaryValueField = Ext.create('Ext.form.field.Checkbox', {
+    		name: 			'showSummary',
+    		fieldLabel: 	LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.showsummaryvalue'),
+    		displayField: 	'value',
+    		valueField: 	'value',
+    		labelWidth:		LABEL_WIDTH,
+    		width:			FIELD_WIDTH
+    	});
 
 	   	this.decimalsScaleContainer = Ext.create('Ext.form.FieldContainer', {
 			labelWidth:		LABEL_WIDTH,
@@ -255,9 +260,11 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			layout: 		'vbox',
 			items: 			[
 			       			 	this.decimalsField,
-			       			 	this.scaleField
+			       			 	this.scaleField,
+			       			 	this.showSummaryValueField
 			       			 ]
 		});
+	   	
 	   	if(config.columnType != undefined && config.columnType != null && config.columnType != ""){
 	   		this.typeComboBox.select(config.columnType);
 	   		
@@ -286,6 +293,16 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   					&& config.scale != null 
 	   					&& config.scale != "") {
 	   				this.scaleField.setValue(config.scale);
+	   			}
+	   			
+	   			if(config.showSummaryValue != undefined 
+	   					&& config.showSummaryValue != null) {
+	   				this.showSummaryValueField.setValue(config.showSummaryValue);
+	   			}
+	   			
+	   			if(config.fieldNature == 'attribute') {
+	   				this.showSummaryValueField.setValue(false);
+	   				this.showSummaryValueField.hide();
 	   			}
 	   		} else {
 	   			this.decimalsScaleContainer.setVisible(false);
@@ -325,6 +342,12 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			
 	   			this.decimalsField.setValue('');
 	   			this.scaleField.setValue(scales.NONE);
+	   			
+	   			if(config.fieldNature == 'attribute') {
+	   				this.showSummaryValueField.setValue(false);
+	   				this.showSummaryValueField.hide();
+	   			}
+	   			
 	   		} else {
 	   			this.decimalsScaleContainer.setVisible(false);
 	   		}
@@ -582,9 +605,11 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 		if(this.decimalsScaleContainer.isVisible()) {
 			formState.decimals = this.decimalsField.getValue();
 			formState.scale = this.scaleField.getValue();
+			formState.showSummaryValue = this.showSummaryValueField.getValue();
 		} else {
 			formState.decimals = null;
 			formState.scale = null;
+			formState.showSummaryValue = false;
 		}
 		
 		formState.backgroundColor = this.backgroundColorField.getValue();

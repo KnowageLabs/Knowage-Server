@@ -179,18 +179,69 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var columnIndexer = meta.fields.length + 1;
 			
 		var visibleselectfields = this.wconf.visibleselectfields;
-		for(var j = 0; j < visibleselectfields.length; j++) {
+		
+		if(this.wconf.summaryRowText && this.wconf.summaryRowText != '' && visibleselectfields.length > 0) {
+			var summaryRowColumnDataId = (this.id + '_SummaryRowColumn');
+			var summaryRowText = this.wconf.summaryRowText;
 			
+			var summaryRowClass = 'summaryRowColumnCls';
+			
+			var summaryRowColumn = {
+				dataIndex: summaryRowColumnDataId,
+				columnId: summaryRowColumnDataId,
+				name: summaryRowColumnDataId,
+				type: "string",
+				sortable: true,
+				draggable : false,
+				resizable: true,
+				tdCls: summaryRowClass,
+				
+				summaryRenderer: function(value, summaryData, dataIndex) {
+		            return summaryRowText; 
+		        }
+			};
+			
+			fields.push(summaryRowColumn);
+			columns.push(summaryRowColumn.header);
+			
+			var summaryRowClassExtId = summaryRowColumnDataId + '_td_';
+			var summaryRowClassCSS = '#' + this.id  + ' .' + this.tableConfigCSSClass 
+				+ ' .x-grid-cell.x-grid-cell-first' + '.' + summaryRowClass
+				+ '{border-bottom-width: 0px;}';
+				
+			Ext.util.CSS.removeStyleSheet(summaryRowClassExtId);
+			Ext.util.CSS.createStyleSheet(summaryRowClassCSS, summaryRowClassExtId);
+			
+			var summaryRowClassFirstTrExtId = summaryRowColumnDataId + '_1tr_td_';
+			var summaryRowClassFirstTrCSS = '#' + this.id  + ' .' + this.tableConfigCSSClass 
+				+ ' tr:first-child .x-grid-cell.x-grid-cell-first' + '.' + summaryRowClass
+				+ '{border-bottom-width: 0px;}';
+				
+			Ext.util.CSS.removeStyleSheet(summaryRowClassFirstTrExtId);
+			Ext.util.CSS.createStyleSheet(summaryRowClassFirstTrCSS, summaryRowClassFirstTrExtId);
+			
+			if(!this.wconf.hideGrid && this.wconf.lineSize) {
+				var summaryRowClassLastTrExtId = summaryRowColumnDataId + '_last_Tr_td_';
+				var summaryRowClassLastTrCSS = '#' + this.id  + ' .' + this.tableConfigCSSClass 
+					+ ' tr:last-child .x-grid-cell.x-grid-cell-first' + '.' + summaryRowClass
+					+ '{border-bottom-width: ' + this.wconf.lineSize + 'px;}';
+				
+				Ext.util.CSS.removeStyleSheet(summaryRowClassLastTrExtId);
+				Ext.util.CSS.createStyleSheet(summaryRowClassLastTrCSS, summaryRowClassLastTrExtId);
+			}
+		}
+		
+		for(var j = 0; j < visibleselectfields.length; j++) {
 			var visibleSelectField = visibleselectfields[j];
 			
 			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag == true) {
 				var newColumnName = "column_" + columnIndexer;
 				var calculatedField = {
-						dataIndex: newColumnName,
-						header: visibleSelectField.alias,
-						columnId: visibleSelectField.id,
-						name: newColumnName,
-						type: "string"
+					dataIndex: newColumnName,
+					header: visibleSelectField.alias,
+					columnId: visibleSelectField.id,
+					name: newColumnName,
+					type: "string"
 				};
 				columnIndexer++;
 				
@@ -217,11 +268,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					
 					
 					if(metaField.header === propToCheck) {
-//					if(visibleSelectField.funct != null &&
-//							visibleSelectField.funct != 'NaN'
-//								&& visibleSelectField.funct != ''){
-//						metaField.header = visibleSelectField.funct+'('+visibleSelectField.alias+')';
-//					}
 						if(visibleSelectField.alias != null && 
 								visibleSelectField.alias != ''){
 							
@@ -473,7 +519,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		} else {
 			field.flex = 1;
 		}
-		
 
 		// the following renderer will apply a style to previously selected cells
 		var applyCellStyleRenderer = function (value, metadata, record, rowIndex, colIndex, store, view, fieldHeader) {
@@ -504,7 +549,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		var finalRendererFunction = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
         
-		var summaryRowRenderFunction = this.customCreateSequenceFn(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
+		var summaryRowRenderFunction = visibleField.showSummaryValue?
+				this.customCreateSequenceFn(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true))
+				: function(){return '';};
 		
 		var calculatedRendererFunction = null;
 
@@ -549,7 +596,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					
 					
 					var boundariesChars = '\\+\\-\\*/\\(\\)';  //  + - * / || ( )
-//					var re = new RegExp('\\s+' + columnId + '\\s+', 'g');
+
 					var re = new RegExp('([' + boundariesChars + ']|\\|\\||\\s*)(' + columnId + ')([' + boundariesChars + ']|\\|\\||\\s+)', 'g');
 					calculatedFieldFormula = calculatedFieldFormula.replace(re, "$1(record.get('" + dataIndex + "'))$3");
 				}
@@ -708,10 +755,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var gridConf = {
 			store: this.getStore()
 		    , columns: columns
-//		    sm : new Ext.grid.RowSelectionModel( {
-//				singleSelect : true
-//			})
-//		    selModel: {selType: 'cellmodel', mode: 'SINGLE', allowDeselect: true}
 		};
 		if(this.enableExport === true) {
 			this.initExportToolbar();
@@ -726,7 +769,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 
 		if (this.areOutcomingEventsEnabled()) {
-			gridConf.cls = "tableWidget";  // this highlight the cells to be selected
+			gridConf.cls = "tableWidget";  // this highlights the cells to be selected
 		}
 
 		gridConf.pagingConfig = {};
@@ -745,9 +788,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
 
-	,
 	// optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
-	setSelectionsForColumnRenderers : function () {
+	, setSelectionsForColumnRenderers : function () {
 		this.selectionsForColumnRenderers = this.getWidgetManager().getWidgetSelections(this.getId()) || {};
 		return true;
 	}
@@ -755,77 +797,91 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, onColumnResize: function (ct, column, width, eOpts){
 		Sbi.trace("[TableWidget.onColumnResize]: IN");
 		
-		var visibleselectfields = this.wconf.visibleselectfields;
-		var columnIndex = column.getIndex();
-		
-		if(columnIndex < visibleselectfields.length 
-				&& visibleselectfields[columnIndex].id === column.columnId) {
-			
-			visibleselectfields[columnIndex].width = column.width;
+		if(Sbi.config.documentMode == 'EDIT') {
+			var visibleselectfields = this.wconf.visibleselectfields;
+			var columnIndex = column.getIndex();
+
+			if(columnIndex < visibleselectfields.length 
+					&& visibleselectfields[columnIndex].id === column.columnId) {
+				var visibleselectfield = visibleselectfields[columnIndex];
+
+				if(column.width) {
+					visibleselectfield.width = column.width;
+					visibleselectfield.columnWidth = column.width;
+					delete visibleselectfield.flex;
+				} else if(column.flex) {
+					visibleselectfield.flex = column.flex;
+					visibleselectfield.columnWidth = "";
+					delete visibleselectfield.width;
+				}
+			}
 		}
+
 		Sbi.trace("[TableWidget.onColumnResize]: OUT");
 	}
 
 	, onColumnMove: function (ct, column, fromIdx, toIdx, eOpts){
 		Sbi.trace("[TableWidget.onColumnMove]: IN");
 
-		Sbi.trace("[TableWidget.onColumnMove]: fromIdx= " + fromIdx + " - toIdx= " + toIdx);
+		if(Sbi.config.documentMode == 'EDIT') {
+			Sbi.trace("[TableWidget.onColumnMove]: fromIdx= " + fromIdx + " - toIdx= " + toIdx);
 
-		var toIndex = toIdx;
+			var toIndex = toIdx;
 
-		/*
-		 * Moving a column forward, columnresize method count also the moving column itself
-		 * so the right toIndex base 0 is (toIdx - 1)
-		 */
-		if (fromIdx < toIdx){
-			toIndex = toIdx - 1;
-		}
-
-		var columnArray = this.wconf.visibleselectfields;
-		var mixedArray = [];
-
-		Sbi.trace("[TableWidget.onColumnMove]: ColumnArray " + Sbi.toSource(columnArray));
-
-		Ext.each(columnArray, function (val,index){
-			if (index == toIndex){
-				/* Perform the move of the selected column */
-				Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals toIdx - pushing " + columnArray[fromIdx].id);
-
-				mixedArray.push(columnArray[fromIdx]);
-
-			} else if (index == fromIdx) {
-				Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals fromIdx");
-
-				if (fromIdx > toIdx){
-					/* Column have been pushed to the right */
-					Sbi.trace("[TableWidget.onColumnMove]: fromIdx > toIdx - pushing " + columnArray[index - 1].id);
-					mixedArray.push(columnArray[index - 1]);
-				} else {
-					/* Column have been pushed to the left */
-					Sbi.trace("[TableWidget.onColumnMove]: fromIdx < toIdx - pushing " + columnArray[index + 1].id);
-					mixedArray.push(columnArray[index + 1]);
-				}
-
-			} else {
-				if ((index > toIndex) && (index < fromIdx)){
-					/* Column between a move from right to left */
-					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index > toIdx) - pushing " + columnArray[index - 1].id);
-					mixedArray.push(columnArray[index - 1]);
-				} else if ((index < toIndex) && (index > fromIdx)){
-					/* Column between a move from left to right */
-					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index < toIdx) - pushing " + columnArray[index + 1].id);
-					mixedArray.push(columnArray[index + 1]);
-				} else {
-					/* Column not influenced by the move */
-					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " - pushing " + columnArray[index].id);
-					mixedArray.push(columnArray[index]);
-				}
+			/*
+			 * Moving a column forward, columnresize method count also the moving column itself
+			 * so the right toIndex base 0 is (toIdx - 1)
+			 */
+			if (fromIdx < toIdx){
+				toIndex = toIdx - 1;
 			}
-		});
 
-		this.wconf.visibleselectfields = mixedArray;
+			var columnArray = this.wconf.visibleselectfields;
+			var mixedArray = [];
 
-		Sbi.trace("[TableWidget.onColumnMove]: MixedArray " + Sbi.toSource(mixedArray));
+			Sbi.trace("[TableWidget.onColumnMove]: ColumnArray " + Sbi.toSource(columnArray));
+
+			Ext.each(columnArray, function (val,index){
+				if (index == toIndex){
+					/* Perform the move of the selected column */
+					Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals toIdx - pushing " + columnArray[fromIdx].id);
+
+					mixedArray.push(columnArray[fromIdx]);
+
+				} else if (index == fromIdx) {
+					Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals fromIdx");
+
+					if (fromIdx > toIdx){
+						/* Column have been pushed to the right */
+						Sbi.trace("[TableWidget.onColumnMove]: fromIdx > toIdx - pushing " + columnArray[index - 1].id);
+						mixedArray.push(columnArray[index - 1]);
+					} else {
+						/* Column have been pushed to the left */
+						Sbi.trace("[TableWidget.onColumnMove]: fromIdx < toIdx - pushing " + columnArray[index + 1].id);
+						mixedArray.push(columnArray[index + 1]);
+					}
+
+				} else {
+					if ((index > toIndex) && (index < fromIdx)){
+						/* Column between a move from right to left */
+						Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index > toIdx) - pushing " + columnArray[index - 1].id);
+						mixedArray.push(columnArray[index - 1]);
+					} else if ((index < toIndex) && (index > fromIdx)){
+						/* Column between a move from left to right */
+						Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index < toIdx) - pushing " + columnArray[index + 1].id);
+						mixedArray.push(columnArray[index + 1]);
+					} else {
+						/* Column not influenced by the move */
+						Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " - pushing " + columnArray[index].id);
+						mixedArray.push(columnArray[index]);
+					}
+				}
+			});
+
+			this.wconf.visibleselectfields = mixedArray;
+
+			Sbi.trace("[TableWidget.onColumnMove]: MixedArray " + Sbi.toSource(mixedArray));
+		}
 
 		Sbi.trace("[TableWidget.onColumnMove]: OUT");
 	}
@@ -1141,17 +1197,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var summaryRowFlag = this.wconf.summaryRow;
 			if(summaryRowFlag != undefined && summaryRowFlag == true) {
 				if (this.wconf.summaryRowFont && this.wconf.summaryRowFont != '')
-					summaryRowClass += 'font-family: '+ this.wconf.summaryRowFont + ';';
+					summaryRowClass += 'font-family: ' + this.wconf.summaryRowFont + ';';
 				if (this.wconf.summaryRowFontSize && this.wconf.summaryRowFontSize != '')
-					summaryRowClass += 'font-size: '+ this.wconf.summaryRowFontSize + 'px;';
+					summaryRowClass += 'font-size: ' + this.wconf.summaryRowFontSize + 'px;';
 				if (this.wconf.summaryRowFontColor && this.wconf.summaryRowFontColor != '')
-					summaryRowClass += 'color: #'+ this.wconf.summaryRowFontColor + ';';
+					summaryRowClass += 'color: #' + this.wconf.summaryRowFontColor + ';';
 				if (this.wconf.summaryRowFontWeight && this.wconf.summaryRowFontWeight != '')
-					summaryRowClass += 'font-weight: '+ this.wconf.summaryRowFontWeight + ';';
+					summaryRowClass += 'font-weight: ' + this.wconf.summaryRowFontWeight + ';';
 				if (this.wconf.summaryRowFontDecoration && this.wconf.summaryRowFontDecoration != '')
-					summaryRowClass += 'text-decoration: '+ this.wconf.summaryRowFontDecoration + ';';
+					summaryRowClass += 'text-decoration: ' + this.wconf.summaryRowFontDecoration + ';';
 				if (this.wconf.summaryRowBackgroundColor && this.wconf.summaryRowBackgroundColor != '')
-					summaryRowClass += 'background-color: #'+ this.wconf.summaryRowBackgroundColor + ' !important;';
+					summaryRowClass += 'background-color: #' + this.wconf.summaryRowBackgroundColor + ' !important;';
 			} else {
 				summaryRowClass += 'display: none;';
 			}

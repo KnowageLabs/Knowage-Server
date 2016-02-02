@@ -6,10 +6,6 @@
 
 
 
-
-
-
-
 /**
   *
   * Authors
@@ -40,7 +36,6 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 
 	Ext.apply(c, {
         store: this.store
-//        , width: 250
         , width: 650
         , height: 380
         , cls : 'table'
@@ -53,22 +48,8 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	            wcId: this.wcId
 	        },
 	    	forceFit: true,
-//	    	getRowClass: function(record, rowIndex, rowParams, store){
-//	            return record.get("hiddenForCalculatedFieldFlag") == true ? "hidden" : "x-grid-row";
-//	        }
 	    }
 		, tools: [
-//			        {
-//			        	  type: 'help'
-//			        	, handler: function(){
-//							Ext.Msg.show({
-//								   title: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'),
-//								   msg: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'),
-//								   buttons: Ext.Msg.OK,
-//								   icon: Ext.MessageBox.INFO 	});
-//			            }
-//			          }
-//		          ,
 			{ // PLUS BUTTON
 				type:'plus'
 				, handler: function(){
@@ -139,6 +120,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'typeSecondary', type: 'string'}
 	      , {name: 'decimals', type: 'int'}
 	      , {name: 'scale', type: 'string'}
+	      , {name: 'showSummaryValue', type: 'boolean'}
 	      , {name: 'backgroundColor', type: 'string'}
 	      , {name: 'columnWidth', type: 'string'}
 	      , {name: 'fontType', type: 'string'}
@@ -195,7 +177,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
          //glyph: glyph,
          glyphCls: '',
          glyphFontFamily: Ext._glyphFontFamily,
-         text     : '&#160;',
+         text : '&#160;',
          funct : ''
     }
 
@@ -207,7 +189,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 		'alias', 	'funct', 'columnType', 	'typeSecondary', 'decimals',
-	                 'scale', 	'backgroundColor', 'columnWidth', 'fontType', 'fontSize', 
+	                 'scale', 'showSummaryValue', 'backgroundColor', 'columnWidth', 'fontType', 'fontSize', 
 	                 'fontWeight', 'fontColor', 'fontDecoration', 'calculatedFieldFlag', 
 	                 'calculatedFieldFormula', 'hiddenForCalculatedFieldFlag', 'iconCls',  'nature', 
 	                 'values', 'valid',  'sortable', /*'width', */ 'columnName'
@@ -279,7 +261,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     		align : 'right',
     		scope: this,
     		items: [{
-//    			iconCls: 'icon_configure_tablerow_calculated_formula',
     			tooltip: LN('sbi.cockpit.widgets.table.inlineCalculatedFields.title'),
     			handler: function(grid, rowIndex, colIndex) {
 					var rec = grid.getStore().getAt(rowIndex);
@@ -448,12 +429,15 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					funct: record.data.funct,
 					nature: record.data.nature,
 					columnType: 
-						(record.data.columnType && record.data.columnType != '' ? record.data.columnType :
-							record.data.nature == 'measure' ? 
+						(record.data.columnType && record.data.columnType != '' ? 
+							record.data.columnType :
+							record.data.nature == 'measure' ?
 									elementTypes.NUMBER : ''),
+
 					typeSecondary: record.data.typeSecondary,
 					decimals: record.data.decimals,
 					scale: record.data.scale,
+					showSummaryValue: record.data.showSummaryValue,
 					backgroundColor: record.data.backgroundColor,
 					columnWidth: record.data.columnWidth,
 					fontType: record.data.fontType,
@@ -505,6 +489,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						typeSecondary = formState.typeSecondary,
 						scale = formState.scale,
 						decimals = formState.decimals,
+						showSummaryValue = formState.showSummaryValue,
 						backgroundColor = formState.backgroundColor,
 						columnWidth = formState.columnWidth,
 						fontType = formState.fontType,
@@ -530,6 +515,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					
 					if(scale !== undefined && scale !== null) {
 						record.data.scale = scale;
+					}
+					
+					if(showSummaryValue !== undefined && showSummaryValue !== null) {
+						record.data.showSummaryValue = showSummaryValue;
 					}
 					
 					if(backgroundColor !== undefined && backgroundColor !== null) {
@@ -594,8 +583,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	, setValues: function (attributes) {
 		Sbi.trace("[QueryFieldsContainerPanel.setValues]: IN");
 		this.removeAllValues();
-		var i = 0;
-		for (; i < attributes.length; i++) {
+		for (var i = 0; i < attributes.length; i++) {
   			var attribute = attributes[i];
   			this.addField(attribute);
   		}
