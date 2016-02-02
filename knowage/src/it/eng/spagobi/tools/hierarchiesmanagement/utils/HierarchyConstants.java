@@ -115,4 +115,10 @@ public class HierarchyConstants {
 
 	public final static int CD_VALUE_POSITION = 0;
 	public final static int NM_VALUE_POSITION = 1;
+
+	// fill options
+	public final static String FILL_EMPTY = "FILL_EMPTY";
+	public final static String FILL_EMPTY_YES = "YES";
+	public final static String FILL_EMPTY_NO = "NO";
+	public final static String FILL_VALUE = "FILL_VALUE";
 }

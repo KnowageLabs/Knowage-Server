@@ -416,6 +416,10 @@ public class Hierarchies {
 						toReturn.put(HierarchyConstants.DIMENSION_CD, sbConfig.getAttribute(HierarchyConstants.DIMENSION_CD));
 					if (null != sbConfig.getAttribute(HierarchyConstants.DIMENSION_NM))
 						toReturn.put(HierarchyConstants.DIMENSION_NM, sbConfig.getAttribute(HierarchyConstants.DIMENSION_NM));
+					if (null != sbConfig.getAttribute(HierarchyConstants.FILL_EMPTY))
+						toReturn.put(HierarchyConstants.FILL_EMPTY, sbConfig.getAttribute(HierarchyConstants.FILL_EMPTY));
+					if (null != sbConfig.getAttribute(HierarchyConstants.FILL_VALUE))
+						toReturn.put(HierarchyConstants.FILL_VALUE, sbConfig.getAttribute(HierarchyConstants.FILL_VALUE));
 				}
 			}
 		}
