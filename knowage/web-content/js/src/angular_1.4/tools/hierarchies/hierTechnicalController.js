@@ -770,14 +770,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		}else{
 			 loading = choose ==  "src" ? $scope.showLoadingSrc : $scope.showLoadingTarget;
 		}
-		if (loading){
-			$timeout(function(){
-				choose == "src" ? $scope.showLoadingSrc = false : $scope.showLoadingTarget = false;
-			},400,true);
-		}else{
-			$timeout(function(){
-				choose == "src" ? $scope.showLoadingSrc = true : $scope.showLoadingTarget = true;
-			},0,true);
-		}
+		$timeout(function(){
+			choose == "src" ? $scope.showLoadingSrc = !loading : $scope.showLoadingTarget = !loading;
+		},100,true);
+		
 	}
 };
