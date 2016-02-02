@@ -20,14 +20,23 @@ angular.module('angular_time_picker', ['ngMaterial'])
 
 function angularTimePickerFunction($scope){
 	var s=$scope;
-
+	s.checkHoursValid=function(){
+		if(s.hours==null){
+			angular.element(document.querySelector('angular-time-picker #hoursInput-'+$scope.id))[0].value=12;
+		}
+	}
+	s.checkMinuitesValid=function(){
+		if(s.minutes==null){
+			angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0].value=00;
+		}
+	}
 	
 	s.getHours=function(){
-		if(s.ngModel==undefined){return 0};
+		if(s.ngModel==undefined || s.ngModel=="NaN:NaN"){return 0};
 		return parseInt(s.ngModel.split(":")[0]);
 	}
 	s.getMinutes=function(){
-		if(s.ngModel==undefined){return 0};
+		if(s.ngModel==undefined || s.ngModel=="NaN:NaN"){return 0};
 		return parseInt(s.ngModel.split(":")[1]);
 	}
 	
@@ -54,7 +63,7 @@ function angularTimePickerFunction($scope){
 	}
 	
 	s.alterNgModel=function(){
-			if(s.ngModel==undefined || s.ngModel==""){
+			if(s.ngModel==undefined || s.ngModel=="NaN:NaN" || s.ngModel==""){
 				var date=new Date();
 				s.hours=date.getHours()%24;
 				s.minutes=date.getMinutes();

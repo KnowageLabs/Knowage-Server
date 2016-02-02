@@ -70,6 +70,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 	static private Logger logger = Logger.getLogger(XExecuteBIDocumentJob.class);
 
+	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
@@ -258,7 +259,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				documentInstanceName = documentLabels[documentIndex];
 				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
 				document = documentDAO.loadBIObjectByLabel(documentLabel);
-
+				if (document == null) {
+					continue;
+				}
 				String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__" + (documentIndex + 1));
 
 				DispatchContext dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
@@ -321,6 +324,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 				// load document
 				document = documentDAO.loadBIObjectByLabel(documentLabel);
+				if (document == null) {
+					continue;
+				}
 				loadDocumentMetadata(document);
 
 				// create the execution controller

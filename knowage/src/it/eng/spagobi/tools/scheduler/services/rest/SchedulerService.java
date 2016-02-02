@@ -587,9 +587,12 @@ public class SchedulerService {
 
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
-			String servoutStr = schedulerService.scheduleJob(message.toString());
+			JSONObject jo;
+			jo = new JSONObject(schedulerService.scheduleJob(message.toString()));
 
-			JSONObject jo = JobTriggerToJson(jobTrigger);
+			if (jo.has("Status") && jo.getString("Status").equals("OK")) {
+				jo = JobTriggerToJson(jobTrigger);
+			}
 
 			return jo.toString();
 		} catch (Exception e) {

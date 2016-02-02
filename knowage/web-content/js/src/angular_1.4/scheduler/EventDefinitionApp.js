@@ -1,4 +1,4 @@
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','sbiModule',  'angular_list', 'angular_time_picker','angular_2_col']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','sbiModule',  'angular_list', 'angular_time_picker','ngMessages']);
 
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');

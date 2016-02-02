@@ -48,6 +48,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 	private static Logger logger = Logger.getLogger(TriggerXMLDeserializer.class);
 
+	@Override
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {
 
 		it.eng.spagobi.tools.scheduler.bo.Trigger trigger;
@@ -165,9 +166,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 		String startDateStr = (String) xml.getAttribute(TRIGGER_START_DATE);
 		if (startDateStr != null) {
-			String startDay = startDateStr.substring(0, 2);
-			String startMonth = startDateStr.substring(3, 5);
-			String startYear = startDateStr.substring(6, 10);
+			String[] splitterDate = startDateStr.split("/");
+			String startDay = splitterDate[0];
+			String startMonth = splitterDate[1];
+			String startYear = splitterDate[2];
 
 			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1, new Integer(startDay).intValue());
 			String startTimeStr = (String) xml.getAttribute(TRIGGER_START_TIME);
@@ -191,9 +193,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 		if (endDateStr != null) {
 
 			try {
-				String endDay = endDateStr.substring(0, 2);
-				String endMonth = endDateStr.substring(3, 5);
-				String endYear = endDateStr.substring(6, 10);
+				String[] splitterDate = endDateStr.split("/");
+				String endDay = splitterDate[0];
+				String endMonth = splitterDate[1];
+				String endYear = splitterDate[2];
 				calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
 			} catch (Exception e) {
 				// Old method with date in format yyyy/MM/dd

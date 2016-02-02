@@ -43,11 +43,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<md-tab-body class="md-padding " flex>
 						
 						<md-content class="h100" > 
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("scheduler.schedname","component_scheduler_messages")}}:</label>
 								<input ng-model="activityEventCtrl.event.triggerName" name={{translate.load("scheduler.schedname","component_scheduler_messages")}} required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
 							</md-input-container>
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("scheduler.scheddescription","component_scheduler_messages")}}:</label>
 								<textarea ng-model="activityEventCtrl.event.triggerDescription" 
 										columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
@@ -55,14 +55,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 							<div layout="row" class="checkboxRow">
 								<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
-								<md-datepicker ng-model="activityEventCtrl.event.startDate" name={{translate.load("scheduler.startdate","component_scheduler_messages")}} required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+								 <md-datepicker ng-model="activityEventCtrl.event.startDate" name="startDateField" required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+								 <div class="validation-messages" ng-messages="contactForm.startDateField.$error">
+							        <div ng-message="valid">{{translate.load("scheduler.invalidDate","component_scheduler_messages")}}</div>
+							        <div ng-message="required">{{translate.load("scheduler.requiredDate","component_scheduler_messages")}}</div>
+							     </div> 
 								<label style="margin: 0 20px;">{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
 								<angular-time-picker id="myTimePicker1" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 							</div>
 
 							<div layout="row" class="checkboxRow">
 								<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
-								<md-datepicker ng-model="activityEventCtrl.event.endDate" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
+								<md-datepicker ng-model="activityEventCtrl.event.endDate" name="endDateField" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
+								<div class="validation-messages" ng-messages="contactForm.endDateField.$error">
+							        <div ng-message="valid">{{translate.load("scheduler.invalidDate","component_scheduler_messages")}}</div>
+							     </div> 
 								<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
 								<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
 							</div>
@@ -71,7 +78,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									ng-class="activityEventCtrl.typeOperation != 'single'? 'selectedItem' : 'unselectedItem'"
 									style="height: 50px;  min-height: 30px;">
 								<div class="md-toolbar-tools" layout="row" style="padding-left: 0px;">
-									<md-input-container> 
+									<md-input-container class="md-block"> 
 										<label>{{translate.load("sbi.generic.type")}}</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.typeOperation"
 												ng-change="activityEventCtrl.changeTypeOperation();"> 
@@ -83,7 +90,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							</md-toolbar>
 							
 							<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'event'"	layout-padding class="borderBox">
-								<md-input-container> 
+								<md-input-container class="md-block"> 
 									<label>{{translate.load("scheduler.eventType","component_scheduler_messages")}}:</label>
 									<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type"
 											ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}>
@@ -100,16 +107,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									</md-toolbar>
 
 									<md-content layout-padding class="borderBox"> 
-										<md-input-container>
+										<md-input-container class="md-block">
 											<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 											<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.dataset"
 													ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 												<md-option ng-repeat="item in activityEventCtrl.datasets " 
 														value="{{item.id.dsId}}">{{item.label}}</md-option> 
 											</md-select> 
-										</md-input-container> 
-										<md-input-container>
-											<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}:</label>
+										</md-input-container>   
+										<md-input-container class="md-block">
+											<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}} ({{translate.load("sbi.kpis.mins")}}) :</label>
 											<input type="number" ng-change="activityEventCtrl.changeTypeFrequency()"
 													ng-model="activityEventCtrl.eventSched.frequency"> 
 										</md-input-container> 
