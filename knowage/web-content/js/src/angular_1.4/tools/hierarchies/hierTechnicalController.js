@@ -546,6 +546,13 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				return item !== undefined && item.fake != true;
 				},
 			action: $scope.deleteHier
+		},{
+			label: $scope.translate.load('sbi.generic.details'),
+			icon: "fa fa-info-circle",
+			showItem : function(item,event){
+				return item !== undefined && item.fake != true;
+				},
+			action : $scope.showDetailsNode
 		}
 	];
 	

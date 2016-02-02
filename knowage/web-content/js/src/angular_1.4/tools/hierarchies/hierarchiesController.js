@@ -1,5 +1,5 @@
 var app = angular.module('hierManager', ['ngMaterial','angular_list','angular_table','sbiModule','document_tree','ui.tree', 'angularUtils.directives.dirPagination']);
-
+/*
 app.config(function($mdDateLocaleProvider) {
 	 $mdDateLocaleProvider.parseDate = function(date) {
 		 if (typeof date == "string"){
@@ -27,6 +27,7 @@ app.config(function($mdDateLocaleProvider) {
 		 }
 	};
 });
+*/
 
 app.controller('hierCtrl', ['sbiModule_translate',"$scope",funzione]);
 

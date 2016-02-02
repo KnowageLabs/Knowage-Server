@@ -10,7 +10,7 @@
 			</md-toolbar>
 			<md-content id='hierMasterDim' layout-padding layout='column' layout-align='space-around stretch'>
 		        <md-content id='dimensionsSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
-			        <md-datepicker ng-model="dateDim" ng-change='getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
+		        	<md-datepicker required ng-model="dateDim" ng-change='getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
 					<md-input-container flex flex-sm='90'>
 						<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
 			        	<md-select ng-model='dim' ng-disabled='!dateDim' md-on-close='getDimensionsTable(undefined,undefined,true,true);getHierarchies()'>
@@ -39,7 +39,11 @@
 			        	</div>
 			        </fieldset>
 				</md-content>
-		      	<md-content style="min-height:32rem;max-height:32rem;" ng-if="dimensionsTable && dimensionsTable.length > 0">
+				<md-content class='force-100width' ng-show='showLoadingMaster' layout='row' layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>{{translate.load("sbi.generic.wait");}}</h4>
+				</md-content>
+		      	<md-content style="min-height:32rem;max-height:32rem;" ng-if="dimensionsTable && dimensionsTable.length > 0 && !showLoadingMaster" >
 		      		<angular-table
 				        id='dimTable'
 				        ng-model="dimensionsTable"
@@ -62,7 +66,7 @@
 					<h4>{{translate.load("sbi.hierarchies.nodata");}}</h4>
 				</md-content> 	  	
 				<md-content layout="row" layout-align="start start">	
-					<md-button ng-click="crateMasterHier()" ng-disabled="!dim || !dateDim" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
+					<md-button ng-click="createMasterHier()" ng-disabled="!dim || !dateDim" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
 					<md-button ng-click="synchronizeMaster()" ng-disabled="true" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.synchronize");}}</md-button>
 				</md-content>
 			</md-content>
@@ -147,7 +151,7 @@
 						>
 					</document-tree>
 				</md-content>
-				<md-content class='waitingContainer' ng-show='showLoading' layout='row' layout-padding layout-align ='space-around center'>
+				<md-content class='force-100width' ng-show='showLoading' layout='row' layout-align ='space-around center'>
 					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 					<h4>{{translate.load("sbi.generic.wait");}}</h4>
 				</md-content>
