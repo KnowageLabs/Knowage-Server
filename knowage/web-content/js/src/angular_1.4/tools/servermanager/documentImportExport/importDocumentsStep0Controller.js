@@ -15,8 +15,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 
 				sbiModule_restServices.post("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 				.success(function(data, status, headers, config) {
-					console.log("role--->",data)
-					if(data.STATUS=="NON OK"){
+				 	if(data.STATUS=="NON OK"){
 						$scope.showToast(data.ERROR,4000);
 					}
 					else if(data.STATUS=="OK"){

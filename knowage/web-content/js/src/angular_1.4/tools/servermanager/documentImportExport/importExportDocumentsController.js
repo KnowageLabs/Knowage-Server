@@ -67,15 +67,6 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 }
 function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast) {
 
-	$scope.pathRest = {
-			vers: '2.0'
-				, folders : 'folders'
-					, includeDocs : 'includeDocs=true'
-						, urlTest : sbiModule_config.contextName+'/servlet/AdapterHTTP'
-	}
-
-
-
 	$scope.restServices = sbiModule_restServices;
 	$scope.download = sbiModule_download;
 	$scope.log = sbiModule_logger;
@@ -93,7 +84,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportSnapshots : false
 	};
 
-	$scope.restServices.get($scope.pathRest.vers, $scope.pathRest.folders,$scope.pathRest.includeDocs)
+	$scope.restServices.get("2.0", "folders","includeDocs=true")
 	.success(function(data){
 		//if not errors in response, copy the data
 		if (data.errors === undefined){
