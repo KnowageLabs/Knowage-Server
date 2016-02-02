@@ -24,6 +24,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
 <script type="text/javascript" src="<%=linkProtoEff%>"></script>
+
+
+
 <link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
 <link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
 
@@ -35,6 +38,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%
     } else {
+    
 	    // get parameter field name
 	    String parameterFieldName = (String)moduleResponse.getAttribute(SpagoBIConstants.PARAMETER_FIELD_NAME); 
 	    // get value column name
@@ -79,6 +83,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			</tr>
 		</thead>
 		<tbody>
+		<tr>
+			<button type="button" onclick="javascript:observerLRLclose.saveResult()" >
+				<img class="header-button-image-portlet-section" title="Save" src="/knowage/themes/sbi_default/img/tools/scheduler/save.png" alt="Save">
+			</button>
+			<button type="button" onclick="javascript:observerLRLclose.cancelResult()">
+				<img class="header-button-image-portlet-section" title="Back" src="/knowage/themes/sbi_default/img/tools/scheduler/back.png" alt="Back">
+			</button>
+		</tr>
 			<!-- for each row design table row -->
 			<%
 			String rowvalue = "";
@@ -94,12 +106,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				for (int j = 0; j < columns.size(); j++) {
 					String nameColumn = (String) ((SourceBean) columns.get(j)).getAttribute("NAME");
 					Object fieldObject = row.getAttribute(nameColumn);
+					
 					String field = null;
 					if (fieldObject != null) {
 						field = fieldObject.toString();
 						// set value of the row
 						if(nameColumn.equalsIgnoreCase(valColName)) {
 							rowvalue = field;
+						
 						}
 					}
 					else { field = "&nbsp;"; }
@@ -118,6 +132,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<%
 			}
 			%>
+	
 			</tr>
 		</tbody>
 	</table>

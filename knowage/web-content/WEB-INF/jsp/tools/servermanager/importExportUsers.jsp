@@ -108,9 +108,9 @@
 							</md-icon> </md-button>
 						</md-input-container>
 						</div>
-						<span flex=30></span>
+						<span flex=20></span>
 						
-						<div flex =15>
+						<div flex =20>
 							<md-radio-group layout="row" ng-model="typeSaveUser">
 						      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
 						      <md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>

@@ -31,7 +31,6 @@
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});
-	
 	//Load of default file (en_US): it can be used if a message of the current locale is missing
     messageResource.load('messages', function(){});
     messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');

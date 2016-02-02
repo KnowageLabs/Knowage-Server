@@ -263,23 +263,29 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		
 	observerLRLclose = { 
 		onClose: function(eventName, win) {
-			if (win == winLRL) {
-				var valuesArray = new Array();
-			    parfield = document.getElementById(parfieldName);
-			    checks = document.getElementsByName('rowcheck');
-			    for(i=0; i<checks.length; i++) {
-			    	check = checks[i];
-			    	if(check.checked) {
-			    		val = check.value;
-			    		if (!valuesArray.contains(val)) {
-			    			valuesArray.push(val);
-			    		}
-			    	}
-			    }
-			    if(valuesArray.length > 0) {
-			    	parfield.value = valuesArray.join(';');
-			    }
-			}
+		
+		},
+		saveResult: function() {
+		var valuesArray = new Array();
+	    parfield = document.getElementById(parfieldName);
+	    checks = document.getElementsByName('rowcheck');
+	    for(i=0; i<checks.length; i++) {
+	    	check = checks[i];
+	    	if(check.checked) {
+	    		val = check.value;
+	    		if (!valuesArray.contains(val)) {
+	    			valuesArray.push(val);
+	    		}
+	    	}
+	    }
+	    if(valuesArray.length > 0) {
+	    	parfield.value = valuesArray.join(';');
+	    }
+	    Windows.close("winLRLId", null);
+	    
+		},
+		cancelResult:function(){
+			Windows.close("winLRLId", null);
 		}
 	}
 	
@@ -383,24 +389,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <table class='header-table-portlet-section'>
 	<tr class='header-row-portlet-section'>
 		<td class='header-title-column-portlet-section' style='vertical-align:middle;padding-left:5px;'>
-			<spagobi:message key = "scheduler.jobDetail"  bundle="component_scheduler_messages"/>		
+			<spagobi:message key = "scheduler.jobDetail"  />		
 		</td>
 		<td class='header-empty-column-portlet-section'>&nbsp;</td>
 		<td class='header-button-column-portlet-section'>
 			<a href='<%=backUrl%>'> 
       			<img class='header-button-image-portlet-section' 
-      				 title='<spagobi:message key = "scheduler.back" bundle="component_scheduler_messages" />' 
+      				 title='<spagobi:message key = "scheduler.back" />' 
       				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/back.png", currTheme)%>' 
-      				 alt='<spagobi:message key = "scheduler.back"  bundle="component_scheduler_messages"/>' />
+      				 alt='<spagobi:message key = "scheduler.back" />' />
 			</a>
 		</td>
 		<td class='header-empty-column-portlet-section'>&nbsp;</td>
 		<td class='header-button-column-portlet-section'>
 			<a href='javascript:saveCall()'> 
       			<img class='header-button-image-portlet-section' 
-      				 title='<spagobi:message key = "scheduler.save" bundle="component_scheduler_messages" />' 
+      				 title='<spagobi:message key = "scheduler.save" />' 
       				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/save.png", currTheme)%>' 
-      				 alt='<spagobi:message key = "scheduler.save"  bundle="component_scheduler_messages"/>' />
+      				 alt='<spagobi:message key = "scheduler.save"  />' />
 			</a>
 		</td>
 	</tr>
@@ -416,7 +422,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<div class="div_form_row" >
 			<div class='div_form_label'>
 				<span class='portlet-form-field-label'>
-					<spagobi:message key = "scheduler.jobName"  bundle="component_scheduler_messages"/>
+					<spagobi:message key = "scheduler.schedname"  />
 				</span>
 			</div>
 			<%
@@ -437,7 +443,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<div class="div_form_row" >
 			<div class='div_form_label'>
 				<span class='portlet-form-field-label'>
-					<spagobi:message key = "scheduler.jobDescription"  bundle="component_scheduler_messages"/>
+					<spagobi:message key = "scheduler.jobDescription"/>
 				</span>
 			</div>
 			<div class='div_form_field'>
@@ -469,32 +475,32 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<table>
 		<tr> 
 			<td class='titlebar_level_2_text_section' style='vertical-align:middle;padding-left:5px;'>
-				<spagobi:message key = "scheduler.documentparameters"  bundle="component_scheduler_messages"/>	
+				<spagobi:message key = "scheduler.documentparameters"  />	
 			</td>
 			<td class='titlebar_level_2_empty_section_bis'>
 				<a href='javascript:opencloseDocumentSelectionWin()'> 
 	      			<img class='header-button-image-portlet-section_bis' 
-	      				 title='<spagobi:message key = "scheduler.addocument" bundle="component_scheduler_messages" />' 
+	      				 title='<spagobi:message key = "scheduler.addocument" />' 
 	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/edit_add.png", currTheme)%>' 
-	      				 alt='<spagobi:message key = "scheduler.addocument"  bundle="component_scheduler_messages"/>' />
+	      				 alt='<spagobi:message key = "scheduler.addocument"  />' />
 				</a>
 			</td>
 			<td class='titlebar_level_2_empty_section_bis'>&nbsp;</td>
 			<td class='titlebar_level_2_empty_section_bis'>
-				<a href="javascript:removeTab('<spagobi:message key="scheduler.DeleteDocumentConfirm" bundle="component_scheduler_messages"/>')"> 
+				<a href="javascript:removeTab('<spagobi:message key="scheduler.DeleteDocumentConfirm" />')"> 
 	      			<img class='header-button-image-portlet-section_bis' 
-	      				 title='<spagobi:message key = "scheduler.removedocument" bundle="component_scheduler_messages" />' 
+	      				 title='<spagobi:message key = "scheduler.removedocument" />' 
 	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/edit_remove.png", currTheme)%>' 
-	      				 alt='<spagobi:message key = "scheduler.removedocument"  bundle="component_scheduler_messages"/>' />
+	      				 alt='<spagobi:message key = "scheduler.removedocument"  />' />
 				</a>
 			</td>
 			<td class='titlebar_level_2_empty_section_bis'>&nbsp;</td>
 			<td class='titlebar_level_2_empty_section_bis'>
 				<a href="javascript:copyTab()"> 
 	      			<img class='header-button-image-portlet-section_bis' 
-	      				 title='<spagobi:message key = "scheduler.copydocument" bundle="component_scheduler_messages" />' 
+	      				 title='<spagobi:message key = "scheduler.copydocument"  />' 
 	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/copy_schedule.gif", currTheme)%>' 
-	      				 alt='<spagobi:message key = "scheduler.copydocument"  bundle="component_scheduler_messages"/>' />
+	      				 alt='<spagobi:message key = "scheduler.copydocument" />' />
 				</a>
 			</td>
 			<td class='titlebar_level_2_empty_section_bis'>&nbsp;</td>
@@ -510,7 +516,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		if(jobBiobjects.size()==0){
 	%>
 				<br/>
-				<spagobi:message key = "scheduler.nodocumentSelected"  bundle="component_scheduler_messages"/>
+				<spagobi:message key = "scheduler.nodocumentSelected" />
 				<br/>
 	<%			
 		} else {
@@ -577,7 +583,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		   		<div class='div_form_row' >
 				   <div class='div_form_message nowraptext'>
 				       	<span class='portlet-form-field-label'>
-		        	      <spagobi:message key = "scheduler.noparameter"  bundle="component_scheduler_messages"/>
+		        	      <spagobi:message key = "scheduler.noparameter"  />
 		            	</span>
 		         	</div>
 		         </div>
@@ -590,7 +596,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<br>
 			<div class='div_form_container' >
 				<div class='div_form_margin'>
-			
+		
 				<%
 				Iterator iterPars = pars.iterator();
 				while(iterPars.hasNext()) {
@@ -612,30 +618,31 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<div class='div_form_row' >
 						<div class='div_form_label'>
 							<span class='portlet-form-field-label'>
+							
 				            	<%=biobjpar.getLabel()%>
 				          	</span>
 				    	</div>
 				    	
 				    	<div style="float:left;width:500px;margin-bottom:30px;">
 
-				    		<spagobi:message key = "scheduler.parameterValuesStrategyQuestion"  bundle="component_scheduler_messages"/>
+				    		<spagobi:message key = "scheduler.parameterValuesStrategyQuestion"  />
 				    		<br>
 				    		<div style="height: 2px" >&nbsp;</div>
 						  	<select name='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_strategy"%>'
 										id='<%="par_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_strategy"%>'
 										onChange="<%="change_"+biobj.getId()+"_"+index+"_"+biobjpar.getParameterUrlName()+"_strategy(this.selectedIndex);"%>">
 								<option value='fixedValues' <%= strategy == null ? "selected='selected'" : "" %>>
-									<spagobi:message key = "scheduler.fixedValuesStrategy"  bundle="component_scheduler_messages"/>
+									<spagobi:message key = "scheduler.fixedValuesStrategy" />
 								</option>
 								<option value='loadAtRuntime' <%= (strategy != null && strategy instanceof RuntimeLoadingParameterValuesRetriever) ? "selected='selected'" : "" %>>
-									<spagobi:message key = "scheduler.loadAtRuntimeStrategy"  bundle="component_scheduler_messages"/>
+									<spagobi:message key = "scheduler.loadAtRuntimeStrategy"  />
 								</option>
 								<% 
 								Integer parId = biobjpar.getParID();
 								Parameter parameter = pardao.loadForDetailByParameterID(parId);
 								if (parameter.isTemporal()) { %>
 									<option value='useFormula' <%= (strategy != null && strategy instanceof FormulaParameterValuesRetriever) ? "selected='selected'" : "" %>>
-										<spagobi:message key = "scheduler.useFormulaStrategy"  bundle="component_scheduler_messages"/>
+										<spagobi:message key = "scheduler.useFormulaStrategy"  />
 									</option>
 								<% } %>
 							</select>
@@ -674,7 +681,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							  		List roles = biobjdao.getCorrectRolesForExecution(biobj.getId(), userProfile);
 							  		if(roles.size()>0) {
 							  	%>
-							  	(<spagobi:message key = "scheduler.usingrole"  bundle="component_scheduler_messages"/> 
+							  	(<spagobi:message key = "scheduler.usingrole"/> 
 								&nbsp;
 								<select name='role_par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())%>'
 										id='role_par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())%>' >
@@ -703,9 +710,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							  	
 							  	
 							  	<a style='text-decoration:none;' href="javascript:getLovList('<%=biobj.getId()%>', '<%=biobjpar.getParID()%>', '<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())%>')">
-							  		<img title='<spagobi:message key = "scheduler.fillparameter"  bundle="component_scheduler_messages"/>' 
+							  		<img title='<spagobi:message key = "scheduler.fillparameter"  />' 
 	      				 				src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
-	      				 				alt='<spagobi:message key = "scheduler.fillparameter"  bundle="component_scheduler_messages"/>' />
+	      				 				alt='<spagobi:message key = "scheduler.fillparameter"  />' />
 							  	</a>
 							  	<br>
 							  	<br>
@@ -719,7 +726,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				    				id='<%="par_"+biobj.getId()+"_"+index+"_"+StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())+"_loadAtRuntime"%>'
 				    				style="margin-top:10px;display:<%= (strategy != null && strategy instanceof RuntimeLoadingParameterValuesRetriever) ? "block" : "none" %>" >
 				    				
-									<spagobi:message key = "scheduler.loadAtRuntimeRole"  bundle="component_scheduler_messages"/>
+									<spagobi:message key = "scheduler.loadAtRuntimeRole"/>
 									<select name='par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName()) + "_loadWithRole"%>'
 											id='par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName()) + "_loadWithRole"%>' >
 										<% 	
@@ -744,7 +751,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				    				id='<%="par_"+biobj.getId()+"_"+index+"_"+StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())+"_useFormula"%>'
 				    				style="margin-top:10px;display:<%= (strategy != null && strategy instanceof FormulaParameterValuesRetriever) ? "block" : "none" %>" >
 				    				
-				    				<spagobi:message key = "scheduler.formulaName"  bundle="component_scheduler_messages"/>
+				    				<spagobi:message key = "scheduler.formulaName" />
 									<select name='par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName()) + "_formula"%>'
 											id='par_<%=biobj.getId()%>_<%=index%>_<%=StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName()) + "_formula"%>' >
 										<% 	
@@ -773,9 +780,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							  	<div>
 							  	<select name='<%="par_"+biobj.getId()+"_"+index+"_"+StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())+"_Iterative"%>'
 											id='<%="par_"+biobj.getId()+"_"+index+"_"+StringEscapeUtils.escapeHtml(biobjpar.getParameterUrlName())+"_Iterative"%>'>
-									<option value='false'><spagobi:message key = "scheduler.doNotIterateOnParameterValues"  bundle="component_scheduler_messages"/></option>
+									<option value='false'><spagobi:message key = "scheduler.doNotIterateOnParameterValues"  /></option>
 									<option value='true' <%= biobjpar.isIterative() ? "selected='selected'" : "" %>>
-										<spagobi:message key = "scheduler.iterateOnParameterValues"  bundle="component_scheduler_messages"/>
+										<spagobi:message key = "scheduler.iterateOnParameterValues" />
 									</option>
 								</select>
 								</div>
@@ -814,19 +821,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<table>
 			<tr> 
 				<td class='titlebar_level_2_text_section' style='vertical-align:middle;padding-left:5px;'>
-					<spagobi:message key = "scheduler.documentselection"  bundle="component_scheduler_messages"/>		
+					<spagobi:message key = "scheduler.documentselection"  />		
 				</td>
 				<td class='titlebar_level_2_empty_section'>&nbsp;</td>
 				<td class='titlebar_level_2_button_section'>
 					<a href='javascript:fillParamCall()'> 
 		      			<img class='header-button-image-portlet-section' 
-		      				 title='<spagobi:message key = "scheduler.save" bundle="component_scheduler_messages" />' 
+		      				 title='<spagobi:message key = "scheduler.save"  />' 
 		      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/tools/scheduler/save.png", currTheme)%>' 
-		      				 alt='<spagobi:message key = "scheduler.save"  bundle="component_scheduler_messages"/>' />
+		      				 alt='<spagobi:message key = "scheduler.save"  />' />
 					</a>
 				</td>
 			</tr>
+			
 		</table>
+		<h3><spagobi:message key = "scheduler.msg"  /></h3>
 		<spagobi:treeObjects moduleName="JobManagementModule"  
 							 htmlGeneratorClass="it.eng.spagobi.tools.scheduler.gui.SchedulerTreeHtmlGenerator" />
 		<br/>
