@@ -15,7 +15,28 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
     draggable: true,
     closable : true,
     closeAction: 'destroy',
-    width: 500,
+    
+    /**
+     * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+//    width: 500,
+    
+    /**
+     * Providing these possibilities for the Serie style configuration popup:
+     * (1) 	Resizing of the popup window for both axes (vertically and horizontally)
+     * (2) 	The height is static and when initially rendered it has the value defined
+     * 		in the parameter specified here (afterwards, user can resize it). But in both
+     * 		situations, the height of the popup will remain constants, so the expansion of
+     * 		fieldsets within it will just enable the inner vertical scrollbar.
+     * (3) 	The width of the initial popup (until user potentially change it) is reduced.
+     * 
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    width: Sbi.settings.chart.structureStep.axisAndSerieStyleConfigPopup.width,
+    height: Sbi.settings.chart.structureStep.axisAndSerieStyleConfigPopup.height,
+    resizable: Sbi.settings.chart.structureStep.axisAndSerieStyleConfigPopup.resizable,
+    overflowY: Sbi.settings.chart.structureStep.axisAndSerieStyleConfigPopup.overflowY,
+    
     modal: true,
 	config: {
 		store: '',

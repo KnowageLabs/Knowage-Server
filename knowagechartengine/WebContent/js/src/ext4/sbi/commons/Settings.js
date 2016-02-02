@@ -81,7 +81,22 @@ Sbi.settings.chart =
     	{
         	type:'hbox',
         	align:"center"
-		},
+		}
+	},
+	
+	/**
+	 * Common configuration for the Axis style configuration and Serie style
+	 * configuration popups.
+	 */
+	structureStep:
+	{		
+		axisAndSerieStyleConfigPopup:
+		{
+			width: 400,
+			height: 500,
+			overflowY: true,
+			resizable: true
+		}		
 	},
 	
 	parallel:
