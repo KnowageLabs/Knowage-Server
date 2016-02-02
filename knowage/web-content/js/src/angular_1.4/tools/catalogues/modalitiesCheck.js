@@ -259,23 +259,18 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 			
 		}
 	
-	$scope.getPredefined = function(){ // service that gets predefined list GET
-		sbiModule_restServices.get("2.0", "predefinedChecks").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						toastr.error(data.errors[0].message, 'Error');
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.PredefinedList = data;
-						toastr.success('Hello world!', 'Toastr fun!');
-					}
-				}).error(function(data, status, headers, config) {
-					
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					  
+	$scope.getPredefined = function(){ // service that gets predefined list GET		
+		sbiModule_restServices.promiseGet("2.0", "predefinedCheck")
+		.then(function(response) {
+			$scope.PredefinedList = response.data;
+			
 
-				})	
-	}
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
+		
+}
 	
 	
 	$scope.getCustom = function(){ // service that gets user created list GET
