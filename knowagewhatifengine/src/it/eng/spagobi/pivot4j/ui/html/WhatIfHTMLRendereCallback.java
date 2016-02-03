@@ -107,15 +107,15 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName
-										+ "','" + positionUniqueName + " ')");
+								attributes.put("onClick", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ " ')");
 								startElement("img", attributes);
 								endElement("img");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName
-										+ "','" + positionUniqueName + "' )");
+								attributes.put("onClick", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ "' )");
 								startElement("img", attributes);
 								endElement("img");
 							} else {
