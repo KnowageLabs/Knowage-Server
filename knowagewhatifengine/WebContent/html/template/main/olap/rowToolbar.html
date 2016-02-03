@@ -1,0 +1,13 @@
+<md-toolbar flex=5 class='md-toolbar-tools knowage-blue' style='background-color:purple!important' ng-click="swapAxis()">
+		&nbsp;
+	</md-toolbar>
+	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar'>
+		<div class="filter-toolbar-element" layout="row" ng-repeat="row in rows" ng-drag="true">
+			<div class="name">{{row.name}}</div>
+			<div class="action">
+				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e)">
+					<md-icon md-font-icon="fa fa-filter"></md-icon>
+			</md-button>
+			</div>
+		</div>
+	</md-toolbar>

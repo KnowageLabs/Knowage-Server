@@ -11,6 +11,8 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   $scope.mainToolbar = '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html';
   $scope.filterPanel = '/knowagewhatifengine/html/template/main/filter/filterPanel.html';
   $scope.olapPanel = '/knowagewhatifengine/html/template/main/olap/olapPanel.html';
+  $scope.rowToolbar = '/knowagewhatifengine/html/template/main/olap/rowToolbar.html';
+  $scope.leftToolbarPlusMain = '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html';
   $scope.leftPanel = '/knowagewhatifengine/html/template/left/leftPanel.html';
   $scope.rightPanel = '/knowagewhatifengine/html/template/right/rightPanel.html';
   
@@ -62,8 +64,8 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   $scope.sendMdxQuery = function() {
 	  $http({
 		  method: 'POST',
-		  url: '/knowagewhatifengine/restful-services/1.0/model/'+$scope.mdxQuery+'/?SBI_EXECUTION_ID='+JSsbiExecutionID,
-		  
+		  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
+		  data: $scope.mdxQuery
 		}).then(function successCallback(response) {
 		    // this callback will be called asynchronously
 		    // when the response is available
@@ -81,8 +83,8 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
     
   $http({
 	  method: 'POST',
-	  url: '/knowagewhatifengine/restful-services/1.0/model/null/?SBI_EXECUTION_ID='+JSsbiExecutionID,
-	  
+	  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
+	  data: 'null'
 	}).then(function successCallback(response) {
 	    // this callback will be called asynchronously
 	    // when the response is available
@@ -131,7 +133,47 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 	   
   }*/
   
+
+  $scope.drillDown =function(axis, position,  member, uniqueName, uniqueName){
+		$http({
+			  method: 'GET',
+			  url: '/knowagewhatifengine/restful-services/1.0/member/drilldown/'+axis+'/'+position+'/'+member+'/'+uniqueName+'/'+uniqueName,
+		  
+		  }).then(function successCallback(response) {
+
+		  },function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+		  });
+	}
   
+  $scope.drillUp =function(axis, position,  member, uniqueName, uniqueName){
+		$http({
+			  method: 'GET',
+			  url: '/knowagewhatifengine/restful-services/1.0/member/drillup/'+axis+'/'+position+'/'+member+'/'+uniqueName+'/'+uniqueName,
+		  
+		  }).then(function successCallback(response) {
+
+		  },function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+		  });
+	}
+  
+  $scope.swapAxis =function(){
+		$http({
+			  method: 'POST',
+			  url: '/knowagewhatifengine/restful-services/1.0/axis/swap?SBI_EXECUTION_ID='+JSsbiExecutionID,
+		  
+		  }).then(function successCallback(response) {
+			  console.log(response.data.table);
+			  $scope.table = response.data.table;
+		  },function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+		  });
+	}
+
   //tree example data
   $scope.data = [
     {

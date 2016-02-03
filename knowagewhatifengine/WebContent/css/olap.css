@@ -149,6 +149,7 @@
   font-size: 15px !important;
   color:white;
   cursor: pointer;
+  background-color:#3b678c;
 }
 
 .filter-toolbar-element-left .name{

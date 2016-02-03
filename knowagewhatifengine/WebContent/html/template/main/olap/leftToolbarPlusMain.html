@@ -1,0 +1,16 @@
+<div class='knowage-blue dimension-left-toolbar' layout="column">
+
+			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true">
+				<div class="name">
+					<div class="rotate-text">{{column.name}}</div>
+				</div>	
+				<div class="action">
+					<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e)">
+						<md-icon md-font-icon="fa fa-filter"></md-icon>
+					</md-button>
+				</div>
+			</div>
+	</div>
+	<div ng-bind-html="table">
+		
+	</div>
