@@ -81,7 +81,7 @@
 	</div>
 		</left-col>
 		<right-col>
-		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveDrivers()"
+		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && save()"
 		class="detailBody md-whiteframe-z1">
 		<div ng-show="showme">
 				<md-toolbar class="header"> 
@@ -93,7 +93,7 @@
 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button  type="submit"
-							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
+							aria-label="save" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 							style=" margin-top: 2px;"
 							ng-disabled="!attributeForm.$valid"
 							>
@@ -189,6 +189,14 @@
 			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> <md-content
 				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder"> 
+				
+				
+				<md-button type="button" tabindex="-1" aria-label="test"
+							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;float:right;"
+							ng-click="test()">TEST
+				</md-button>
+				
+				
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							 <md-input-container class="small counter">

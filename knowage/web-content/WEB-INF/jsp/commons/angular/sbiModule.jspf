@@ -226,11 +226,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-		if ( data.status == -1) {
-			data.data={};
-			data.data.errors=[];
-			data.data.errors.push({"message":"Too many Redirects"})
-		}
+
   		deferred.reject(data, status, headers, config);
 	};
 	

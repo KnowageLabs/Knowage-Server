@@ -256,106 +256,111 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedParUse.id = $scope.selectedDriver.id;
 		$scope.selectedParUse.associatedRoles = $scope.associatedRoles;
 		$scope.selectedParUse.associatedChecks = $scope.associatedChecks;
+		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
+		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
 		delete $scope.selectedParUse.defaultrg;
 	}
 	 
-	$scope.saveDrivers= function(){  // this function is called when clicking on save button
-		$scope.formatDriver();
-		console.log($scope.selectedDriver);
-		if($scope.selectedDriver.hasOwnProperty("id")){ // if item already exists do update @PUT
+	$scope.save= function(){  // this function is called when clicking on save button
+		
+		var saveDriver = function() {
+			$scope.formatDriver();
 			
-			sbiModule_restServices.promisePut("2.0/analyticalDrivers",$scope.selectedDriver.id, $scope.selectedDriver)
-			.then(function(response) {
-				$scope.adList=[];
-				$timeout(function(){								
-					$scope.getDrivers();
-				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-				$scope.selectedDriver={};
-				$scope.selectedTab = 0;
-				$scope.showme=false;
-				$scope.showadMode = false;
-				$scope.dirtyForm=false;	
+			if($scope.selectedDriver.hasOwnProperty("id")){ // if item already exists do update @PUT
 				
-			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
+				sbiModule_restServices.promisePut("2.0/analyticalDrivers",$scope.selectedDriver.id, $scope.selectedDriver)
+				.then(function(response) {
+					$scope.adList=[];
+					$timeout(function(){								
+						$scope.getDrivers();
+					}, 1000);
+					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					$scope.selectedDriver={};
+					$scope.selectedTab = 0;
+					$scope.showme=false;
+					$scope.showadMode = false;
+					$scope.dirtyForm=false;	
+					
+				}, function(response) {
+					toastr.error(response.data.errors[0].message, 'Error');
+					
+				});			
+							
+			}else{ // create new item in database @POST
+				console.log($scope.selectedDriver);
+				sbiModule_restServices.promisePost("2.0/analyticalDrivers","",angular.toJson($scope.selectedDriver))
+				.then(function(response) {
+					$scope.adList=[];
+					$timeout(function(){								
+						$scope.getDrivers();
+					}, 1000);
+					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+					$scope.selectedDriver={};
+					$scope.selectedTab = 0;
+					$scope.showme=false;
+					$scope.showadMode = false;
+					$scope.dirtyForm=false;	
+					
+				}, function(response) {
+					toastr.error(response.data.errors[0].message, 'Error');
+					
+				});	
 				
-			});	
-			
-			if($scope.selectedParUse.label != null){
-				$scope.saveUseMode();
-			}				
-						
-		}else{ // create new item in database @POST
-			console.log($scope.selectedDriver);
-			sbiModule_restServices.promisePost("2.0/analyticalDrivers","",angular.toJson($scope.selectedDriver))
-			.then(function(response) {
-				$scope.adList=[];
-				$timeout(function(){								
-					$scope.getDrivers();
-				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-				$scope.selectedDriver={};
-				$scope.selectedTab = 0;
-				$scope.showme=false;
-				$scope.showadMode = false;
-				$scope.dirtyForm=false;	
-				
-			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
-				
-			});	
-			
+			}
 		}
+		var saveUseMode= function(){  // this function is called when clicking on save button
+			$scope.formatUseMode();
+			if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
+				sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
+				.then(function(response) {
+					$scope.useModeList=[];
+					$timeout(function(){								
+						$scope.getUseModesById($scope.selectedDriver);
+					}, 1000);
+					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					$scope.selectedTab = 0;
+					$scope.showme=false;
+					$scope.showadMode = false;
+					$scope.dirtyForm=false;	
+					
+				}, function(response) {
+					toastr.error(response.data.errors[0].message, 'Error');
+					
+				});	
+				
+			}else{ // create new item in database @POST
+				sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
+				.then(function(response) {
+					$scope.useModeList=[];
+					$timeout(function(){								
+						$scope.getUseModesById($scope.selectedDriver);
+					}, 1000);
+					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+					$scope.selectedParUse={};
+					$scope.selectedTab = 0;
+					$scope.showme=false;
+					$scope.showadMode = false;
+					$scope.dirtyForm=false;
+					
+				}, function(response) {
+					toastr.error(response.data.errors[0].message, 'Error');
+					
+				});	
+			}
+		}
+		
+		if($scope.selectedTab==0){
+			console.log("SAVING DRIVER");
+			console.log($scope.selectedDriver);
+			saveDriver();
+		}else {
+			console.log("SAVING USEMODE");
+			console.log($scope.selectedParUse);
+			saveUseMode();
+		}
+		
 	}
 	
-	$scope.saveUseMode= function(){  // this function is called when clicking on save button
-		$scope.formatUseMode();
-		if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT
-			$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
-			$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
-			
-			console.log($scope.selectedParUse);
-			
-			sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
-			.then(function(response) {
-				$scope.useModeList=[];
-				$timeout(function(){								
-					$scope.getUseModesById($scope.selectedDriver);
-				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-				$scope.selectedTab = 0;
-				$scope.showme=false;
-				$scope.showadMode = false;
-				$scope.dirtyForm=false;	
-				
-			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
-				
-			});	
-			
-		}else{ // create new item in database @POST
-			console.log($scope.selectedParUse);
-			sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
-			.then(function(response) {
-				$scope.useModeList=[];
-				$timeout(function(){								
-					$scope.getUseModesById($scope.selectedDriver);
-				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-				$scope.selectedParUse={};
-				$scope.selectedTab = 0;
-				$scope.showme=false;
-				$scope.showadMode = false;
-				$scope.dirtyForm=false;
-				
-			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
-				
-			});	
-		}
-	}
-
 	$scope.deleteDrivers = function(item){
 		// this function is called when clicking on delete button
 		sbiModule_restServices.promiseDelete("2.0/analyticalDrivers",item.id)
@@ -363,6 +368,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			$scope.adList=[];
 			$timeout(function(){								
 				$scope.getDrivers();
+				$scope.useModeList=[];
 			}, 1000);
 			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			$scope.selectedDriver={};
@@ -525,5 +531,9 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			toastr.error(response.data.errors[0].message, 'Error');
 			
 		});
+	}
+	$scope.test = function(){ 
+		$scope.formatUseMode();
+		console.log($scope.selectedParUse);
 	}
 };
