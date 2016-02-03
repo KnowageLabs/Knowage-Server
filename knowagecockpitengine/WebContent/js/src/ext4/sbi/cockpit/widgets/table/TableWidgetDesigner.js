@@ -841,7 +841,29 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
 		state.wtype = 'table';
 		if(this.tableDesigner.rendered === true) {
-			state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
+			var allSortedFields = this.tableDesigner.tableDesigner.getContainedValues();
+			
+			var allSortedFieldsKeyMap = {};
+			for(var i = 0; i < allSortedFields.length; i++) {
+				var field = allSortedFields[i];
+				
+				allSortedFieldsKeyMap[field.id] = field;
+			}
+			
+			this.tableDesigner.tableDesigner.store.clearFilter();
+			//All fields without non necessary columns used for calculated fields (BUT NOT properly sorted)
+			var filteredFields = this.tableDesigner.tableDesigner.getContainedValues();
+			for(var i = 0; i < filteredFields.length; i++) {
+				var filteredField = filteredFields[i];
+				
+				if(!allSortedFieldsKeyMap[filteredField.id]) {
+					allSortedFieldsKeyMap[filteredField.id] = filteredField;
+					allSortedFields.push(filteredField);
+				}
+			}
+			
+//			state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
+			state.visibleselectfields = allSortedFields;
 		} else {
 			state.visibleselectfields =  this.visibleselectfields;
 		}
