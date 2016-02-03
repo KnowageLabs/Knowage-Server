@@ -170,7 +170,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 			var tmpData = records[i].getData();
 			
 			for (var key in tmpData) {
-				if (tmpData[key] === fieldValue) {
+				if (tmpData[key] == fieldValue) {
 					column = key;
 					break outerloop;
 				}

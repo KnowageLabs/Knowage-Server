@@ -47,7 +47,7 @@ Sbi.data.StoreManager = function(config) {
 
 		for(var i=0; i<widgetsConf.length; i++){
 			var sheet = widgetsConf[i];
-			var  widgets = sheet.sheetConf.widgets;
+			var widgets = sheet.sheetConf.widgets;
 			for(var i=0; i<widgets.length; i++){
 				var aWidget = widgets[i];
 				var aStore = stores[i];
@@ -215,7 +215,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			Sbi.trace("[StoreManager.resetConfiguration]: There are [" + this.stores.getCount() + "] store(s) to remove");
 			autoDestroy = autoDestroy || this.autoDestroy;
 			this.stores.each(function(registeredStore, index, length) {
-				Sbi.trace("[StoreManager.resetConfiguration]: Removing  [" + registeredStore.aggregatedVersions.length + "] store(s) " +
+				Sbi.trace("[StoreManager.resetConfiguration]: Removing [" + registeredStore.aggregatedVersions.length + "] store(s) " +
 						"associated with id [" + registeredStore.id + "]...");
 				for(var i = 0; i < registeredStore.aggregatedVersions.length; i++) {
 					this.removeStore(registeredStore.aggregatedVersions[i], autoDestroy);
@@ -683,14 +683,14 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 				var registeredStore = this.stores.get(this.getStoreId(store));
 				if(!registeredStore) {
-					Sbi.trace("[StoreManager.addStore]: No store is alredy registered with id  [" + store.storeId + "]");
+					Sbi.trace("[StoreManager.addStore]: No store is already registered with id  [" + store.storeId + "]");
 					registeredStore = {
 						id: this.getStoreId(store),
 						aggregatedVersions: []
 					};
 					this.stores.add(registeredStore);
 				} else {
-					Sbi.trace("[StoreManager.addStore]: There are alredy [" + registeredStore.aggregatedVersions.length + "] stores registered with id  [" + registeredStore.id + "]");
+					Sbi.trace("[StoreManager.addStore]: There are already [" + registeredStore.aggregatedVersions.length + "] stores registered with id  [" + registeredStore.id + "]");
 				}
 				registeredStore.aggregatedVersions.push(store);
 
@@ -2072,13 +2072,16 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					}
 					
 					fireEventAssociation = false;
+					 
 					for(var i = 0; i < stores.length; i++) {
 						var store = stores[i];
+						var params = store.getProxy().extraParams;
+						params.storeId = store.storeId;
 						Ext.Ajax.request({
 							url: Sbi.config.serviceReg.getServiceUrl('v2/loadDataSetStorePost', {
 								pathParams: {datasetLabel: store.storeId}
 							}),
-							params: store.getProxy().extraParams,
+							params: params,
 						    method: 'POST',
 						    jsonData: r,
 						    success : this.onAssociativeSelectionsApplied,
@@ -2133,8 +2136,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					}
 					
 					fireEventAssociation = false;
-					var stores = this.getStoresById(response.label)
-					stores[0].loadData(Ext.JSON.decode(response.store).rows);
+					var storeId = options.params.storeId;
+					var aggregations = Ext.JSON.decode(options.params.aggregations);
+					var store = this.getStore(storeId, aggregations);
+					store.loadData(response.rows);
 				}
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
@@ -2144,8 +2149,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
     	
     	if (fireEventAssociation) {
-    		var stores = this.getStoresById(response.label)
-			stores[0].fireEvent('association', store, associationGroup, selections);
+    		var storeId = options.params.storeId;
+			var aggregations = Ext.JSON.decode(options.params.aggregations);
+			var store = this.getStore(storeId, aggregations);
+			store.fireEvent('association', store, associationGroup, selections);
 		}
 
     	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: OUT");
