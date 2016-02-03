@@ -333,23 +333,26 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		if (selectionsObject.has(dataset)) {
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
 			Iterator<String> it = datasetSelectionObject.keys();
+			boolean onlyEmptySelections = true;
 			while (it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
-				FilterCriteria filterCriteria;
-				if (values.length() == 0) {
-					Operand leftOperand = new Operand("0");
-					Operand rightOperand = new Operand("1");
-					filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
-				} else {
+				if (values.length() > 0) {
+					onlyEmptySelections = false;
 					List<String> valuesList = new ArrayList<String>();
 					for (int i = 0; i < values.length(); i++) {
 						valuesList.add(values.getString(i));
 					}
 					Operand leftOperand = new Operand(columns);
 					Operand rightOperand = new Operand(valuesList);
-					filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+					filterCriterias.add(filterCriteria);
 				}
+			}
+			if (onlyEmptySelections) {
+				Operand leftOperand = new Operand("0");
+				Operand rightOperand = new Operand("1");
+				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 				filterCriterias.add(filterCriteria);
 			}
 		}
@@ -361,13 +364,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, String selections) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("storeId") String storeId, String selections) {
 		logger.debug("IN");
 		try {
-			JSONObject response = new JSONObject();
-			response.put("label", label);
-			response.put("store", getDataStore(label, parameters, selections, aggregations));
-			return response.toString();
+			return getDataStore(label, parameters, selections, aggregations);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {

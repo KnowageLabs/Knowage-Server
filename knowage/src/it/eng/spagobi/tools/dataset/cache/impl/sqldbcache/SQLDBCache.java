@@ -580,7 +580,11 @@ public class SQLDBCache implements ICache {
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (String value : values) {
 							if (operator.equalsIgnoreCase("IN")) {
-								rightOperand += separator + "(1," + value.substring(1);
+								if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) || value.startsWith("(") && value.endsWith(")")) {
+									rightOperand += separator + "(1," + value + ")";
+								} else {
+									rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+								}
 							} else {
 								rightOperand += separator + stringDelimiter + value + stringDelimiter;
 							}
