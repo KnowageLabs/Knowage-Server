@@ -27,9 +27,11 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		this.initEvents();
 		this.callParent(arguments);
 
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			tmpWc.getWidgetManager().on('selectionChange', this.onSelectionChange,this);
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				tmpWc.getWidgetManager().on('selectionChange', this.onSelectionChange,this);
+			}
 		}
 //		this.widgetManager.on('selectionChange', this.onSelectionChange,this);
 
@@ -282,29 +284,33 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		var widgetId = record.get('widget');
 		var fieldHeader = record.get('association');
 		
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			if(widgetId != "_association_") {
-//				this.widgetManager.clearFieldSelections(widgetId, fieldHeader);							
-				tmpWc.getWidgetManager().clearFieldSelections(widgetId, fieldHeader);
-				if (tmpWc.getWidgetManager().getWidget(widgetId)){		
-					this.fireEvent("performunselect");
-				}
-			} else {
-//				this.widgetManager.clearAssociationSelections(fieldHeader);
-				if (tmpWc.getWidgetManager().getWidget(widgetId)){
-					tmpWc.getWidgetManager().clearAssociationSelections(fieldHeader);
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				if(widgetId != "_association_") {
+//					this.widgetManager.clearFieldSelections(widgetId, fieldHeader);							
+					tmpWc.getWidgetManager().clearFieldSelections(widgetId, fieldHeader);
+					if (tmpWc.getWidgetManager().getWidget(widgetId)){		
+						this.fireEvent("performunselect");
+					}
+				} else {
+//					this.widgetManager.clearAssociationSelections(fieldHeader);
+					if (tmpWc.getWidgetManager().getWidget(widgetId)){
+						tmpWc.getWidgetManager().clearAssociationSelections(fieldHeader);
+					}
 				}
 			}
 		}
 	}
 
 	, onPerformUnselectAll: function(){
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-//			this.widgetManager.clearSelections();
-			tmpWc.getWidgetManager().clearSelections();
-			this.fireEvent("performunselectall");
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+//				this.widgetManager.clearSelections();
+				tmpWc.getWidgetManager().clearSelections();
+				this.fireEvent("performunselectall");
+			}
 		}
 	}
 

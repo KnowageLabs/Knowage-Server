@@ -47,25 +47,31 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, onCancelSingle: function(grid, rowIndex, colIndex) {
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			tmpWc.getWidgetManager().clearSingleSelection(grid, rowIndex, colIndex);
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				tmpWc.getWidgetManager().clearSingleSelection(grid, rowIndex, colIndex);
+			}
 		}
 //		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
 	}
 
 	, onClearSelections: function(){
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			tmpWc.getWidgetManager().clearSelections();
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				tmpWc.getWidgetManager().clearSelections();
+			}
 		}
 //		this.widgetManager.clearSelections();
 	}
 
 	, onSelectionChange: function() {
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			tmpWc.selectionsPanel.refreshStore();
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				tmpWc.selectionsPanel.refreshStore();
+			}
 		}
 //	    this.selectionsPanel.refreshStore();
 	}
@@ -96,10 +102,12 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 			gridHeader: this.gridHeader
 		});
 
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-			tmpWc.on('selectionChange',this.onSelectionChange,this);
-//			tmpWc.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				tmpWc.on('selectionChange',this.onSelectionChange,this);
+//				tmpWc.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
+			}
 		}
 //		this.widgetManager.on('selectionChange',this.onSelectionChange,this);
 		this.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
