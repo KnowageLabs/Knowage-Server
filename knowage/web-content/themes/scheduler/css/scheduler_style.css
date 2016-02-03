@@ -58,6 +58,7 @@ md-toolbar.minihead {
 
 .borderBox {
 	border: 1px solid #B0BEC5;
+	padding-bottom: 20px;
 }
 
 .bottomButtonsBox {

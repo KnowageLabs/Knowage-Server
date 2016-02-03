@@ -2,10 +2,10 @@
 var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                      'sbiModule']);
 
-app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageDomainFucntion ]);
+app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
 
 
-function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 	
 	var s = $scope;
 	
@@ -14,9 +14,7 @@ function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scop
 	s.translate = sbiModule_translate;
 	s.data=[]
 	s.itemSelected= {};
-	
-	var calculatedHeight = document.body.clientHeight - (25 + document.body.getElementsByTagName("md-toolbar")[0].clientHeight + document.body.getElementsByClassName("buttonsContainer")[0].clientHeight);
-	$scope.gridHeight = calculatedHeight +"px";
+	 
 	
 	var rowDefault = {
 		valueId : "",
@@ -46,7 +44,7 @@ function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scop
 	s.addRow = function() {
 		$mdDialog.show({
 			controller: s.dialogController ,
-			templateUrl: '/knowage/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
+			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
 			parent: angular.element(document.body),
 			locals : {
 				translate : s.translate,
@@ -88,7 +86,7 @@ function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scop
 			var idx = s.indexOf(s.data, rowSelected);
 			$mdDialog.show({
 				controller: s.dialogController ,
-				templateUrl: '/knowage/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
+				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
 				parent: angular.element(document.body),
 				locals : {
 					translate : s.translate,

@@ -591,4 +591,18 @@ eventDefinitionApp.controller('ActivityEventController',
 	            ];
 
 	
+	activityEventCtrl.showInfoBox=function(title,text,parentId){
+				$mdDialog.show(
+					      $mdDialog.alert()
+					        .clickOutsideToClose(true)
+					        .title(title)
+					        .content(text)
+					        .ariaLabel('info dialog')
+					        .ok(sbiModule_translate.load("sbi.general.close")) 
+					        .openFrom('#'+parentId)
+					        .closeTo('#'+parentId)
+					    );
+
+	}
+	
 }]);

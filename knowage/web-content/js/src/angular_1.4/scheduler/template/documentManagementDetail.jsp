@@ -104,8 +104,10 @@
 		
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.fixedFolder", "component_scheduler_messages")}}:</label>
-				<md-checkbox aria-label="aria-label"
-						ng-model="activityEventCtrl.selectedDocument.useFixedFolder"></md-checkbox>
+				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedFolder"></md-checkbox>
+				<md-button id="fixedFolder" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedFolder', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedFolder', 'component_scheduler_messages'),'fixedFolder')" >
+         			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
+        		</md-button>
 			</div>
 		
 			<div ng-if="activityEventCtrl.selectedDocument.useFixedFolder==true">
@@ -141,10 +143,12 @@
 				</div>
 			</div>
 		
-			<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
+			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.useFolderDataset", "component_scheduler_messages")}}:</label>
-				<md-checkbox aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.useFolderDataset"></md-checkbox>
+				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFolderDataset"></md-checkbox>
+				<md-button id="useFolderDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useFolderDataset', 'component_scheduler_messages'),translate.load('scheduler.help.useFolderDataset', 'component_scheduler_messages'),'useFolderDataset')" >
+         			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
+        		</md-button>
 			</div>
 		
 			<md-input-container class="subCheckboxRowElement"
@@ -215,22 +219,25 @@
 			</md-input-container>
 	
 			<div layout="row" class="checkboxRow">
-				<label>{{translate.load("scheduler.help.useFixedRecipients", "component_scheduler_messages")}}:</label>
-				<md-checkbox aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.useFixedRecipients">
+				<label>{{translate.load("scheduler.fixedRecipients", "component_scheduler_messages")}}:</label>
+				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients"></md-checkbox>
+				<md-button id="useFixedRecipients" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedRecipients', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedRecipients', 'component_scheduler_messages'),'useFixedRecipients')" >
+         			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
+        		</md-button>
 			</div>
 	
 			<md-input-container class="subCheckboxRowElement"
 					ng-if="activityEventCtrl.selectedDocument.useFixedRecipients==true">
 				<label>{{translate.load("scheduler.mailto", "component_scheduler_messages")}}:</label>
-				<input ng-model="activityEventCtrl.selectedDocument.mailtos" maxlength="100"
-					ng-maxlength="100" md-maxlength="100"> 
+				<input ng-model="activityEventCtrl.selectedDocument.mailtos" maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 			</md-input-container>
 	
 			<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
 				<label>{{translate.load("scheduler.useDatasetList", "component_scheduler_messages")}}:</label>
-				<md-checkbox aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.useDataset">
+				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset"></md-checkbox>
+				<md-button id="useDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useDatasetList', 'component_scheduler_messages'),translate.load('scheduler.help.useDataset', 'component_scheduler_messages'),'useDataset')" >
+         			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
+        		</md-button>
 			</div>
 	
 			<md-input-container class="subCheckboxRowElement"
@@ -252,8 +259,10 @@
 		
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.useExpression", "component_scheduler_messages")}}:</label>
-				<md-checkbox aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.useExpression">
+				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression"></md-checkbox>
+				<md-button id="useExpression" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useExpression', 'component_scheduler_messages'),translate.load('scheduler.help.useExpression', 'component_scheduler_messages'),'useExpression')" >
+         			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
+        		</md-button>
 			</div>
 		
 			<md-input-container class="subCheckboxRowElement"
