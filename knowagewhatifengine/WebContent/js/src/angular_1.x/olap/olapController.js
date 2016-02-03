@@ -14,13 +14,17 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   $scope.leftPanel = '/knowagewhatifengine/html/template/left/leftPanel.html';
   $scope.rightPanel = '/knowagewhatifengine/html/template/right/rightPanel.html';
   
+  $scope.rows;
+  $scope.columns;  
   $scope.toolbarButtons=[];
-  $scope.filterCardList = [{"name":"name1"},{"name":"name2"},{"name":"name3"},{"name":"name4"},{"name":"name5"},{"name":"name6"},{"name":"name7"}];
+  $scope.filterCardList = [];
+  
   $scope.numVisibleFilters = 5;
   $scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters? true : false; 
   
-  console.log("*********************************")
-  console.log(test);
+  $scope.data1=[];
+  var counter=0;
+  console.log(JSsbiExecutionID);
   
   filterXMLResult = function(res){
 	  var regEx = /([A-Z]+_*)+/g;
@@ -28,8 +32,6 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 	  
 	  while(i = regEx.exec(res))
 		  $scope.toolbarButtons.push(messageResource.get("sbi.olap.toolbar."+i[0],'messages'));
-	  
-	  console.log($scope.toolbarButtons);
   }
   
   filterXMLResult(test);
@@ -87,11 +89,49 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 		
 		
 		$scope.table = response.data.table;
+		$scope.rows = response.data.rows;
+		$scope.columns = response.data.columns;
+		$scope.filterCardList = response.data.filters;
+		
+		console.log("rows->");
+		console.log($scope.rows);
+		console.log("columns->");
+		console.log($scope.columns);
+		console.log("filters->");
+		console.log($scope.filterCardList);
 	  }, function errorCallback(response) {
 	    // called asynchronously if an error occurs
 	    // or server returns response with an error status.
 	  });
-     
+  
+  /*$scope.getHierarchyMembers = function(uniqueName,axis,node){
+	  $http({
+		  method: 'GET',
+		  url: '/knowagewhatifengine/restful-services/1.0/hierarchy/'+uniqueName+'/filtertree/'+axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID+'&node='+node,
+	  
+	  }).then(function successCallback(response) {
+		  if(node == 'root')
+			  $scope.data1 = response.data;
+		  
+		  for(var i=0; i<response.data.length;i++){
+			  
+			  if(!response.data[i].leaf)
+				  $scope.getHierarchyMembers(uniqueName,axis,response.data[i].uniqueName);
+			  
+			  $scope.data1["nodes"] = response.data[i];
+			  console.log(response.data[i]);
+		}
+			
+		   
+		  console.log($scope.data1);
+	  },function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		  });
+	   
+  }*/
+  
+  
   //tree example data
   $scope.data = [
     {

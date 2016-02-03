@@ -83,6 +83,7 @@
 
 .dimension-left-toolbar{
     border-radius: 0px 0px 7px 7px;
+    width:32px;
 }
 
 .md-toolbar-tools{
@@ -105,12 +106,77 @@
     line-height: 0;
 }
 
-/*.filter-card{
-    border-radius: 10px 10px;
-    width:20%;
-    height:10%;
-    -moz-height:5%;
-}*/
+/*New stuff start*/
+.filter-toolbar-element{
+  width:15%;
+  height:85%;
+  background-color:#3b678c;
+  border-radius:5px; 
+  border:2px solid white;
+  margin-right: 10px;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 15px !important;
+  line-height: 1.5;
+}
+
+.filter-toolbar-element .name{
+  width:80%; 
+  padding-left:5px; 
+  border-right:2px solid white;
+  overflow: hidden;
+}
+
+.filter-toolbar-element .action{
+  width:20%;
+}
+
+.filter-toolbar-element .button{
+  right:14;
+  bottom:2;
+}
+
+/**/
+
+.filter-toolbar-element-left{
+  border: 2px solid #FFF;
+  height: 20%;
+  width: 80%;
+  border-radius: 5px;
+  margin-left: 4%;
+  margin-top: 4%;
+  font-weight: normal;
+  font-size: 15px !important;
+  color:white;
+  cursor: pointer;
+}
+
+.filter-toolbar-element-left .name{
+  height:80%; 
+  padding-left:5px; 
+  overflow: hidden;
+}
+
+.filter-toolbar-element-left .action{
+  height:80%;
+  border-top: 2px solid white;
+}
+
+.filter-toolbar-element-left .button{
+  right:12;
+  bottom:4;
+}
+
+.filter-toolbar-element-left md-icon{
+  color:white;
+}
+
+.rotate-text{
+  transform: rotate(90deg);
+  padding:5px;
+}
+/*new stuff end*/
+
 
 md-card{
   border-radius: 10px 10px;
