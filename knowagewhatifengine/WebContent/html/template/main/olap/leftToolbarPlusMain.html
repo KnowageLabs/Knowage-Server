@@ -1,6 +1,6 @@
-<div class='knowage-blue dimension-left-toolbar' layout="column">
+<div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 
-			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true">
+			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true" ng-drag-data="column">
 				<div class="name">
 					<div class="rotate-text">{{column.name}}</div>
 				</div>	

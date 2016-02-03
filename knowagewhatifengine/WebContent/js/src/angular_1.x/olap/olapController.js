@@ -249,6 +249,51 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 		);
 	}
 
+  $scope.dropTop = function(data,ev){
+	
+	if($scope.columns.length == 1 && $scope.columns[0].id == data.id ){
+		alert("Not allowed")
+	}
+	else{
+		$scope.rows.push(data);
+		remove(data.id);
+	}
+		
+	
+  }
+  
+  $scope.dropLeft = function(data,ev){
+	  	
+	  if($scope.rows.length == 1 && $scope.rows[0].id == data.id ){
+			alert("Not allowed")
+		}
+		else{
+			$scope.columns.push(data);
+			remove(data.id);
+		}
+  }
+  
+  $scope.dropFilter = function(data,ev){
+	  console.log(isfilter);
+	  	
+	  $scope.filterCardList.push(data);
+  }
+  
+
+  remove = function (id){
+	  for(var i=0;i<$scope.columns.length;i++){
+		  if(id == $scope.columns[i].id){
+			  $scope.columns.splice(i,1);
+			  break;
+		  }
+	  }
+	  for(var i=0;i<$scope.rows.length;i++){
+		  if(id == $scope.rows[i].id){
+			  $scope.rows.splice(i,1);
+			  break;
+		  }
+	  }
+  }
   $scope.openFiltersDialog = function(ev){
     $mdDialog.show({
       scope: $scope,

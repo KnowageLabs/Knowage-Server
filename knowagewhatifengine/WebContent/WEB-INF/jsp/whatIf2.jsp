@@ -15,6 +15,7 @@
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var test = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
+	
 </script>
 </head>
 <body ng-controller="olapController">
@@ -28,7 +29,7 @@
 			<div  ng-include="mainToolbar">
 			</div>
 		
-			<div layout="row" ng-include="filterPanel" class="top-alignment">
+			<div layout="row" ng-include="filterPanel" class="top-alignment" ng-drop="true" ng-drop-success="dropFilter($data,$event)">
 			</div>
 
 			<div layout="column" ng-include="olapPanel">
