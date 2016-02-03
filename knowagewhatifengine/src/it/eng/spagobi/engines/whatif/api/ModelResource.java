@@ -63,6 +63,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
+import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
@@ -100,12 +101,47 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * @return the htm table representing the cellset
 	 */
 	@POST
+	@Path("/")
+	@Produces("text/html; charset=UTF-8")
+	public String setMdx() {
+		logger.debug("IN");
+		String table = "";
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+
+		String requestBody = "";
+
+		try {
+			requestBody = RestUtilities.readBody(getServletRequest());
+		} catch (IOException e) {
+			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
+		}
+
+		if (!isNullOrEmpty(requestBody)) {
+			logger.debug("Updating the query in the model");
+			model.setMdx(requestBody);
+		} else {
+			logger.debug("No query found");
+		}
+
+		table = renderModel(model);
+
+		logger.debug("OUT");
+		return table;
+
+	}
+
+	@GET
 	@Path("/{mdx}")
 	@Produces("text/html; charset=UTF-8")
-	public String setMdx(@PathParam("mdx") String mdx) {
+	public String setMdx2(@PathParam("mdx") String mdx) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
+		String mesure = "";
+		model.setSortCriteria(SortCriteria.ASC);
 
 		if (!isNullOrEmpty(mdx)) {
 			logger.debug("Updating the query in the model");
