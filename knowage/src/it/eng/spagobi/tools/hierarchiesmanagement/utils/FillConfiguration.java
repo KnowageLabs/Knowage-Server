@@ -75,7 +75,11 @@ public class FillConfiguration {
 	private void setFillConfiguration() {
 
 		String tmpFillEmpty = (String) this.hierarchyConfig.get(HierarchyConstants.FILL_EMPTY);
-		this.fillEmpty = (tmpFillEmpty.equalsIgnoreCase(HierarchyConstants.FILL_EMPTY_YES)) ? true : false;
+		if (tmpFillEmpty != null) {
+			this.fillEmpty = (tmpFillEmpty.equalsIgnoreCase(HierarchyConstants.FILL_EMPTY_YES)) ? true : false;
+		} else {
+			this.fillEmpty = false;
+		}
 
 		String tmpFillValue = (String) this.hierarchyConfig.get(HierarchyConstants.FILL_VALUE);
 		this.fillValue = (tmpFillValue != null && tmpFillValue.equals("")) ? null : tmpFillValue;

@@ -24,8 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -342,7 +342,7 @@ public class HierarchyMasterService {
 	}
 
 	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, Map<Integer, Object> fieldsMap, JSONObject requestVal,
-			StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException {
+			StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException, ParseException {
 
 		int index = fieldsMap.size();
 
@@ -379,15 +379,12 @@ public class HierarchyMasterService {
 			String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 			String beginDtValue = requestVal.getString(HierarchyConstants.BEGIN_DT);
 
-			Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(beginDtValue);
-			java.sql.Date tmpDate = new java.sql.Date(calendar.getTimeInMillis());
-
 			// updating sql clauses for columns and values
 			columnsClause.append(beginDtColumn + sep);
 			valuesClause.append("?" + sep);
 
 			// updating values and types maps
-			fieldsMap.put(index, tmpDate);
+			fieldsMap.put(index, beginDtValue);
 
 			index++;
 
@@ -398,15 +395,12 @@ public class HierarchyMasterService {
 			String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 			String endDtValue = requestVal.getString(HierarchyConstants.END_DT);
 
-			Calendar calendar = javax.xml.bind.DatatypeConverter.parseDateTime(endDtValue);
-			java.sql.Date tmpDate = new java.sql.Date(calendar.getTimeInMillis());
-
 			// updating sql clauses for columns and values
 			columnsClause.append(endDtColumn + sep);
 			valuesClause.append("?" + sep);
 
 			// updating values and types maps
-			fieldsMap.put(index, tmpDate);
+			fieldsMap.put(index, endDtValue);
 
 		}
 
@@ -628,11 +622,26 @@ public class HierarchyMasterService {
 		// if there is only one level, we don't have LEAF_PARENT_XX columns
 		if (lvlIndex > 1) {
 
-			int parentIndex = lvlIndex - 1;
-			Object[] lvlValues = levelsMap.get(parentIndex);
+			Object leafParentCdValue = null;
+			Object leafParentNmValue = null;
 
-			Object leafParentCdValue = lvlValues[0];
-			Object leafParentNmValue = lvlValues[1];
+			int parentIndex = lvlIndex - 1;
+
+			for (int i = parentIndex; i > 0; i--) {
+
+				logger.debug("Looking for parent leaf at level [" + i + "]");
+
+				Object[] lvlValues = levelsMap.get(i);
+
+				leafParentCdValue = lvlValues[0];
+				leafParentNmValue = lvlValues[1];
+
+				if (leafParentCdValue != null && leafParentNmValue != null) {
+
+					logger.debug("Found a valorized parent! Break the loop.");
+					break;
+				}
+			}
 
 			String cdLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 			String nmLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
