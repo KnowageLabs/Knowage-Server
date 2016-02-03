@@ -513,6 +513,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         if (existingWidget){
         	wtype = existingWidget.wtype;
         }
+        
+        var unselectedAggregations = existingWidget.aggregations;
 
         // pass information that is moving towards runtime
 		var wizardState = null;
@@ -679,21 +681,22 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");
 
-		this.applyStoreUnselection(unselectedDatasetLabel);
+		this.applyStoreUnselection(unselectedDatasetLabel, unselectedAggregations);
 
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: OUT");
 
 		return true;
     }
 
-    , applyStoreUnselection: function(unselectedDatasetLabel) {
+    , applyStoreUnselection: function(unselectedDatasetLabel, unselectedAggregations) {
 
     	Sbi.trace("[WidgetContainer.applyStoreUnselection]: IN");
 
 		if(Sbi.isValorized(unselectedDatasetLabel)) {
 			Sbi.trace("[WidgetContainer.applyStoreUnselection]: removing from store manger unselected store [" + unselectedDatasetLabel + "] ...");
 			if( this.getWidgetManager().isStoreUsed(unselectedDatasetLabel) == false ) {
-				Sbi.storeManager.removeStore(unselectedDatasetLabel);
+				var oldStore = Sbi.storeManager.getStore(unselectedDatasetLabel, unselectedAggregations);
+				Sbi.storeManager.removeStore(oldStore);
 				Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] succesfully removed from store manager");
 			} else {
 				Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] wont be used because other widgets are using it");

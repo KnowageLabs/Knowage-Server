@@ -735,7 +735,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	/**
 	 * @method
 	 *
-	 * @param {Ext.data.Store/String} store The store to rmove or its id.
+	 * @param {Ext.data.Store} store The store to remove.
 	 * @param {Boolean} autoDestroy (optional) True to automatically also destroy the store after removal.
 	 * Defaults to the value of this Manager's {@link #autoDestroy} config.
 	 *
