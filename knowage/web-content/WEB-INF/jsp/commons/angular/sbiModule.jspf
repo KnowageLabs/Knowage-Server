@@ -85,7 +85,7 @@ sbiM.config(function($mdDateLocaleProvider) {
 					 }
 				 }
 			 }
-			 return dateCorrect == true ? new Date(result[3],result[2]-1,result[1]) : null; //Date has month starting from 0, so result[2]-1 is the correct month
+			 return dateCorrect == true ? new Date(yy,mm-1,day) : null;
 		 }else{
 		    return date;
 		 }
