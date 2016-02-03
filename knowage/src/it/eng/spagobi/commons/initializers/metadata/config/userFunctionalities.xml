@@ -105,6 +105,12 @@
 		name="FederationDefinition" description="FederationDefinition" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 		
+	<USER_FUNCTIONALITY productType="KnowageBD" name="TemplateManagement" description="TemplateManagement" />	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpDocument" description="ImpExpDocument"/>	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+		
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	
 
@@ -178,7 +184,6 @@
 	<USER_FUNCTIONALITY productType="KnowageFake" name="TemplateManagement" description="TemplateManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpDocument" description="ImpExpDocument"/>	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpMenu" description="ImpExpMenu"/>	
-	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageFake" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 </USER_FUNCTIONALITIES>
