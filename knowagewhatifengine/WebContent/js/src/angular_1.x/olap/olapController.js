@@ -1,4 +1,4 @@
-var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize']);
+var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable']);
 olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",
 		olapFunction ]);
 
