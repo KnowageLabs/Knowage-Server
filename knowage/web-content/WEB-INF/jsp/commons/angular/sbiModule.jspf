@@ -92,27 +92,28 @@ sbiM.config(function($mdDateLocaleProvider) {
 	};
 	
 	$mdDateLocaleProvider.formatDate = function(date){
-		if (date){
-			var formats = localizedDateFormat.split('/');
-			var dateResult='';
-			for (var time in formats){
-				var partOfDate='';
-				if (formats[time].toUpperCase().indexOf('D')>=0){
-					partOfDate+=date.getDay();
-				}else if (formats[time].toUpperCase().indexOf('M')>=0){
-					partOfDate+=(date.getMonth()+1);
-				}else if (formats[time].toUpperCase().indexOf('Y')>=0){
-					partOfDate+=date.getFullYear();
-				}
-				if (partOfDate.length == 1 && formats[time].length == 2){
-					partOfDate = '0'+partOfDate;
-				}else if (partOfDate.length==4 && formats[time].length == 2){
-					partOfDate=partOfDate.substring(2);
-				}
-				dateResult+=partOfDate+'/';
-			}
-			return dateResult.substring(0, dateResult.length - 1);
+		if (!date){
+			return null;
 		}
+		var formats = localizedDateFormat.split('/');
+		var dateResult='';
+		for (var time in formats){
+			var partOfDate='';
+			if (formats[time].toUpperCase().indexOf('D')>=0){
+				partOfDate+=date.getDay();
+			}else if (formats[time].toUpperCase().indexOf('M')>=0){
+				partOfDate+=(date.getMonth()+1);
+			}else if (formats[time].toUpperCase().indexOf('Y')>=0){
+				partOfDate+=date.getFullYear();
+			}
+			if (partOfDate.length == 1 && formats[time].length == 2){
+				partOfDate = '0'+partOfDate;
+			}else if (partOfDate.length==4 && formats[time].length == 2){
+				partOfDate=partOfDate.substring(2);
+			}
+			dateResult+=partOfDate+'/';
+		}
+		return dateResult.substring(0, dateResult.length - 1);
 	};
 });
 
