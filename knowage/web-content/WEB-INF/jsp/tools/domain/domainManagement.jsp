@@ -23,13 +23,13 @@
 			    <div class="md-toolbar-tools">
 			      <h2 class="md-flex">Domain Management</h2>
 			    </div>
-			</md-toolbar>
+		</md-toolbar>
 	 
-			 <div  layout="row" layoput-wrap >
-					<md-button class="md-raised" ng-click="addRow()">{{translate.load("sbi.generic.add")}}</md-button>
-					<md-button 	class="md-raised" ng-click="deleteRow()">{{translate.load("sbi.generic.delete")}}</md-button>
-					<md-button 	class="md-raised " ng-click="editRow()">{{translate.load("sbi.generic.update2")}}</md-button>
-			 </div>
+		 <div  layout="row" layoput-wrap >
+				<md-button class="md-raised" ng-click="addRow()">{{translate.load("sbi.generic.add")}}</md-button>
+				<md-button 	class="md-raised" ng-click="deleteRow()">{{translate.load("sbi.generic.delete")}}</md-button>
+				<md-button 	class="md-raised " ng-click="editRow()">{{translate.load("sbi.generic.update2")}}</md-button>
+		 </div>
 			
 		 
 		<md-content flex >

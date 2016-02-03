@@ -2,10 +2,10 @@
 var app = angular.module('configManagementApp',  ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                       'sbiModule']);
 
-app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageConfigFucntion ])
+app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog','sbiModule_config', manageConfigFucntion ])
 
 
-function manageConfigFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageConfigFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 	
 	var path = "2.0/configs";
 	$scope.translate=sbiModule_translate;
@@ -13,9 +13,6 @@ function manageConfigFucntion(sbiModule_translate, sbiModule_restServices, $scop
 	$scope.itemSelected= {};
 	$scope.filterCategory=[];
 	$scope.hashCategory={};
-	
-	var calculatedHeight = document.body.clientHeight - (25 + document.body.getElementsByTagName("md-toolbar")[0].clientHeight + document.body.getElementsByClassName("buttonsContainer")[0].clientHeight);
-	$scope.gridHeight = calculatedHeight +"px";
 	
 	var rowDefault = {
 		id : "",
@@ -56,7 +53,7 @@ function manageConfigFucntion(sbiModule_translate, sbiModule_restServices, $scop
 	$scope.addRow = function() {
 		$mdDialog.show({
 			controller: $scope.dialogController ,
-			templateUrl: '/knowage/js/src/angular_1.4/tools/config/templates/configDialogForm.html',
+			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/config/templates/configDialogForm.html',
 			parent: angular.element(document.body),
 			locals : {
 				translate : $scope.translate,
@@ -100,7 +97,7 @@ function manageConfigFucntion(sbiModule_translate, sbiModule_restServices, $scop
 			var idx = $scope.indexOf($scope.data, rowSelected);
 			$mdDialog.show({
 				controller: $scope.dialogController ,
-				templateUrl: '/knowage/js/src/angular_1.4/tools/config/templates/configDialogForm.html',
+				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/config/templates/configDialogForm.html',
 				parent: angular.element(document.body),
 				locals : {
 					translate : $scope.translate,
