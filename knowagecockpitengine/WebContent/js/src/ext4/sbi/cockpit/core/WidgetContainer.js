@@ -514,7 +514,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         	wtype = existingWidget.wtype;
         }
         
-        var unselectedAggregations = existingWidget.aggregations;
+        var unselectedAggregations;
+        if(existingWidget && existingWidget.aggregations){
+        	unselectedAggregations = existingWidget.aggregations;
+        }
 
         // pass information that is moving towards runtime
 		var wizardState = null;
@@ -681,7 +684,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");
 
-		this.applyStoreUnselection(unselectedDatasetLabel, unselectedAggregations);
+		if(unselectedDatasetLabel && unselectedAggregations){
+			this.applyStoreUnselection(unselectedDatasetLabel, unselectedAggregations);
+		}
 
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: OUT");
 
