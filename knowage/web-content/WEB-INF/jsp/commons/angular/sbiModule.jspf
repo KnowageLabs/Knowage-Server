@@ -226,18 +226,32 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-		/* STEFAN: ADD GENERAL BEHAVIOUR */
+		if ( data.status == -1) {
+			data.data={};
+			data.data.errors=[];
+			data.data.errors.push({"message":"Too many Redirects"})
+		}
   		deferred.reject(data, status, headers, config);
 	};
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
-		if (data.data.hasOwnProperty("errors")) {
-			/* STEFAN: HANDLE OTHER ERRORS e.g. you should check also data.status  */
+		if(data.data != null){
+			if ( data.data.hasOwnProperty("errors")) {
+				
+				genericErrorHandling(data, status, headers, config, deferred);
+			} else {
+				deferred.resolve(data, status, headers, config);
+			}	
+		}else{
+			if ( data.status == 201) {
+				deferred.resolve(data, status, headers, config);
+				
+			} else {
+				genericErrorHandling(data, status, headers, config, deferred);
+			}	
 			
-			genericErrorHandling(data, status, headers, config, deferred);
-		} else {
-			deferred.resolve(data, status, headers, config);
 		}
+		
 	};
 
 	// SAMPLE METHOD, this will be the implementation

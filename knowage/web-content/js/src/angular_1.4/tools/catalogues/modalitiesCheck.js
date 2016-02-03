@@ -143,7 +143,6 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
 	
 	$scope.saveConstraints= function(){  // this function is called when clicking on save button
-		
 		if($scope.SelectedConstraint.hasOwnProperty("checkId")){ // if item already exists do update PUT
 			
 			sbiModule_restServices.promisePut("2.0/customChecks",$scope.SelectedConstraint.checkId,$scope.SelectedConstraint)

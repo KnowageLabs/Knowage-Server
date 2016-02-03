@@ -1,6 +1,6 @@
-var app = angular.module("AnalyticalDriversModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"]);
-app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout",AnalyticalDriversFunction]);
-function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout){
+var app = angular.module("AnalyticalDriversModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","toastr"]);
+app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","toastr",AnalyticalDriversFunction]);
+function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,toastr){
 	
 	//VARIABLES
 	
@@ -21,24 +21,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.associatedChecks=[]; // temp array that hold selected object checks list
 	$scope.checksList = []; // array that hold checks list
 	$scope.useModeList= []; // array that hold use mode objects list
-	$scope.showActionOK = function(msg) {
-		  var toast = $mdToast.simple() 
-		  .content(msg)
-		  .action('OK')
-		  .highlightAction(false)
-		  .hideDelay(3000)
-		  .position('top')
-
-		  $mdToast.show(toast).then(function(response) {
-
-		   if ( response == 'ok' ) {
-
-
-		   }
-		  });
-		 };
-		 //speed menus for the tables   
-		 $scope.adSpeedMenu= [
+	//speed menus for the tables   
+	$scope.adSpeedMenu= [
 		                         {
 		                            label:sbiModule_translate.load("sbi.generic.delete"),
 		                            icon:'fa fa-trash-o fa-lg',
@@ -70,11 +54,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		            .ariaLabel('toast').ok(
 		                    sbiModule_translate.load("sbi.general.continue")).cancel(
 		                            sbiModule_translate.load("sbi.general.cancel"));
- 
-		 
-		 
-		
-	 
+		  
 	//FUNCTIONS	
 		 
 	angular.element(document).ready(function () { // on page load function
@@ -95,7 +75,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedDriver.type = "DATE";
 		$scope.selectedDriver.functional = true;
 	}
-	//TODO delete defaultrg property before saving
+
 	$scope.useModeInit = function(){
 		$scope.selectedParUse.idLov= -1;
 		$scope.selectedParUse.idLovForDefault= -1;
@@ -175,101 +155,74 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	
 
 	$scope.getDrivers = function(){ // service that gets list of drivers @GET
-		sbiModule_restServices.get("2.0", "analyticalDrivers").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.adList = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
+		sbiModule_restServices.promiseGet("2.0", "analyticalDrivers")
+		.then(function(response) {
+			$scope.adList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	
 	$scope.getLayers = function(){ // service that gets list of layers @GET
-		sbiModule_restServices.get("2.0/analyticalDrivers/layers/", "").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.layersList = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
+		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/layers/", "")
+		.then(function(response) {
+			$scope.layersList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	
 	$scope.getRoles = function () { // service that gets list of roles @GET
-        sbiModule_restServices.get("2.0", "roles").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                	$scope.rolesList = data;
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-        })
+		sbiModule_restServices.promiseGet("2.0", "roles")
+		.then(function(response) {
+			$scope.rolesList = response.data;
+		}, function(response) {
+			console.log(response);
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
 	
 	$scope.getChecks = function () { // service that gets list of checks @GET
-        sbiModule_restServices.get("2.0/analyticalDrivers/checks/", "").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                	$scope.checksList = data;
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-        })
+		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/checks/", "")
+		.then(function(response) {
+			$scope.checksList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
 	
 	$scope.getDomainType = function(){ // service that gets driver types for dropdown @GET
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=PAR_TYPE").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.listType = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=PAR_TYPE")
+		.then(function(response) {
+			$scope.listType = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	
 	$scope.getSelTypes = function(){ // service that gets lovs selection types for dropdown @GET
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=SELECTION_TYPE").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.listSelType = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=SELECTION_TYPE")
+		.then(function(response) {
+			$scope.listSelType = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	
 	$scope.getLovDates = function(){ // service that gets list of lovs @GET
-		sbiModule_restServices.get("2.0", "lovs").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.listDate = data;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-				})	
+		sbiModule_restServices.promiseGet("2.0", "lovs")
+		.then(function(response) {
+			$scope.listDate = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	//object to populate one of lovs dropdowns TODO maybe some service gets it?? 
 	$scope.defaultFormula = [{
@@ -311,135 +264,122 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		console.log($scope.selectedDriver);
 		if($scope.selectedDriver.hasOwnProperty("id")){ // if item already exists do update @PUT
 			
-			sbiModule_restServices
-		    .put("2.0/analyticalDrivers",$scope.selectedDriver.id, $scope.selectedDriver).success(
-					function(data, status, headers, config) {
-						
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.adList=[];
-							$timeout(function(){								
-								$scope.getDrivers();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
-							$scope.selectedDriver={};
-							$scope.selectedTab = 0;
-							$scope.showme=false;
-							$scope.showadMode = false;
-							$scope.dirtyForm=false;	
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})
-					
-					if($scope.selectedParUse.label != null){
-						$scope.saveUseMode();
-					}
+			sbiModule_restServices.promisePut("2.0/analyticalDrivers",$scope.selectedDriver.id, $scope.selectedDriver)
+			.then(function(response) {
+				$scope.adList=[];
+				$timeout(function(){								
+					$scope.getDrivers();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.selectedDriver={};
+				$scope.selectedTab = 0;
+				$scope.showme=false;
+				$scope.showadMode = false;
+				$scope.dirtyForm=false;	
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});	
+			
+			if($scope.selectedParUse.label != null){
+				$scope.saveUseMode();
+			}				
 						
 		}else{ // create new item in database @POST
 			console.log($scope.selectedDriver);
-			sbiModule_restServices
-		    .post("2.0/analyticalDrivers","",angular.toJson($scope.selectedDriver)).success(
-					function(data, status, headers, config) {
-						
-							$scope.adList=[];
-							$timeout(function(){								
-								$scope.getDrivers();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
-							$scope.selectedDriver={};
-							$scope.selectedTab = 0;
-							$scope.showme=false;
-							$scope.showadMode = false;
-							$scope.dirtyForm=false;
-						
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})	
+			sbiModule_restServices.promisePost("2.0/analyticalDrivers","",angular.toJson($scope.selectedDriver))
+			.then(function(response) {
+				$scope.adList=[];
+				$timeout(function(){								
+					$scope.getDrivers();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				$scope.selectedDriver={};
+				$scope.selectedTab = 0;
+				$scope.showme=false;
+				$scope.showadMode = false;
+				$scope.dirtyForm=false;	
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});	
+			
 		}
 	}
 	
 	$scope.saveUseMode= function(){  // this function is called when clicking on save button
 		$scope.formatUseMode();
-		console.log($scope.selectedParUse);
 		if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT
 			$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
 			$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
-			sbiModule_restServices
-		    .put("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse).success(
-					function(data, status, headers, config) {
-						
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.useModeList=[];
-							$timeout(function(){								
-								$scope.getUseModesById($scope.selectedDriver);
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
-							$scope.getUseModesById($scope.selectedDriver);
-							$scope.selectedTab = 0;
-							$scope.showme=false;
-							$scope.showadMode = false;
-							$scope.dirtyForm=false;	
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})	
+			
+			console.log($scope.selectedParUse);
+			
+			sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
+			.then(function(response) {
+				$scope.useModeList=[];
+				$timeout(function(){								
+					$scope.getUseModesById($scope.selectedDriver);
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.selectedTab = 0;
+				$scope.showme=false;
+				$scope.showadMode = false;
+				$scope.dirtyForm=false;	
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});	
 			
 		}else{ // create new item in database @POST
 			console.log($scope.selectedParUse);
-			sbiModule_restServices
-		    .post("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse)).success(
-					function(data, status, headers, config) {
-						
-							$scope.useModeList=[];
-							$timeout(function(){								
-								$scope.getUseModesById($scope.selectedDriver);
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
-							$scope.selectedParUse={};
-							$scope.selectedTab = 0;
-							$scope.showme=false;
-							$scope.showadMode = false;
-							$scope.dirtyForm=false;
-						
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-					})	
+			sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
+			.then(function(response) {
+				$scope.useModeList=[];
+				$timeout(function(){								
+					$scope.getUseModesById($scope.selectedDriver);
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				$scope.selectedParUse={};
+				$scope.selectedTab = 0;
+				$scope.showme=false;
+				$scope.showadMode = false;
+				$scope.dirtyForm=false;
+				
+			}, function(response) {
+				toastr.error(response.data.errors[0].message, 'Error');
+				
+			});	
 		}
 	}
 
-	$scope.deleteDrivers = function(item){ // this function is called when clicking on delete button
-		sbiModule_restServices.delete("2.0/analyticalDrivers",item.id).success(
-				function(data, status, headers, config) {
-					
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.adList=[];
-						$timeout(function(){								
-							$scope.getDrivers();
-						}, 1000);
-						$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
-						$scope.selectedDriver={};
-						$scope.selectedTab = 0;
-						$scope.showme=false;
-						$scope.showadMode = false;
-						$scope.dirtyForm=false;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+	$scope.deleteDrivers = function(item){
+		// this function is called when clicking on delete button
+		sbiModule_restServices.promiseDelete("2.0/analyticalDrivers",item.id)
+		.then(function(response) {
+			$scope.adList=[];
+			$timeout(function(){								
+				$scope.getDrivers();
+			}, 1000);
+			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			$scope.selectedDriver={};
+			$scope.selectedTab = 0;
+			$scope.showme=false;
+			$scope.showadMode = false;
+			$scope.dirtyForm=false;
 
-				})	
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
+	
 	// this function is called when item from use mode table is clicked
 	$scope.loadUseMode=function(item){
+		console.log(item);
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
@@ -558,40 +498,32 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	// service that gets list of use modes for selected driver @GET
 	$scope.getUseModesById = function (item) { 
-        sbiModule_restServices.get("2.0/analyticalDrivers/"+item.id+"/modes", "").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                	$scope.useModeList = data;
-
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-        })
+		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/"+item.id+"/modes", "")
+		.then(function(response) {
+			$scope.useModeList = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
+	
 	$scope.deleteUseMode = function(item){ // this function is called when clicking on delete button
-		sbiModule_restServices.delete("2.0/analyticalDrivers/modes", item.useID).success(
-				function(data, status, headers, config) {
-					
-					if (data.hasOwnProperty("errors")) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						$scope.useModeList=[];
-						$timeout(function(){								
-							$scope.getUseModesById($scope.selectedDriver);
-						}, 1000);
-						$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
-						$scope.selectedParUse = {};
-						$scope.selectedTab = 0;
-						$scope.showme=false;
-						$scope.showadMode = false;
-						$scope.dirtyForm=false;
-					}
-				}).error(function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+		sbiModule_restServices.promiseDelete("2.0/analyticalDrivers/modes", item.useID)
+		.then(function(response) {
+			$scope.useModeList=[];
+			$timeout(function(){								
+				$scope.getUseModesById($scope.selectedDriver);
+			}, 1000);
+			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			$scope.selectedParUse = {};
+			$scope.selectedTab = 0;
+			$scope.showme=false;
+			$scope.showadMode = false;
+			$scope.dirtyForm=false;
 
-				})	
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 };
