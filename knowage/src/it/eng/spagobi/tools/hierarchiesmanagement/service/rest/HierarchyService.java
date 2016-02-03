@@ -606,7 +606,7 @@ public class HierarchyService {
 
 		if (root != null)
 			// set debug mode : error in only for debug
-			logger.error(TreeString.toString(root));
+			logger.debug(TreeString.toString(root));
 
 		return root;
 
@@ -712,7 +712,7 @@ public class HierarchyService {
 		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
 		nodeCode = leafParentCodeString + "_" + nodeCode;
 		data.setLeafParentCode(leafParentCodeString);
-		data.setLeafOriginalParentCode(leafParentCodeString); // backup code
+		// data.setLeafOriginalParentCode(leafParentCodeString); // backup code
 
 		IField leafParentNameField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_NM));
 		String leafParentNameString = (String) leafParentNameField.getValue();
@@ -809,11 +809,10 @@ public class HierarchyService {
 				nodeJSONObject.put(HierarchyConstants.ID, nodeData.getNodeCode());
 				nodeJSONObject.put(HierarchyConstants.LEAF_ID, nodeData.getLeafId());
 				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_CD, nodeData.getLeafParentCode());
-				nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
+				// nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
 				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_NM, nodeData.getLeafParentName());
 				nodeJSONObject.put("aliasId", hierConfig.get(HierarchyConstants.TREE_NODE_CD));
 				nodeJSONObject.put("aliasName", hierConfig.get(HierarchyConstants.TREE_NODE_NM));
-
 				JSONArray childrenJSONArray = new JSONArray();
 
 				for (int i = 0; i < node.getChildCount(); i++) {
@@ -833,7 +832,7 @@ public class HierarchyService {
 				nodeJSONObject.put(HierarchyConstants.ID, nodeData.getNodeCode());
 				nodeJSONObject.put(HierarchyConstants.LEAF_ID, nodeData.getLeafId());
 				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_CD, nodeData.getLeafParentCode());
-				nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
+				// nodeJSONObject.put(HierarchyConstants.LEAF_ORIG_PARENT_CD, nodeData.getLeafOriginalParentCode());
 				nodeJSONObject.put(HierarchyConstants.LEAF_PARENT_NM, nodeData.getLeafParentName());
 				nodeJSONObject.put("aliasId", hierConfig.get(HierarchyConstants.TREE_LEAF_CD));
 				nodeJSONObject.put("aliasName", hierConfig.get(HierarchyConstants.TREE_LEAF_NM));
@@ -1175,15 +1174,15 @@ public class HierarchyService {
 				}
 				// set parent informations
 				String nodeParentCode = null;
-				String nodeOriginalParentCode = null;
+				// String nodeOriginalParentCode = null;
 				if (!node.isNull(HierarchyConstants.LEAF_PARENT_CD))
 					nodeParentCode = node.getString(HierarchyConstants.LEAF_PARENT_CD);
-				if (!node.isNull(HierarchyConstants.LEAF_ORIG_PARENT_CD))
-					nodeOriginalParentCode = node.getString(HierarchyConstants.LEAF_ORIG_PARENT_CD);
+				// if (!node.isNull(HierarchyConstants.LEAF_ORIG_PARENT_CD))
+				// nodeOriginalParentCode = node.getString(HierarchyConstants.LEAF_ORIG_PARENT_CD);
 				// nodeData.setNodeCode(nodeCode.replaceFirst(nodeOriginalParentCode + "_", ""));
 				nodeData.setLeafParentCode(nodeParentCode);
 				nodeData.setLeafParentName(node.getString(HierarchyConstants.LEAF_PARENT_NM));
-				nodeData.setLeafOriginalParentCode(nodeOriginalParentCode);
+				// nodeData.setLeafOriginalParentCode(nodeOriginalParentCode);
 				nodeData.setDepth(node.getString(HierarchyConstants.LEVEL));
 				aPath.add(nodeData);
 				collectionOfPaths.add(aPath);
