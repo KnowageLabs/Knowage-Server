@@ -149,7 +149,15 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	
 	$scope.deleteItem = function(item){
 		$scope.tenantSelected = item;
-		$scope.deleteTenant();
+		var confirm = $mdDialog.confirm()
+				.title($scope.translate.load("sbi.multitenant.delete.title"))
+				.content($scope.translate.load("sbi.multitenant.delete.msg"))
+				.ok($scope.translate.load("sbi.general.yes"))
+				.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm)
+			.then(function(){
+				$scope.deleteTenant();
+			},function(){});
 	}
 	
 	$scope.deleteTenant = function(form) {
