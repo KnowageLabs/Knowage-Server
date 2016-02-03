@@ -13,15 +13,16 @@
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/domain/domainManagement.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/domain/domainManagement.js"></script>
 	
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/domain/css/domainStyle.css">
 </head>
 
 <body>
 	<div ng-controller="Controller as ctrl" layout="column">
 		<div flex="20">
-			<md-toolbar class="md-blue minihead">
+			<md-toolbar class="md-knowage-theme ">
 			    <div class="md-toolbar-tools">
 			      <h2 class="md-flex">Domain Management</h2>
 			    </div>
