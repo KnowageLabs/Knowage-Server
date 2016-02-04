@@ -1,7 +1,7 @@
-var app = angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col"]);
-app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout", UsersManagementFunction]);
+var app = angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","toastr"]);
+app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","toastr", UsersManagementFunction]);
 
-function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout) {
+function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,toastr) {
 
     //VARIABLES
 
@@ -14,24 +14,6 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.usersAttributes = [];
     $scope.tempAttributes = [];
     $scope.role = [];
-
-    $scope.showActionOK = function (msg) {
-        var toast = $mdToast.simple()
-            .content(msg)
-            .action('OK')
-            .highlightAction(false)
-            .hideDelay(3000)
-            .position('top')
-
-        $mdToast.show(toast).then(function (response) {
-
-            if (response == 'ok') {
-
-
-            }
-        });
-    };
-
     $scope.umSpeedMenu = [{
         label: sbiModule_translate.load("sbi.generic.delete"),
         icon: 'fa fa-trash-o fa-lg',
@@ -215,110 +197,92 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.saveUser = function () { // this function is called when clicking on save button
         $scope.formatUser();
         if($scope.selectedUser.hasOwnProperty("id")){ // if item already exists do update PUT
-			sbiModule_restServices
-		    .put("2.0/users",$scope.selectedUser.id,$scope.selectedUser).success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.usersList=[];
-							$timeout(function(){								
-								$scope.getUsers();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
-							$scope.selectedUser={};
-							$scope.showme=false;
-							$scope.dirtyForm=false;	
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					})	
+        	
+        	sbiModule_restServices.promisePut("2.0/users",$scope.selectedUser.id,$scope.selectedUser)
+    		.then(function(response) {
+    			$scope.usersList=[];
+				$timeout(function(){								
+					$scope.getUsers();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.selectedUser={};
+				$scope.showme=false;
+				$scope.dirtyForm=false;	
+			
+    		}, function(response) {
+    			toastr.error(response.data.errors[0].message, 'Error');
+    			
+    		});
 			
 		}else{ // create new item in database POST
-			sbiModule_restServices
-		    .post("2.0/users","",angular.toJson($scope.selectedUser, true)).success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							$scope.usersList=[];
-							$timeout(function(){								
-								$scope.getUsers();
-							}, 1000);
-							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
-							$scope.selectedUser={};
-							$scope.showme=false;
-							$scope.dirtyForm=false;
-						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-					})	
 			
+			sbiModule_restServices.promisePost("2.0/users","",angular.toJson($scope.selectedUser, true))
+    		.then(function(response) {
+    			$scope.usersList=[];
+				$timeout(function(){								
+					$scope.getUsers();
+				}, 1000);
+				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				$scope.selectedUser={};
+				$scope.showme=false;
+				$scope.dirtyForm=false;	
 			
+    		}, function(response) {
+    			toastr.error(response.data.errors[0].message, 'Error');
+    			
+    		});
 		}
     }
 
     $scope.getUsers = function () { // service that gets list of users GET
-        sbiModule_restServices.get("2.0", "users").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                    $scope.usersList = data;
-                    $scope.addConfirmPwdProp();
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-        })
+    	sbiModule_restServices.promiseGet("2.0", "users")
+		.then(function(response) {
+			$scope.usersList = response.data;
+            $scope.addConfirmPwdProp();
+			
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
     
     $scope.getRoles = function () { // service that gets list of roles GET
-        sbiModule_restServices.get("2.0", "roles").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                    $scope.usersRoles = data;
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-        })
+    	sbiModule_restServices.promiseGet("2.0", "roles")
+		.then(function(response) {
+			$scope.usersRoles = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
     
     $scope.getAttributes = function () { // service that gets list of roles GET
-        sbiModule_restServices.get("2.0", "attributes").success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                    $scope.usersAttributes = data;
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-
-        })
+    	sbiModule_restServices.promiseGet("2.0", "attributes")
+		.then(function(response) {
+			$scope.usersAttributes = response.data;
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
     
     $scope.deleteUser = function (item) { // this function is called when clicking on delete button
-        sbiModule_restServices.delete("2.0/users", item.id).success(
-            function (data, status, headers, config) {
-                if (data.hasOwnProperty("errors")) {
-                    console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-                } else {
-                    $scope.usersList = [];
-                    $timeout(function () {
-                        $scope.getUsers();
-                    }, 1000);
-                    $scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
-                    $scope.selectedUser = {};
-                    $scope.showme = false;
-                    $scope.dirtyForm = false;
-                }
-            }).error(function (data, status, headers, config) {
-            console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+    	
+    	sbiModule_restServices.promiseDelete("2.0/users", item.id)
+		.then(function(response) {
+			 $scope.usersList = [];
+             $timeout(function () {
+                 $scope.getUsers();
+             }, 1000);
+             toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+             $scope.selectedUser = {};
+             $scope.showme = false;
+             $scope.dirtyForm = false;
 
-        })
+		}, function(response) {
+			toastr.error(response.data.errors[0].message, 'Error');
+			
+		});
     }
 };
 
