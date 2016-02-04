@@ -164,8 +164,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 			sbiModule_logger.log("GetTargetLayer non Ottenuto");
 		});
 	}
-
-
+ 
 	/**
 	 * Loads the dataset using a REST service
 	 * */
@@ -176,7 +175,8 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 						sbiModule_logger.log("dataset non Ottenuto");
 						alert("Errore nel recupero del dataset"+data);
 					} else {
-						Object.assign(geoModule_dataset, data); 
+						angular.copy(data,geoModule_dataset);
+//						Object.assign(geoModule_dataset, data); 
 						sbiModule_logger.trace("dataset caricato",data);		
 						gru.initRigthMenuVariable();
 						gru.GetTargetLayer();
@@ -233,7 +233,8 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 
 							//if this measure is the datasetJoinColumns load the variable
 							if(fields[i].header==geoModule_template.datasetJoinColumns){
-								Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
+								angular.copy(fields[i],geModule_datasetJoinColumnsItem)
+//								Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
 							}
 						}else{
 							console.error("dataset->metaData->fields->role="+fields[i].role+"not managed ") 

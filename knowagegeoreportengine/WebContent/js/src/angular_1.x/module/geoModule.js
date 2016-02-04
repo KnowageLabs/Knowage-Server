@@ -92,7 +92,8 @@ geoM.service(
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
-				Object.assign(geoModule_templateLayerData, data);
+				angular.copy(data,geoModule_templateLayerData);
+//				Object.assign(geoModule_templateLayerData, data);
 				geoModule_thematizer.updateLegend(geoModule_template.analysisType);
 				if (geoModule_templateLayerData.type == "WMS") {
 					var sldBody = geoModule_thematizer
