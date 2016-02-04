@@ -350,19 +350,19 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 	c.actions = new Array();
 	c.actions.push({
-		text: 'Add to SELECT clause',
+		text: LN('sbi.qbe.queryeditor.addtoselect'),
 		handler: this.onAddNodeToSelectAndFocus,
 		scope: this,
 		iconCls: 'option'
 	});
 	c.actions.push({
-		text: 'Add to WHERE clause',
+		text: LN('sbi.qbe.queryeditor.addtowhere'),
 		handler: this.onAddNodeToWhereAndFocus,
 		scope: this,
 		iconCls: 'option'
 	});
 	c.actions.push({
-		text: 'Add to HAVING clause',
+		text: LN('sbi.qbe.queryeditor.addtohaving'),
 		handler: this.onAddNodeToHavingAndFocus,
 		scope: this,
 		iconCls: 'option'
