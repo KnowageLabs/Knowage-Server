@@ -89,6 +89,8 @@ author:...
 	<head>
 		<%@include file="commons/angular/angularImport.jsp"%>
 		<%@include file="commons/angular/dataminingModule.jsp"%>
+		<%@include file="commons/includeMessageResource.jspf" %>
+		
 		<script type="text/javascript" src="/knowagedataminingengine/js/src/angular_1.4/datamining/dataminingController.js"></script>
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
@@ -204,7 +206,27 @@ author:...
 										 	</div>
 								 	</md-toolbar>
 								 	<md-content layout-margin layout-align="stretch center">
-										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' " ng-bind-html="results[cmd.name][out.outputName].html"></div>
+										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' ">
+											<div layout="row" layout-align="center center">
+												<md-input-container>
+													 <label>{{translate.load("sbi.datamining.img.width");}} (px)</label>
+													<input type="number" min="0" ng-model="imgWidth">
+												</md-input-container>
+												<div flex="5"></div>
+												<md-input-container>
+													<label>{{translate.load("sbi.datamining.img.height");}} (px)</label>
+													<input type="number" min="0" ng-model="imgHeight">
+												</md-input-container>
+											</div>
+											<div layout="row" layout-align="center center">
+												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="data:image/png;base64,{{results[cmd.name][out.outputName].result}}" />
+												<br>
+											</div>
+											<!-- 
+											<div ng-bind-html="results[cmd.name][out.outputName].html">
+											</div>
+											-->
+										</div>
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'text' ">
 											<h3 class="md-subhead">	
 												{{results[cmd.name][out.outputName].variablename}} = {{results[cmd.name][out.outputName].result}}

@@ -1,4 +1,4 @@
-var app = angular.module('dataMiningApp', ['ngMaterial', 'ui.tree', 'sbiModule']);
+var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
 app.controller('Controller', ['$sce','sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', dataMiningFunction ]);
 
@@ -23,6 +23,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 			loadDataset : 'loadDataset',
 			updateDataset : 'updateDataset'
 	}
+	$scope.translate = sbiModule_translate;
 	$scope.idx_output = 0;
 	$scope.file = undefined;
 	$scope.fileName = '';
@@ -35,6 +36,9 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	$scope.variableForm = false;
 	$scope.visibleOuputVariables = false;
 	$scope.config = {};
+	$scope.imgWidth=480;
+	$scope.imgHeight=480;
+	
 	$scope.config.params = {
 			'SBI_EXECUTION_ID' : datamining_template.ajaxBaseParams.SBI_EXECUTION_ID
 	};
@@ -52,7 +56,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 			html +=  'result = ' + result.result;
 		}
 		else if (result.outputType == 'image'){
-			html += '<img width="480px" height="480px" style="image-resolution: 72dpi;" alt="Result for '+ result.plotName+'" src="data:image/png;base64,'+result.result+'" /></p><br/><br/><br/>'
+			html += '<img ng-style="{\'width\':imgWidth+\'px\',\'height\':imgHeight+\'px\'}" style="image-resolution: 72dpi;" alt="Result for '+ result.plotName+'" src="data:image/png;base64,'+result.result+'" /></p><br/><br/><br/>'
 		}
 		return $sce.trustAsHtml(html);
 	};
@@ -78,7 +82,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 					 $scope.results[commandName][output.outputName] = data;
 				 } 
 				 $scope.results[commandName][output.outputName].result = data.result.replace(/]/g,'').replace(/\[/g,'');
-				 $scope.results[commandName][output.outputName].html = $scope.createHtmlFromResult(data);
+				 //$scope.results[commandName][output.outputName].html = $scope.createHtmlFromResult(data);
 			 })
 			 .error(function(data, status){
 				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
