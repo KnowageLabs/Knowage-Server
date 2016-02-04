@@ -118,7 +118,10 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 			this.iFrameContent = Ext.create('Ext.panel.Panel',{
 				header:		false,
 			    autoScroll: true,
-			    html: 		'<iframe name="' + this.iFrameId + '" src="" width="100%" height="600"></iframe>',
+			    bodyStyle: {
+			        color: '#ffffff'
+			    },
+			    html: 		'<iframe name="' + this.iFrameId + '" src="" width="100%" height="100%"></iframe>',
 			    listeners: {
 	                render: function () {
 	                	
