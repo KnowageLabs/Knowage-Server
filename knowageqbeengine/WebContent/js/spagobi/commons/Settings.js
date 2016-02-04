@@ -58,7 +58,7 @@ Sbi.settings.qbe = {
 			, enableTbExpWizardBtn: true
 			, enableTbRemoveAllFilterBtn: true
 			, enableTbAddFilterBtn: true
-			, enableRowRemoveBtn: false
+			, enableRowRemoveBtn: true
 			, columns : {
 				'filterId': {hideable: true, hidden: false, sortable: false, editable: true}
 				, 'filterDescripion': {hideable: true, hidden: true, sortable: false, editable: true}
@@ -68,7 +68,7 @@ Sbi.settings.qbe = {
 				, 'rightOperandDescription': {hideable: false, hidden: false, sortable: false, editable: true}				
 				, 'rightOperandType': {hideable: true, hidden: true, sortable: false, editable: true}
 				, 'booleanConnector': {hideable: true, hidden: false, sortable: false, editable: true}
-				, 'deleteButton': {hideable: true, hidden: true, sortable: false, editable: true}
+				, 'deleteButton': {hideable: true, hidden: false, sortable: false, editable: true}
 				, 'promptable': {hideable: true, hidden: false, sortable: false, editable: true}				
 			}
 			, lookupValuesSeparator: ' ---- '

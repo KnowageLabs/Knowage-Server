@@ -405,7 +405,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 	, initColumnModel: function(config) {
 			
 			var delButtonColumn = new Ext.grid.ButtonColumn({
-		       header: LN('sbi.qbe.filtergridpanel.headers.delete')
+		       header: LN('sbi.qbe.selectgridpanel.headers.delete.column')
 		       , tooltip: LN('sbi.qbe.filtergridpanel.headers.delete')
 		       , dataIndex: 'deleteButton'
 		       , imgSrc: '../img/actions/delete.gif'
@@ -415,7 +415,7 @@ Ext.extend(Sbi.qbe.HavingGridPanel, Ext.Panel, {
 		          this.grid.store.remove(record);
 		       }
 			   , hideable: true
-		       , hidden: true
+		       , hidden: false
 		       , width: 50
 		    });
 		    
