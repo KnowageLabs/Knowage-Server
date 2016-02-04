@@ -257,7 +257,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			//perform Ajax Request
 
 			Ext.Ajax.request({
-				url: this.services["getTriggerSaveOptions"],
+				url: this.services["getTriggerInfo"],
 				params: values,
 				success : function(response, options) {
 					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {

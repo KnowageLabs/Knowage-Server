@@ -502,7 +502,7 @@ public class SchedulerService {
 
 	// TODO controllare se viene usata ed in caso eliminarlo
 
-	@GET
+	@POST
 	@Path("/getTriggerInfo")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getTriggerInfo(@Context HttpServletRequest req) {

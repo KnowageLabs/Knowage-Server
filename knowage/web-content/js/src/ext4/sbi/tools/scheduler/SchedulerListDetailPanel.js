@@ -139,8 +139,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				, baseParams: baseParams
 		});
 		
-		this.services["getTriggerSaveOptions"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'scheduler/getTriggerSaveOptions'
+		this.services["getTriggerInfo"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'scheduler/getTriggerInfo'
 				, baseParams: baseParams
 		});
 

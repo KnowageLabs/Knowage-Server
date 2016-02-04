@@ -33,12 +33,12 @@ Ext.define('Sbi.tools.scheduler.TriggerInfoWindow', {
 			if ((parsedData.documents != null) && (parsedData.documents != undefined)){
 				for (var i = 0; i< parsedData.documents.length; i++){
 					var document = parsedData.documents[i];
-					var docLabel = document.documentLabel;
-					var mailTos= '<b>'+LN('sbi.scheduler.schedulation.mailto')+':</b> '+document.mailTos+"</br>";
-					var zipMailName= '<b>'+LN('sbi.scheduler.schedulation.attachedzip')+':</b> '+document.zipMailName+"</br>";
-					var mailSubject= '<b>'+LN('sbi.scheduler.schedulation.mailsubject')+':</b> '+document.mailSubject+"</br>";
-					var containedFileName= '<b>'+LN('sbi.scheduler.schedulation.containedfilename')+':</b> '+document.containedFileName+"</br>";
-					var mailTxt= '<b>'+LN('sbi.scheduler.schedulation.mailtext')+':</b> '+document.mailTxt+"</br>";
+					var docLabel = document.label;
+					var mailTos= '<b>'+LN('sbi.scheduler.schedulation.mailto')+':</b> '+(document.mailtos || "" )+"</br>";
+					var zipMailName= '<b>'+LN('sbi.scheduler.schedulation.attachedzip')+':</b> '+(document.zipMailName || "" )+"</br>";
+					var mailSubject= '<b>'+LN('sbi.scheduler.schedulation.mailsubject')+':</b> '+(document.mailsubj || "" )+"</br>";
+					var containedFileName= '<b>'+LN('sbi.scheduler.schedulation.containedfilename')+':</b> '+(document.containedFileName || "" )+"</br>";
+					var mailTxt= '<b>'+LN('sbi.scheduler.schedulation.mailtext')+':</b> '+(document.mailtxt || "" )+"</br>";
 					
 					var content = mailTos+zipMailName+mailSubject+containedFileName+mailTxt;
 					var item = {
