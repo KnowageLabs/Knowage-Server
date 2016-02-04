@@ -179,7 +179,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.rolesList = response.data;
 		}, function(response) {
-			console.log(response);
 			toastr.error(response.data.errors[0].message, 'Error');
 			
 		});
@@ -250,14 +249,27 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			}
 	}
 	$scope.formatUseMode = function() {
-		$scope.selectedParUse.multivalue = true; // multivalue??
-		$scope.selectedParUse.manualInput = 1; // manualinput??
+		$scope.selectedParUse.manualInput = ($scope.selectedParUse.valueSelection == 'man_in') ? 1 : 0;
 		$scope.selectedDriver.valueSelection = $scope.selectedParUse.valueSelection;
 		$scope.selectedParUse.id = $scope.selectedDriver.id;
 		$scope.selectedParUse.associatedRoles = $scope.associatedRoles;
 		$scope.selectedParUse.associatedChecks = $scope.associatedChecks;
-		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : $scope.selectedParUse.idLov;
-		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : $scope.selectedParUse.idLovForDefault;
+		$scope.selectedParUse.idLov = ($scope.selectedParUse.idLov === null) ? -1 : parseInt($scope.selectedParUse.idLov);
+		$scope.selectedParUse.idLovForDefault = ($scope.selectedParUse.idLovForDefault === null) ? -1 : parseInt($scope.selectedParUse.idLovForDefault);
+		switch ($scope.selectedParUse.defaultrg) {
+		case "none":
+			$scope.selectedParUse.defaultFormula = null;
+			$scope.selectedParUse.idLovForDefault = -1;
+			break;
+		case "lov":
+			$scope.selectedParUse.defaultFormula = null;
+			break;
+		case "pickup":
+			$scope.selectedParUse.idLovForDefault = -1;
+			break;
+		default:
+			break;
+		}
 		delete $scope.selectedParUse.defaultrg;
 	}
 	 
@@ -287,7 +299,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				});			
 							
 			}else{ // create new item in database @POST
-				console.log($scope.selectedDriver);
 				sbiModule_restServices.promisePost("2.0/analyticalDrivers","",angular.toJson($scope.selectedDriver))
 				.then(function(response) {
 					$scope.adList=[];
@@ -385,7 +396,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	
 	// this function is called when item from use mode table is clicked
 	$scope.loadUseMode=function(item){
-		console.log(item);
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
@@ -531,9 +541,5 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			toastr.error(response.data.errors[0].message, 'Error');
 			
 		});
-	}
-	$scope.test = function(){ 
-		$scope.formatUseMode();
-		console.log($scope.selectedParUse);
 	}
 };

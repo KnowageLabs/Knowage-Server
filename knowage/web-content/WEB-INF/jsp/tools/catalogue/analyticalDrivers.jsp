@@ -190,13 +190,6 @@
 				flex style="margin-left:20px;"
 				class="md-padding ToolbarBox noBorder"> 
 				
-				
-				<md-button type="button" tabindex="-1" aria-label="test"
-							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;float:right;"
-							ng-click="test()">TEST
-				</md-button>
-				
-				
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							 <md-input-container class="small counter">
