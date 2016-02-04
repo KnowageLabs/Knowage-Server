@@ -24,6 +24,7 @@ app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiM
 
 function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	//variables
+	sbiModule_translate.addMessageFile("component_impexp_messages");
 	$scope.translate=sbiModule_translate;
 	$scope.selectedTab=0;
 	$scope.users = [];
@@ -43,9 +44,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.selectedUser = [];
 	$scope.typeSaveUser = 'Missing'
 	$scope.flagShowUser=false;
+	$scope.checkboxs={
+			exportSubObj : false,
+			exportSnapshots : false,
+			exportPersonalFolder: false
+	};
+	
 	
 	$scope.loadAllUsers = function(){
-		sbiModule_restServices.get("1.0/serverManager/importExport/users", 'getusers').success(
+		sbiModule_restServices.get("2.0", 'users').success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
@@ -107,8 +114,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			//modulo download zip
 			var config={"USERS_LIST":$scope.usersSelected ,
 					"EXPORT_FILE_NAME":$scope.nameExport,
-					"EXPORT_SUB_OBJ":false,
-					"EXPORT_SNAPSHOT":false};
+					"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
+					"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
+					"EXPORT_PERSONAL_FOLDER":$scope.checkboxs.exportPersonalFolder};
 			
 			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'export',config).success(
 					function(data, status, headers, config) {

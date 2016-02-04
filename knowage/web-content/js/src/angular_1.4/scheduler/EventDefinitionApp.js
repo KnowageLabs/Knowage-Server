@@ -313,7 +313,7 @@ eventDefinitionApp.controller('ActivityEventController',
 		
 	};
 	
-	activityEventCtrl.saveEvent = function(isValid) {
+	activityEventCtrl.saveEvent = function(isValid,saveAndReturn) {
 		if (!isValid) {
 			return false;
 		}
@@ -336,6 +336,12 @@ eventDefinitionApp.controller('ActivityEventController',
 				 } else {
 					 activityEventCtrl.disableName=true;
 					$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
+					if(saveAndReturn){
+						$timeout(function() {
+							parent.angularWindow.close();
+					    }, 3000);
+						
+					}
 				}
 			})
 			.error(function(data, status, headers, config) {

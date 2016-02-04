@@ -200,7 +200,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
 				+ '&JOB_GROUP=' + jobGroup;
 			
-			var angularWindow = Ext.create('Ext.window.Window', {
+			 angularWindow = Ext.create('Ext.window.Window', {
 			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
 			    height : '100%',
 			    width : '100%',

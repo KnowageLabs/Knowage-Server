@@ -43,15 +43,16 @@
 					<div layout="row" layout-wrap>
 						<div flex>
 							<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-									<input class="input_class" ng-model="nameExport"
-										required maxlength="100" ng-maxlength="100" md-maxlength="100" />
-										
+									<input class="input_class" ng-model="nameExport" required maxlength="100" ng-maxlength="100" md-maxlength="100" />
 							</md-input-container>
 						</div>
 					 
-					<md-checkbox style="line-height: 61px;"  ng-model="exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
-					 
-						<div flex =10 >
+					 <div layout="row" layout-wrap >
+						<md-checkbox   style="line-height: 61px;"  ng-model="checkboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
+						<md-checkbox ng-if="checkboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="checkboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
+						<md-checkbox ng-if="checkboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="checkboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
+					 </div>
+						<div>
 							<md-input-container class="small counter"> 
 								
 								<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download Users"

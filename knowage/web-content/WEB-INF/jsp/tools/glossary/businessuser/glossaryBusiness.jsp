@@ -125,11 +125,11 @@
 			</div>
 			
 			<div flex  class="rightBox_GLOSS  h100">
-				<md-content  layout="column" flex>
+				<md-content  layout="column" layout-fill flex>
 <!-- 					<md-content  class="h100"> -->
 				 	<md-tabs  md-dynamic-height  class="hideTabs h100" md-border-bottom > 
 						<md-tab  label="Glossari"	md-on-select="ctrl.activeTab='Glossari'"	md-active="ctrl.activeTab=='Glossari'">
-							<md-content  style="padding-left: 20px;"> 
+							<md-content  style="padding-left: 20px;" layout-fill> 
 								<div layout="row" layout-wrap>
 									<div flex="100">
 										<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">{{translate.load("sbi.glossary.select.messages");}}</p>

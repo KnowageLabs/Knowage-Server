@@ -14,7 +14,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="java.net.URLEncoder"%>
 <%@page import="java.util.Locale"%>
 
-<%-- <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%> --%>
+<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 
 <% 

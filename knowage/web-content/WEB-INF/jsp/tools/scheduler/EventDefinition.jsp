@@ -36,7 +36,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		ng-controller="ActivityEventController as activityEventCtrl"
 		ng-init="activityEventCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=triggerName%>', '<%=triggerGroup%>');">
 
-		<form name="contactForm"  layout-fill ng-submit="contactForm.$valid && activityEventCtrl.saveEvent(contactForm.$valid)" class="detailBody md-whiteframe-z1" novalidate>
+		<form name="contactForm"  layout-fill ng-submit="contactForm.$valid && activityEventCtrl.saveEvent(contactForm.$valid,true)" class="detailBody md-whiteframe-z1" novalidate>
 			<md-tabs flex class="h100 mini-tabs">
 				<md-tab id="eventTabDetail" layout-padding flex>
 					<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
