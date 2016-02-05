@@ -72,7 +72,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			var axisStyleAsMap = ChartUtils.jsonizeStyle(axis.style);
-//			console.log(axisStyleAsMap);
+
 			result['styleRotate'] = axisStyleAsMap.rotate && axisStyleAsMap.rotate != '' ? axisStyleAsMap.rotate : '';
 			result['styleAlign'] = axisStyleAsMap.align && axisStyleAsMap.align != '' ? axisStyleAsMap.align : '';
 			result['styleColor'] = axisStyleAsMap.color && axisStyleAsMap.color != '' ? axisStyleAsMap.color : '';
@@ -245,7 +245,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		exportAsJson : function (chartModel) {
 			var result = {};
 			var CHART = {};
-//console.log("exportAsJson (START)");
+
 			CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
 			var chartData = ChartUtils.getChartDataAsOriginaJson(chartModel);
@@ -330,15 +330,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			result['CHART'] = CHART;
 
-//			console.log("-- After saving the chart: --");
-			//console.log(result);
-			//console.log("exportAsJson (END)");
+			//console.log(result); 
+
 			return result;
 		},
 
 		getAxesDataAsOriginalJson : function () {
 			var result = [];
-			//console.log("getAxesDataAsOriginalJson (START)");
 			
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 
@@ -593,13 +591,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result.push(axisAsJson);
 				/* END Chart bottom axis data */
 			}
-			//console.log("getAxesDataAsOriginalJson (END)");
+			
 			return result;
 		},
 
 		getSeriesDataAsOriginalJson : function () {
 			var result = [];
-			//console.log("getSeriesDataAsOriginalJson (START)");
+	
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
 
 			for (storeIndex in serieStores) {
@@ -732,11 +730,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					result.push(serie);
 				}
 			}
-			console.log("getSeriesDataAsOriginalJson (END)");
+
 			return result;
 		},
 
-		getCategoriesDataAsOriginalJson : function () {//console.log("getCategoriesDataAsOriginalJson (START)");
+		getCategoriesDataAsOriginalJson : function () {
 			var categoriesStore = Ext.data.StoreManager.lookup('categoriesStore');
 
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -867,7 +865,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		
 		getChartDataAsOriginaJson : function (chartModel) {
 			var CHART = {};
-			//console.log("getChartDataAsOriginaJson (START)");
+			
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 
 			/**
@@ -1230,8 +1228,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 : '';
 				LEGEND['layout'] = (chartModel.get('legendLayout') != undefined) ? chartModel.get('legendLayout')
 				 : '';
-				LEGEND['floating'] = (chartModel.get('legendFloating') != undefined) ? chartModel.get('legendFloating')
-				 : '';
+				
+				/**
+				 * The 'floating' option (parameter) is removed from the Legend.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+//				LEGEND['floating'] = (chartModel.get('legendFloating') != undefined) ? chartModel.get('legendFloating')
+//				 : '';
 				
 				LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel.get('legendX')
 				 : '';
@@ -1946,7 +1949,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				legendTitleStyle : jsonLegendTitleStyle.fontWeight,
 				legendPosition : chartLegend.position,
 				legendLayout : chartLegend.layout,
-				legendFloating : chartLegend.floating,
+
+				/**
+				 * The 'floating' option (parameter) is removed from the Legend.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+//				legendFloating : chartLegend.floating,
+				
 				legendX : chartLegend.x,
 				legendY : chartLegend.y,
 				legendAlign : jsonLegendStyle.align,
@@ -2304,7 +2313,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 	            		{
 		            		if (key == ChartUtils.unwantedStyleProps[i])
 		            		{
-		            			//console.log(key);
 			            		delete obj[key];
 		            		}
 	            		}	
@@ -2351,7 +2359,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			config = config || {};
-			//console.log("== marge objects (START) ==");
+			
 			var removeNotFoundItemsFlag = config.removeNotFoundItemsFlag || false;
 			
 			var applyAxes = config.applyAxes || false;
@@ -2539,7 +2547,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (removeNotFoundItemsFlag) {
 				newTarget = ChartUtils.removeNotFoundItems(newTarget, source);
 			}
-			//console.log("== marge objects (END) ==");
+		
 			return newTarget;
 		},
 

@@ -96,7 +96,11 @@ Sbi.settings.chart =
 			height: 500,
 			overflowY: true,
 			resizable: true
-		}		
+		},
+		cockpitAxisAndSerieStyleConfigPopup:
+		{
+			height: 350
+		}
 	},
 	
 	parallel:

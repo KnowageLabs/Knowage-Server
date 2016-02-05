@@ -10,6 +10,7 @@ Ext.define('Sbi.chart.viewer.HighchartsDrilldownHelper', {
 					selectedName: selectedName,
 					selectedSerie: selectedSerie
 			};
+			
 //			console.log(drill);
 //			console.log(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb.indexOf(drill));
 			
@@ -44,7 +45,7 @@ Ext.define('Sbi.chart.viewer.HighchartsDrilldownHelper', {
 		},
 		
 		drillup: function(){
-			console.log(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb);
+//			console.log(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb);
 			Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb.pop();
 		}
 	}

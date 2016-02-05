@@ -91,6 +91,19 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
 		
+		/**
+	     * https://production.eng.it/jira/browse/KNOWAGE-490
+	     * When we are creating a chart from the Cockpit Engine, we need to use
+	     * a different height, because inside the Wizard, there is less space
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		
+		if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+			this.setHeight(Sbi.settings.chart.structureStep.cockpitAxisAndSerieStyleConfigPopup.height);
+		}
+		
+		
 		store = config.store,
 		
 		rowIndex = config.rowIndex;
@@ -109,6 +122,14 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			
 		this.tooltipFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
+			/**
+		     * https://production.eng.it/jira/browse/KNOWAGE-490
+		     * When we are creating a chart from the Cockpit Engine, the tooltip
+		     * fieldset should be collapsed
+		     * 
+		     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+		     */
+			collapsed: Sbi.chart.designer.ChartUtils.isCockpitEngine,
 			title: LN('sbi.chartengine.designer.tooltip'),
 			defaults: {anchor: '100%',
 				labelAlign : 'left',

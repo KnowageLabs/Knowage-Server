@@ -6,15 +6,15 @@
 
 		<generic>
 
-			<CHART height="" width="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:Arial;fontSize:12px;fontWeight:normal;backgroundColor:#FAFAFA;" styleName="sfnas">
+			<CHART height="" width="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;" styleName="sfnas">
 
-				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:;" text=""/>
+				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:transparent;" text=""/>
 
-				<SUBTITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				<SUBTITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 
-				<EMPTYMESSAGE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				<EMPTYMESSAGE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 
-				<LEGEND floating='' layout="" position="" show= '' style= "align:;fontFamily:;fontSize:;fontWeight:;;borderWidth:;color:;backgroundColor:;"/>
+				<LEGEND floating='' layout="" position="" show= '' style= "align:;fontFamily:;fontSize:;fontWeight:;;borderWidth:;color:transparent;backgroundColor:transparent;"/>
 
 				<COLORPALETTE>
 					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
@@ -31,22 +31,22 @@
 
 				<AXES_LIST>
 
-					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
-						<MAJORGRID interval="" style="typeline:;color:;"/>
-						<MINORGRID interval="" style="typeline:;color:;"/>
-						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Serie' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:;">
+						<MAJORGRID interval="" style="typeline:;color:transparent;"/>
+						<MINORGRID interval="" style="typeline:;color:transparent;"/>
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
-					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;">
-						<TITLE style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;">
+						<TITLE style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
 				</AXES_LIST>
 
 				<VALUES>					
-					<SERIE color="" postfixChar="" precision="" prefixChar="" showValue="">
+					<SERIE color="transparent" postfixChar="" precision="" prefixChar="" showValue="">
 						<TOOLTIP backgroundColor=""
-						style="color:;fontFamily:;fontWeight:;fontSize:;align:;" templateHtml=""/>
+						style="color:transparent;fontFamily:;fontWeight:;fontSize:;align:;" templateHtml=""/>
 					</SERIE>
 				</VALUES>
 
@@ -55,8 +55,8 @@
 		</generic>
 
 		<wordcloud>
-			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding=''
-			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:;"/>
+			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding=''
+			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;"/>
 		</wordcloud>
 
 		<bar>
@@ -71,8 +71,8 @@
 			<CHART type="PIE">
 				<VALUES>					
 					<SERIE postfixChar="" precision="" prefixChar="" showAbsValue="" showPercentage="">
-						<TOOLTIP backgroundColor=""
-						style="color:;fontFamily:;fontWeight:;fontSize:;align:;" templateHtml=""/>
+						<TOOLTIP backgroundColor="transparent"
+						style="color:transparent;fontFamily:;fontWeight:;fontSize:;align:;" templateHtml=""/>
 					</SERIE>
 				</VALUES>
 			</CHART>
@@ -87,9 +87,9 @@
 
 				<AXES_LIST style="axisColNamePadd:;brushWidth:;axisColor:transparent;brushColor:transparent;">
 
-					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;"/>
+					<AXIS type='Serie' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;"/>
 
-					<AXIS type='Category' style="color:;fontFamily:;fontWeight:;fontSize:;"/>		
+					<AXIS type='Category' style="color:transparent;fontFamily:;fontWeight:;fontSize:;"/>		
 				</AXES_LIST>
 
 				<LIMIT style="maxNumberOfLines:;orderTopMinBottomMax:;serieFilterColumn:;"/>
@@ -108,7 +108,7 @@
 		<heatmap>
 			<CHART type="HEATMAP">
 				<LEGEND symbolHeight='' style="align:;"/>
-				<TOOLTIP style="fontFamily:;fontSize:;color:;fontWeight:;"/>
+				<TOOLTIP style="fontFamily:;fontSize:;color:transparent;fontWeight:;"/>
 			</CHART>
 		</heatmap>
 
@@ -121,14 +121,14 @@
 			<CHART type="SCATTER" zoomType="">
 
 				<AXES_LIST>
-					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
-						<MAJORGRID interval="" style="typeline:;color:;"/>
-						<MINORGRID interval="" typeline="typeline:;color:;"/>
-						<TITLE style="align:;color:#C80752;fontFamily:Arial;fontWeight:bold;fontSize:14px;" text=""/>
+					<AXIS type='Serie' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:;">
+						<MAJORGRID interval="" style="typeline:;color:transparent;"/>
+						<MINORGRID interval="" typeline="typeline:;color:transparent;"/>
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
-					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" startOnTick="" showLastLabel="" endOnTick="">
-						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" startOnTick="" showLastLabel="" endOnTick="">
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
 				</AXES_LIST>
@@ -143,22 +143,22 @@
 
 				<AXES_LIST>
 
-					<AXIS lineColor="" lineWidth="" max=""  min="" minorTickColor="" minorTickLength="" minorTickPosition="" minorTickWidth=""
-		              offset="" minorTickInterval="" tickColor="" tickLength="" type='Serie'
-		              tickPixelInterval="" tickPosition="" tickWidth="" style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
+					<AXIS lineColor="transparent" lineWidth="" max=""  min="" minorTickColor="transparent" minorTickLength="" minorTickPosition="" minorTickWidth=""
+		              offset="" minorTickInterval="" tickColor="transparent" tickLength="" type='Serie'
+		              tickPixelInterval="" tickPosition="" tickWidth="" style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:;">
 
-						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 
 						<LABELS distance="" rotation=""/>
 
 						<PLOTBANDS>
-							<PLOT color="" from="" to=""/>
+							<PLOT color="transparent" from="" to=""/>
 						</PLOTBANDS>
 
 					</AXIS>
 
-					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;">
-						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;">
+						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 
 				</AXES_LIST>
@@ -167,11 +167,11 @@
 
 				<VALUES>
 
-					<SERIE animation="true" color="" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend=""
+					<SERIE animation="true" color="transparent" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend=""
 	                   showValue="">
-						<TOOLTIP backgroundColor="" style="color:;fontFamily:;fontWeight:;fontSize:;align:" templateHtml=""/>
-						<DIAL backgroundColorDial=""/>
-						<DATA_LABELS colorDataLabels="" formatDataLabels="" yPositionDataLabels=""/>
+						<TOOLTIP backgroundColor="transparent" style="color:transparent;fontFamily:;fontWeight:;fontSize:;align:" templateHtml=""/>
+						<DIAL backgroundColorDial="transparent"/>
+						<DATA_LABELS colorDataLabels="transparent" formatDataLabels="" yPositionDataLabels=""/>
 					</SERIE>
 
 				</VALUES>
@@ -181,8 +181,8 @@
 
 		<sunburst>
 			<CHART type="SUNBURST" opacMouseOver="">
-				<TOOLBAR  style="position:;height:;width:;spacing:;tail:;percFontColor:;fontFamily:;fontWeight:;fontSize:;"/>
-				<TIP style="fontFamily:;fontWeight:;fontSize:;color:;align:;width:;" text=""/>
+				<TOOLBAR  style="position:;height:;width:;spacing:;tail:;percFontColor:transparent;fontFamily:;fontWeight:;fontSize:;"/>
+				<TIP style="fontFamily:;fontWeight:;fontSize:;color:transparent;align:;width:;" text=""/>
 			</CHART>
 		</sunburst>
 

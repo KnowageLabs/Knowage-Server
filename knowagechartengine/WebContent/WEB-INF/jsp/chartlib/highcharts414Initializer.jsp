@@ -51,16 +51,35 @@
 	function renderChart(chartConf) {
 		var chartType = chartConf.chart.type.toLowerCase();
 		
-		if (chartType == 'treemap') {
+		if (chartType == 'treemap') 
+		{
 			renderTreemap(chartConf);
-		} else if (chartType == 'heatmap') {
-			console.log(chartConf);
+		} 
+		else if (chartType == 'heatmap') 
+		{
 			renderHeatmap(chartConf);
 		}
-
-		else {
-			console.log("highcharts414Initializer.jspf (line 62)");
-			console.log(chartConf);
+		else
+		{			
+			/*
+				Text that will be displayed inside the Back (drillup) button
+				that appears whenever we enter deeper levels of charts (BAR
+				and LINE), i.e. whenever we drilldown through categories for
+				certain serie. This way we will keep record of the current 
+				drill down level.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			Highcharts.setOptions
+			(
+				{
+			        lang:
+			    	{
+			        	drillUpText: "Back to: <b>{series.name}</b>"
+			    	}
+		    	}
+			);
+		    
 			new Highcharts.Chart(chartConf);
 		}
 	};
@@ -85,6 +104,7 @@
 				var chart = this;
 				chart.showLoading('Loading...');
 				Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+				
 				var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 				var parameters = {
 					breadcrumb: Ext.JSON.encode(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb),

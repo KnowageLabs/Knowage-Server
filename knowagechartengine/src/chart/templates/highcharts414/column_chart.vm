@@ -1,5 +1,5 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
-#set($dataColumnsMapper = {})
+#set($dataColumnsMapper = {}) 
 
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
@@ -405,22 +405,6 @@
 		        layout: 'vertical',
 		    
 	    #end
-	    		
-	    		#if ($chart.LEGEND.floating != '')
-		        	floating: $chart.LEGEND.floating,
-		        #end
-		        
-		    	#if($chart.LEGEND.floating == 'true')
-		    	
-			        #if($chart.LEGEND.x != '')
-			        	x: $chart.LEGEND.x,
-				    #end
-			        
-			        #if($chart.LEGEND.y != '')
-			        	y: $chart.LEGEND.y,
-			    	#end
-		    	
-		    	#end
 	    		
 			    #if($chart.LEGEND.style.backgroundColor != '')
 		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
@@ -882,44 +866,45 @@
 							
 							@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						*#
-						#if ($relatedSerieShowValue != "")
-						
-							dataLabels: 
-							{
-			                    enabled: $relatedSerieShowValue,
-			                    
-			                    #set ($postfixValueAsString = '')
-			                    
-			                    #if ($relatedSerie.postfixChar != '')
-				                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
-								#end
-			                    
-			                    #set ($prefixValueAsString = '')
-			                    
-			                    #if ($relatedSerie.prefixChar != '')
-				                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
-								#end
-			                    
-			                    #set ($precisionValueAsString = '')
-			                    
-			                    #if ($relatedSerie.precision != '')
-				                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
-			                   	#else
-			                   		#set ($precisionValueAsString = ':,.0f')
-								#end
-			                    
-			                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',		                                				
-			                    
-			                    #*
-				                    formatter: function() {
-				                    	return '${prefixValueAsString}' + '{' + this.y + '$precisionValueAsString' + '}' + '${postfixValueAsString}';
-				                    },
-			                    *#
-		                    
-		                	}
-		                	
+						#if ($relatedSerieShowValue == "" || $relatedSerieShowValue == "false")
+							#set($relatedSerieShowValue = false)
+						#else
+							#set($relatedSerieShowValue = true)
 						#end
 						
+						dataLabels: 
+						{
+		                    enabled: $relatedSerieShowValue,
+		                    
+		                    #set ($postfixValueAsString = '')
+		                    
+		                    #if ($relatedSerie.postfixChar != '')
+			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+							#end
+		                    
+		                    #set ($prefixValueAsString = '')
+		                    
+		                    #if ($relatedSerie.prefixChar != '')
+			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+							#end
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':,.' + $relatedSerie.precision + 'f')
+		                   	#else
+		                   		#set ($precisionValueAsString = ':,.0f')
+							#end
+		                    
+		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',		                                				
+		                    
+		                    #*
+			                    formatter: function() {
+			                    	return '${prefixValueAsString}' + '{' + this.y + '$precisionValueAsString' + '}' + '${postfixValueAsString}';
+			                    },
+		                    *#
+	                    
+	                	}
 					},
 				#end
 	    	],
@@ -1097,7 +1082,7 @@
         			Find the object that contains property "name" with the value
         			of the "root" variable, so we can extract "dataLabels" property
         			that contains the "format" property.        			
-        		*#
+        		*#        		
         		var resultY = allMainCategories.filter
         		(
         			function(obj) 
@@ -1240,6 +1225,7 @@
                 lineWidth: 2
             }
         },
+       
         #if($chart.isCockpitEngine == 'true' && $chart.outcomingEventsEnabled == 'true')
         series: {
             cursor: 'pointer',

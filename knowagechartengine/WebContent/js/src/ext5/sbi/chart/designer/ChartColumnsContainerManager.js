@@ -903,6 +903,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					Ext.create('Ext.grid.column.Column', {
 						dataIndex: 'serieGroupingFunction',
 						flex: 8,
+						
+						/**
+						 * If the current chart type is GAUGE disable this combobox,
+						 * since we do not need custom aggregation type because we
+						 * are dealing with only series that are plain numbers and 
+						 * that are not connected to any serie.
+						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						hidden: 
+							Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase()=="GAUGE" ?
+									true : false,
+									
 						layout: 'fit',
 						sortable: false,
 						editor: {

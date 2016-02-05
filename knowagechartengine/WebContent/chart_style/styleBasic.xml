@@ -54,7 +54,7 @@
 		</generic>
 		
 		<wordcloud>
-			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' maxWords='100' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
+			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' maxWords='100' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
 		</wordcloud>
 		
 		<bar>
@@ -140,7 +140,7 @@
 						  
 						<TITLE style="align:;color:#000000;fontFamily:Arial;fontWeight:bold;fontSize:14px;" text=" measure axis title"/>
 				
-						<LABELS distance="5" rotation="1"/>
+						<LABELS distance="35" rotation="1"/>
 				
 						<PLOTBANDS>
 							<PLOT color="#000000" from="20" to="40"/>

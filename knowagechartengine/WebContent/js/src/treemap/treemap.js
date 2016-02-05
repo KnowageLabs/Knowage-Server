@@ -1,9 +1,35 @@
 function renderTreemap(chartConf) {
-    
+	
     chartConf = prepareChartConfForTreemap(chartConf);
     
+    /**
+     * Text that will be displayed inside the Back (drillup) button
+     * that appears whenever we enter deeper levels of the TREEMAP 
+     * chart, i.e. whenever we drilldown through categories for
+     * the serie user specified. This way we will keep record of the 
+     * current drill down level.
+     * 
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    (
+		function (H) 
+		{       			
+			H.wrap
+			(
+				H.seriesTypes.treemap.prototype, 
+				'showDrillUpButton',
+				
+				function (proceed) 
+				{
+					arguments[1] = 'Back to: <b>' + this.nodeMap[this.rootNode].name + '</b>';            
+					proceed.apply(this, [].slice.call(arguments, 1));
+				}
+			);			
+		}(Highcharts)
+	);
+    
 	new Highcharts.Chart(chartConf);
-     
+	
 	var getCrossParams= function(point){
 		var params={
 				point:{

@@ -54,7 +54,7 @@
 		</generic>
 		
 		<wordcloud>
-			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' maxWords='60' minAngle='45' sizeCriteria='serie' wordPadding='5'/>
+			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#E3E3E3;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' maxWords='60' minAngle='45' sizeCriteria='serie' wordPadding='5'/>
 		</wordcloud>
 	
 		<bar>
@@ -148,7 +148,7 @@
 						
 						<TITLE style="align:;color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;" text=""/>
 				
-						<LABELS distance="" rotation=""/>
+						<LABELS distance="35" rotation="0"/>
 				
 						<PLOTBANDS>
 							<PLOT color="" from="" to=""/>

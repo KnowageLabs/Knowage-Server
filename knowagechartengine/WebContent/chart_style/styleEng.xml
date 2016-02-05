@@ -55,7 +55,7 @@
 		</generic>
 		
 		<wordcloud>
-			<CHART type="WORDCLOUD" height="" width="" orientation="horizontal" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#FAFAFA;" maxAngle='360' maxFontSize='100' maxWords='60' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
+			<CHART type="WORDCLOUD" height="" width="" orientation="horizontal" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:#FAFAFA;" maxAngle='360' maxFontSize='100' minFontSize='5' maxWords='60' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
 		</wordcloud>
 		
 		<bar>
@@ -146,7 +146,7 @@
 						
 						<TITLE style="align:;color:#002E57;fontFamily:Arial;fontWeight:bold;fontSize:14px;" text=""/>
 				
-						<LABELS distance="5" rotation="1"/>
+						<LABELS distance="35" rotation="0"/>
 				
 						<PLOTBANDS>
 							<PLOT color="#002E57" from="20" to="40"/>

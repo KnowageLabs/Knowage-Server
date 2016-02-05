@@ -1,4 +1,4 @@
-Ext.define('Sbi.chart.designer.ChartStructure', {
+Ext.define('Sbi.chart.designer.ChartStructure', { 
     extend: 'Ext.panel.Panel',
     requires: [
         'Ext.layout.container.Column'
@@ -13,6 +13,7 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
         rightYAxisesPanel : {},
         bottomXAxisesPanel : {}
     },
+    
     constructor: function(config) {
         this.callParent(config);
         this.title = config.title && config.title != null ? config.title: this.title;

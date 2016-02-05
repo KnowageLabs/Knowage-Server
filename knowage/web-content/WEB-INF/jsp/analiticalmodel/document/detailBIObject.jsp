@@ -56,6 +56,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	String modality = (String) moduleResponse
 			.getAttribute(ObjectsTreeConstants.MODALITY);
+	
 	IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 
 	// CREATE PAGE URLs
@@ -123,6 +124,7 @@ function showEngField(docType) {
 				Integer idEng = en.getId();
 				boolean useDataSource = en.getUseDataSource();
 				boolean useDataSet = en.getUseDataSet();
+				
 				String driver = en.getDriverName();
 				%>
 		engineSource[<%=idEng%>]=<%=useDataSource%>;
@@ -499,7 +501,7 @@ function saveDocument(goBack) {
 				  	<input type="hidden" name="dataset" id="dataset" value="<%=currDataSetIdValue%>" <%=disableSet%> />	
 												
 					<input class='portlet-form-input-field' style='width:230px;' type="text"  readonly="readonly"
-									name="datasetReadLabel" id="datasetReadLabel" value="<%=StringEscapeUtils.escapeHtml(currDataSetLabel)%>" maxlength="400" /> 
+									name="datasetReadLabel" id="datasetReadLabel" value="<%=StringEscapeUtils.escapeHtml(currDataSetLabel)%>" maxlength="400" /> *
 				
 					<a href='javascript:void(0);' id="datasetLink">
 						<img src="<%=urlBuilder.getResourceLinkByTheme(request,
@@ -797,6 +799,7 @@ function saveDocument(goBack) {
 				</div>
 				<script>
 				function addConstraint(){
+					
 					valore = document.getElementById('attributeValue').value;
 					if (valore == null || valore == '') {
 						alert('Missing value');
@@ -932,6 +935,7 @@ function saveDocument(goBack) {
 			     if(obj!=null && obj.getEngine()!=null){
 			     	EngineDriverClass = obj.getEngine().getDriverName();
 			     }
+			     
 			     if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
 			       || (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 			       || BIobjTypecode.equalsIgnoreCase("SMART_FILTER")
@@ -950,6 +954,7 @@ function saveDocument(goBack) {
 					<div class='div_detail_form'>
 					<%
 						boolean hasTemplates = false;
+					
 						List templates = objtempdao.getBIObjectTemplateList(obj.getId());
 						if ((templates != null) && !templates.isEmpty()) {
 							hasTemplates = true;
@@ -965,22 +970,44 @@ function saveDocument(goBack) {
 								confUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId()
 										.toString());
 								hrefConf = urlBuilder.getUrl(request, confUrlPars);
+											
+								/*
+									If the current document does not have dataset (user did not
+									pick one), the warning will appear in the form of the browser
+									popup with the message that warns about the necessity of having
+									a dataset for the chart document.
+									
+									@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								*/
+								if (currDataSetIdValue.toString().equals(""))
+								{
+									hrefConf = "javascript:alert('"
+											+ msgBuilder.getMessage(
+													"sbi.detailbiobj.datasetNotChosen",
+													"messages", request) + "')";
+								}
+
 							} else {
+								
 								hrefConf = "javascript:alert('"
 										+ msgBuilder.getMessage(
 												"sbi.detailbiobj.objectnotsaved",
 												"messages", request) + "')";
 							}
-					%>	
+					%>		
+									
 							<a href="<%=hrefConf%>">
+							
 								<img class='header-button-image-portlet-section' 
 	      				 			 title='<spagobi:message key = "sbi.detailbiobj.generateNewTemplate" />' 
 	      				 			 src='<%=urlBuilder.getResourceLinkByTheme(request,
 						"/img/createTemplate.jpg", currTheme)%>' 
 	      				 			 alt='<spagobi:message key = "sbi.detailbiobj.generateNewTemplate"  />' />
 							</a>
+							
 					<%
 						} else { // if(!hasTemplates)
+							
 							Map editUrlPars = new HashMap();
 							editUrlPars.put(SpagoBIConstants.PAGE,
 									SpagoBIConstants.DOCUMENT_TEMPLATE_BUILD);
@@ -1034,7 +1061,9 @@ function saveDocument(goBack) {
 
 	<script>
 	function switchView() {
+		
 		var treeView = document.getElementById('folderTree').style.display;
+		
 		if (treeView == 'inline') {
 			document.getElementById('folderTree').style.display = 'none';
 			document.getElementById('versionTable').style.display = 'inline';
@@ -1316,7 +1345,6 @@ function isBIObjectFormChanged() {
 	//var datasetLabel=document.getElementById('datasetLabel').value;
 	var state = document.getElementById('doc_state').value;
     var parametersRegion = document.getElementById('doc_parameters_region').value;
-
   
 	if ((label != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
 						.escapeHtml(initialBIObject.getLabel()))%>')
@@ -1427,7 +1455,7 @@ function isBIParameterFormChanged () {
 }
 
 function changeBIParameter (objParId, message) {
-
+	
 	var biobjParFormModified = isBIParameterFormChanged();
 	
 	document.getElementById('selected_obj_par_id').name = 'selected_obj_par_id';
@@ -1451,7 +1479,7 @@ function changeBIParameter (objParId, message) {
 }
 
 function saveAndGoBackConfirm(message, url){
-
+	
 		var biobjFormModified = isBIObjectFormChanged();
 		var biobjParFormModified = isBIParameterFormChanged();
 		if (biobjFormModified == 'true' || biobjParFormModified == 'true') {
@@ -1481,6 +1509,7 @@ function deleteBIParameterConfirm (message) {
 }
 
 function verifyDependencies() {
+	
 	<%List correlations = DAOFactory.getObjParuseDAO()
 						.loadObjParuses(objPar.getId());
 				if (correlations != null && correlations.size() > 0) {%>
@@ -1495,7 +1524,7 @@ function verifyDependencies() {
 }
 
 function saveBIParameterConfirm (message) {
-   
+	
 	var biobjParFormModified = isBIParameterFormChanged();
 
 	if (biobjParFormModified == 'true') 
@@ -1519,6 +1548,7 @@ function saveBIParameterConfirm (message) {
 }
 
 function checkDocumentType(message) {
+	
 	var type = document.getElementById('doc_type').value;
 	if (type.match('REPORT') != null || type.match('DATA_MINING') != null) {
 		var biobjFormModified = isBIObjectFormChanged();

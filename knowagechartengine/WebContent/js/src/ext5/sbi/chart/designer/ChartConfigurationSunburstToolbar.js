@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 320,
+		height: 330,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 		bodyPadding: 10,
