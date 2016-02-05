@@ -20,12 +20,8 @@
 </head>
 <body ng-controller="olapController">
 	<div layout="row">
-		<div flex=20 ng-include="leftPanel">
-		</div>
-	
-		<div style="width:2px"></div>
-
-		<div layout="column" flex=60>
+		
+		<div layout="column" flex=80>
 			<div  ng-include="mainToolbar">
 			</div>
 		
