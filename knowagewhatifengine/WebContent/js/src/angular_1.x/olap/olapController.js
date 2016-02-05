@@ -98,6 +98,8 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 			$scope.columns = response.data.columns;
 			$scope.filterCardList = response.data.filters;
 			$scope.showMdxVar = response.data.mdxFormatted;
+			$mdDialog.hide();
+			$scope.mdxQuery = "";
 			
 			console.log("rows->");
 			console.log($scope.rows);
