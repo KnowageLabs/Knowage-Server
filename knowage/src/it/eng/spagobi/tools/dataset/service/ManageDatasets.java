@@ -1168,7 +1168,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				// the file used will have the name equals to dataset's label
 				((CkanDataSet) dataSet).setFileName(dsLabel + "." + fileType.toLowerCase());
 			} else {
-				((CkanDataSet) dataSet).setFileName(fileName);
+				// fileName can be empty if you preview it as administrator
+				if (fileName.isEmpty()) {
+					((CkanDataSet) dataSet).setFileName(DataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
+				} else {
+					((CkanDataSet) dataSet).setFileName(fileName);
+				}
 			}
 
 		}
@@ -1555,7 +1560,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	/**
 	 * Protected for testing purposes
-	 * 
+	 *
 	 * @param value
 	 * @param type
 	 * @param forSave
