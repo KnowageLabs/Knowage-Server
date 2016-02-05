@@ -27,10 +27,6 @@ public interface ICacheDAO extends ISpagoBIDao {
 
 	public CacheItem loadCacheItemBySignature(String signature);
 
-	public List<CacheItem> loadCacheJoinedItemsReferringTo(String signature);
-
-	public boolean hasCacheItemReferenceToCacheJoinedItem(String signature, String joinedSignature);
-
 	// ========================================================================================
 	// CREATE operations (Crud)
 	// ========================================================================================
@@ -38,8 +34,6 @@ public interface ICacheDAO extends ISpagoBIDao {
 	public String insertCacheItem(CacheItem cacheItem);
 
 	public void updateCacheItem(CacheItem cacheItem);
-
-	public Integer insertCacheJoinedItem(CacheItem cacheItem, CacheItem joinedCacheitem);
 
 	// ========================================================================================
 	// DELETE operations (cruD)
@@ -50,7 +44,4 @@ public interface ICacheDAO extends ISpagoBIDao {
 	public void deleteCacheItemBySignature(String signature);
 
 	public boolean deleteAllCacheItem();
-
-	public boolean deleteAllCacheJoinedItem();
-
 }
