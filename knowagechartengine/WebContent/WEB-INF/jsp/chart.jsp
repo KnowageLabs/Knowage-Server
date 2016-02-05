@@ -320,10 +320,12 @@ author:
  				width: '100%',
  			    height: '100%',
 				bodyStyle : 'background:transparent;',
+				style: "overflow: auto",
  			    renderTo: Ext.getBody()
  			});
  			
  			var globalThis = this;
+ 			
  			
  			
  			/* 

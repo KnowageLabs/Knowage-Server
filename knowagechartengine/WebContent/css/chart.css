@@ -16,3 +16,7 @@ background-image:none;
 .x-tool-deleteAllItemsFromAxisPanel {
  background: url(../img/icon_deleteAll.png);
 }
+
+. highcharts-container {
+	margin: auto;
+}
