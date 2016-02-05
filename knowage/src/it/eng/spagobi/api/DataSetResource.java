@@ -947,7 +947,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				label = labels.getString(i);
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 				dataSetManagementAPI.setUserProfile(getUserProfile());
-				dataSetManagementAPI.persistDataset(label);
 				String tableName = dataSetManagementAPI.persistDataset(label);
 				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
 				if (tableName != null) {
