@@ -13,17 +13,27 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
 
 public class DataMiningExecutor {
 	static private Logger logger = Logger.getLogger(DataMiningExecutor.class);
 
-	private Rengine re;
+	private REngine re;
 	private IEngUserProfile profile;
 
 	private final CommandsExecutor commandsExecutor;
@@ -40,77 +50,103 @@ public class DataMiningExecutor {
 	}
 
 	/**
-	 * Prepare Rengine and user workspace environmet
+	 * Prepare REngine and user workspace environmet
 	 *
 	 * @param dataminingInstance
 	 * @param userProfile
 	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws ClassNotFoundException
 	 */
-	private void setupEnvonment(IEngUserProfile userProfile) throws IOException {
+	private void setupEnvonment(IEngUserProfile userProfile) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("IN");
 		profile = userProfile;
 
-		// new R-engine
-		re = Rengine.getMainEngine();
+		re = createREngineInstance();
 		if (re == null) {
-			/*
-			 * attention : setting to --save the engine doesn't remove object from the current environment,so it's unrelevant the workspace saving if you don't
-			 * remove manualli the R objects first through the rm command:re = new Rengine(new String[] { "--save" }, false, null);
-			 */
-			re = new Rengine(new String[] { "--vanilla" }, false, null);
-
-			logger.debug("new R engine created");
-		} else {
-			// Clean workspace
-			re.idleEval("rm(list=ls())");
-		}
-
-		if (!re.waitForR()) {
 			logger.error("Cannot load R");
+			return;
 		}
 		commandsExecutor.setRe(re);
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
 
-		// DataMiningUtils.createUserResourcesPath(profile);
 		logger.debug("created user dir");
-		// get user R workspace
-		// loadUserWorkSpace();
-		// logger.debug("loaded user WS");
 		logger.debug("OUT");
 	}
 
 	/**
-	 * Prepare Rengine and user workspace environmet
+	 * Prepare REngine and user workspace environmet
 	 *
 	 * @param dataminingInstance
 	 * @param userProfile
 	 * @throws IOException
+	 * @throws REXPMismatchException
+	 * @throws REngineException
 	 */
-	private void setupEnvonmentForExternal() throws IOException {
+	private void setupEnvonmentForExternal() throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
 		// new R-engine
-		re = Rengine.getMainEngine();
+		re = createREngineInstance();
 		if (re == null) {
-			/*
-			 * attention : setting to --save the engine doesn't remove object from the current environment,so it's unrelevant the workspace saving if you don't
-			 * remove manually the R objects first through the rm command:re = new Rengine(new String[] { "--save" }, false, null);
-			 */
-			re = new Rengine(new String[] { "--vanilla" }, false, null);
-			logger.debug("New r engine created");
-			re.eval("setwd(\"" + DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH + "\")");
-			logger.debug("Set working directory");
-		}
-
-		if (!re.waitForR()) {
 			logger.error("Cannot load R");
+			return;
 		}
+		re.parseAndEval("setwd(\"" + DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH + "\")");
+		logger.debug("Set working directory");
 		commandsExecutor.setRe(re);
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
+
 		logger.debug("OUT");
+	}
+
+	private REngine createREngineInstance() {
+		REngine reEng = null;
+		// TODO use workMamager
+		// WorkManager workerManager = new WorkManager();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Callable<REngine> task = new Callable<REngine>() {
+			public REngine call() throws REngineException, REXPMismatchException {
+				REngine reEng = null;
+				reEng = REngine.getLastEngine();
+				if (reEng == null) {
+					try {
+						/*
+						 * attention : setting to --save the engine doesn't remove object from the current environment,so it's unrelevant the workspace saving
+						 * if you don't remove manualli the R objects first through the rm command:re = new REngine(new String[] { "--save" }, false, null);
+						 */
+						reEng = REngine.engineForClass("org.rosuda.REngine.JRI.JRIEngine", new String[] { "--vanilla" }, null, false);
+						logger.debug("new R engine created");
+
+					} catch (Exception e) {
+						logger.error("Error during creation of new R instance");
+					}
+				} else {
+					// Clean workspace
+					reEng.parseAndEval("rm(list=ls())");
+				}
+				return reEng;
+			}
+		};
+		Future<REngine> future = executor.submit(task);
+		try {
+			reEng = future.get(500, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException ex) {
+			logger.error("TimeoutException during creation of new R instance");
+		} catch (InterruptedException e) {
+			logger.error("InterruptedException during creation of new R instance");
+		} catch (ExecutionException e) {
+			logger.error("ExecutionException during creation of new R instance");
+		} finally {
+			future.cancel(true);
+		}
+		return reEng;
 	}
 
 	/**
@@ -181,13 +217,13 @@ public class DataMiningExecutor {
 	 *
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
 	 *
-	 * // create user workspace data logger.debug("IN"); re.eval("save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() + ".RData')");
-	 * logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.eval("load(file= '" + profile.getUserUniqueIdentifier() +
-	 * ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }
+	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
+	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
+	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }
 	 */
 
 	/*
-	 * protected void saveUserWorkSpace() throws IOException { logger.debug("IN"); re.eval("save(list = ls(all = TRUE), file= '" +
+	 * protected void saveUserWorkSpace() throws IOException { logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("OUT"); }
 	 */
 

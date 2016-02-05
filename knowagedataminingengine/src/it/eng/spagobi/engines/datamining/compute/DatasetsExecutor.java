@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
@@ -15,14 +15,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
 
 public class DatasetsExecutor {
 
 	static private Logger logger = Logger.getLogger(DatasetsExecutor.class);
 
-	private Rengine re;
+	private REngine re;
 
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
@@ -32,16 +34,15 @@ public class DatasetsExecutor {
 		this.profile = profile;
 	}
 
-	public Rengine getRe() {
+	public REngine getRe() {
 		return re;
 	}
 
-	public void setRe(Rengine re) {
+	public void setRe(REngine re) {
 		this.re = re;
 	}
 
-
-	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException {
+	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
 		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
@@ -51,26 +52,26 @@ public class DatasetsExecutor {
 					options = "header = TRUE, sep = \",\"";
 				}
 				if (ds.getType().equalsIgnoreCase("file")) {
-					
+
 					// tries to get it from user workspace
-					REXP datasetNameInR = re.eval(ds.getName());
+					REXP datasetNameInR = re.parseAndEval(ds.getName());
 					if (datasetNameInR == null) {
 						logger.debug("File ds: gets default DS");
-						Boolean defaultExists =getAndEvalDefaultDataset(ds);
-						if(!defaultExists){						
-							
+						Boolean defaultExists = getAndEvalDefaultDataset(ds);
+						if (!defaultExists) {
+
 							File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 							// /find file in dir
 							File[] dsfiles = fileDSDir.listFiles();
 							if (dsfiles != null && dsfiles.length != 0) {
 								String fileDSPath = dsfiles[0].getPath();
-	
-								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-	
-								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
-								re.eval(stringToEval);
 
-							}							
+								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
+
+								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
+								re.parseAndEval(stringToEval);
+
+							}
 						}
 
 					} else {
@@ -85,7 +86,7 @@ public class DatasetsExecutor {
 
 						String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
 						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
-						re.eval(stringToEval);
+						re.parseAndEval(stringToEval);
 
 					} catch (IOException e) {
 						logger.error(e.getMessage());
@@ -97,47 +98,49 @@ public class DatasetsExecutor {
 		}
 		logger.debug("OUT");
 	}
-	protected boolean getAndEvalDefaultDataset (DataMiningDataset ds) throws IOException {
+
+	protected boolean getAndEvalDefaultDataset(DataMiningDataset ds) throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
-		//checks relative path
+		// checks relative path
 		String relPathToDefDS = ds.getDefaultDS();
-		if(relPathToDefDS == null || relPathToDefDS.equals("")){
+		if (relPathToDefDS == null || relPathToDefDS.equals("")) {
 			return false;
 		}
-		if(relPathToDefDS.startsWith("/") || relPathToDefDS.startsWith("\\\\")){
+		if (relPathToDefDS.startsWith("/") || relPathToDefDS.startsWith("\\\\")) {
 			relPathToDefDS = relPathToDefDS.substring(1);
 		}
-		String defDSRelPath = DataMiningUtils.UPLOADED_FILE_PATH + relPathToDefDS;		
-		
+		String defDSRelPath = DataMiningUtils.UPLOADED_FILE_PATH + relPathToDefDS;
+
 		defDSRelPath = defDSRelPath.replaceAll("\\\\", "/");
-		logger.debug("Default path "+defDSRelPath);
-		File fileDSDefault = new File( defDSRelPath);
-		if(!fileDSDefault.exists()){
+		logger.debug("Default path " + defDSRelPath);
+		File fileDSDefault = new File(defDSRelPath);
+		if (!fileDSDefault.exists()) {
 			logger.debug("Default file doesn't exist");
 			return false;
 		}
 		String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + defDSRelPath + "\"," + ds.getOptions() + ");";
-		
-		logger.debug("R code to eval "+stringToEval);
-		re.eval(stringToEval);
+
+		logger.debug("R code to eval " + stringToEval);
+		re.parseAndEval(stringToEval);
 		logger.debug("OUT");
 		return true;
-		
+
 	}
-	protected void updateDataset(DataMiningDataset ds) throws IOException {
+
+	protected void updateDataset(DataMiningDataset ds) throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
 		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
-		if(dsfiles != null){
+		if (dsfiles != null) {
 			String fileDSPath = dsfiles[0].getPath();
-	
+
 			fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-			logger.debug("File ds path "+fileDSPath);
-	
+			logger.debug("File ds path " + fileDSPath);
+
 			String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
-			logger.debug("R code to eval "+stringToEval);
-			re.eval(stringToEval);
+			logger.debug("R code to eval " + stringToEval);
+			re.parseAndEval(stringToEval);
 		}
 		logger.debug("OUT");
 	}

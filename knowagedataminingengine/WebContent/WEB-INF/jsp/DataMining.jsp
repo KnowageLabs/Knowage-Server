@@ -200,12 +200,16 @@ author:...
 								</div>
 								<br>
 								<div class = "border-container">
-									<md-toolbar class="md-blue minihead element-border">
+									<md-toolbar class="minihead element-border" ng-class="{'error-toolbar' : results[cmd.name][out.outputName].error}">
 										    <div class="md-toolbar-tools">
-										 		Results 
+										 		<span ng-if="!results[cmd.name][out.outputName].error">Results</span>
+										 		<span ng-if="results[cmd.name][out.outputName].error">Error</span> 
 										 	</div>
 								 	</md-toolbar>
 								 	<md-content layout-margin layout-align="stretch center">
+								 		<div ng-if="results[cmd.name][out.outputName].error">
+								 			{{results[cmd.name][out.outputName].error}}
+								 		</div>
 										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' ">
 											<div layout="row" layout-align="center center">
 												<md-input-container>

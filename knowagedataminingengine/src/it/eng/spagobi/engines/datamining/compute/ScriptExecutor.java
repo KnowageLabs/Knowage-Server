@@ -23,14 +23,16 @@ import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
 
 public class ScriptExecutor {
 
 	static private Logger logger = Logger.getLogger(ScriptExecutor.class);
 
-	private Rengine re;
+	private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 
@@ -39,11 +41,11 @@ public class ScriptExecutor {
 		this.profile = profile;
 	}
 
-	public Rengine getRe() {
+	public REngine getRe() {
 		return re;
 	}
 
-	public void setRe(Rengine re) {
+	public void setRe(REngine re) {
 		this.re = re;
 	}
 
@@ -65,12 +67,12 @@ public class ScriptExecutor {
 			// script
 			String ret = createTemporarySourceScript(scriptToExecute);
 			logger.debug("created temporary script");
-			re.eval("source(\"" + ret + "\")");
+			re.parseAndEval("source(\"" + ret + "\")");
 			logger.debug("detects action to execute from command --> used to call functions");
 			// detects action to execute from command --> used to call functions
 			String action = command.getAction();
 			if (action != null) {
-				re.eval(action);
+				re.parseAndEval(action);
 				logger.debug("evaluated action");
 			}
 
@@ -160,13 +162,13 @@ public class ScriptExecutor {
 					}
 				}
 				logger.debug("Ready to execute external script with params");
-				re.eval("source(\"" + codeResourceTemp + "\")");
+				re.parseAndEval("source(\"" + codeResourceTemp + "\")");
 				logger.debug("External script executed with params");
 				deleteTemporarySourceScript(codeResourceTemp);
 				logger.debug("Deleted temp source file");
 			} else {
 				logger.debug("Ready to execute external script without params");
-				re.eval("source(\"" + codeResource + "\")");
+				re.parseAndEval("source(\"" + codeResource + "\")");
 				logger.debug("External script executed without params");
 			}
 
@@ -192,16 +194,16 @@ public class ScriptExecutor {
 		return code;
 	}
 
-	private void loadLibrariesFromRLocal(String libraryNames) {
+	private void loadLibrariesFromRLocal(String libraryNames) throws REngineException, REXPMismatchException {
 		logger.debug("IN");
 
-		REXP rHome = re.eval("libdir<-paste(R.home(),\"library\", sep=\"/\")");
-		if (rHome != null) {
+		REXP rHome = re.parseAndEval("try(libdir<-paste(R.home(),\"library\", sep=\"/\"))");
+		if (!rHome.inherits("try-error") && !rHome.isNull()) {
 			if (libraryNames != null) {
 				String[] libs = libraryNames.split(",");
 				for (int i = 0; i < libs.length; i++) {
 					String lib = libs[i].trim();
-					re.eval("library(" + lib + ",lib.loc=libdir)");
+					re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
 				}
 			}
 		}

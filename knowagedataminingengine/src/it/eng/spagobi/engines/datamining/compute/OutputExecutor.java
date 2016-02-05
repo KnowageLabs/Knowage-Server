@@ -23,9 +23,9 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.RFactor;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
 
 public class OutputExecutor {
 	static private Logger logger = Logger.getLogger(OutputExecutor.class);
@@ -33,7 +33,7 @@ public class OutputExecutor {
 	private static final String OUTPUT_PLOT_EXTENSION = "png";
 	private static final String OUTPUT_PLOT_IMG = "png";
 
-	private Rengine re;
+	private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 
@@ -42,11 +42,11 @@ public class OutputExecutor {
 		this.profile = profile;
 	}
 
-	public Rengine getRe() {
+	public REngine getRe() {
 		return re;
 	}
 
-	public void setRe(Rengine re) {
+	public void setRe(REngine re) {
 		this.re = re;
 	}
 
@@ -77,38 +77,49 @@ public class OutputExecutor {
 			res.setVariablename(outVal);// could be multiple value
 										// comma separated
 			String plotName = out.getOutputName();
-			re.eval(getPlotFilePath(plotName));
+			re.parseAndEval(getPlotFilePath(plotName));
+
+			REXP rexp = null;
 
 			logger.debug("Plot file name " + plotName);
 			if (function.equals("hist")) {
 				// predefined Histogram function
-				re.eval(function + "(" + outVal + ", col=4)");
+				rexp = re.parseAndEval("try(" + function + "(" + outVal + ", col=4))");
 			} else if (function.equals("plot") || function.equals("biplot")) {
 				// predefined plot/biplot functions
-				re.eval(function + "(" + outVal + ", col=2)");
+				rexp = re.parseAndEval("try(" + function + "(" + outVal + ", col=2))");
 			} else {
 				// function recalling a function inside the main script (auto)
 				// to produce an image result
 
 				if (outVal == null || outVal.equals("")) {
-					re.eval(function);
+					rexp = re.parseAndEval("try(" + function + ")");
 				} else {
-					re.eval(function + "(" + outVal + ")");
+					rexp = re.parseAndEval("try(" + function + "(" + outVal + "))");
 				}
 
 			}
-			logger.debug("Evaluated function");
-			re.eval("dev.off()");
-			logger.debug("Evaluated dev.off()");
-			res.setOutputType(out.getOutputType());
-			String resImg = getPlotImageAsBase64(out.getOutputName());
-			res.setPlotName(plotName);
-			if (resImg != null && !resImg.equals("")) {
-				res.setResult(resImg);
-
-				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
-						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
-				logger.debug("Deleted temp image");
+			if (rexp.inherits("try-error")) {
+				logger.debug("Script contains error(s)");
+				res.setError(rexp.asString());
+			} else {
+				logger.debug("Evaluated function");
+				rexp = re.parseAndEval("try(dev.off())");
+				if (rexp.inherits("try-error")) {
+					logger.debug("Script contains error(s)");
+					res.setError(rexp.asString());
+				} else {
+					logger.debug("Evaluated dev.off()");
+					res.setOutputType(out.getOutputType());
+					String resImg = getPlotImageAsBase64(out.getOutputName());
+					res.setPlotName(plotName);
+					if (resImg != null && !resImg.equals("")) {
+						res.setResult(resImg);
+						scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
+								+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+						logger.debug("Deleted temp image");
+					}
+				}
 			}
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && outVal != null && out.getOutputName() != null) {
@@ -119,19 +130,21 @@ public class OutputExecutor {
 			if (function != null) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
-					rexp = re.eval(function);
+					rexp = re.parseAndEval("try(" + function + ")");
 				} else {
-					rexp = re.eval(function + "(" + outVal + ")");
+					rexp = re.parseAndEval("try(" + function + "(" + outVal + "))");
 				}
 
 			} else {
-
-				rexp = re.eval(outVal);
+				rexp = re.parseAndEval("try(" + outVal + ")");
 			}
 
 			res.setVariablename(outVal);// could be multiple value
 			// comma separated
-			if (rexp != null) {
+			if (rexp.inherits("try-error")) {
+				logger.debug("Script contains error(s)");
+				res.setError(rexp.asString());
+			} else if (!rexp.isNull()) {
 				res.setOutputType(out.getOutputType());
 				res.setResult(getResultAsString(rexp));
 			} else {
@@ -143,41 +156,49 @@ public class OutputExecutor {
 			logger.debug("Html output");
 
 			REXP rexp = null;
-			re.eval("library(R2HTML)");
-			re.eval("library(RCurl)");
+			re.parseAndEval("library(R2HTML)");
+			re.parseAndEval("library(RCurl)");
 
-			re.eval("HTMLStart(outdir = \"" + DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/") + "\", , filename = \""
+			re.parseAndEval("HTMLStart(outdir = \"" + DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/") + "\", , filename = \""
 					+ profile.getUserUniqueIdentifier() + "\")");
 
 			if (function != null) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
-					rexp = re.eval("HTML(" + function + ", append = FALSE)");
+					rexp = re.parseAndEval("try(HTML(" + function + ", append = FALSE))");
 				} else {
-					rexp = re.eval("HTML(" + function + "(" + outVal + ")" + ", append = FALSE)");
+					rexp = re.parseAndEval("try(HTML(" + function + "(" + outVal + ")" + ", append = FALSE))");
 				}
 
 			} else {
-				rexp = re.eval("HTML(" + outVal + ", append = FALSE)");
+				rexp = re.parseAndEval("HTML(" + outVal + ", append = FALSE)");
 			}
-			REXP htmlFile = re.eval("HTMLGetFile()");
-			if (htmlFile != null) {
-				logger.debug("Html result being created");
-				re.eval("u<-HTMLGetFile()");
-				logger.debug("got html output file");
-				re.eval("HTMLStop()");
-				rexp = re.eval("u");
-				rexp = re.eval("s<-paste(\"file:///\",u, sep=\"\")");
-				rexp = re.eval("c<-getURL(s)");
-				rexp = re.eval("c");
-				logger.debug("got html");
-				// delete temp file:
-				boolean success = (new File(htmlFile.asString())).delete();
-				res.setResult(rexp.asString());
-				// comma separated
-
+			if (rexp.inherits("try-error")) {
+				logger.debug("Script contains error(s)");
+				res.setError(rexp.asString());
 			} else {
-				res.setResult("No result");
+				REXP htmlFile = re.parseAndEval("HTMLGetFile()");
+				if (htmlFile.inherits("try-error")) {
+					logger.debug("Script contains error(s)");
+					res.setError(htmlFile.asString());
+				} else if (!htmlFile.isNull()) {
+					logger.debug("Html result being created");
+					re.parseAndEval("u<-HTMLGetFile()");
+					logger.debug("got html output file");
+					re.parseAndEval("HTMLStop()");
+					rexp = re.parseAndEval("u");
+					rexp = re.parseAndEval("s<-paste(\"file:///\",u, sep=\"\")");
+					rexp = re.parseAndEval("c<-getURL(s)");
+					rexp = re.parseAndEval("c");
+					logger.debug("got html");
+					// delete temp file:
+					boolean success = (new File(htmlFile.asString())).delete();
+					res.setResult(rexp.asString());
+					// comma separated
+
+				} else {
+					res.setResult("No result");
+				}
 			}
 
 			res.setOutputType(out.getOutputType());
@@ -244,39 +265,39 @@ public class OutputExecutor {
 		return imageString;
 	}
 
-	private String getResultAsString(REXP rexp) {
+	private String getResultAsString(REXP rexp) throws REXPMismatchException {
 		logger.debug("IN");
 		String result = "";
 		/* http://www.studytrails.com/RJava-Eclipse-Plugin/JRI-R-Java-Data-Communication.jsp */
-		int rexpType = rexp.getType();
-
-		if (rexpType == REXP.XT_ARRAY_INT) {
-			int[] intArr = rexp.asIntArray();
-			result = Arrays.toString(intArr);
-		} else if (rexpType == REXP.XT_ARRAY_DOUBLE) {
-			double[] doubleArr = rexp.asDoubleArray();
-			result = Arrays.toString(doubleArr);
-		} else if (rexpType == REXP.XT_ARRAY_STR || (rexpType == REXP.XT_ARRAY_BOOL)) {
-			String[] strArr = rexp.asStringArray();
-			result = Arrays.toString(strArr);
-		} else if (rexpType == REXP.XT_INT) {
-			result = rexp.asInt() + "";
-		} else if (rexpType == REXP.XT_BOOL) {
-			result = rexp.asBool().toString();
-		} else if (rexpType == REXP.XT_DOUBLE) {
+		Object obj = rexp.asNativeJavaObject();
+		if (rexp.isVector()) {
+			if (obj instanceof double[]) {
+				int[] intArr = rexp.asIntegers();
+				result = Arrays.toString(intArr);
+			} else if (obj instanceof int[]) {
+				double[] doubleArr = rexp.asDoubles();
+				result = Arrays.toString(doubleArr);
+			} else if (obj instanceof String[]) {
+				String[] strArr = rexp.asStrings();
+				result = Arrays.toString(strArr);
+			} else if (obj instanceof Boolean[]) {
+				int[] strArr = rexp.asIntegers();
+				result = Arrays.toString(strArr);
+			} else {
+				result = obj.toString();
+			}
+		} else if (rexp.isInteger()) {
+			result = rexp.asInteger() + "";
+		} else if (rexp.isLogical()) {
+			result = ((Boolean) obj).toString();
+		} else if (rexp.isNumeric()) {
 			result = rexp.asDouble() + "";
-		} else if (rexpType == REXP.XT_LIST) {
-			result = rexp.asList().getBody().asString();
-		} else if (rexpType == REXP.XT_STR) {
+		} else if (rexp.isList()) {
+			result = rexp.asList().toString();
+		} else if (rexp.isString()) {
 			result = rexp.asString();
-		} else if (rexpType == REXP.XT_VECTOR) {
-			result = rexp.asVector().toString();
-		} else if (rexpType == REXP.XT_ARRAY_BOOL_INT) {
-			int[] doubleArr = rexp.asIntArray();
-			result = Arrays.toString(doubleArr);
-		} else if (rexpType == REXP.XT_FACTOR) {
-			RFactor factor = rexp.asFactor();
-			result = factor.toString();
+		} else if (rexp.isFactor()) {
+			result = rexp.asFactor().toString();
 		}
 		logger.debug("OUT");
 		return result;

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
@@ -14,10 +14,10 @@ import it.eng.spagobi.engines.datamining.model.Output;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.*;
 
 public class CommandsExecutor {
-	private Rengine re;
+	private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 	static private Logger logger = Logger.getLogger(CommandsExecutor.class);
@@ -27,19 +27,18 @@ public class CommandsExecutor {
 		this.profile = profile;
 	}
 
-	public Rengine getRe() {
+	public REngine getRe() {
 		return re;
 	}
 
-	public void setRe(Rengine re) {
+	public void setRe(REngine re) {
 		this.re = re;
 	}
 
 	/**
-	 * Method called to evaluate all the command prepare the result based on the
-	 * script each command needs, for the output with mode = auto. Both command
-	 * and output must have mode=auto to be executed and displayed
-	 * 
+	 * Method called to evaluate all the command prepare the result based on the script each command needs, for the output with mode = auto. Both command and
+	 * output must have mode=auto to be executed and displayed
+	 *
 	 * @param dataminingInstance
 	 * @return the command for the auto output mode
 	 */
