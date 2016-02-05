@@ -95,7 +95,7 @@ Sbi.settings.myanalysis = {
 
 		, showReportFilter: true
 		, showCockpitFilter: true
-		, showMapFilter: false
+		, showMapFilter: true
 		, showAllFilter: true		
 };
 
