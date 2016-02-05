@@ -175,7 +175,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 		  
 		  }).then(function successCallback(response) {
 			  console.log(response.data.table);
-			  $scope.table = response.data.table;
+			 $scope.table = $sce.trustAsHtml(response.data.table);
 		  },function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
