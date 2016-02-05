@@ -49,19 +49,8 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	/*****************************/
 	/** Functions               **/
 	/*****************************/
-	$scope.createHtmlFromResult = function (result){
-		//<img width="480px" height="480px" style="image-resolution: 72dpi;" alt="Result for '+plotName+'" src="data:image/png;base64,'+result+'" /></p><br/><br/><br/>
-		var html = '';
-		if (result.outputType == 'text'){
-			html +=  'result = ' + result.result;
-		}
-		else if (result.outputType == 'image'){
-			html += '<img ng-style="{\'width\':imgWidth+\'px\',\'height\':imgHeight+\'px\'}" style="image-resolution: 72dpi;" alt="Result for '+ result.plotName+'" src="data:image/png;base64,'+result.result+'" /></p><br/><br/><br/>'
-		}
-		return $sce.trustAsHtml(html);
-	};
 	
-	 //GET the result of [commandName, output, variables]
+	//GET the result of [commandName, output, variables]
 	 //if succeed, save the result in the matrix result[commandName][output.outputName] and set some values
 	 //if necessary, convert result in html (e.g. result is image base64)
 	 $scope.createResultPromise = function(){
@@ -81,8 +70,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 				 if ($scope.results[commandName][output.outputName] === undefined ){
 					 $scope.results[commandName][output.outputName] = data;
 				 } 
-				 $scope.results[commandName][output.outputName].result = data.result.replace(/]/g,'').replace(/\[/g,'');
-				 //$scope.results[commandName][output.outputName].html = $scope.createHtmlFromResult(data);
+				 $scope.results[commandName][output.outputName].result = data.result;
 			 })
 			 .error(function(data, status){
 				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);

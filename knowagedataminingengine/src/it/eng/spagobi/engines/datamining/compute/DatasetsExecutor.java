@@ -52,26 +52,26 @@ public class DatasetsExecutor {
 					options = "header = TRUE, sep = \",\"";
 				}
 				if (ds.getType().equalsIgnoreCase("file")) {
-
+					
 					// tries to get it from user workspace
-					REXP datasetNameInR = re.parseAndEval(ds.getName());
-					if (datasetNameInR == null) {
+					REXP datasetNameInR = re.eval(ds.getName());
+					if (datasetNameInR.isNull()) {
 						logger.debug("File ds: gets default DS");
-						Boolean defaultExists = getAndEvalDefaultDataset(ds);
-						if (!defaultExists) {
-
+						Boolean defaultExists =getAndEvalDefaultDataset(ds);
+						if(!defaultExists){						
+							
 							File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 							// /find file in dir
 							File[] dsfiles = fileDSDir.listFiles();
 							if (dsfiles != null && dsfiles.length != 0) {
 								String fileDSPath = dsfiles[0].getPath();
-
+	
 								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
-
+	
 								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
-								re.parseAndEval(stringToEval);
+								re.eval(stringToEval);
 
-							}
+							}							
 						}
 
 					} else {
