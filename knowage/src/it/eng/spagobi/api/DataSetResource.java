@@ -52,6 +52,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -948,6 +949,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 				dataSetManagementAPI.setUserProfile(getUserProfile());
 				String tableName = dataSetManagementAPI.persistDataset(label);
+				dataSetManagementAPI.createIndexes(label, new HashSet<String>());
 				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
 				if (tableName != null) {
 					labelsJSON.put(label, tableName);

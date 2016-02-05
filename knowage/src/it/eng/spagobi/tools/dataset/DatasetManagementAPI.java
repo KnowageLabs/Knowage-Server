@@ -38,16 +38,21 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -1180,14 +1185,64 @@ public class DatasetManagementAPI {
 		return queryText;
 	}
 
-	private String generateQuery(int maxResults) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT * FROM ");
-		sb.append(DataStore.DEFAULT_SCHEMA_NAME);
-		sb.append(".");
-		sb.append(DataStore.DEFAULT_TABLE_NAME);
-		sb.append(" LIMIT ");
-		sb.append(maxResults);
-		return sb.toString();
+	/*
+	 * Create indexes for the specified dataset and the specified columns
+	 */
+	public void createIndexes(String label, Set<String> columns) {
+		logger.debug("IN - Dataset label " + label);
+		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+		cache.setUserProfile(userProfile);
+		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+		String signature = dataSet.getSignature();
+		logger.debug("Retrieve table name for signature " + signature);
+		CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+
+		if (cacheItem != null) {
+			String tableName = cacheItem.getTable();
+			for (String column : columns) {
+				try {
+					String query = buildIndexStatement(tableName, column);
+					if (query != null) {
+						Connection conn = cache.getDataSource().getConnection();
+						Statement stmt = conn.createStatement();
+						stmt.executeUpdate(query);
+					} else {
+						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+					}
+				} catch (ClassNotFoundException | NamingException | SQLException e) {
+					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]", e);
+				}
+			}
+		} else {
+			if (signature != null && !signature.isEmpty()) {
+				logger.error("Table name could not be found for signature [" + signature + "] and hash [" + Helper.sha256(signature) + "]");
+			} else {
+				logger.error("Table name could not be found for signature [" + signature + "]");
+
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	private String buildIndexStatement(String tableName, String column) {
+		logger.debug("IN - Table [" + tableName + "], Column [" + column + "]");
+		String statement = null;
+		if (tableName != null && !tableName.isEmpty() && column != null && !column.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("CREATE INDEX");
+			sb.append(" ");
+			sb.append(tableName.toUpperCase());
+			sb.append(".");
+			sb.append(column.toUpperCase());
+			sb.append(" ");
+			sb.append("ON");
+			sb.append(" ");
+			sb.append(tableName);
+			sb.append("(");
+			sb.append(column);
+			sb.append(")");
+			statement = sb.toString();
+		}
+		return statement;
 	}
 }
