@@ -23,6 +23,7 @@ import javax.xml.bind.PropertyException;
 public class Helper {
 
 	private static MessageDigest md5instance;
+	private static MessageDigest sha256instance;
 
 	/**
 	 * ISO format
@@ -237,10 +238,36 @@ public class Helper {
 	}
 
 	private static synchronized MessageDigest getMD5Instance() throws NoSuchAlgorithmException {
-		if (md5instance==null) {
-			md5instance=MessageDigest.getInstance("MD5");
+		if (md5instance == null) {
+			md5instance = MessageDigest.getInstance("MD5");
 		}
 		return md5instance;
+	}
+
+	public static String sha256(String res) {
+		try {
+			byte[] bytesOfMessage = res.getBytes("UTF-8");
+			MessageDigest md = getSHA256Instance();
+			byte[] thedigest = md.digest(bytesOfMessage);
+
+			// convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < thedigest.length; i++) {
+				sb.append(Integer.toString((thedigest[i] & 0xff) + 0x100, 16).substring(1));
+			}
+			return sb.toString();
+		} catch (UnsupportedEncodingException e) {
+			throw new SpagoBIRuntimeException(e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+	}
+
+	private static synchronized MessageDigest getSHA256Instance() throws NoSuchAlgorithmException {
+		if (sha256instance == null) {
+			sha256instance = MessageDigest.getInstance("SHA-256");
+		}
+		return sha256instance;
 	}
 
 	public static String toNullIfempty(String s) {

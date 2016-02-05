@@ -25,7 +25,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
@@ -141,11 +140,6 @@ public interface ICache {
 	void refreshIfNotContained(IDataSet dataSet, boolean wait);
 
 	IDataStore refresh(List<IDataSet> dataSets, boolean wait);
-
-	/**
-	 * refresh the store ignoring cache content
-	 */
-	IDataStore refresh(JoinedDataSet dataSet, AssociationGroup associationGroup);
 
 	/**
 	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.

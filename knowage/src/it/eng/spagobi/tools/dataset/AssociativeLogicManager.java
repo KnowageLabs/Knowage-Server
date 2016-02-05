@@ -1,3 +1,25 @@
+/**
+
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005-2010 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+ **/
+
 package it.eng.spagobi.tools.dataset;
 
 import it.eng.spago.error.EMFUserError;
@@ -26,6 +48,11 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jgrapht.graph.Pseudograph;
+
+/**
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
+ *
+ */
 
 public class AssociativeLogicManager {
 
@@ -164,18 +191,19 @@ public class AssociativeLogicManager {
 				if (intersection.size() > 0) {
 					edgeGroupValues.put(group, intersection);
 
-					String inClauseColumns;
-					String inClauseValues;
-					if (intersection.size() > IN_CLAUSE_LIMIT) {
-						inClauseColumns = "1," + columnNames;
-						inClauseValues = getUnlimitedInClauseValues(intersection);
-					} else {
-						inClauseColumns = columnNames;
-						inClauseValues = StringUtils.join(intersection.iterator(), ",");
-					}
-					String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
 					for (String datasetInvolved : edgeGroupToDataset.get(group)) {
 						if (!datasetInvolved.equals(dataset)) {
+							columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
+							String inClauseColumns;
+							String inClauseValues;
+							if (intersection.size() > IN_CLAUSE_LIMIT) {
+								inClauseColumns = "1," + columnNames;
+								inClauseValues = getUnlimitedInClauseValues(intersection);
+							} else {
+								inClauseColumns = columnNames;
+								inClauseValues = StringUtils.join(intersection.iterator(), ",");
+							}
+							String f = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
 							// it will skip the current dataset, from which the filter is fired
 							calculateDatasets(datasetInvolved, group, f);
 						}

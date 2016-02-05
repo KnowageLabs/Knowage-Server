@@ -15,18 +15,15 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.JoinedDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -370,6 +367,9 @@ public class DatasetManagementAPI {
 				if (baseDataStore.getRecordsCount() > 10000) {
 					cache.put(dataSet, baseDataStore);
 					dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+					if (dataStore == null) {
+						throw new CacheException("An unexpected error occured while executing method");
+					}
 					adjustMetadata((DataStore) dataStore, dataSet, null);
 					dataSet.decode(dataStore);
 				} else {
@@ -404,152 +404,6 @@ public class DatasetManagementAPI {
 		if (size > maxResults) {
 			records.subList(maxResults, size).clear();
 		}
-	}
-
-	/**
-	 * @param associationGroup
-	 * @param selections
-	 * @param parametersValues
-	 *            A map of map with the following structure: storeId->paramName->paramValue
-	 *
-	 * @return
-	 */
-	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
-
-		IDataStore joinedDataStore = null;
-
-		logger.debug("IN");
-
-		try {
-			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
-			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
-			// for (IDataSet dataSet : joinedDatasets) {
-			// checkQbeDataset(dataSet);
-			// }
-
-			joinedDataSet.setParamsMaps(parametersValues);
-
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			// if (cache.contains(joinedDataSet) == false) {
-			// cache.refresh(joinedDataSet, true);
-			// }
-
-			cache.refreshIfNotContained(joinedDataSet, true);
-			List<FilterCriteria> filters = new ArrayList<FilterCriteria>();
-			Iterator<String> it = selections.keys();
-			while (it.hasNext()) {
-				String associationName = it.next();
-				JSONArray values = selections.getJSONArray(associationName);
-				if (values.length() == 0) {
-					continue;
-				}
-				List<String> valuesList = new ArrayList<String>();
-				for (int i = 0; i < values.length(); i++) {
-					valuesList.add(values.get(i).toString());
-				}
-
-				String datasetColumn = null;
-				String datasetLabel = null;
-				Association association = associationGroup.getAssociation(associationName);
-				if (association != null) {
-					datasetColumn = association.getFields().get(0).getFieldName();
-					datasetLabel = association.getFields().get(0).getDataSetLabel();
-				} else {
-					String[] tmpAssociationName = associationName.split("\\.");
-					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
-						datasetColumn = tmpAssociationName[1];
-						datasetLabel = tmpAssociationName[0];
-					}
-				}
-				if (datasetLabel != null && datasetColumn != null) {
-					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-					Operand rightOperand = new Operand(valuesList);
-					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-					filters.add(filterCriteria);
-				}
-			}
-
-			joinedDataStore = cache.get(joinedDataSet, null, filters, null);
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return joinedDataStore;
-	}
-
-	/**
-	 * @param associationGroupObject
-	 * @param selectionsJSON
-	 * @param parametersMap
-	 * @param groupCriterias
-	 * @param object
-	 * @param projectionCriterias
-	 * @return
-	 */
-	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
-
-		IDataStore joinedDataStore = null;
-
-		logger.debug("IN");
-
-		try {
-			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
-			joinedDataSet.setParamsMaps(parametersValues);
-
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-			cache.refreshIfNotContained(joinedDataSet, true);
-			// if (cache.contains(joinedDataSet) == false) {
-			// cache.refresh(joinedDataSet, true);
-			// }
-
-			List<FilterCriteria> filters = (filterCriteria != null) ? filterCriteria : new ArrayList<FilterCriteria>();
-			Iterator<String> it = selections.keys();
-			while (it.hasNext()) {
-				String associationName = it.next();
-				JSONArray values = selections.getJSONArray(associationName);
-				if (values.length() == 0) {
-					continue;
-				}
-				List<String> valuesList = new ArrayList<String>();
-				for (int i = 0; i < values.length(); i++) {
-					valuesList.add(values.get(i).toString());
-				}
-
-				String datasetColumn = null;
-				String datasetLabel = null;
-				Association association = associationGroup.getAssociation(associationName);
-				if (association != null) {
-					datasetColumn = association.getFields().get(0).getFieldName();
-					datasetLabel = association.getFields().get(0).getDataSetLabel();
-				} else {
-					String[] tmpAssociationName = associationName.split("\\.");
-					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
-						datasetColumn = tmpAssociationName[1];
-						datasetLabel = tmpAssociationName[0];
-					}
-				}
-				if (datasetLabel != null && datasetColumn != null) {
-					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-					Operand rightOperand = new Operand(valuesList);
-					FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
-					filters.add(filter);
-				}
-			}
-
-			joinedDataStore = cache.get(joinedDataSet, groupCriteria, filters, projectionCriteria);
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return joinedDataStore;
-
 	}
 
 	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {

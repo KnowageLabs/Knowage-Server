@@ -9,6 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="/knowageutils/lib/foo-commonj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-test/hamcrest-core-1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib-test/junit-4.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="/knowageutils/lib/hazelcast-all-3.5.4.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>

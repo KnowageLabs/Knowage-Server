@@ -22,18 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBase;
 import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,8 +44,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.hazelcast.core.IMap;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
+ * @author Alessandro Portosa (alessandro.portosa@eng.it)
  *
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
@@ -111,7 +116,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 	}
 
-	
+	@Override
 	public BigDecimal getTotalMemory() {
 		logger.debug("Total memory is equal to [" + totalMemory + "]");
 		return totalMemory;
@@ -120,7 +125,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
 	 */
-	
+
+	@Override
 	public BigDecimal getUsedMemory() {
 		IDataBase dataBase = DataBase.getDataBase(cacheConfiguration.getCacheDataSource());
 		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
@@ -131,7 +137,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
 	 */
-	
+
+	@Override
 	public BigDecimal getAvailableMemory() {
 		BigDecimal availableMemory = getTotalMemory();
 		BigDecimal usedMemory = getUsedMemory();
@@ -144,12 +151,13 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * @return the number of bytes used by the resultSet (approximate)
 	 */
-	
+
+	@Override
 	public BigDecimal getRequiredMemory(IDataStore store) {
 		return DataStoreStatistics.extimateMemorySize(store, cacheConfiguration.getObjectsTypeDimension());
 	}
 
-	
+	@Override
 	public Integer getAvailableMemoryAsPercentage() {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
@@ -157,17 +165,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return toReturn;
 	}
 
-	
+	@Override
 	public Integer getNumberOfObjects() {
 		return cacheDao.loadAllCacheItems().size();
 	}
 
-	
+	@Override
 	public boolean isCleaningEnabled() {
 		return isActiveCleanAction;
 	}
 
-	
+	@Override
 	public Integer getCleaningQuota() {
 		return cachePercentageToClean;
 	}
@@ -180,7 +188,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cachePercentageToStore;
 	}
 
-	
+	@Override
 	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
 		BigDecimal availableMemory = getAvailableMemory();
 		if (availableMemory.compareTo(requiredMemory) <= 0) {
@@ -190,7 +198,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 	}
 
-	
+	@Override
 	public boolean hasEnoughMemoryForStore(IDataStore store) {
 		BigDecimal availableMemory = getAvailableMemory();
 		BigDecimal requiredMemory = getRequiredMemory(store);
@@ -209,68 +217,147 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDao.loadAllCacheItems();
 	}
 
-	
+	@Override
 	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
-		CacheItem item = new CacheItem();
-		item.setName(tableName);
-		item.setTable(tableName);
-		item.setSignature(getHashedSignature(resultsetSignature));
-		item.setDimension(getRequiredMemory(resultset));
-		Date now = new Date();
-		item.setCreationDate(now);
-		item.setLastUsedDate(now);
-		item.setProperties(properties);
-		cacheDao.insertCacheItem(item);
+		String hashedSignature = Helper.sha256(resultsetSignature);
 
-		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
-				+ " bytes (approximately)  ]");
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+		try {
+			removeCacheItem(resultsetSignature);
+
+			CacheItem item = new CacheItem();
+			item.setName(tableName);
+			item.setTable(tableName);
+			item.setSignature(hashedSignature);
+			item.setDimension(getRequiredMemory(resultset));
+			Date now = new Date();
+			item.setCreationDate(now);
+			item.setLastUsedDate(now);
+			item.setProperties(properties);
+			cacheDao.insertCacheItem(item);
+
+			logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
+					+ " bytes (approximately)  ]");
+		} finally {
+			mapLocks.unlock(hashedSignature);
+		}
 	}
 
-	
+	@Override
 	public void updateCacheItem(CacheItem cacheItem) {
-		cacheDao.updateCacheItem(cacheItem);
+		String signature = cacheItem.getSignature();
+		String hashedSignature = Helper.sha256(signature);
+
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+		try {
+			if (containsCacheItem(signature)) {
+				cacheDao.updateCacheItem(cacheItem);
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] has been updated");
+			} else {
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] does not exist in cache");
+			}
+		} finally {
+			mapLocks.unlock(hashedSignature);
+		}
 	}
 
-	
+	@Override
 	public void removeCacheItem(String signature) {
-		cacheDao.deleteCacheItemBySignature(getHashedSignature(signature));
+		String hashedSignature = Helper.sha256(signature);
+
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+		try {
+			if (containsCacheItem(signature)) {
+				cacheDao.deleteCacheItemBySignature(hashedSignature);
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] has been updated");
+			} else {
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] does not exist in cache");
+			}
+		} finally {
+			mapLocks.unlock(hashedSignature);
+		}
 	}
 
 	public void removeCacheItem(String signature, boolean isHash) {
 		if (isHash) {
-			cacheDao.deleteCacheItemBySignature(signature);
+			IMap mapLocks = DistributedLockFactory
+					.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+			mapLocks.lock(signature); // it is possible to use also the method tryLock(...) with timeout parameter
+			try {
+				if (containsCacheItem(signature, true)) {
+					cacheDao.deleteCacheItemBySignature(signature);
+					logger.debug("The dataset with hash [" + signature + "] has been deleted");
+				} else {
+					logger.debug("The dataset with hash [" + signature + "] does not exist in cache");
+				}
+			} finally {
+				mapLocks.unlock(signature);
+			}
 		} else {
 			removeCacheItem(signature);
 		}
 	}
 
-	
+	@Override
 	public void removeAllCacheItems() {
 		cacheDao.deleteAllCacheItem();
 	}
 
-	public CacheItem getCacheItemByResultSetTableName(String tableName) {
-		return cacheDao.loadCacheItemByTableName(tableName);
-	}
+	// public CacheItem getCacheItemByResultSetTableName(String tableName) {
+	// return cacheDao.loadCacheItemByTableName(tableName);
+	// }
 
-	
+	@Override
 	public CacheItem getCacheItem(String resultSetSignature) {
-		return cacheDao.loadCacheItemBySignature(getHashedSignature(resultSetSignature));
+		CacheItem cacheItem = null;
+
+		String hashedSignature = Helper.sha256(resultSetSignature);
+
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+		try {
+			cacheItem = cacheDao.loadCacheItemBySignature(hashedSignature);
+			if (cacheItem != null) {
+				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature + "] has been found in cache");
+			} else {
+				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature + "] does not exist in cache");
+			}
+		} finally {
+			mapLocks.unlock(hashedSignature);
+		}
+		return cacheItem;
 	}
 
 	public CacheItem getCacheItem(String resultSetSignature, boolean isHash) {
 		if (isHash) {
-			return cacheDao.loadCacheItemBySignature(resultSetSignature);
+			CacheItem cacheItem = null;
+			IMap mapLocks = DistributedLockFactory
+					.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+			mapLocks.lock(resultSetSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+			try {
+				cacheItem = cacheDao.loadCacheItemBySignature(resultSetSignature);
+				if (cacheItem != null) {
+					logger.debug("The dataset with hash [" + resultSetSignature + "] has been found in cache");
+				} else {
+					logger.debug("The dataset with hash [" + resultSetSignature + "] does not exist in cache");
+				}
+			} finally {
+				mapLocks.unlock(resultSetSignature);
+			}
+			return cacheItem;
 		} else {
 			return getCacheItem(resultSetSignature);
 		}
 	}
 
-	public boolean containsCacheItemByTableName(String tableName) {
-		return getCacheItemByResultSetTableName(tableName) != null;
-	}
+	// public boolean containsCacheItemByTableName(String tableName) {
+	// return getCacheItemByResultSetTableName(tableName) != null;
+	// }
 
-	
+	@Override
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
 	}
@@ -288,7 +375,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
-	
+
+	@Override
 	public List<String> getSignatures() {
 		List<String> signatures = new ArrayList<String>();
 		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
@@ -300,61 +388,5 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	public String getTableNamePrefix() {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
-	}
-
-	
-	public List<String> getJoinedsReferringDataset(String datasetSignature) {
-		return getJoinedsReferringDataset(datasetSignature, false);
-	}
-
-	public List<String> getJoinedsReferringDataset(String datasetSignature, boolean isHash) {
-		logger.debug("IN");
-		String signature;
-		if (isHash) {
-			signature = datasetSignature;
-		} else {
-			signature = getHashedSignature(datasetSignature);
-		}
-		logger.debug("Search if dataset with signature " + signature + " has joined dataset referring to it");
-		List<String> toReturn = new ArrayList<String>();
-		List<CacheItem> joinedCacheItems = cacheDao.loadCacheJoinedItemsReferringTo(signature);
-		for (CacheItem joinedCacheItem : joinedCacheItems) {
-			toReturn.add(joinedCacheItem.getSignature());
-		}
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-	public void addJoinedDatasetReference(String signature, String joinedSignature) {
-		logger.debug("IN");
-		String hashedSignature = getHashedSignature(signature);
-		String hashedJoinedSignature = getHashedSignature(joinedSignature);
-		if (!cacheDao.hasCacheItemReferenceToCacheJoinedItem(hashedSignature, hashedJoinedSignature)) {
-			CacheItem cacheItem = cacheDao.loadCacheItemBySignature(hashedSignature);
-			CacheItem joinedCacheItem = cacheDao.loadCacheItemBySignature(hashedJoinedSignature);
-			cacheDao.insertCacheJoinedItem(cacheItem, joinedCacheItem);
-			logger.debug("Added information that " + hashedJoinedSignature + " refers " + hashedSignature);
-		} else {
-			logger.debug("Already know that " + hashedJoinedSignature + " refers " + hashedSignature);
-		}
-		logger.debug("OUT");
-	}
-
-	private String getHashedSignature(String signature) {
-		MessageDigest messageDigest;
-		try {
-			messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(signature.getBytes("UTF-8"));
-		} catch (Throwable t) {
-			throw new CacheException("Error when hashing dataset signature. This step is necessary to generate the cache item signature", t);
-		}
-
-		// convert the byte to hex format method 1
-		byte byteData[] = messageDigest.digest();
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-		}
-		return sb.toString();
 	}
 }

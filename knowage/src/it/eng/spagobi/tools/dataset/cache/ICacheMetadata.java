@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Antonella Giachino (antonella.giachino@eng.it)
- * 
+ *
  */
 public interface ICacheMetadata {
 
@@ -81,7 +81,7 @@ public interface ICacheMetadata {
 
 	/**
 	 * TODO improve ordering not by insertion but by last access date from oldest to newest
-	 * 
+	 *
 	 * @return The signatures of all cached objects ordered by insertion order (FIFO)
 	 */
 	List<String> getSignatures();
@@ -130,9 +130,4 @@ public interface ICacheMetadata {
 	 * @return the number of the objects cached
 	 */
 	public Integer getNumberOfObjects();
-
-	/**
-	 * Returns the list of signature of datasets that are joined dataset referring to datasetSignature
-	 */
-	public List<String> getJoinedsReferringDataset(String datasetSignature);
 }

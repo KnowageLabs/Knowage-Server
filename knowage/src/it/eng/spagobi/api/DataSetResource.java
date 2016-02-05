@@ -15,7 +15,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
-import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -31,8 +30,6 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -55,11 +52,9 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -136,52 +131,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 
 		return Response.ok(executeDataSet(label, parameters)).build();
-	}
-
-	private String executeDataSet(String label, SDKDataSetParameter[] params) {
-		logger.debug("IN: label in input = " + label);
-
-		try {
-			if (label == null) {
-				logger.warn("DataSet identifier in input is null!");
-				return null;
-			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-			if (dataSet == null) {
-				logger.warn("DataSet with label [" + label + "] not existing.");
-				return null;
-			}
-			if (params != null && params.length > 0) {
-				HashMap parametersFilled = new HashMap();
-				for (int i = 0; i < params.length; i++) {
-					SDKDataSetParameter par = params[i];
-					parametersFilled.put(par.getName(), par.getValues()[0]);
-					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
-				}
-				dataSet.setParamsMap(parametersFilled);
-			}
-
-			// add the jar retriver in case of a Qbe DataSet
-			if (dataSet instanceof QbeDataSet
-					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
-				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-				Map parameters = dataSet.getParamsMap();
-				if (parameters == null) {
-					parameters = new HashMap();
-					dataSet.setParamsMap(parameters);
-				}
-				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-			}
-
-			dataSet.loadData();
-			// toReturn = dataSet.getDataStore().toXml();
-
-			JSONDataWriter writer = new JSONDataWriter();
-			return (writer.write(dataSet.getDataStore())).toString();
-		} catch (Exception e) {
-			logger.error("Error while executing dataset", e);
-			throw new SpagoBIRuntimeException("Error while executing dataset", e);
-		}
 	}
 
 	@DELETE
@@ -334,10 +283,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
 
-			synchronized (session) {
-				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
-						projectionCriteria);
-			}
+			dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
+					projectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
@@ -357,111 +304,49 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@GET
-	@Path("/joined/data")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getJoinedDataStore(@QueryParam("associationGroup") String associationGroup // the joined dataset
-			, @QueryParam("parameters") String parameters // parameters of the joined dataset
-			, @QueryParam("selections") String selections // the filter to apply to the joined dataset
-			, @QueryParam("aggregations") String aggregations // the aggregation to apply to the joined dataset
-			, @QueryParam("datasets") String datasets // the list of joined dataset to return
-	) {
+	private String executeDataSet(String label, SDKDataSetParameter[] params) {
+		logger.debug("IN: label in input = " + label);
 
-		logger.debug("IN");
 		try {
-			// unmarshall query param [associationGroup]
-			if (associationGroup == null) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
+			if (label == null) {
+				logger.warn("DataSet identifier in input is null!");
+				return null;
 			}
-			AssociationGroup associationGroupObject = null;
-			try {
-				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-				associationGroupObject = serializer.deserialize(new JSONObject(associationGroup));
-			} catch (Throwable t) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] value [" + associationGroup
-						+ "] is not a valid JSON object", t);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			if (dataSet == null) {
+				logger.warn("DataSet with label [" + label + "] not existing.");
+				return null;
 			}
-
-			// TODO process association and apply it to the joined dataset
-			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
-			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
-			if (aggregations != null) {
-				JSONObject aggregationsObject = new JSONObject(aggregations);
-				String dataset = aggregationsObject.getString("dataset");
-				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
-				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
-
-				projectionCriteria = getProjectionCriteria(dataset, categoriesObject, measuresObject);
-				groupCriteria = getGroupCriteria(dataset, categoriesObject);
-			}
-
-			// unmarshal query param [selections]
-			JSONObject selectionsJSON = new JSONObject(selections);
-
-			Set<String> datasetsObject = null;
-			if (datasets != null) {
-				datasetsObject = new HashSet<String>();
-				JSONArray datasetsJSON = new JSONArray(datasets);
-				for (int i = 0; i < datasetsJSON.length(); i++) {
-					datasetsObject.add(datasetsJSON.getString(i));
+			if (params != null && params.length > 0) {
+				HashMap parametersFilled = new HashMap();
+				for (int i = 0; i < params.length; i++) {
+					SDKDataSetParameter par = params[i];
+					parametersFilled.put(par.getName(), par.getValues()[0]);
+					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
 				}
+				dataSet.setParamsMap(parametersFilled);
 			}
 
-			IDataStore dataStore = null;
-			if (groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
-				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMaps(parameters));
-			} else {
-				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMaps(parameters), groupCriteria,
-						null, projectionCriteria);
-			}
-
-			// serializing response
-			Monitor monitor = Monitor.start("serializeStore");
-			Map<String, Object> properties = new HashMap<String, Object>();
-			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
-			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
-			properties.put(JSONDataWriter.PROPERTY_WRITE_DATA_ONLY, true);
-			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			dataSetWriter.setLocale(buildLocaleFromSession());
-			JSONArray gridDataFeed = (JSONArray) dataSetWriter.write(dataStore);
-			logger.info("Dataset serialized in: " + monitor.elapsedAsString());
-
-			JSONObject results = null;
-
-			if (groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
-				List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
-				List<String> datasetLabels = new ArrayList<String>();
-				// filtering datasets related to document (they are not real datasets)
-				for (String label : associationGroupObject.getDataSetLabels()) {
-					if (DAOFactory.getDataSetDAO().loadDataSetByLabel(label) != null) {
-						datasetLabels.add(label);
-					}
+			// add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet
+					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
 				}
-				JSONObject resultsAll = splitGridDataFeed(gridDataFeed, datasetLabels, breakIndexes);
-
-				if (datasetsObject != null) {
-					results = new JSONObject();
-					JSONArray names = resultsAll.names();
-					for (int i = 0; i < names.length(); i++) {
-						String name = names.getString(i);
-						if (datasetsObject.contains(name)) {
-							results.put(name, resultsAll.getJSONArray(name));
-						}
-					}
-				} else {
-					results = resultsAll;
-				}
-			} else {
-				results = new JSONObject();
-				List<String> dsList = new ArrayList(datasetsObject);
-				results.put(dsList.get(0), gridDataFeed);
+				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
 			}
 
-			return results.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
+			dataSet.loadData();
+			// toReturn = dataSet.getDataStore().toXml();
+
+			JSONDataWriter writer = new JSONDataWriter();
+			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (Exception e) {
+			logger.error("Error while executing dataset", e);
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
 		}
 	}
 
@@ -568,103 +453,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return filterCriterias;
 	}
 
-	private JSONObject splitGridDataFeed(JSONArray gridDataFeed, List<String> datasetLabels, List<Integer> breakIndexes) {
-
-		JSONObject results = null;
-
-		logger.debug("IN");
-		Monitor monitor = Monitor.start("splitGridDataFeed");
-
-		try {
-			breakIndexes.add(Integer.MAX_VALUE);
-			int datasetNo = datasetLabels.size();
-
-			results = new JSONObject();
-			JSONArray[] datasetRecords = new JSONArray[datasetNo];
-			for (int j = 0; j < datasetRecords.length; j++) {
-				datasetRecords[j] = new JSONArray();
-			}
-
-			// String[] lastRowNo = new String[datasetNo];
-			Map<Integer, List<String>> lastRowNo = new HashMap<Integer, List<String>>();
-			for (int j = 0; j < datasetRecords.length; j++) {
-				lastRowNo.put(j, new ArrayList<String>());
-			}
-			for (int i = 0; i < gridDataFeed.length(); i++) {
-				JSONObject originalRecord = gridDataFeed.getJSONObject(i);
-				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels, breakIndexes);
-				for (int j = 0; j < datasetRecords.length; j++) {
-					String currentRowNoName = "column_0";
-					String currentRowNo = datasetRecord[j].getString(currentRowNoName);
-					// if (currentRowNo == null || !currentRowNo.equals(lastRowNo[j])) {
-					if (currentRowNo == null || !lastRowNo.get(j).contains(currentRowNo)) {
-						datasetRecords[j].put(datasetRecord[j]);
-						// lastRowNo[j] = currentRowNo;
-						lastRowNo.get(j).add(currentRowNo);
-					}
-				}
-			}
-
-			// TODO refactor this because it is very fragile. There is infact no garanty that datasetLabels order is the same splited
-			// datasets (i.e. braeking points)
-			for (int j = 0; j < datasetRecords.length; j++) {
-				results.put(datasetLabels.get(j), datasetRecords[j]);
-			}
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while splittind dataset", t);
-		} finally {
-			logger.info("Dataset splitted in: " + monitor.elapsedAsString());
-			logger.debug("OUT");
-		}
-
-		return results;
-	}
-
-	public JSONObject[] splitRecord(JSONObject originalRecord, List<String> datasetLabels, List<Integer> breakIndexes) {
-
-		logger.debug("IN");
-
-		try {
-			JSONArray props = originalRecord.names();
-
-			int datasetNo = datasetLabels.size();
-			JSONObject[] datasetRecord = new JSONObject[datasetNo];
-			for (int j = 0; j < datasetRecord.length; j++) {
-				datasetRecord[j] = new JSONObject();
-				datasetRecord[j].put("id", originalRecord.getString("id"));
-			}
-
-			int breakIndexNo = 0;
-			int breakIndex = breakIndexes.get(breakIndexNo);
-			JSONObject record = datasetRecord[0];
-			for (int j = 1, colNo = 0; j < props.length(); j++, colNo++) { // prima colonna cache_id del dataset di join, seconda colonna
-				// cache_id primo dataset
-				String p = props.getString(j);
-
-				if (j == breakIndex + 1) { // breakIndex is the last element of the previous dataset. breakIndex + 1 is the first one of the new dataset
-
-					breakIndexNo++;
-					breakIndex = breakIndexes.get(breakIndexNo);
-					record = datasetRecord[breakIndexNo];
-					colNo = 0;
-					record.put("column_" + colNo, originalRecord.getString(p));
-
-				} else {
-
-					record.put("column_" + colNo, originalRecord.getString(p));
-
-				}
-
-			}
-
-			return datasetRecord;
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while splitting record", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
 	private static Map<String, Map<String, String>> getParametersMaps(String parameters) {
 		Map<String, Map<String, String>> toReturn = new HashMap<String, Map<String, String>>();
 
@@ -734,23 +522,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	// Start CKAN integration by Alessandro P
-	// @GET
-	// @Path("/ckan")
-	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// public String getCkanDataSet(@QueryParam("typeDoc") String typeDoc) {
-	// logger.debug("IN");
-	// try {
-	// List<IDataSet> dataSets = getDatasetManagementAPI().getCkanDataSet();
-	// return serializeDataSets(dataSets, typeDoc);
-	// } catch (Throwable t) {
-	// throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-	// } finally {
-	// logger.debug("OUT");
-	// }
-	// }
-	// End integration
-
 	@GET
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -816,36 +587,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	// @GET
-	// @Path("/getflatdataset")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public String getFlatDataSet(@Context HttpServletRequest req) {
-	// IDataSetDAO dataSetDao = null;
-	// List<IDataSet> dataSets;
-	// IEngUserProfile profile = (IEngUserProfile) req.getSession()
-	// .getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	// JSONObject JSONReturn = new JSONObject();
-	// JSONArray datasetsJSONArray = new JSONArray();
-	// try {
-	// dataSetDao = DAOFactory.getDataSetDAO();
-	// dataSetDao.setUserProfile(profile);
-	// dataSets = dataSetDao.loadFlatDatasets(profile.getUserUniqueIdentifier().toString());
-	//
-	// datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
-	// "application/json").serialize(dataSets, null);
-	//
-	// JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, null);
-	//
-	// JSONReturn.put("root", datasetsJSONReturn);
-	//
-	// } catch (Throwable t) {
-	// throw new SpagoBIServiceException(
-	// "An unexpected error occured while instatiating the dao", t);
-	// }
-	// return JSONReturn.toString();
-	//
-	// }
-
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
@@ -853,19 +594,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	public String getUserId() {
 		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
-
-	// private IDataSetDAO getDataSetDAO() {
-	// IDataSetDAO dataSetDao = null;
-	// try {
-	// dataSetDao = DAOFactory.getDataSetDAO();
-	// } catch (Throwable t) {
-	// throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
-	// }
-	//
-	//
-	// dataSetDao.setUserProfile(getUserProfile());
-	// return dataSetDao;
-	// }
 
 	protected DatasetManagementAPI getDatasetManagementAPI() {
 		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
@@ -1234,27 +962,4 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		return labelsJSON.toString();
 	}
-
-	// @POST
-	// @Path("/list/persist")
-	// public void persistDataSetsPost(@FormParam("labels") JSONArray labels) {
-	// logger.debug("IN");
-	//
-	// for (int i = 0; i < labels.length(); i++) {
-	// String label = null;
-	// try {
-	// label = labels.getString(i);
-	// DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
-	// dataSetManagementAPI.setUserProfile(getUserProfile());
-	// dataSetManagementAPI.persistDataset(label);
-	// } catch (JSONException e) {
-	// logger.error("error in persisting dataset with label: " + label, e);
-	// throw new RuntimeException("error in persisting dataset with label: " + label);
-	// }
-	// }
-	//
-	// logger.debug("OUT");
-	//
-	// }
-
 }
