@@ -451,7 +451,7 @@ public class SpagoBIConstants {
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
-	
+
 	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";
 
 	public static final String CREATE_TIMESPAN = "CreateTimepan";
@@ -463,7 +463,7 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_DOCUMENT = "ImpExpDocument";
 	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
 	public static final String IMP_EXP_USERS = "ImpExpUsers";
-
+	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
 	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
 	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
 }
