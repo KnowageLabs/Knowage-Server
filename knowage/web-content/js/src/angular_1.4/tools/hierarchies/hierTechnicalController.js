@@ -686,20 +686,20 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		do{
 			var el = elements.shift();
 			el.checked = el.visible = el.expanded = el.type = undefined;
-			//el.LEVEL = el.$parent ? (el.$parent.LEVEL && el.$parent.LEVEL >= 0 ? el.$parent.LEVEL + 1 : 1) : undefined;
 			el.$parent=null;
 			for (var k in el){
 				if (el[k] instanceof Date){
 					el[k] = $scope.formatDate(el[k]);
 				}
 			}
-			if (el.children !== undefined && el.children.length > 0) {
+			if (el.leaf == true){
+				el.MAX_DEPTH = el.LEVEL;
+			} else if (el.children !== undefined && el.children.length > 0) {
 				for (var i = 0; i < el.children.length; i++) {
 					if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true) {
 						el.children.splice(i, 1);
 						i--;
 					} else {
-				//		el.children[i].$parent = el;
 						elements.push(el.children[i]);
 					}
 				}

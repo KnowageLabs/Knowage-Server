@@ -660,7 +660,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					el[k] = $scope.formatDate(el[k]);
 				}
 			}
-			if (el.children !== undefined && el.children.length > 0) {
+			if (el.leaf == true){
+				el.MAX_DEPTH = el.LEVEL;
+			} else if (el.children !== undefined && el.children.length > 0) {
 				for (var i = 0; i < el.children.length; i++) {
 					if ((!el.children[i].leaf && !el.children[i].children) || el.children[i].fake == true) {
 						el.children.splice(i, 1);
