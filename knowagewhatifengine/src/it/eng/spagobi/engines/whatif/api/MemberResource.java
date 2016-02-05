@@ -13,6 +13,8 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
+import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
@@ -43,10 +46,14 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
 			@PathParam("memberUniqueName") String memberUniqueName) {
 
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "Drilldown start " + format.format(new Date());
+		System.out.println(time);
+
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
-
+		model.setSorting(false);
 		// Axes of the resulting query.
 		List<CellSetAxis> axes = cellSet.getAxes();
 
@@ -73,6 +80,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
 			if (transform.canExpand(p, m2)) {
+
 				transform.expand(p, m2);
 			}
 		} else if (drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)) {
@@ -88,7 +96,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		return renderModel(model);
+		time = "Drilldown end " + format.format(new Date());
+		System.out.println(time);
+		String table = renderModel(model);
+
+		return table;
 	}
 
 	@GET
@@ -152,6 +164,35 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				transform.collapse(m2);
 			}
 		}
+
+		return renderModel(model);
+	}
+
+	@GET
+	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortType}")
+	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
+			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType) {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+
+		CellSet cellSet = model.getCellSet();
+		model.setSorting(true);
+		model.setSortCriteria(SortCriteria.valueOf(sortType));
+
+		/*
+		 * if (type.equals(SortCriteria.ASC)) {
+		 * model.setSortCriteria(SortCriteria.ASC); } else if
+		 * (type.equals(SortCriteria.DESC)) {
+		 * model.setSortCriteria(SortCriteria.ASC); }
+		 */
+		CellSetAxis axisToSort = cellSet.getAxes().get(axisToSortpos);
+		CellSetAxis axisM = cellSet.getAxes().get(axis);
+		List<Position> positions = axisM.getPositions();
+		// Position position = positions.get(0);
+
+		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
+		model.sort(axisToSort, position);
 
 		return renderModel(model);
 	}

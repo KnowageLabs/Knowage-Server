@@ -62,6 +62,7 @@ import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
+import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.ui.fop.FopExporter;
@@ -99,17 +100,24 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * @param mdx
 	 *            the query to execute
 	 * @return the htm table representing the cellset
+	 * @throws OlapException
 	 */
 	@POST
 	@Path("/")
 	@Produces("text/html; charset=UTF-8")
-	public String setMdx() {
+	public String setMdx() throws OlapException {
 		logger.debug("IN");
 		String table = "";
+		String uniqueName = "[Product].[All Products]";
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 
+		/*
+		 *
+		 *
+		 *
+		 */
 		String requestBody = "";
 
 		try {
@@ -126,31 +134,11 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("No query found");
 		}
 
+		model.setSortCriteria(SortCriteria.BDESC);
+		model.setSorting(true);
+
 		table = renderModel(model);
 
-		logger.debug("OUT");
-		return table;
-
-	}
-
-	@GET
-	@Path("/{mdx}")
-	@Produces("text/html; charset=UTF-8")
-	public String setMdx2(@PathParam("mdx") String mdx) {
-		logger.debug("IN");
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
-		String mesure = "";
-		model.setSortCriteria(SortCriteria.ASC);
-
-		if (!isNullOrEmpty(mdx)) {
-			logger.debug("Updating the query in the model");
-			model.setMdx(mdx);
-		} else {
-			logger.debug("No query found");
-		}
-
-		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
 

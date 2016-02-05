@@ -1,8 +1,21 @@
-var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable']);
-olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",
+var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable'])
+.directive('compileTemplate', function($compile, $parse){
+    return {
+        link: function(scope, element, attr){
+            var parsed = $parse(attr.ngBindHtml);
+            function getStringValue() { return (parsed(scope) || '').toString(); }
+            
+            //Recompile if the template changes
+            scope.$watch(getStringValue, function() {
+                $compile(element, null,-9999)(scope);  //The -9999 makes it skip directives so that we do not recompile ourselves
+            });
+        }         
+    }
+});;
+olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",'$sce',
 		olapFunction ]);
 
-function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
+function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 
 
   $scope.templateList = '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html';
@@ -24,6 +37,11 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   $scope.numVisibleFilters = 5;
   $scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters? true : false; 
   
+  angular.element(document).ready(function () {
+	  $scope.sendMdxQuery('null');
+		
+		
+  });
   $scope.data1=[];
   var counter=0;
   console.log(JSsbiExecutionID);
@@ -61,17 +79,27 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 
   }
   
-  $scope.sendMdxQuery = function() {
+  $scope.sendMdxQuery = function(mdx) {
 	  $http({
 		  method: 'POST',
 		  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
-		  data: $scope.mdxQuery
+		  data: mdx
 		}).then(function successCallback(response) {
 		    // this callback will be called asynchronously
 		    // when the response is available
 			
-			$scope.table = response.data.table;
+			$scope.table = $sce.trustAsHtml( response.data.table);
 			console.log($http.url);
+			$scope.rows = response.data.rows;
+			$scope.columns = response.data.columns;
+			$scope.filterCardList = response.data.filters;
+			
+			console.log("rows->");
+			console.log($scope.rows);
+			console.log("columns->");
+			console.log($scope.columns);
+			console.log("filters->");
+			console.log($scope.filterCardList);
 		  }, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -81,30 +109,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   
   console.log(JSsbiExecutionID);
     
-  $http({
-	  method: 'POST',
-	  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
-	  data: 'null'
-	}).then(function successCallback(response) {
-	    // this callback will be called asynchronously
-	    // when the response is available
-		
-		
-		$scope.table = response.data.table;
-		$scope.rows = response.data.rows;
-		$scope.columns = response.data.columns;
-		$scope.filterCardList = response.data.filters;
-		
-		console.log("rows->");
-		console.log($scope.rows);
-		console.log("columns->");
-		console.log($scope.columns);
-		console.log("filters->");
-		console.log($scope.filterCardList);
-	  }, function errorCallback(response) {
-	    // called asynchronously if an error occurs
-	    // or server returns response with an error status.
-	  });
+ 
   
   /*$scope.getHierarchyMembers = function(uniqueName,axis,node){
 	  $http({
@@ -134,12 +139,13 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
   }*/
   
 
-  $scope.drillDown =function(axis, position,  member, uniqueName, uniqueName){
+  $scope.drillDown = function(axis, position,  member, uniqueName, positionUniqueName){
 		$http({
 			  method: 'GET',
-			  url: '/knowagewhatifengine/restful-services/1.0/member/drilldown/'+axis+'/'+position+'/'+member+'/'+uniqueName+'/'+uniqueName,
+			  url: '/knowagewhatifengine/restful-services/1.0/member/drilldown/'+axis+'/'+position+'/'+member+'/'+positionUniqueName+'/'+uniqueName+'?SBI_EXECUTION_ID='+JSsbiExecutionID,
 		  
 		  }).then(function successCallback(response) {
+			$scope.table = $sce.trustAsHtml(response.data.table);
 
 		  },function errorCallback(response) {
 			    // called asynchronously if an error occurs
@@ -147,12 +153,14 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http) {
 		  });
 	}
   
-  $scope.drillUp =function(axis, position,  member, uniqueName, uniqueName){
+  $scope.drillUp =function(axis, position,  member, uniqueName, positionUniqueName){
 		$http({
 			  method: 'GET',
-			  url: '/knowagewhatifengine/restful-services/1.0/member/drillup/'+axis+'/'+position+'/'+member+'/'+uniqueName+'/'+uniqueName,
+			  url: '/knowagewhatifengine/restful-services/1.0/member/drillup/'+axis+'/'+position+'/'+member+'/'+positionUniqueName+'/'+uniqueName+'?SBI_EXECUTION_ID='+JSsbiExecutionID,
 		  
 		  }).then(function successCallback(response) {
+			
+			$scope.table = $sce.trustAsHtml(response.data.table);
 
 		  },function errorCallback(response) {
 			    // called asynchronously if an error occurs
