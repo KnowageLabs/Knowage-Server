@@ -591,17 +591,19 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			); 
     	}
     	
+    	// RE-ACTIVATE AFTER SOLVING    https://production.eng.it/jira/browse/KNOWAGE-553
+    	
     	// COPY IN MY FOLDER
-    	if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
-	    	itemConfig = Ext.apply({}, {
-				text: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
-				, iconCls: 'icon-save-into-personal-folder' 
-				, handler : this.saveExecution
-	        }, baseMenuItemConfig);    	
-	    	menuItems.push(	
-				new Ext.menu.Item(itemConfig)
-			); 
-    	}    	
+//    	if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
+//	    	itemConfig = Ext.apply({}, {
+//				text: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
+//				, iconCls: 'icon-save-into-personal-folder' 
+//				, handler : this.saveExecution
+//	        }, baseMenuItemConfig);    	
+//	    	menuItems.push(	
+//				new Ext.menu.Item(itemConfig)
+//			); 
+//    	}    	
     	
     	// create menu    	
     	var menu = new Ext.menu.Menu({
