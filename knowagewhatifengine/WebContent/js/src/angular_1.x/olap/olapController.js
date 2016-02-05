@@ -17,7 +17,6 @@ olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog
 
 function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 
-
   $scope.templateList = '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html';
   $scope.templateListChild = '/knowagewhatifengine/html/template/main/filter/treeDeeperLevels.html';
   $scope.filterCard = '/knowagewhatifengine/html/template/main/filter/filterCard.html';
@@ -33,6 +32,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
   $scope.columns;  
   $scope.toolbarButtons=[];
   $scope.filterCardList = [];
+  $scope.showMdxVar = "";
   
   $scope.numVisibleFilters = 5;
   $scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters? true : false; 
@@ -42,8 +42,11 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 		
 		
   });
+  
   $scope.data1=[];
+  
   var counter=0;
+  
   console.log(JSsbiExecutionID);
   
   filterXMLResult = function(res){
@@ -85,6 +88,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 		  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
 		  data: mdx
 		}).then(function successCallback(response) {
+			
 		    // this callback will be called asynchronously
 		    // when the response is available
 			
@@ -93,6 +97,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 			$scope.rows = response.data.rows;
 			$scope.columns = response.data.columns;
 			$scope.filterCardList = response.data.filters;
+			$scope.showMdxVar = response.data.mdxFormatted;
 			
 			console.log("rows->");
 			console.log($scope.rows);
@@ -109,8 +114,6 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
   
   console.log(JSsbiExecutionID);
     
- 
-  
   /*$scope.getHierarchyMembers = function(uniqueName,axis,node){
 	  $http({
 		  method: 'GET',
@@ -138,7 +141,6 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 	   
   }*/
   
-
   $scope.drillDown = function(axis, position,  member, uniqueName, positionUniqueName){
 		$http({
 			  method: 'GET',
@@ -146,6 +148,9 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 		  
 		  }).then(function successCallback(response) {
 			$scope.table = $sce.trustAsHtml(response.data.table);
+
+			$scope.showMdxVar = response.data.mdxFormatted;
+			
 
 		  },function errorCallback(response) {
 			    // called asynchronously if an error occurs
@@ -161,6 +166,7 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
 		  }).then(function successCallback(response) {
 			
 			$scope.table = $sce.trustAsHtml(response.data.table);
+			$scope.showMdxVar = response.data.mdxFormatted;
 
 		  },function errorCallback(response) {
 			    // called asynchronously if an error occurs
@@ -323,6 +329,17 @@ function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce) {
       clickOutsideToClose:true
     });
   }
+  
+  $scope.openShowMdxDialog = function(ev){
+	    $mdDialog.show({
+	      scope: $scope,
+	      preserveScope: true,
+	      controllerAs:'olapCtrl',
+	      templateUrl:'/knowagewhatifengine/html/template/main/toolbar/showMdx.html',
+	      targetEvent:ev,
+	      clickOutsideToClose:true
+	    });
+	  }
 
   $scope.closeFiltersDialog = function(){
     $mdDialog.hide();

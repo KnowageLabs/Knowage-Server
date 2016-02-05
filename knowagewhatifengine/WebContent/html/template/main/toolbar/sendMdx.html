@@ -4,21 +4,21 @@
 		<p>Insert MDX Query</p>
 	</md-toolbar>
 	
+	<md-content>
+		<md-input-container class="md-block">
+       		<label>MDX Query</label>
+       		<textarea ng-model="mdxQuery" columns="1" rows="15"></textarea>
+     	</md-input-container>
+	
+	
+		<md-dialog-actions layout="row">
+			<md-button ng-click="closeFiltersDialog(e)">
+				Cancel
+			</md-button>
+			<md-button ng-click="sendMdxQuery()">
+				Save
+			</md-button>		
+		</md-dialog-actions>
 	</md-content>
-	
-	<md-input-container class="md-block">
-       <label>MDX Query</label>
-       <textarea ng-model="mdxQuery" columns="1" rows="15"></textarea>
-     </md-input-container>
-	
-	
-	<md-dialog-actions layout="row">
-		<md-button ng-click="closeFiltersDialog(e)">
-			Cancel
-		</md-button>
-		<md-button ng-click="sendMdxQuery()">
-			Save
-		</md-button>		
-	</md-dialog-actions>
 	
 </md-dialog>

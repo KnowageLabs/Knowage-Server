@@ -1,0 +1,20 @@
+<md-dialog  layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="max-height:64px" flex=20>
+		<p>Current MDX Query</p>
+	</md-toolbar>
+	
+	</md-content>
+	
+	<div ng-bind-html="showMdxVar">
+		
+	</div>
+	
+	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="closeFiltersDialog(e)">
+			Close
+		</md-button>	
+	</md-dialog-actions>
+	
+</md-dialog>
