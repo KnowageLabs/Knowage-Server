@@ -189,7 +189,7 @@ eventDefinitionApp.controller('ActivityEventController',
 			+"&triggerGroup=" + activityEventCtrl.event.triggerGroup
 			+"&triggerName=" + activityEventCtrl.event.triggerName;
 		
-		sbiModule_restServices.get("scheduler", requestString	)
+		sbiModule_restServices.post("scheduler", requestString	)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.error(sbiModule_translate.load("sbi.glossary.load.error"));
