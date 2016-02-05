@@ -121,10 +121,7 @@
 								
 		</ITEM>		
 		<ITEM code="menu_tools" title="#menu.ToolsMenu" groupingMenu="true"	iconCls="build">
-		   	<ITEM title="#menu.ImpExp"
-		     functionality="ImportExportManagement"
-		     url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-		     iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/importexport/importexport16.png" />
+
 			<ITEM title="#menu.Scheduler" functionality="SchedulerManagement"
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
@@ -261,7 +258,9 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
 	  		<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers.jsp" /> 
-				
+			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
+					
 	  	</ITEM>	  	
 	</ITEM>
 	

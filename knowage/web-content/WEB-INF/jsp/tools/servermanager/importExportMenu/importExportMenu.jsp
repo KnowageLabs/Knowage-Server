@@ -53,12 +53,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<md-tab-body>
 						<md-content	ng-controller="exportController">
 						
-							<div ng-if="flags.waitExport" layout="column" layout-padding layout-align="space-around center">
-								<h3 class="md-subhead">
-									{{translate.load('SBISet.importexport.opProg', 'component_impexp_messages')}}
-								</h3>
-								<i class="fa fa-spinner fa-spin fa-5x"></i>
-							</div>
+							
 					
 					
 							<div layout="column" layout-padding layout-wrap>
@@ -67,13 +62,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										<label>{{translate.load('SBISet.importexport.nameExp', 'component_impexp_messages')}}</label>
 										<input type="text" ng-model="exportName" required> 
 									</md-input-container>
-					
-									<md-button class="md-fab md-fab-mini"
-											ng-click="exportFiles(selected)"
-											ng-disabled="exportName===undefined || exportName.length == 0"
-											aria-label="{{translate.load('SBISet.importexport.fileArchive', 'component_impexp_messages')}}">
-										<md-icon class="fa fa-download center-ico"></md-icon>
-									</md-button>
+									<md-input-container class="small counter"> 
+										<md-button ng-if="!flags.waitExport" ng-click="exportFiles(selected)" aria-label="{{translate.load('SBISet.importexport.fileArchive', 'component_impexp_messages')}}"
+											ng-disabled="exportName===undefined || exportName.length == 0" class="md-fab md-mini"  > <md-icon
+										md-font-icon="fa fa-download"  >
+										</md-icon> </md-button>
+									</md-input-container>
+									<div ng-if="flags.waitExport">
+										<i  class="fa fa-spinner fa-spin fa-4x"></i>
+									</div>
 					
 								</div>
 								

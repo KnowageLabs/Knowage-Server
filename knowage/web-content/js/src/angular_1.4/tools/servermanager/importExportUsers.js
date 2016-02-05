@@ -111,7 +111,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
 			$scope.wait = false;
 		}else{
-			//modulo download zip
+			// download zip
 			var config={"USERS_LIST":$scope.usersSelected ,
 					"EXPORT_FILE_NAME":$scope.nameExport,
 					"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
@@ -124,7 +124,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							console.log("layer non Ottenuti");
 						} else {
 							if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
-								//da usare poi
+								
 								$scope.viewDownload = true;
 								$scope.downloadFile();
 							}

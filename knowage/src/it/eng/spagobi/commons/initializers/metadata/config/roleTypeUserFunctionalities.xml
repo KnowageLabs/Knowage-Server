@@ -112,8 +112,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="HotLinkManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="ImportExportManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsManagement" roleType="MODEL_ADMIN" />
@@ -325,6 +323,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpResources" roleType="ADMIN" />
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpUsers" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpCatalog" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
