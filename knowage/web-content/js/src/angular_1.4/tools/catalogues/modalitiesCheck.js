@@ -1,8 +1,8 @@
 
-var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","toastr"])
+var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"])
 app.controller("ModalitiesCheckController",ModalitiesCheckFunction);
-ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","toastr"];
-function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,toastr){
+ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
+function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
 	
 	//VARIABLES
 	
@@ -25,7 +25,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		                            color:'#153E7E',
 		                            action:function(item,event){
 		                                
-		                            	$scope.deleteConstraint(item);
+		                            	$scope.confirmDelete(item,event);
 		                            }
 		                         }
 		                        ];
@@ -42,7 +42,20 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		                            sbiModule_translate.load("sbi.general.cancel"));
  
 		 
-		 
+		 $scope.confirmDelete = function(item,ev) {
+			    var confirm = $mdDialog.confirm()
+			          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+			          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+			          .ariaLabel("confirm_delete")
+			          .targetEvent(ev)
+			          .ok(sbiModule_translate.load("sbi.general.continue"))
+			          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+			    $mdDialog.show(confirm).then(function() {
+			    	$scope.deleteConstraint(item);
+			    }, function() {
+			
+			    });
+			  };
 		
 	 
 	//FUNCTIONS	
@@ -151,13 +164,13 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getCustom();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				$scope.SelectedConstraint={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
 				
 			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
 			});	
 			
@@ -169,13 +182,13 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getCustom();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				$scope.SelectedConstraint={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
 				
 			}, function(response) {
-				toastr.error(response.data.errors[0].message, 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
 			});			
 		}
@@ -234,7 +247,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		.then(function(response) {
 			$scope.PredefinedList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});	
 	}
@@ -245,7 +258,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		.then(function(response) {
 			$scope.ItemList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -256,7 +269,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.listType = response.data;
 			$scope.addTranslation();
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -268,13 +281,13 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 			$timeout(function(){								
 				$scope.getCustom();
 			}, 1000);
-			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			$scope.SelectedConstraint={};
 			$scope.showme=false;
 			$scope.dirtyForm=false;
 
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}

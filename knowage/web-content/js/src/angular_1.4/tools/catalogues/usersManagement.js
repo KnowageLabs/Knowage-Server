@@ -1,7 +1,7 @@
-var app = angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","toastr"]);
-app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","toastr", UsersManagementFunction]);
+var app = angular.module("UsersManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col"]);
+app.controller("UsersManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", UsersManagementFunction]);
 
-function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,toastr) {
+function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging) {
 
     //VARIABLES
 
@@ -20,7 +20,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         color: '#153E7E',
         action: function (item, event) {
 
-            $scope.deleteUser(item);
+        	$scope.confirmDelete(item,event);
         }
     }];
 
@@ -36,7 +36,20 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             sbiModule_translate.load("sbi.general.cancel"));
 
 
-
+    $scope.confirmDelete = function(item,ev) {
+	    var confirm = $mdDialog.confirm()
+	          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+	          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+	          .ariaLabel("confirm_delete")
+	          .targetEvent(ev)
+	          .ok(sbiModule_translate.load("sbi.general.continue"))
+	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+	    $mdDialog.show(confirm).then(function() {
+	    	$scope.deleteUser(item);
+	    }, function() {
+	
+	    });
+	  };
 
     //FUNCTIONS	
 
@@ -204,13 +217,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getUsers();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				$scope.selectedUser={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;	
 			
     		}, function(response) {
-    			toastr.error(response.data.errors[0].message, 'Error');
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     			
     		});
 			
@@ -222,13 +235,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getUsers();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				$scope.selectedUser={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;	
 			
     		}, function(response) {
-    			toastr.error(response.data.errors[0].message, 'Error');
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     			
     		});
 		}
@@ -241,7 +254,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $scope.addConfirmPwdProp();
 			
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -251,7 +264,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		.then(function(response) {
 			$scope.usersRoles = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -261,7 +274,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		.then(function(response) {
 			$scope.usersAttributes = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -274,13 +287,13 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
              $timeout(function () {
                  $scope.getUsers();
              }, 1000);
-             toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+             sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
              $scope.selectedUser = {};
              $scope.showme = false;
              $scope.dirtyForm = false;
 
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }

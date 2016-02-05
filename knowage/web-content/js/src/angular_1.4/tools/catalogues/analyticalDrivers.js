@@ -1,6 +1,6 @@
-var app = angular.module("AnalyticalDriversModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","toastr"]);
-app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","toastr",AnalyticalDriversFunction]);
-function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,toastr){
+var app = angular.module("AnalyticalDriversModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"]);
+app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging",AnalyticalDriversFunction]);
+function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
 	
 	//VARIABLES
 	
@@ -29,7 +29,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		                            color:'#153E7E',
 		                            action:function(item,event){
 		                                
-		                            	$scope.deleteDrivers(item);
+		                            	$scope.confirmDelete(item,event);
 		                            }
 		                         }
 		                        ];
@@ -40,7 +40,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		                            color:'#153E7E',
 		                            action:function(item,event){
 		                                
-		                            	$scope.deleteUseMode(item);
+		                            	$scope.confirmDelete(item,event);
+		                            	
 		                            }
 		                         }
 		                        ];
@@ -54,7 +55,29 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		            .ariaLabel('toast').ok(
 		                    sbiModule_translate.load("sbi.general.continue")).cancel(
 		                            sbiModule_translate.load("sbi.general.cancel"));
-		  
+		
+		 
+		 $scope.confirmDelete = function(item,ev) {
+			 console.log(item);
+			    var confirm = $mdDialog.confirm()
+			          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+			          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+			          .ariaLabel("confirm_delete")
+			          .targetEvent(ev)
+			          .ok(sbiModule_translate.load("sbi.general.continue"))
+			          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+			    $mdDialog.show(confirm).then(function() {
+			    	if(item.type != null){
+			    		console.log("DELETING DRIVER");
+			    		$scope.deleteDrivers(item);
+			    	}else{
+			    		console.log("DELETING USEMODE");
+			    		$scope.deleteUseMode(item);
+			    	}
+			    }, function() {
+			
+			    });
+			  };
 	//FUNCTIONS	
 		 
 	angular.element(document).ready(function () { // on page load function
@@ -159,7 +182,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.adList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -169,7 +192,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.layersList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -179,7 +202,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.rolesList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -189,7 +212,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.checksList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -199,7 +222,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.listType = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -209,7 +232,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.listSelType = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -219,7 +242,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.listDate = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -286,7 +309,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$timeout(function(){								
 						$scope.getDrivers();
 					}, 1000);
-					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 					$scope.selectedDriver={};
 					$scope.selectedTab = 0;
 					$scope.showme=false;
@@ -294,7 +317,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
-					toastr.error(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
 				});			
 							
@@ -305,7 +328,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$timeout(function(){								
 						$scope.getDrivers();
 					}, 1000);
-					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 					$scope.selectedDriver={};
 					$scope.selectedTab = 0;
 					$scope.showme=false;
@@ -313,7 +336,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
-					toastr.error(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
 				});	
 				
@@ -328,14 +351,14 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$timeout(function(){								
 						$scope.getUseModesById($scope.selectedDriver);
 					}, 1000);
-					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 					$scope.selectedTab = 0;
 					$scope.showme=false;
 					$scope.showadMode = false;
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
-					toastr.error(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
 				});	
 				
@@ -346,7 +369,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$timeout(function(){								
 						$scope.getUseModesById($scope.selectedDriver);
 					}, 1000);
-					toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 					$scope.selectedParUse={};
 					$scope.selectedTab = 0;
 					$scope.showme=false;
@@ -354,7 +377,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.dirtyForm=false;
 					
 				}, function(response) {
-					toastr.error(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
 				});	
 			}
@@ -381,7 +404,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				$scope.getDrivers();
 				$scope.useModeList=[];
 			}, 1000);
-			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			$scope.selectedDriver={};
 			$scope.selectedTab = 0;
 			$scope.showme=false;
@@ -389,7 +412,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			$scope.dirtyForm=false;
 
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -518,7 +541,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		.then(function(response) {
 			$scope.useModeList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -530,7 +553,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			$timeout(function(){								
 				$scope.getUseModesById($scope.selectedDriver);
 			}, 1000);
-			toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			$scope.selectedParUse = {};
 			$scope.selectedTab = 0;
 			$scope.showme=false;
@@ -538,7 +561,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			$scope.dirtyForm=false;
 
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}

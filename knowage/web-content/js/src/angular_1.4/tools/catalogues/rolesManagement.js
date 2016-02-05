@@ -1,7 +1,7 @@
-var app = angular.module("RolesManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","toastr"]);
-app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","toastr", RolesManagementFunction]);
+var app = angular.module("RolesManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col"]);
+app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", RolesManagementFunction]);
 
-function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,toastr) {
+function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging) {
 
     // VARIABLES
 
@@ -22,7 +22,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         color: '#153E7E',
         action: function (item, event) {
 
-            $scope.deleteRole(item);
+            $scope.confirmDelete(item,event);
         }
     }];
 
@@ -36,7 +36,20 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             sbiModule_translate.load("sbi.general.continue")).cancel(
             sbiModule_translate.load("sbi.general.cancel"));
     
-
+    $scope.confirmDelete = function(item,ev) {
+	    var confirm = $mdDialog.confirm()
+	          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+	          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+	          .ariaLabel("confirm_delete")
+	          .targetEvent(ev)
+	          .ok(sbiModule_translate.load("sbi.general.continue"))
+	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+	    $mdDialog.show(confirm).then(function() {
+            $scope.deleteRole(item);
+	    }, function() {
+	
+	    });
+	  };
 
 
     // FUNCTIONS
@@ -260,12 +273,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getRoles();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				$scope.selectedRole = {};
 				$scope.showme=false;
 				$scope.dirtyForm=false;	
     		}, function(response) {
-    			toastr.error(response.data.errors[0].message, 'Error');
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     			
     		});
 						
@@ -277,12 +290,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				$timeout(function(){								
 					$scope.getRoles();
 				}, 1000);
-				toastr.success(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				$scope.selectedRole = {};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
     		}, function(response) {
-    			toastr.error(response.data.errors[0].message, 'Error');
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     			
     		});
 		}
@@ -294,7 +307,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		.then(function(response) {
 			$scope.rolesList = response.data;
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }
@@ -310,7 +323,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.listType = response.data;
 			$scope.addTranslation();
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -326,7 +339,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.roleMetaModelCategories = response.data;
 			
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -342,7 +355,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.setCetegories(response.data);
 			
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
@@ -359,13 +372,13 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             $timeout(function () {
                 $scope.getRoles();
             }, 1000);
-            toastr.success(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
             $scope.selectedRole = {};
             $scope.showme = false;
             $scope.dirtyForm = false;
 
 		}, function(response) {
-			toastr.error(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
     }

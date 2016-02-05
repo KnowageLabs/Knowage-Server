@@ -1,7 +1,7 @@
 
 
 <script>
-var sbiM=angular.module('sbiModule',[]);
+var sbiM=angular.module('sbiModule',["toastr"]);
 
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
@@ -156,6 +156,26 @@ sbiM.service('sbiModule_logger',function(){
 		if(this.exec){
 		console.log("[TRACE] ",val1,(val2 || ""),(val3|| ""));
 		}
+	};
+	
+});
+
+sbiM.service('sbiModule_messaging',function(toastr){
+	this.showErrorMessage = function(msg,title){
+		
+		toastr.error(msg,title);
+	};
+	this.showWarningMessage = function(msg,title){
+		
+		toastr.warning(msg,title);
+	};
+	this.showInfoMessage = function(msg,title){
+		
+		toastr.info(msg,title);
+	};
+	this.showSuccessMessage = function(msg,title){
+		
+		toastr.success(msg,title);
 	};
 	
 });
