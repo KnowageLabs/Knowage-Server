@@ -184,6 +184,9 @@ public class HierarchyMasterService {
 			dbConnection.commit();
 
 		} catch (Throwable t) {
+			if (dbConnection != null && !dbConnection.isClosed()) {
+				dbConnection.rollback();
+			}
 			logger.error("An unexpected error occured while retriving dimension data");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
 		} finally {
@@ -537,12 +540,6 @@ public class HierarchyMasterService {
 
 			int recursiveValuesSize = recursiveValuesList.size();
 
-			boolean fillEmpty = false;
-
-			if (!requestVal.isNull("fill_empty")) {
-				fillEmpty = Boolean.valueOf(requestVal.getString("fill_empty"));
-			}
-
 			// we use i+2 because we need CD and NM
 			for (int i = 0; i < recursiveValuesSize; i = i + 2) {
 
@@ -556,9 +553,6 @@ public class HierarchyMasterService {
 						HierarchyConstants.CD_VALUE_POSITION);
 				Object nmValue = ((recursiveValuesList.get(i + 1)) != null) ? recursiveValuesList.get(i + 1) : fillConfiguration.fillHandler(levelsMap,
 						HierarchyConstants.NM_VALUE_POSITION);
-
-				// String cdValue = recursiveValuesList.get(i);
-				// String nmValue = recursiveValuesList.get(i + 1);
 
 				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue + "] and the name [" + nmValue + "]");
 
@@ -593,8 +587,8 @@ public class HierarchyMasterService {
 
 			Object[] lvlValues = levelsMap.get(lvlIndex);
 
-			Object cdLeafValue = lvlValues[0];
-			Object nmLeafValue = lvlValues[1];
+			Object cdLeafValue = lvlValues[HierarchyConstants.CD_VALUE_POSITION];
+			Object nmLeafValue = lvlValues[HierarchyConstants.NM_VALUE_POSITION];
 
 			String cdLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
 			String nmLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEAF", dataSource);
@@ -633,8 +627,8 @@ public class HierarchyMasterService {
 
 				Object[] lvlValues = levelsMap.get(i);
 
-				leafParentCdValue = lvlValues[0];
-				leafParentNmValue = lvlValues[1];
+				leafParentCdValue = lvlValues[HierarchyConstants.CD_VALUE_POSITION];
+				leafParentNmValue = lvlValues[HierarchyConstants.NM_VALUE_POSITION];
 
 				if (leafParentCdValue != null && leafParentNmValue != null) {
 
