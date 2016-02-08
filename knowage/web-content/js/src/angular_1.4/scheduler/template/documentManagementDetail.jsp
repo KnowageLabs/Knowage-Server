@@ -105,7 +105,7 @@
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.fixedFolder", "component_scheduler_messages")}}:</label>
 				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedFolder"></md-checkbox>
-				<md-button id="fixedFolder" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedFolder', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedFolder', 'component_scheduler_messages'),'fixedFolder')" >
+				<md-button type="button" id="fixedFolder" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedFolder', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedFolder', 'component_scheduler_messages'),'fixedFolder')"  >
          			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
         		</md-button>
 			</div>
@@ -146,7 +146,7 @@
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.useFolderDataset", "component_scheduler_messages")}}:</label>
 				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFolderDataset"></md-checkbox>
-				<md-button id="useFolderDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useFolderDataset', 'component_scheduler_messages'),translate.load('scheduler.help.useFolderDataset', 'component_scheduler_messages'),'useFolderDataset')" >
+				<md-button type="button" id="useFolderDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useFolderDataset', 'component_scheduler_messages'),translate.load('scheduler.help.useFolderDataset', 'component_scheduler_messages'),'useFolderDataset')" >
          			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
         		</md-button>
 			</div>
@@ -221,7 +221,7 @@
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.fixedRecipients", "component_scheduler_messages")}}:</label>
 				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients"></md-checkbox>
-				<md-button id="useFixedRecipients" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedRecipients', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedRecipients', 'component_scheduler_messages'),'useFixedRecipients')" >
+				<md-button type="button" id="useFixedRecipients" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.fixedRecipients', 'component_scheduler_messages'),translate.load('scheduler.help.useFixedRecipients', 'component_scheduler_messages'),'useFixedRecipients')" >
          			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
         		</md-button>
 			</div>
@@ -235,7 +235,7 @@
 			<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
 				<label>{{translate.load("scheduler.useDatasetList", "component_scheduler_messages")}}:</label>
 				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset"></md-checkbox>
-				<md-button id="useDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useDatasetList', 'component_scheduler_messages'),translate.load('scheduler.help.useDataset', 'component_scheduler_messages'),'useDataset')" >
+				<md-button type="button" id="useDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useDatasetList', 'component_scheduler_messages'),translate.load('scheduler.help.useDataset', 'component_scheduler_messages'),'useDataset')" >
          			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
         		</md-button>
 			</div>
@@ -260,7 +260,7 @@
 			<div layout="row" class="checkboxRow">
 				<label>{{translate.load("scheduler.useExpression", "component_scheduler_messages")}}:</label>
 				<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression"></md-checkbox>
-				<md-button id="useExpression" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useExpression', 'component_scheduler_messages'),translate.load('scheduler.help.useExpression', 'component_scheduler_messages'),'useExpression')" >
+				<md-button type="button" id="useExpression" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.showInfoBox(translate.load('scheduler.useExpression', 'component_scheduler_messages'),translate.load('scheduler.help.useExpression', 'component_scheduler_messages'),'useExpression')" >
          			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
         		</md-button>
 			</div>

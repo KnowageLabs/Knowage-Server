@@ -605,10 +605,9 @@ eventDefinitionApp.controller('ActivityEventController',
 					        .content(text)
 					        .ariaLabel('info dialog')
 					        .ok(sbiModule_translate.load("sbi.general.close")) 
-					        .openFrom('#'+parentId)
-					        .closeTo('#'+parentId)
+					       
 					    );
-
+				
 	}
 	
 }]);
