@@ -93,6 +93,18 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var isYAxis = (config.isYAxis != undefined)? config.isYAxis: false;
 		this.isYAxis = isYAxis;
 		
+		/**
+	     * https://production.eng.it/jira/browse/KNOWAGE-491
+	     * When we are creating a chart from the Cockpit Engine, we need to use
+	     * a different height, because inside the Wizard, there is less space
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		
+		if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+			this.setHeight(Sbi.settings.chart.structureStep.cockpitAxisAndSerieStyleConfigPopup.height);
+		}
+		
 		this.axisFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
 			title: LN("sbi.chartengine.axisstylepopup.axis"),	// danristo
