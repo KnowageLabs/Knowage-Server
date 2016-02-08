@@ -372,8 +372,8 @@ public class Hierarchies {
 	 *            the dimension name
 	 * @return the hashmap config
 	 */
-	public HashMap getConfig(String dimension) {
-		HashMap toReturn = new HashMap();
+	public HashMap<String, Object> getConfig(String dimension) {
+		HashMap<String, Object> toReturn = new HashMap<String, Object>();
 
 		SourceBean sb = getTemplate();
 		SourceBean dimensions = (SourceBean) sb.getAttribute(HierarchyConstants.DIMENSIONS);

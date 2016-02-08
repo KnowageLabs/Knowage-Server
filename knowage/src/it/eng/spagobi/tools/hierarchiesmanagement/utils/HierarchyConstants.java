@@ -109,6 +109,7 @@ public class HierarchyConstants {
 	public final static String JSON_NM_PARENT = "NM_PARENT";
 
 	public final static String HIER_TP_MASTER = "MASTER";
+	public final static String HIER_TP_TECHNICAL = "TECHNICAL";
 
 	public final static String HIER_MASTERS_CONFIG_TABLE = "HIER_MASTERS_CONFIG";
 	public final static String HIER_MASTERS_CONFIG = "CONFIGURATION";
@@ -121,4 +122,17 @@ public class HierarchyConstants {
 	public final static String FILL_EMPTY_YES = "YES";
 	public final static String FILL_EMPTY_NO = "NO";
 	public final static String FILL_VALUE = "FILL_VALUE";
+
+	// PROPAGATION FIELDS
+	public final static String REL_MASTER_TECH_TABLE_NAME = "HIER_MASTER_TECHNICAL";
+	public final static String HIER_CD_T = "HIER_CD_T";
+	public final static String HIER_NM_T = "HIER_NM_T";
+	public final static String NODE_CD_T = "NODE_CD_T";
+	public final static String NODE_NM_T = "NODE_NM_T";
+	public final static String NODE_LEV_T = "NODE_LEV_T";
+	public final static String HIER_CD_M = "HIER_CD_M";
+	public final static String HIER_NM_M = "HIER_NM_M";
+	public final static String NODE_CD_M = "NODE_CD_M";
+	public final static String NODE_NM_M = "NODE_NM_M";
+	public final static String NODE_LEV_M = "NODE_LEV_M";
 }
