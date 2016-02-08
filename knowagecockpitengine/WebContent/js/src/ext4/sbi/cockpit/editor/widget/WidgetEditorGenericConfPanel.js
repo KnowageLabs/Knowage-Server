@@ -64,7 +64,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 
 	, initFields: function(config) {
 
-		this.re = new RegExp("^([A-Z0-9 ]*)$","i");
+		this.re = new RegExp("^([A-Z0-9 -\_\.\:\,\;\w\|\!\%\&\@\#\°\§\$]*)$","i");
 
 		this.fields = [];
 		
