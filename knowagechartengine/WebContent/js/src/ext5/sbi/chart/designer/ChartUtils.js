@@ -1550,6 +1550,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * 		- isShowLegendDisabled
 		 * 		- isLegendEnabled
 		 * 		- isXBottomContainerDisabled
+		 * 		- isChartHeightDisabled -> https://production.eng.it/jira/browse/KNOWAGE-548
 		 * 		- isChartWidthDisabled
 		 * 		- isChartOrientationDisabled
 		 * 		- isBottomAxisTextFieldDisabled
@@ -1606,6 +1607,25 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		isXBottomContainerDisabled : function () {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE';
 		},
+		
+		
+		/**
+	     * https://production.eng.it/jira/browse/KNOWAGE-548
+	     * Height has to be hidden when the designer is created by cockpit engine.
+	     * I used a if-then-else logic in order to handle future decisions
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+
+		isChartHeightDisabled : function () {
+			
+			if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+				return true;
+			} else {
+				return false;
+			}
+		},		
+		
 
 		/**
 		 * If Designer is still not defined (created), i.e. in the process of running (creating) it
@@ -1614,7 +1634,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 */
 
 		isChartWidthDisabled : function () {
-			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+			
+			/**
+		     * https://production.eng.it/jira/browse/KNOWAGE-548
+		     * Width has to be hidden when the designer is created by cockpit engine
+		     * I used a if-then-else logic in order to handle future decisions
+		     * 
+		     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+		     */
+			
+			if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+				return true;
+			} else {
+				return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+			}
 		},
 
 		isChartOrientationDisabled : function () {

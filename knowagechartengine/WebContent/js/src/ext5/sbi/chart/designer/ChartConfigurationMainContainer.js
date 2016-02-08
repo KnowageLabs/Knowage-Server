@@ -70,7 +70,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		padding: Sbi.settings.chart.configurationStep.paddingOfTopFields,	// Danilo Ristovski
     		emptyText: LN("sbi.chartengine.configuration.height.emptyText"),    		
     		bind : '{configModel.height}',
-    		fieldLabel : LN('sbi.chartengine.configuration.height')
+    		fieldLabel : LN('sbi.chartengine.configuration.height'),
+    		hidden: ChartUtils.isChartHeightDisabled()  // added by: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
         
         this.width = {
@@ -82,7 +83,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),    		
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
-    		hidden: ChartUtils.isChartWidthDisabled()
+    		hidden: ChartUtils.isChartWidthDisabled() // modifiedby: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
