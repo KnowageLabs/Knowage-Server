@@ -279,11 +279,27 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		this.createContent(responseText);
 		this.up().body.unmask();
 		
+	    /**
+	     * https://production.eng.it/jira/browse/KNOWAGE-557
+	     * Force hiding load mask after the chart content is created
+	     * in the success function
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		this.hideLoadingMask();
     }
 	
 	, failureFunction: function() {
 		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.cockpit.widgets.chartengine.chartEngine.serverError'), 'Server Error');
 		this.up().body.unmask();
+		
+	    /**
+	     * https://production.eng.it/jira/browse/KNOWAGE-557
+	     * Force hiding load mask after failed call
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		this.hideLoadingMask();
     }
 	
 });
