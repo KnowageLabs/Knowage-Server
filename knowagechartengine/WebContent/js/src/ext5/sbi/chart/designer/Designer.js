@@ -2297,16 +2297,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Creating Cross navigation step panel
 			this.crossNavigationPanel = Ext.create('Sbi.chart.designer.CrossNavigationPanel', {
 				id: 'crossNavigation',
-				
 				contextName: thisContextName,
 				mainContextName: mainContextName,
 				userId: userId, 
 				hostName: hostName,
 				sbiExecutionId: sbiExecutionId,
-			       
+			    
 				title: LN('sbi.chartengine.designer.stepCrossNavigation'),
 			});
-						
+			// crossNavigation should be disabled when in Cockpit 
+			if(isCockpit){
+				this.crossNavigationPanel.hide();
+			}
+			
 			// Creating Advanced Editor step
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
