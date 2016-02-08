@@ -5,30 +5,36 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
+import it.eng.spago.engines.datamining.work.DataminingWriteWork;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
+
+import commonj.work.Work;
+import commonj.work.WorkException;
+import commonj.work.WorkItem;
 
 public class DataMiningExecutor {
 	static private Logger logger = Logger.getLogger(DataMiningExecutor.class);
@@ -59,13 +65,13 @@ public class DataMiningExecutor {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchMethodException
 	 * @throws ClassNotFoundException
+	 * @throws NamingException
 	 */
-	private void setupEnvonment(IEngUserProfile userProfile) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException {
+	private void setupEnvonment(IEngUserProfile userProfile) {
 		logger.debug("IN");
 		profile = userProfile;
 
-		re = createREngineInstance();
+		re = createREngineInstanceWithWork();
 		if (re == null) {
 			logger.error("Cannot load R");
 			return;
@@ -87,11 +93,12 @@ public class DataMiningExecutor {
 	 * @throws IOException
 	 * @throws REXPMismatchException
 	 * @throws REngineException
+	 * @throws NamingException
 	 */
-	private void setupEnvonmentForExternal() throws IOException, REngineException, REXPMismatchException {
+	private void setupEnvonmentForExternal() throws IOException, REngineException, REXPMismatchException, NamingException {
 		logger.debug("IN");
 		// new R-engine
-		re = createREngineInstance();
+		re = createREngineInstanceWithWork();
 		if (re == null) {
 			logger.error("Cannot load R");
 			return;
@@ -106,47 +113,48 @@ public class DataMiningExecutor {
 		logger.debug("OUT");
 	}
 
-	private REngine createREngineInstance() {
-		REngine reEng = null;
-		// TODO use workMamager
-		// WorkManager workerManager = new WorkManager();
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Callable<REngine> task = new Callable<REngine>() {
-			public REngine call() throws REngineException, REXPMismatchException {
-				REngine reEng = null;
-				reEng = REngine.getLastEngine();
-				if (reEng == null) {
-					try {
-						/*
-						 * attention : setting to --save the engine doesn't remove object from the current environment,so it's unrelevant the workspace saving
-						 * if you don't remove manualli the R objects first through the rm command:re = new REngine(new String[] { "--save" }, false, null);
-						 */
-						reEng = REngine.engineForClass("org.rosuda.REngine.JRI.JRIEngine", new String[] { "--vanilla" }, null, false);
-						logger.debug("new R engine created");
+	/*
+	 * Create or retrieve R instance. To avoid deadlock is used a Work, scheduled by the WorkManager
+	 */
+	private REngine createREngineInstanceWithWork() {
 
-					} catch (Exception e) {
-						logger.error("Error during creation of new R instance");
-					}
-				} else {
-					// Clean workspace
-					reEng.parseAndEval("rm(list=ls())");
-				}
-				return reEng;
-			}
-		};
-		Future<REngine> future = executor.submit(task);
+		DataminingWriteWork workResult = null;
+		long timeout = 1000;
+		WorkManager workerManager;
+		List<WorkItem> workItems = new LinkedList<WorkItem>();
+
 		try {
-			reEng = future.get(500, TimeUnit.MILLISECONDS);
-		} catch (TimeoutException ex) {
-			logger.error("TimeoutException during creation of new R instance");
+			workerManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+			commonj.work.WorkManager workManager = workerManager.getInnerInstance();
+			Work work = new DataminingWriteWork();
+			WorkItem workItem = workManager.schedule(work);
+			workItems.add(workItem);
+			workManager.waitForAll(workItems, timeout);
+			workResult = (DataminingWriteWork) workItem.getResult();
+		} catch (IllegalArgumentException e) {
+			logger.error("error while workManager scheduling to load R");
+		} catch (WorkException e) {
+			logger.error("error while workManager scheduling to load R");
 		} catch (InterruptedException e) {
-			logger.error("InterruptedException during creation of new R instance");
-		} catch (ExecutionException e) {
-			logger.error("ExecutionException during creation of new R instance");
-		} finally {
-			future.cancel(true);
+			logger.error("error while workManager scheduling to load R");
+		} catch (NamingException e1) {
+			logger.error("error while workManager scheduling to load R");
 		}
-		return reEng;
+		return workResult.getrEngine();
+	}
+
+	private static String getSpagoBIConfigurationProperty(String propertyName) {
+		try {
+			String propertyValue = null;
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(propertyName);
+			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceCleanableConfig.isActive())) {
+				propertyValue = cacheSpaceCleanableConfig.getValueCheck();
+			}
+			return propertyValue;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+		}
 	}
 
 	/**

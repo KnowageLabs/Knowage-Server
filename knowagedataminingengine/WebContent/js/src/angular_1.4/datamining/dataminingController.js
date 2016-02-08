@@ -1,10 +1,9 @@
 var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
-app.controller('Controller', ['$sce','sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', dataMiningFunction ]);
+app.controller('Controller', ['$sce','sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
 
 //TODO label = name command - command variables unico
-function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
-	$scope.provas = [{id:'1',name:'prova1',label:'prova 1'},{id:'2',name:'prova2',label:'prova 2'},{id:'3',name:'prova3',label:'prova 3'}];
+function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
 	
 	/*****************************/
 	/** Initialization          **/
@@ -259,24 +258,23 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	
 	$scope.setFileName = function (element){
 		$scope.file = element.files[0];
-		$scope.fileName = element.files[0].name;
+		$timeout(function(){
+			$scope.fileName = element.files[0].name;
+		},0,true);
 	}
 	
-	$scope.uploadFile = function(cmd){
+	$scope.uploadFile = function(cmd,dataset){
 		var commandName = cmd.name;
-		var datasets = $scope.datasets[commandName];
 		if ($scope.file !== undefined  && $scope.file.name !== undefined && $scope.file.name.length > 0){
-			$scope.dialog = $scope.showDialogUpdating(); //show updating bar
-			for (var i = 0 ; i < datasets.length ; i++){	
-				if (datasets[i] !== undefined && datasets[i].type == 'file' && datasets[i].canUpload == true){
-					var urlUpload = $scope.pathRest.vers + '/' + $scope.pathRest.dataset+'/'+$scope.pathRest.loadDataset;
-					var tmpConfig = angular.fromJson(angular.toJson($scope.config));
-					var fd = new FormData();
-			        fd.append(datasets[i].name, $scope.file);
-					var tmpPromise = restServices.postMultiPart(urlUpload, datasets[i].name, fd, tmpConfig);
-					//if loadDataset is correct start to update the dataset in the server using a promise
-					$scope.createPromiseUpload($scope,tmpPromise,datasets[i].name, $scope.file, tmpConfig);
-				}
+			if (dataset !== undefined && dataset.type == 'file' && dataset.canUpload == true){
+				$scope.dialog = $scope.showDialogUpdating(); //show updating bar
+				var urlUpload = $scope.pathRest.vers + '/' + $scope.pathRest.dataset+'/'+$scope.pathRest.loadDataset;
+				var tmpConfig = angular.fromJson(angular.toJson($scope.config));
+				var fd = new FormData();
+		        fd.append(dataset.name, $scope.file);
+				var tmpPromise = restServices.postMultiPart(urlUpload, dataset.name, fd, tmpConfig);
+				//if loadDataset is correct start to update the dataset in the server using a promise
+				$scope.createPromiseUpload($scope,tmpPromise,dataset.name, $scope.file, tmpConfig);
 			}
 		}
 	}

@@ -95,9 +95,9 @@ author:...
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
 	</head>
-<body>
+<body class="bodyStile">
 	<div div ng-controller="Controller as ctrl" ng-cloak id="popupContainer">
-		<md-content layout-padding layout="row" layout-align = "start stretch ">
+		<md-content layout-margin layout="row" layout-align = "start stretch ">
 			<md-input-container flex="50">
 				<md-select placeholder="Select Command" ng-model="cmd" ng-change="calculateResult(cmd)">
 		          <md-option ng-repeat="cmd in commands" ng-value="cmd">
@@ -116,8 +116,8 @@ author:...
 				<md-icon ng-show="variableForm" class="fa fa-undo center-ico"></md-icon>	
 			</md-button>
 		</md-content>
-		<md-content layout="column" layout-padding>
-			<md-content ng-if="variableForm" layout-padding>
+		<md-content layout="column" layout-margin>
+			<md-content ng-if="variableForm" layout-wrap>
 				<div class = "border-container" >
 					<md-toolbar class="md-blue minihead element-border">
 					    <div class="md-toolbar-tools">
@@ -142,29 +142,38 @@ author:...
 					</div>
 				</div>
 			</md-content>
-			<md-content ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-margin>
-				<div ng-if="visibilityRerunButton">
-					<md-button class="md-button md-raised md-ExtraMini md-larger" arial-label="Rerun Script" ng-click="rerunScript(cmd)">
-						 Run Script
+			<md-content ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-wrap>
+				<div flex="30">
+					<md-select placeholder="Select Dataset to Upload" ng-model="dataset"">
+						<md-option ng-repeat="ds in datasets[cmd.name]" ng-value="ds">
+							{{ds.label}}
+						</md-option>
+					</md-select>
+				</div>
+				<div ng-if="dataset" layout="row" layout-align="start center">
+					<div ng-if="visibilityRerunButton">
+						<md-button class="md-button md-raised md-ExtraMini md-larger" aria-label="Rerun Script" ng-click="rerunScript(cmd)">
+							 Run Script
+						</md-button>
+					</div>
+					<!-- Simulate button and link the click event with the input type='file' -->
+					<label class="md-button md-raised md-ExtraMini" md-ink-ripple for="fileInput">
+						<span >File</span>
+					</label>
+					<input id="fileInput" type="file" class="ng-hide" aria-label="fileName" onchange='angular.element(this).scope().setFileName(this)'>
+					<md-input-container >
+						<input type='text' ng-disabled="true" ng-model="fileName" aria-label="fileName"/>
+					</md-input-container>
+					<md-button class="md-fab md-raised" ng-disabled="!fileName || fileName.length == 0" arial-label="Upload File" ng-click="uploadFile(cmd,dataset)">
+						<md-icon class="fa fa-upload center-ico"></md-icon>
+						<md-tooltip md-direction="bottom">
+	         					Upload File
+	       				</md-tooltip>
 					</md-button>
 				</div>
-				<!-- Simulate button and link the click event with the input type='file' -->
-				<label class="md-button md-raised md-ExtraMini" md-ink-ripple for="fileInput">
-					<span >File</span>
-				</label>
-				<input id="fileInput" type="file" class="ng-hide" onchange='angular.element(this).scope().setFileName(this)'>
-				<md-input-container flex='40'>
-					<input type='text' disabled ng-model="fileName"/>
-				</md-input-container>
-				<md-button class="md-fab md-raised" arial-label="Upload File" ng-click="uploadFile(cmd)">
-					<md-icon class="fa fa-upload center-ico"></md-icon>
-					<md-tooltip md-direction="bottom">
-         					Upload File
-       				</md-tooltip>
-				</md-button>
 			</md-content>
 		
-			<md-content ng-if="!variableForm" layout-padding>
+			<md-content ng-if="!variableForm" layout-wrap>
 				<md-tabs class="mini-tabs" md-selected="idx_output" layout="column" md-dynamic-height> 
 					<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}">
 						<md-content layout="column" layout-padding>
