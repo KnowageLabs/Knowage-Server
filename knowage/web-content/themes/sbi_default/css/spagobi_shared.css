@@ -232,6 +232,11 @@ img.header-button-image-portlet-section {
 	border:none;
 }
 
+@-moz-document url-prefix() {
+  .mozillaSetup{
+	margin-top: 5px !important;
+	}
+}
 /* Image of a button in the header table for each section of the portlet*/
 img.header-button-image-portlet-section_bis {
 	width:15px;

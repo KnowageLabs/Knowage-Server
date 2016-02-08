@@ -31,6 +31,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.typeCatalog="Dataset";
 	$scope.showDataset=false;
 	$scope.listType=[];
+	$scope.importFile = {};
+	$scope.exportedDataset =[];
 	$scope.download = sbiModule_download;
 	//export utilities 
 	$scope.loadAllDataset = function(){
@@ -164,7 +166,70 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		
 		
 	}
-
+	//import utilities
+	$scope.upload = function(ev){
+		if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
+			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+		}else{
+			var fd = new FormData();
+		
+			fd.append('exportedArchive', $scope.importFile.file);
+			sbiModule_restServices.post("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+			.success(function(data, status, headers, config) {
+				if(data.STATUS=="NON OK"){
+					$mdToast.show($mdToast.simple().content("data.ERROR").position('top').action(
+					'OK').highlightAction(false).hideDelay(5000));
+				}
+				else if(data.STATUS=="OK"){
+					
+					
+					$scope.exportedDataset = data.exportedDataset;
+					
+					
+				}
+				
+				
+			})
+			.error(function(data, status, headers, config) {
+				$mdToast.show($mdToast.simple().content("errore").position('top').action(
+				'OK').highlightAction(false).hideDelay(5000));
+				
+			});
+		}
+	}
+	
+	
+	$scope.save = function(ev){
+		if($scope.exportingUser.length == 0){
+			//if not selected no one users
+			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+		}else{
+			if($scope.typeSaveUser == 'Missing'){
+				//missing user
+				sbiModule_restServices.post("1.0/serverManager/importExport/users","missingusers",$scope.exportingUser)
+				.success(function(data, status, headers, config) {
+				
+					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
+					
+				}).error(function(data, status, headers, config) {
+					showToast("ERRORS "+status,4000);
+				})
+			}else{
+				//override
+			
+				sbiModule_restServices.post("1.0/serverManager/importExport/users","overrideusers",$scope.exportingUser)
+				.success(function(data, status, headers, config) {
+				
+					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
+				}).error(function(data, status, headers, config) {
+					showToast("ERRORS "+status,4000);
+				})
+			}
+		}
+	}
+	
+	
+	
 	$scope.setTab = function(Tab){
 		$scope.selectedTab = Tab;
 	}

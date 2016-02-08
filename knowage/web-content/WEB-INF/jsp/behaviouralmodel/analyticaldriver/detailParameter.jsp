@@ -87,8 +87,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			
 			<%  if (!isreadonly){%>
 			<td class='header-button-column-portlet-section'>
-				<a href="javascript:document.getElementById('parametersForm').submit()"> 
-	      			<img class='header-button-image-portlet-section' 
+				<a href="javascript:document.getElementById('parametersForm').submit()" style="line-height: 13px;"> 
+	      			<img class='header-button-image-portlet-section mozillaSetup' 
 	      			     title='<spagobi:message key = "SBIDev.param.saveButt" />' 
 	      			     src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/save.png", currTheme)%>' 
 	      			     alt='<spagobi:message key = "SBIDev.param.saveButt" />' /> 

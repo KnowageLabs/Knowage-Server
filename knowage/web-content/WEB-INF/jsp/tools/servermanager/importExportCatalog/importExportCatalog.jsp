@@ -93,7 +93,35 @@
 				</md-tab>
 				<md-tab	label="Import" md-on-select="setTab('Import')"
 					md-active="isSelectedTab('Import')">
-				
+					<div  layout="column" layout-wrap>
+					<div layout="row" layout-wrap>
+						<div flex = 15 >
+							<h3>{{translate.load("sbi.importusers.import");}}</h3>
+						</div>
+						
+						<div flex=20 >
+							<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+						</div>
+						
+						<div flex =10 >
+						<md-input-container class="small counter"> 
+							<md-button ng-click="upload($event)" aria-label="upload Catalog"
+								class="md-fab md-mini"  > <md-icon
+								md-font-icon="fa fa-upload fa-2x"  >
+							</md-icon> </md-button>
+						</md-input-container>
+						</div>
+						<span flex=40></span>
+
+						<md-input-container class="small counter"> 
+							<md-button ng-click="save($event)" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+						</md-input-container>
+					</div>
+					<div layout="row" layout-fill>
+						<angular-list layout-fill id='right' ng-model="exportedDataset" item-name='label' click-function="" show-search-bar=true />
+			
+					</div>
+					</div>
 				</md-tab>
 				
 			</md-tabs>
