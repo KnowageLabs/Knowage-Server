@@ -1,13 +1,43 @@
 /**
- * @author Simović Nikola (nikola.simovic@mht.net)
+ * @author Simovic Nikola (nikola.simovic@mht.net)
  */
-var app = angular.module('federationDefinitionModule', ['ngMaterial','angular_list','sbiModule']);
+var app = angular
+.module
+('federationDefinitionModule',
+		[
+		 'ngMaterial',
+		 'angular_list',
+		 'sbiModule'
+		 ]
+);
 
+app
+.controller
+('federationDefinitionCTRL',
+		[
+		 "$location",
+		 "$window",
+		 "$scope",
+		 "$mdDialog", 
+		 "$timeout",
+		 "sbiModule_translate",
+		 "sbiModule_restServices",
+		 federationDefinitionFunction
+		 ]
+);
 
-app.controller('federationDefinitionCTRL', ["$scope",
-                   		"$mdDialog", "$timeout", "sbiModule_translate","sbiModule_restServices",federationDefinitionFunction]);
-
-function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_restServices) {
+function federationDefinitionFunction
+(
+		$location,
+		$window,
+		$scope,
+		$mdDialog, 
+		$timeout,
+		sbiModule_translate, 
+		sbiModule_restServices
+) {
+		
+	//current scope
 	ctr = this;
 	
 	//creating translate variable that is accessible from the global scope, and can be used as an expression inside html
@@ -42,8 +72,147 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 	
 	//used for highlighting dataset fields 
 	ctr.item = {};
-	ctr.selectedVariable = {};
-	ctr.myselectedvariable = {};
+
+	angular.element(document).ready(function () {
+        $scope.getDataSets();
+    });
+	
+	
+	$scope.getDataSets = function() {
+		
+		sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
+		.success(
+				function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")) {
+						console.log(data.errors[0].message);
+					} else {
+						ctr.list = data;
+						console.log("List:")
+						console.log(ctr.list)
+						angular.forEach(ctr.list, function(dataset){
+							////Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
+							if(dataset.metadata==null){
+								dataset.metadata.fieldsMeta = [];
+							}
+							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+								
+								listField.selected =  false;
+							});
+						});
+					}
+					ctr.loadedList = true;
+					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
+						if(value!=0) {
+							ctr.loadDatasetsEditMode();
+							
+						}						
+					} else {
+						console.log("Only loadedList is loaded")
+					}
+				}
+		)
+		.error(
+				function(data, status, headers, config) {
+					// called asynchronously if an error occurs
+				    // or server returns response with an error status.
+					console.log("Datasets not obtained " + status);
+				}
+		)
+		
+		sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
+		.success(
+				function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")) {
+						console.log(data.errors[0].message);
+					} else {
+						ctr.listAllO = data;
+						console.log("ListALLO:")
+						console.log(ctr.listAllO)
+						angular.forEach(ctr.listAllO, function(dataset){
+							//Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
+							if(dataset.metadata==null){
+								dataset.metadata.fieldsMeta = [];
+							}
+							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+								listField.selected =  false;
+							});
+						});
+					}
+
+					ctr.loadedListAllO = true;
+					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
+						if(value!=0) {
+							ctr.loadDatasetsEditMode();
+						}
+					} else {
+						console.log("Only loadedListAllO is loaded")
+					}
+			}
+		)
+		.error(
+				function(data, status, headers, config) {
+					// called asynchronously if an error occurs
+				    // or server returns response with an error status.
+					console.log("Datasets not obtained " + status);
+				}
+		)
+		
+	}
+	
+	
+	ctr.createAssociations = function(){
+		var RelationshipsArray = [];
+		var checkBranch = false;
+		angular.forEach(ctr.listaNew, function(dataset){
+			if(checkBranch==false){
+				console.log(checkBranch+"branch");
+				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+					if(listField.selected){
+						console.log('selected field');
+						ctr.beforeRel = dataset;
+						ctr.beforeRel.firstSelectedListField = listField.name;
+						ctr.beforeRel.ime = dataset.label;
+						checkBranch = true;
+					}
+				});
+			} else {
+				console.log(checkBranch+"branch");
+				angular.forEach(dataset.metadata.fieldsMeta, function(polje){
+					if(polje.selected){
+						var t = {
+								bidirectional: true,
+						        cardinality: 'many-to-one',
+						        sourceTable: {
+						            name: '',
+						            className: ''
+						        },
+						        sourceColumns: [],
+						        destinationTable: {
+						            name: '',
+						            className: ''
+						        }, 
+						        destinationColumns: []
+						}
+						
+						t.sourceTable.name = ctr.beforeRel.ime;
+						t.sourceTable.className = ctr.beforeRel.ime;
+						t.sourceColumns.push(ctr.beforeRel.firstSelectedListField);
+						
+						t.destinationTable.name = dataset.label;
+						t.destinationTable.className = dataset.label;
+						t.destinationColumns.push(polje.name);
+						
+						ctr.beforeRel = polje;
+						ctr.beforeRel.ime = dataset.label;
+						ctr.beforeRel.firstSelectedListField = polje.name;
+						
+						RelationshipsArray.push(t);
+					}
+				});
+			}
+		});
+		return RelationshipsArray;
+	}
 	
 	ctr.fillTheArray = function() {
 		
@@ -101,59 +270,9 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 		
 	}
 	
-	ctr.createAssociations = function(){
-		var RelationshipsArray = [];
-		var checkBranch = false;
-		angular.forEach(ctr.listaNew, function(dataset){
-			if(checkBranch==false){
-				console.log(checkBranch+"branch");
-				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-					if(listField.selected){
-						console.log('selected field');
-						ctr.beforeRel = dataset;
-						ctr.beforeRel.firstSelectedListField = listField.name;
-						ctr.beforeRel.ime = dataset.label;
-						checkBranch = true;
-					}
-				});
-			} else {
-				console.log(checkBranch+"branch");
-				angular.forEach(dataset.metadata.fieldsMeta, function(polje){
-					if(polje.selected){
-						var t = {
-								bidirectional: true,
-						        cardinality: 'many-to-one',
-						        sourceTable: {
-						            name: '',
-						            className: ''
-						        },
-						        sourceColumns: [],
-						        destinationTable: {
-						            name: '',
-						            className: ''
-						        }, 
-						        destinationColumns: []
-						}
-						
-						t.sourceTable.name = ctr.beforeRel.ime;
-						t.sourceTable.className = ctr.beforeRel.ime;
-						t.sourceColumns.push(ctr.beforeRel.firstSelectedListField);
-						
-						t.destinationTable.name = dataset.label;
-						t.destinationTable.className = dataset.label;
-						t.destinationColumns.push(polje.name);
-						
-						ctr.beforeRel = polje;
-						ctr.beforeRel.ime = dataset.label;
-						ctr.beforeRel.firstSelectedListField = polje.name;
-						
-						RelationshipsArray.push(t);
-					}
-				});
-			}
-		});
-		return RelationshipsArray;
-	}
+	$scope.goToFederationCatalogue = function() {
+		 $window.location.href = "publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/manageSelfService.jsp";
+	};
 	
 	ctr.showAdvanced = function(ev){
 		
@@ -235,9 +354,9 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 														
 												ctr.showAlert();
 												
+																								
 											}
-											
-											
+												
 										}
 										
 								)
@@ -264,6 +383,8 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 												console.log("[POST]: SUCCESS!");
 														
 												ctr.showAlert();
+												
+												$scope.goToFederationCatalogue();
 												
 											}
 											
@@ -304,115 +425,63 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
 				targetEvent: param
 			});
 	}
+	
+	
+	$scope.selectedDatasets = [];
+		
+	$scope.isDSCountained= function(label){
+		return $scope.selectedDatasets.indexOf(label) >=0;
+	}
 
 	ctr.selectDeselect = function(item, listId){
-		console.log(item)
-		if(ctr.myselectedvariable[listId]!=undefined || ctr.myselectedvariable[listId]!=null){
-			if(item.name==ctr.myselectedvariable[listId].name){
-				ctr.myselectedvariable[listId] = null;
-				console.log("Field is unhighlighted.")
-			}
-		}
-		angular.forEach(ctr.listaNew, function(dataset){
-			if(dataset.label==listId){
-				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-					if(listField.name==item.name){
-						if(listField.selected==true){
-							listField.selected = false;
-							ctr.selectedVariable = null; //chechk this
+
+		$scope.selectedDatasets.push(listId);
+		var index = $scope.selectedDatasets.indexOf(listId);
+		
+		if(index>-1&&index<2) {
+			
+			angular.forEach(ctr.listaNew, function(dataset){
+				if(dataset.label==listId){
+					angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+						if(listField.name==item.name){
+							if(listField.selected==true){
+								var index2 = $scope.selectedDatasets.indexOf(listId);
+								$scope.selectedDatasets.splice(index,2);
+								console.log($scope.selectedDatasets);
+								listField.selected = false;
+								ctr.myselectedvariable[listId] = null;
+								
+								console.log($scope.selectedDatasets)
+								console.log("Field is unhighlighted.")
+								
+							} else {
+								angular.forEach(dataset.metadata.fieldsMeta, function(att){
+									att.selected = false;
+								});
+								listField.selected = true;
+							}
 						} else {
-							angular.forEach(dataset.metadata.fieldsMeta, function(att){
-								att.selected = false;
-							});
-							listField.selected = true;
-							//add code for changing background with icon
+							//listField.name==item.name
 						}
-					} else {
-						//listField.name==item.name
-					}
-				});
-			} else {
-				//dataset.label==listId
-			}
-		});
+					});
+				} else {
+					//dataset.label==listId
+				}
+			});
+			
+			
+		} else {
+			
+			console.log("2 files are already selected")
+			$scope.selectedDatasets.splice(index,1);
+			console.log($scope.selectedDatasets)
+			console.log(index);
+		}
+
+		
 	}
 	
-	sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
-		.success(
-				function(data, status, headers, config){
-					if(data.hasOwnProperty("errors")) {
-						console.log(data.errors[0].message);
-					} else {
-						ctr.list = data;
-						console.log("List:")
-						console.log(ctr.list)
-						angular.forEach(ctr.list, function(dataset){
-							////Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
-							if(dataset.metadata==null){
-								dataset.metadata.fieldsMeta = [];
-							}
-							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-								
-								listField.selected =  false;
-							});
-						});
-					}
-					ctr.loadedList = true;
-					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
-						if(value!=0) {
-							ctr.loadDatasetsEditMode();
-							
-						}						
-					} else {
-						console.log("Only loadedList is loaded")
-					}
-				}
-		)
-		.error(
-				function(data, status, headers, config) {
-					// called asynchronously if an error occurs
-				    // or server returns response with an error status.
-					console.log("Datasets not obtained " + status);
-				}
-		)
-		
-	sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
-		.success(
-				function(data, status, headers, config){
-					if(data.hasOwnProperty("errors")) {
-						console.log(data.errors[0].message);
-					} else {
-						ctr.listAllO = data;
-						console.log("ListALLO:")
-						console.log(ctr.listAllO)
-						angular.forEach(ctr.listAllO, function(dataset){
-							//Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
-							if(dataset.metadata==null){
-								dataset.metadata.fieldsMeta = [];
-							}
-							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-								listField.selected =  false;
-							});
-						});
-					}
-
-					ctr.loadedListAllO = true;
-					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
-						if(value!=0) {
-							ctr.loadDatasetsEditMode();
-						}
-					} else {
-						console.log("Only loadedListAllO is loaded")
-					}
-				}
-		)
-		.error(
-				function(data, status, headers, config) {
-					// called asynchronously if an error occurs
-				    // or server returns response with an error status.
-					console.log("Datasets not obtained " + status);
-				}
-		)
+	
 		
 	ctr.kickOutFromListNew = function(param) {
 		ctr.nizSourceva = [];
@@ -682,6 +751,7 @@ function federationDefinitionFunction($scope, $mdDialog, $timeout, sbiModule_tra
     }
 	
 	ctr.clearSelections = function() {
+		$scope.selectedDatasets = [];
 		ctr.myselectedvariable = {};
 		angular.forEach(ctr.listaNew, function(dataset){
 			angular.forEach(dataset.metadata.fieldsMeta, function(listField){
@@ -749,4 +819,4 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 $mdThemingProvider.setDefaultTheme('knowage');
 }]);
-
+	

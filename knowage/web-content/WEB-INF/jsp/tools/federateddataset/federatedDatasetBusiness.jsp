@@ -78,7 +78,7 @@
 							</div>
 						</md-toolbar>
 					
-						<md-content  layout-padding >
+						<md-content  layout-padding>
 							<angular-list
 							layout-fill 
 							id="availableDatasets" 
@@ -133,28 +133,32 @@
 					
 					<md-content	class="associationsBox">
 						<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
+
 						<div ng-repeat="dataset in ctrl.listaNew track by $index">
 							<div class="datasetInAssociationBox">
-								<!-- Datset name-->
-								<md-toolbar class="miniheadfedsmall">
-								<div class="md-toolbar-tools">
-									<h2 class="md-flex">{{dataset.name | uppercase}}</h2>
-								</div>
-								</md-toolbar>
-								
-								<md-content ng-show="true" class="listBox" layout="column">
-									<angular-list
-										layout-fill
-										id='{{dataset.label}}'
-										ng-model="dataset.metadata.fieldsMeta" 
-										item-name="name"
-										highlights-selected-item=true
-										selected-item="ctrl.myselectedvariable[dataset.label]"
-										click-function="ctrl.selectDeselect(item, listId)"
-										class="noScrol"									
-									>
-									</angular-list>
-								</md-content>
+								<md-card style="height:93%">
+									<!-- Datset name-->
+									<md-toolbar class="miniheadfedsmall">
+									<div class="md-toolbar-tools">
+										<h2 class="md-flex">{{dataset.name | uppercase}}</h2>
+									</div>
+									</md-toolbar>
+									
+									<md-content ng-show="true" class="listBox" layout="column">
+										
+										<angular-list
+											layout-fill
+											id='{{dataset.label}}'
+											ng-model="dataset.metadata.fieldsMeta" 
+											item-name="name"
+											highlights-selected-item="isDSCountained(dataset.name)"
+											selected-item="ctrl.myselectedvariable[dataset.name]"
+											click-function="ctrl.selectDeselect(item, listId)"
+											class="noScrol"									
+										>
+										</angular-list>
+									</md-content>
+								</md-card>
 							</div>
 						</div>
 					</md-content>
