@@ -606,6 +606,19 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			if(wizardState.wtype === Sbi.constants.cockpit.chart){
 				
 				storeConf.aggregations = wizardState.wconf.aggregations;
+				
+				/**
+			     * https://production.eng.it/jira/browse/KNOWAGE-539
+			     * The Gauge chart doesn't have categories, so we need to check
+			     * if they are valorized, if not, we create an empty array,
+			     * like other widgets without categories
+			     * 
+			     * @modifiedBy Giorgio Federici (giofeder, giorgio.federici@eng.it)
+			     */
+				if(Sbi.isNotValorized(storeConf.aggregations.categories)){
+					storeConf.aggregations.categories = [];
+				}
+				
 				wizardState.storeConf = storeConf;
 				
 			}else{
