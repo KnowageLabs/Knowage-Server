@@ -89,34 +89,35 @@
 					md-active="isSelectedTab('Import')">
 					<div  layout="column" layout-wrap>
 					<div layout="row" layout-wrap>
-						<div flex = 15 >
-							<h3>{{translate.load("sbi.importusers.import");}}</h3>
-						</div>
-						
-						<div flex=20 >
+		
+						<div flex >
 							<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
 						</div>
 						
-						<div flex =10 >
 						<md-input-container class="small counter"> 
 							<md-button ng-click="upload($event)" aria-label="upload Users"
 								class="md-fab md-mini"  > <md-icon
 								md-font-icon="fa fa-upload fa-2x"  >
 							</md-icon> </md-button>
 						</md-input-container>
-						</div>
-						<span flex=20></span>
 						
-						<div flex =20>
+						
+							
+					</div>
+					
+					<div layout="row" layout-wrap ng-show="flagShowUser">
+						<div flex >
 							<md-radio-group layout="row" ng-model="typeSaveUser">
 						      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
 						      <md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
 						    </md-radio-group>
 						</div>
-							<span flex=2></span>				
+						<md-checkbox flex   style="line-height: 61px;"  ng-model="importPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.importPersonalFolder")}}</md-checkbox>
+									
 						<md-input-container class="small counter"> 
 							<md-button ng-click="save($event)" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 						</md-input-container>
+						
 					</div>
 
 					<div layout="row" layout-fill ng-show="flagShowUser">

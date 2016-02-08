@@ -42,7 +42,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.exportedUser=[];
 	$scope.exportingUser = [];
 	$scope.selectedUser = [];
-	$scope.typeSaveUser = 'Missing'
+	$scope.typeSaveUser = 'Missing';
+	$scope.importPersonalFolder = true;
 	$scope.flagShowUser=false;
 	$scope.checkboxs={
 			exportSubObj : false,
@@ -124,16 +125,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							console.log("layer non Ottenuti");
 						} else {
 							if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
-								
-								$scope.viewDownload = true;
+								//da usare poi 
 								$scope.downloadFile();
 							}
 								
 						}
-
+						$scope.viewDownload = true;
 					}).error(function(data, status, headers, config) {
 						console.log("layer non Ottenuti " + status);
-
+						$scope.viewDownload = true;
 					})
 		}
 		
@@ -168,27 +168,43 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			//if not selected no one users
 			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
 		}else{
-			if($scope.typeSaveUser == 'Missing'){
-				//missing user
-				sbiModule_restServices.post("1.0/serverManager/importExport/users","missingusers",$scope.exportingUser)
-				.success(function(data, status, headers, config) {
-				
-					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
-					
-				}).error(function(data, status, headers, config) {
-					showToast("ERRORS "+status,4000);
-				})
-			}else{
-				//override
-			
-				sbiModule_restServices.post("1.0/serverManager/importExport/users","overrideusers",$scope.exportingUser)
-				.success(function(data, status, headers, config) {
-				
-					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
-				}).error(function(data, status, headers, config) {
-					showToast("ERRORS "+status,4000);
-				})
+			var data={
+					"exportingUser":$scope.exportingUser,
+					"type":$scope.typeSaveUser,
+					"importPersonalFolder":$scope.importPersonalFolder
 			}
+			
+			sbiModule_restServices.post("1.0/serverManager/importExport/users","importUsers",data)
+			.success(function(data, status, headers, config) {
+			
+				$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
+				
+			}).error(function(data, status, headers, config) {
+				showToast("ERRORS "+status,4000);
+			})
+			
+			
+//			if($scope.typeSaveUser == 'Missing'){
+//				//missing user
+//				sbiModule_restServices.post("1.0/serverManager/importExport/users","missingusers",$scope.exportingUser)
+//				.success(function(data, status, headers, config) {
+//				
+//					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
+//					
+//				}).error(function(data, status, headers, config) {
+//					showToast("ERRORS "+status,4000);
+//				})
+//			}else{
+//				//override
+//			
+//				sbiModule_restServices.post("1.0/serverManager/importExport/users","overrideusers",$scope.exportingUser)
+//				.success(function(data, status, headers, config) {
+//				
+//					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
+//				}).error(function(data, status, headers, config) {
+//					showToast("ERRORS "+status,4000);
+//				})
+//			}
 		}
 	}
 	$scope.checkRole = function(){
