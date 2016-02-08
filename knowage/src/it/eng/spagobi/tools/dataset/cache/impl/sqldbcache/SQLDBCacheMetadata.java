@@ -246,17 +246,16 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public void updateCacheItem(CacheItem cacheItem) {
-		String signature = cacheItem.getSignature();
-		String hashedSignature = Helper.sha256(signature);
+		String hashedSignature = cacheItem.getSignature();
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
-			if (containsCacheItem(signature)) {
+			if (containsCacheItem(hashedSignature, true)) {
 				cacheDao.updateCacheItem(cacheItem);
-				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] has been updated");
+				logger.debug("The dataset with hash [" + hashedSignature + "] has been updated");
 			} else {
-				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] does not exist in cache");
+				logger.debug("The dataset with hash [" + hashedSignature + "] does not exist in cache");
 			}
 		} finally {
 			mapLocks.unlock(hashedSignature);
@@ -331,25 +330,25 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheItem;
 	}
 
-	public CacheItem getCacheItem(String resultSetSignature, boolean isHash) {
+	public CacheItem getCacheItem(String signature, boolean isHash) {
 		if (isHash) {
 			CacheItem cacheItem = null;
 			IMap mapLocks = DistributedLockFactory
 					.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
-			mapLocks.lock(resultSetSignature); // it is possible to use also the method tryLock(...) with timeout parameter
+			mapLocks.lock(signature); // it is possible to use also the method tryLock(...) with timeout parameter
 			try {
-				cacheItem = cacheDao.loadCacheItemBySignature(resultSetSignature);
+				cacheItem = cacheDao.loadCacheItemBySignature(signature);
 				if (cacheItem != null) {
-					logger.debug("The dataset with hash [" + resultSetSignature + "] has been found in cache");
+					logger.debug("The dataset with hash [" + signature + "] has been found in cache");
 				} else {
-					logger.debug("The dataset with hash [" + resultSetSignature + "] does not exist in cache");
+					logger.debug("The dataset with hash [" + signature + "] does not exist in cache");
 				}
 			} finally {
-				mapLocks.unlock(resultSetSignature);
+				mapLocks.unlock(signature);
 			}
 			return cacheItem;
 		} else {
-			return getCacheItem(resultSetSignature);
+			return getCacheItem(signature);
 		}
 	}
 
@@ -359,14 +358,14 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public boolean containsCacheItem(String resultSetSignature) {
-		return getCacheItem(resultSetSignature) != null;
+		return containsCacheItem(resultSetSignature, false);
 	}
 
-	public boolean containsCacheItem(String resultSetSignature, boolean isHash) {
+	public boolean containsCacheItem(String signature, boolean isHash) {
 		if (isHash) {
-			return getCacheItem(resultSetSignature, isHash) != null;
+			return getCacheItem(signature, isHash) != null;
 		} else {
-			return getCacheItem(resultSetSignature) != null;
+			return getCacheItem(signature) != null;
 		}
 	}
 
