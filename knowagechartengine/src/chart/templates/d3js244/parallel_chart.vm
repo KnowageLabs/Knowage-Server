@@ -133,7 +133,7 @@
   		height: '$chart.height',
   		
   		colors: '$colorsPal',
-  		isCockpit: '$chart.isCockpitEngine',
+  		isCockpit: $chart.isCockpitEngine,
   		#if($chart.isCockpitEngine=='true')
   		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end

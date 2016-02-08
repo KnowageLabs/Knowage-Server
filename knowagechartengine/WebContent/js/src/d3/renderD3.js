@@ -702,7 +702,7 @@ function renderWordCloud(chartConf){
 		   
 			wordArea.on('click', function(d){
 
-				if(chartConf.chart.isCockpit){
+				if(chartConf.chart.isCockpit==true){
 					if(chartConf.chart.outcomingEventsEnabled){
 					paramethers=fetchParamethers(d);
 					var selectParam={
@@ -2245,12 +2245,7 @@ function renderWordCloud(chartConf){
 			if(data.chart.outcomingEventsEnabled){
 			paramethers=crossNavigationParamethers(d);
 			var selectParams={
-					categoryName:paramethers.categoryName,
-					categoryValue:paramethers.categoryValue,
-					serieName:paramethers.serieName,
-					serieValue:paramethers.serieValue,
-					groupingCategoryName:paramethers.groupingCategoryName,
-					groupingCategoryValue:paramethers.groupingCategoryValue		
+					categoryValue:paramethers.groupingCategoryValue		
 			};
 			handleCockpitSelection(selectParams);
 			}
