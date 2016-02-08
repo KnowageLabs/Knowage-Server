@@ -53,7 +53,10 @@
   		minFontSize: $chart.minFontSize,
   		wordPadding: $chart.wordPadding,
   		maxWords: $chart.maxWords,
-  		
+  		isCockpit: $chart.isCockpitEngine, 
+  		#if($chart.isCockpitEngine=='true')
+  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
   		style:
   		{
   			fontFamily: '$chart.style.fontFamily',

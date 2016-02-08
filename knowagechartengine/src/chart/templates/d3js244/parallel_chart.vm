@@ -133,7 +133,10 @@
   		height: '$chart.height',
   		
   		colors: '$colorsPal',
-  		
+  		isCockpit: '$chart.isCockpitEngine',
+  		#if($chart.isCockpitEngine=='true')
+  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
   		#*
   			If user wants to see the table of the PARALLEL chart
   			this parameter will be true.

@@ -41,7 +41,10 @@
 		#if($chart.width)
 			width: '$chart.width',
 		#end			
-		
+		isCockpit: '$chart.isCockpitEngine', 
+		#if($chart.isCockpitEngine=='true')
+  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
 		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',

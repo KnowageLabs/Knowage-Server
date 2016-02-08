@@ -701,7 +701,22 @@ function renderWordCloud(chartConf){
 			
 		   
 			wordArea.on('click', function(d){
-				if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+
+				if(chartConf.chart.isCockpit){
+					if(chartConf.chart.outcomingEventsEnabled){
+					paramethers=fetchParamethers(d);
+					var selectParam={
+							categoryName:paramethers.categoryName,
+							categoryValue:paramethers.categoryValue,
+							serieName:paramethers.serieName,
+							serieValue:paramethers.serieValue,
+							groupingCategoryName:paramethers.groupingCategoryName,
+							groupingCategoryValue:paramethers.groupingCategoryValue	
+					};
+					
+					handleCockpitSelection(selectParam);
+					}
+				}else if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 					paramethers=fetchParamethers(d);
 					var navigParams={
 						crossNavigationDocumentName:chartConf.crossNavigation.crossNavigationDocumentName,
@@ -1249,7 +1264,9 @@ function renderWordCloud(chartConf){
 				)					
 				.style("opacity", 1)
 				.on("mouseover", mouseover)
-				.on("click",clickFunction);
+				.on("click",function(d){
+					return clickFunction(d);
+				});
 
 				drawLegend();
 			
@@ -1650,7 +1667,21 @@ function renderWordCloud(chartConf){
 		};
 		
 		function clickFunction(d){
-			if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+			if(jsonObject.chart.isCockpit==true){
+				if(jsonObject.chart.outcomingEventsEnabled){
+				paramethers=crossNavigationParams(d);
+				var selectParams={
+						categoryName:paramethers.categoryName,
+						categoryValue:paramethers.categoryValue,
+						serieName:paramethers.serieName,
+						serieValue:paramethers.serieValue,
+						groupingCategoryName:paramethers.groupingCategoryName,
+						groupingCategoryValue:paramethers.groupingCategoryValue	
+				};
+				
+				handleCockpitSelection(selectParams);
+				}
+			}else if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 				paramethers=crossNavigationParams(d);
 				var navigParams={
 					crossNavigationDocumentName:jsonObject.crossNavigation.crossNavigationDocumentName,
@@ -1689,7 +1720,7 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-    console.log(data);
+   
 	var records = data.data[0];
    
 	if(records.length>0){
@@ -2210,7 +2241,20 @@ function renderWordCloud(chartConf){
 	foreground.on("click",clickLine);
 	
 	function clickLine(d){
-		if(data.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+		if(data.chart.isCockpit==true){
+			if(data.chart.outcomingEventsEnabled){
+			paramethers=crossNavigationParamethers(d);
+			var selectParams={
+					categoryName:paramethers.categoryName,
+					categoryValue:paramethers.categoryValue,
+					serieName:paramethers.serieName,
+					serieValue:paramethers.serieValue,
+					groupingCategoryName:paramethers.groupingCategoryName,
+					groupingCategoryValue:paramethers.groupingCategoryValue		
+			};
+			handleCockpitSelection(selectParams);
+			}
+		}else if(data.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 			paramethers=crossNavigationParamethers(d);
 			var navigParams={
 				crossNavigationDocumentName:data.crossNavigation.crossNavigationDocumentName,
@@ -3010,8 +3054,20 @@ function renderChordChart(jsonData)
 			 	.style("opacity", opacityMouseOver);
 		    
 			tooltip.transition().duration(50).style("opacity","0");
-			
-			if(jsonData.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+			if(jsonData.chart.isCockpit==true){
+				if(jsonData.chart.outcomingEventsEnabled){
+				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
+				var selectParams={
+						categoryName:paramethers.categoryName,
+						categoryValue:paramethers.categoryValue,
+						serieName:paramethers.serieName,
+						serieValue:paramethers.serieValue,
+						groupingCategoryName:paramethers.groupingCategoryName,
+						groupingCategoryValue:paramethers.groupingCategoryValue	
+				};
+				handleCockpitSelection(selectParams);
+				}
+			}else if(jsonData.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
 				var navigParams={
 					crossNavigationDocumentName:jsonData.crossNavigation.crossNavigationDocumentName,

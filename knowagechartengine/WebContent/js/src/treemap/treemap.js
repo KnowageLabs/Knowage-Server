@@ -1,5 +1,5 @@
 function renderTreemap(chartConf) {
-	
+    
     chartConf = prepareChartConfForTreemap(chartConf);
     
     /**
@@ -17,7 +17,7 @@ function renderTreemap(chartConf) {
 			H.wrap
 			(
 				H.seriesTypes.treemap.prototype, 
-				'showDrillUpButton',
+				'showDrillUpButton', 
 				
 				function (proceed) 
 				{
@@ -29,37 +29,39 @@ function renderTreemap(chartConf) {
 	);
     
 	new Highcharts.Chart(chartConf);
-	
-	var getCrossParams= function(point){
-		var params={
-				point:{
-					name: null, // category name
-					value: null, // category  value
-					crossNavigationDocumentName:null,
-					crossNavigationDocumentParams:null,
-
-					series:{ // serie name and value
-						name:null,
-						value: null	
-					},
-					group:{ // grouping category name and value
-						name:null,
-						value: null
-					}
-				}
-		};
-
-		params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
-		params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
-
-		params.point.value=point.name;
-
-		params.point.series.value=point.value;
-
-
-		return params;
-	}
+     
+//	var getCrossParams= function(point){
+//		var params={
+//				point:{
+//					name: null, // category name
+//					value: null, // category  value
+//					crossNavigationDocumentName:null,
+//					crossNavigationDocumentParams:null,
+//
+//					series:{ // serie name and value
+//						name:null,
+//						value: null	
+//					},
+//					group:{ // grouping category name and value
+//						name:null,
+//						value: null
+//					}
+//				}
+//		};
+//
+//		params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+//		params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+//
+//		params.point.value=point.name;
+//
+//		params.point.series.value=point.value;
+//
+//
+//		return params;
+//	}
 }
+
+
 
 function renderHeatmap(chartConf){
     
@@ -67,8 +69,40 @@ function renderHeatmap(chartConf){
     
     var chart = new Highcharts.Chart(chartConfig);
     
-    var getCrossParams= function(point){
-    	var params={
+//    var getCrossParams= function(point){
+//    	var params={
+//    		point:{
+//    			name: null, // category name
+//    	        value: null, // category  value
+//    	        crossNavigationDocumentName:null,
+//    	        crossNavigationDocumentParams:null,
+//    		
+//    		series:{ // serie name and value
+//    			name:null,
+//    			value: null	
+//    		},
+//    		group:{ // grouping category name and value
+//    			name:null,
+//    			value: null
+//    		}
+//    		}
+//    	};
+//    	
+//    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+//    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+//    	params.point.name=chartConf.additionalData.columns[0].value;
+//    	params.point.value= new Date(point.x);
+//    	params.point.series.name=chartConf.additionalData.serie.value;
+//    	params.point.series.value=point.value;
+//    	params.point.group.name=chartConf.additionalData.columns[1].value;
+//    	params.point.group.value=point.label;
+//        
+//    	return params;
+//    };	
+}
+
+function getCrossParamsForHeatmap(point,chartConf){
+	var params={
     		point:{
     			name: null, // category name
     	        value: null, // category  value
@@ -96,7 +130,52 @@ function renderHeatmap(chartConf){
     	params.point.group.value=point.label;
         
     	return params;
-    };	
+	
+}
+
+function getSelectionParammsForHeatmap(point){
+	var params={
+    		point:{
+    			name: null, // category name
+    	        value: null, // category  value
+    	    }
+    	};
+	params.point.name=point.label;
+	params.point.value=point.value;
+	
+	return params;
+}
+
+function getCrossParamsForTreemap(point,chartConf){
+	var params={
+			point:{
+				name: null, // category name
+				value: null, // category  value
+				crossNavigationDocumentName:null,
+				crossNavigationDocumentParams:null,
+
+				series:{ // serie name and value
+					name:null,
+					value: null	
+				},
+				group:{ // grouping category name and value
+					name:null,
+					value: null
+				}
+			}
+	};
+
+	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+
+	params.point.value=point.name;
+
+	params.point.series.value=point.value;
+
+
+	return params;
+	
+	
 }
 
 function prepareChartConfForTreemap(chartConf) {
@@ -266,10 +345,13 @@ function prepareChartConfForTreemap(chartConf) {
 			data: points,
 			events:{
 				click: function(event){
-			        
-					if(event.point.node.children.length==0){
+			        if(chartConf.chart.isCockpit==true){
+			        	if(chartConf.chart.outcomingEventsEnabled){
+			        	handleCockpitSelection(event);
+			        	}
+			        }else if(event.point.node.children.length==0){
 						if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
-		            		var params=getCrossParams(event.point);
+		            		var params=getCrossParamsForTreemap(event.point,chartConf);
 		            	    handleCrossNavigationTo(params);
 		            	}
 					}
@@ -336,6 +418,8 @@ function prepareChartConfForTreemap(chartConf) {
 		}
 	};
 }
+
+
 
 function prepareChartConfForHeatmap(chartConf) {
 	var start;
@@ -638,10 +722,18 @@ function prepareChartConfForHeatmap(chartConf) {
             data:points,
             events: {
             click: function(event){
-            	if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
-            		var params=getCrossParams(event.point);
+            	if(chartConf.chart.isCockpit==true){
+            		if(chartConf.chart.outcomingEventsEnabled){
+            		var selectParams=getSelectionParammsForHeatmap(event.point);
+            		handleCockpitSelection(selectParams);
+            		}
+            	}else{ 
+            		if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+            		
+            		var params=getCrossParamsForHeatmap(event.point,chartConf);
             	    handleCrossNavigationTo(params);
             	}
+            	}		
             }
             },
             turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release

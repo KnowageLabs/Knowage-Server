@@ -77,6 +77,9 @@
 		}
 	}
 	
+	
+	
+	
 	function handleCrossNavigationTo(e){
 		if (!e.seriesOptions) {
 			var chart = this;
@@ -106,6 +109,32 @@
 	
 	function handleCrossNavigationFrom(){
 		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
+	};
+	
+	function handleCockpitSelection(e) {
+		
+// 			debugger;
+			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
+			var cockpitWidgets = cockpitWidgetManager.widgets;
+			var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+			
+			var selections = {};
+// 			selections[e.point.name] = {values: [e.point.series.name]};
+			
+			for(var i = 0; i < cockpitWidgets.getCount(); i++) {
+				var widget = cockpitWidgets.get(i);
+				
+				if(Sbi.isValorized(widget) && widget.wtype === 'chart' && widget.id === widgetId){
+					
+					var fieldMeta = widget.getFieldMetaByValue(e.categoryValue);
+					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
+					
+					selections[categoryFieldHeader] = {values: [e.categoryValue]};					
+					
+					cockpitWidgetManager.onSelection(widget, selections);
+				}
+			}		
+		
 	};
 	
 </script>

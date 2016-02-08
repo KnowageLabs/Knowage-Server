@@ -87,7 +87,10 @@
  		type: '$chartType',
 	  	height: '$chart.height',
 	  	width: '$chart.width', 		
-  
+        isCockpit: '$chart.isCockpitEngine',
+        #if($chart.isCockpitEngine=='true')
+  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  		#end
   		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',
