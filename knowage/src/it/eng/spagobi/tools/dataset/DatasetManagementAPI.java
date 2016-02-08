@@ -1199,18 +1199,35 @@ public class DatasetManagementAPI {
 
 		if (cacheItem != null) {
 			String tableName = cacheItem.getTable();
+			Connection conn = null;
+			Statement stmt = null;
 			for (String column : columns) {
 				try {
 					String query = buildIndexStatement(tableName, column);
 					if (query != null) {
-						Connection conn = cache.getDataSource().getConnection();
-						Statement stmt = conn.createStatement();
+						conn = cache.getDataSource().getConnection();
+						stmt = conn.createStatement();
 						stmt.executeUpdate(query);
 					} else {
 						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
 					}
 				} catch (ClassNotFoundException | NamingException | SQLException e) {
 					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]", e);
+				} finally {
+					if (stmt != null) {
+						try {
+							stmt.close();
+						} catch (SQLException e) {
+							logger.debug(e);
+						}
+					}
+					if (conn != null) {
+						try {
+							conn.close();
+						} catch (SQLException e) {
+							logger.debug(e);
+						}
+					}
 				}
 			}
 		} else {

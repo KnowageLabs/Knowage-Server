@@ -47,6 +47,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 
 /**
@@ -67,6 +68,8 @@ public class AssociativeLogicManager {
 	private final Pseudograph<String, LabeledEdge<String>> graph;
 	private final Map<String, String> datasetToCachedTable;
 	private final Map<String, String> selections;
+
+	static private Logger logger = Logger.getLogger(AssociativeLogicManager.class);
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
 			Map<String, String> selections) {
@@ -118,13 +121,38 @@ public class AssociativeLogicManager {
 
 							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
 							String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
-							Connection connection = dataSource.getConnection();
-							Statement stmt = connection.createStatement();
-							ResultSet rs = stmt.executeQuery(query);
-							Set<String> tuple = getTupleOfValues(rs);
-							rs.close();
-							stmt.close();
-							connection.close();
+							Connection connection = null;
+							Statement stmt = null;
+							ResultSet rs = null;
+							Set<String> tuple = null;
+							try {
+								connection = dataSource.getConnection();
+								stmt = connection.createStatement();
+								rs = stmt.executeQuery(query);
+								tuple = getTupleOfValues(rs);
+							} finally {
+								if (rs != null) {
+									try {
+										rs.close();
+									} catch (SQLException e) {
+										logger.debug(e);
+									}
+								}
+								if (stmt != null) {
+									try {
+										stmt.close();
+									} catch (SQLException e) {
+										logger.debug(e);
+									}
+								}
+								if (connection != null) {
+									try {
+										connection.close();
+									} catch (SQLException e) {
+										logger.debug(e);
+									}
+								}
+							}
 
 							if (!edgeGroupValues.containsKey(group)) {
 								edgeGroupValues.put(group, tuple);
@@ -177,13 +205,39 @@ public class AssociativeLogicManager {
 		for (EdgeGroup group : groups) {
 			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
 			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
-			Connection connection = dataSource.getConnection();
-			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery(query);
-			Set<String> distinctValues = getTupleOfValues(rs);
-			rs.close();
-			statement.close();
-			connection.close();
+
+			Connection connection = null;
+			Statement statement = null;
+			ResultSet rs = null;
+			Set<String> distinctValues = null;
+			try {
+				connection = dataSource.getConnection();
+				statement = connection.createStatement();
+				rs = statement.executeQuery(query);
+				distinctValues = getTupleOfValues(rs);
+			} finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						logger.debug(e);
+					}
+				}
+				if (statement != null) {
+					try {
+						statement.close();
+					} catch (SQLException e) {
+						logger.debug(e);
+					}
+				}
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						logger.debug(e);
+					}
+				}
+			}
 
 			Set<String> baseSet = edgeGroupValues.get(group);
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
