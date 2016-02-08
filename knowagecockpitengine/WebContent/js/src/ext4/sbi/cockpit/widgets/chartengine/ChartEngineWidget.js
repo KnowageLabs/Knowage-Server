@@ -123,10 +123,20 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 			iFrameHTML.contentWindow.document.close();
 		}
 		
+	    /**
+	     * https://production.eng.it/jira/browse/KNOWAGE-557
+	     * In order to enable "updatable/not-updatable" behavior
+	     * I need to unbound and re-bound the store associated with
+	     * the chart. In the refresh function, the create chart content
+	     * must be invoked before to call superclass refresh
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		
 		if (!this.areIncomingEventsEnabled()) {
-			var previousStore = this.getStore();
-	     	var clone = Sbi.storeManager.cloneStore(previousStore);
 	     	this.unboundStore();
+		} else {
+			this.boundStore();
 		}
 		
 		this.doLayout();
@@ -257,16 +267,17 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	
 	, refresh:  function() {
     	Sbi.trace("[ChartEngineWidget.refresh]: IN");
-    	Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.refresh.call(this);
     	
     	this.chartEngineServicePostCall();
+    	Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.refresh.call(this);
 
 		Sbi.trace("[ChartEngineWidget.refresh]: OUT");
-	}
+	},
 	
-	, successFunction: function(responseText) {
+	successFunction: function(responseText) {
 		
-		this.createContent(responseText);		
+		this.createContent(responseText);
+		this.up().body.unmask();
 		
     }
 	
