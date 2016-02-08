@@ -4,9 +4,9 @@
 
 var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload']);
 
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging){
 	
 	//variables
 	///////////////////////////////////////////////////////////
@@ -146,131 +146,74 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 
 	 //calling service for getting Business Models @GET
 	 $scope.getBusinessModels = function(){
-			  sbiModule_restServices
-			  	.get("2.0", 'businessmodels')
-			  	.success(
-			  			function(data, status, headers, config) {
-			  				if (data.hasOwnProperty("errors")) {
-			  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-			  				} else {
-			  					$scope.bmLoadingShow = true;
-			  					$scope.businessModelList = [];
-			  					
-			  					setTimeout(function(){
-				  					for(var i = 0; i < data.length; i++){
-				  						$scope.businessModelList.push(data[i]);
-				  						
-				  						$scope.bmLoadingShow = false;
-				  						$scope.$apply();
-						  			}
-			  					},1000);	
-			  				}
-			  			})
-			  		
-			  		.error(function(data, status, headers, config) {
-			  			console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-			  		});
+		 
+		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
+			.then(function(response) {
+				
+				$scope.bmLoadingShow = true;
+					$scope.businessModelList = [];
+					
+					setTimeout(function(){
+  					for(var i = 0; i < response.data.length; i++){
+  						$scope.businessModelList.push(response.data[i]);
+  						$scope.bmLoadingShow = false;
+  						$scope.$apply();
+		  			}
+					},1000);	
+			
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});	
 	 }
 	 
 	 //calling service for getting data sources @GET
 	 $scope.getDataSources = function(){
-		  sbiModule_restServices
-			.get("datasources","")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{
-						console.log("datasources:");
-						console.log(data);
-						$scope.listOfDatasources = data.root;					
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);	
+		 
+		 sbiModule_restServices.promiseGet("datasources","")
+			.then(function(response) {
+				$scope.listOfDatasources = response.data.root;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
 	 }
 	 
 	 //Calling service for getting Categories  @GET
 	 $scope.getCategories = function(){
-		 sbiModule_restServices
-			.get("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{
-						console.log("categories:");
-						console.log(data);
-						$scope.listOfCategories = data;
-						for(var i=0; i<data.length;i++){
-							console.log($scope.listOfCategories[i].VALUE_ID);
-						}
-						
-					}
+		 
+		 sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
+			.then(function(response) {
+				$scope.listOfCategories = response.data;
+				for(var i=0; i<response.data.length;i++){
+					console.log($scope.listOfCategories[i].VALUE_ID);
 				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	 
 	 }
 	 
 	 //Calling service for file versions @GET
 	 $scope.getVersions = function (id){
 		 
-		 sbiModule_restServices
-		  	.get("2.0/businessmodels/"+id+"/versions","")
-		  	.success(
-		  			function(data, status, headers, config) {
-		  				console.log(data);
-		  				if (data.hasOwnProperty("errors")) {
-		  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-		  				} else {
-		  					$scope.versionLoadingShow = true;
-		  					$scope.bmVersions = [];
-		  					
-		  					setTimeout(function(){
-		  						$scope.bmVersions = data;
-			  					activeFlagStyle();
-			  					millisToDate($scope.bmVersions);
-			  					
-			  					$scope.versionLoadingShow = false;
-			  					$scope.$apply();
-		  					 },600);	  					
-		  					
-		  				}
-		  				
-		  			})
-		  		
-		  		.error(function(data, status, headers, config) {
-		  			console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-		  		});
-		 
-		 //$scope.versionLoadingShow = false;
-		 
+		 sbiModule_restServices.promiseGet("2.0/businessmodels/"+id+"/versions","")
+			.then(function(response) {
+				$scope.versionLoadingShow = true;
+					$scope.bmVersions = [];
+					
+					setTimeout(function(){
+						$scope.bmVersions = response.data;
+  					activeFlagStyle();
+  					millisToDate($scope.bmVersions);
+  					$scope.versionLoadingShow = false;
+  					$scope.$apply();
+					 },600);	  		
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	 
 	 }
-	 
+	 // TODO fix this
 	 $scope.saveBusinessModelFile = function(){
 			multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.fileObj).success(
 					
@@ -299,64 +242,60 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 	if($scope.selectedBusinessModel.modelLocked === undefined)
 		 		$scope.selectedBusinessModel.modelLocked = false;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
-				console.log("Novi se cuva");
-
-				sbiModule_restServices
-					.post("2.0/businessmodels","",$scope.selectedBusinessModel)
-					.success(
-							function(data, status, headers, config){
-								$scope.selectedBusinessModel.id = data.id;
-								$scope.businessModelList.push(data);
-								$scope.selectedVersions=[];
-								$scope.isDirty = false;							
-								
-								if($scope.fileObj.fileName !== undefined)
-									$scope.saveBusinessModelFile();
-								
-								$scope.showActionOK("New Business Model saved successfully");
-							}
-							
-						);
-			}
 				
-			else{
-				console.log("Cuva se postojeci:id="+$scope.selectedBusinessModel.id);
-				sbiModule_restServices
-					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
-					.success(
-							function(data,status,headers,config){
-								if($scope.fileObj.fileName !== undefined)
-									$scope.saveBusinessModelFile();
-								
-								if($scope.bmVersionsActive != null){
-									sbiModule_restServices
-									.put("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
-									.success(
-											function(){
-												console.log("Uspjesno sacuvana promjena verzije ");
-											}
-										
-										);
-									}
-								
-								$scope.businessModelList=[];
-								$scope.getBusinessModels();
-								$scope.isDirty = false;
-								$scope.selectedBusinessModel.modelLocker = data.modelLocker;
-								$scope.showActionOK("Business Model edited successfully");
-								
-							}
-							
-						);
-				
-				
+				sbiModule_restServices.promisePost("2.0/businessmodels","",$scope.selectedBusinessModel)
+				.then(function(response) {
+					
+					$scope.selectedBusinessModel.id = response.data.id;
+					$scope.businessModelList.push(response.data);
+					$scope.selectedVersions=[];
+					$scope.isDirty = false;							
+					
+					if($scope.fileObj.fileName !== undefined)
+						$scope.saveBusinessModelFile();
+					
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
+				});	
 			}	
+			else{
+				
+				sbiModule_restServices.promisePut("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
+				.then(function(response) {
+					
+					if($scope.fileObj.fileName !== undefined)
+						$scope.saveBusinessModelFile();
+					
+					if($scope.bmVersionsActive != null){
+						
+						sbiModule_restServices.promisePut("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
+						.then(function(response) {
+				
+						}, function(response) {
+							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+							
+						});	
+						}
+					
+					$scope.businessModelList=[];
+					$scope.getBusinessModels();
+					$scope.isDirty = false;
+					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 
-		}
+					
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
+				});	
+			}
+	 }	
+				
 	 	
 	 //calling service method DELETE/{bmId} deleting single item
 	 $scope.deleteItem=function(item,event){
-		 console.log(item.id);
 		 var id = item.id;
 			
 			var confirm = $mdDialog
@@ -371,22 +310,22 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 			$mdDialog.show(confirm).then(function() {
 				
-				 sbiModule_restServices
-				 .delete("2.0/businessmodels",id)
-				 .success(
-						 function(){
-							 removeFromBMs(id,"left");
-							 if($scope.selectedBusinessModel.id == id){
-								 $scope.selectedBusinessModel={};
-							 }
-							 $scope.selectedBusinessModels=[];
-							 $scope.showActionOK(
-									 sbiModule_translate.load("sbi.businessModelsCatalogue.delete.done"));
-						 });
-				
-				
+				sbiModule_restServices.promiseDelete("2.0/businessmodels",id)
+				.then(function(response) {
+					removeFromBMs(id,"left");
+					 if($scope.selectedBusinessModel.id == id){
+						 $scope.selectedBusinessModel={};
+					 }
+					 $scope.selectedBusinessModels=[];
+					 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
+				});	
+
 			}, function() {
-				console.log('Canceled');
+	
 			});
 		 
 
@@ -409,95 +348,22 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 									sbiModule_translate.load("sbi.general.cancel"));
 
 			$mdDialog.show(confirm).then(function() {
+				
+				sbiModule_restServices.promiseDelete("2.0/businessmodels/"+bmId+"/versions/"+id,"")
+				.then(function(response) {
+					removeFromBMs(id,"right");
+					$scope.getVersions(bmId);
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 
-				sbiModule_restServices
-				.delete("2.0/businessmodels/"+bmId+"/versions/"+id,"")
-				.success(
-						function(){
-							removeFromBMs(id,"right");
-							$scope.getVersions(bmId);
-							$scope.showActionOK(
-									sbiModule_translate.load("sbi.businessModelsCatalogue.versionDelete.done")
-									);
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
 				});
-				
-				
+
 			}, function() {
-				console.log('Canceled');
+	
 			});
-		 
 		}
-		
-	 	//calling service for deleting BM @DELETE
-		$scope.deleteBusinessModels = function(){
-			var size = $scope.selectedBusinessModels.length;
-			if(size > 0 && size == 1){
-				var id = $scope.selectedBusinessModels[0].id;
-				sbiModule_restServices
-					.delete("2.0/businessmodels",id)
-					.success(
-							function(){
-								removeFromBMs(id,"left");
-								if($scope.selectedBusinessModel.id == id){
-									$scope.selectedBusinessModel={};
-									
-								}
-								$scope.selectedBusinessModels=[];
-								$scope.showActionOK("Business Model deleted successfully");
-							});
-			}
-			
-			else{
-				sbiModule_restServices
-				.delete("2.0/businessmodels/deletemany",makeDeletePath($scope.selectedBusinessModels))
-				.success(
-						function(){
-							for(var i=0; i<size; i++){
-								removeFromBMs($scope.selectedBusinessModels[i].id,"left");
-								
-								if($scope.selectedBusinessModel.id == id){
-									$scope.selectedBusinessModel={};
-									
-								}
-							}
-							
-							$scope.selectedBusinessModels=[];
-							$scope.showActionOK("Business Models deleted successfully");
-						});
-			}
-			
-		}
-		
-		//calling service for deleting BM Versions @DELETE
-		$scope.deleteBusinessModelVersions = function(){
-			var size = $scope.bmVersions.length;
-			var bmId = $scope.selectedBusinessModel.id;
-			if(size > 0 && size == 1){
-				var id = $scope.bmVersions[0].id;
-				sbiModule_restServices
-					.delete("2.0/businessmodels/"+bmId+"/versions",id)
-					.success(
-							function(){
-								removeFromBMs(id,"right");
-								$scope.bmVersions=[];
-								$scope.showActionOK("Business Model Version deleted successfully");
-					});
-			}
-			else{
-				sbiModule_restServices
-				.delete("2.0/businessmodels/"+bmId+"/deleteManyVersions",makeDeletePath($scope.bmVersions))
-				.success(
-						function(){
-							for(var i=0; i<size; i++){
-								removeFromBMs($scope.bmVersions[i].id,"left");
-							}
-							$scope.bmVersions=[];
-							$scope.showActionOK("Business Model Version deleted successfully");
-							
-				});
-			}
-		}
-	 
 		//my util functions
 		//////////////////////////////////////////////////
 	 
