@@ -3,9 +3,9 @@
  */
 var app=angular.module('profileAttributesManagementModule',['ngMaterial','angular_list','angular_table','sbiModule','angular_2_col']);
 
-app.controller('profileAttributesManagementController',["sbiModule_translate","sbiModule_restServices","$scope","$mdDialog","$mdToast","$timeout",profileAttributesManagementFunction]);
+app.controller('profileAttributesManagementController',["sbiModule_translate","sbiModule_restServices","$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging",profileAttributesManagementFunction]);
 
-function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restServices,$scope,$mdDialog,$mdToast,$timeout){
+function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restServices,$scope,$mdDialog,$mdToast,$timeout,sbiModule_messaging){
 	
 	$scope.translate=sbiModule_translate;
 	$scope.showMe=false;
@@ -25,16 +25,15 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	}
 	
 	$scope.getProfileAttributes= function(){
-		
-		sbiModule_restServices.get("2.0/attributes", '').success(
-				function(data, status, headers, config) {
-				       
-						$scope.attributeList = data;
-						
-				}).error(function(data, status, headers, config) {
-					
-				})
-		
+
+			sbiModule_restServices.promiseGet("2.0/attributes", '')
+			.then(function(response) {
+				$scope.attributeList = response.data;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
+
 	}
 	
 	
@@ -66,52 +65,38 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.saveProfileAttribute=function(){
 
 		if($scope.selectedAttribute.hasOwnProperty("attributeId")){ // put, update existing
-			sbiModule_restServices.put('2.0/attributes',$scope.selectedAttribute.attributeId,$scope.selectedAttribute).success(
-				function(data, status, headers, config){
-					
-					for(i=0;i<$scope.attributeList.length;i++){
-						if($scope.attributeList[i].attributeId===$scope.selectedAttribute.attributeId){
-							$scope.attributeList[i].attributeName=$scope.selectedAttribute.attributeName;
-							$scope.attributeList[i].attributeDescription=$scope.selectedAttribute.attributeDescription;
-						}
-					}
-					$scope.dirtyForm=false;
-					$scope.showActionOK();
-				}).error(function(data,status,headers,config){
-					
-				})
-			                        
 			
+			sbiModule_restServices.promisePut('2.0/attributes',$scope.selectedAttribute.attributeId,$scope.selectedAttribute)
+			.then(function(response) {
+				
+				for(i=0;i<$scope.attributeList.length;i++){
+					if($scope.attributeList[i].attributeId===$scope.selectedAttribute.attributeId){
+						$scope.attributeList[i].attributeName=$scope.selectedAttribute.attributeName;
+						$scope.attributeList[i].attributeDescription=$scope.selectedAttribute.attributeDescription;
+					}
+				}
+				$scope.dirtyForm=false;
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
+
 		}else{// post create new
-			sbiModule_restServices.post('2.0/attributes','',$scope.selectedAttribute).success(
-					function(data, status, headers, config){
-				        $scope.attributeList.push(data);  
-				        $scope.dirtyForm=false;
-						$scope.showActionOK();
-						
-					}).error(function(data,status,headers,config){
-						
-					})
+			
+			sbiModule_restServices.promisePost('2.0/attributes','',$scope.selectedAttribute)
+			.then(function(response) {
+				$scope.attributeList.push(response.data);  
+		        $scope.dirtyForm=false;
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});			
 		}
 		
 	}
-	
-	$scope.showActionOK = function() {
-		var toast = $mdToast.simple()
-		.content(sbiModule_translate.load("sbi.attributes.ok.msg"))
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
-	};
 	
 	$scope.loadAttribute=function(item){
 		
@@ -142,19 +127,21 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	
 	$scope.deleteItem=function(item){
 		
-		sbiModule_restServices.delete('2.0/attributes',item.attributeId).success(
-				function(data, status, headers, config){
-					
-					$scope.showActionOK();
-					$scope.attributeList=[];
-					$timeout(function(){								
-						$scope.getProfileAttributes();
-					}, 1000);
-					$scope.selectedAttribute={};
-					$scope.showMe=false;
-				}).error(function(data,status,headers,config){
-					
-				})
+		sbiModule_restServices.promiseDelete('2.0/attributes',item.attributeId)
+		.then(function(response) {
+			
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			$scope.attributeList=[];
+			$timeout(function(){								
+				$scope.getProfileAttributes();
+			}, 1000);
+			$scope.selectedAttribute={};
+			$scope.showMe=false;
+
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 		
 	$scope.deleteAttributes=function(){
@@ -199,7 +186,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	                    	color:'#153E7E',
 	                    	action:function(item,event){
 	                    		
-	                    		$scope.deleteItem(item);
+	                    		$scope.confirmDelete(item,event);
 	                    	}
 	                     }
 	                    ];
@@ -213,6 +200,21 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 			.ariaLabel('Lucky day').ok(
 					sbiModule_translate.load("sbi.general.yes")).cancel(
 							sbiModule_translate.load("sbi.general.No"));
+	 
+	 $scope.confirmDelete = function(item,ev) {
+		    var confirm = $mdDialog.confirm()
+		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+		          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+		          .ariaLabel("confirm_delete")
+		          .targetEvent(ev)
+		          .ok(sbiModule_translate.load("sbi.general.continue"))
+		          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		    $mdDialog.show(confirm).then(function() {
+		    	$scope.deleteItem(item);
+		    }, function() {
+		
+		    });
+		  };
 	
 	
 }

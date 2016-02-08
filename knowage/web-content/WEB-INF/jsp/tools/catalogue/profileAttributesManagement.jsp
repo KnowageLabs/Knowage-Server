@@ -34,6 +34,7 @@
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
+							aria-label="create"
 							ng-click="createProfileAttribute()"> 
 							<md-icon
 								md-font-icon="fa fa-plus" 
