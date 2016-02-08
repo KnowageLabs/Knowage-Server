@@ -10,6 +10,7 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.date.DateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -166,10 +167,23 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 		String startDateStr = (String) xml.getAttribute(TRIGGER_START_DATE);
 		if (startDateStr != null) {
-			String[] splitterDate = startDateStr.split("/");
-			String startDay = splitterDate[0];
-			String startMonth = splitterDate[1];
-			String startYear = splitterDate[2];
+			String[] splitterDate;
+			String startDay;
+			String startMonth;
+			String startYear;
+			if (DateUtils.isValidFormat(startDateStr, "dd/MM/yyyy") || DateUtils.isValidFormat(startDateStr, "dd/MM/yy")) {
+				splitterDate = startDateStr.split("/");
+				startDay = splitterDate[0];
+				startMonth = splitterDate[1];
+				startYear = splitterDate[2];
+			} else if (DateUtils.isValidFormat(startDateStr, "dd-MM-yyyy")) {
+				splitterDate = startDateStr.split("-");
+				startDay = splitterDate[0];
+				startMonth = splitterDate[1];
+				startYear = splitterDate[2];
+			} else {
+				return null;
+			}
 
 			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1, new Integer(startDay).intValue());
 			String startTimeStr = (String) xml.getAttribute(TRIGGER_START_TIME);
@@ -191,20 +205,26 @@ public class TriggerXMLDeserializer implements Deserializer {
 		Calendar calendar = null;
 		String endDateStr = (String) xml.getAttribute(TRIGGER_END_DATE);
 		if (endDateStr != null) {
-
-			try {
-				String[] splitterDate = endDateStr.split("/");
-				String endDay = splitterDate[0];
-				String endMonth = splitterDate[1];
-				String endYear = splitterDate[2];
-				calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
-			} catch (Exception e) {
-				// Old method with date in format yyyy/MM/dd
-				String endDay = endDateStr.substring(8, 10);
-				String endMonth = endDateStr.substring(5, 7);
-				String endYear = endDateStr.substring(0, 4);
-				calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
+			String[] splitterDate;
+			String endDay;
+			String endMonth;
+			String endYear;
+			if (DateUtils.isValidFormat(endDateStr, "dd/MM/yyyy") || DateUtils.isValidFormat(endDateStr, "dd/MM/yy")) {
+				splitterDate = endDateStr.split("/");
+				endDay = splitterDate[0];
+				endMonth = splitterDate[1];
+				endYear = splitterDate[2];
+			} else if (DateUtils.isValidFormat(endDateStr, "yyyy-MM-dd'T'HH:mm:ss")) {
+				endDateStr = endDateStr.split("T")[0];
+				splitterDate = endDateStr.split("-");
+				endYear = splitterDate[0];
+				endMonth = splitterDate[1];
+				endDay = splitterDate[2];
+			} else {
+				return null;
 			}
+
+			calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
 
 			String endTimeStr = (String) xml.getAttribute(TRIGGER_END_TIME);
 			if (endTimeStr != null) {
