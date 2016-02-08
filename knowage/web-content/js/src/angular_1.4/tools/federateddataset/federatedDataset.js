@@ -271,7 +271,7 @@ function federationDefinitionFunction
 	}
 	
 	$scope.goToFederationCatalogue = function() {
-		 $window.location.href = "publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/manageSelfService.jsp";
+		 $window.location.href = contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation";
 	};
 	
 	ctr.showAdvanced = function(ev){
@@ -446,7 +446,7 @@ function federationDefinitionFunction
 						if(listField.name==item.name){
 							if(listField.selected==true){
 								var index2 = $scope.selectedDatasets.indexOf(listId);
-								$scope.selectedDatasets.splice(index,2);
+								$scope.selectedDatasets.splice(index2,2);
 								console.log($scope.selectedDatasets);
 								listField.selected = false;
 								ctr.myselectedvariable[listId] = null;

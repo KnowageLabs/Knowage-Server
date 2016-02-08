@@ -1,3 +1,4 @@
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="it.eng.spagobi.tools.dataset.bo.IDataSet"%>
@@ -24,6 +25,7 @@
 		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<%
+		 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 			String relString = "";
 			String lisOfDSL = "";
 			if(request.getParameter("id")!=null){
@@ -47,6 +49,7 @@
 		<script>
 			var value = '<%= lisOfDSL %>';
 			var valueRelString = '<%= relString  %>';
+			var contextName = '<%=contextName %>';
 		</script> 
 	</head>
 
