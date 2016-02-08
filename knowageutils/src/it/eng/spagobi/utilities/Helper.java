@@ -238,10 +238,8 @@ public class Helper {
 	}
 
 	private static synchronized MessageDigest getMD5Instance() throws NoSuchAlgorithmException {
-		if (md5instance == null) {
-			md5instance = MessageDigest.getInstance("MD5");
-		}
-		return md5instance;
+		// MessageDigest is not thread safe and is not particularly expensive to construct, so instance it each time.
+		return MessageDigest.getInstance("MD5");
 	}
 
 	public static String sha256(String res) {
@@ -264,10 +262,8 @@ public class Helper {
 	}
 
 	private static synchronized MessageDigest getSHA256Instance() throws NoSuchAlgorithmException {
-		if (sha256instance == null) {
-			sha256instance = MessageDigest.getInstance("SHA-256");
-		}
-		return sha256instance;
+		// MessageDigest is not thread safe and is not particularly expensive to construct, so instance it each time.
+		return MessageDigest.getInstance("SHA-256");
 	}
 
 	public static String toNullIfempty(String s) {
