@@ -530,9 +530,11 @@ function renderWordCloud(chartConf){
 		layout.start();
 
 		function draw(words,e) {
-				
+			var randomId=+ Math.round((Math.random())*10000);
+			//console.log(mainId);
 			d3.select("body")
-			.append("div").attr("id","main")
+			.append("div").attr("id","main"+randomId)
+			.attr("class","d3-container")
 			.style("height",chartConf.chart.height)
 			.style("width",chartConf.chart.width)
 			.style("font-family", chartConf.chart.style.fontFamily)	
@@ -569,7 +571,7 @@ function renderWordCloud(chartConf){
 				emptyMsgTextDecoration = (chartConf.emptymessage.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
 				
 				// Set title
-				d3.select("#main").append("div")
+				d3.select("#main"+randomId).append("div")
 					.style("height",emptyMsgTotal)
 					.style("position",chartConf.emptymessage.position)
 					.style("left",chartConf.emptymessage.paddingLeft)
@@ -627,7 +629,7 @@ function renderWordCloud(chartConf){
 				subtitleTextDecoration = (chartConf.subtitle.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
 								
 				// Set title
-				d3.select("#main").append("div")
+				d3.select("#main"+ randomId).append("div")
 					.style("color",chartConf.title.style.color)
 					.style("text-align",chartConf.title.style.align)
 		    		.style("font-family",chartConf.title.style.fontFamily)
@@ -638,7 +640,7 @@ function renderWordCloud(chartConf){
 					.text(chartConf.title.text);	
 								
 				// Set subtitle
-				d3.select("#main").append("div")					
+				d3.select("#main"+randomId).append("div")					
 					.style("color",chartConf.subtitle.style.color)
 					.style("text-align",chartConf.subtitle.style.align)
 		    		.style("font-family",chartConf.subtitle.style.fontFamily)
@@ -648,15 +650,15 @@ function renderWordCloud(chartConf){
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
 			
-		var bacground=d3.select("#main")
-			.append("div").attr("id","chart")
+		var bacground=d3.select("#main"+randomId)
+			.append("div").attr("id","chart"+randomId)
 			.append("svg")
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
          
 		
-		var tooltip=d3.select("#chart")
+		var tooltip=d3.select("#chart"+randomId)
 		.append("div")
 		.attr("class","tooltip")
 		.style("opacity","0");
@@ -732,8 +734,7 @@ function renderWordCloud(chartConf){
 					handleCrossNavigationTo(navigParams);
 				}
 				
-			})
-			;
+			});
 			
 			wordArea.on('mouseover',function(d){
 				var tooltipText;
@@ -888,8 +889,12 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
+		
+		var randomId=  Math.round((Math.random())*10000);
+		
 		d3.select("body")
-			.append("div").attr("id","main")
+			.append("div").attr("id","main"+ randomId)
+			.attr("class","d3-container")
 			.style("height", jsonObject.chart.height)
 			.style("width", jsonObject.chart.width)
 			.style("font-family", jsonObject.chart.style.fontFamily)
@@ -907,7 +912,7 @@ function renderWordCloud(chartConf){
 			var emptyMsgTotal = emptyMsgFontSize;
 			
 			// Set empty text on the chart
-			d3.select("#main").append("div")
+			d3.select("#main"+randomId).append("div")
 				.style("color",jsonObject.emptymessage.style.color)
 				.style("text-align",jsonObject.emptymessage.style.align)
 	    		.style("font-family",jsonObject.emptymessage.style.fontFamily)
@@ -920,8 +925,8 @@ function renderWordCloud(chartConf){
 		else
 		{			
 			// Set title on the chart
-			d3.select("#main").append("div")
-				.attr("id","title")  
+			d3.select("#main"+randomId).append("div")
+				.attr("id","title"+randomId)  
 				.style("color",jsonObject.title.style.color)
 				.style("text-align",jsonObject.title.style.align)
 	    		.style("font-family",jsonObject.title.style.fontFamily)
@@ -932,8 +937,8 @@ function renderWordCloud(chartConf){
 				.text(jsonObject.title.text);	
 			
 			// Set subtitle on the chart
-			d3.select("#main").append("div")
-				.attr("id","subtitle")  
+			d3.select("#main"+randomId).append("div")
+				.attr("id","subtitle"+randomId)  
 				.style("color",jsonObject.subtitle.style.color)
 				.style("text-align",jsonObject.subtitle.style.align)
 	    		.style("font-family",jsonObject.subtitle.style.fontFamily)
@@ -946,12 +951,12 @@ function renderWordCloud(chartConf){
 			/* Put the topPadding on the the top of the chart, even if toolbar
 			 * is set on the bottom of the chart (because of the clearer and 
 			 * more structured view). */
-		    d3.select("#main").append("div").style("height",topPadding);
+		    d3.select("#main"+randomId).append("div").style("height",topPadding);
 		    
 		    /* Get the data about the height of the title, subtitle and toolbar 
 		     * already placed on the chart. */
-		    var titleHeight = d3.select("#title")[0][0].getBoundingClientRect().height;
-		    var subtitleHeight = d3.select("#subtitle")[0][0].getBoundingClientRect().height;
+		    var titleHeight = d3.select("#title"+randomId)[0][0].getBoundingClientRect().height;
+		    var subtitleHeight = d3.select("#subtitle"+randomId)[0][0].getBoundingClientRect().height;
 		    var breadCrumbHeight = parseInt(jsonObject.toolbar.style.height);
 		    
 		    /* Sum of heights of all of the DOM elements above the chart's center:
@@ -962,23 +967,23 @@ function renderWordCloud(chartConf){
 		    if (jsonObject.toolbar.style.position=="top")
 			{   
 		    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + breadCrumbHeight);		    	
-	    		d3.select("#main").append("div").attr("id","sequence");	
-	    		d3.select("#main").append("div").style("height",topPadding);
+	    		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);	
+	    		d3.select("#main"+randomId).append("div").style("height",topPadding);
 			}
 		    
-		    d3.select("#main").append("div").attr("id","chart");	        
+		    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId);	        
 	    	
 	    	if (jsonObject.toolbar.style.position=="bottom")
 			{   
 		    	/* Add padding between the bottom of the chart and the top of 
 		    	 * the toolbar (breadcrumb). */	  
-	    		d3.select("#main").append("div").style("height",bottomPadding);
-		    	d3.select("#main").append("div").attr("id","sequence");				
+	    		d3.select("#main"+randomId).append("div").style("height",bottomPadding);
+		    	d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);				
 			}
 	    	
 	    	if (jsonObject.toolbar.style.position=="top")
 			{   
-	    		d3.select("#main").append("div").style("height",bottomPadding);
+	    		d3.select("#main"+randomId).append("div").style("height",bottomPadding);
 			}
 		       
 		}
@@ -1006,11 +1011,11 @@ function renderWordCloud(chartConf){
 		/* Put inside first "div" element the Suburst chart, i.e. SVG DOM
 		 * element that will represent it. SVG window will be with previously
 		 * defined dimensions ("width" and "height"). */		
-		var vis = d3.select("#chart").append("svg:svg")
+		var vis = d3.select("#chart"+randomId).append("svg:svg")
 		    .attr("width", width)
 		    .attr("height", height)
 		    .append("svg:g")
-		    .attr("id", "container")
+		    .attr("id", "container"+randomId)
 		    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");	
 		
 		var partition = d3.layout.partition()
@@ -1271,7 +1276,7 @@ function renderWordCloud(chartConf){
 				drawLegend();
 			
 				// Add the mouseleave handler to the bounding circle.
-				d3.select("#container").on("mouseleave", mouseleave);
+				d3.select("#container"+randomId).on("mouseleave", mouseleave);
 
 				// Get total size of the tree = value of root node from partition.
 				totalSize = path.node().__data__.value;
@@ -1309,17 +1314,17 @@ function renderWordCloud(chartConf){
 		  /* If we already have move mouse over the chart, remove
 		   * previous content for the "explanation", i.e. move the
 		   * previous text inside the chart.  */
-		  if (d3.select("#explanation")[0][0] != null)
+		  if (d3.select("#explanation"+randomId)[0][0] != null)
 		  {
-			  d3.select("#explanation").remove();
-			  d3.select("#percentage").remove();
+			  d3.select("#explanation"+randomId).remove();
+			  d3.select("#percentage"+randomId).remove();
 		  }	  
 		  
-		  d3.select("#chart")   	
-	    	.append("div").attr("id","explanation")
-	    	.append("span").attr("id","percentage");
+		  d3.select("#chart"+randomId)   	
+	    	.append("div").attr("id","explanation"+randomId)
+	    	.append("span").attr("id","percentage"+randomId);
 		  
-		  d3.select("#explanation")
+		  d3.select("#explanation"+randomId)
 		  	.append("text").html("</br>" + jsonObject.tip.text)
 	    	.style("text-align","center")
 	    	.style("font-family",jsonObject.tip.style.fontFamily)
@@ -1328,7 +1333,7 @@ function renderWordCloud(chartConf){
     		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
 	  		.style("font-size",tipFontSize); 
 		
-		  d3.select("#percentage")
+		  d3.select("#percentage"+randomId)
 		  	.text(percentageString)		  	
 		      .style("font-family",jsonObject.tip.style.fontFamily)
 	    		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
@@ -1337,10 +1342,10 @@ function renderWordCloud(chartConf){
 	    		.style("font-size",tipFontSize)
 	    		.style("vertical-align","middle");		  
 	    			
-		  var percentageHeight = document.getElementById('percentage').getBoundingClientRect().height;
-		  var explanationHeight = document.getElementById('explanation').getBoundingClientRect().height;	
+		  var percentageHeight = document.getElementById('percentage'+randomId).getBoundingClientRect().height;
+		  var explanationHeight = document.getElementById('explanation'+randomId).getBoundingClientRect().height;	
 		  		    
-		  d3.select("#explanation")
+		  d3.select("#explanation"+randomId)
 		  	.style("color",jsonObject.tip.style.color)
 			.style("position","absolute")
 			.style("left",width/2-tipWidth/2)
@@ -1350,16 +1355,16 @@ function renderWordCloud(chartConf){
 		  /* When width of the text area (rectangle) is set, count 
 		   * the height of the invisible text rectangle in which 
 		   * text will fit. */
-		  var textRectangleHight = d3.select("#explanation")[0][0].clientHeight;		  
+		  var textRectangleHight = d3.select("#explanation"+randomId)[0][0].clientHeight;		  
 		  var distanceFromTheTop = sumOfHeightsAboveChartCenter - textRectangleHight/2;
 		    
 		  /* When text area in the middle of the chart is determined,
 		   * set the distance of the invisible text rectangle from
 		   * the top of the window to the top of that rectangle.*/
-		  d3.select("#explanation")
+		  d3.select("#explanation"+randomId)
     		.style("top",distanceFromTheTop);    				    
 		    
-		  d3.select("#explanation")
+		  d3.select("#explanation"+randomId)
 		      .style("visibility", "");
 		
 		  var sequenceArray = getAncestors(d);
@@ -1383,7 +1388,7 @@ function renderWordCloud(chartConf){
 		function mouseleave(d) {
 		
 		  // Hide the breadcrumb trail
-		  d3.select("#trail")
+		  d3.select("#trail"+randomId)
 		      .style("visibility", "hidden");
 		
 		  // Deactivate all segments during transition.
@@ -1398,7 +1403,7 @@ function renderWordCloud(chartConf){
 		              d3.select(this).on("mouseover", mouseover);
 		            });
 		
-		  d3.select("#explanation")
+		  d3.select("#explanation"+randomId)
 		      .style("visibility", "hidden");
 		}
 		
@@ -1425,11 +1430,11 @@ function renderWordCloud(chartConf){
 			 * to present breadcrumb. It specifies its dimensions (width,
 			 * height */		
 			
-			var trail = d3.select("#sequence")
+			var trail = d3.select("#sequence"+randomId)
 				.append("svg:svg")
 				.attr("width", width)
 				.attr("height", bcHeight)
-				.attr("id", "trail");
+				.attr("id", "trail"+randomId);
 			  
 			// Add the label at the end, for the percentage.
 			/* Append to the newly created SVG element text subelement 
@@ -1438,7 +1443,7 @@ function renderWordCloud(chartConf){
 			 * (#000). ("#000") = ("black") */
 			trail
 				.append("svg:text")
-				.attr("id", "endlabel")
+				.attr("id", "endlabel"+randomId)
 				.style("fill", jsonObject.toolbar.style.percFontColor)
 				.style("font-family", jsonObject.toolbar.style.fontFamily)
 				.style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
@@ -1465,7 +1470,7 @@ function renderWordCloud(chartConf){
 		function updateBreadcrumbs(nodeArray, percentageString) {
 		
 		  // Data join; key function combines name and depth (= position in sequence).
-		  var g = d3.select("#trail")
+		  var g = d3.select("#trail"+randomId)
 		      .selectAll("g")
 		      .data(nodeArray, function(d) { return d.name + d.depth; });
 		
@@ -1500,7 +1505,7 @@ function renderWordCloud(chartConf){
 		  g.exit().remove();
 		  
 		  // Now move and update the percentage at the end.
-		  d3.select("#trail").select("#endlabel")
+		  d3.select("#trail"+randomId).select("#endlabel"+randomId)
 		      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
 		      .attr("y", b.h / 2)
 		      .attr("dy", "0.35em")
@@ -1508,7 +1513,7 @@ function renderWordCloud(chartConf){
 		      .text(percentageString);
 		
 		  // Make the breadcrumb trail visible, if it's hidden.
-		  d3.select("#trail")
+		  d3.select("#trail"+randomId)
 		      .style("visibility", "");
 		
 		}
@@ -1530,7 +1535,7 @@ function renderWordCloud(chartConf){
 
 			var numOfColorElems = Object.keys(colors).length;
 			
-			var legend = d3.select("#legend").append("svg:svg")
+			var legend = d3.select("#legend"+randomId).append("svg:svg")
 			.attr("width", li.w)
 			.attr("height", numOfColorElems * (li.h + li.s));
 					
@@ -1567,7 +1572,7 @@ function renderWordCloud(chartConf){
 		 * legends visibility. */
 		function toggleLegend() 
 		{		
-			var legend = d3.select("#legend");
+			var legend = d3.select("#legend"+randomId);
 			
 			if (legend.style("visibility") == "hidden") 
 			{
@@ -1859,8 +1864,12 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
+		
+		var randomId=  Math.round((Math.random())*10000);
+		
 		d3.select("body")
-			.append("div").attr("id","main")
+			.append("div").attr("id","main"+randomId)
+			.attr("classs","d3-container")
 			.style("height",data.chart.height)
 			.style("width",data.chart.width)
 			.style("background-color",data.chart.style.backgroundColor)
@@ -1871,7 +1880,7 @@ function renderWordCloud(chartConf){
 			.style("text-decoration",data.chart.style.textDecoration);
 				
 		// Set title
-		d3.select("#main").append("div")
+		d3.select("#main"+randomId).append("div")
 		.style("color",data.title.style.color)
 		.style("text-align",data.title.style.align)
 		.style("font-family",data.title.style.fontFamily)
@@ -1882,7 +1891,7 @@ function renderWordCloud(chartConf){
 		.text(data.title.text);
 
 		// Set subtitle
-		d3.select("#main").append("div")
+		d3.select("#main"+randomId).append("div")
 		.style("color",data.subtitle.style.color)
 		.style("text-align",data.subtitle.style.align)
 		.style("font-family",data.subtitle.style.fontFamily)
@@ -1917,12 +1926,12 @@ function renderWordCloud(chartConf){
 		 * Add brush clearing selections button to the main DIV.
 		 * @author Ana Tomic
 		 */
-		d3.select("#main").append("div").attr("id","clearButton").style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
-		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",chartDivHeight);
+		d3.select("#main"+randomId).append("div").attr("id","clearButton"+randomId).style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
+		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",data.chart.width).style("height",chartDivHeight);
 			
 		var axesDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
 		
-		var svg = d3.select("#chart")
+		var svg = d3.select("#chart"+randomId)
 			.append("div")
 				.style("float","left")
 				.style("width",data.chart.width-legendWidth)
@@ -1964,7 +1973,7 @@ function renderWordCloud(chartConf){
 		
 		var svgHeight=Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+8+gr.length*(Number(removePixelsFromFontSize(data.legend.element.style.fontSize))+8)+30;
 	   
-		var legend=d3.select("#chart").append("div")
+		var legend=d3.select("#chart"+randomId).append("div")
 		         .style("float","right")
 		         .style("width",legendWidth)
 		         // "...-180" for table height plus pagination height (150+30)
@@ -2034,7 +2043,7 @@ function renderWordCloud(chartConf){
 			return d; });
 
 		//tooltip
-		var tooltip=d3.select("#chart")
+		var tooltip=d3.select("#chart"+randomId)
 		.append("div")
 		.attr("class","tooltip")
 		.style("opacity","0");
@@ -2226,7 +2235,7 @@ function renderWordCloud(chartConf){
 
 	else{
 
-		// Set title
+		// Set empty message
 		d3.select("body").append("div")
 		.style("color",data.emptymessage.style.color)
 		.style("text-align",data.emptymessage.style.align)
@@ -2303,13 +2312,13 @@ function renderWordCloud(chartConf){
 			lastDisplayed=allTableData.length;
 		}
 	
-		var tableDiv = d3.select("#main")
+		var tableDiv = d3.select("#main"+randomId)
 							.append("div").attr("id","tableDiv")
 							.style("width",data.chart.width)						
 							.style("padding-bottom",10)
 							.style("padding-top",30);
 		
-		var table = tableDiv.append("div").attr("id","tDiv").attr("align","center")
+		var table = tableDiv.append("div").attr("id","tDiv"+randomId).attr("align","center")
 		                .attr("width", data.chart.width)
 		                .append("table")
 						.style("width", data.chart.width)
@@ -2339,7 +2348,7 @@ function renderWordCloud(chartConf){
 						.style("padding-right",25)
 						.style("padding-left",m[3]);
 		
-		var paginationBar = tableDiv.append("div").attr("id","pBar")
+		var paginationBar = tableDiv.append("div").attr("id","pBar"+randomId)
 		                        .attr("align","center")
 								//.style("padding-left",w/2+m[3]/2-150)
 								.style("padding-top",10)
@@ -3260,8 +3269,11 @@ function renderChordChart(jsonData)
     			.domain(d3.range(elemSize))
 				.range(jsonData.colors);
 	
+	var randomId=  Math.round((Math.random())*10000);
+	
 	d3.select("body")
-		.append("div").attr("id","main")
+		.append("div").attr("id","main"+randomId)
+		.attr("class","d3-container")
 		// Set the real height of the entire chart (the one that user specified)
 		.style("height",height)	
 		.style("width",width)
@@ -3272,7 +3284,7 @@ function renderChordChart(jsonData)
 		.style("font-size",jsonData.chart.style.fontSize);
 	
 	// Set title
-	d3.select("#main").append("div")
+	d3.select("#main"+randomId).append("div")
 		.style("color",jsonData.title.style.color)
 		.style("text-align",jsonData.title.style.align)
 		.style("font-family",jsonData.title.style.fontFamily)
@@ -3283,7 +3295,7 @@ function renderChordChart(jsonData)
 		.text(jsonData.title.text);
 
 	// Set subtitle
-	d3.select("#main").append("div")
+	d3.select("#main"+randomId).append("div")
 		.style("color",jsonData.subtitle.style.color)
 		.style("text-align",jsonData.subtitle.style.align)
 		.style("font-family",jsonData.subtitle.style.fontFamily)
@@ -3293,11 +3305,11 @@ function renderChordChart(jsonData)
 		.style("font-size",jsonData.subtitle.style.fontSize)
 		.text(jsonData.subtitle.text);
 		
-	d3.select("#main").append("div").style("height", emptySplitDivHeight);
+	d3.select("#main"+randomId).append("div").style("height", emptySplitDivHeight);
 	
-	d3.select("#main").append("div").attr("id","chartD3");
+	d3.select("#main"+randomId).append("div").attr("id","chartD3"+randomId);
 	
-	var svg = d3.select("#chartD3").append("div")
+	var svg = d3.select("#chartD3"+randomId).append("div")
 	 			.attr("class","chart")	 			
 	 			.style("width",width)
 	 			.style("height",chartDivHeight)
@@ -3315,7 +3327,7 @@ function renderChordChart(jsonData)
 	 * @author: Ana Tomic (atomic ana.tomic@mht.net)
 	 */
 	
-	var tooltip=d3.select("#chartD3")
+	var tooltip=d3.select("#chartD3"+randomId)
 	.append("div")
 	.attr("class","tooltip")
 	.style("opacity","0");
