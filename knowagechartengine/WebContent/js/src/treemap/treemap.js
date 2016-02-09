@@ -106,12 +106,13 @@ function getCrossParamsForHeatmap(point,chartConf){
     		point:{
     			name: null, // category name
     	        value: null, // category  value
+    	        y:null,
     	        crossNavigationDocumentName:null,
     	        crossNavigationDocumentParams:null,
     		
     		series:{ // serie name and value
     			name:null,
-    			value: null	
+    			y: null	
     		},
     		group:{ // grouping category name and value
     			name:null,
@@ -122,10 +123,10 @@ function getCrossParamsForHeatmap(point,chartConf){
     	
     	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
     	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
-    	params.point.name=chartConf.additionalData.columns[0].value;
-    	params.point.value= new Date(point.x);
+    	params.point.category=chartConf.additionalData.columns[0].value;
+    	params.point.name= new Date(point.x);
     	params.point.series.name=chartConf.additionalData.serie.value;
-    	params.point.series.value=point.value;
+    	params.point.y=point.value;
     	params.point.group.name=chartConf.additionalData.columns[1].value;
     	params.point.group.value=point.label;
         
@@ -149,8 +150,8 @@ function getSelectionParammsForHeatmap(point){
 function getCrossParamsForTreemap(point,chartConf){
 	var params={
 			point:{
-				name: null, // category name
-				value: null, // category  value
+				name: null, // category value
+				category: null, // category  value
 				crossNavigationDocumentName:null,
 				crossNavigationDocumentParams:null,
 
@@ -168,9 +169,9 @@ function getCrossParamsForTreemap(point,chartConf){
 	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
 	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
 
-	params.point.value=point.name;
+	params.point.name=point.name;
 
-	params.point.series.value=point.value;
+	params.point.y=point.value;
 
 
 	return params;
@@ -345,6 +346,7 @@ function prepareChartConfForTreemap(chartConf) {
 			data: points,
 			events:{
 				click: function(event){
+					console.log(event.point);
 			        if(chartConf.chart.isCockpit==true){
 			        	if(chartConf.chart.outcomingEventsEnabled){
 			        	handleCockpitSelection(event);
@@ -722,6 +724,7 @@ function prepareChartConfForHeatmap(chartConf) {
             data:points,
             events: {
             click: function(event){
+            	console.log(event.point);
             	if(chartConf.chart.isCockpit==true){
             		if(chartConf.chart.outcomingEventsEnabled){
             		var selectParams=getSelectionParammsForHeatmap(event.point);

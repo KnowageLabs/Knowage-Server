@@ -124,6 +124,7 @@
 	}
 
 	function handleCockpitSelection(e) {
+		
 		if (!e.seriesOptions) {
 // 			debugger;
 			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
@@ -150,21 +151,21 @@
 	};
 
 	function handleCrossNavigationTo(e) {
+		console.log(e.point);
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
 
-			var categoryName = e.point.name;
-			var categoryValue = null;
+			var categoryName = null;
+			var categoryValue = e.point.name;
 
-			if (e.point.hasOwnProperty('value')) {
-				categoryValue = e.point.value;
+			if (e.point.hasOwnProperty('category')) {
+				categoryName = e.point.category;
 			}
+			
 			var serieName = e.point.series.name;
-			var serieValue = null;
-			if (e.point.series.hasOwnProperty('value')) {
-				serieValue = e.point.series.value;
-			}
+			var serieValue = e.point.y;
+		
 
 			var groupingCategoryName = null;
 			var groupingCategoryValue = null;
