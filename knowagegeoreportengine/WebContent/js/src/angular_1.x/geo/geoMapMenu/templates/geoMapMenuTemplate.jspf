@@ -50,12 +50,12 @@
 			<div flex = 20 style="margin-top: -30px;margin-left:30px;">
 		  		<md-input-container  ng-show="selectModeInteraction.selectedFilterType=='near'" class="md-block">
       		 		<label>Insert</label>
-       		 		<input required type="number" min="0" step="any" name="rate" ng-model="measureInsert"  ng-change="save(selectMisure,measureInsert)" />
+       		 		<input required type="number" min="0" step="any" name="rate" ng-model="measureInsert"  ng-change="save(selectMisure,measureInsert,'near')" />
   				</md-input-container>
 		 	</div>
 			<div flex=20 style="margin-top: -30px;margin-left:20px;">
 				<md-select class="md-block" selected="kilometers" ng-model="selectMisure" placeholder="Select a unite of misure" ng-show="selectModeInteraction.selectedFilterType=='near'"
-				 ng-change="save(selectMisure,measureInsert)">
+				 ng-change="save(selectMisure,measureInsert,'near')">
 			 		<md-option ng-value="misure.type" ng-repeat="misure in typeOfMisure">{{ misure.label }}</md-option>
 	  				</md-select></div>
 		 	

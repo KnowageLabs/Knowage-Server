@@ -65,7 +65,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var bool = false;
 		var raster;
 
-		if(geoModule_layerServices.selectedBaseLayer.getSource().A!=undefined){
+		if(geoModule_layerServices.selectedBaseLayer.get("type")!="TMS"){
 			bool=false;
 			raster = new ol.layer.Tile({
 				source : geoModule_layerServices.selectedBaseLayer.getSource()
@@ -84,10 +84,9 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		var vector=[raster];
 		var j=1;
 		for(var i=0;i<$map.getLayers().getArray().length;i++){
-			//if($map.getLayers().getArray()[i].getSource().Ab!=undefined || $map.getLayers().getArray()[i].getSource().Ab==0){
+			
 			if($map.getLayers().getArray()[i].get("type")!="TMS"){
 				vector.push($map.getLayers().getArray()[i]);
-				//j++;
 			}else{
 				removed.push($map.getLayers().getArray()[i]);
 

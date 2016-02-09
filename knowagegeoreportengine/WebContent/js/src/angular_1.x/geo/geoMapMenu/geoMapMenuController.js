@@ -77,14 +77,14 @@ function geoMapMenuControllerFunction(
 		}
 		
 	};
-	$scope.save = function(select,num){
+	$scope.save = function(select,num,type){
 		$scope.selectMisure=select;
 		$scope.measureInsert=2*num;
 		if($scope.selectMisure=="miglia"){
 			//conversion in km
 			$scope.measureInsert=$scope.measureInsert*1.852;
 		}
-		
+		geo_interaction.selectedFilterType=type;
 		geoModule_layerServices.measure=$scope.measureInsert*500;
 		geoModule_layerServices.setInteraction();
 	}

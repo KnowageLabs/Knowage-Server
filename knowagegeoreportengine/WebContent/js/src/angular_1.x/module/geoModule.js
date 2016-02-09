@@ -295,7 +295,7 @@ geoM.service(
 
 					var vectorSource = layerServ.templateLayer.getSource();
 					vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
-						var geom = feature.getGeometry().A;
+						var geom = feature.getGeometry().getExtent();
 						if (geom[0] > extent[0]) {
 							if (geom[1] > extent[1]) {
 								if (geom[2] < extent[2]) {
@@ -325,12 +325,12 @@ geoM.service(
 			}
 			this.spy = function() {
 				var element;
-				var key = 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3';
+			
 				var sFeatures = select.getFeatures();
 				var imagery = new ol.layer.Tile({
-					source : new ol.source.BingMaps({
-						key : key,
-						imagerySet : 'Aerial'
+					source : new ol.source.MapQuest({
+						layer : 'osm',
+						crossOriginKeyword: 'anonymous'
 					}),
 					opacity : 0.001
 				});
@@ -338,7 +338,7 @@ geoM.service(
 				var container = document.getElementById('map');
 				var coordinate;
 				$map.addLayer(imagery);
-				
+				imagery.setZIndex(100000);
 				var radius ;
 				var ray ;
 				
@@ -462,25 +462,19 @@ geoM.service(
 
 				if (currentInteraction != {} && currentInteraction.type != type) {
 					// remove $map
-					//$map.removeInteraction(currentInteraction.obj);
+					$map.removeInteraction(currentInteraction.obj);
 
 				}
 				// set the tyoe of interaction
 
 				currentInteraction.type = type;
 				if (type == 'near') {
-				
-					$map.removeInteraction(currentInteraction.obj);
 					layerServ.spy();
 
 				} else if (type == 'intersect') {
-
-					$map.removeInteraction(currentInteraction.obj);
 					layerServ.intersectFeature();
 
 				} else if (type == 'inside') {
-
-					$map.removeInteraction(currentInteraction.obj);
 					layerServ.insideFeature();
 				}
 			}
