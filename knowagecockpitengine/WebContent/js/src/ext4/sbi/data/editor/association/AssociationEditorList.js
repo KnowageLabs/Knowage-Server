@@ -144,15 +144,15 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
             	, editor: {
                         allowBlank: false
                   }
-            	, flex: 1
+            	, flex: 0.5
             	}, {
         		  header: LN('sbi.cockpit.association.editor.wizard.list.columnAssociation')
-            	, width: 700
+            	, flex: 9
             	, sortable: true
             	, dataIndex: 'ass'
             	},{
                     xtype: 'actioncolumn',
-                    width: 50,
+                    flex: 0.5,
                     items: [{
                         iconCls:'icon-delete',
                         tooltip: LN('sbi.cockpit.association.editor.wizard.list.delete.tooltip'),

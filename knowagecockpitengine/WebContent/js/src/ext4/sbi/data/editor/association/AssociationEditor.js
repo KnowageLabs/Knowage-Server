@@ -56,6 +56,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 						region: 'south',
 						autoScroll: true,
 						split: true,
+						layout: 'fit',
 						items: [this.assContainerPanel]
 						}]
 	        });
