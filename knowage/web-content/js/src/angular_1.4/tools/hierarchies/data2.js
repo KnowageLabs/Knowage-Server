@@ -424,3 +424,82 @@ var dataRoot={
 		         ]
 		       };
 
+var listHierarchies = {
+		  "root": [
+		           {
+		             "DIMENSION": "ACCOUNT",
+		             "HIER_CD_T": "test2",
+		             "HIER_NM_T": "test2",
+		             "NODE_CD_T": "PAS_PN_1234_UN_01",
+		             "NODE_NM_T": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_T": 4,
+		             "PATH_CD_T": "/PAS_PN_CR/PAS_PN_1234_UN/PAS_PN_1234_UN_01/D3100100",
+		             "PATH_NM_T": "/Capitale e Riserve di Terzi/Utili (perdite) Portati a Nuovo/Utile indiviso esercizi precedenti/UTILE INDIVISO ESERCIZI PRECEDENTI",
+		             "HIER_CD_M": "BPC_PATR",
+		             "HIER_NM_M": "BPC_PATR",
+		             "NODE_CD_M": "PAS_PN_1234_UN_01",
+		             "NODE_NM_M": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_M": 5
+		           },
+		           {
+		             "DIMENSION": "ACCOUNT",
+		             "HIER_CD_T": "test2",
+		             "HIER_NM_T": "test2",
+		             "NODE_CD_T": "PAS_PN_1234_UN_01",
+		             "NODE_NM_T": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_T": 4,
+		             "PATH_CD_T": "/PAS_PN_CR/PAS_PN_1234_UN/PAS_PN_1234_UN_01/CALC_PA80R",
+		             "PATH_NM_T": "/Capitale e Riserve di Terzi/Utili (perdite) Portati a Nuovo/Utile indiviso esercizi precedenti/Utili a nuovo riportati",
+		             "HIER_CD_M": "BPC_PATR",
+		             "HIER_NM_M": "BPC_PATR",
+		             "NODE_CD_M": "PAS_PN_1234_UN_01",
+		             "NODE_NM_M": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_M": 5
+		           },
+		           {
+		             "DIMENSION": "ACCOUNT",
+		             "HIER_CD_T": "test2",
+		             "HIER_NM_T": "test2",
+		             "NODE_CD_T": "PAS_PN_1234_UN_01",
+		             "NODE_NM_T": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_T": 4,
+		             "PATH_CD_T": "/PAS_PN_CR/PAS_PN_1234_UN/PAS_PN_1234_UN_01/CALC_PA78G",
+		             "PATH_NM_T": "/Capitale e Riserve di Terzi/Utili (perdite) Portati a Nuovo/Utile indiviso esercizi precedenti/riserva di consolidamento",
+		             "HIER_CD_M": "BPC_PATR",
+		             "HIER_NM_M": "BPC_PATR",
+		             "NODE_CD_M": "PAS_PN_1234_UN_01",
+		             "NODE_NM_M": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_M": 5
+		           },
+		           {
+		             "DIMENSION": "ACCOUNT",
+		             "HIER_CD_T": "test2",
+		             "HIER_NM_T": "test2",
+		             "NODE_CD_T": "PAS_PN_1234_UN_01",
+		             "NODE_NM_T": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_T": 4,
+		             "PATH_CD_T": "/PAS_PN_CR/PAS_PN_1234_UN/PAS_PN_1234_UN_01/D3100150",
+		             "PATH_NM_T": "/Capitale e Riserve di Terzi/Utili (perdite) Portati a Nuovo/Utile indiviso esercizi precedenti/Azioni proprie in portafoglio netto V.N.",
+		             "HIER_CD_M": "BPC_PATR",
+		             "HIER_NM_M": "BPC_PATR",
+		             "NODE_CD_M": "PAS_PN_1234_UN_01",
+		             "NODE_NM_M": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_M": 5
+		           },
+		           {
+		             "DIMENSION": "ACCOUNT",
+		             "HIER_CD_T": "test2",
+		             "HIER_NM_T": "test2",
+		             "NODE_CD_T": "PAS_PN_1234_UN_01",
+		             "NODE_NM_T": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_T": 4,
+		             "PATH_CD_T": "/PAS_PN_CR/PAS_PN_1234_UN/PAS_PN_1234_UN_01/D3100200",
+		             "PATH_NM_T": "/Capitale e Riserve di Terzi/Utili (perdite) Portati a Nuovo/Utile indiviso esercizi precedenti/PERDITE ESERCIZI PRECEDENTI",
+		             "HIER_CD_M": "BPC_PATR",
+		             "HIER_NM_M": "BPC_PATR",
+		             "NODE_CD_M": "PAS_PN_1234_UN_01",
+		             "NODE_NM_M": "Utile indiviso esercizi precedenti",
+		             "NODE_LEV_M": 5
+		           }
+		         ]
+		       };

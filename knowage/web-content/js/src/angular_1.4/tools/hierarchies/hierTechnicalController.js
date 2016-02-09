@@ -86,7 +86,12 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		//var source = e.source.cloneModel ? e.source.cloneModel : e.source.nodeScope.$modelValue;
 		var source = e.source.nodeScope.$modelValue;
 		$scope.removeFakeAndCorupt(dest.children);
-		if (isInsideTree && source.$parent.children.length <= 1){
+		if (!isInsideTree){
+			$scope.hierSourceCode = $scope.hierSrc.HIER_CD;
+			$scope.hierSourceName = $scope.hierSrc.HIER_NM;
+			$scope.hierSourceType = $scope.hierSrc.HIER_TP;
+		}
+		else if (isInsideTree && source.$parent.children.length <= 1){
 			//ui-tree work in a copy object. Need to find the real parent in the tree
 			var realParent = $scope.findRealParent(source.$parent);
 			if (realParent){
@@ -229,6 +234,10 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		var date = choose == 'src' ? $scope.dateSrc : $scope.dateTarget;
 		var hier = choose == 'src' ?  $scope.hierSrc : $scope.hierTarget;
 		if (type && dim && hier && date){
+			if (choose == 'src' && $scope.treeTargetDirty == true){
+				$scope.showConfirm($scope.translate.load("sbi.generic.info"),'Are you sure to descard the hierarchy modification?');
+				//TODO active this
+			}
 			var dateFormatted =$scope.formatDate(date);
 			var keyMap = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM + '_' + dateFormatted;
 			var config = {};
@@ -247,6 +256,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				keyMap = keyMap + '_' + seeElement;
 			}
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
+		
 			//in source tree force the download, because the D&D do a messy with the source tree. Is better to restart from the original
 			if (hierMap[keyMap] === undefined || choose == "src"){ 
 				$scope.toogleLoading(choose,true);
@@ -260,6 +270,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 								choose =='src' ? $scope.hierTreeSrc = data : $scope.hierTreeTarget = data;
 								choose =='src' ? $scope.hierTreeCacheSrc[keyMap] = angular.copy(data) : $scope.hierTreeCacheTarget[keyMap] = angular.copy(data);
 								$scope.targetIsNew = choose =='src' ? $scope.targetIsNew : false;
+								$scope.treeTargetDirty = choose == "src" ? $scope.treeTargetDirty : false;
 							}else{
 								var params = 'date = ' + date + ' dimension = ' + dim.DIMENSION_NM + ' type = ' +  type + ' hierachies = ' + hier.HIER_NM;
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
@@ -450,7 +461,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	
 	$scope.deleteHier =  function(item,parent,event){
 		//rest service for deleting
-		var response=$scope.showConfirm(item);
+		var response=$scope.showConfirm('Delete ' + item.name.toUpperCase(),'Would you like to delete the item?');
 		response.then(
 			function() {
 				if (parent !== undefined && parent !== null){
@@ -620,11 +631,11 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		}
 	}
 	
-	$scope.showConfirm = function(hier) {
+	$scope.showConfirm = function(title,message) {
 	    var confirm = $mdDialog
 			.confirm()
-			.title('Delete ' + hier.name.toUpperCase())
-			.content('Would you like to delete the item?')
+			.title(title)
+			.content(message)
 			.ariaLabel('Lucky day')
 			.ok('Yes')
 			.cancel('No');
@@ -721,6 +732,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			root.dateValidity = $scope.formatDate($scope.dateTarget);
 			root.isInsert = $scope.targetIsNew;
 			root.doBackup = $scope.doBackup !== undefined ? $scope.doBackup : false;
+			root.hierSourceCode  = $scope.hierSourceCode;
+			root.hierSourceName = $scope.hierSourceName;
+			root.hierSourceType = $scope.hierSourceType;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
 			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
 			root.root.$parent = undefined;
