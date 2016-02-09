@@ -333,7 +333,26 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			metadata[i]={};
 			metadata[i].column = fields[i].field;
 			metadata[i].pname = '';
+			metadata[i].alias = fields[i].alias;
+			metadata[i].entity = fields[i].entity;
+			metadata[i].field = fields[i].field;
+			metadata[i].group = fields[i].group;
+			metadata[i].funct = fields[i].funct;
+			metadata[i].id = fields[i].id;
+			metadata[i].type = fields[i].type;			
+			metadata[i].include = fields[i].include;			
+			metadata[i].visible = fields[i].visible;	
 			
+			// If it has aggregation function and is not grouped by is assumed to be a measure
+			//alert (metadata[i].group + " ---- "+ metadata[i].funct );
+			if(metadata[i].group != true && metadata[i].funct != '' && metadata[i].funct != 'NONE'){
+				metadata[i].pname = 'fieldType';
+				metadata[i].pvalue = 'MEASURE';
+			}
+			else{
+				metadata[i].pname = 'fieldType';
+				metadata[i].pvalue = 'ATTRIBUTE';
+			}
 		}
 
 		this.metadataPanel.loadItems({columns: metadata});

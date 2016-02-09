@@ -25,7 +25,7 @@ Sbi.qbe.ManageDatasetFieldMetadata = function(config) {
 	var selectElement = document.getElementById("fieldTypeSelect");
 	if(!selectElement){
 		var select = '<select name="fieldTypeSelect" id="fieldTypeSelect" style="display: none;">'+
-    	'<option value="ATTRIBUTE" selected="selected">ATTRIBUTE</option>'+
+    	'<option value="ATTRIBUTE">ATTRIBUTE</option>'+
     	'<option value="MEASURE">MEASURE</option>'+
     	'</select>';
 		var bodyElement = document.getElementsByTagName('body');
