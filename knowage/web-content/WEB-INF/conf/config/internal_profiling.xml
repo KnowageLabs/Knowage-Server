@@ -2,7 +2,7 @@
 <INTERNAL_PROFILING_INITIALIZER>
 	<DEFAULT_USERS>
 		<USER userId="biadmin" password="biadmin" fullName="Knowage Administrator"
-			organization="DEFAULT_TENANT">
+			organization="DEFAULT_TENANT" isSuperadmin="true">
 			<ATTRIBUTE name="email" value="admin@eng.it" />
 			<ATTRIBUTE name="name" value="Knowage Administrator" />
 			<ROLE name="admin" />
