@@ -48,8 +48,7 @@ function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 		console.log(text)
 		$mdToast.show($mdToast.simple().content(text).position('top').action(
 		'OK').highlightAction(false).hideDelay(timer));
-	}
-
+	} 
 }
 
 
@@ -63,6 +62,40 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 //	$scope.fileImport= {};
 //	$scope.associationsFileImport={};
 //	$scope.associations="noAssociations";
+	
+	$scope.errorImport=function(text){
+		
+		
+		var confirm = $mdDialog.confirm()
+		.title('')
+		.content(text)
+		.ariaLabel('error import') 
+		.ok('OK') 
+		$mdDialog.show(confirm).then(function() {
+			$scope.stepControl.resetBreadCrumb();
+			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+		} );
+		
+		
+		
+		
+		
+		
+		
+//		
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.position('top');
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//				$scope.stepControl.resetBreadCrumb();
+//				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+//			}
+//		}); 
+	}
+	
 
 }
 function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast) {

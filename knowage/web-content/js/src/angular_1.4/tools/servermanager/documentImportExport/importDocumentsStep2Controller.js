@@ -33,9 +33,9 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 		.success(function(data, status, headers, config) {
 			console.log("data--->",data)
 			if(data.hasOwnProperty("errors")){
-				$scope.showToast(data.errors[0].message,4000);
+				$scope.errorImport(data.errors[0].message);	
 			}else if(data.STATUS=="NON OK"){
-				$scope.showToast(data.ERROR,4000);
+				$scope.errorImport(data.ERROR);		
 			}
 			else if(data.STATUS=="OK"){
 				importExportDocumentModule_importConf.datasources.currentDatasources=data.currentDatasources;
@@ -45,7 +45,7 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 			}
 		})
 		.error(function(data, status, headers, config) {
-			$scope.showToast(data,4000);
+			$scope.errorImport(data);		
 		});
 	}
 

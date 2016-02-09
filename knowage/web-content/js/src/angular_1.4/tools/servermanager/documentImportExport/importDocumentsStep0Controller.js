@@ -24,7 +24,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 						importExportDocumentModule_importConf.roles.associatedRoles=data.associatedRoles;
 //						importExportDocumentModule_importConf.roles.exportedRoles.push({"id":123,"name":"/spagobi/lucY","description":"/spagobi/lucy","roleTypeCD":"ADMIN","code":"","roleTypeID":32,"organization":null,"defaultRole":false,"roleMetaModelCategories":null,"ableToSeeNotes":false,"ableToSaveRememberMe":false,"ableToEditWorksheet":false,"ableToSeeMetadata":false,"ableToSeeSubobjects":false,"ableToSeeViewpoints":false,"ableToBuildQbeQuery":false,"ableToSeeSnapshots":false,"ableToSaveMetadata":false,"ableToSendMail":false,"ableToSaveSubobjects":false,"ableToSeeMyData":false,"ableToEditAllKpiComm":false,"ableToCreateSocialAnalysis":false,"ableToEditMyKpiComm":false,"ableToSeeDocumentBrowser":false,"ableToSeeSubscriptions":false,"ableToSeeToDoList":false,"ableToDeleteKpiComm":false,"ableToViewSocialAnalysis":false,"ableToSeeFavourites":false,"ableToDoMassiveExport":false,"ableToCreateDocuments":false,"ableToHierarchiesManagement":false,"ableToManageUsers":false,"ableToEnableDatasetPersistence":false,"ableToManageGlossaryBusiness":false,"ableToManageGlossaryTechnical":false,"ableToSaveIntoPersonalFolder":false,"ableToEnableFederatedDataset":false});
 						
-						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')})
+						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 					} 
 				})
 				.error(function(data, status, headers, config) {
