@@ -656,7 +656,8 @@ geoM.service(
 									options : JSON.parse(layerConf.layerOptions)
 								})),
 					crossOriginKeyword: 'anonymous',
-					name: name
+					name: name,
+					type: 'WMS'
 					});
 					break;
 
@@ -664,14 +665,16 @@ geoM.service(
 					var vectorSource = new ol.source.Vector({
 						url : layerConf.layerURL,
 						format : new ol.format.GeoJSON(),
-						name: name
+						name: name,
+						type: 'WFS'
 						// options : JSON.parse(layerConf.layerOptions)
 					});
 
 					tmpLayer = new ol.layer.Vector({
 						source : vectorSource,
 						style: layerServ.applyFilter,
-						name: name
+						name: name,
+						type: 'WFS'
 					});
 					break;
 
@@ -692,7 +695,8 @@ geoM.service(
 
 						}),
 						crossOriginKeyword: 'anonymous',
-						name: name
+						name: name,
+						type: 'TMS'
 					});
 					break;
 
@@ -702,14 +706,16 @@ geoM.service(
 							layer : 'osm',
 							crossOriginKeyword: 'anonymous'
 						}),
-						name: name
+						name: name,
+						type: 'OSM'
 					});
 					break;
 
 				case 'File':
 					
 					tmpLayer= this.getLayerFromFile(layerConf);
-					tmpLayer.name= name
+					tmpLayer.name= name,
+					tmpLayer["type"]= 'File'
 					break;
 					
 				default:
