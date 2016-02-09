@@ -24,6 +24,7 @@ package it.eng.spagobi.tools.dataset;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -191,7 +192,8 @@ public class AssociativeLogicManager {
 		String[] associationNames = associationNamesString.split(",");
 		List<String> columnNames = new ArrayList<String>();
 		for (String associationName : associationNames) {
-			columnNames.add(datasetToAssociations.get(datasetName).get(associationName));
+			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
+			columnNames.add(columnName);
 		}
 		return StringUtils.join(columnNames.iterator(), ",");
 	}
