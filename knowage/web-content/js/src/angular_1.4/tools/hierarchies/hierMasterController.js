@@ -96,68 +96,84 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		beforeDrop : function(e) {
 			var dest = e.dest.nodesScope.$nodeScope;
 			if (dest && dest.$modelValue && dest.$modelValue.children !== undefined) {
-				var parameters="dimension="+$scope.dim.DIMENSION_NM+"&hierSourceCode="+$scope.hierMaster.HIER_CD+"&hierSourceName="+$scope.hierMaster.HIER_NM+"&nodeSourceCode="+dest.$modelValue[dest.$modelValue.aliasId];
-				var getListHierarchiesPromise = $scope.restService.get("hierarchies","getRelationsMasterTechnical",parameters);
-				getListHierarchiesPromise   
-					.success(function(data){
-						if (data.errors === undefined){
-							//TODO remove fake element listHierarchies.root 
-							$scope.showListHierarchies(data.root.length == 0 ? listHierarchies.root : data.root)
-								.then(
-									function(list) {
-										if (!angular.equals(e.source.cloneModel,e.source.nodeScope.row)){
-											e.source.cloneModel = angular.copy(e.source.nodeScope.row);
-										}
-										var source = e.source.cloneModel;
-										var dest = e.dest.nodesScope.$nodeScope.$modelValue;
-										var dimName = $scope.dim.DIMENSION_NM;
-										var keyName = dimName + '_NM';
-										var keyId = dimName + '_CD';
-										source.name = source[keyName];
-										source.id = source[keyId];
-										source.LEAF_PARENT_NM = dest[dest.aliasName];
-										source.LEAF_PARENT_CD = dest[dest.aliasId];
-										source.LEAF_ORIG_PARENT_CD = dest[dest.aliasId];
-										source.LEVEL = dest.LEVEL !== undefined ? dest.LEVEL + 1 : 1;
-										var tmp = angular.copy($scope.createEmptyNode('leaf'));
-										tmp.$parent = dest;
-										var keys = Object.keys(tmp);
-										for (var i = 0; i < keys.length; i++) {
-											if (source[keys[i]] == undefined) {
-												source[keys[i]] = tmp[keys[i]];
-											}
-										}
-										//force leaf to have some metadata keys
-										var matchingFields = $scope.metadataDimMap[dimName].MATCH_LEAF_FIELDS;
-										for (var k in matchingFields){
-											if (source[k]){
-												source[matchingFields[k]] = source[k];
-											}
-										}
-										$scope.removeFakeAndCorupt(dest.children);
-										dest.children.splice(0, 0, source);
-										$scope.treeDirty = true;
-										e.source.cloneModel = source;
-										for (var i = 0 ; i < list.length; i++){
-											$scope.relationsMT.push(angular.copy(list[i]));
-										}
-										return false;
-									}, function() {
-										return false;
-									});
-						}else{
-							$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
-						}
-						
-					})
-					.error(function(data, status){
-						var message = $scope.translate.load("sbi.hierarchies.error.drag.listhierarchies");
-						$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
-					});
+				if ($scope.hierType.toUpperCase() == "MASTER"){
+					var parameters="dimension="+$scope.dim.DIMENSION_NM+"&hierSourceCode="+$scope.hierMaster.HIER_CD+"&hierSourceName="+$scope.hierMaster.HIER_NM+"&nodeSourceCode="+dest.$modelValue[dest.$modelValue.aliasId];
+					var getListHierarchiesPromise = $scope.restService.get("hierarchies","getRelationsMasterTechnical",parameters);
+					getListHierarchiesPromise   
+						.success(function(data){
+							if (data.errors === undefined){
+								//TODO remove fake element listHierarchies.root 
+								$scope.showListHierarchies(data.root.length == 0 ? listHierarchies.root : data.root)
+									.then(function(list) {
+											$scope.copyNodeTableToTree(e,list);
+										}, function() {
+										});
+							}else{
+								$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
+							}
+						})
+						.error(function(data, status){
+							var message = $scope.translate.load("sbi.hierarchies.error.drag.listhierarchies");
+							$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
+						});
+					
+				}else{
+					$scope.copyNodeTableToTree(e);
+				}
 			}
 			return false;
 		}
 	};
+	
+	$scope.copyNodeTableToTree = function(e,list){
+		if (!angular.equals(e.source.cloneModel,e.source.nodeScope.row)){
+			e.source.cloneModel = angular.copy(e.source.nodeScope.row);
+		}
+		var source = e.source.cloneModel;
+		var dest = e.dest.nodesScope.$nodeScope.$modelValue;
+		var dimName = $scope.dim.DIMENSION_NM;
+		var keyName = dimName + '_NM';
+		var keyId = dimName + '_CD';
+		source.name = source[keyName];
+		source.id = source[keyId];
+		source.LEAF_PARENT_NM = dest[dest.aliasName];
+		source.LEAF_PARENT_CD = dest[dest.aliasId];
+		source.LEAF_ORIG_PARENT_CD = dest[dest.aliasId];
+		source.LEVEL = dest.LEVEL !== undefined ? dest.LEVEL + 1 : 1;
+		var tmp = angular.copy($scope.createEmptyNode('leaf'));
+		tmp.$parent = dest;
+		var keys = Object.keys(tmp);
+		for (var i = 0; i < keys.length; i++) {
+			if (source[keys[i]] == undefined) {
+				source[keys[i]] = tmp[keys[i]];
+			}
+		}
+		//force leaf to have some metadata keys
+		var matchingFields = $scope.metadataDimMap[dimName].MATCH_LEAF_FIELDS;
+		for (var k in matchingFields){
+			if (source[k]){
+				source[matchingFields[k]] = source[k];
+			}
+		}
+		$scope.removeFakeAndCorupt(dest.children);
+		dest.children.splice(0, 0, source);
+		$scope.treeDirty = true;
+		e.source.cloneModel = source;
+		if (list){
+			var newElement = {};
+			newElement["leafData"] = {};
+			newElement.leafData[keyName] = source[keyName];
+			newElement.leafData[keyId] = source[keyId];
+			newElement.leafData[dimName+'_ID'] = source[dimName+'_ID'];
+			newElement.leafData['BEGIN_DT'] = source['BEGIN_DT'];
+			newElement.leafData['END_DT'] = source['END_DT'];
+			newElement.relationsArray = [];
+			for (var i = 0 ; i < list.length; i++){
+				newElement.relationsArray.push(angular.copy(list[i]));
+			}
+			$scope.relationsMT.push(newElement);
+		}
+	}
 
 	$scope.updateLevelRecursive = function(node, level){
 		node.LEVEL = level;
