@@ -3,7 +3,7 @@
  */
 var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
 
-app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout", dataSourceFunction]);
+app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout","sbiModule_messaging", dataSourceFunction]);
 
 var emptyDataSource = {
 	label : "",
@@ -21,7 +21,7 @@ var emptyDataSource = {
 	writeDefault: false	
 };
 
-function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout){
+function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging){
 	
 	//DECLARING VARIABLES
 	$scope.showMe=false;
@@ -51,53 +51,24 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.getDataSources = function(){
 		
 		//GET DATA SOURCES
-		sbiModule_restServices.get("2.0/datasources", "")
-		
-		.success(
-				
-				function(data, status, headers, config) {
-					
-					if (data.hasOwnProperty("errors")) {
-		
-						console.log("[GET]: DATA HAS ERRORS PROPERTY!");
-						
-					} else {
-						
-						console.log("[GET]: SUCCESS!");
-													
-							$scope.dataSourceList = data;
-						
-					}
-				})
-				
-		.error(
-				
-				function(data, status, headers, config) {
-					console.log("[GET]: FAIL!"+status);
-				});
+		sbiModule_restServices.promiseGet("2.0/datasources", "")
+		.then(function(response) {
+			$scope.dataSourceList = response.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});		
 		
 		//GET DIALECT TYPES
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB")
 		
-		.success(
-				
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						
-						console.log("[GET/DIALECT]: DATA HAS ERRORS PROPERTY!");
-					
-					} else {
-						console.log("[GET/DIALECT]: SUCCESS!");
-						$scope.dialects = data;
-					}
-				})
-				
-		.error(
-				
-				function(data, status, headers, config) {
-					console.log("[GET/DIALECT]: FAIL!"+status);
-
-		});
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB")
+		.then(function(response) {
+			$scope.dialects = response.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
+		
 	};
 	
 	//REST
@@ -111,61 +82,35 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			var errorU = "Error updating the datasource!"
 			
 			//MODIFY DATA SOURCE
-			sbiModule_restServices.put('2.0/datasources','',angular.toJson($scope.selectedDataSource))
-			
-			.success(
-			
-					function(data, status, header, config) {
-						if(data.hasOwnProperty("errors")) {
-							console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
-							$scope.showActionTestKO(errorU);
-						} else {
-							console.log("[PUT]: SUCCESS!");
-							$scope.dataSourceList = [];
-							$scope.getDataSources();
-							$scope.closeForm();
-							$scope.showActionOK();
-						}
-					}
+				
+				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
+				.then(function(response) {
+					console.log("[PUT]: SUCCESS!");
+					$scope.dataSourceList = [];
+					$scope.getDataSources();
+					$scope.closeForm();
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
-			).error(
-					
-					function(data, status, header, config) {
-						console.log("[PUT]: FAIL!"+status);
-						$scope.showActionTestKO(errorU);
-					}
-			
-			);
+				});		
 		} else {
 			
 			var errorS = "Error saving the datasource!";
 			
 			//CREATE NEW DATA SOURCE
-			sbiModule_restServices.post('2.0/datasources','', angular.toJson($scope.selectedDataSource))
+			sbiModule_restServices.promiseGet('2.0/datasources','', angular.toJson($scope.selectedDataSource))
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				$scope.dataSourceList = [];
+				$scope.getDataSources();
+				$scope.closeForm();
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
 			
-			.success(
-					
-					function(data, status, headers, config) {
-						if(data.hasOwnProperty("errors")) {
-							console.log("[POST]: DATA HAS ERRORS PROPERTY!");
-							console.log(data)
-							$scope.showActionTestKO(errorS);
-						} else {
-							console.log("[POST]: SUCCESS!");
-							$scope.dataSourceList = [];
-							$scope.getDataSources();
-							$scope.closeForm();
-							$scope.showActionOK();
-						}
-					})	
-					
-			.error(
-					
-					function(data, status, headers, config) {
-						console.log("[POST]: FAIL!"+status);
-						$scope.showActionTestKO(errorS);
-					}					
-			);
 		}		
 	};
 	
@@ -195,25 +140,19 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else {
 			
 			//DELETE  ONE DATA SOURCE
-			sbiModule_restServices.delete("2.0/datasources", $scope.selectedDataSource.dsId).success(
-
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
-						} else {
-							console.log("[DELETE]: SUCCESS!");
-							$scope.dataSourceList = [];
-							$scope.getDataSources();
-							$scope.closeForm();
-							$scope.showActionDelete();
-						}
-					}).error(function(data, status, headers, config) {
-						console.log("[DELETE]: FAIL!"+status);
-					});
 			
+			sbiModule_restServices.promiseDelete("2.0/datasources", $scope.selectedDataSource.dsId)
+			.then(function(response) {
+				console.log("[DELETE]: SUCCESS!");
+				$scope.dataSourceList = [];
+				$scope.getDataSources();
+				$scope.closeForm();
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
 		}
-		
-		
 	};
 	
 	//SHOW RIGHT-COLUMN
@@ -402,21 +341,17 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	
 	$scope.deleteItem = function (item) {
 		console.log(item)
-		sbiModule_restServices.delete("2.0/datasources", item.dsId).success(
-
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
-					} else {
-						console.log("[DELETE]: SUCCESS!");
-						$scope.dataSourceList = [];
-						$scope.closeForm();
-						$scope.showActionDelete();
-						$scope.getDataSources();
-					}
-				}).error(function(data, status, headers, config) {
-					console.log("[DELETE]: FAIL!"+status);
-				});
+		sbiModule_restServices.promiseDelete("2.0/datasources", item.dsId)
+		.then(function(response) {
+			console.log("[DELETE]: SUCCESS!");
+			$scope.dataSourceList = [];
+			$scope.getDataSources();
+			$scope.closeForm();
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
 	}
 	
 	//REST
@@ -435,38 +370,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		
 		console.log(angular.toJson(testJSON));
 		
-		sbiModule_restServices.post('2.0/datasources/test','',testJSON)
-	
-		.success(
-				
-				function(data, status, headers, config) {
-					if(data.hasOwnProperty("errors")) {
-						
-						var error = "Error testing the datasource!";
-						
-						if(data.errors[0].message){
-							$scope.showActionTestKO(data.errors[0].message);
-						} else {
-							$scope.showActionTestKO(error);
-						}
-						
-						
-					} else {
-						console.log("[TEST]: SUCCESS!");
-						$scope.showActionTestOK();
-					}
-				})	
-				
-		.error(
-				
-				function(data, status, headers, config) {
-					
-					console.log("[TEST]: FAIL!"+status);
-					var error = "Error testing the datasource!"
-					$scope.showActionTestKO(error);
-				}					
-		);
-		
+		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
+		.then(function(response) {
+			sbiModule_messaging.showInfoMessage("Test is ok", 'Information!');
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});
 	}
 	
 	//Get user
@@ -479,7 +389,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//SPEED MENU TRASH ITEM
 	$scope.dsSpeedMenu= [
 	                     {
-	                    	label:'delete',
+	                    	label:sbiModule_translate.load("sbi.generic.delete"),
 	                    	icon:'fa fa-trash-o fa-lg',
 	                    	color:'#153E7E',
 	                    	action:function(item,event){
