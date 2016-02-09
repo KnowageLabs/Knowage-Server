@@ -9,7 +9,6 @@
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowagenetworkengine" />
 		<ENGINE label="knowagetalendengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageFake">
