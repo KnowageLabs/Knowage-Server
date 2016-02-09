@@ -113,8 +113,7 @@
 						<md-button  type="submit"
 							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 							style=" margin-top: 2px;"
-							ng-disabled="!attributeForm.$valid"
-							>
+							ng-disabled="!attributeForm.$valid">
 						{{translate.load("sbi.browser.defaultRole.save")}}
 						</md-button>
 					</div>

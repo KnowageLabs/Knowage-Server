@@ -110,7 +110,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 	 $scope.bmSpeedMenu= [
 		                      {
-		                    	  label:'delete',
+		                    	  label:sbiModule_translate.load("sbi.generic.delete"),
 		                    	  icon:'fa fa-trash-o fa-lg',
 		                    	  color:'#153E7E',
 		                    	  action:function(item,event){
@@ -121,22 +121,22 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 
 	 $scope.bmSpeedMenu2= [
 	                       {
-		                       label:'download',
+	                    	   label:sbiModule_translate.load("sbi.generic.download"),
 		                       icon:'fa fa-download',
-		                       color:'#3CB371',
+		                       color:'#153E7E',
 		                       action:function(item,event){
 		                    	   $scope.downloadFile(item,event);
 		                       }
 	                       },
 	                       
 	                       {
-		                    	  label:'delete',
-		                    	  icon:'fa fa-trash',
-		                    	  color:'#DC143C',
-		                    	  action:function(item,event){
+	                    	   label:sbiModule_translate.load("sbi.generic.delete"),
+	                    	   icon:'fa fa-trash-o fa-lg',
+	                    	   color:'#153E7E',
+	                    	   action:function(item,event){
 		                    		  $scope.deleteItemVersion(item,event);
-		                    	  }
-		                      	}
+		                       }
+		                   }
 	                       
 	                       ];
 	 
@@ -184,9 +184,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
 			.then(function(response) {
 				$scope.listOfCategories = response.data;
-				for(var i=0; i<response.data.length;i++){
-					console.log($scope.listOfCategories[i].VALUE_ID);
-				}
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				

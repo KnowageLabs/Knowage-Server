@@ -42,12 +42,14 @@
 <!-- /////////////// LEFT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
 			<div class="md-toolbar-tools">
 		
-				<div>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue")}}</div>
+				<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue")}}</div>
 <!-- /////////////// ADD(PLUS) BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
 				<md-button 	class="md-fab md-ExtraMini addButton"
-							style="position:absolute; right:25px; top:0px;"
-							ng-click="createMondrianSchema()"> 
-						
+							style="position:absolute; right:11px; top:0px;"
+							ng-click="createMondrianSchema()"
+							aria-label="create"
+							> 
+							
 						<md-icon 	md-font-icon="fa fa-plus" 
 									style=" margin-top: 6px ;
 									color: white;">
@@ -66,7 +68,7 @@
  		
 				<md-content layout-padding
 					style="background-color: rgb(236, 236, 236);"
-					class="md-padding ToolbarBox miniToolbar noBorder"> 
+					class="ToolbarBox miniToolbar noBorder leftListbox"> 
 					<div layout-align="space-around" layout="row" style="height:100%" ng-show="catalogLoadingShow" >
 					
 						<md-progress-circular 
@@ -106,13 +108,12 @@
 			
 			<div ng-show="showMe"  >
 			
-			<form 	layout-fill class="detailBody md-whiteframe-z1"
+			<form 	layout-fill class="detailBody md-whiteframe-z1" >
+			
 					
-					class="detailBody md-whiteframe-z1" 
-					novalidate>
 					
 <!-- /////////////// RIGHT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->				
-				<md-toolbar class= "md-blue minihead" >
+				<md-toolbar class= "header" >
 				
 <!-- /////////////// RIGHT SIDE TOOLBAR TOOLS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->					
 					<div class="md-toolbar-tools h100">
@@ -134,15 +135,14 @@
 
 <!-- /////////////// SAVE BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
 
-						
 						<md-button  type="submit"
-										aria-label="save layer" class="md-raised md-ExtraMini "
-										style=" margin-top: 2px;" 
-										ng-click="saveMondrianCatalogue()"
-										ng-disabled = "selectedMondrianSchema.modelLocked">
-										{{translate.load("sbi.browser.defaultRole.save");}} 
+							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
+							style=" margin-top: 2px;"
+							ng-click="saveMondrianCatalogue()"
+							ng-disabled = "selectedMondrianSchema.modelLocked">
+						{{translate.load("sbi.browser.defaultRole.save")}}
 						</md-button>
-					
+		
 					</div>
 				</div>
 				</md-toolbar>
@@ -216,8 +216,8 @@
       									ng-hide="selectedMondrianSchema.modelLocked">
       									
       								<md-button 	class="md-fab md-Mini "style="
-											background-color: #2196F3;"
-      									
+											background-color: #3b678c;"
+      										aria-label="unlock"
 										> 
 						
 										<md-icon 	md-font-icon="fa fa-unlock fa-lg" 
@@ -233,7 +233,8 @@
       							
       							<div  style="line-height: 40px;margin: 2px;" ng-show="selectedMondrianSchema.modelLocked">
       								<md-button 	class="md-fab md-Mini 
-      								"style="background-color: #2196F3;"
+      								"style="background-color: #3b678c;"
+      								aria-label="lock"
       									
 										ng-click="unlockModel()"> 
 						
@@ -301,7 +302,7 @@
 										
 						</angular-table>
 			
-				</md-radio-button>
+				</md-radio-group>
 			
 				
 				</md-content>	

@@ -49,7 +49,7 @@
 			<div class="leftBox">
 				<md-toolbar class="header">
 					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
+						<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
 						
 						<!--<md-button 
     						ng-disabled=false
@@ -66,7 +66,8 @@
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
-							ng-click="createBusinessModel()"> 
+							ng-click="createBusinessModel()"
+							aria-label="create">
 							<md-icon
 								md-font-icon="fa fa-plus" 
 								style=" margin-top: 6px ; color: white;">
@@ -86,7 +87,7 @@
 
 					<angular-table 
 						layout-fill
-						id="arsenije"
+						id="businessModelList_id"
 						ng-show="!bmLoadingShow"
 						ng-model="businessModelList"
 						columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"}]' 
@@ -279,7 +280,9 @@
      					</div> -->
      					 
      					<div style="height:55%; padding-top:20px;">     						
-     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"><!-- overflow:hidden; -->
+     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"
+     						class="ToolbarBox miniToolbar noBorder leftListbox"  >
+			
      							<md-toolbar class="header md-toolbar-tools">
      								<!-- <md-button 
     									ng-disabled=false
@@ -307,13 +310,13 @@
      								ng-show="!versionLoadingShow"
 	     							style="background-color:red" 
 									layout-fill
-									id="arsenije1"
+									id="bmVersions_id"
 									ng-model="bmVersions"
 									columns='[
-										{"label":"Creator","name":"creationUser"},
-										{"label":"Creation Date","name":"creationDate"},
-										{"label":"File name","name":"fileName"},
-										{"label":"Active","name":"ACTION"}
+										{"label":"ACTIVE","name":"ACTION"},
+										{"label":"FILE NAME","name":"fileName"},
+										{"label":"CREATOR","name":"creationUser"},
+										{"label":"CREATION DATE","name":"creationDate"}
 										]'
 									columns-search='["creationUser","creationDate"]'
 									show-search-bar=false
@@ -324,7 +327,7 @@
 									click-function="clickRightTable(item)"								
 								>						
 								</angular-table>
-								<md-radio-group>								
+								</md-radio-group>								
      						</md-content>
      						<a id="test" style="visibility:hidden"></a>
      					</div>

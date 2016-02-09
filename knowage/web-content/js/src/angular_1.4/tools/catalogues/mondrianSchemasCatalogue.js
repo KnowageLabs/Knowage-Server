@@ -4,9 +4,9 @@
 
 var app = angular.module('mondrianSchemasCatalogueModule',['ngMaterial' , 'angular_list' , 'angular_table' , 'sbiModule' , 'angular_2_col','file_upload']);
 
-app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm",mondrianSchemasCatalogueFunction]);
+app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging",mondrianSchemasCatalogueFunction]);
 
-function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm){
+function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.showMe = false;
@@ -22,40 +22,22 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.servicePath = "2.0/mondrianSchemasResource";
 	$scope.file ={};
 	
-	$scope.print = function(){
-	
-		
-	console.log($scope.file);
-		
-	};
 	
 	$scope.downloadFile= function (item){
-		sbiModule_restServices.get("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions/"+item.id+"/file","").success(
 		
-		function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-				console.log("[DOWNLOAD]: DATA HAS ERRORS PROPERTY!");	
-					
-				}else{
-					
-					
-					window.location="http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/74/versions/"+item.id+"/file" ;
-					
-	
-				}
-			}
-		).error(function(data, status, headers, config) {
-						console.log("[DOWNLOAD]: FAIL! "+status);
-					}
-		
-		)
+		sbiModule_restServices.promiseGet("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions/"+item.id+"/file","")
+		.then(function(response) {
+			window.location="http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/74/versions/"+item.id+"/file" ;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
 	}
 	
 	$scope.unlockModel= function(){
 		
 		$scope.selectedMondrianSchema.modelLocked = false;
-		$scope.showActionOK("Mondrian Schema "+$scope.selectedMondrianSchema.name+" is unlocked");
+		sbiModule_messaging.showInfoMessage("Mondrian Schema "+$scope.selectedMondrianSchema.name+" is unlocked", 'Information!');
 	}
 	
 	$scope.isUniqueInList = function(propertyName,obj,listOfObjs){
@@ -67,9 +49,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 				
 			}
 			
-		}
-		
-		
+		}	
 	}
 	
 	
@@ -81,21 +61,6 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
     });
 	
-	$scope.showActionOK = function(msg) {
-				    var toast = $mdToast.simple()
-				    .content(msg)
-				    .action('OK')
-				    .highlightAction(false)
-				    .hideDelay(3000)
-				    .position('top')
-		
-				    $mdToast.show(toast).then(
-				    		function(response) {
-				    			if ( response == 'ok' ) {
-				    			}
-				    		});
-		};
-	
 	$scope.catalogueSpeedOptions =  [
 		
 		
@@ -105,7 +70,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	    icon:'fa fa-trash-o fa-lg',
 	    color:'#153E7E',
 	    action:function(item){
-	    $scope.deleteMondrianSchema(item);
+	    $scope.confirmDelete(item,event);	
+	    
 			
 	    	}
 	 	}
@@ -116,7 +82,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	                                
 	  {
 	        
-		label:'download',
+		label:sbiModule_translate.load("sbi.generic.download"),
 	    icon:'fa fa-download',
 	    color:'#153E7E',
 	    action:function(item,event){
@@ -132,18 +98,36 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	    icon:'fa fa-trash-o fa-lg',
 	    color:'#153E7E',
 	    action:function(item){
-			
-	    $scope.deleteVersion(item);
+	    $scope.confirmDelete(item,event);	
+	    
 			
 	    }
 	  }
 	  
 	  ];
 	
-	
-	
-	
-	
+	 $scope.confirmDelete = function(item,ev) {
+		    var confirm = $mdDialog.confirm()
+		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+		          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+		          .ariaLabel("confirm_delete")
+		          .targetEvent(ev)
+		          .ok(sbiModule_translate.load("sbi.general.continue"))
+		          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		    $mdDialog.show(confirm).then(function() {
+		    	
+		    	if (item.name) {
+		    		console.log("deleting schemaa");
+		    		$scope.deleteMondrianSchema(item);
+		    	} else if (item.fileName) {
+		    		console.log("deleting version");
+		    		$scope.deleteVersion(item);
+		    	}
+		   
+		    }, function() {
+		
+		    });
+		  };
 	
 	
 	$scope.saveMondrianCatalogue = function(){
@@ -168,17 +152,10 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					console.log("adding new...");
 					$scope.addNewMondrianSchema();
 					
-				}
-			
-			
-			
+				}			
 		}
 
 	};
-	
-	
-	
-	
 	$scope.createMondrianSchema = function(){
 		$scope.showMe = true;
 		$scope.selectedMondrianSchema = {};
@@ -228,96 +205,76 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	//GET ALL MONDRIAN SCHEMAS
 	$scope.getMondrianSchemas = function(){
 		
-		sbiModule_restServices.get($scope.servicePath,"").success(
+		sbiModule_restServices.promiseGet($scope.servicePath,"")
+		.then(function(response) {
+			$scope.catalogLoadingShow =true;
+			$scope.showCatalogs = false;
+			$scope.itemList=[];
 			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-				console.log("[GET]: DATA HAS ERRORS PROPERTY!");	
-					
-				}else{
-					$scope.catalogLoadingShow =true;
-					$scope.showCatalogs = false;
-					$scope.itemList=[];
-					
-					
-					setTimeout(function(){
-						$scope.itemList = data;
-						$scope.catalogLoadingShow = false;
-						$scope.showCatalogs = true;
-						$scope.$apply();
-					},10)
-	
-				}
-			}
+			
+			setTimeout(function(){
+				$scope.itemList = response.data;
+				$scope.catalogLoadingShow = false;
+				$scope.showCatalogs = true;
+				$scope.$apply();
+			},10)
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
 		
-		).error(function(data, status, headers, config) {
-						console.log("[GET]: FAIL! "+status);
-					}
-		
-		)
 	};
 	
 	//GET ALL MONDRIAN SCHEMAS VERSIONS
 	$scope.getMondrianSchemasVersion = function(){
 		
-		sbiModule_restServices.get("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions","").success(
+		sbiModule_restServices.promiseGet("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions","")
+		.then(function(response) {
+			$scope.showVersions=false;
+			$scope.versionLoadingShow = true;	
+			$scope.fileList =[];
 			
-			
 					
-					
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-				console.log("[GET]: DATA HAS ERRORS PROPERTY!");	
-					
-				}else{
-					
-				$scope.showVersions=false;
-				$scope.versionLoadingShow = true;	
-				$scope.fileList =[];
-				
+				setTimeout(function(){
 						
-					setTimeout(function(){
+						
+						$scope.fileList=response.data;
+						for(var i= 0 ; i<$scope.fileList.length;i++){	
+						
+							$scope.fileList[i].creationDate = new Date(response.data[i].creationDate).toLocaleString();
+							$scope.fileList[i].actives = "<md-radio-button ng-value = "+$scope.fileList[i].id+" aria-label='label'></md-radio-button>";
+						
+							if($scope.fileList[i].active){
 							
-							
-							$scope.fileList=data;
-							for(var i= 0 ; i<$scope.fileList.length;i++){	
-							
-								$scope.fileList[i].creationDate = new Date(data[i].creationDate);
-								$scope.fileList[i].actives = "<md-radio-button ng-value = "+$scope.fileList[i].id+" aria-label='label'></md-radio-button>";
-							
-								if($scope.fileList[i].active){
-								
-									$scope.selectedMondrianSchema.currentContentId = $scope.fileList[i].id;
-									for(var j =0; j<$scope.itemList.length;j++){
-										if($scope.itemList[j].id===$scope.selectedMondrianSchema.id){
-										
-											for(var key in $scope.selectedMondrianSchema){
-												$scope.itemList[j][key] = $scope.selectedMondrianSchema[key];
-											}
-											
-										}
-									}
+								$scope.selectedMondrianSchema.currentContentId = $scope.fileList[i].id;
+								for(var j =0; j<$scope.itemList.length;j++){
+									if($scope.itemList[j].id===$scope.selectedMondrianSchema.id){
 									
-								
+										for(var key in $scope.selectedMondrianSchema){
+											$scope.itemList[j][key] = $scope.selectedMondrianSchema[key];
+										}
+										
+									}
 								}
 								
 							
 							}
 							
-							$scope.versionLoadingShow = false;	
-							$scope.showVersions=true;
-							
-							
-							$scope.$apply();
 						
-						},500)
+						}
 						
-				}
-			}
-		
-		)};
+						$scope.versionLoadingShow = false;	
+						$scope.showVersions=true;
+						
+						
+						$scope.$apply();
+					
+					},500)
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
+		};
 	
 	//POST NEW MONDRIAN SCHEMA
 	$scope.addNewMondrianSchema = function(){
@@ -325,28 +282,23 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		$scope.selectedMondrianSchema.type ="MONDRIAN_SCHEMA";
 		console.log($scope.selectedMondrianSchema);
 		
-		sbiModule_restServices.post($scope.servicePath,"",$scope.selectedMondrianSchema).success(
-			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					console.log("[GET]: DATA HAS ERRORS PROPERTY!");
-					
-					
-				}else{
-				$scope.selectedMondrianSchema = data;	
-				$scope.itemList.unshift($scope.selectedMondrianSchema);	
-				$scope.showActionOK("Mondrian schema successfully created");
-					
-				if($scope.file.file){
-						console.log("uploading...");
-						$scope.uploadFile();
-						
-					}		
+		sbiModule_restServices.promisePost($scope.servicePath,"",$scope.selectedMondrianSchema)
+		.then(function(response) {
+			$scope.selectedMondrianSchema = response.data;	
+			$scope.itemList.unshift($scope.selectedMondrianSchema);	
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				
-				}
-			}
+			if($scope.file.file){
+					console.log("uploading...");
+					$scope.uploadFile();
+					
+				}		
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
 		
-		)};
+		};
 		
 	//POST UPLOAD FILE
 	$scope.uploadFile= function(){
@@ -361,7 +313,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 				}else{
 					
 					console.log("[UPLOAD]: SUCCESS!");
-					$scope.showActionOK("Mondrian schema version "+$scope.file.fileName+" successfully uploaded");
+					sbiModule_messaging.showSuccessMessage("Mondrian schema version "+$scope.file.fileName+" successfully uploaded", 'Success!');
 					$scope.getMondrianSchemasVersion();
 					$scope.file={};
 					
@@ -377,45 +329,31 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	//PUT MODIFY MONDRIAN SCHEMA
 	$scope.modifyMondrianSchema = function(){
 		
-		sbiModule_restServices.put($scope.servicePath,$scope.selectedMondrianSchema.id,$scope.selectedMondrianSchema).success(
+		sbiModule_restServices.promisePut($scope.servicePath,$scope.selectedMondrianSchema.id,$scope.selectedMondrianSchema)
+		.then(function(response) {
 			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-					console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
-					
-				}else{
-					
-						console.log("[PUT]: SUCCESS!");
-						$scope.showActionOK("Mondrian schema successfully edited");
-						for(var j =0; j<$scope.itemList.length;j++){
-										if($scope.itemList[j].id===data.id){
-											for(var key in data){
-												$scope.itemList[j][key] = data[key];
-											}
-											$scope.selectedMondrianSchema = angular.copy($scope.itemList[j]);
-										}
-									}
-						
-						
-					if($scope.file.file){
-						console.log("uploading...");
-						$scope.uploadFile();
-						
-					}
-						
-						
-					
-					
-						
-					
-					
-					
-				}
-			}).error(function(data, status, headers, config) {
-						console.log("[PUT]: FAIL!");
-					});
-	
+			console.log("[PUT]: SUCCESS!");
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+
+			for(var j =0; j<$scope.itemList.length;j++){
+							if($scope.itemList[j].id===response.data.id){
+								for(var key in response.data){
+									$scope.itemList[j][key] = response.data[key];
+								}
+								$scope.selectedMondrianSchema = angular.copy($scope.itemList[j]);
+							}
+						}
+			
+			
+		if($scope.file.file){
+			console.log("uploading...");
+			$scope.uploadFile();
+			
+		}
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
 	}
 	
 	
@@ -424,34 +362,21 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
 		if($scope.selectedMondrianSchema.modelLocker!=null){
 			
-			$scope.showActionOK("Model is locked");
+			sbiModule_messaging.showInfoMessage("Model is locked", 'Information!');
 			console.log("model is locked");
 			
 		}else{
 			console.log($scope.selectedMondrianSchema.modelLocker);
-			sbiModule_restServices.delete($scope.servicePath,item.id).success(
 			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-					console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
-					
-				}else{
-					console.log("[DELETE]: SUCCESS!")	
-					$scope.showActionOK("Mondrian schema successfully deleted");
-					$scope.getMondrianSchemas();
-	
-				}
-			}).error(function(data, status, headers, config) {
-						console.log("[DELETE]: FAIL!"+status);
-					});
-		
-			
+			sbiModule_restServices.promiseDelete($scope.servicePath,item.id)
+			.then(function(response) {
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+				$scope.getMondrianSchemas();
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
 		}
-		
-		
-		
-		
 	}
 	
 	//DELETE VERSION
@@ -459,30 +384,19 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
 		if($scope.selectedMondrianSchema.modelLocker!=null){
 			
-			$scope.showActionOK("Model is locked");
+			sbiModule_messaging.showInfoMessage("Model is locked", 'Information!');
 			console.log("model is locked");
 			
 		}else{
-		
-		sbiModule_restServices.delete("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions",item.id).success(
 			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-					console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
-					
-				}else{
-					
-					console.log("[DELETE]: SUCCESS!")	
-					$scope.showActionOK("Mondrian schema successfully deleted");
-					$scope.getMondrianSchemasVersion();
-								
-					
-				}
-			}).error(function(data, status, headers, config) {
-						console.log("[DELETE]: FAIL!"+status+data);
-					});
-	
+			sbiModule_restServices.promiseDelete("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions",item.id)
+			.then(function(response) {
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+				$scope.getMondrianSchemasVersion();
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
 		}
 	}
 	
