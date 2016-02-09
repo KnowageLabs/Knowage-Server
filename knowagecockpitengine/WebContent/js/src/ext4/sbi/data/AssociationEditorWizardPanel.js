@@ -93,7 +93,7 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 			stores: this.stores
 		  , associations: this.associations
 		});
-		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: IN");
+		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: OUT");
 		return this.associationEditorPage;
 	}
 

@@ -12,7 +12,7 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 		title: LN('sbi.cockpit.association.editor.wizard.title')
 		, width: 1000
 		, height: 510
-		, closable: true
+		, closable: false
 		, closeAction: 'close' //'hide'
 		, modal: true
 	}
