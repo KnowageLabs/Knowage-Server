@@ -118,6 +118,7 @@ public class DataMiningExecutor {
 	 */
 	private REngine createREngineInstanceWithWork() {
 
+		REngine rEng = null;
 		DataminingWriteWork workResult = null;
 		long timeout = 1000;
 		WorkManager workerManager;
@@ -131,6 +132,10 @@ public class DataMiningExecutor {
 			workItems.add(workItem);
 			workManager.waitForAll(workItems, timeout);
 			workResult = (DataminingWriteWork) workItem.getResult();
+			if (workResult != null){
+				rEng = workResult.getrEngine();
+			}
+			work.release();
 		} catch (IllegalArgumentException e) {
 			logger.error("error while workManager scheduling to load R");
 		} catch (WorkException e) {
@@ -140,7 +145,7 @@ public class DataMiningExecutor {
 		} catch (NamingException e1) {
 			logger.error("error while workManager scheduling to load R");
 		}
-		return workResult.getrEngine();
+		return rEng;
 	}
 
 	private static String getSpagoBIConfigurationProperty(String propertyName) {
@@ -219,12 +224,12 @@ public class DataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 *
-	 *
+	 * 
+	 * 
 	 * protected void loadUserWorkSpace() throws IOException {
-	 *
+	 * 
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 *
+	 * 
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

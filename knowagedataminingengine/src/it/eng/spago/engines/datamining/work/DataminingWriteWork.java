@@ -50,13 +50,12 @@ public class DataminingWriteWork implements Work {
 	}
 
 	public boolean isDaemon() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public void release() {
-		// TODO Auto-generated method stub
-
+		rEngine = null;
+		return;
 	}
 
 }
