@@ -47,6 +47,7 @@
 		height: '$chart.height',
 		
   		sizeCriteria: '$chart.sizeCriteria',
+  		wordLayout: '$chart.wordLayout',
   		maxAngle: $chart.maxAngle,
   		minAngle: $chart.minAngle,
   		maxFontSize: $chart.maxFontSize,

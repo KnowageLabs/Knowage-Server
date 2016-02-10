@@ -55,7 +55,7 @@
 		</generic>
 
 		<wordcloud>
-			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding=''
+			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding='' wordLayout=''
 			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;"/>
 		</wordcloud>
 

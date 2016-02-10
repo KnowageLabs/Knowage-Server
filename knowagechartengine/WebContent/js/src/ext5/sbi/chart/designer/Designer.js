@@ -4954,6 +4954,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/* ================================================================================= */
 				var wordcloudSizeCriteriaCModel = chartViewModelData.sizeCriteria;
 				var wordcloudMaxWordsCModel = chartViewModelData.maxWords;
+				var wordcloudWordLayoutCModel = chartViewModelData.wordLayout;
 				var wordcloudMaxAngleCModel = chartViewModelData.maxAngle;
 				var wordcloudMinAngleCModel = chartViewModelData.minAngle;
 				var wordcloudMaxFontSizeCModel = chartViewModelData.maxFontSize;
@@ -4976,6 +4977,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 							]
 						) : errorMsg;
+				(wordcloudWordLayoutCModel=="" || wordcloudWordLayoutCModel==null ||wordcloudWordLayoutCModel==undefined) ?
+						 errorMsg += Sbi.locale.sobstituteParams
+						 (
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+										
+							[
+								LN('sbi.chartengine.configuration.wordcloud.wordLayout'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						 ) : errorMsg;			
 											
 				if (wordcloudMaxWordsGUI == null)
 				{

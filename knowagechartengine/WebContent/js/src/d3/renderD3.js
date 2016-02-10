@@ -515,6 +515,10 @@ function renderWordCloud(chartConf){
 		}))
 		.padding(chartConf.chart.wordPadding)
 		.rotate(function() {
+			if(chartConf.chart.wordLayout==='horizontalAndVertical'){
+				return 90*Math.round(Math.random());
+			}
+			
 			if(chartConf.chart.minAngle==chartConf.chart.maxAngle){
 				return chartConf.chart.minAngle;
 			}
@@ -530,8 +534,8 @@ function renderWordCloud(chartConf){
 		layout.start();
 
 		function draw(words,e) {
-			var randomId=+ Math.round((Math.random())*10000);
-			//console.log(mainId);
+			var randomId=Math.round((Math.random())*10000);
+		
 			d3.select("body")
 			.append("div").attr("id","main"+randomId)
 			.attr("class","d3-container")

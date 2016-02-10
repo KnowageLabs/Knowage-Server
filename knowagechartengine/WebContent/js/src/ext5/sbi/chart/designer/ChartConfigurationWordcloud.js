@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 300,
+		height: 400,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding : 10,
@@ -133,6 +133,91 @@ Ext.define
     	         			}
     	         		]
                 	 },
+                	 
+                	 {
+ 						xtype : 'combo',
+ 						queryMode : 'local',
+ 						forceSelection : true,
+ 						editable : false,
+ 						width: Sbi.settings.chart.configurationStep.widthOfFields,
+ 	        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+ 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.wordLayout") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+ 						bind : '{configModel.wordLayout}',
+ 						displayField : 'name',
+ 						valueField : 'value',					
+ 						emptyText: LN("sbi.chartengine.configuration.wordcloudWordLayout.emptyText"),
+ 						
+ 						store : 
+ 						{
+ 							fields : [ 'name', 'value' ],
+ 							
+ 							data : 
+ 							[
+ 								{
+ 									name : LN('sbi.chartengine.configuration.wordcloud.wordLayout.horizontal'),
+ 									value : 'horizontal'
+ 								},
+ 								{
+ 									name : LN('sbi.chartengine.configuration.wordcloud.wordLayout.vertical'),
+ 									value : 'vertical'
+ 								},
+ 								{
+ 									name : LN('sbi.chartengine.configuration.wordcloud.wordLayout.horizontalAndVerticaal'),
+ 									value : 'horizontalAndVertical'
+ 								},
+ 								{
+ 									name : LN('sbi.chartengine.configuration.wordcloud.wordLayout.randomAngle'),
+ 									value : 'custom'
+ 								}
+ 							]
+ 						},
+ 						
+ 						listeners:
+ 						{
+ 							change: function(a,currentValue)
+ 							{
+ 								if (currentValue)
+ 								{
+ 									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.wordLayout") + ":");
+ 									switch(currentValue){
+ 									case 'horizontal':
+ 										Ext.getCmp("wordcloudMaxAngle").setValue(0);
+ 										Ext.getCmp("wordcloudMinAngle").setValue(0);
+ 										Ext.getCmp("wordcloudMaxAngle").hide();
+ 										Ext.getCmp("wordcloudMinAngle").hide();
+ 									   break;
+ 									case 'vartical':
+ 										Ext.getCmp("wordcloudMaxAngle").setValue(90);
+ 										Ext.getCmp("wordcloudMinAngle").setValue(90);
+ 										Ext.getCmp("wordcloudMaxAngle").hide();
+ 										Ext.getCmp("wordcloudMinAngle").hide();
+ 									   break;   
+ 									case 'horizontalAndVertical':
+ 										Ext.getCmp("wordcloudMaxAngle").setValue(90);
+ 										Ext.getCmp("wordcloudMinAngle").setValue(0);
+ 										Ext.getCmp("wordcloudMaxAngle").hide();
+ 										Ext.getCmp("wordcloudMinAngle").hide();
+ 									   break;
+ 									case 'custom':
+ 										Ext.getCmp("wordcloudMaxAngle").setValue('');
+ 										Ext.getCmp("wordcloudMinAngle").setValue('');
+ 										Ext.getCmp("wordcloudMaxAngle").show();
+ 										Ext.getCmp("wordcloudMinAngle").show();
+ 									   break;
+ 										
+ 									   
+ 									   
+ 									}
+ 									
+ 									
+ 								}
+ 								else
+ 								{
+ 									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.wordLayout") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+ 								}
+ 							}
+ 						}
+ 					},
                 	 
 	                 {            
 	                	 xtype : 'fieldcontainer',
@@ -340,6 +425,8 @@ Ext.define
                 	 }];
 
 			this.add(item);
+			Ext.getCmp("wordcloudMaxAngle").hide();
+			Ext.getCmp("wordcloudMinAngle").hide();
 		}
 	}
 );

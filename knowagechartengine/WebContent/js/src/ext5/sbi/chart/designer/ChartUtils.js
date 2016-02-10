@@ -926,7 +926,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (chartType.toUpperCase() == "WORDCLOUD") 
 			{
 				CHART['sizeCriteria'] = chartModel.get('sizeCriteria') ? chartModel.get('sizeCriteria') : '';
-				
+				CHART['wordLayout'] = chartModel.get('wordLayout') ? chartModel.get('wordLayout') : '';
 				CHART['maxWords'] = (Number(chartModel.get('maxWords'))) ? Number(chartModel.get('maxWords')) : 0;
 				CHART['maxAngle'] = (Number(chartModel.get('maxAngle'))) ? Number(chartModel.get('maxAngle')) : 0;
 				CHART['minAngle'] = (Number(chartModel.get('minAngle'))) ? Number(chartModel.get('minAngle')) : 0;
@@ -2012,7 +2012,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				minFontSize : jsonTemplate.CHART.minFontSize,
 				wordPadding : jsonTemplate.CHART.wordPadding,
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
-
+                wordLayout: jsonTemplate.CHART.wordLayout,
 				/**
 				 * Added for the SUNBURST chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
