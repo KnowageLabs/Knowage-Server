@@ -3,7 +3,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     id: "chartColorPalette",
     
     /**
-     * Extend the JS file with the common configuration for panels that are
+     * Extends the JS file with the common configuration for panels that are
      * set on the Configuration tab of the Designer (formerly known as Step 2).
      * 
      * @author: danristo (danilo.ristovski@mht.net)
@@ -73,10 +73,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
              * 
              * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
              */
-            viewConfig: 
-            {
-                plugins: 
-                {
+            viewConfig: {
+            	enableTextSelection: true,
+                plugins: {
                     ptype: 'gridviewdragdrop'
                 }
             },
@@ -85,15 +84,26 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     	    margin:'0 10 0 0',
     	    multiSelect: true,
     	    
-    	    columns: [{
-    	        text     : LN('sbi.chartengine.configuration.palette.header'),
-    	        flex     : 1,
-    	        sortable : false,
-    	        dataIndex: 'value',
-    	        renderer : function(value, meta) {
-    	        	meta.style = "background-color:#"+value+";";
-    	        }
-    	    }]
+    	    plugins: [{
+				ptype: 'cellediting',
+				clicksToEdit: 1
+			}],
+			
+    	    columns: [
+    	              Ext.create('Ext.grid.column.Column', {
+    	            	  text: LN('sbi.chartengine.configuration.palette.header'),
+    	            	  dataIndex: 'value',
+    	            	  flex: 1,
+    	            	  renderer : function(value, meta) {
+    	            		  meta.style = "background-color:#"+value+";";
+    	            		  return value.toUpperCase();
+    	            	  },
+    	            	  sortable: false,
+    	            	  editor: Ext.create('Sbi.chart.designer.components.ColorPicker', {
+    	            		  triggers: null
+    	            	  })
+    	              }),
+    	    ]
     	});
         
         // Reset
