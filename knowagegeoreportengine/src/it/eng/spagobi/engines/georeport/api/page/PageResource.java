@@ -6,6 +6,7 @@ import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -36,7 +38,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 	/**
 	 * TODO Tutte le pagine dell'engine
-	 *
+	 * 
 	 * */
 	static {
 		pages = new HashMap<String, JSONObject>();
@@ -103,6 +105,28 @@ public class PageResource extends AbstractChartEngineResource {
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/executeTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String testAction(@Context HttpServletResponse response) {
+
+		logger.debug("IN");
+
+		try {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("result", "ok");
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			String successString = obj.toString();
+			return successString;
 		} finally {
 			logger.debug("OUT");
 		}
