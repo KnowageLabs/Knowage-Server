@@ -294,6 +294,9 @@
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigation.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiCrossNavigationPar.hbm.xml" />
         
+        <!-- Document Output Parameters -->
+        <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
+        
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
