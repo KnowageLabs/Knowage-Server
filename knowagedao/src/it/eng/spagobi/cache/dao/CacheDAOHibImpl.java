@@ -452,7 +452,6 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			throw new SpagoBIDOAException("An error occured while creating a CacheItem from SbiCacheItem:", t);
 		}
 		CacheItem cacheItem = new CacheItem();
-		cacheItem.setName(hibCacheItem.getTableName());
 		cacheItem.setSignature(hibCacheItem.getSignature());
 		cacheItem.setTable(hibCacheItem.getTableName());
 		cacheItem.setName(hibCacheItem.getName());

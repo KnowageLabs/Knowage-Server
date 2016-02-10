@@ -44,7 +44,7 @@
             <column name="TABLE_NAME" length="100" not-null="true" unique="true" />
         </property>
         <property name="name" type="string">
-            <column name="NAME" length="100" />
+            <column name="NAME" length="65535" not-null="true" />
         </property>
         <property name="dimension" type="java.lang.Long">
             <column name="DIMENSION" precision="10" scale="0" />
@@ -58,17 +58,5 @@
         <property name="properties" type="string">
             <column name="PROPERTIES" length="65535" />
         </property>
-        <set name="sbiCacheJoinedItemsForSignature" table="sbi_cache_joined_item" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="SIGNATURE" length="100" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" />
-        </set>
-        <set name="sbiCacheJoinedItemsForJoinedSignature" table="sbi_cache_joined_item" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="JOINED_SIGNATURE" length="100" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" />
-        </set>
     </class>
 </hibernate-mapping>

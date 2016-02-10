@@ -267,7 +267,6 @@
 		
 		<!-- CACHE -->
         <mapping resource="it/eng/spagobi/cache/metadata/mapping/SbiCacheItem.hbm.xml" />
-        <mapping resource="it/eng/spagobi/cache/metadata/mapping/SbiCacheJoinedItem.hbm.xml" />
         
         <!-- GLOSSARY -->
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlContents.hbm.xml" />

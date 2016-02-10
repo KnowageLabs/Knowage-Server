@@ -2656,3 +2656,6 @@ CREATE TABLE SBI_OBJ_DATA_SET (
 )WITHOUT OIDS;
 
 -- 05.02.2015 Alessandro Portosa: removed the table SBI_CACHE_JOINED_ITEM from all the DB scripts
+
+-- 10.02.2015 Alessandro Portosa: changed the type of field NAME of SBI_CACHE_ITEM from all the DB scripts
+	e.g. NAME TEXT NOT NULL

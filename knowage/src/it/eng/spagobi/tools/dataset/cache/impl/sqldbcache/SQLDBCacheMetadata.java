@@ -227,7 +227,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			removeCacheItem(resultsetSignature);
 
 			CacheItem item = new CacheItem();
-			item.setName(tableName);
+			item.setName(resultsetSignature);
 			item.setTable(tableName);
 			item.setSignature(hashedSignature);
 			item.setDimension(getRequiredMemory(resultset));
@@ -371,7 +371,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 
