@@ -528,20 +528,28 @@ public class HierarchyService {
 			if (f.isSingleValue()) {
 				column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 				selectClauseBuffer.append(column + sep);
-				// add first node column as order field:
-				if (i == 0)
-					orderClauseBuffer.append(column);
+				// // add first node column as order field:
+				// if (i == 0)
+				// orderClauseBuffer.append(column);
 			} else {
 				for (int i2 = 1, l2 = totalLevels; i2 <= l2; i2++) {
 					sep = ",";
 					column = AbstractJDBCDataset.encapsulateColumnName(f.getId() + i2, dataSource);
 					selectClauseBuffer.append(column + sep);
-					// add first node column as order field:
-					if (i == 0 && i2 == 1)
-						orderClauseBuffer.append(column);
+					// // add first node column as order field:
+					// if (i == 0 && i2 == 1)
+					// orderClauseBuffer.append(column);
 				}
 			}
 		}
+
+		// order clause
+		for (int o = 1, l2 = totalLevels; o <= l2; o++) {
+			String sep = (o == totalLevels) ? "" : ",";
+			String column = AbstractJDBCDataset.encapsulateColumnName(prefix + HierarchyConstants.SUFFIX_CD_LEV + o, dataSource);
+			orderClauseBuffer.append(column + sep);
+		}
+
 		// leaf fields:
 		for (int i = 0, l = leafMetadataFields.size(); i < l; i++) {
 			Field f = leafMetadataFields.get(i);
@@ -589,6 +597,9 @@ public class HierarchyService {
 		}
 		// order cluase
 		query.append(" ORDER BY " + orderClauseBuffer.toString());
+
+		// ONLY FDOR TEST
+		// query.append(" limit 100");
 
 		logger.debug("Query for get hierarchies: " + query);
 		return query.toString();
@@ -730,7 +741,8 @@ public class HierarchyService {
 						mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
 						data.setAttributes(mapAttrs);
 
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, localPath, data, allNodeCodes);
+						// attachNodeToLevel(root, nodeCode, lastLevelCodeFound, localPath, data, allNodeCodes);
+						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, data, allNodeCodes);
 
 						lastLevelCodeFound = nodeCode;
 						lastLevelNameFound = nodeName;
@@ -744,8 +756,8 @@ public class HierarchyService {
 							mapAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 						}
 						data.setAttributes(mapAttrs);
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, localPath, data, allNodeCodes);
-						// attachNodeToLevel(root, nodeCode, lastLevelCodeFound, data, allNodeCodes);
+						// attachNodeToLevel(root, nodeCode, lastLevelCodeFound, localPath, data, allNodeCodes);
+						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, data, allNodeCodes);
 					} else {
 						// refresh local structure (for parent management)
 						HierarchyTreeNode aNodeLocal = new HierarchyTreeNode(data, nodeCode);
@@ -760,8 +772,8 @@ public class HierarchyService {
 		}
 
 		if (root != null)
-			// set debug mode : error in only for debug
-			logger.error(TreeString.toString(root));
+			// set debug mode : error is only for debug
+			logger.debug(TreeString.toString(root));
 
 		return root;
 
@@ -771,76 +783,48 @@ public class HierarchyService {
 	 * Attach a node as a child of another node (with key lastLevelFound that if it's null means a new record and starts from root)
 	 */
 	// TODO: remove allNodeCodes from signature
-	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNode localPath, HierarchyTreeNodeData data,
-			Set<String> allNodeCodes) {
+	// private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNode localPath, HierarchyTreeNodeData data,
+	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, HierarchyTreeNodeData data, Set<String> allNodeCodes) {
 
 		HierarchyTreeNode treeNode = null;
 		// get the local element
-		HierarchyTreeNode treeLocalNode = localPath.getHierarchyNode(lastLevelFound, false);
+		// HierarchyTreeNode treeLocalNode = localPath.getHierarchyNode(lastLevelFound, false, null);
+		// treeNode = root.getHierarchyNode(lastLevelFound, true);
 
 		// first search parent node (with all path)
+
+		int localLevel = 0;
 		for (Iterator<HierarchyTreeNode> treeIterator = root.iterator(); treeIterator.hasNext();) {
-			treeNode = treeIterator.next();
-			String localNodeParent = (treeLocalNode.getParent() != null) ? treeLocalNode.getParent().getKey() : "";
-			String treeNodeParent = (treeNode.getParent() != null) ? treeNode.getParent().getKey() : "";
-			HierarchyTreeNodeData treeData = (HierarchyTreeNodeData) treeNode.getObject();
+			localLevel++;
+			Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
+			Integer maxDeptLevel = ((Integer) data.getAttributes().get(HierarchyConstants.MAX_DEPTH));
+			// treeNode = treeIterator.next();
+			treeNode = root.getHierarchyNode(lastLevelFound, true, nodeLevel - 1);
 
 			if (lastLevelFound == null) {
 				break;
-			} else if (treeNode.getKey().equals(lastLevelFound) && treeNodeParent.equals(localNodeParent)) {
-				// check second level if levels and first parents are the same
-				localNodeParent = (treeLocalNode.getParent().getParent() != null) ? treeLocalNode.getParent().getParent().getKey() : "";
-				treeNodeParent = (treeNode.getParent().getParent() != null) ? treeNode.getParent().getParent().getKey() : "";
-				if ((treeNodeParent != null && localNodeParent != null) && treeNodeParent.equals(localNodeParent))
-					break;
-				else if (treeNodeParent == null && localNodeParent == null) // if the grand-father is'n valorized, it's valid
-					break;
+			} else if (treeNode.getKey().equals(lastLevelFound) && localLevel == nodeLevel) {
+				// parent node found
+				break;
 			}
+			// // update the local structure for next elements
+			// HierarchyTreeNode aNodeLocal = new HierarchyTreeNode(data, nodeCode);
+			// treeLocalNode.add(aNodeLocal, nodeCode); // updates the local path
 		}
 		// then check if node was already added as a child of this parent
 		if (!treeNode.getChildrensKeys().contains(nodeCode)) {
 			// node not already attached to the level
 			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-			// treeNode.add(aNode, nodeCode);
-			Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
-			Integer maxDeptLevel = ((Integer) data.getAttributes().get(HierarchyConstants.MAX_DEPTH));
-			if (nodeLevel.equals(maxDeptLevel)) {
-				// it's the leaf... adds it to the last element if has the same code (for duplicate nodes)
-				String lastKey = (treeLocalNode.getLastChild() != null) ? treeLocalNode.getLastChild().getKey() : nodeCode;
-				HierarchyTreeNode lastNode = treeNode.getHierarchyNode(lastKey, true);
-				lastNode.add(aNode, nodeCode);
-			} else {
-				treeNode.add(aNode, nodeCode);
-			}
-			HierarchyTreeNode aNodeLocal = new HierarchyTreeNode(data, nodeCode);
-			treeLocalNode.add(aNodeLocal, nodeCode); // updates the local path
-		} else {
-			// check if it's a duplicate node in different level (in this case its will add to the tree, otherwise not)
-			Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
-			for (int n = 0; n < treeNode.getChildrensKeys().size(); n++) {
-				HierarchyTreeNodeData child = (HierarchyTreeNodeData) treeNode.getChild(n).getObject();
-				if (child.getNodeCode().equals(nodeCode)) {
-					Integer childLevel = ((Integer) child.getAttributes().get(HierarchyConstants.LEVEL));
-					if (childLevel != null && nodeLevel != null && !childLevel.equals(nodeLevel)) {
-						// add the node to the tree (because it's a repetitive node BUT in different levels)
-						// moves on the tree until the correct element
-						HierarchyTreeNode lastNode = treeNode.getHierarchyNode(nodeCode, true);
-						HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode); // the new node
-						lastNode.add(aNode, nodeCode);
-						break;
-					}
-				}
-			}
-			// update the local structure for next elements
-			HierarchyTreeNode aNodeLocal = new HierarchyTreeNode(data, nodeCode);
-			treeLocalNode.add(aNodeLocal, nodeCode); // updates the local path
+			treeNode.add(aNode, nodeCode);
 		}
-		localPath = treeLocalNode;
 
 		// ONLY FOR DEBUG
-		if (!allNodeCodes.contains(nodeCode)) {
+		if (allNodeCodes.contains(nodeCode)) {
+			// logger.error("COLLISION DETECTED ON: " + nodeCode);
+		} else {
 			allNodeCodes.add(nodeCode);
 		}
+
 	}
 
 	/**

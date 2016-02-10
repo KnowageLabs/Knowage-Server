@@ -238,18 +238,28 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	 *            : element key
 	 * @param theLast
 	 *            : boolean: if true returns the last element, otherwise the first
+	 * @param levelToCheck
+	 *            : Integer: the level to check
 	 *
 	 * @return the node
 	 */
-	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast) {
+	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck) {
 		HierarchyTreeNode toReturn = this;
 		HierarchyTreeNode treeNode = null;
 		for (Iterator<HierarchyTreeNode> treeIterator = this.iterator(); treeIterator.hasNext();) {
 			treeNode = treeIterator.next();
 			if (treeNode.getKey().equals(key)) {
-				toReturn = treeNode;
-				if (!theLast)
-					break;
+				if (levelToCheck != null) {
+					if (treeNode.getLevel() == levelToCheck) {
+						toReturn = treeNode;
+						if (!theLast)
+							break;
+					}
+				} else {
+					toReturn = treeNode;
+					if (!theLast)
+						break;
+				}
 			}
 		}
 		return toReturn;
@@ -257,7 +267,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/**
 	 * Returns the last node of the hierarchy
-	 * 
+	 *
 	 * @return the node
 	 */
 	public HierarchyTreeNode getLastChild() {
@@ -286,7 +296,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -322,6 +332,25 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 			elderList.add(p);
 		}
 		return elderList;
+	}
+
+	public String getPathKeysFromRootAsString(boolean withLastLevel) {
+		String toReturn = new String();
+		String sep = "|";
+		List elderList = getPathFromRoot();
+		int len = (withLastLevel) ? elderList.size() : elderList.size() - 1;
+
+		for (int i = 0; i < len; i++) {
+			if (i == len - 1)
+				sep = ""; // delete last |
+
+			if (!withLastLevel && i == elderList.size() - 1)
+				break;
+
+			HierarchyTreeNode node = (HierarchyTreeNode) elderList.get(i);
+			toReturn += node.getKey() + sep;
+		}
+		return toReturn;
 	}
 
 	public boolean hasNextSiblingNode() {
