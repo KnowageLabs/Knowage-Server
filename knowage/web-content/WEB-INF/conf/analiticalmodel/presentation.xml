@@ -8,6 +8,9 @@
 <MAPPING business_name="LOGIN_PAGE_SBI_FUNCTIONALITY" business_type="PAGE" publisher_name="BIObjectsPubJ"/>
 <MAPPING business_name="DetailBIObjectPage" business_type="PAGE" publisher_name="DetailBIObjectPubJ"/>
 <MAPPING business_name="DocumentTemplateBuildPage" business_type="PAGE" publisher_name="DocumentTemplateBuildPublisher"/>
+
+<MAPPING business_name="ManageCrossOutParamsPage" business_type="PAGE" publisher_name="ManageCrossOutParamsPublisher"/>"
+
 <MAPPING business_name="ExecuteBIObjectPage" business_type="PAGE" publisher_name="ExecuteBIObjectPubJ"/>
 <MAPPING business_type="ACTION" business_name="CREATE_MASTER_NODE_LOWFUNCTIONALITY" publisher_name="FunctionalitiesTreeRefresh"/>
 <MAPPING business_type="ACTION" business_name="MOVE_UP_LOWFUNCTIONALITY" publisher_name="FunctionalitiesTreeRefresh"/>

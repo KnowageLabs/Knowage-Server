@@ -194,6 +194,13 @@
       		<MODULE keep_instance="false" keep_response="false" name="DocumentTemplateBuildModule"/>
     	</MODULES>
   	</PAGE>
+  	
+	<PAGE name="ManageCrossOutParamsPage" scope="REQUEST" title="Document template build page" >
+    	<DEPENDENCIES>
+    	</DEPENDENCIES>
+    	<MODULES>
+    	</MODULES>
+  	</PAGE>
  
 
   	<PAGE name="ExecuteBIObjectPage" scope="REQUEST" title="Execute BIObject" >
