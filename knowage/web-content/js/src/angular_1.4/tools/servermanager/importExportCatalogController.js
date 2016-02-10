@@ -31,6 +31,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.typeCatalog="Dataset";
 	$scope.showDataset=false;
 	$scope.listType=[];
+	$scope.listDestType=[];
 	$scope.importFile = {};
 	$scope.exportedDataset =[];
 	$scope.download = sbiModule_download;
@@ -147,6 +148,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			}else{
 				$scope.showDataset=false;
 			}
+			break;
+		
 		
 		}
 		
