@@ -1,16 +1,18 @@
 angular.module('importExportDocumentModule').controller('importControllerStep4', ["$scope","importExportDocumentModule_importConf","sbiModule_restServices",importStep4FuncController]);
 
 function importStep4FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
-	$scope.nextStep = function(){
-		alert("FINITO")
-		$scope.stepControl.resetBreadCrumb();
-		$scope.stepControl.insertBread({name:"step1"})
-	}
+	
 	
 	
 	$scope.saveMetaDataAssociation=function(){
-		sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateMetadata',{"overwrite":$scope.overwriteMetaData})
-		.success(function(data, status, headers, config) {
+		var data={
+				"overwrite":$scope.overwriteMetaData, 
+			}
+		if($scope.importType){
+			data.importType=$scope.importType;
+		}
+			sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateMetadata',data)
+			.success(function(data, status, headers, config) {
 			if(data.hasOwnProperty("errors")){
 				$scope.errorImport(data.errors[0].message);	
 			}else if(data.STATUS=="NON OK"){
@@ -22,6 +24,10 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 				importExportDocumentModule_importConf.folderName=data.folderName;
 				$scope.stepControl.resetBreadCrumb();
 				$scope.stepControl.insertBread({name:$scope.translate.load('sbi.ds.file.upload.button')})
+			
+			if($scope.finishImport){
+				$scope.finishImport();
+			}
 			}
 		})
 		.error(function(data, status, headers, config) {

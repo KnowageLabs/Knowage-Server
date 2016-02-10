@@ -7,9 +7,7 @@
 		<md-icon ng-show="showSearch" md-font-icon="fa fa-trash" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
 	</md-input-container>
 </angular-table-actions>
-
-
-
+ 
 <md-content>
 	<table flex>
 		<thead></thead>
@@ -29,10 +27,10 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th ng-repeat="val in tableColumns" width="{{val.size}}">
 
-	<div ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
+	<div ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
 		
 		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering ,'fa fa-arrow-down' : (val.name==column_ordering && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering && !reverse_col_ord)}"></md-icon>
-		{{val.label}}
+		<span >{{val.label}}</span>
 	</div>
 
 	<md-checkbox  ng-checked="multiSelectVal" ng-if="val.name=='--MULTISELECT--'"  ng-click="selectAll()" aria-label="selected item checked"> </md-checkbox>

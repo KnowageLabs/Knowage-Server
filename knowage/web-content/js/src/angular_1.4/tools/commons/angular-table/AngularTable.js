@@ -38,7 +38,8 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			noDropEnabled:"=?",
 			allowEdit : "=?",
 			editFunction : "&?",
-			allowEditFunction: "&?"
+			allowEditFunction: "&?",
+			hideTableHead:"=?"
 		},
 		compile: function (tElement, tAttrs, transclude) {
 			 return {

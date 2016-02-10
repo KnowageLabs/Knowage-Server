@@ -64,9 +64,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 //	$scope.associations="noAssociations";
 	
 	$scope.errorImport=function(text){
-		
-		
-		var confirm = $mdDialog.confirm()
+		 var confirm = $mdDialog.confirm()
 		.title('')
 		.content(text)
 		.ariaLabel('error import') 
@@ -74,26 +72,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 		$mdDialog.show(confirm).then(function() {
 			$scope.stepControl.resetBreadCrumb();
 			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
-		} );
-		
-		
-		
-		
-		
-		
-		
-//		
-//		var toast = $mdToast.simple()
-//		.content(text)
-//		.action('OK')
-//		.highlightAction(false)
-//		.position('top');
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//				$scope.stepControl.resetBreadCrumb();
-//				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
-//			}
-//		}); 
+		} ); 
 	}
 	
 
