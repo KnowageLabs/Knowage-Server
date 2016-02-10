@@ -18,6 +18,9 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	private SbiObjPar fromKey;
 	private SbiObjPar toKey;
 
+	private Integer fromKeyId;
+	private Integer fromType;
+
 	private boolean newRecord;
 
 	/**
@@ -93,6 +96,36 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	 */
 	public void setSbiCrossNavigation(SbiCrossNavigation crossNavigation) {
 		this.sbiCrossNavigation = crossNavigation;
+	}
+
+	/**
+	 * @return the fromKeyId
+	 */
+	public Integer getFromKeyId() {
+		return fromKeyId;
+	}
+
+	/**
+	 * @param fromKeyId
+	 *            the fromKeyId to set
+	 */
+	public void setFromKeyId(Integer fromKeyId) {
+		this.fromKeyId = fromKeyId;
+	}
+
+	/**
+	 * @return the fromType
+	 */
+	public Integer getFromType() {
+		return fromType;
+	}
+
+	/**
+	 * @param fromType
+	 *            the fromType to set
+	 */
+	public void setFromType(Integer fromType) {
+		this.fromType = fromType;
 	}
 
 }

@@ -6,27 +6,31 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar" table="SBI_CROSS_NAVIGATION_PAR">
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter" table="SBI_OUTPUT_PARAMETER">
         
         <id name="id" type="integer">
            <column name="ID" />
 		   <generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_CROSS_NAVIGATION_PAR</param>	
+				<param name="segment_value">SBI_OUTPUT_PARAMETER</param>	
 				<param name="initial_value">1</param>	
 		   </generator>
         </id>
-        <!-- 
-        <many-to-one name="fromKey" column="FROM_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" lazy="false" />
-         -->
-         
-        <property name="fromKeyId" column="FROM_KEY" type="int" />
         
-        <many-to-one name="toKey" column="TO_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"  lazy="false" />
-        <many-to-one name="sbiCrossNavigation" column="CN_ID" class="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" not-null="true" />
+        <property name="biobjId" column="BIOBJ_ID" />
+        <property name="parameterTypeId" column="PAR_TYPE_ID" />
         
-        <property name="fromType" column="FROM_TYPE" type="int" />
+        <property name="label" column="label" />
         
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" insert="false">
+            <column name="biobj_id" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="parameterType" class="it.eng.spagobi.commons.metadata.SbiDomains" insert="false" lazy="false">
+			<column name="par_type_id" not-null="true" />
+		</many-to-one>
+        
+	    
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

@@ -10,13 +10,15 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.json.JSONException;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
@@ -25,27 +27,33 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public List<SimpleNavigation> listNavigation() {
 		final List<SimpleNavigation> lst = new ArrayList<>();
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
-			/* .sbiCrossNavigation.id, p.sbiCrossNavigation.name, p.fromKey.sbiObject.biobjId, p.toKey.sbiObject.biobjId */
 			@Override
 			public Boolean execute(Session session) throws JSONException {
-				String hql = "select p ";
-				hql += " from it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar p ";
-				hql += " group by p.sbiCrossNavigation.id, p.sbiCrossNavigation.name, p.fromKey.sbiObject.biobjId, p.toKey.sbiObject.biobjId ";
-				hql += " order by p.sbiCrossNavigation.name ";
-				Query q = session.createQuery(hql);
-				/*
-				 * Criteria q = session.createCriteria(SbiCrossNavigationPar.class).createAlias("sbiCrossNavigation", "sbiCrossNavigation")
-				 * .addOrder(Order.asc("sbiCrossNavigation.name"));
-				 */
-				for (Object o : q.list()) {
-					SbiCrossNavigationPar cn = (SbiCrossNavigationPar) o;
-					String fromDoc = cn.getFromKey().getSbiObject().getLabel();
-					String toDoc = cn.getToKey().getSbiObject().getLabel();
-					lst.add(new SimpleNavigation(cn.getSbiCrossNavigation().getId(), cn.getSbiCrossNavigation().getName(), fromDoc, toDoc));
+				Criteria c = session.createCriteria(SbiCrossNavigation.class).addOrder(Order.asc("name"));
+
+				for (Object o : c.list()) {
+					SbiCrossNavigation cn = (SbiCrossNavigation) o;
+					SimpleNavigation sn = new SimpleNavigation();
+					sn.setId(cn.getId());
+					sn.setName(cn.getName());
+					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
+						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
+						sn.setToDoc(cnp.getToKey().getLabel());
+						switch (cnp.getFromType()) {
+						case 1:
+							SbiObjPar op = (SbiObjPar) session.get(SbiObjPar.class, cnp.getFromKeyId());
+							sn.setFromDoc(op.getSbiObject().getLabel());
+							break;
+						case 2:
+							SbiOutputParameter o2 = (SbiOutputParameter) session.get(SbiOutputParameter.class, cnp.getFromKeyId());
+							sn.setFromDoc(o2.getSbiObject().getLabel());
+							break;
+						}
+					}
+					lst.add(sn);
 				}
 				return Boolean.TRUE;
 			}
-
 		});
 
 		return lst;
