@@ -7,6 +7,37 @@ package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
+import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
+import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
+import it.eng.spagobi.sdk.documents.bo.SDKDocument;
+import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
+import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
+import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
+import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,39 +72,9 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.CriteriaParameter;
-import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
-import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
-import it.eng.spagobi.sdk.documents.bo.SDKDocument;
-import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
-import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
-import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
-import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
-import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -207,10 +208,10 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
-			throw new SpagoBIRuntimeException(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId()
+					+ "]");
+			throw new SpagoBIRuntimeException("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is ["
+					+ document.getId() + "]");
 		}
 
 		try {
@@ -242,10 +243,10 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
-			throw new SpagoBIRuntimeException(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId()
+					+ "]");
+			throw new SpagoBIRuntimeException("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is ["
+					+ document.getId() + "]");
 		}
 
 		parameter.setId(id);
@@ -340,8 +341,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 					rb.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 					return rb.build();
 				} else
-					throw new SpagoBIRuntimeException(
-							"User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
+					throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label
+							+ "]");
 			} else
 				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
 
@@ -390,8 +391,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 		// in glossary, the user with admin role and specific authorization can see all document of the organization
 		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
-			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE,
-					new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
+			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
 				UserFilter = null;
 			}
 		}
@@ -569,5 +569,63 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/{id}/listOutParams")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response listOutParams(@PathParam("id") Integer id) {
+		IOutputParameterDAO op;
+		try {
+			op = DAOFactory.getOutputParameterDAO();
+			op.setUserProfile(getUserProfile());
+			List<OutputParameter> lst = op.getOutputParametersByObjId(id);
+			String toBeReturned = JsonConverter.objectToJson(lst, lst.getClass());
+			return Response.ok(toBeReturned).build();
+		} catch (EMFUserError e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of output parameters of document id[" + id + "]", e);
+		}
+	}
+
+	@POST
+	@Path("/saveOutParam")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response addOutputParameter(String body) {
+		OutputParameter op = (OutputParameter) JsonConverter.jsonToValidObject(body, OutputParameter.class);
+
+		IOutputParameterDAO parameterDAO = null;
+		try {
+			parameterDAO = DAOFactory.getOutputParameterDAO();
+		} catch (EMFUserError e) {
+			logger.error("Error while retrieving parameters", e);
+			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
+		}
+
+		BIObject document = documentManager.getDocument(op.getBiObjectId());
+		if (document == null) {
+			throw new SpagoBIRuntimeException("Document with id [" + op.getBiObjectId() + "] doesn't exist");
+		}
+
+		parameterDAO.saveParameter(op);
+
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path("/{id}/deleteOutParam")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response removeOutputParameter(@PathParam("id") Integer id) {
+		IOutputParameterDAO parameterDAO = null;
+		try {
+			parameterDAO = DAOFactory.getOutputParameterDAO();
+		} catch (EMFUserError e) {
+			logger.error("Error while retrieving parameters", e);
+			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
+		}
+
+		parameterDAO.removeParameter(id);
+
+		return Response.ok().build();
 	}
 }

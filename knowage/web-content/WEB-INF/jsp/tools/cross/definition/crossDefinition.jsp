@@ -102,7 +102,7 @@
 
 	<angular-list-detail ng-controller="navigationController as ctrl" new-function="ctrl.newNavigation" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc" >
        <list label="translate.load('sbi.crossnavigation.lst')"  > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
-			<!-- ricerca -->
+			<!-- navigations list -->
 			<angular-table 
 					layout-fill
 					id="dataSourceList"

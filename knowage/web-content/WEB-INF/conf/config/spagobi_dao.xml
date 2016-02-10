@@ -126,6 +126,7 @@
 
 		<DAO name="CrossNavigationDAO" implementation="it.eng.spagobi.tools.crossnavigation.dao.CrossNavigationDAOImpl" />
 		
+		<DAO name="OutputParameterDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.OutputParameterDAOImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

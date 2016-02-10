@@ -1029,6 +1029,31 @@ function saveDocument(goBack) {
  						%>
 					</div>
 	        </div>
+	        
+	        <!-- link to AngularJS page of managing output parameters -->
+	        <div id="link_obj_conf" <%=styleDivLinkConf%>>
+				<div class='div_detail_label'>
+					<span class='portlet-form-field-label'>
+						<spagobi:message key = "sbi.detailbiobj.editOutputParameters" />
+					</span>
+				</div>
+				<div class='div_detail_form'>
+				<!-- ${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=ManageCrossOutParamsPage -->
+					<%
+					Map editOutputParametersMap = new HashMap();
+					editOutputParametersMap.put(SpagoBIConstants.PAGE,
+							SpagoBIConstants.MANAGE_CROSS_OUT_PARAMS_PAGE);
+					editOutputParametersMap.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
+					String editOutputParameters = urlBuilder.getUrl(request, editOutputParametersMap);
+					%>
+					<a href="<%=editOutputParameters%>">
+						<img class='header-button-image-portlet-section' 
+   				 			 title='<spagobi:message key = "sbi.detailbiobj.editOutputParameters" />' 
+   				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/copytree.gif", currTheme)%>' 
+   				 			 alt='<spagobi:message key = "sbi.detailbiobj.editOutputParameters"  />' />
+					</a> 
+				</div>
+			</div>
 
 	        
 	        <!-- engine list and template buttons adjustment based on the document type -->
