@@ -44,7 +44,7 @@ public class DatasetsExecutor {
 
 	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
-		if (dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
+		if (re != null && dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
 				String options = ds.getOptions();

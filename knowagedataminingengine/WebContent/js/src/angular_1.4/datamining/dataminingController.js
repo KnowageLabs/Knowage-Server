@@ -2,7 +2,6 @@ var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
 app.controller('Controller', ['$sce','sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
 
-//TODO label = name command - command variables unico
 function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
 	
 	/*****************************/
@@ -59,21 +58,34 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 			 var commandName = data.commandName;
 			 var output = data.singleOutput;
 			 var variables = data.variables;
+			 if ($scope.results[commandName] === undefined ){
+				 $scope.results[commandName] = {};
+			 }
+			 if ($scope.results[commandName][output.outputName] === undefined ){
+				 $scope.results[commandName][output.outputName] = {};
+			 }
 			 var tmpConfig = angular.fromJson(angular.toJson($scope.config));
 			 var urlResult = $scope.pathRest.result + '/'+commandName+'/'+output.outputName + '/' + $scope.pathRest.confirm;
 			 restServices.get($scope.pathRest.vers, urlResult, null, tmpConfig)
-			 .success(function(data){
-				 if ($scope.results[commandName] === undefined ){
-					 $scope.results[commandName] = {};
-				 }
-				 if ($scope.results[commandName][output.outputName] === undefined ){
+				 .success(function(data){
 					 $scope.results[commandName][output.outputName] = data;
-				 } 
-				 $scope.results[commandName][output.outputName].result = data.result;
-			 })
-			 .error(function(data, status){
-				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
-			 });
+					 if (data.result){
+						 $scope.results[commandName][output.outputName].result = data.result;
+					 }else if (data.error){
+						 $scope.results[commandName][output.outputName].error = data.error;
+					 }
+					 
+				 })
+				 .error(function(data, status){
+					var error = 'GET RESULT error with status: ' + status;
+					if (data){
+						var idxBegin = data.indexOf("<body>") + "<body>".length;
+						var idxEnd = data.indexOf("</body>");
+						error = error  + ".\n Message: " + data.substring(idxBegin,idxEnd); 
+					}
+					$scope.results[commandName][output.outputName].error = error;
+					$scope.log.error(error);
+				 });
 		 },function(error) {
 				promiseResult.reject();
 				$scope.log.error('Promise Result error ' + error);

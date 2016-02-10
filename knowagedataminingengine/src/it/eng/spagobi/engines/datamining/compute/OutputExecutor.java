@@ -57,7 +57,10 @@ public class OutputExecutor {
 		// output -->if script --> execute script then prepare output
 
 		DataMiningResult res = new DataMiningResult();
-
+		if (re == null) {
+			res.setError("No R instance found");
+			return res;
+		}
 		List<Variable> variables = out.getVariables();
 		logger.debug("Got variables list");
 		// replace in function and in value attributes

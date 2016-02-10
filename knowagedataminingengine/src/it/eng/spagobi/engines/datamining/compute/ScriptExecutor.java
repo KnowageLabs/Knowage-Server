@@ -52,6 +52,10 @@ public class ScriptExecutor {
 	protected void evalScript(DataMiningCommand command, Boolean rerun) throws Exception {
 		logger.debug("IN");
 
+		if (re == null) {
+			logger.debug("No R instance found");
+			return;
+		}
 		// checks whether executed before
 		if (rerun || command.getExecuted() == null || !command.getExecuted()) {
 			logger.debug("rerun or first execution");
@@ -196,18 +200,18 @@ public class ScriptExecutor {
 
 	private void loadLibrariesFromRLocal(String libraryNames) throws REngineException, REXPMismatchException {
 		logger.debug("IN");
-
-		REXP rHome = re.parseAndEval("try(libdir<-paste(R.home(),\"library\", sep=\"/\"))");
-		if (!rHome.inherits("try-error") && !rHome.isNull()) {
-			if (libraryNames != null) {
-				String[] libs = libraryNames.split(",");
-				for (int i = 0; i < libs.length; i++) {
-					String lib = libs[i].trim();
-					re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
+		if (this.re != null) {
+			REXP rHome = re.parseAndEval("try(libdir<-paste(R.home(),\"library\", sep=\"/\"))");
+			if (!rHome.inherits("try-error") && !rHome.isNull()) {
+				if (libraryNames != null) {
+					String[] libs = libraryNames.split(",");
+					for (int i = 0; i < libs.length; i++) {
+						String lib = libs[i].trim();
+						re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
+					}
 				}
 			}
 		}
-
 		logger.debug("OUT");
 	}
 
