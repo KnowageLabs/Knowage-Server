@@ -327,7 +327,6 @@ author:
  			var globalThis = this;
  			
  			
- 			
  			/* 
  				Listen for the resizing of the window (panel) in order to re-render
  				the chart.

@@ -412,21 +412,31 @@ Ext.define
  	        	//         	}
  	        
  	        /* Color picker drop-down matrix (table) */
-	        this.colorPicker = Ext.create
-	        (
-        		'Sbi.chart.designer.ColorPickerContainer',
-        		
-        		{
-        			viewModel: this.viewModel,
-        			isColorMandatory: true,
-        			customLabel: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
-        			fieldBind: '{configModel.toolbarPercFontColor}',
-        			initiator: "sunburstPercentageColor",
-        			//bodyPadding:10
-        			width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-        		}
-    		);		 
+// 	        	this.colorPicker = Ext.create
+// 	        	(
+// 	        			'Sbi.chart.designer.ColorPickerContainer',
+// 	        			
+// 	        			{
+// 	        				viewModel: this.viewModel,
+// 	        				isColorMandatory: true,
+// 	        				customLabel: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
+// 	        				fieldBind: '{configModel.toolbarPercFontColor}',
+// 	        				initiator: "sunburstPercentageColor",
+// 	        				//bodyPadding:10
+// 	        				width: Sbi.settings.chart.configurationStep.widthOfFields,
+// 	        				padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+// 	        			}
+// 	        	);		 
+	        this.colorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+	        	viewModel: this.viewModel,
+	        	fieldBind: '{configModel.toolbarPercFontColor}',
+	        	bind: '{configModel.toolbarPercFontColor}',
+				fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
+				emptyText: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor.emptyText'),
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
+				adding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+				isColorMandatory: true,
+			});
 	        
 	        this.colorPicker.on
 	        (

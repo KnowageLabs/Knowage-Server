@@ -81,7 +81,20 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
     defaultType: 'textfield',
     
     constructor: function(config) {
+    	
+    	var LABEL_WIDTH = 115;
+    	
 		this.callParent(config);
+		
+		// Esc key pressing closes the modal
+		this.keyMap = new Ext.util.KeyMap(Ext.getBody(), [{
+			key: Ext.EventObject.ESC,
+			defaultEventAction: 'preventDefault',
+			scope: this,
+			fn: function() {
+				this.destroy()
+			}
+		}]);
 		
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		
@@ -110,7 +123,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			title: LN("sbi.chartengine.axisstylepopup.axis"),	// danristo
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
-				labelWidth : 115
+				labelWidth : LABEL_WIDTH
 			},
 			layout: 'anchor',
 			items : []
@@ -129,9 +142,10 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			
 			id: 'titleFieldSetForAxis',	// (danristo :: danilo.ristovski@mht.net) 
 			title: LN("sbi.chartengine.axisstylepopup.title"),	// danristo
-			defaults: {anchor: '100%',
+			defaults: {
+				anchor: '100%',
 				labelAlign : 'left',
-				labelWidth : 115
+				labelWidth : LABEL_WIDTH
 			},
 			layout: 'anchor',
 			items : []
@@ -153,7 +167,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					{
 						anchor: '100%',
 						labelAlign : 'left',
-						labelWidth : 115
+						labelWidth : LABEL_WIDTH
 					},
 					
 					layout: 'anchor',
@@ -175,7 +189,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					{
 						anchor: '100%',
 						labelAlign : 'left',
-						labelWidth : 115
+						labelWidth : LABEL_WIDTH
 					},
 					
 					layout: 'anchor',
@@ -197,7 +211,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					{
 						anchor: '100%',
 						labelAlign : 'left',
-						labelWidth : 115
+						labelWidth : LABEL_WIDTH
 					},
 					
 					layout: 'anchor',
@@ -219,7 +233,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					{
 						anchor: '100%',
 						labelAlign : 'left',
-						labelWidth : 115
+						labelWidth : LABEL_WIDTH
 					},
 					
 					layout: 'anchor',
@@ -241,7 +255,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					{
 						anchor: '100%',
 						labelAlign : 'left',
-						labelWidth : 115
+						labelWidth : LABEL_WIDTH
 					},
 					
 					layout: 'anchor',
@@ -256,9 +270,10 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				collapsed : true,
 				id: "majorGridFieldSetYAxis",	// (danristo :: danilo.ristovski@mht.net) 
 				title: LN('sbi.chartengine.axisstylepopup.majorgrid'),
-				defaults: {anchor: '100%',
+				defaults: {
+					anchor: '100%',
 					labelAlign : 'left',
-					labelWidth : 115
+					labelWidth : LABEL_WIDTH
 				},
 				layout: 'anchor',
 				items : []
@@ -269,9 +284,10 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				collapsed : true,
 				id: "minorGridFieldSetYAxis", // (danristo :: danilo.ristovski@mht.net) 
 				title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
-				defaults: {anchor: '100%',
+				defaults: {
+					anchor: '100%',
 					labelAlign : 'left',
-					labelWidth : 115
+					labelWidth : LABEL_WIDTH
 				},
 				layout: 'anchor',
 				items : []
@@ -321,46 +337,52 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisFieldSet.add(this.styleAlignComboBox);
 		}
 		
-		var axisStyleColor = this.axisData.styleColor;		
-				
-		this.styleColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                	id: 'styleColorField',
-					fieldStyle : (axisStyleColor && axisStyleColor.trim() != '' && axisStyleColor.trim() != 'transparent') ? 
-						'background-image: none; background-color: ' + axisStyleColor.trim() : '',
-                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
-					labelWidth : 115,
-                    readOnly : true,
-					flex: 15,
-				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('styleColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
+//		var axisStyleColor = this.axisData.styleColor;		
+//		this.styleColor = {
+//				xtype : 'fieldcontainer',
+//				layout : 'hbox',
+//				items: [
+//				        Ext.create('Ext.form.field.Base', {
+//				        	id: 'styleColorField',
+//				        	fieldStyle : (axisStyleColor && axisStyleColor.trim() != '' && axisStyleColor.trim() != 'transparent') ? 
+//				        			'background-image: none; background-color: ' + axisStyleColor.trim() : '',
+//				        			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+//				        			labelWidth : LABEL_WIDTH,
+//				        			readOnly : true,
+//				        			flex: 15,
+//				        			
+//				        			getStyle: function() {
+//				        				return this.getFieldStyle( );
+//				        			}
+//				        }), {
+//				        	xtype : 'button',
+//				        	layout : 'hbox',
+//				        	menu : Ext.create('Ext.menu.ColorPicker',{
+//				        		listeners : {
+//				        			select : function(picker, selColor) {
+//				        				var style = 'background-image: none; background-color: #' + selColor;
+//				        				Ext.getCmp('styleColorField').setFieldStyle(style);
+//				        			}
+//				        		}
+//				        	}),
+//				        	flex: 1                
+//				        }
+//				        ],
+//				        getColor: function(){
+//				        	var styleColor = this.items[0].getStyle();
+//				        	var indexOfSharp = styleColor.indexOf('#');
+//				        	styleColor = styleColor.substring(indexOfSharp);
+//				        	
+//				        	return styleColor;
+//				        }
+//		};
+		var axisStyleColor = (this.axisData.styleColor || '').replace('#', '');		
+		this.styleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+			emptyText: LN('sbi.chartengine.configuration.axiscolor.emptyText'),
+			labelWidth : LABEL_WIDTH,
+			value: axisStyleColor
+		});
 		this.axisFieldSet.add(this.styleColor);
 		
 		var styleFont = this.axisData.styleFont;
@@ -433,45 +455,52 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			});
 			this.majorgridFieldSet.add(this.majorgridStyleTypelineComboBox);
 			
-			var majorgridStyleColor = this.axisData.majorgridStyleColor;
-			this.majorgridStyleColor = {
-				xtype : 'fieldcontainer',
-	            layout : 'hbox',
-	            items: [
-	                Ext.create('Ext.form.field.Base', {
-	                	id: 'majorgridStyleColorColorField',
-						fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
-							'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
-	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
-						labelWidth : 115,
-	                    readOnly : true,
-						flex: 15,
-					
-						getStyle: function() {
-							return this.getFieldStyle( );
-						}
-	                }), {
-	                    xtype : 'button',
-						layout : 'hbox',
-	                    menu : Ext.create('Ext.menu.ColorPicker',{
-	                        listeners : {
-	                            select : function(picker, selColor) {
-	                                var style = 'background-image: none; background-color: #' + selColor;
-	                                Ext.getCmp('majorgridStyleColorColorField').setFieldStyle(style);
-	                            }
-	                        }
-	                    }),
-						flex: 1                
-	                }
-				],
-				getColor: function(){
-					var styleColor = this.items[0].getStyle();
-					var indexOfSharp = styleColor.indexOf('#');
-					styleColor = styleColor.substring(indexOfSharp);
-					
-					return styleColor;
-				}
-			};
+//			var majorgridStyleColor = this.axisData.majorgridStyleColor;
+//			this.majorgridStyleColor = {
+//					xtype : 'fieldcontainer',
+//					layout : 'hbox',
+//					items: [
+//					        Ext.create('Ext.form.field.Base', {
+//					        	id: 'majorgridStyleColorColorField',
+//					        	fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
+//					        			'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
+//					        			fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
+//					        			labelWidth : LABEL_WIDTH,
+//					        			readOnly : true,
+//					        			flex: 15,
+//					        			
+//					        			getStyle: function() {
+//					        				return this.getFieldStyle( );
+//					        			}
+//					        }), {
+//					        	xtype : 'button',
+//					        	layout : 'hbox',
+//					        	menu : Ext.create('Ext.menu.ColorPicker',{
+//					        		listeners : {
+//					        			select : function(picker, selColor) {
+//					        				var style = 'background-image: none; background-color: #' + selColor;
+//					        				Ext.getCmp('majorgridStyleColorColorField').setFieldStyle(style);
+//					        			}
+//					        		}
+//					        	}),
+//					        	flex: 1                
+//					        }
+//					        ],
+//					        getColor: function(){
+//					        	var styleColor = this.items[0].getStyle();
+//					        	var indexOfSharp = styleColor.indexOf('#');
+//					        	styleColor = styleColor.substring(indexOfSharp);
+//					        	
+//					        	return styleColor;
+//					        }
+//			};
+			var majorgridStyleColor = (this.axisData.majorgridStyleColor || '').replace('#', '');
+			this.majorgridStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
+				emptyText: LN('sbi.chartengine.configuration.axismajorgridcolor.emptyText'),
+				labelWidth : LABEL_WIDTH,
+				value: majorgridStyleColor
+			});
 			this.majorgridFieldSet.add(this.majorgridStyleColor);
 			
 			var minorgridInterval = '' + this.axisData.minorgridInterval;
@@ -491,45 +520,52 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			});
 			this.minorgridFieldSet.add(this.minorgridStyleTypelineComboBox);
 			
-			var minorgridStyleColor = this.axisData.minorgridStyleColor;
-			this.minorgridStyleColor = {
-				xtype : 'fieldcontainer',
-	            layout : 'hbox',
-	            items: [
-	                Ext.create('Ext.form.field.Base', {
-	                	id: 'minorgridStyleColorColorField',
-						fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
-							'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
-	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
-						labelWidth : 115,
-	                    readOnly : true,
-						flex: 15,
-					
-						getStyle: function() {
-							return this.getFieldStyle( );
-						}
-	                }), {
-	                    xtype : 'button',
-						layout : 'hbox',
-	                    menu : Ext.create('Ext.menu.ColorPicker',{
-	                        listeners : {
-	                            select : function(picker, selColor) {
-	                                var style = 'background-image: none; background-color: #' + selColor;
-	                                Ext.getCmp('minorgridStyleColorColorField').setFieldStyle(style);
-	                            }
-	                        }
-	                    }),
-						flex: 1                
-	                }
-				],
-				getColor: function(){
-					var styleColor = this.items[0].getStyle();
-					var indexOfSharp = styleColor.indexOf('#');
-					styleColor = styleColor.substring(indexOfSharp);
-					
-					return styleColor;
-				}
-			};
+//			var minorgridStyleColor = this.axisData.minorgridStyleColor;
+//			this.minorgridStyleColor = {
+//					xtype : 'fieldcontainer',
+//					layout : 'hbox',
+//					items: [
+//					        Ext.create('Ext.form.field.Base', {
+//					        	id: 'minorgridStyleColorColorField',
+//					        	fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
+//					        			'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
+//					        			fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
+//					        			labelWidth : LABEL_WIDTH,
+//					        			readOnly : true,
+//					        			flex: 15,
+//					        			
+//					        			getStyle: function() {
+//					        				return this.getFieldStyle( );
+//					        			}
+//					        }), {
+//					        	xtype : 'button',
+//					        	layout : 'hbox',
+//					        	menu : Ext.create('Ext.menu.ColorPicker',{
+//					        		listeners : {
+//					        			select : function(picker, selColor) {
+//					        				var style = 'background-image: none; background-color: #' + selColor;
+//					        				Ext.getCmp('minorgridStyleColorColorField').setFieldStyle(style);
+//					        			}
+//					        		}
+//					        	}),
+//					        	flex: 1                
+//					        }
+//					        ],
+//					        getColor: function(){
+//					        	var styleColor = this.items[0].getStyle();
+//					        	var indexOfSharp = styleColor.indexOf('#');
+//					        	styleColor = styleColor.substring(indexOfSharp);
+//					        	
+//					        	return styleColor;
+//					        }
+//			};
+			var minorgridStyleColor = (this.axisData.minorgridStyleColor || '').replace('#', '');
+			this.minorgridStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
+				emptyText: LN('sbi.chartengine.configuration.axisminorgridcolor.emptyText'),
+				labelWidth : LABEL_WIDTH,
+				value: minorgridStyleColor
+			});
 			this.minorgridFieldSet.add(this.minorgridStyleColor);
 		}
 				
@@ -602,68 +638,58 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * LINE COLOR
 			 * 		Description: Color of the speedometer line
 			 */
-			var lineColor = this.axisData.lineColor;
-			
-			this.lineColor = 
-			{
-				xtype : 'fieldcontainer',
-	            layout : 'hbox',
-	            
-	            items: 
-            	[
-	                Ext.create
-	                (
-                		'Ext.form.field.Base', 
-                		
-                		{
-		                	id: 'yAxisLineColor',
-							fieldStyle : (lineColor && lineColor.trim() != '') ? 
-								'background-image: none; background-color: ' + lineColor.trim() : '',
-		                    fieldLabel : LN("sbi.chartengine.axisstylepopup.additionalParams.lineColor"),
-							labelWidth : 115,
-		                    readOnly : true,
-							flex: 15,
-						
-							getStyle: function() 
-							{
-								return this.getFieldStyle();
-							}
-		                }
-            		), 
-            		
-            		{
-	                    xtype : 'button',
-						layout : 'hbox',
-						
-	                    menu : Ext.create
-	                    (
-                			'Ext.menu.ColorPicker',
-                			
-                			{	                        
-                				listeners : 
-                				{
-		                            select : function(picker, selColor) 
-		                            {
-		                                var style = 'background-image: none; background-color: #' + selColor;
-		                                Ext.getCmp('yAxisLineColor').setFieldStyle(style);
-		                            }
-                				}	
-                			}
-            			),
-						
-            			flex: 1                
-	                }
-				],
-				
-				getColor: function()
-				{
-					var styleColor = this.items[0].getStyle();
-					var indexOfSharp = styleColor.indexOf('#');
-					styleColor = styleColor.substring(indexOfSharp);
-					
-					return styleColor;
-				}
-			};
+//			var lineColor = this.axisData.lineColor;
+//			this.lineColor = {
+//					xtype : 'fieldcontainer',
+//					layout : 'hbox',
+//					
+//					items: [
+//					        Ext.create('Ext.form.field.Base', {
+//					        	id: 'yAxisLineColor',
+//					        	fieldStyle : (lineColor && lineColor.trim() != '') ? 
+//					        			'background-image: none; background-color: ' + lineColor.trim() : '',
+//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.additionalParams.lineColor"),
+//					        			labelWidth : LABEL_WIDTH,
+//					        			readOnly : true,
+//					        			flex: 15,
+//					        			
+//					        			getStyle: function() {
+//					        				return this.getFieldStyle();
+//					        			}
+//					        }), 
+//					        
+//					        {
+//					        	xtype : 'button',
+//					        	layout : 'hbox',
+//					        	
+//					        	menu : Ext.create('Ext.menu.ColorPicker', {	                        
+//					        		listeners : {
+//					        			select : function(picker, selColor) {
+//					        				var style = 'background-image: none; background-color: #' + selColor;
+//					        				Ext.getCmp('yAxisLineColor').setFieldStyle(style);
+//					        			}
+//					        		}	
+//					        	}),
+//					        	
+//					        	flex: 1                
+//					        }
+//					        ],
+//					        
+//					        getColor: function() {
+//					        	var styleColor = this.items[0].getStyle();
+//					        	var indexOfSharp = styleColor.indexOf('#');
+//					        	styleColor = styleColor.substring(indexOfSharp);
+//					        	
+//					        	return styleColor;
+//					        }
+//			};
+			var lineColor = (this.axisData.lineColor || '').replace('#', '');
+			this.lineColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.additionalParams.lineColor'),
+				emptyText: LN('sbi.chartengine.configuration.speedometerlinecolor.emptyText'),
+				labelWidth : LABEL_WIDTH,
+				value: lineColor
+			});
 			
 			/**
 			 * OFFSET
@@ -789,68 +815,61 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 		Description: 	
 			 * 			Axis main tick color
 			 */
-			var tickColor = this.axisData.tickColor;
-			
-			this.tickColor = 
-			{
-				xtype : 'fieldcontainer',
-	            layout : 'hbox',
-	            
-	            items: 
-            	[
-	                Ext.create
-	                (
-                		'Ext.form.field.Base', 
-                		
-                		{
-		                	id: 'tickColorYAxis',
-							fieldStyle : (tickColor && tickColor.trim() != '') ? 
-								'background-image: none; background-color: ' + tickColor.trim() : '',
-		                    fieldLabel : LN("sbi.chartengine.axisstylepopup.mainTickParams.tickColor"),
-							labelWidth : 115,
-		                    readOnly : true,
-							flex: 15,
-						
-							getStyle: function() 
-							{
-								return this.getFieldStyle();
-							}
-		                }
-            		), 
-            		
-            		{
-	                    xtype : 'button',
-						layout : 'hbox',
-						
-	                    menu : Ext.create
-	                    (
-                			'Ext.menu.ColorPicker',
-                			
-                			{	                        
-                				listeners : 
-                				{
-		                            select : function(picker, selColor) 
-		                            {
-		                                var style = 'background-image: none; background-color: #' + selColor;
-		                                Ext.getCmp('tickColorYAxis').setFieldStyle(style);
-		                            }
-                				}	
-                			}
-            			),
-						
-            			flex: 1                
-	                }
-				],
-				
-				getColor: function()
-				{
-					var styleColor = this.items[0].getStyle();
-					var indexOfSharp = styleColor.indexOf('#');
-					styleColor = styleColor.substring(indexOfSharp);
-					
-					return styleColor;
-				}
-			};
+//			var tickColor = this.axisData.tickColor;
+//			this.tickColor = {
+//					xtype : 'fieldcontainer',
+//					layout : 'hbox',
+//					
+//					items: [
+//					        Ext.create('Ext.form.field.Base', {
+//					        	id: 'tickColorYAxis',
+//					        	fieldStyle : (tickColor && tickColor.trim() != '') ? 
+//					        			'background-image: none; background-color: ' + tickColor.trim() : '',
+//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.mainTickParams.tickColor"),
+//					        			labelWidth : LABEL_WIDTH,
+//					        			readOnly : true,
+//					        			flex: 15,
+//					        			
+//					        			getStyle: function() 
+//					        			{
+//					        				return this.getFieldStyle();
+//					        			}
+//					        }), 
+//					        {
+//					        	xtype : 'button',
+//					        	layout : 'hbox',
+//					        	
+//					        	menu : Ext.create('Ext.menu.ColorPicker',{	                        
+//					        		listeners : 
+//					        		{
+//					        			select : function(picker, selColor) 
+//					        			{
+//					        				var style = 'background-image: none; background-color: #' + selColor;
+//					        				Ext.getCmp('tickColorYAxis').setFieldStyle(style);
+//					        			}
+//					        		}	
+//					        	}),
+//					        	
+//					        	flex: 1                
+//					        }
+//					        ],
+//					        
+//					        getColor: function()
+//					        {
+//					        	var styleColor = this.items[0].getStyle();
+//					        	var indexOfSharp = styleColor.indexOf('#');
+//					        	styleColor = styleColor.substring(indexOfSharp);
+//					        	
+//					        	return styleColor;
+//					        }
+//			};
+			var tickColor = (this.axisData.tickColor || '').replace('#', '');
+			this.tickColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.mainTickParams.tickColor'),
+				emptyText: LN('sbi.chartengine.configuration.tickcolor.emptyText'),
+				labelWidth : LABEL_WIDTH,
+				value: tickColor
+			});
 			
 			/**
 			 * TICK PIXEL INTERVAL
@@ -976,68 +995,62 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 		Description: 	
 			 * 			Axis minor tick color
 			 */
-			var minorTickColor = this.axisData.minorTickColor;
-		
-			this.minorTickColor = 
-			{
-				xtype : 'fieldcontainer',
-	            layout : 'hbox',
-	            
-	            items: 
-            	[
-	                Ext.create
-	                (
-                		'Ext.form.field.Base', 
-                		
-                		{
-		                	id: 'minorTickColor',
-							fieldStyle : (minorTickColor && minorTickColor.trim() != '') ? 
-								'background-image: none; background-color: ' + minorTickColor.trim() : '',
-		                    fieldLabel : LN("sbi.chartengine.axisstylepopup.minorTickParams.tickColor"),
-							labelWidth : 115,
-		                    readOnly : true,
-							flex: 15,
-						
-							getStyle: function() 
-							{
-								return this.getFieldStyle();
-							}
-		                }
-            		), 
-            		
-            		{
-	                    xtype : 'button',
-						layout : 'hbox',
-						
-	                    menu : Ext.create
-	                    (
-                			'Ext.menu.ColorPicker',
-                			
-                			{	                        
-                				listeners : 
-                				{
-		                            select : function(picker, selColor) 
-		                            {
-		                                var style = 'background-image: none; background-color: #' + selColor;
-		                                Ext.getCmp('minorTickColor').setFieldStyle(style);
-		                            }
-                				}	
-                			}
-            			),
-						
-            			flex: 1                
-	                }
-				],
-				
-				getColor: function()
-				{
-					var styleColor = this.items[0].getStyle();
-					var indexOfSharp = styleColor.indexOf('#');
-					styleColor = styleColor.substring(indexOfSharp);
-					
-					return styleColor;
-				}
-			};
+//			var minorTickColor = this.axisData.minorTickColor;
+//			this.minorTickColor = {
+//					xtype : 'fieldcontainer',
+//					layout : 'hbox',
+//					
+//					items: [
+//					        Ext.create('Ext.form.field.Base', {
+//					        	id: 'minorTickColor',
+//					        	fieldStyle : (minorTickColor && minorTickColor.trim() != '') ? 
+//					        			'background-image: none; background-color: ' + minorTickColor.trim() : '',
+//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.minorTickParams.tickColor"),
+//					        			labelWidth : LABEL_WIDTH,
+//					        			readOnly : true,
+//					        			flex: 15,
+//					        			
+//					        			getStyle: function() 
+//					        			{
+//					        				return this.getFieldStyle();
+//					        			}
+//					        }), 
+//					        
+//					        {
+//					        	xtype : 'button',
+//					        	layout : 'hbox',
+//					        	
+//					        	menu : Ext.create('Ext.menu.ColorPicker', {	                        
+//					        		listeners : 
+//					        		{
+//					        			select : function(picker, selColor) 
+//					        			{
+//					        				var style = 'background-image: none; background-color: #' + selColor;
+//					        				Ext.getCmp('minorTickColor').setFieldStyle(style);
+//					        			}
+//					        		}	
+//					        	}),
+//					        	
+//					        	flex: 1                
+//					        }
+//					        ],
+//					        
+//					        getColor: function()
+//					        {
+//					        	var styleColor = this.items[0].getStyle();
+//					        	var indexOfSharp = styleColor.indexOf('#');
+//					        	styleColor = styleColor.substring(indexOfSharp);
+//					        	
+//					        	return styleColor;
+//					        }
+//			};
+			var minorTickColor = (this.axisData.minorTickColor || '').replace('#', '');
+			this.minorTickColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.minorTickParams.tickColor'),
+				emptyText: LN('sbi.chartengine.configuration.tickcolor.emptyText'),
+				labelWidth : LABEL_WIDTH,
+				value: minorTickColor
+			});
 			
 			/**
 			 * MINOR TICK INTERVAL
@@ -1422,18 +1435,14 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			            ]
 					},
 					
-					selModel: 
-					{
+					selModel: {
 						selType: 'cellmodel'
 					},
 					
-					plugins: 
-					[
-					 	{
-					 		ptype: 'cellediting',
-					 		clicksToEdit: 1
-					 	}
-				 	]
+					plugins: [{
+				 		ptype: 'cellediting',
+				 		clicksToEdit: 1
+				 	}]
 				}
 			);
 			
@@ -1446,45 +1455,52 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 		}
 		
-		var titleStyleColor = this.axisData.titleStyleColor;
-		this.titleStyleColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                	id: 'titleStyleColorColorField',
-					fieldStyle : (titleStyleColor && titleStyleColor.trim() != '') ? 
-						'background-image: none; background-color: ' + titleStyleColor.trim() : '',
-                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
-					labelWidth : 115,
-                    readOnly : true,
-					flex: 15,
-				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('titleStyleColorColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
+//		var titleStyleColor = this.axisData.titleStyleColor;
+//		this.titleStyleColor = {
+//				xtype : 'fieldcontainer',
+//				layout : 'hbox',
+//				items: [
+//				        Ext.create('Ext.form.field.Base', {
+//				        	id: 'titleStyleColorColorField',
+//				        	fieldStyle : (titleStyleColor && titleStyleColor.trim() != '') ? 
+//				        			'background-image: none; background-color: ' + titleStyleColor.trim() : '',
+//				        			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+//				        			labelWidth : LABEL_WIDTH,
+//				        			readOnly : true,
+//				        			flex: 15,
+//				        			
+//				        			getStyle: function() {
+//				        				return this.getFieldStyle( );
+//				        			}
+//				        }), {
+//				        	xtype : 'button',
+//				        	layout : 'hbox',
+//				        	menu : Ext.create('Ext.menu.ColorPicker',{
+//				        		listeners : {
+//				        			select : function(picker, selColor) {
+//				        				var style = 'background-image: none; background-color: #' + selColor;
+//				        				Ext.getCmp('titleStyleColorColorField').setFieldStyle(style);
+//				        			}
+//				        		}
+//				        	}),
+//				        	flex: 1                
+//				        }
+//				        ],
+//				        getColor: function(){
+//				        	var styleColor = this.items[0].getStyle();
+//				        	var indexOfSharp = styleColor.indexOf('#');
+//				        	styleColor = styleColor.substring(indexOfSharp);
+//				        	
+//				        	return styleColor;
+//				        }
+//		};
+		var titleStyleColor = (this.axisData.titleStyleColor || '').replace('#', '');
+		this.titleStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+			emptyText: LN('sbi.chartengine.configuration.axistitlecolor.emptyText'),
+			labelWidth : LABEL_WIDTH,
+			value: titleStyleColor
+		});
 		this.titleFieldSet.add(this.titleStyleColor);
 
 		var titleStyleFont = this.axisData.titleStyleFont;

@@ -83,22 +83,32 @@ Ext.define
 	        this.add(fontStyle);
 			
 			/* Color picker drop-down matrix (table) */
-	        this.colorPicker = Ext.create
-	        (
-        		'Sbi.chart.designer.ColorPickerContainer',
-        		
-        		{
-        			viewModel: this.viewModel,
-        			width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-        			fieldBind: '{configModel.tipColor}',
-        			bodyPadding:10,
-        			isColorMandatory: true,
-        			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"),
-					initiator: "sunburstTooltipColor"
-        			//label: LN("sbi.chartengine.configuration.sunburst.tip.fontColor")
-        		}
-    		);
+//	        this.colorPicker = Ext.create
+//	        (
+//	        		'Sbi.chart.designer.ColorPickerContainer',
+//	        		
+//	        		{
+//	        			viewModel: this.viewModel,
+//	        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+//	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+//	        			fieldBind: '{configModel.tipColor}',
+//	        			bodyPadding:10,
+//	        			isColorMandatory: true,
+//	        			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"),
+//	        			initiator: "sunburstTooltipColor"
+//	        		}
+//	        );
+	        this.colorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+	        	viewModel: this.viewModel,
+	        	fieldBind: '{configModel.tipColor}',
+	        	bind: '{configModel.tipColor}',
+				fieldLabel : LN('sbi.chartengine.configuration.sunburst.tip.fontColor'),
+				emptyText: LN('sbi.chartengine.configuration.axistitlecolor.emptyText'),
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
+				adding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+				isColorMandatory: true,
+//	        			initiator: "sunburstTooltipColor"
+			});
 	        
 	        this.colorPicker.on
 	        (

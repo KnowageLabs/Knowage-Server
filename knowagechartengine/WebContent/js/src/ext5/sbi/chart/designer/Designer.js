@@ -256,10 +256,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				applySeries: applySeries,
 			};
 			
-			//console.log("== 1 ==");
-			//console.log(baseTemplate);
-			//console.log(jsonTemplate);
-			
 			/**
 			 * If we are creating completely new chart (new document) immediately on loading
 			 * the Designer page apply the default style.
@@ -268,11 +264,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (!jsonTemplate.CHART) 
-			{
-				//console.log("== 2 (new chart) ==");
-				//console.log(baseTemplate);
-				//console.log(jsonTemplate);
-				
+			{				
 			    var defaultStyleTemplate = this.getDefaultStyle();
 			    
 			    /**
@@ -294,8 +286,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 */
 			    	var defaultStyleTemplateGeneric = 
 			    			Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(defaultStyleTemplate.generic);
-			    	//console.log(baseTemplate);
-			    	//console.log(defaultStyleTemplateGeneric); 
 			    	
 			    	/**
 			    	 * I think we don't need applying the current style to axis style configuration, neither to
@@ -312,7 +302,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 * TODO: Check about this with Benedetto !!!! 
 			    	 */
 			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: true});
-			    	//console.log(jsonTemplate);
 			    }
 			    else
 			    {
@@ -358,9 +347,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					jsonTemplate.CHART.AXES_LIST.AXIS = axisArray;
 					jsonTemplate.CHART.AXES_LIST.AXIS.push(axisTemp);
-				}		
-					
-				//console.log(jsonTemplate);
+				}							
 				
 				/**
 				 * I think that requiring for "applyAxes" and "applySeries" is not necessary.
@@ -381,7 +368,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate, {applyAxes: false, applySeries: false});	
 				
-				//console.log(jsonTemplate);
 			}
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
@@ -630,7 +616,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 //					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
 					var sunburstToolbar = secondConfigurationPanel.getComponent("chartToolbar");
 					var sunburstTip = secondConfigurationPanel.getComponent("chartTip");
-					//console.log(colorPalette);
+
 					/**
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
 					 */
@@ -689,10 +675,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge 
 								|| isChartChord) {	
-						//console.log(chartLegendCheckBox);
 						chartLegendCheckBox.hide();
 					} else {
-						//console.log(chartLegendCheckBox);
 						chartLegendCheckBox.show();
 					}
 					
@@ -703,10 +687,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					if (isChartSunburst || isChartWordCloud || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge
 								|| isChartChord) {
-						//console.log(chartLegend);
 						chartLegend.hide();
 					} else {
-						//console.log(chartLegend);
 						chartLegend.show();
 					}
 					
@@ -719,10 +701,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 								|| isChartChord || isChartPie || isChartRadar 
 									|| isChartScatter)
 							|| chartLibrary == 'chartJs'){
-						//console.log(chartOrientation);
 						chartOrientation.hide();
 					} else {
-						//console.log(chartOrientation);
 						chartOrientation.show();
 					}
 					
@@ -731,10 +711,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * panel on the Step 2 tab of the Designer page.
 					 */
 					if (isChartSunburst) {
-						//console.log(chartWidth);
 						chartWidth.hide();
 					} else {
-						//console.log(chartWidth);
 						chartWidth.show();
 					}
 					
@@ -744,10 +722,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * of the Designer page.
 					 */
 					if (isChartSunburst) {
-						//console.log(opacityOnMouseOver);
 						opacityOnMouseOver.show();
 					} else {
-						//console.log(opacityOnMouseOver);
 						opacityOnMouseOver.hide();
 					}
 					
@@ -756,11 +732,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Step 2 tab of the Designer page.
 					 */					
 //					if (isChartWordCloud || isChartGauge) {	
-					if (isChartWordCloud) {	
-						//console.log(colorPalette);
+					if (isChartWordCloud) {						
 						colorPalette.hide();
-					} else {
-						//console.log(colorPalette);
+					} else {						
 						colorPalette.show();
 					}
 					
@@ -854,12 +828,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * so we can be up-to-date with current structure of the document inside the Designer.
 					 */
 					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
-				
-					//console.log("========================");
-					//console.log("== RESET STEP 2 (start) ==");
-					
-//					console.log(jsonTemplateAdvancedEditor);
-					
+									
 					/**
 			    	 * Remove unwanted properties from the JSON template that we are about to apply to
 			    	 * the current chart document structure via "removeUnwantedPropsFromJsonStyle" 
@@ -877,9 +846,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * case the ghost (empty, fake) serie item will appear in the Y-axis after changing
 					 */
 					var yAxisListIsEmpty = (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) ? true : false;
-					
-					//console.log(Designer.getConfigurationForStyle(Designer.styleName));
-					
+										
 					/**
 					 * Since we are dealing with the newly created chart which does not posses any 
 					 * serie item, in order to skip mergin the OBJECT (not an empty array!) in the 
@@ -904,9 +871,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 							yAxisListIsEmpty
 						);	
 					
-//					console.log(configurationForStyleGeneric);
-//					console.log(configurationForStyleSpecific);
-					
 					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					(
 						jsonTemplateAdvancedEditor,
@@ -914,16 +878,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 						configApplyAxes
 					);
 					
-//					console.log(localJsonTemplate);
-					
 					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					(
 						localJsonTemplate, 
 						configurationForStyleSpecific,
 						configApplyAxes
 					);							
-					
-//					console.log(localJsonTemplate);
 					
 					jsonTemplate = localJsonTemplate;				
 					
@@ -955,9 +915,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * the Step 2 tab) after selecting the particular style.
 					 */
 		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
-					
-					//console.log("== RESET STEP 2 (end) ==");
-					//console.log("========================");
 				}
 			);
 						
@@ -1220,25 +1177,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 						axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";						
 					}	
 					
-					if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
-						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);	
-					else if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel)
-						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel = axisColorLabel;
-						
-					if (axesListStyle.brushColor && axesListStyle.brushColor!="" && axesListStyle.brushColor!="transparent")
-					{
-						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":";						
+//					if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
+//						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);	
+//					else if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel)
+//						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel = axisColorLabel;
+					if(Ext.getCmp("chartParallelAxesLines") && Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor) {
+						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.setFieldLabel(axisColorLabel);	
 					}
-					else
-					{
-						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
-							Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
+						
+					if (axesListStyle.brushColor && axesListStyle.brushColor != "" && axesListStyle.brushColor != "transparent") {
+						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":";						
+					} else {
+						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") 
+							+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
+//						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
 					}
 					
-					if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl)
-						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
-					else if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel)
-						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
+//					if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl)
+//						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+//					else if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel)
+//						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
+					if(Ext.getCmp("chartParallelAxesLines") && Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor) {
+						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.setFieldLabel(brushColorLabel);	
+					}
 				}
 				
 				else if (chartType=="SUNBURST")
@@ -1256,10 +1217,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 						percFontColorLabel = LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
 					}
 					
-					if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl)
-						Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl.update(percFontColorLabel);	
-					else if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel)
-						Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel = percFontColorLabel;
+//					if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl)
+//						Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl.update(percFontColorLabel);	
+//					else if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel)
+//						Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel = percFontColorLabel;
+					if(Ext.getCmp("chartToolbar") && Ext.getCmp("chartToolbar").colorPicker) {
+						Ext.getCmp("chartToolbar").colorPicker.setFieldLabel(percFontColorLabel);	
+					}
 					
 					var sunburstTipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style);
 					
@@ -1274,10 +1238,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 						tipFontColorLabel = LN('sbi.chartengine.configuration.sunburst.tip.fontColor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
 					}
 					
-					if (Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl)
-						Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl.update(tipFontColorLabel);	
-					else if (Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel)
-						Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel = tipFontColorLabel;
+//					if (Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl)
+//						Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl.update(tipFontColorLabel);	
+//					else if (Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel)
+//						Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel = tipFontColorLabel;
+					if(Ext.getCmp("chartTip") && Ext.getCmp("chartTip").colorPicker) {
+						Ext.getCmp("chartTip").colorPicker.setFieldLabel(tipFontColorLabel);	
+					}
 				}
 				
 				else if (chartType=="HEATMAP")
@@ -1295,10 +1262,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 						fontColorHeatmapTooltipLabel = LN('sbi.chartengine.configuration.color') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
 					}
 					
-					if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl)
-						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl.update(fontColorHeatmapTooltipLabel);	
-					else if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel)
-						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel = fontColorHeatmapTooltipLabel;
+//					if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl)
+//						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl.update(fontColorHeatmapTooltipLabel);	
+//					else if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel)
+//						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel = fontColorHeatmapTooltipLabel;
+					if(Ext.getCmp("chartHeatmapTooltip") && Ext.getCmp("chartHeatmapTooltip").colorPicker) {
+						Ext.getCmp("chartHeatmapTooltip").colorPicker.setFieldLabel(fontColorHeatmapTooltipLabel);	
+					}
 				}
 			};
 			
@@ -2334,10 +2304,10 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            cls: 'tool-icon',
   		            hidden: isCockpit,
   		            listeners: {
+  		            	
   		            	click: {
   		            		element: 'el',
   		            		fn: function(){
-  		            			
   		            			/**
   		            			 * TODO: Check if this part affects somehow the functioning of the application.
   		            			 * 
@@ -2360,9 +2330,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			
-  		            			//console.log(Sbi.chart.designer.Designer.exportAsJson());
-    							//console.log(Sbi.chart.designer.Designer.exportAsJson(true));
-  		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
 
   		            			
@@ -2383,10 +2350,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
   		            							  		 		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            							
-  		            							//console.log(Sbi.chart.designer.Designer.exportAsJson(false));
-  		            							//console.log(exportedAsOriginalJson);
-  		            							
+  		            							  		            							
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   	  		            									docLabel: docLabel
@@ -2437,6 +2401,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            	click: {
   		            		element: 'el',
   		            		fn: function(){
+  		            			
   		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
   		            			if (activeTab.getId() == 'advancedEditor') {
   		            				var json = activeTab.getChartData(); // original code
@@ -2493,31 +2458,56 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            }
   		        }],
 				listeners: {
+					
+					/**
+					 * Detect the browser and according to this information, if it is the
+					 * Mozilla Firefox, provide a tab listener for 'focus' event on it for
+					 * every tab that is present in the panel. This event will fire whenever
+					 * user clicks once on particular tab and it will consequesntly set the
+					 * tab as the active one.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					render: function () 
+					{
+						if (Ext.browser.is('Firefox')) 
+						{
+							this.items.each
+							(
+								function (itm, idx) 
+								{
+									itm.tab.on
+									(
+										'focus', 
+										
+										function (tab) 
+										{
+											var tabpanel = tab.up('tabpanel');
+											tabpanel.setActiveTab(idx);
+										}
+									);
+								}
+							);
+						}
+					},
+					
 				    tabchange: function(tabPanel, tab){
 				    	
-//				    	console.log("=============");
-//				    	console.log("=== Tab change (START) ===");
-//				    	console.log("=============");
-				    	
-				    	if(tab.getId() == 'advancedEditor') { console.log("-- 1-1 --");
+				    	if(tab.getId() == 'advancedEditor') { 
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
-//				    		console.log("-- 2-1 --");
 				    		var json = Sbi.chart.designer.Designer.exportAsJson();
-//				    		console.log("-- 3-1 --");
-				    		//console.log(json);
-//				    		console.log("-- 4-1 --");
 							tab.setChartData(json);
 							
-						} else if(tabPanel.previousTabId == 'advancedEditor') { console.log("-- 1-2 --");
+						} else if(tabPanel.previousTabId == 'advancedEditor') { 
 							Sbi.chart.designer.Designer.chartTypeColumnSelector.enable();
-//							console.log("-- 2-2 --");
-							var advancedEditor = Ext.getCmp('advancedEditor'); console.log("-- 3-2 --");
+//						
+							var advancedEditor = Ext.getCmp('advancedEditor');
 							if(advancedEditor.dataChanged == true) {
-//								console.log("-- 4-2-1 --");
-								var newJson = advancedEditor.getChartData();console.log("-- 4-2-2 --");
+//								
+								var newJson = advancedEditor.getChartData();
 								var oldJson = Sbi.chart.designer.Designer.exportAsJson();
-//								console.log("-- 4-2-3 --");
-								var tabChangeChecksMsgs = Sbi.chart.designer.Designer.tabChangeChecksMessages(oldJson, newJson);console.log("-- 4-2-4 --");
+//								
+								var tabChangeChecksMsgs = Sbi.chart.designer.Designer.tabChangeChecksMessages(oldJson, newJson);
 								if(Sbi.chart.designer.Designer.tabChangeChecksFlag && tabChangeChecksMsgs) {
 										Ext.Msg.show({
 											title : LN('sbi.chartengine.designer.tabchange.title'),
@@ -2529,19 +2519,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 												ok : LN('sbi.chartengine.generic.ok'),
 											}
 										});
-//										console.log("-- 4-2-4-1 --");
-									tabPanel.setActiveTab('advancedEditor');console.log("-- 4-2-6 --");
+//									
+									tabPanel.setActiveTab('advancedEditor');
 									return false;
-			    				} else {//console.log("-- 4-2-4-2 --");
+			    				} else {
 			    					Sbi.chart.designer.Designer.update(newJson);
 			    				}
 							}
-						}//console.log("-- 5 --");
-						tabPanel.previousTabId = tab.getId();
-						
-//						console.log("=============");
-//				    	console.log("=== Tab change (END) ===");
-//				    	console.log("=============");
+						}
+						tabPanel.previousTabId = tab.getId();						
 					}
 				},  
   				items: [
@@ -2708,14 +2694,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftYAxisesPanel = this.leftYAxisesPanel;
 			var rightYAxisesPanel = this.rightYAxisesPanel;
 			var bottomXAxisesPanel = this.bottomXAxisesPanel;
-			//console.log("LOAD AXIS");
+
 			var globalScope = this;
 			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
 			
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
-			//console.log(theStorePool);
 						
 			var yCount = 1;
 			
@@ -2971,20 +2956,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 			
 			//Workaround for color picker resets
-			if(this.cModel.get('backgroundColor') && this.cModel.get('backgroundColor').trim() == '') {
-				this.cModel.set('backgroundColor', 'transparent');
-			};
-			if(this.cModel.get('legendColor') && this.cModel.get('legendColor').trim() == '') {
-				this.cModel.set('legendColor', 'transparent');
-			};
-			
-			if(this.cModel.get('legendBackgroundColor') && this.cModel.get('legendBackgroundColor').trim() == '') {
-				this.cModel.set('legendBackgroundColor', 'transparent');
-			};
-			
-			if(this.cModel.get('legendTitleColor') && this.cModel.get('legendTitleColor').trim() == '') {
-				this.cModel.set('legendTitleColor', 'transparent');
-			};
+//			if(this.cModel.get('backgroundColor') && this.cModel.get('backgroundColor').trim() == '') {
+//				this.cModel.set('backgroundColor', 'transparent');
+//			};
+//			if(this.cModel.get('legendColor') && this.cModel.get('legendColor').trim() == '') {
+//				this.cModel.set('legendColor', 'transparent');
+//			};
+//			
+//			if(this.cModel.get('legendBackgroundColor') && this.cModel.get('legendBackgroundColor').trim() == '') {
+//				this.cModel.set('legendBackgroundColor', 'transparent');
+//			};
+//			
+//			if(this.cModel.get('legendTitleColor') && this.cModel.get('legendTitleColor').trim() == '') {
+//				this.cModel.set('legendTitleColor', 'transparent');
+//			};
 			
 			this.cViewModel.setData({
 				configModel: this.cModel
@@ -3011,42 +2996,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// resulted json from 1st, 2nd and 3rd designer steps (without properties catalogue)
 			var exportedDesignerSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
-			//console.log("-------------------");
-			//console.log("-- EXPORT AS JSON (start) --");
-//			console.log(exportedDesignerSteps);
-						
+									
 			// default properties catalogue by used chart library, depending on selected chart type 
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
     		chartType = chartType.toLowerCase();
 			var library = this.chartLibNamesConfig[chartType];
 			var catalogue = propertiesCatalogue[library] || {};
-			
-//			console.log("+++++++++");
-//			console.log(library);
-//			console.log(catalogue);
-//			console.log("+++++++++");
-			
+						
 			// default properties catalogue by used chart library, depending on selected chart type 
 			var oldJsonChartType = Sbi.chart.designer.Designer.jsonTemplate.CHART.type;
 			oldJsonChartType = oldJsonChartType.toLowerCase();
 			var oldLibrary = this.chartLibNamesConfig[oldJsonChartType];
 			
-//			console.log(oldJsonChartType);
-//			console.log(oldLibrary);
-			
-//			console.log("+++++++++");
-			
 			// last json template in memory
 			var lastJsonTemplate = Sbi.chart.designer.Designer.jsonTemplate;
-//			console.log(lastJsonTemplate);
-//			
-//			console.log("+++++++++");
 			
 			// last json in memory with applied properties catalogue
 			var appliedPropertiesOnOldJson = Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, lastJsonTemplate);
-//			console.log(appliedPropertiesOnOldJson);
-//			
-//			console.log("+++++++++");
 			
 			// comparison and merge generated json template with the old one
 			var removeNotFoundItemsFlag = true;
@@ -3057,9 +3023,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						removeNotFoundItemsFlag: removeNotFoundItemsFlag
 					}
 				);
-//			console.log("+++++++++");
-//			console.log(overwrittenJsonTemplate);
-//			console.log("+++++++++");
+
 			// add default catalogue properties in case there are new elements generated by designer
 			var newJsonTemplate = (library === oldLibrary)?
 				Sbi.chart.designer.ChartUtils.mergeObjects(
@@ -3076,19 +3040,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						}
 					);
 			
-						//console.log("+++++++++");
-			//console.log(newJsonTemplate);
-			//console.log("+++++++++");
-			
 			if(finalJson == true) {
-				//console.log(Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate));
-				
-				//console.log("-- EXPORT AS JSON (end) --");
-				//console.log("-------------------");
 				return Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate);
 			} else {
-				//console.log("-- EXPORT AS JSON (end) --");
-				//console.log("-------------------");
 				return newJsonTemplate;
 			}
 		},

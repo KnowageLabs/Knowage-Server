@@ -175,7 +175,7 @@
 					floating : true,
 					layout : 'fit',
 					margin : 6,
-					draggable : chartConf.chart.legendFloating,
+					draggable : true,
 					bodyStyle : 'background:transparent;',
 					html : myNewChart.generateLegend()
 				});

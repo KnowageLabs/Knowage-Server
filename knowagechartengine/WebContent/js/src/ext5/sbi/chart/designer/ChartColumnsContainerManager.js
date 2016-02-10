@@ -912,15 +912,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						 * 
 						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
-						hidden: 
-							Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase()=="GAUGE" ?
-									true : false,
+						hidden: (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase()=="GAUGE"),
 									
 						layout: 'fit',
 						sortable: false,
 						editor: {
 							xtype: 'combobox',
 							editable: false,
+//							editable: true,
 							displayField: 'label',
 							valueField: 'value',
 							store: [

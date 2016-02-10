@@ -17,7 +17,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 170,
+//		height: 170, //why this fixed height?? it cuts off the inner components
 		
 		title: LN("sbi.chartengine.configuration.parallel.axesLines.title"), 
 		bodyPadding: 10,
@@ -45,20 +45,30 @@ Ext.define
 			var globalScope = this;
 			
 			/* Color picker drop-down matrix (table) */
-	        this.colorPickerAxisColor = Ext.create
-	        (
-        		'Sbi.chart.designer.ColorPickerContainer',
-        		
-        		{
-        			viewModel: this.viewModel,
-        			isColorMandatory: true, 
-        			width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
-        			fieldBind: '{configModel.axisColor}',
-        			initiator: "colorPickerAxisColor"
-        		}
-    		);
+//			this.colorPickerAxisColor = Ext.create
+//			(
+//					'Sbi.chart.designer.ColorPickerContainer',
+//					
+//					{
+//						viewModel: this.viewModel,
+//						isColorMandatory: true, 
+//						width: Sbi.settings.chart.configurationStep.widthOfFields,
+//						padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+//						customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
+//						fieldBind: '{configModel.axisColor}',
+//						initiator: "colorPickerAxisColor"
+//					}
+//			);
+	        this.colorPickerAxisColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+	        	viewModel: this.viewModel,
+	        	fieldBind: '{configModel.axisColor}',
+	        	bind: '{configModel.axisColor}',
+				fieldLabel : LN('sbi.chartengine.configuration.parallel.axesLines.axisColor'),
+				emptyText: LN('sbi.chartengine.configuration.parallel.axesLines.axisColor.emptyText'),
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
+				adding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+				isColorMandatory: true,
+			});
 	        
 	        this.colorPickerAxisColor.on
 	        (
@@ -86,21 +96,31 @@ Ext.define
     		);
 	        
 	        /* Color picker drop-down matrix (table) */
-	        this.colorPickerBrushColor= Ext.create
-	        (
-        		'Sbi.chart.designer.ColorPickerContainer',
-        		
-        		{
-        			viewModel: this.viewModel,
-        			isColorMandatory: true, 
-        			width: Sbi.settings.chart.configurationStep.widthOfFields,
-        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
-        			fieldBind: '{configModel.brushColor}',	
-        			initiator: "colorPickerBrushColor",
-        			
-        		}
-    		);
+//	        this.colorPickerBrushColor= Ext.create
+//	        (
+//	        		'Sbi.chart.designer.ColorPickerContainer',
+//	        		
+//	        		{
+//	        			viewModel: this.viewModel,
+//	        			isColorMandatory: true, 
+//	        			width: Sbi.settings.chart.configurationStep.widthOfFields,
+//	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+//	        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
+//	        			fieldBind: '{configModel.brushColor}',	
+//	        			initiator: "colorPickerBrushColor",
+//	        			
+//	        		}
+//	        );
+	        this.colorPickerBrushColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+	        	viewModel: this.viewModel,
+	        	fieldBind: '{configModel.brushColor}',
+	        	bind: '{configModel.brushColor}',
+				fieldLabel : LN('sbi.chartengine.configuration.parallel.axesLines.brushColor'),
+				emptyText: LN('sbi.chartengine.configuration.parallel.axesLines.brushColor.emptyText'),
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
+				adding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
+				isColorMandatory: true,
+			});
 	        
 	        this.colorPickerBrushColor.on
 	        (

@@ -157,31 +157,30 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			this.add(borderWidth);
 		};
 
-		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+//		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+		var color = Ext.create('Sbi.chart.designer.components.ColorPicker',{    		
 			viewModel: this.viewModel,
 			fieldBind : this.config.bindColor,
 			bind : this.config.bindColor,
+			fieldLabel : LN('sbi.chartengine.configuration.color'),
+			emptyText: LN('sbi.chartengine.configuration.fontColor.emptyText'),
 			
+			width: Sbi.settings.chart.configurationStep.widthOfFields,
 			padding: Sbi.settings.chart.configurationStep.paddingOfTopFields,
-			
-			/**
-			 * If this is mandatory for certain chart type, this flag ('isFontColorMandatory' 
-			 * boolean should be raised up. According to that we will determine if the label 
-			 * for this GUI element should be marked with some kind of flag that will point
-			 * to the mandatory field that is not specified.
-			 * 
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
 			isColorMandatory: this.config.isFontColorMandatory
 		});
 		this.add(color);
 				
 		if(this.config.bindBackgroundColor){
-			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+//			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+			var bkgrColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{    		
 				viewModel: this.viewModel,
 				fieldBind : this.config.bindBackgroundColor,
+				bind : this.config.bindBackgroundColor,
+				emptyText: LN('sbi.chartengine.configuration.backgroundColor.emptyText'),
 				
 				padding: Sbi.settings.chart.configurationStep.paddingOfBottomFields,
+				width: Sbi.settings.chart.configurationStep.widthOfFields,
 				
 				/**
 				 * If this is mandatory for certain chart type, this flag ('isBackgroundColorMandatory' 
@@ -192,7 +191,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				//customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-	        	customLabel : (globalScope.config.isBackgroundColorMandatory) ?  
+//				customLabel : (globalScope.config.isBackgroundColorMandatory) ?  
+//						LN('sbi.chartengine.configuration.backgroundcolor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+//						: LN('sbi.chartengine.configuration.backgroundcolor')
+				fieldLabel : (globalScope.config.isBackgroundColorMandatory) ?  
 	        			LN('sbi.chartengine.configuration.backgroundcolor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 	    				: LN('sbi.chartengine.configuration.backgroundcolor')
 			});
@@ -207,12 +209,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
      * 
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
-    listeners:
-	{
-    	close: function()
-    	{
-    		if (this.getComponent("borderWidthLegend"))
-			{    			
+    listeners: {
+    	close: function() {
+    		if (this.getComponent("borderWidthLegend")) {    			
     			/**
         		 * Validate the border with parameter for the Legend panel 
         		 * (inside of the popup that appears after clicking on the
@@ -242,28 +241,24 @@ Ext.define('Sbi.chart.designer.StylePopup',{
     				}
     			}
         		
-        		if (errorMsg != "")
-    			{
-        			var msg = Ext.Msg.show
-        			(
-    					{						
-	    					title : LN('sbi.chartengine.validation.errormessage'),
-	    					message : errorMsg,
-	    					icon : Ext.Msg.WARNING,
-	    					closable : false,
-	    					buttons : Ext.Msg.OK,
-	    					
-	    					fn : function()
-	    					{
-	    						/**
-	    						 * Show again the initial popup (with the form)
-	    						 * so the user can correct inappropriate value
-	    						 * for the border width.
-	    						 */
-	    	                    globalThis.show();
-	    	                }
-    					}
-					);
+        		if (errorMsg != "") {
+        			var msg = Ext.Msg.show({						
+    					title : LN('sbi.chartengine.validation.errormessage'),
+    					message : errorMsg,
+    					icon : Ext.Msg.WARNING,
+    					closable : false,
+    					buttons : Ext.Msg.OK,
+    					
+    					fn : function()
+    					{
+    						/**
+    						 * Show again the initial popup (with the form)
+    						 * so the user can correct inappropriate value
+    						 * for the border width.
+    						 */
+    	                    globalThis.show();
+    	                }
+					});
     			}       			
 			}    			
     	}

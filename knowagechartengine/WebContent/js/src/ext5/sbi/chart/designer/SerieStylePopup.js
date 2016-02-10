@@ -1,11 +1,12 @@
 Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	extend: 'Ext.form.Panel',
-	require: [
-	    'Sbi.chart.designer.FontCombo',
-	    'Sbi.chart.designer.FontStyleCombo',
-	    'Sbi.chart.designer.FontDimCombo',
-	    'Sbi.chart.designer.FontAlignCombo'
-	],
+//	requires: [
+//	    'Sbi.chart.designer.components.ColorPicker',
+//	    'Sbi.chart.designer.FontCombo',
+//	    'Sbi.chart.designer.FontStyleCombo',
+//	    'Sbi.chart.designer.FontDimCombo',
+//	    'Sbi.chart.designer.FontAlignCombo'
+//	],
 	
 	id: 'serieStylePopup',
     title: LN('sbi.chartengine.designer.seriesstyleconf'),
@@ -87,6 +88,16 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var LABEL_WIDTH = 115;
 		
 		this.callParent(config);		
+		
+		// Esc key pressing closes the modal
+		this.keyMap = new Ext.util.KeyMap(Ext.getBody(), [{
+			key: Ext.EventObject.ESC,
+			defaultEventAction: 'preventDefault',
+			scope: this,
+			fn: function() {
+				this.destroy()
+			}
+		}]);
 		
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
@@ -394,59 +405,66 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			this.serieOrderComboBox.hide();
 		}
 		
-		var serieColor = dataAtRow.get('serieColor');
-		this.serieColorPicker = {
-			xtype : 'fieldcontainer',
-			layout : 'hbox',
-			
-			/**
-			 * ID of the field set that contains color picker is added. It is
-			 * useful when the popup is showed for a PIE chart, since this one
-			 * does not need the specification for the serie items color on the
-			 * chart (color of its segment on the chart) because the chart is
-			 * using colors from the color pallete on the Step 2 of the Designer
-			 * when creating the XML template and rendering atfrewards.
-			 *  @author: danristo (danilo.ristovski@mht.net)
-			 */
-			id: "serieColorFieldSet",
-			
-			items: [
-				Ext.create('Ext.form.field.Base', {
-					id : 'serieColorField',
-					fieldStyle : (serieColor && serieColor.trim() != '') ? 
-						'background-image: none; background-color: ' + serieColor.trim() : '',
-					fieldLabel : LN('sbi.chartengine.designer.color'),
-					labelWidth : LABEL_WIDTH,
-					readOnly : true,
-					flex: 15,
-					
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-				}), {
-					xtype : 'button',
-					layout : 'hbox',
-					menu : Ext.create('Ext.menu.ColorPicker',{
-						listeners : {
-							select : function(picker, selColor) {
-								var style = 'background-image: none;background-color: #' + selColor;
-								
-								Ext.getCmp('serieColorField').setFieldStyle(style);
-							}
-						}
-					}),
-					flex: 1                
-				}
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
+//		var serieColor = dataAtRow.get('serieColor');
+//		this.serieColorPicker = {
+//			xtype : 'fieldcontainer',
+//			layout : 'hbox',
+//			
+//			/**
+//			 * ID of the field set that contains color picker is added. It is
+//			 * useful when the popup is showed for a PIE chart, since this one
+//			 * does not need the specification for the serie items color on the
+//			 * chart (color of its segment on the chart) because the chart is
+//			 * using colors from the color pallete on the Step 2 of the Designer
+//			 * when creating the XML template and rendering atfrewards.
+//			 *  @author: danristo (danilo.ristovski@mht.net)
+//			 */
+//			id: "serieColorFieldSet",
+//			
+//			items: [
+//				Ext.create('Ext.form.field.Base', {
+//					id : 'serieColorField',
+//					fieldStyle : (serieColor && serieColor.trim() != '') ? 
+//						'background-image: none; background-color: ' + serieColor.trim() : '',
+//					fieldLabel : LN('sbi.chartengine.designer.color'),
+//					labelWidth : LABEL_WIDTH,
+//					readOnly : false,
+//					flex: 15,
+//					
+//					getStyle: function() {
+//						return this.getFieldStyle( );
+//					}
+//				}), {
+//					xtype : 'button',
+//					layout : 'hbox',
+//					menu : Ext.create('Ext.menu.ColorPicker',{
+//						listeners : {
+//							select : function(picker, selColor) {
+//								var style = 'background-image: none;background-color: #' + selColor;
+//								
+//								Ext.getCmp('serieColorField').setFieldStyle(style);
+//							}
+//						}
+//					}),
+//					flex: 1                
+//				}
+//			],
+//			getColor: function(){
+//				var styleColor = this.items[0].getStyle();
+//				var indexOfSharp = styleColor.indexOf('#');
+//				styleColor = styleColor.substring(indexOfSharp);
+//				
+//				return styleColor;
+//			}
+//		};
 		
+		var serieColor = dataAtRow.get('serieColor').replace('#', '');
+		this.serieColorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			fieldLabel : LN('sbi.chartengine.designer.color'),
+			emptyText: LN('sbi.chartengine.configuration.seriescolor.emptyText'),
+			labelWidth : LABEL_WIDTH,
+			value: serieColor
+		});
 		this.serieFieldSet.add(this.serieColorPicker);
 		
 		/**
@@ -545,21 +563,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieFieldSet.add(this.serieShowAbsValue);
 		this.serieFieldSet.add(this.serieShowPercentage);
 		
-//		if(chartType=="PIE"){
-//			this.serieShowAbsValue.show();
-//			this.serieShowPercentage.show();
-//			this.serieShowValue.hide();
-//		}else if(chartType=="WORDCLOUD"){
-//			this.serieShowAbsValue.hide();
-//			this.serieShowPercentage.hide();
-//			this.serieShowValue.hide();
-//		}else{
-//			this.serieShowAbsValue.hide();
-//			this.serieShowPercentage.hide();
-//			this.serieShowValue.show();
-//		}
-		
-		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
@@ -637,6 +640,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		/* * * * * * * * * * TOOTLTIP FIELDS  * * * * * *  * * * * */
+//		var serieTooltipColor = dataAtRow.get('serieTooltipColor');
 //		var templateHtml = dataAtRow.get('serieTooltipTemplateHtml');
 //		this.tooltipTemplateHtml = Ext.create('Ext.form.field.TextArea',{
 //			grow      : true,
@@ -648,86 +652,99 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //		});
 //		this.tooltipFieldSet.add(this.tooltipTemplateHtml);
 		
-		var serieTooltipColor = dataAtRow.get('serieTooltipColor');
-		this.tooltipColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                    id : 'tooltipColorField',
-					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
-						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
-                    fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
-					labelWidth : LABEL_WIDTH,
-                    readOnly : true,
-					flex: 15,
-				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('tooltipColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
+//		this.tooltipColor = {
+//			xtype : 'fieldcontainer',
+//            layout : 'hbox',
+//            items: [
+//                Ext.create('Ext.form.field.Base', {
+//                    id : 'tooltipColorField',
+//					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
+//						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
+//                    fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
+//					labelWidth : LABEL_WIDTH,
+//                    readOnly : true,
+//					flex: 15,
+//				
+//					getStyle: function() {
+//						return this.getFieldStyle( );
+//					}
+//                }), {
+//                    xtype : 'button',
+//					layout : 'hbox',
+//                    menu : Ext.create('Ext.menu.ColorPicker',{
+//                        listeners : {
+//                            select : function(picker, selColor) {
+//                                var style = 'background-image: none; background-color: #' + selColor;
+//                                Ext.getCmp('tooltipColorField').setFieldStyle(style);
+//                            }
+//                        }
+//                    }),
+//					flex: 1                
+//                }
+//			],
+//			getColor: function(){
+//				var styleColor = this.items[0].getStyle();
+//				var indexOfSharp = styleColor.indexOf('#');
+//				styleColor = styleColor.substring(indexOfSharp);
+//				
+//				return styleColor;
+//			}
+//		};
+		var serieTooltipColor = dataAtRow.get('serieTooltipColor').replace('#', '');
+		this.tooltipColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
+			emptyText: LN('sbi.chartengine.configuration.seriestooltipcolor.emptyText'),
+			labelWidth : LABEL_WIDTH,
+			value: serieTooltipColor
+		});
 		this.tooltipFieldSet.add(this.tooltipColor);
 		
-		var serieTooltipBackgroundColor = dataAtRow.get('serieTooltipBackgroundColor');
-		this.tooltipBackgroundColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                    id : 'tooltipBackgroundColorField',
-                    fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
-					fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
-						'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
-					labelWidth : LABEL_WIDTH,
-                    readOnly : true,
-					flex: 15,
-				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('tooltipBackgroundColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
+//		var serieTooltipBackgroundColor = dataAtRow.get('serieTooltipBackgroundColor');
+//		this.tooltipBackgroundColor = {
+//				xtype : 'fieldcontainer',
+//				layout : 'hbox',
+//				items: [
+//				        Ext.create('Ext.form.field.Base', {
+//				        	id : 'tooltipBackgroundColorField',
+//				        	fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
+//				        	fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
+//				        			'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
+//				        			labelWidth : LABEL_WIDTH,
+//				        			readOnly : true,
+//				        			flex: 15,
+//				        			
+//				        			getStyle: function() {
+//				        				return this.getFieldStyle( );
+//				        			}
+//				        }), {
+//				        	xtype : 'button',
+//				        	layout : 'hbox',
+//				        	menu : Ext.create('Ext.menu.ColorPicker',{
+//				        		listeners : {
+//				        			select : function(picker, selColor) {
+//				        				var style = 'background-image: none; background-color: #' + selColor;
+//				        				Ext.getCmp('tooltipBackgroundColorField').setFieldStyle(style);
+//				        			}
+//				        		}
+//				        	}),
+//				        	flex: 1                
+//				        }
+//				        ],
+//				        getColor: function(){
+//				        	var styleColor = this.items[0].getStyle();
+//				        	var indexOfSharp = styleColor.indexOf('#');
+//				        	styleColor = styleColor.substring(indexOfSharp);
+//				        	
+//				        	return styleColor;
+//				        }
+//		};
+		var serieTooltipBackgroundColor = dataAtRow.get('serieTooltipBackgroundColor').replace('#', '');
+		this.tooltipBackgroundColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
+			emptyText: LN('sbi.chartengine.configuration.seriestooltipbackgroundcolor.emptyText'),
+			labelWidth : LABEL_WIDTH,
+			value: serieTooltipBackgroundColor
+		});
 		this.tooltipFieldSet.add(this.tooltipBackgroundColor);
 		
 		var serieTooltipAlign = dataAtRow.get('serieTooltipAlign');

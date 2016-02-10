@@ -3,6 +3,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	
 	requires : [
+	            'Sbi.chart.designer.components.ColorPicker',
 	            'Sbi.chart.designer.ChartOrientationCombo',
 	            'Sbi.chart.designer.ColorPickerContainer',
 	            'Sbi.chart.designer.FontCombo',
@@ -97,10 +98,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var fontSize = this.fontSize;
         var fontStyle = this.fontStyle;
         
-        this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
+//        this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
+        this.colorPickerContainer = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+        	fieldLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
+        	emptyText: LN('sbi.chartengine.configuration.backgroundColor.emptyText'),
+    		bind : '{configModel.backgroundColor}',
     		viewModel: this.viewModel,
-    		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
        		fieldBind: '{configModel.backgroundColor}',
+       		emptyText: LN('sbi.chartengine.configuration.backgroundColor.emptyText'),
+       		width: Sbi.settings.chart.configurationStep.widthOfFields,
        		padding: Sbi.settings.chart.configurationStep.paddingOfTopFields	// Danilo Ristovski
        	});
         
