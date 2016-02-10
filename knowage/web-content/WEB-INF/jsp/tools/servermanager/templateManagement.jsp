@@ -42,7 +42,7 @@
 				
 			</div>
 			</md-toolbar>
-			<md-content layout="column" layout-wrap>
+			<md-content layout="column" layout-wrap flex>
 			<md-input-container class="small counter"> 
 				<p>
 				<h4>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</h4>
@@ -81,7 +81,7 @@
 					</md-input-container>
 				</div>
 			</div>
-			<div id="lista" style="background:#eceff1">
+			<div id="lista" flex>
 			<div layout="row" layout-wrap>
 				<div ng-show="flagSelect">
 				<md-checkbox  ng-show="flagSelect" ng-checked="flagCheck" ng-click="selectAll()">Select All</md-checkbox>
@@ -93,6 +93,7 @@
 					ng-click="toggle(doc, docChecked)"> {{ doc.name }} </md-checkbox>
 		
 			</div>
+			
 			</div>
 
 			
