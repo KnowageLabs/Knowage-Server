@@ -172,20 +172,11 @@ public class HierarchyService {
 			String dimension = requestVal.getString("dimension");
 			paramsMap.put("dimension", dimension);
 			String hierSourceCode = (!requestVal.isNull("hierSourceCode")) ? requestVal.getString("hierSourceCode") : null;
-			paramsMap.put("hierSourceName", hierSourceCode);
+			paramsMap.put("hierSourceCode", hierSourceCode);
 			String hierSourceName = (!requestVal.isNull("hierSourceName")) ? requestVal.getString("hierSourceName") : null;
 			paramsMap.put("hierSourceName", hierSourceName);
 			String hierSourceType = (!requestVal.isNull("hierSourceType")) ? requestVal.getString("hierSourceType") : null;
 			paramsMap.put("hierSourceType", hierSourceType);
-
-			// ----------- ONLY FOR TEST -------------------
-			hierSourceCode = "BPC_PATR"; // aggiungere nella request come parametro
-			hierSourceName = "BPC_PATR"; // aggiungere nella request come parametro
-			hierSourceType = "MASTER"; // aggiungere nella request come parametro
-			paramsMap.put("hierSourceCode", hierSourceCode);
-			paramsMap.put("hierSourceName", hierSourceName);
-			paramsMap.put("hierSourceType", hierSourceType);
-			// ----------- END ONLY FOR TEST -------------------
 
 			String root = requestVal.getString("root"); // tree
 			JSONObject rootJSONObject = ObjectUtils.toJSONObject(root);
@@ -211,7 +202,7 @@ public class HierarchyService {
 			boolean doPropagation = false;
 			if (hierSourceType != null && hierSourceType.equals(HierarchyConstants.HIER_TP_MASTER) && hierTargetType != null
 					&& hierTargetType.equals(HierarchyConstants.HIER_TP_TECHNICAL)) {
-				// doPropagation = true; // ONLY FOR COMMIT: disable the relations management
+				doPropagation = true;
 				paramsMap.put("doPropagation", doPropagation);
 			}
 
@@ -236,10 +227,18 @@ public class HierarchyService {
 				deleteHierarchy(dimension, hierSourceName, dataSource, connection);
 			}
 
+			List lstRelMTInserted = new ArrayList();
 			for (List<HierarchyTreeNodeData> path : paths) {
-				persistHierarchyPath(connection, dataSource, paramsMap, path, hierarchyFields, hierConfig);
+				persistHierarchyPath(connection, dataSource, paramsMap, path, hierarchyFields, hierConfig, lstRelMTInserted);
 			}
 
+			// persists relations MT
+			String relationsMT = (!requestVal.isNull("relationsMT")) ? requestVal.getString("relationsMT") : null; // relations MASTER-TECHNICAL (propagation
+																													// management)
+			if (relationsMT != null) {
+				JSONArray relationsMTJSONObject = ObjectUtils.toJSONArray(relationsMT);
+				propagateNewLeaves(connection, dataSource, paramsMap, relationsMTJSONObject);
+			}
 			// OK - commit ALL changes!
 			connection.commit();
 			return "{\"response\":\"ok\"}";
@@ -310,27 +309,11 @@ public class HierarchyService {
 		Connection connection = null;
 		JSONObject result = new JSONObject();
 		try {
-
-			// JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-
 			HashMap<String, Object> paramsMap = new HashMap<String, Object>();
-			// String dimension = requestVal.getString("dimension");
 			paramsMap.put(HierarchyConstants.DIMENSION, dimension);
-			// String hierSourceCode = (!requestVal.isNull("hierSourceCode")) ? requestVal.getString("hierSourceCode") : null;
 			paramsMap.put(HierarchyConstants.HIER_CD_M, hierSourceCode);
-			// String hierSourceName = (!requestVal.isNull("hierSourceName")) ? requestVal.getString("hierSourceName") : null;
 			paramsMap.put(HierarchyConstants.HIER_NM_M, hierSourceName);
-			// String nodeSourceCode = (!requestVal.isNull("nodeSourceCode")) ? requestVal.getString("nodeSourceCode") : null;
 			paramsMap.put(HierarchyConstants.NODE_CD_M, nodeSourceCode);
-
-			// ----------- ONLY FOR TEST -------------------
-			// hierSourceCode = "BPC_PATR"; // aggiungere nella request come parametro
-			// hierSourceName = "BPC_PATR"; // aggiungere nella request come parametro
-			// nodeSourceCode = "PAS_TP_PC_AP_PRE"; // aggiungere nella request come parametro
-			// paramsMap.put("hierSourceCode", hierSourceCode);
-			// paramsMap.put("hierSourceName", hierSourceName);
-			// paramsMap.put("nodeSourceCode", nodeSourceCode);
-			// ----------- END ONLY FOR TEST -------------------
 
 			// 1 - get datasource label name
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -351,7 +334,6 @@ public class HierarchyService {
 			result.put(HierarchyConstants.ROOT, dataArray);
 
 		} catch (Throwable t) {
-			connection.rollback();
 			logger.error("An unexpected error occured while deleting custom hierarchy");
 			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
 		} finally {
@@ -363,38 +345,6 @@ public class HierarchyService {
 
 		return result.toString();
 	}
-
-	// public static JSONArray createRelationalData(IDataStore dataStore) throws JSONException {
-	//
-	// logger.debug("START");
-	//
-	// JSONArray rootArray = new JSONArray();
-	//
-	// IMetaData columnsMetaData = dataStore.getMetaData();
-	//
-	// Iterator iterator = dataStore.iterator();
-	//
-	// while (iterator.hasNext()) {
-	//
-	// IRecord record = (IRecord) iterator.next();
-	// List<IField> recordFields = record.getFields();
-	//
-	// JSONObject tmpJSON = new JSONObject();
-	//
-	// for (int i = 0; i < recordFields.size(); i++) {
-	//
-	// IField tmpField = recordFields.get(i);
-	//
-	// String tmpKey = columnsMetaData.getFieldName(i);
-	// tmpJSON.put(tmpKey, tmpField.getValue());
-	// }
-	//
-	// rootArray.put(tmpJSON);
-	// }
-	//
-	// logger.debug("END");
-	// return rootArray;
-	// }
 
 	private boolean deleteHierarchy(String dimension, String hierarchyName, IDataSource dataSource, Connection connection) throws SQLException {
 		// delete hierarchy
@@ -528,7 +478,7 @@ public class HierarchyService {
 			if (f.isSingleValue()) {
 				column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 				selectClauseBuffer.append(column + sep);
-				// // add first node column as order field:
+				// add first node column as order field:
 				// if (i == 0)
 				// orderClauseBuffer.append(column);
 			} else {
@@ -536,13 +486,12 @@ public class HierarchyService {
 					sep = ",";
 					column = AbstractJDBCDataset.encapsulateColumnName(f.getId() + i2, dataSource);
 					selectClauseBuffer.append(column + sep);
-					// // add first node column as order field:
+					// add first node column as order field:
 					// if (i == 0 && i2 == 1)
 					// orderClauseBuffer.append(column);
 				}
 			}
 		}
-
 		// order clause
 		for (int o = 1, l2 = totalLevels; o <= l2; o++) {
 			String sep = (o == totalLevels) ? "" : ",";
@@ -597,9 +546,6 @@ public class HierarchyService {
 		}
 		// order cluase
 		query.append(" ORDER BY " + orderClauseBuffer.toString());
-
-		// ONLY FDOR TEST
-		// query.append(" limit 100");
 
 		logger.debug("Query for get hierarchies: " + query);
 		return query.toString();
@@ -819,12 +765,9 @@ public class HierarchyService {
 		}
 
 		// ONLY FOR DEBUG
-		if (allNodeCodes.contains(nodeCode)) {
-			// logger.error("COLLISION DETECTED ON: " + nodeCode);
-		} else {
+		if (!allNodeCodes.contains(nodeCode)) {
 			allNodeCodes.add(nodeCode);
 		}
-
 	}
 
 	/**
@@ -1019,8 +962,9 @@ public class HierarchyService {
 	 * Persist custom hierarchy paths to database
 	 */
 	private void persistHierarchyPath(Connection connection, IDataSource dataSource, HashMap<String, Object> paramsMap, List<HierarchyTreeNodeData> path,
-			Hierarchy hierarchyFields, HashMap hierConfig) throws SQLException {
+			Hierarchy hierarchyFields, HashMap hierConfig, List lstRelMTInserted) throws SQLException {
 		String columns = "";
+
 		try {
 			// 1 - get fields structure
 			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
@@ -1113,14 +1057,21 @@ public class HierarchyService {
 				hierPreparedStatement.setObject(i, null);
 			}
 
-			// 4 - Explore the path and set the corresponding columns for insert hier and insert rel (master and technical)
+			// 4 - Explore the path and set the corresponding columns for insert hier
 			// -----------------------------------------------
+			HashMap<String, Object> lstMTFieldsValue = new HashMap<String, Object>();
 			for (int i = 0; i < path.size(); i++) {
 				HierarchyTreeNodeData node = path.get(i);
-				hierPreparedStatement = valorizeInsertPlaceholders(hierPreparedStatement, node, lstFields, paramsMap);
-				if ((boolean) paramsMap.get("doPropagation")) {
-					persistRelationMasterTechnical(connection, node, dataSource, paramsMap);
-				}
+				hierPreparedStatement = valorizeInsertPlaceholders(hierPreparedStatement, node, lstFields, paramsMap, lstMTFieldsValue);
+				lstMTFieldsValue = getMTvalues(lstMTFieldsValue, node, paramsMap);
+			}
+
+			// 4bis - insert rel (master and technical)
+			if (paramsMap.get("doPropagation") != null && (boolean) paramsMap.get("doPropagation")) {
+				// adds only distinct values
+				if (!lstRelMTInserted.contains(lstMTFieldsValue.get(HierarchyConstants.PATH_CD_T)))
+					persistRelationMasterTechnical(connection, lstMTFieldsValue, dataSource, paramsMap);
+				lstRelMTInserted.add(lstMTFieldsValue.get(HierarchyConstants.PATH_CD_T));
 			}
 
 			// 5 - Execution of insert prepared statement
@@ -1144,21 +1095,21 @@ public class HierarchyService {
 	 * @param dataSource
 	 * @throws SQLException
 	 */
-	private void persistRelationMasterTechnical(Connection connection, HierarchyTreeNodeData node, IDataSource dataSource, HashMap paramsMap)
-			throws SQLException {
+	private void persistRelationMasterTechnical(Connection connection, HashMap values, IDataSource dataSource, HashMap paramsMap) throws SQLException {
 		try {
 			// prepare stmt ONLY for original MASTER (with '_M' suffix) nodes
-			if (node.getAttributes().get(HierarchyConstants.HIER_NM_M) != null) {
+			if (values.get(HierarchyConstants.HIER_NM_M) != null) {
 				String relColumns = getRelationalColumns(dataSource);
 				String insertRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns
-						+ ") values (?,?,?,?,?,?,?,?,?,?,?) ";
+						+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 				try (PreparedStatement relPreparedStatement = connection.prepareStatement(insertRelQuery);) {
-					for (int k = 1; k <= 11; k++) {
+					for (int k = 1; k <= 13; k++) {
 						relPreparedStatement.setObject(k, null);
 					}
-					valorizeRelPlaceholders(relPreparedStatement, node, paramsMap);
+					// valorizeRelPlaceholders(relPreparedStatement, node, paramsMap);
+					valorizeRelPlaceholders(relPreparedStatement, values);
 					relPreparedStatement.executeUpdate();
-					// relPreparedStatement.close();
+					relPreparedStatement.close();
 				} catch (Throwable t2) {
 					logger.error("An unexpected error occured while updating hierarchy for backup");
 					throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t2);
@@ -1167,6 +1118,18 @@ public class HierarchyService {
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy relations", t.getMessage());
 		}
+	}
+
+	/**
+	 * Inserts new leaves where the user wants (selected path throught the GUI)
+	 *
+	 * @param connection
+	 * @param dataSource
+	 * @param paramsMap
+	 * @param relationsMTJSONObject
+	 */
+	private void propagateNewLeaves(Connection connection, IDataSource dataSource, HashMap paramsMap, JSONArray relationsMTJSONObject) {
+
 	}
 
 	/**
@@ -1195,6 +1158,10 @@ public class HierarchyService {
 		sbColumns.append(column + ",");
 		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource);
 		sbColumns.append(column + ",");
+		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource);
+		sbColumns.append(column + ",");
+		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource);
+		sbColumns.append(column + ",");
 		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource);
 		sbColumns.append(column + ",");
 		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
@@ -1214,7 +1181,7 @@ public class HierarchyService {
 	 * set values for the preparedStatement of INSERT into the HIER_XXX
 	 */
 	private PreparedStatement valorizeInsertPlaceholders(PreparedStatement preparedStatement, HierarchyTreeNodeData node, LinkedHashMap lstFields,
-			HashMap paramsMap) throws SQLException {
+			HashMap paramsMap, HashMap lstMTFieldsValue) throws SQLException {
 
 		PreparedStatement toReturn = preparedStatement;
 		HashMap values = new HashMap();
@@ -1323,48 +1290,30 @@ public class HierarchyService {
 	/**
 	 * set values for the preparedStatement of relations between MASTER and TECHNICAL (HIER_XXX)
 	 */
-	private PreparedStatement valorizeRelPlaceholders(PreparedStatement preparedStatement, HierarchyTreeNodeData node, HashMap paramsMap) throws SQLException {
+	// private PreparedStatement valorizeRelPlaceholders(PreparedStatement preparedStatement, HierarchyTreeNodeData node, HashMap paramsMap) throws SQLException
+	// {
+	private PreparedStatement valorizeRelPlaceholders(PreparedStatement preparedStatement, HashMap values) throws SQLException {
 
 		PreparedStatement toReturn = preparedStatement;
 
-		HashMap values = new HashMap();
-
 		try {
-			toReturn.setObject(1, paramsMap.get("dimension"));
-			values.put("DIMENSION", paramsMap.get("dimension"));
-
-			toReturn.setObject(2, paramsMap.get("hierTargetCode"));
-			values.put("HIER_CD_T", paramsMap.get("hierTargetCode"));
-
-			toReturn.setObject(3, paramsMap.get("hierTargetName"));
-			values.put(HierarchyConstants.HIER_NM_T, paramsMap.get("hierTargetName"));
-
-			toReturn.setObject(4, node.getLeafParentCode());
-			values.put(HierarchyConstants.NODE_CD_T, node.getLeafParentCode());
-
-			toReturn.setObject(5, node.getLeafParentName());
-			values.put(HierarchyConstants.NODE_NM_T, node.getLeafParentName());
-
-			toReturn.setObject(6, Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.LEVEL)) - 1);
-			values.put(HierarchyConstants.NODE_LEV_T, Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.LEVEL)) - 1);
-
-			toReturn.setObject(7, paramsMap.get("hierSourceCode"));
-			values.put(HierarchyConstants.HIER_CD_M, paramsMap.get("hierSourceCode"));
-
-			toReturn.setObject(8, paramsMap.get("hierSourceName"));
-			values.put(HierarchyConstants.HIER_NM_M, paramsMap.get("hierSourceName"));
-
-			toReturn.setObject(9, node.getAttributes().get(HierarchyConstants.NODE_CD_M));
-			values.put(HierarchyConstants.NODE_CD_M, node.getAttributes().get(HierarchyConstants.NODE_CD_M));
-
-			toReturn.setObject(10, node.getAttributes().get(HierarchyConstants.NODE_NM_M));
-			values.put(HierarchyConstants.NODE_NM_M, node.getAttributes().get(HierarchyConstants.NODE_NM_M));
-
-			toReturn.setObject(11, node.getAttributes().get(HierarchyConstants.NODE_LEV_M));
-			values.put(HierarchyConstants.NODE_LEV_M, node.getAttributes().get(HierarchyConstants.NODE_LEV_M));
+			toReturn.setObject(1, values.get(HierarchyConstants.DIMENSION));
+			toReturn.setObject(2, values.get(HierarchyConstants.HIER_CD_T));
+			toReturn.setObject(3, values.get(HierarchyConstants.HIER_NM_T));
+			toReturn.setObject(4, values.get(HierarchyConstants.NODE_CD_T));
+			toReturn.setObject(5, values.get(HierarchyConstants.NODE_NM_T));
+			toReturn.setObject(6, values.get(HierarchyConstants.NODE_LEV_T));
+			toReturn.setObject(7, values.get(HierarchyConstants.PATH_CD_T));
+			toReturn.setObject(8, values.get(HierarchyConstants.PATH_NM_T));
+			toReturn.setObject(9, values.get(HierarchyConstants.HIER_CD_M));
+			toReturn.setObject(10, values.get(HierarchyConstants.HIER_NM_M));
+			toReturn.setObject(11, values.get(HierarchyConstants.NODE_CD_M));
+			toReturn.setObject(12, values.get(HierarchyConstants.NODE_NM_M));
+			toReturn.setObject(13, values.get(HierarchyConstants.NODE_LEV_M));
 
 		} catch (Throwable t) {
-			String errMsg = "Error while inserting relation of element with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
+			String errMsg = "Error while inserting relation of element with code: [" + values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
+					+ values.get(HierarchyConstants.NODE_NM_T) + "]";
 			if (values.size() > 0) {
 				errMsg += " with next values: [";
 				Iterator iter = values.keySet().iterator();
@@ -1380,6 +1329,47 @@ public class HierarchyService {
 		}
 
 		return toReturn;
+	}
+
+	private HashMap getMTvalues(HashMap<String, Object> lstMTFieldsValue, HierarchyTreeNodeData node, HashMap paramsMap) {
+
+		HashMap<String, Object> values = lstMTFieldsValue;
+		if (values == null)
+			values = new HashMap<String, Object>();
+
+		// get level - is null if the node is the root
+		Integer level = (node.getAttributes().get(HierarchyConstants.LEVEL) != null) ? Integer.valueOf((String) node.getAttributes().get(
+				HierarchyConstants.LEVEL)) : null;
+		Integer maxDepth = (node.getAttributes().get(HierarchyConstants.MAX_DEPTH) != null) ? Integer.valueOf((String) node.getAttributes().get(
+				HierarchyConstants.MAX_DEPTH)) : null;
+
+		boolean isLeaf = (level != null && maxDepth != null && level.compareTo(maxDepth) == 0) ? true : false;
+
+		if (node.getAttributes().get(HierarchyConstants.HIER_NM_M) != null) {
+			values.put(HierarchyConstants.DIMENSION, paramsMap.get("dimension"));
+			values.put(HierarchyConstants.HIER_CD_T, paramsMap.get("hierTargetCode"));
+			values.put(HierarchyConstants.HIER_NM_T, paramsMap.get("hierTargetName"));
+			values.put(HierarchyConstants.NODE_CD_T, node.getLeafParentCode());
+			values.put(HierarchyConstants.NODE_NM_T, node.getLeafParentName());
+			values.put(HierarchyConstants.NODE_LEV_T, level - 1);
+			values.put(HierarchyConstants.HIER_CD_M, paramsMap.get("hierSourceCode"));
+			values.put(HierarchyConstants.HIER_NM_M, paramsMap.get("hierSourceName"));
+			values.put(HierarchyConstants.NODE_CD_M, node.getAttributes().get(HierarchyConstants.NODE_CD_M));
+			values.put(HierarchyConstants.NODE_NM_M, node.getAttributes().get(HierarchyConstants.NODE_NM_M));
+			values.put(HierarchyConstants.NODE_LEV_M, node.getAttributes().get(HierarchyConstants.NODE_LEV_M));
+		}
+		if (!isLeaf && level != null) {
+			// update complete path references
+			String pathCodes = (values.get(HierarchyConstants.PATH_CD_T) != null) ? (String) values.get(HierarchyConstants.PATH_CD_T) : "";
+			pathCodes += "/" + node.getNodeCode();
+			values.put(HierarchyConstants.PATH_CD_T, pathCodes);
+
+			String pathNames = (values.get(HierarchyConstants.PATH_NM_T) != null) ? (String) values.get(HierarchyConstants.PATH_NM_T) : "";
+			pathNames += "/" + node.getNodeName();
+			values.put(HierarchyConstants.PATH_NM_T, pathNames);
+		}
+		return values;
+
 	}
 
 	/**
@@ -1550,7 +1540,7 @@ public class HierarchyService {
 		logger.debug("The update query is [" + updateQuery + "]");
 
 		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
-			preparedStatement.setString(1, (String) paramsMap.get("hierSourceName") + "_" + timestamp);
+			preparedStatement.setString(1, (String) paramsMap.get("hierTargetName") + "_" + timestamp);
 			preparedStatement.setBoolean(2, true);
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
 			preparedStatement.setString(4, (String) paramsMap.get("hierTargetName"));
@@ -1569,7 +1559,7 @@ public class HierarchyService {
 			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t);
 		}
 
-		if ((Boolean) paramsMap.get("doPropagation")) {
+		if (paramsMap.get("doPropagation") != null && (Boolean) paramsMap.get("doPropagation")) {
 
 			String hierNameTargetColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 			String hierNameSourceColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);

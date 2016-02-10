@@ -254,23 +254,39 @@ public class BackupService {
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
+		// relations table (propagation management)
+		// String timestampBkp = hierBkpName.substring(hierBkpName.lastIndexOf("_"));
+		String hierCDTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
+		String hierNMTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
+
 		String selectQuery = "SELECT DISTINCT(" + hierCdColumn + ") FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+		String selectQueryRel = "SELECT DISTINCT(" + hierCDTColumn + ") FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn
+				+ "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The select query is [" + selectQuery + "]");
+		logger.debug("The select query for relations TM is [" + selectQueryRel + "]");
 
 		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+		String deleteQueryRel = "DELETE FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn + "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
+		logger.debug("The delete query for relations TM is [" + deleteQueryRel + "]");
 
 		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ? WHERE " + hierNameColumn + "= ?";
+		String updateQueryRel = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNMTColumn + "= ?, " + bkpColumn + " = ? WHERE "
+				+ hierNMTColumn + "= ?";
 
 		logger.debug("The update query is [" + updateQuery + "]");
+		logger.debug("The update query for relations TM is [" + updateQueryRel + "]");
 
 		try (Connection databaseConnection = dataSource.getConnection();
 				Statement stmt = databaseConnection.createStatement();
 				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
 				PreparedStatement deletePs = databaseConnection.prepareStatement(deleteQuery);
-				PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery)) {
+				PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery);
+				PreparedStatement selectPsRel = databaseConnection.prepareStatement(selectQueryRel);
+				PreparedStatement deletePsRel = databaseConnection.prepareStatement(deleteQueryRel);
+				PreparedStatement updatePsRel = databaseConnection.prepareStatement(updateQueryRel)) {
 
 			// begin transaction
 			databaseConnection.setAutoCommit(false);
@@ -309,6 +325,41 @@ public class BackupService {
 				updatePs.executeUpdate();
 
 				logger.debug("Update query executed!");
+			}
+
+			// MT Relations management
+			selectPsRel.setString(1, hierBkpName);
+
+			logger.debug("Preparing select statement. Name of the hierarchy backup is [" + hierBkpName + "]");
+
+			selectPsRel.setBoolean(2, true);
+
+			ResultSet rsRel = selectPsRel.executeQuery();
+
+			logger.debug("Select query fore relations MT executed! Processing result set...");
+
+			if (rsRel.next()) {
+
+				String hierCdT = rsRel.getString(HierarchyConstants.HIER_CD_T);
+
+				deletePsRel.setString(1, hierCdT);
+				deletePsRel.setBoolean(2, false);
+
+				logger.debug("Preparing delete statement for relations MT. Field [" + HierarchyConstants.HIER_CD_T + "] has value = " + hierCdT);
+
+				deletePsRel.executeUpdate();
+
+				logger.debug("Delete query on relations MT executed!");
+
+				logger.debug("Preparing update on relations MT statement.");
+
+				updatePsRel.setString(1, hierCdT);
+				updatePsRel.setBoolean(2, false);
+				updatePsRel.setString(3, hierBkpName);
+
+				updatePsRel.executeUpdate();
+
+				logger.debug("Update query on relations MT executed!");
 			}
 
 			logger.debug("Executing commit. End transaction!");
