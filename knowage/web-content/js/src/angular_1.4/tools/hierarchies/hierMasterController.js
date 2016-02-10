@@ -102,12 +102,16 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					getListHierarchiesPromise   
 						.success(function(data){
 							if (data.errors === undefined){
-								//TODO remove fake element listHierarchies.root 
-								$scope.showListHierarchies(data.root.length == 0 ? listHierarchies.root : data.root)
-									.then(function(list) {
-											$scope.copyNodeTableToTree(e,list);
-										}, function() {
+								if (data.root.length == 0 ){
+									$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.info.drag.listhierarchies"));
+									$scope.copyNodeTableToTree(e,[]);
+								}else{
+									$scope.showListHierarchies(data.root.length == 0 ? listHierarchies.root : data.root)
+										.then(function(list) {
+												$scope.copyNodeTableToTree(e,list);
+											}, function() {
 										});
+								}
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
 							}
