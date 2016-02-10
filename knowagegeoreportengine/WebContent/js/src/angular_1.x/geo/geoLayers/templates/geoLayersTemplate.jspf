@@ -87,7 +87,7 @@
       <md-button ng-click="cancel()">
      Annulla
       </md-button>
-      <md-button ng-click="updateChange()" style="margin-right:20px;" md-autofocus>
+      <md-button ng-click="updateChange()" style="margin-right:20px;" >
         Salva
       </md-button>
     </md-dialog-actions>
