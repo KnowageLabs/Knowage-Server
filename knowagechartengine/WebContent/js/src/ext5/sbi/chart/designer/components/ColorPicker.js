@@ -51,6 +51,10 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 	},
 
 	setValue : function(hex){
+		if(this.menu && this.menu.close) {
+			this.menu.close();
+		}
+		
 		var value = (hex || "").toUpperCase();
 		
 		Sbi.chart.designer.components.ColorPicker.superclass.setValue.call(this, value);
@@ -60,8 +64,12 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 	},
 	
 	setRawValue : function(hex){
-		var value = (hex || "").toUpperCase();
+		if(this.menu && this.menu.close) {
+			this.menu.close();
+		}
 		
+		var value = (hex || "").toUpperCase();
+
 		Sbi.chart.designer.components.ColorPicker.superclass.setRawValue.call(this, hex);
 		if(this.regex6Digits.test(value) || this.regexTransparent.test(value)) {
 			this.setColor(value);
@@ -102,11 +110,22 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 			return;
 		}
 
+		if(this.menu) {
+			this.menu.destroy();
+		}
+		
 		this.menu = new Ext.menu.ColorPicker({
 			shadow: true,
 			autoShow : true,
 //			closable : true,
-//			closeAction : 'destroy'
+			closeAction : 'destroy',
+			
+			listeners: {
+				afterrender : function(){
+					this.focus();
+					this.onFocus();
+				},
+			}
 		});
 		this.menu.alignTo(this.inputEl, 'tl-bl?');
 		this.menu.doLayout();
@@ -129,15 +148,20 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 			
 			this.setValue(color);
 		},
-//		show : function(){
-//			this.onFocus();
-//		},
-		hide : function(){
-			this.focus();
+		close : function(){
+			this.menu.focus();
 			var ml = this.menuListeners;
 			this.menu.un("select", ml.select, this);
-//			this.menu.un("show", ml.show, this);
+			this.menu.un("close", ml.close, this);
 			this.menu.un("hide", ml.hide, this);
+		},
+		hide : function(){
+			this.menu.focus();
+			var ml = this.menuListeners;
+			this.menu.un("select", ml.select, this);
+			this.menu.un("close", ml.close, this);
+			this.menu.un("hide", ml.hide, this);
+			this.menu.destroy();
 		},
 	},
 });
