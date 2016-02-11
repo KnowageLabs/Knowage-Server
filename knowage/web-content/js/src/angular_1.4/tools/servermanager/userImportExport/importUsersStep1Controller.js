@@ -117,7 +117,7 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 				if(data.hasOwnProperty("errors")){
 					$scope.stopImport(data.errors[0].message);	
 				}else if(data.STATUS=="NON OK"){
-					$scope.stopImport(data.ERROR);		
+					 $scope.stopImport(data.SUBMESSAGE,$scope.translate.load(data.ERROR,'component_impexp_messages'));	
 				}
 				else if(data.STATUS=="OK"){
 					

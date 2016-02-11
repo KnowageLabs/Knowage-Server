@@ -257,9 +257,10 @@ function userImportFuncController(sbiModule_download,sbiModule_device,$scope, $m
 		}
 	}
 	
-	$scope.stopImport=function(text){
+	$scope.stopImport=function(text,title){
+		var titleFin=title || "";
 		 var confirm = $mdDialog.confirm()
-		.title('')
+		.title(titleFin)
 		.content(text)
 		.ariaLabel('error import') 
 		.ok('OK') 
