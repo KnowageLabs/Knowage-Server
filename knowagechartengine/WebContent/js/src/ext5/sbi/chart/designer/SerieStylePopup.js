@@ -151,179 +151,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			items : []
 		});
 		
-		/**
-		 * Additional elements and functionalities inside the Serie style popup window
-		 * for the GAUGE chart type.
-		 * (danilo.ristovski@mht.net)
-		 */
-		if (chartType == "GAUGE") {
-//			/**
-//			 * DIAL field set for the GAUGE chart type
-//			 */
-//			this.dialFieldSet = Ext.create('Ext.form.FieldSet', {
-//				collapsible: true,
-//				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
-//				
-//				defaults: {
-//					anchor: '100%',
-//					labelAlign : 'left',
-//					labelWidth : LABEL_WIDTH,
-//				},
-//				
-//				layout: 'anchor',
-//				items : []
-//			});
-//			
-//			/**
-//			 * DATA_LABELS field set for the GAUGE chart type
-//			 */
-//			this.dataLabelsFieldSet = Ext.create('Ext.form.FieldSet', {
-//				collapsible: true,
-//				title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
-//				
-//				defaults: {
-//					anchor: '100%',
-//					labelAlign : 'left',
-//					labelWidth : LABEL_WIDTH,
-//				},
-//				
-//				layout: 'anchor',
-//				items : []
-//			});
-//		
-//			/**
-//			 * Variables (GUI elements) for the DIAL and DATA LABELS of the GAUGE chart
-//			 */
-//			
-//			/**
-//			 * DIAL: 
-//			 * 		backgroundColor
-//			 * 			- color of the indicator
-//			 */
-//			var backgroundColorDial = dataAtRow.get('backgroundColorDial');
-//			
-//			this.backgroundColorDial = {
-//				xtype : 'fieldcontainer',
-//				layout : 'hbox',
-//				items: [
-//					Ext.create('Ext.form.field.Base', {
-//						id : 'backgroundColorDial',
-//						fieldStyle : (backgroundColorDial && backgroundColorDial.trim() != '') ? 
-//							'background-image: none; background-color: ' + backgroundColorDial.trim() : '',
-//						fieldLabel : LN('sbi.chartengine.designer.color'),
-//						labelWidth : LABEL_WIDTH,
-//						readOnly : true,
-//						flex: 15,
-//						
-//						getStyle: function() {
-//							return this.getFieldStyle( );
-//						}
-//					}), {
-//						xtype : 'button',
-//						layout : 'hbox',
-//						menu : Ext.create('Ext.menu.ColorPicker',{
-//							listeners : {
-//								select : function(picker, selColor) {
-//									var style = 'background-image: none;background-color: #' + selColor;
-//									
-//									Ext.getCmp('backgroundColorDial').setFieldStyle(style);
-//								}
-//							}
-//						}),
-//						flex: 1                
-//					}
-//				],
-//				getColor: function(){
-//					var styleColor = this.items[0].getStyle();
-//					var indexOfSharp = styleColor.indexOf('#');
-//					styleColor = styleColor.substring(indexOfSharp);
-//					
-//					return styleColor;
-//				}
-//			};
-//		
-//			//this.dialFieldSet.add(this.backgroundColorDial);
-//			
-//			/**
-//			 * DATA LABELS
-//			 * 		y 
-//			 * 			- Y position of the panel
-//			 */	
-//			
-//			this.yPositionDataLabels = Ext.create
-//	    	(
-//				{
-//			        xtype: 'numberfield',
-//			        id: 'yPositionDataLabels',
-//			        value: dataAtRow.get('yPositionDataLabels'),
-//			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition"),
-//			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.yPosition.emptyText")
-//			    }	
-//	    	);
-//			
-//			/**
-//			 * DATA LABELS: 
-//			 * 		color
-//			 * 			- panel background color
-//			 */
-//			var colorDataLabels = dataAtRow.get('colorDataLabels');
-//			
-//			this.colorDataLabels = {
-//				xtype : 'fieldcontainer',
-//				layout : 'hbox',
-//				items: [
-//					Ext.create('Ext.form.field.Base', {
-//						id : 'colorDataLabels',
-//						fieldStyle : (colorDataLabels && colorDataLabels.trim() != '') ? 
-//							'background-image: none; background-color: ' + colorDataLabels.trim() : '',
-//						fieldLabel : LN('sbi.chartengine.designer.color'),
-//						labelWidth : LABEL_WIDTH,
-//						readOnly : true,
-//						flex: 15,
-//						
-//						getStyle: function() {
-//							return this.getFieldStyle( );
-//						}
-//					}), {
-//						xtype : 'button',
-//						layout : 'hbox',
-//						menu : Ext.create('Ext.menu.ColorPicker',{
-//							listeners : {
-//								select : function(picker, selColor) {
-//									var style = 'background-image: none;background-color: #' + selColor;
-//									
-//									Ext.getCmp('colorDataLabels').setFieldStyle(style);
-//								}
-//							}
-//						}),
-//						flex: 1                
-//					}
-//				],
-//				getColor: function(){
-//					var styleColor = this.items[0].getStyle();
-//					var indexOfSharp = styleColor.indexOf('#');
-//					styleColor = styleColor.substring(indexOfSharp);
-//					
-//					return styleColor;
-//				}
-//			};
-//			
-////			this.formatDataLabels = Ext.create
-////	    	(
-////				{
-////			        xtype: 'textfield',
-////			        id: 'formatDataLabels',
-////			        value: dataAtRow.get('formatDataLabels'),
-////			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format"),
-////			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText")
-////			    }	
-////	    	);
-//			
-			//this.dataLabelsFieldSet.add(this.yPositionDataLabels);
-//			//this.dataLabelsFieldSet.add(this.colorDataLabels);
-////			this.dataLabelsFieldSet.add(this.formatDataLabels);
-		}
-		
 		/* * * * * * * * * * SERIE FIELDS  * * * * * *  * * * * */
 		var serieName = dataAtRow.get('axisName');
 		this.serieNameTextField = Ext.create('Ext.form.field.Text', {
@@ -460,6 +287,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var serieColor = dataAtRow.get('serieColor').replace('#', '');
 		this.serieColorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
+			id: "serieColorFieldSet",
 			fieldLabel : LN('sbi.chartengine.designer.color'),
 			emptyText: LN('sbi.chartengine.configuration.seriescolor.emptyText'),
 			labelWidth : LABEL_WIDTH,
@@ -611,14 +439,16 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var globalScope = this;
 		
-		if(chartType=="WORDCLOUD"){
-			this.serieFormatOrPrecision.hide();
-		}
-	
-		
 		if(chartLibrary == 'chartJs') {
-			this.serieFormatOrPrecision.setValue("precision");
-			this.serieFormatOrPrecision.setDisabled(true);
+			/**
+			 * Lines are commented by Danilo.
+			 * 
+			 * 'serieFormatOrPrecision' field is deprecated. Now we have only
+			 * precision with prefix and postffix as optional parts of the format
+			 * of the serie that is going to be represented.
+			 */
+//			this.serieFormatOrPrecision.setValue("precision");
+//			this.serieFormatOrPrecision.setDisabled(true);
 			
 			globalScope.seriePrefixCharTextField.setValue("");
 			globalScope.seriePostfixCharTextField.setValue("");
@@ -626,11 +456,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			globalScope.seriePrefixCharTextField.hide();
 			globalScope.seriePostfixCharTextField.hide();
 		}
-		
-//		if (chartType == "GAUGE")
-//		{
-//			this.serieFieldSet.add(this.precisionOrFormat);
-//		}
 				
 		/**
 		 * This item is going to be removed since the serie tooltip HTML template
@@ -782,12 +607,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //		if(chartType=="WORDCLOUD"){
 //		  this.tooltipFieldSet.hide();	
 //		}
-		
-		if (chartType == "GAUGE")
-		{
-			//this.add(this.dialFieldSet);
-			//this.add(this.dataLabelsFieldSet);
-		}
 	},
 	
     writeConfigsAndExit: function() {
@@ -862,32 +681,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
 		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
-
-		/**
-		 * When close the popup take care also of elements that it had when appeared
-		 * that are related to charts of type GAUGE.
-		 * (danilo.ristovski@mht.net)
-		 */
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
-		{
-			/**
-			 * DIAL
-			 */
-//			var backgroundColorDial = this.backgroundColorDial.getColor();
-//			dataAtRow.set('backgroundColorDial', backgroundColorDial);
-			
-//			/**
-//			 * DATA LABELS
-//			 */		
-//			var yPositionDataLabels = this.yPositionDataLabels.getValue();
-//			dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
-			
-//			var colorDataLabels = this.colorDataLabels.getColor();
-//			dataAtRow.set('colorDataLabels', colorDataLabels);
-			
-//			var formatDataLabels = this.formatDataLabels.getValue();
-//			dataAtRow.set('formatDataLabels', formatDataLabels);
-		}		
 		
 		if (errorMessages)
 		{

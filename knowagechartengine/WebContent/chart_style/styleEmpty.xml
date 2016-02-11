@@ -8,13 +8,13 @@
 			
 			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:;" styleName="blue">
 	
-				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:transparent;" text=""/>
+				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:;" text=""/>
 				
-				<SUBTITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				<SUBTITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 				
-				<EMPTYMESSAGE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				<EMPTYMESSAGE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 				
-				<LEGEND floating='' layout="" position="" show='false' style= "align:;fontFamily:;fontSize:;fontWeight:;;borderWidth:;color:transparent;backgroundColor:transparent;" x='' y= ''/>
+				<LEGEND floating='' layout="" position="" show='false' style= "align:;fontFamily:;fontSize:;fontWeight:;;borderWidth:;color:;backgroundColor:transparent;" x='' y= ''/>
 				
 				<COLORPALETTE>
 					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
@@ -31,14 +31,14 @@
 				
 				<AXES_LIST>
 					
-					<AXIS type='Serie' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:false;">
-						<MAJORGRID interval="" style="typeline:;color:transparent;"/>
-						<MINORGRID interval="" style="typeline:;color:transparent;"/>
+					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;">
+						<MAJORGRID interval="" style="typeline:;color:;"/>
+						<MINORGRID interval="" style="typeline:;color:;"/>
 						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 	   
-					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;">
-						<TITLE style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;">
+						<TITLE style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 				
 				</AXES_LIST>
@@ -77,11 +77,11 @@
 			
 			<CHART type="PARALLEL">
 				
-				<AXES_LIST style="axisColNamePadd:;brushWidth:;axisColor:transparent;brushColor:transparent;">
+				<AXES_LIST style="axisColNamePadd:;brushWidth:;axisColor:;brushColor:;">
 				
 					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;"/>
 					
-					<AXIS type='Category' style="color:transparent;fontFamily:;fontWeight:;fontSize:;"/>
+					<AXIS type='Category' style="color:;fontFamily:;fontWeight:;fontSize:;"/>
 				
 				</AXES_LIST>
 	
@@ -120,14 +120,14 @@
 			
 				<AXES_LIST>
 				
-					<AXIS type='Serie' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:;">
+					<AXIS type='Serie' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
 						<MAJORGRID interval="" style="typeline:;color:;"/>
 						<MINORGRID interval="" typeline="typeline:;color:;"/>
-						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 					
-					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" startOnTick="" showLastLabel="" endOnTick="">
-						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" startOnTick="" showLastLabel="" endOnTick="">
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 				
 				</AXES_LIST>
@@ -143,10 +143,10 @@
 				<AXES_LIST>
 		
 					<AXIS lineColor="" lineWidth="" max=""  min="" minorTickColor="" minorTickLength="" minorTickPosition="" minorTickWidth=""
-			         offset="" minorTickInterval="" tickColor=transparent tickLength="" type='Serie'
-			         tickPixelInterval="" tickPosition="" tickWidth="" style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;opposite:;">
+			         offset="" minorTickInterval="" tickColor= tickLength="" type='Serie'
+			         tickPixelInterval="" tickPosition="" tickWidth="" style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
 						
-						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 				
 						<LABELS distance="" rotation=""/>
 				
@@ -156,8 +156,8 @@
 					
 					</AXIS>
 			
-					<AXIS type='Category' style="rotate:;align:;color:transparent;fontFamily:;fontWeight:;fontSize:;">
-						<TITLE style="align:;color:transparent;fontFamily:;fontWeight:;fontSize:;" text=""/>
+					<AXIS type='Category' style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;">
+						<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
 					</AXIS>
 			
 				</AXES_LIST>
@@ -168,7 +168,7 @@
 	
 					<SERIE animation="true" color="" pointInterval="" postfixChar="" precision="" prefixChar="" showInLegend="true"
 		                   showValue="true">
-						<TOOLTIP backgroundColor="" style="color:transparent;fontFamily:;fontWeight:;fontSize:;align:" templateHtml=""/>
+						<TOOLTIP backgroundColor="" style="color:;fontFamily:;fontWeight:;fontSize:;align:" templateHtml=""/>
 						<DIAL backgroundColorDial=""/>
 						<DATA_LABELS colorDataLabels="" formatDataLabels="" yPositionDataLabels=""/>
 					</SERIE>
@@ -181,8 +181,8 @@
 		
 		<sunburst>
 			<CHART type="SUNBURST" opacMouseOver="">
-				<TOOLBAR  style="position:;height:;width:;spacing:;tail:;percFontColor:transparent;fontFamily:;fontWeight:;fontSize:;"/>
-				<TIP style="fontFamily:;fontWeight:;fontSize:;color:transparent;align:;width:;" text=""/>
+				<TOOLBAR  style="position:;height:;width:;spacing:;tail:;percFontColor:;fontFamily:;fontWeight:;fontSize:;"/>
+				<TIP style="fontFamily:;fontWeight:;fontSize:;color:;align:;width:;" text=""/>
 			</CHART>
 		</sunburst>
 		

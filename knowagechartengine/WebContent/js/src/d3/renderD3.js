@@ -67,8 +67,60 @@ function removePixelsFromFontSize(fontSize)
 	}
 }
 
-function renderWordCloud(chartConf){
-    
+/**
+ * Providing the tooltip for charts and determining its position
+ * on the chart.
+ * 
+ * @param chartHeight Height of the chart
+ * @param chartWidth Width of the chart
+ * @param ttText Tooltip text HTML (DOM) element
+ * 
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+function positionTheTooltip(chartHeight,chartWidth,ttText)
+{
+	var windowHeight = window.innerHeight;
+	var windowWidth = window.innerWidth;
+	
+	ttText
+		.style("left", (d3.event.pageX) + "px")
+		.style("top", (d3.event.pageY - 25) + "px");
+	
+	/**
+	 * Old implementation that included vertical centering
+	 * @commentedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	/*if (chartHeight < windowHeight && chartWidth < windowWidth)
+	{
+		ttText
+			.style("left", (d3.event.pageX - (windowWidth-chartWidth)/2) + "px")
+			.style("top", (d3.event.pageY - (windowHeight-chartHeight)/2 - 25) + "px");
+	}
+	
+	if (chartHeight >= windowHeight && chartWidth >= windowWidth)
+	{
+		ttText
+			.style("left", (d3.event.pageX) + "px")
+			.style("top", (d3.event.pageY - 25) + "px");
+	}
+	
+	if (chartHeight < windowHeight && chartWidth >= windowWidth)
+	{					
+		ttText
+		.style("left", (d3.event.pageX) + "px")
+		.style("top", (d3.event.pageY - (windowHeight-chartHeight)/2 - 25) + "px");
+	}
+	
+	if (chartHeight >= windowHeight && chartWidth < windowWidth)
+	{
+		ttText
+		.style("left", (d3.event.pageX - (windowWidth-chartWidth)/2) + "px")
+		.style("top", (d3.event.pageY - 25) + "px");					
+	}*/
+}
+
+function renderWordCloud(chartConf,catchSVG){
+
 	var maxic = 0;
 	var minValue=0;
 	
@@ -78,8 +130,7 @@ function renderWordCloud(chartConf){
 			
 			maxic = chartConf.data[0][i].value;
 			
-		}
-		
+		}		
 		
         if (chartConf.data[0][i].value < minValue){
 			
@@ -87,8 +138,7 @@ function renderWordCloud(chartConf){
 			
 		}
 		
-	}
-    
+	}    
     
 		(function() {
                
@@ -534,13 +584,14 @@ function renderWordCloud(chartConf){
 		layout.start();
 
 		function draw(words,e) {
-			var randomId=Math.round((Math.random())*10000);
-		
-			d3.select("body")
+			var randomId= Math.round((Math.random())*10000);
+			
+			d3.select("body")		
 			.append("div").attr("id","main"+randomId)
 			.attr("class","d3-container")
+			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 			.style("height",chartConf.chart.height)
-			.style("width",chartConf.chart.width)
+			.style("width",chartConf.chart.width)			
 			.style("font-family", chartConf.chart.style.fontFamily)	
 			.style("font-style", chartConf.chart.style.fontStyle)
     		.style("font-weight", chartConf.chart.style.fontWeight)
@@ -749,12 +800,20 @@ function renderWordCloud(chartConf){
 					}
 				}
 				tooltip.transition().duration(50).style("opacity","1");
-				
-			
     				
-				tooltip.text(chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix)				
-					.style("left", (d3.event.pageX) + "px")     
-					.style("top", (d3.event.pageY - 25) + "px");
+				var ttText = tooltip.text(chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix);
+			  				
+				/**
+				 * Call the function that enables positioning of the 
+				 * tooltip according to its dimensions.
+				 */			
+				var chartHeight = Number(chartConf.chart.height);
+				var chartWidth = Number(chartConf.chart.width);
+				
+				positionTheTooltip(chartHeight,chartWidth,ttText);							
+				
+//					.style("left", (d3.event.pageX) + "px")     
+//					.style("top", (d3.event.pageY - 25) + "px");
 				
 			});
 			
@@ -788,6 +847,7 @@ function renderWordCloud(chartConf){
 			}
 			return param;
 		}
+		
 	}
     
 	function renderSunburst(jsonObject)
@@ -899,6 +959,7 @@ function renderWordCloud(chartConf){
 		d3.select("body")
 			.append("div").attr("id","main"+ randomId)
 			.attr("class","d3-container")
+			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 			.style("height", jsonObject.chart.height)
 			.style("width", jsonObject.chart.width)
 			.style("font-family", jsonObject.chart.style.fontFamily)
@@ -1326,6 +1387,7 @@ function renderWordCloud(chartConf){
 		  
 		  d3.select("#chart"+randomId)   	
 	    	.append("div").attr("id","explanation"+randomId)
+	    	//.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 	    	.append("span").attr("id","percentage"+randomId);
 		  
 		  d3.select("#explanation"+randomId)
@@ -1348,11 +1410,19 @@ function renderWordCloud(chartConf){
 	    			
 		  var percentageHeight = document.getElementById('percentage'+randomId).getBoundingClientRect().height;
 		  var explanationHeight = document.getElementById('explanation'+randomId).getBoundingClientRect().height;	
-		  		    
+		
+		  var explanLeftDistance = null;
+		  
+		  var a = (window.innerWidth-Number(width))/2;
+		  var b = Number(width)/2;
+		  var c = tipWidth/2;
+		  
+		  explanLeftDistance = (window.innerWidth > Number(width)) ? (a + b - c) : (b - c);		  
+		 
 		  d3.select("#explanation"+randomId)
 		  	.style("color",jsonObject.tip.style.color)
 			.style("position","absolute")
-			.style("left",width/2-tipWidth/2)
+			.style("left",explanLeftDistance)
 			.style("width",tipWidth)
 			.style("text-align","center");
 		    		
@@ -1874,6 +1944,7 @@ function renderWordCloud(chartConf){
 		d3.select("body")
 			.append("div").attr("id","main"+randomId)
 			.attr("classs","d3-container")
+			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 			.style("height",data.chart.height)
 			.style("width",data.chart.width)
 			.style("background-color",data.chart.style.backgroundColor)
@@ -2141,17 +2212,27 @@ function renderWordCloud(chartConf){
 							
 							tooltip.style("background", myColors(d[groupcolumn]));
 							
-							tooltip.text(d[data.chart.tooltip])	
+							var ttText = tooltip.text(d[data.chart.tooltip])	
 								/**
 								 * Set the color of the text, determined on the base of the level
 								 * of light (darkness) of the tooltip background color.
 								 * 
 								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
-								.style("color",tooltipBckgndColor)		
-								//.style("text-shadow", "1px 1px 2px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
-								.style("left", (d3.event.pageX) + "px")     
-								.style("top", (d3.event.pageY - 25) + "px");
+								.style("color",tooltipBckgndColor);
+								//.style("text-shadow", "1px 1px 2px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)																
+														
+							/**							 * 
+							 * Call the function that enables positioning of the 
+							 * tooltip according to its dimensions.
+							 */			
+							var chartHeight = Number(data.chart.height);
+							var chartWidth = Number(data.chart.width);
+							
+							positionTheTooltip(chartHeight,chartWidth,ttText);	
+							
+//							.style("left", (d3.event.pageX) + "px")     
+//							.style("top", (d3.event.pageY - 25) + "px");
 						}
 
 					}
@@ -2161,10 +2242,19 @@ function renderWordCloud(chartConf){
 
 					tooltip.transition().duration(50).style("opacity","1");
 					tooltip.style("background",myColors(d[groupcolumn]));
-					tooltip.text(d[data.chart.tooltip])
-					.style("left", (d3.event.pageX) + "px")     
-					.style("top", (d3.event.pageY - 25) + "px");
-
+					var ttText = tooltip.text(d[data.chart.tooltip]);
+					
+//					.style("left", (d3.event.pageX) + "px")     
+//					.style("top", (d3.event.pageY - 25) + "px");
+					
+					/**	
+					 * Call the function that enables positioning of the 
+					 * tooltip according to its dimensions.
+					 */			
+					var chartHeight = Number(data.chart.height);
+					var chartWidth = Number(data.chart.width);
+					
+					positionTheTooltip(chartHeight,chartWidth,ttText);	
 				}
 
 			})
@@ -3002,12 +3092,19 @@ function renderChordChart(jsonData)
 			   // attr("hidden","false").
 				transition().duration(50).style("opacity","1");
 				//tooltip.style("background",myColors(d[groupcolumn]));
-				tooltip.html(tool)
-				.style("left", (d3.event.pageX) + "px")     
-				.style("top", (d3.event.pageY- 25) + "px");
+				var ttText = tooltip.html(tool);
 				
-	
-
+				/**
+				 * Call the function that enables positioning of the 
+				 * tooltip according to its dimensions.
+				 */			
+				var chartHeight = Number(jsonData.chart.height);
+				var chartWidth = Number(jsonData.chart.width);
+				
+				positionTheTooltip(chartHeight,chartWidth,ttText);	
+				
+//				.style("left", (d3.event.pageX) + "px")     
+//				.style("top", (d3.event.pageY- 25) + "px");
 				
 			}
 		}
@@ -3278,9 +3375,11 @@ function renderChordChart(jsonData)
 	d3.select("body")
 		.append("div").attr("id","main"+randomId)
 		.attr("class","d3-container")
+		.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 		// Set the real height of the entire chart (the one that user specified)
 		.style("height",height)	
 		.style("width",width)
+		.style("margin","auto")	// TODO: Danilo (5.2)
 		.style("background-color",jsonData.chart.style.backgroundColor)
 		.style("font-style",jsonData.chart.style.fontStyle)
 		.style("font-weight",jsonData.chart.style.fontWeight)

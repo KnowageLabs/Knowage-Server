@@ -97,10 +97,17 @@ Sbi.settings.chart =
 			overflowY: true,
 			resizable: true
 		},
+		
 		cockpitAxisAndSerieStyleConfigPopup:
 		{
 			height: 350
-		}
+		},
+		
+		/**
+		 * Height of the Y-axis panels and Preview panel on the Designer page.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		heightYAxisAndPreviewPanels: 330
 	},
 	
 	parallel:

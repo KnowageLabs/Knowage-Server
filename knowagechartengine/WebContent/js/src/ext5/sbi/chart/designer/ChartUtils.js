@@ -1607,8 +1607,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		isXBottomContainerDisabled : function () {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'GAUGE';
 		},
-		
-		
+
 		/**
 	     * https://production.eng.it/jira/browse/KNOWAGE-548
 	     * Height has to be hidden when the designer is created by cockpit engine.
@@ -1646,7 +1645,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
 				return true;
 			} else {
-				return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+//				return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+				return false;
 			}
 		},
 

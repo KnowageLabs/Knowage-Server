@@ -230,8 +230,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   				getAxisData: function() {
   					return this.axisData;
   				},
-				minHeight: 300,
-				height: 300,
+  				
+  				/**
+  				 * The value of the height of the Y-axis panel(s) is set inside the Settings.js
+  				 * file and this value is also common for the Preview panel's height.
+  				 * 
+  				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+  				 */
+				minHeight: Sbi.settings.chart.structureStep.heightYAxisAndPreviewPanels,
+				height: Sbi.settings.chart.structureStep.heightYAxisAndPreviewPanels,
+				
 				flex: 1,
 				viewConfig: {
 					plugins: {
@@ -540,9 +548,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								Ext.Msg.show
 								(
 									{
-										title : '',
-										
-										message : "You are about to remove all serie items. Continue?",	// TODO: LN()
+										title : LN("sbi.chartengine.designer.removeAllSeries.title"),										
+										message : LN("sbi.chartengine.designer.removeAllSeries.msg"),	
 											
 										icon : Ext.Msg.QUESTION,
 										closable : false,
@@ -678,11 +685,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
 					    id: "stylePopupLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
 					    // True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts (danilo.ristovski@mht.net)
-					    hidden: gearHidden,
-					    padding: "3 0 0 0",// TODO: danristo (10.11)
-					    height: 22,// TODO: danristo (10.11)
+					    hidden: gearHidden,					    
 					    
-					    //flex: 1, //TODO: danristo (was not commented)
+					    /**
+					     * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					     */
+					    padding: "3 0 0 0",
+					    height: 22,
+					    //flex: 1, 
+					    
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    	if(chartType.toUpperCase() != 'PIE') {
@@ -717,6 +728,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					 * Y-axis panels' header Help button for providing necessary information 
 					 * about series items that should be specified for particular chart type (i.e.
 					 * the number of series that current chart type needs).
+					 * 
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					{
@@ -755,13 +767,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    id: "plusLeftAxis_" + idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
 					   
 					    /** 
-					     * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
-					     * 
+					     * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts.
 					     * @author: danristo (danilo.ristovski@mht.net)
 					     */
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
-					    /// flex: 1, //TODO: danristo (was not commented)
+					    /**
+					     * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					     */
+					    /// flex: 1,
+					    
 					    handler: function(event, toolEl, panelHeader) {
 					    						    	
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -820,8 +835,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	 * current style only to that one (new axis). Other axes should be 
 					    	 * excluded from this process, in order to avoid the reset of already 
 					    	 * saved (defined) parameters for already existing axes.  
-					    	 * 
-					    	 * TODO: Check with Benedetto if this is OK !!! 
 					    	 */
 					    	
 					    	/**

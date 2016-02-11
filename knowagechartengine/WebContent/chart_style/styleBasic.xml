@@ -14,7 +14,7 @@
 				
 				<EMPTYMESSAGE style="align:left;color:#FF0000;fontFamily:Arial;fontWeight:bold;fontSize:18px;" text="Insert your empty message (when data for chart does not exist)"/>
 				
-				<LEGEND floating='' layout="" position="top" show='false' style= "align:center;fontFamily:Arial;fontSize:12px;fontWeight:normal;;borderWidth:1;color:transparent;backgroundColor:transparent;" x='' y= ''/>
+				<LEGEND floating='' layout="" position="top" show='false' style= "align:center;fontFamily:Arial;fontSize:12px;fontWeight:normal;;borderWidth:1;color:;backgroundColor:transparent;" x='' y= ''/>
 				
 				<COLORPALETTE>
 					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>

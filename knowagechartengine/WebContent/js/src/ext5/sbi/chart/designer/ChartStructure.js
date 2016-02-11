@@ -48,7 +48,7 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
 				pack: 'start',
 				align: 'stretch'
 			},
-			columnWidth: 0.5,
+			columnWidth: 0.4,
 		});
 		var centralTopPanel = Ext.create('Ext.Container', {
 			xtype: 'basic-panels',

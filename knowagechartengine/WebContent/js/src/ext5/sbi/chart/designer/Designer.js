@@ -298,8 +298,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 * 
 			    	 * Applying of current style to Y-axis configuration (axis style configuration) is going to
 			    	 * be done by this merging.
-			    	 * 
-			    	 * TODO: Check about this with Benedetto !!!! 
 			    	 */
 			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: true});
 			    }
@@ -362,8 +360,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * "applySeries" will (if true) remove all items from serie panel in Designer.
 				 * 
 				 * !! We are not applying styles here !!
-				 * 
-				 * TODO: Check with Benedetto about this !!!
 				 */
 				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate, {applyAxes: false, applySeries: false});	
@@ -1464,6 +1460,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * When the left container (panel) on the Designer page is resized, fire events
 			 * towards attribute/measure container panels so they can update their with.
+			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			this.chartTypeColumnSelector.on
@@ -1481,11 +1478,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var chartServiceManager = this.chartServiceManager;
 			
 			// Creating step 1 panel
+			/**
+  			 * The height of the Preview panel in the Designer page is constant (fixed) and
+  			 * it is of the same heigh of the height of the Y-axis panel(s).
+  			 * 
+  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  			 */
   			this.previewPanel = Ext.create('Ext.panel.Panel', {
   				id: 'previewPanel',
-  				minHeight: 300,
+  				
+  				/**
+  				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  				 */
+  				//minHeight: 330,
+  				height: Sbi.settings.chart.structureStep.heightYAxisAndPreviewPanels,
+  				
   				title: LN('sbi.chartengine.preview'),
-  				titleAlign: 'left',	// TODO: danristo: (old value: "center")
+  				
+  				/**
+  				 * Old value was "center".
+  				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  				 */
+  				titleAlign: 'left',
+  				
   				tools:[],
   				layout : {
   				    type  : 'hbox',
@@ -1494,38 +1509,119 @@ Ext.define('Sbi.chart.designer.Designer', {
   				
   			});
   			
+  			/**
+  			 * The 'srcImg' will be the global variable that will serve as a the container
+  			 * of the URL to the image that will be shown inside the Preview panel. We will
+  			 * you this inside the handler (listener) of the 'resize' event of the Preview
+  			 * panel.
+  			 *  
+  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  			 */			
+			var srcImg = null;
+  			
+			/**
+			 * Handles the resizing of the Preview panel that lies within the Designer page.
+			 * 
+			 * @author Daniele Davì
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+  			this.previewPanel.on
+  			(
+				"resize", 
+				
+				function()
+				{
+					/**
+					 * Take the calculation of the resizing if the image is already rendered.
+					 */
+					if (srcImg && srcImg!=null)
+					{
+						var ratioChartJson = widthChartJson/heightChartJson;
+						
+						var heightPrevPan = globalThis.previewPanel.getHeight();
+						var widthPrevPan = globalThis.previewPanel.getWidth();
+						
+						var widthImg = 0;
+						var heightImg = 0;
+						
+						widthImg = (widthChartJson <= widthPrevPan) ? widthChartJson : widthPrevPan;
+						heightImg = widthImg/ratioChartJson;
+						
+						var ratioImg = widthImg/heightImg;
+						
+						heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
+						widthImg = heightImg*ratioImg;
+						
+						/**
+						 * Call the method that sets the rendered image inside the Preview panel.
+						 */
+  						setPreviewImage(srcImg,heightImg,widthImg);
+					}
+				}
+  			);
+  			
   			var previewPanel = this.previewPanel;
 			
 			var hostName = this.hostName; 
 			var serverPort = this.serverPort;
   			
-			function setPreviewImage(src) {
+			function setPreviewImage(src,heightImg,widthImg) {
 				previewPanel.removeAll();
+				
+				/**
+	  			 * If the size of the image is equal to the size of the height of the 
+	  			 * Preview panel, reduce its height for 32, because this is how much
+	  			 * the Preview panel's header takes. This way, the picture will be 
+	  			 * shown completely.
+	  			 * 
+	  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  			 */
+				if (heightImg >= globalThis.previewPanel.getHeight())
+				{
+					heightImg -= 32;
+					widthImg -= 32;
+				}
+				
 				var previewImg = Ext.create('Ext.Img', {
 				    src: src,
 				    shrinkWrap:true,
-				    width: '100%',
-				    height: '100%',
+				    
+				    /**
+		  			 * Set the height and width of the image in a way that is calculated
+		  			 * for dimensions of the Preview panel and the dimensions of the chart
+		  			 * that are set by the user (fixed or no (empty) values for height/
+		  			 * width of the chart (template)). 
+		  			 * 
+		  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  			 */
+				    width: widthImg,
+				    height: heightImg,
+				    
 				    style: {
 				        'display': 'block'
-				    },
-					listeners: {
-			            render: function() {
-			                this.mon(this.getEl(), 'load', function(e) {
-			                	this.setHeight(300-30);// set the height of the image
-			                	previewPanel.setHeight(300);
-//			                	previewPanel.setHeight(this.getHeight()+20);
-			                });
-			            }
-			        }
+				    }
 				});
+				
 				previewPanel.add(previewImg);
 			}; 
+			
+			/**
+  			 * The height and width of the chart (document, template). These values are
+  			 * specified by the user and are taken in real time (when clicking on the 
+  			 * button that serves for rendering the image inside the Preview panel), even
+  			 * when those values are not set. In the latter case, the chart will be of
+  			 * dimensions of the current dimensions of the window.
+  			 * 
+  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  			 */
+			var heightChartJson = null;
+			var widthChartJson = null;
 			
 			var previewTools = [{ xtype: 'tbfill' }, {
 				
 				/**
-				 * Old value was "image".
+				 * Old value for xtype was "image".
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */ 
 				xtype: 'tool',	
@@ -1544,15 +1640,53 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            		element: 'el',
 	            		fn: function(){			
 	            			
-	            			/**
+  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
+							
+  							/**
+  				  			 * Code that serves for the calculation of the size of the image that is going to
+  				  			 * be rendered and displayed inside the Preview panel of the Designer. Calculation
+  				  			 * is based on the current dimensions of the Preview panel and on the dimensions of
+  				  			 * the chart (document, template) that is set by the user (even if the dimensions
+  				  			 * (chart's height and width) are not set by the user - their values will be taken
+  				  			 * from respective dimensions of the entire window). 
+  				  			 * 
+  				  			 * @author Daniele Davì
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  				  			 */
+  							heightChartJson = sbiJson.CHART.height;
+  							widthChartJson = sbiJson.CHART.width;
+  							
+  							sbiJson.CHART.height = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
+  							sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
+  							
+  							heightChartJson = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;  							
+  							widthChartJson = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
+  							
+  							
+  							var ratioChartJson = widthChartJson/heightChartJson;
+  							
+  							var heightPrevPan = globalThis.previewPanel.getHeight();
+  							var widthPrevPan = globalThis.previewPanel.getWidth();
+  							
+  							/**
 	            			 * Set the "Loading preview..." image at the beginning of export,
-	            			 * so the user cna know that request is sent.
+	            			 * so the user can know that the request for the image is sent.
 	            			 * 
 	            			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	            			 */
-	            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png');
-	            			
-  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);  							
+	            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png',heightPrevPan,widthPrevPan);
+  							
+  							var widthImg = 0;
+  							var heightImg = 0;
+  							
+  							widthImg = (widthChartJson <= widthPrevPan) ? widthChartJson : widthPrevPan;
+  							heightImg = widthImg/ratioChartJson;
+  							
+  							var ratioImg = widthImg/heightImg;
+  							
+  							heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
+  							widthImg = heightImg*ratioImg;
   							
   							/**
   							 * We added new property to the 'parameters', the 'exportWebApp'.
@@ -1604,12 +1738,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 									}
 								}								
 								
+								
+								/**
+					  			 * The height and width of the chart are set inside the 'chartConf'
+					  			 * parameter.
+					  			 * 
+					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					  			 */
 								var parameters = {
       									options: chartConf,
       									content:'options',
       									type:'image/png',
-      									height: 300,
-      									width: previewPanel.getWidth(),
+      									//height: 298,
+      									//width: previewPanel.getWidth(),
       									scale: undefined,
       									constr:'Chart',
       									callback: undefined,
@@ -1619,7 +1760,14 @@ Ext.define('Sbi.chart.designer.Designer', {
       							chartExportWebServiceManager.run('exportPng', parameters, [], 
   									function (response) {
 	      								var src = '/highcharts-export-web/'+response.responseText;
-	      								setPreviewImage(src);
+	      								
+	      								/**
+	      					  			 * 
+	      					  			 * 
+	      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	      					  			 */
+	      								srcImg = src;
+	      								setPreviewImage(src,heightImg,widthImg);	      								
 	      							},
 	      							function (response) {
 	      									      								
@@ -1689,10 +1837,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var heightOfSingleItem = 20;
 			
 			/**
-			 * Work in progress...
-			 * 
-			 * TODO: This is needed for managing dynamic empty message in the X-axes panel
-			 * when it is empty.
+			 * Managing the dynamic empty message in the X-axes panel.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */			
 			var currentChartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			var emptyTextForAttributes = LN('sbi.chartengine.designer.emptytext.dragdropattributes.' + currentChartType.toLowerCase());
@@ -1828,6 +1974,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  						/**
 	  	  						 * Taking care of the order of the categories (based on their type) for the 
 	  	  						 * HEATMAP chart type.
+	  	  						 * 
 	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  	  						 */  	  						
 	  	  						if (chartType == "HEATMAP") {
@@ -2019,9 +2166,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 								Ext.Msg.show
 								(
 									{
-										title : '',
-										
-										message : "You are about to remove all categories in the panel. Continue?",	// TODO: LN()
+										title : LN("sbi.chartengine.designer.removeAllCategories.title"),										
+										message : LN("sbi.chartengine.designer.removeAllCategories.msg"),	
 											
 										icon : Ext.Msg.QUESTION,
 										closable : false,
@@ -2267,19 +2413,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Creating Cross navigation step panel
 			this.crossNavigationPanel = Ext.create('Sbi.chart.designer.CrossNavigationPanel', {
 				id: 'crossNavigation',
+				
 				contextName: thisContextName,
 				mainContextName: mainContextName,
 				userId: userId, 
 				hostName: hostName,
 				sbiExecutionId: sbiExecutionId,
-			    
+			       
 				title: LN('sbi.chartengine.designer.stepCrossNavigation'),
 			});
 			// crossNavigation should be disabled when in Cockpit 
 			if(isCockpit){
 				this.crossNavigationPanel.hide();
 			}
-			
+						
 			// Creating Advanced Editor step
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
@@ -2308,6 +2455,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            	click: {
   		            		element: 'el',
   		            		fn: function(){
+  		            			
   		            			/**
   		            			 * TODO: Check if this part affects somehow the functioning of the application.
   		            			 * 
@@ -2412,7 +2560,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			if (errorMessages == false) {
   		            				Ext.Msg.show({
   		            					title : LN('sbi.chartengine.designer.savetemplate.title'),
-  		            					message : LN('sbi.chartengine.designer.savetemplate.msg'),
+  		            					message : LN('sbi.chartengine.designer.savetemplateAndGoBack.msg'),
   		            					icon : Ext.Msg.QUESTION,
   		            					closable : false,
   		            					buttons : Ext.Msg.OKCANCEL,
@@ -2478,7 +2626,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								{
 									itm.tab.on
 									(
-										'focus', 
+										'focus',
 										
 										function (tab) 
 										{
@@ -5171,7 +5319,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					wordcloudMinAngle=wordcloudMinAngleCModel;
 				}
 				
-			    if(wordcloudMinAngle > wordcloudMaxAngle)
+			    if(Number(wordcloudMinAngle) > Number(wordcloudMaxAngle))
 			    {
 				     errorMsg += Sbi.locale.sobstituteParams
 				     (
