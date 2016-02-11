@@ -16,9 +16,7 @@
         <property name="timeUp" type="timestamp">
             <column name="TIME_UP" not-null="false" />
         </property> 
-        <property name="organization" type="string">
-            <column name="ORGANIZATION" length="20" not-null="false" />
-        </property>
+     
 	 
   </component> 
   

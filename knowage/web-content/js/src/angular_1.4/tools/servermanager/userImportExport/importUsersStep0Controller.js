@@ -2,12 +2,12 @@ angular.module('impExpUsers').controller('importUserControllerStep0', ['sbiModul
  
 function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast) {
 	$scope.upload = function(ev){
-		if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
+		if($scope.IEDConf.fileImport.fileName == "" || $scope.IEDConf.fileImport.fileName == undefined){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
 		}else{
 			var fd = new FormData();
 		
-			fd.append('exportedArchive', $scope.importFile.file);
+			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
 			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="NON OK"){

@@ -2,7 +2,7 @@
 						<div layout="row" layout-wrap>
 			
 							<div flex >
-								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+								<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.fileImport"></file-upload>
 							</div>
 							
 							<md-input-container class="small counter"> 

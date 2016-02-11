@@ -115,9 +115,9 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 			.success(function(data, status, headers, config) {
 			
 				if(data.hasOwnProperty("errors")){
-					$scope.errorImport(data.errors[0].message);	
+					$scope.stopImport(data.errors[0].message);	
 				}else if(data.STATUS=="NON OK"){
-					$scope.errorImport(data.ERROR);		
+					$scope.stopImport(data.ERROR);		
 				}
 				else if(data.STATUS=="OK"){
 					
@@ -129,9 +129,11 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 						
 						$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedEngines','component_impexp_messages')})
 					}else{
-						$scope.stepControl.resetBreadCrumb();
-						$scope.stepControl.insertBread({name:$scope.translate.load('sbi.ds.file.upload.button')})
-						$scope.finishImport();
+//						$scope.stepControl.resetBreadCrumb();
+//						$scope.stepControl.insertBread({name:$scope.translate.load('sbi.ds.file.upload.button')})
+//						$scope.finishImport();
+						
+						$scope.stopImport($scope.translate.load("sbi.importusers.importuserok"));	
 					}
 					
 					
@@ -139,7 +141,7 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 				}
 				
 			}).error(function(data, status, headers, config) {
-				$scope.errorImport(data);
+				$scope.stopImport(data);
 			})
 			
 		}

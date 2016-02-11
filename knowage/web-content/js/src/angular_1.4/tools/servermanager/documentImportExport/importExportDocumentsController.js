@@ -9,7 +9,8 @@ $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
 app.factory("importExportDocumentModule_importConf", function() {
-	return {
+	 var current_data = {}; 
+	 var default_values = {
 		fileImport : {},
 		associations : 'noAssociations',
 		fileAssociation : '',
@@ -31,7 +32,12 @@ app.factory("importExportDocumentModule_importConf", function() {
 		associationsFileName:"",
 		logFileName:"",
 		folderName:"",
+		resetData: function() {  
+		    	 current_data = angular.copy( default_values,current_data); 
+		     } 
 	};
+	 default_values.resetData();
+	  return current_data;
 });
 
 
@@ -63,7 +69,15 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 //	$scope.associationsFileImport={};
 //	$scope.associations="noAssociations";
 	
-	$scope.errorImport=function(text){
+
+	
+	$scope.finishImport=function(){
+		if(importExportDocumentModule_importConf.hasOwnProperty("resetData")){
+			importExportDocumentModule_importConf.resetData();
+		}
+	}
+	
+	$scope.stopImport=function(text){
 		 var confirm = $mdDialog.confirm()
 		.title('')
 		.content(text)
@@ -72,6 +86,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 		$mdDialog.show(confirm).then(function() {
 			$scope.stepControl.resetBreadCrumb();
 			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+			$scope.finishImport();
 		} ); 
 	}
 	

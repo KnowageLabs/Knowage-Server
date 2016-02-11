@@ -30,12 +30,10 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 	$scope.saveRoleAssociation=function(){
 		sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateRoles',getExportedRole())
 		.success(function(data, status, headers, config) {
-			console.log("role--->",data);
-			
-			if(data.hasOwnProperty("errors")){
-				$scope.errorImport(data.errors[0].message);	
+			 if(data.hasOwnProperty("errors")){
+				$scope.stopImport(data.errors[0].message);	
 			}else if(data.STATUS=="NON OK"){
-				$scope.errorImport(data.ERROR);		
+				$scope.stopImport(data.ERROR);		
 			}
 			else if(data.STATUS=="OK"){
 				importExportDocumentModule_importConf.engines.exportedEngines=data.exportedEngines;
@@ -47,7 +45,7 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 			}
 		})
 		.error(function(data, status, headers, config) {
-			$scope.errorImport(data);	
+			$scope.stopImport(data);	
 		});
 	}
 	

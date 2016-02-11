@@ -49,11 +49,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 			exportedDatasources : [],
 			associatedDatasources : {}
 		},
-		associationsFileName:"",
-		logFileName:"",
-		folderName:"",
-		resetData: function() { 
-		      console.log( 'Resetting')
+		 resetData: function() {  
 		    	 current_data = angular.copy( default_values,current_data); 
 		     } 
 	};
@@ -61,39 +57,6 @@ app.factory("importExportDocumentModule_importConf", function() {
 	  return current_data;
 });
 
-//app.factory("importExportDocumentModule_importConf", function() {
-//	return {
-//		fileImport : {},
-//		importPersonalFolder : true,
-//		typeSaveUser : 'Missing',
-//		checkboxs:{
-//				exportSubObj : false,
-//				exportSnapshots : false,
-//				exportPersonalFolder: false
-//		},
-//		roles : {
-//			currentRoles : [],
-//			exportedRoles : [],
-//			exportedUser:[],
-//			exportingUser : [],
-//			selectedUser : [],
-//		},
-//		engines : {
-//			currentEngines : [],
-//			exportedEngines : [],
-//			associatedEngines : {}
-//		},
-//		datasources : {
-//			currentDatasources : [],
-//			exportedDatasources : [],
-//			associatedDatasources : {}
-//		},
-//		associationsFileName:"",
-//		logFileName:"",
-//		folderName:"",
-//	};
-//});
- 
 app.controller('userImportExportController', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
 app.controller('userExportController', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", userExportFuncController ]);
 app.controller('userImportController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf",userImportFuncController]);
@@ -109,7 +72,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	$scope.viewDownload =false;
 	$scope.download = sbiModule_download;
-	$scope.importFile = {};
 	$scope.uploadProcessing = [];
 	$scope.upload = [];
 	$scope.wait = false;
@@ -189,7 +151,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	$scope.flagCheck=false;
 	$scope.nameExport="";
-	
+	$scope.exportCheckboxs={};
 	
 	$scope.selectAll = function(){
 		if(!$scope.flagCheck){
@@ -206,21 +168,21 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 	};
 	
 	$scope.prepare = function(ev){
-		$scope.wait = true;
+		
 		if($scope.usersSelected.length == 0){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
-			$scope.wait = false;
+			 
 		} else if($scope.nameExport==""){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
-			$scope.wait = false;
+			 
 		}else{
 			// download zip
 			var config={"USERS_LIST":$scope.usersSelected ,
 					"EXPORT_FILE_NAME":$scope.nameExport,
-					"EXPORT_SUB_OBJ":$scope.IEDConf.checkboxs.exportSubObj,
-					"EXPORT_SNAPSHOT":$scope.IEDConf.checkboxs.exportSnapshots,
-					"EXPORT_PERSONAL_FOLDER":$scope.IEDConf.checkboxs.exportPersonalFolder};
-			
+					"EXPORT_SUB_OBJ":$scope.exportCheckboxs.exportSubObj,
+					"EXPORT_SNAPSHOT":$scope.exportCheckboxs.exportSnapshots,
+					"EXPORT_PERSONAL_FOLDER":$scope.exportCheckboxs.exportPersonalFolder};
+			$scope.wait = true;
 			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'export',config).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
@@ -231,11 +193,11 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 								$scope.downloadFile();
 							}
 								
-						}
-						$scope.viewDownload = true;
+						} 
+						$scope.wait = false;
 					}).error(function(data, status, headers, config) {
 						console.log("layer non Ottenuti " + status);
-						$scope.viewDownload = true;
+						$scope.wait = false;
 					})
 		}
 		
@@ -295,7 +257,7 @@ function userImportFuncController(sbiModule_download,sbiModule_device,$scope, $m
 		}
 	}
 	
-	$scope.errorImport=function(text){
+	$scope.stopImport=function(text){
 		 var confirm = $mdDialog.confirm()
 		.title('')
 		.content(text)

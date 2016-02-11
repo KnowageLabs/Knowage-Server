@@ -72,9 +72,9 @@
 						</div>
 					 
 					 <div layout="row" layout-wrap >
-						<md-checkbox   style="line-height: 61px;"  ng-model="IEDConf.checkboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
-						<md-checkbox ng-if="IEDConf.checkboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="IEDConf.checkboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
-						<md-checkbox ng-if="IEDConf.checkboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="IEDConf.checkboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
+						<md-checkbox   style="line-height: 61px;"  ng-model="exportCheckboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
+						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
+						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
 					 </div>
 						<div>
 							<md-input-container class="small counter"> 
