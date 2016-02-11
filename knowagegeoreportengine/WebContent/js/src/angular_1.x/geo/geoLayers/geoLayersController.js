@@ -372,8 +372,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			closeTo: '#map',
 			clickOutsideToClose:false,
 			preserveScope :true,
-			scope: $scope
-		});
+			scope: $scope,
+			focusOnOpen: false
+		}); 
 	};
 
 	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant,geoModule_layerServices) {	
