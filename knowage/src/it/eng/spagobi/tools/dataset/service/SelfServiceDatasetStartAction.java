@@ -84,6 +84,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String CKAN_URLS = "CKAN_URLS";
 	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "CAN_CREATE_DATASET_AS_FINAL_USER";
 	public static final String CAN_USE_FEDERATED_DATASET_AS_FINAL_USER = "CAN_USE_FEDERATED_DATASET_AS_FINAL_USER";
+	public static final String CALLBACK_FUNCTION = "CALLBACK_FUNCTION";
 
 	// public static final String GEOREPORT_EDIT_ACTION =
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";
@@ -99,6 +100,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 
+		
+			
 			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId);
 			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId);
 			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId);
@@ -120,6 +123,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
 			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser();
 
+			String callBackFunction= (getAttributeAsString(CALLBACK_FUNCTION) == null) ? "empty" : getAttributeAsString("CALLBACK_FUNCTION");//name of a function that has to be invoked on manageSelfService.jsp. Now we use toFederation in order to pen the federation tab after.
+			
 			logger.trace("Copying output parameters to response...");
 			try {
 				Locale locale = getLocale();
@@ -145,6 +150,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(CKAN_URLS, ckanUrls);
 				setAttribute(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
 				setAttribute(CAN_USE_FEDERATED_DATASET_AS_FINAL_USER, canUseFederatedDataset);
+				setAttribute(CALLBACK_FUNCTION, callBackFunction);
+
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}

@@ -123,10 +123,11 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		if (Sbi.settings.mydata.showTabToolbar == false){
 			this.getTabBar().setVisible(false);
 		}
-
-
-
 	}
+    
+    , openfederation: function(){
+    	this.setActiveTab(this.federatedDatasetTab);
+    }
 
     
 	

@@ -175,7 +175,7 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 					}
 			);
 			
-			var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/manageSelfService.jsp";
+			var urlToCall =   Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation"; 
 			window.location.href = urlToCall;
 	
 	

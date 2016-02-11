@@ -103,7 +103,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		this.manageSelfService.on('executeDocument', this.executeDocument ,this);
 
 	}
-
+	
 	, executeDocument: function(docType,inputType, record){
 		if( docType == 'QBE' ) {
 			this.executeQbe(inputType, record);
@@ -185,5 +185,9 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
 		}
+	}
+	
+	, openfederation: function(){
+		this.manageSelfService.openfederation();
 	}
 });

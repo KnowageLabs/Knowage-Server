@@ -24,10 +24,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%
 String isMyData =((String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYDATA)!=null)?(String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYDATA):"FALSE";
-if (isMyData.equalsIgnoreCase("FALSE")) {%>
+if (isMyData.equalsIgnoreCase("FALSE")) {
+
+	isMyData="false";
+%>
 <link rel='stylesheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/tools/dataset/catalogue-item-small.css",currTheme)%>' />
-<%}else{%>
+<%}else{
+	isMyData="true";
+%>
 <link rel='stylesheet' type='text/css'
 	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/tools/dataset/catalogue-item-big.css",currTheme)%>' />
 <%} %>
@@ -55,6 +60,9 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 	String createDatasetsAsFinalUser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_CREATE_DATASET_AS_FINAL_USER);
     String isFederatedDatasetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER);
 	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
+	Object callBackFunction =  aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CALLBACK_FUNCTION);
+	
+	
 	
 	boolean checkCache = false;
   	EMFErrorHandler errorHandler = aResponseContainer.getErrorHandler();  
@@ -76,6 +84,11 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 	alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
 <% }else{ %>
 
+
+	var selfService = null;
+	
+		var callBackFunction  = "<%=callBackFunction%>";
+	
     Ext.onReady(function(){
     	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;
     	Sbi.settings.mydata.isWorksheetEnabled = <%= isWorksheetEnabled %>; 
@@ -84,7 +97,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     	Sbi.settings.mydata.showSmartFilterTab = <%=(isMyData.equalsIgnoreCase("true") && isSmartFilterEnabled.equalsIgnoreCase("true"))?true:false%>;
     	Sbi.settings.mydata.showCreateButton = <%=createDatasetsAsFinalUser%>;
         Sbi.settings.mydata.showFederatedDatasetTab = <%=isFederatedDatasetEnabled%>;
-    	var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
+    	selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
             , qbeFromFederationBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromFederationActionUrl) %>'
@@ -105,6 +118,10 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 			layout:'fit',
 	     	items: [selfService]	     	
 	    });
+		if(callBackFunction=="openFederation"){
+			selfService.openfederation();
+		}
+		
     });
 	
  <%}%>
