@@ -122,6 +122,11 @@ public interface ICacheMetadata {
 	public CacheItem getCacheItem(String resultSetSignature);
 
 	/**
+	 * @return get all the cacheItems
+	 */
+	public List<CacheItem> getAllCacheItems();
+
+	/**
 	 * @return true if the resultsetSignature already esists
 	 */
 	public boolean containsCacheItem(String resultSetSignature);

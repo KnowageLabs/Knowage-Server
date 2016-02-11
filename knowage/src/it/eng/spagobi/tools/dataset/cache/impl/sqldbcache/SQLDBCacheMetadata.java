@@ -371,7 +371,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 
@@ -383,6 +383,11 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			signatures.add(item.getSignature());
 		}
 		return signatures;
+	}
+
+	@Override
+	public List<CacheItem> getAllCacheItems() {
+		return cacheDao.loadAllCacheItems();
 	}
 
 	public String getTableNamePrefix() {
