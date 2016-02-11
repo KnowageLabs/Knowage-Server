@@ -11,19 +11,19 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			s.config = {
 				list : {
 					columns : [{"label":s.translate.load("sbi.crossnavigation.parname.lbl"),"name":"name"}
-					          ,{"label":s.translate.load("sbi.crossnavigation.type.lbl"),"name":"type"}],
+					          ,{"label":s.translate.load("sbi.crossnavigation.type.lbl"),"name":"typeLbl"}],
 		            dsSpeedMenu :  [{
 	                	label : s.translate.load('sbi.crossnavigation.action.delete'),
 	                	icon :'fa fa-trash',
-	                	action : ctr.removeItem
+	                	action : function(item,event) {
+	                		ctr.removeItem(item,event);
+                        }
 	                }]
 				},
 				detail : {
 					
 				}
 			};
-			
-			s.translate = sbiModule_translate;
 			
 			var newRecord = function(){
 				ctr.detail = {'newRecord':true, 'biObjectId': objectId};
@@ -32,35 +32,42 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			var loadParametersList = function(){
 				ctr.list = [];
 				ctr.listloadingSpinner = true;
-				sbiModule_restServices.get('2.0/documents/'+objectId+'/listOutParams', "", null).success(function(data) {
-					var parameters = [];
-					for(var i=0;i<data.length;i++){
-						ctr.list.push({'id':data[i].id,'name':data[i].name,'type':data[i].typeLbl,'typeId':data[i].typeId});
-					}
-					ctr.listloadingSpinner = false;
-				});
+				sbiModule_restServices.promiseGet('2.0/documents/'+objectId+'/listOutParams', "", null).then(
+					function(response) {
+						var data = response.data;
+						for(var i=0;i<data.length;i++){
+							ctr.list.push(
+								{'id':data[i].id
+								,'name':data[i].name
+								,'typeLbl':ctr.typeMap[data[i].typeId]
+								,'typeId':data[i].typeId
+								,'biObjectId':data[i].biObjectId});
+						}
+						ctr.listloadingSpinner = false;
+					},function(response) {
+						
+					});
 			};
 			var loadTypeList = function(){
 				ctr.typeList = []; //[{value:'string',descr:'String'},{value:'number',descr:'Number'}];
-				sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=PAR_TYPE").success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
-						} else {
-							for(var i=0;i<data.length;i++){
-								ctr.typeList.push({'id':data[i].VALUE_ID,'descr':data[i].VALUE_NM});
-							}
-							//ctr.typeList = data;
+				ctr.typeMap = {};
+				sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=PAR_TYPE").then(
+					function(response) {
+						var data = response.data;
+						for(var i=0;i<data.length;i++){
+							ctr.typeList.push({'id':data[i].VALUE_ID,'descr':data[i].VALUE_NM});
+							ctr.typeMap[data[i].VALUE_ID] = data[i].VALUE_NM;
 						}
-					}).error(function(data, status, headers, config) {
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
+					},function(response) {
+						console.log(s.translate.load("sbi.glossary.load.error"));
 
 					});
 			};
 			
 			newRecord();
-			loadParametersList();
+			//list of types must be loaded before list of parameters
 			loadTypeList();
+			loadParametersList();
 			
 			ctr.newFunc = function(){
 				newRecord();
@@ -85,13 +92,13 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			}
 			ctr.saveFunc = function(){
 				sbiModule_restServices.promisePost('2.0/documents/saveOutParam', "", ctr.detail).then(
-					function(data,status,headers,config){
+					function(response){
 						$scope.showActionOK("sbi.crossnavigation.save.ok");
 						loadParametersList();
 						newRecord();
 					},
-					function(data,status,headers,config){
-						$scope.showActionOK(data.errors);
+					function(response){
+						$scope.showActionOK(response.data.errors);
 					}
 				);
 			};
@@ -106,10 +113,10 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 							content += ' - ';
 							delay += 1000;
 						}
-						content += sbiModule_translate.load(msg[i]);
+						content += s.translate.load(msg[i]);
 					}
 				}else{
-					content = sbiModule_translate.load(msg);
+					content = s.translate.load(msg);
 				}
 				var toast = $mdToast.simple()
 				.content(content)

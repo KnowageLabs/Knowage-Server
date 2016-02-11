@@ -29,6 +29,11 @@
 
 <% if(canSee ){ 
 	String objectId = request.getParameter(ObjectsTreeConstants.OBJECT_ID);
+	Map backUrlPars = new HashMap();
+	backUrlPars.put("PAGE", "detailBIObjectPage");
+	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"1");
+	backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
+	String backUrl = urlBuilder.getUrl(request, backUrlPars);
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html >
@@ -46,7 +51,11 @@ var objectId = <%=objectId%>;
 </head>
 
 <body class="bodyStyle" ng-app="crossOutPars" id="ng-app" >
-
+	<div layout="row" layout-align="end center">
+		<a href='<%=backUrl%>'>
+			<md-icon md-font-icon="fa fa-times fa-2x" ></md-icon>
+		</a>
+	</div>
 	<angular-list-detail ng-controller="outputParametersController as ctrl" new-function="ctrl.newFunc" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc" >
        <list label="translate.load('sbi.outputparameter.lst')"  > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
 			<!-- parameters list -->
