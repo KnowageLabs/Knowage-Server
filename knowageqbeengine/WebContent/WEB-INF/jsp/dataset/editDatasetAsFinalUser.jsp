@@ -146,6 +146,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	var qbeConfig = {};
 	      	
 	      	<%
+	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure(profile);
+	      	
 	      	JSONArray queries = new JSONArray();
 			Iterator queriesIt = qbeEngineInstance.getQueryCatalogue().getAllQueries(false).iterator();
 			while (queriesIt.hasNext()) {
@@ -161,7 +163,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure(profile);
 	      	Iterator<String> it = ms.getModelNames().iterator();
 	      	while (it.hasNext()) {
 	      		datamartNamesBuffer.append("'" + it.next() + "'");
