@@ -22,11 +22,11 @@
         
         <property name="label" column="label" />
         
-        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" insert="false">
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" insert="false" update="false">
             <column name="biobj_id" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="parameterType" class="it.eng.spagobi.commons.metadata.SbiDomains" insert="false" lazy="false">
+        <many-to-one name="parameterType" class="it.eng.spagobi.commons.metadata.SbiDomains" insert="false" lazy="false" update="false">
 			<column name="par_type_id" not-null="true" />
 		</many-to-one>
         

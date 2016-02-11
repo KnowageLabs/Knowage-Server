@@ -17,13 +17,7 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		List<OutputParameter> ret = new ArrayList<>();
 
 		for (SbiOutputParameter op : list(SbiOutputParameter.class)) {
-			Domain parameterType = new Domain();
-			parameterType.setValueId(op.getParameterTypeId());
-			parameterType.setValueDescription(op.getParameterType().getValueDs());
-
-			BIObject biObject = new BIObject();
-			biObject.setId(id);
-			ret.add(new OutputParameter(op.getId(), op.getLabel(), parameterType.getValueId(), parameterType.getValueName(), biObject.getId()));
+			ret.add(new OutputParameter(op.getId(), op.getLabel(), op.getParameterTypeId(), op.getParameterType().getValueNm(), op.getBiobjId()));
 		}
 		return ret;
 	}
