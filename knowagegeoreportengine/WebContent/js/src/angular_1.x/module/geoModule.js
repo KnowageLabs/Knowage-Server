@@ -841,9 +841,9 @@ geoM.service(
 					return [styles[feature.getGeometry().getType()]];
 				}
 				
-				if(feature.getGeometry().getType()!='MultiPolygon'){
-					return [styles[feature.getGeometry().getType()]];
-				}
+//				if(feature.getGeometry().getType()!='MultiPolygon'){
+//					return [styles[feature.getGeometry().getType()]];
+//				}
 				var applFilter=false;
 
 					var propertiesFeature = feature.getProperties();

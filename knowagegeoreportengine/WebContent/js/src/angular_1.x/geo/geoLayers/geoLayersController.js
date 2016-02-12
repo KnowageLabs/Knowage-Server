@@ -329,6 +329,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 					geoModule_layerServices.updateLayerLoaded(tmpLayer,$scope.layerSelected)
 
 				});
+			}else{
+				geoModule_layerServices.updateLayerLoaded(layer,$scope.layerSelected);
 			}
 		}
 		for(var i=0;i<$scope.multipleFilters[$scope.layerSelected.layerId].length;i++){

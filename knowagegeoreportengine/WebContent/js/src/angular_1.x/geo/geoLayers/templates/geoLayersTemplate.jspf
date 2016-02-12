@@ -118,9 +118,9 @@
  <md-dialog-actions layout="row">
   
       <span flex></span>
-		<md-button ng-click="applyFilter()"  >Ok</md-button>
+		<md-button ng-click="applyFilter()">Ok</md-button>
 	
-		<md-button ng-click="cancelFilter()"  >Cancel</md-button>
+		<md-button ng-click="cancelFilter()">Cancel</md-button>
 	</md-dialog-actions>
 
 </md-dialog>
