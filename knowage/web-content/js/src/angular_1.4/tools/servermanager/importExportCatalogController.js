@@ -1,6 +1,6 @@
 var app = angular.module('impExpDataset', [ 'ngMaterial', 'ui.tree',
-                                               'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_list', 'angular_table' ,'angular_list','sbiModule','file_upload', 'angular_2_col']);
+                                            'angularUtils.directives.dirPagination', 'ng-context-menu',
+                                            'angular_list', 'angular_table' ,'angular_list','sbiModule','file_upload', 'angular_2_col']);
 app.directive("fileread", [function () {
 	return {
 		scope: {
@@ -38,9 +38,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.flagUser = false;
 	$scope.flagCategory = false;
 	$scope.typeSaveMenu="";
-	
-	
-	
+
+
+
 	//export utilities 
 	$scope.loadAllDataset = function(){
 		sbiModule_restServices.get("1.0/serverManager/importExport/catalog", 'getdataset').success(
@@ -56,7 +56,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 				})
 	}
-	
+
 	$scope.prepare = function(ev){
 		$scope.wait = true;
 		if($scope.datasetSelected.length == 0){
@@ -132,7 +132,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		return  $scope.indexInList(item, list)>-1;
 
 	};
-	
+
 	$scope.indexInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
@@ -144,7 +144,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 		return -1;
 	};
-	
+
 	$scope.checkCategory= function(item){
 		switch(item){
 		case 'Dataset':
@@ -155,10 +155,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				$scope.showDataset=false;
 			}
 			break;
-		
-		
+
+
 		}
-		
+
 	}
 	$scope.selectAll = function(){
 		if(!$scope.flagCheck){
@@ -172,8 +172,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.flagCheck=false;
 			$scope.datasetSelected=[];
 		}
-		
-		
+
+
 	}
 	//import utilities
 	$scope.upload = function(ev){
@@ -182,39 +182,38 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
 		}else{
 			var fd = new FormData();
-		
+
 			fd.append('exportedArchive', $scope.importFile.file);
 			sbiModule_restServices.post("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="NON OK"){
 					$mdToast.show($mdToast.simple().content("data.ERROR").position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
+
 				}
 				else if(data.STATUS=="OK"){
-					
+
 					$scope.datasetSelected = [];
-					$scope.flagUser = data.flagUsers;
+					//	$scope.flagUser = data.flagUsers;
 					$scope.flagCategory = data.flagDomain;
-					if($scope.flagUser && $scope.flagCategory){
+					if($scope.flagCategory){
 						$scope.exportedDataset = data.exportedDataset;
 					}else{
-						if(!$scope.flagUser){
-							$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingusers"));
-						}
+
 						if(!$scope.flagCategory){
 							$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"));
 						}
 					}
-					
-					
+
+
 				}
-				
-				
+
+
 			})
 			.error(function(data, status, headers, config) {
 				$mdToast.show($mdToast.simple().content("errore").position('top').action(
 				'OK').highlightAction(false).hideDelay(5000));
-				
+
 			});
 		}
 	}
@@ -223,33 +222,35 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		if($scope.typeSaveMenu == ""){
 			//if not selected a mode
 			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
-		}
-		if($scope.datasetSelected.length==0){
+		}else if($scope.datasetSelected.length==0){
 			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
 		}else{
 			var config={
 					"ds": $scope.datasetSelected,
 					"type":$scope.typeSaveMenu
-					
+
 			}
-				sbiModule_restServices.post("1.0/serverManager/importExport/catalog","importCatalog",config)
-				.success(function(data, status, headers, config) {
-				
+			sbiModule_restServices.post("1.0/serverManager/importExport/catalog","importCatalog",config)
+			.success(function(data, status, headers, config) {
+				if(data.STATUS=="OK")
 					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
-					
-				}).error(function(data, status, headers, config) {
-					showToast("ERRORS "+status,4000);
-				})
-			
+
+				if(data.STATUS=="NONOK")
+					$scope.showAction(data.STATUS);
+			}).error(function(data, status, headers, config) {
+				showToast("ERRORS "+status,4000);
+				$scope.showAction("Error");
+			})
+
 		}
 	}
-	
-	
-	
+
+
+
 	$scope.setTab = function(Tab){
 		$scope.selectedTab = Tab;
 	}
-	
+
 	$scope.isSelectedTab = function(Tab){
 		return (Tab == $scope.selectedTab) ;
 	}

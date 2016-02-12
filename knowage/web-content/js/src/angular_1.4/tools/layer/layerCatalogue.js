@@ -117,10 +117,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.saveLayer = function(){
 
 		$scope.selectedLayer.roles = $scope.rolesItem;
-		if($scope.filter_set.length==0){
+		/*if($scope.filter_set.length==0){
 			//load filter_set
 			$scope.loadFilterAdded();
-		}
+		}*/
 		$scope.selectedLayer.properties = $scope.filter_set;
 		
 		
