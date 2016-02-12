@@ -36,9 +36,17 @@
     	height:'$chart.height',
     	#end
     	
-    	#if($chart.width != '')
-    	width:'$chart.width',
+    	 #if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+        
+        #if($chart.width != '')
+    	width: $chart.width,
     	#end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
 
     	#if($chart.dimension=='3D')
     	options3d: {

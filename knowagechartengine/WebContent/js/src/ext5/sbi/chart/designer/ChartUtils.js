@@ -880,6 +880,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			CHART['width'] = (chartModel.get('width') != undefined) ? 
 				chartModel.get('width') : '';
 				
+			CHART['heightDimType'] = (chartModel.get('heightDimType') != undefined) ? 
+					chartModel.get('heightDimType') : '';					
+			CHART['widthDimType'] = (chartModel.get('widthDimType') != undefined) ? 
+					chartModel.get('widthDimType') : '';
+				
 			/**
 			 * Set the visibility state of the border of the chart depending on the 
 			 * boolean value of the parameter.
@@ -1945,6 +1950,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 */
 				height : jsonTemplate.CHART.height,
 				width : jsonTemplate.CHART.width,
+				heightDimType: jsonTemplate.CHART.heightDimType,
+				widthDimType: jsonTemplate.CHART.widthDimType,
 				orientation : jsonTemplate.CHART.orientation ? 
 						jsonTemplate.CHART.orientation : 'vertical',
 				backgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),

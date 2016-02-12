@@ -47,9 +47,17 @@
         height: $chart.height,
         #end
         
+        #if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+        
         #if($chart.width != '')
     	width: $chart.width,
     	#end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
     	
     	#*
         	Remove border around the chart if this property is set to true.

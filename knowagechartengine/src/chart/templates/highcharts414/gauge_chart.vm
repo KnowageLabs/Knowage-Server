@@ -47,9 +47,17 @@
     	height:'$chart.height',
     	#end
     	
-    	#if($chart.width != '')
-    	width:'$chart.width',
+    	 #if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+        
+        #if($chart.width != '')
+    	width: $chart.width,
     	#end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
 
         plotBackgroundColor: null,
         plotBorderWidth: 0,

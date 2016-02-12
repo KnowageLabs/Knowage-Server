@@ -61,8 +61,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         this.callParent(config);
         this.viewModel = config.viewModel;
        
-        var globalThis = this;
-        
+        var globalThis = this;        
+       
         this.height = {
     		xtype : 'numberfield',
     		id: "chartHeightNumberfield", 	// added by: Danilo Ristovski (for the validation)
@@ -75,6 +75,25 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		hidden: ChartUtils.isChartHeightDisabled()  // added by: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
         
+        this.heightDimTypePicker = 
+        {
+        	xtype: "combo",
+        	
+        	store: {
+                fields: [ 'typeValue', 'typeAbbr' ],
+                
+                data: [ {"typeValue": "px", "typeAbbr":'pixels'}, {"typeValue": "%","typeAbbr":'percentage'} ]
+            },
+            
+            displayField : 'typeValue',
+            valueField : 'typeAbbr',
+            bind : '{configModel.heightDimType}',
+            fieldLabel : "",          
+            editable : false,            
+            margin: Sbi.settings.chart.configurationStep.marginOfTopFieldsetButtons,          
+            width: 40,
+        };
+        
         this.width = {
     		xtype : 'numberfield',
     		id: "chartWidthNumberfield",
@@ -86,6 +105,25 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
     		hidden: ChartUtils.isChartWidthDisabled() // modifiedby: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
+        
+        this.widthDimTypePicker = 
+        {
+        	xtype: "combo",
+        	
+        	store: {
+                fields: [ 'typeValue', 'typeAbbr' ],
+                
+                data: [ {"typeValue": "px", "typeAbbr":'pixels'}, {"typeValue": "%","typeAbbr":'percentage'} ]
+            },
+            
+            displayField : 'typeValue',
+            valueField : 'typeAbbr',
+            bind : '{configModel.widthDimType}',
+            fieldLabel : "",          
+            editable : false,            
+            margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldsetButtons,         
+            width: 40,
+        };
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
@@ -146,11 +184,71 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var stylePanelTitle = this.stylePanelTitle;
         var stylePanelNoData = this.stylePanelNoData;
         
+        this.heightFieldset = Ext.create
+        (
+    		'Ext.form.FieldSet', 
+    		{
+				id: "heightFieldset", // (danristo :: danilo.ristovski@mht.net) 
+				//title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
+//				defaults: {
+//					anchor: '100%',
+//					labelAlign : 'left'
+//				},
+//				layout: 'hbox',
+				layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+
+				defaults : {
+					/**
+					 * Old implementation (margin) and the
+					 * new one (padding). It is applied also
+					 * in other fields in this file.
+					 *
+					 * @author Danilo Ristovski (danristo,
+					 *         danilo.ristovski@mht.net)
+					 */
+					margin : Sbi.settings.chart.configurationStep.marginOfInnerFieldset
+				},
+				padding: "0 0 0 0",	// Danilo Ristovski
+	    		border: "hidden",
+				items : [this.height,this.heightDimTypePicker]
+    		}
+		);
+        
+        this.widthFieldset = Ext.create
+        (
+    		'Ext.form.FieldSet', 
+    		{
+				id: "widthFieldset", // (danristo :: danilo.ristovski@mht.net) 
+				//title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
+//				defaults: {
+//					anchor: '100%',
+//					labelAlign : 'left'
+//				},
+//				layout: 'hbox',
+				layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+
+				defaults : {
+					/**
+					 * Old implementation (margin) and the
+					 * new one (padding). It is applied also
+					 * in other fields in this file.
+					 *
+					 * @author Danilo Ristovski (danristo,
+					 *         danilo.ristovski@mht.net)
+					 */
+					margin : Sbi.settings.chart.configurationStep.marginOfInnerFieldset
+				},
+	    		padding: "0 0 0 0",	// Danilo Ristovski
+	    		border: "hidden",
+				items : [this.width,this.widthDimTypePicker]
+    		}
+		);
+        
         var item = 
     	[ 
 			// Danilo Ristovski 
-			this.height, 
-		    this.width,
+			this.heightFieldset, 
+			this.widthFieldset,
 		    this.chartOrientation,
 
 		    // Danilo Ristovski 

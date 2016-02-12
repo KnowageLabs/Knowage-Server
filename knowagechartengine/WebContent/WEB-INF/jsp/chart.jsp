@@ -175,6 +175,8 @@ author:
     vertical-align: bottom;">
 --%>
 
+<!-- <body style="width:50%; height:50%;"> -->
+<!-- <body style="height:50%; margin:0 0 0 25%;  overflow-x:hidden;  overflow-y:hidden"> -->
 <body>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
@@ -298,8 +300,7 @@ author:
 		
 		/*  
 			Needed for the PARALLEL chart
-		*/
-		
+		*/		
 		function removePixelsFromFontSize(fontSize) {
 			var indexOfPx = fontSize.indexOf('px');
 			
@@ -308,25 +309,23 @@ author:
 			} else {
 				return fontSize;
 			}
-		};
-				
+		};				
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
- 			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading');
- 						
+ 			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading'); 			
+ 			
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
  			    height: '100%',
 				bodyStyle : 'background:transparent;',
-				style: "overflow: auto",
+ 			   	//style: "overflow: auto",
  			    renderTo: Ext.getBody()
  			});
  			
  			var globalThis = this;
- 			
- 			
+ 			 			
  			/* 
  				Listen for the resizing of the window (panel) in order to re-render
  				the chart.
@@ -425,8 +424,6 @@ author:
 				 			 						
 				var chartConf = Ext.JSON.decode(response.responseText, true);	
 				
-				var typeChart = chartConf.chart.type.toUpperCase();
-				 						
 				/* 
 					Set the initial size of the chart if the height and width are not 
 					defined by the user (through the Designer). This is mandatory for
@@ -434,7 +431,50 @@ author:
 					@author: danristo (danilo.ristovski@mht.net)
 				*/
 				var heightChart = chartConf.chart.height;
+				var heightDimType = chartConf.chart.heightDimType;
+				
 				var widthChart = chartConf.chart.width;
+				var widthDimType = chartConf.chart.widthDimType;
+				
+				//console.log(chartConf.chart);
+				
+				var mainPanelTemp = Ext.getCmp("mainPanel");
+				
+				mainPanelTemp.setStyle("overflow","auto");
+				// Ext.getBody()			
+				
+				if (!heightChart)
+				{
+					mainPanelTemp.setStyle("overflow-y","hidden");
+				}
+				else if (heightDimType == "percentage")
+				{
+					mainPanelTemp.setStyle("height",heightChart+"%");
+					chartConf.chart.height = undefined;
+					mainPanelTemp.setStyle("overflow-y","hidden");
+				}		
+				
+				if (!widthChart)
+				{
+					mainPanelTemp.setStyle("overflow-x","hidden");
+				}
+				else if (widthDimType == "percentage")
+				{
+					mainPanelTemp.setStyle("width",widthChart+"%");
+					chartConf.chart.width = undefined;
+					mainPanelTemp.setStyle("overflow-x","hidden");
+				} 	
+				
+				//var highchartsContainer = Ext.query(".highcharts-container")[0];
+				
+				/*console.log(mainPanelTemp.el);
+				console.log(mainPanelTemp.getEl());
+				mainPanelTemp.getEl().scrollIntoView(Ext.getBody(), null, true)*/
+				/*var ttt = Ext.create('Ext.dom.Element',mainPanelTemp);
+				
+				ttt.getEl().scrollIntoView(Ext.getBody(), null, true);*/
+				
+				var typeChart = chartConf.chart.type.toUpperCase();
 		 				
 				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");		
 				 						
@@ -458,7 +498,7 @@ author:
 					@author: danristo (danilo.ristovski@mht.net)
 				*/
 				if (isD3Chart) {	
-					if (typeChart == "PARALLEL") {
+					 if (typeChart == "PARALLEL") {
 						isChartParallel = true;
 						
 						// HEIGHT
@@ -472,7 +512,7 @@ author:
 						
 						// WIDTH
 						parallelLegendWidth = chartConf.legend.width; 		 								
-					}
+					} 
 					
 					if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST") {
 						if (heightChart == "") {
@@ -482,7 +522,8 @@ author:
 							isChartHeightEmpty = false;
 						}
 						
-						if (widthChart == "" || typeChart == "SUNBURST") {
+						//if (widthChart == "" || typeChart == "SUNBURST") {
+						if (widthChart == "") {
 							chartConf.chart.width = window.innerWidth;		 							
 							isChartWidthEmpty = true;
 						} else {
@@ -502,6 +543,17 @@ author:
 					
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
+					
+					/*console.log("CCC2");
+					console.log(Ext.query(".highcharts-container")[0]);
+					
+					var highchartsContainer = Ext.query(".highcharts-container")[0];
+					var ttt = Ext.create('Ext.dom.Element',highchartsContainer);
+					console.log(ttt);
+					ttt.scrollIntoView(Ext.getBody(), null, true);*/
+					
+					//highchartsContainer.set("");
+					
 				}			
 				
 				Ext.getBody().unmask();
