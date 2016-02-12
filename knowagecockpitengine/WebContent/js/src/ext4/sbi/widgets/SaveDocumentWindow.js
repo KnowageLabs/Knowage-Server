@@ -242,21 +242,19 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 			                        buttons: Ext.MessageBox.OK
 			                   });
 				      		}else{
+				      			var me = this;
 				      			Ext.MessageBox.show({
 				                       title: LN('sbi.generic.resultMsg'),
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
-				                        buttons: Ext.MessageBox.OK
+				                        buttons: Ext.MessageBox.OK,
+				                        fn: function(btn, text){
+				                        	Sbi.config.docLabel = me.docLabel.value;
+							      			me.fireEvent('savedocument', me, goBack, params);
+							      			me.destroy();
+							      			me.hideMask();
+				                        }
 				                });
-
-//				      			if (goBack){
-//				      				this.fireEvent('closedocument', this);  	 //fire event to jump to the MyAnalysis page
-//				                }
-				      			Sbi.config.docLabel = this.docLabel.value;
-
-				      			this.fireEvent('savedocument', this, goBack, params);
-				      			this.destroy();
-				      			this.hideMask();
 				      		}
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
