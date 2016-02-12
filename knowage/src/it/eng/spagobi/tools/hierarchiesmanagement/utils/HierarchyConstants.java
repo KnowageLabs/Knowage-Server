@@ -137,4 +137,6 @@ public class HierarchyConstants {
 	public final static String NODE_CD_M = "NODE_CD_M";
 	public final static String NODE_NM_M = "NODE_NM_M";
 	public final static String NODE_LEV_M = "NODE_LEV_M";
+	public final static String GENERAL_INFO_T = "GENERAL_INFO_T";
+
 }
