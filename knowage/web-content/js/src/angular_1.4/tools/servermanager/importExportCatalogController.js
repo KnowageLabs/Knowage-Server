@@ -35,6 +35,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.importFile = {};
 	$scope.exportedDataset =[];
 	$scope.download = sbiModule_download;
+	$scope.flagUser = false;
+	$scope.flagCategory = false;
+	$scope.typeSaveMenu="";
+	
+	
+	
 	//export utilities 
 	$scope.loadAllDataset = function(){
 		sbiModule_restServices.get("1.0/serverManager/importExport/catalog", 'getdataset').success(
@@ -171,6 +177,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 	//import utilities
 	$scope.upload = function(ev){
+		$scope.exportedDataset =[];
 		if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
 			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
 		}else{
@@ -185,8 +192,19 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				}
 				else if(data.STATUS=="OK"){
 					
-					
-					$scope.exportedDataset = data.exportedDataset;
+					$scope.datasetSelected = [];
+					$scope.flagUser = data.flagUsers;
+					$scope.flagCategory = data.flagDomain;
+					if($scope.flagUser && $scope.flagCategory){
+						$scope.exportedDataset = data.exportedDataset;
+					}else{
+						if(!$scope.flagUser){
+							$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingusers"));
+						}
+						if(!$scope.flagCategory){
+							$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"));
+						}
+					}
 					
 					
 				}
@@ -200,16 +218,21 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			});
 		}
 	}
-	
-	
+
 	$scope.save = function(ev){
-		if($scope.exportingUser.length == 0){
-			//if not selected no one users
-			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+		if($scope.typeSaveMenu == ""){
+			//if not selected a mode
+			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
+		}
+		if($scope.datasetSelected.length==0){
+			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
 		}else{
-			if($scope.typeSaveUser == 'Missing'){
-				//missing user
-				sbiModule_restServices.post("1.0/serverManager/importExport/users","missingusers",$scope.exportingUser)
+			var config={
+					"ds": $scope.datasetSelected,
+					"type":$scope.typeSaveMenu
+					
+			}
+				sbiModule_restServices.post("1.0/serverManager/importExport/catalog","importCatalog",config)
 				.success(function(data, status, headers, config) {
 				
 					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
@@ -217,17 +240,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				}).error(function(data, status, headers, config) {
 					showToast("ERRORS "+status,4000);
 				})
-			}else{
-				//override
 			
-				sbiModule_restServices.post("1.0/serverManager/importExport/users","overrideusers",$scope.exportingUser)
-				.success(function(data, status, headers, config) {
-				
-					$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
-				}).error(function(data, status, headers, config) {
-					showToast("ERRORS "+status,4000);
-				})
-			}
 		}
 	}
 	

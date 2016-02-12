@@ -76,7 +76,7 @@
 					<div flex style="position: relative;" ng-show="showDataset">
 						<angular-table id='datasetlist' 
 							ng-model=dataset
-							columns='[{"label":"Label","name":"name","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
+							columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
 							columnsSearch='["label"]' 
 							show-search-bar=true
 							highlights-selected-item=true 
@@ -111,15 +111,37 @@
 							</md-icon> </md-button>
 						</md-input-container>
 						</div>
-						<span flex=40></span>
-
+						<span flex=20></span>
+						<div flex =20>
+								
+									<md-radio-group layout="row" ng-model="typeSaveMenu">
+								      <md-radio-button value="Override">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+								      <md-radio-button value="Missing" >{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+								    </md-radio-group>
+								 
+								</div>
 						<md-input-container class="small counter"> 
 							<md-button ng-click="save($event)" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 						</md-input-container>
 					</div>
-					<div layout="row" layout-fill>
-						<angular-list layout-fill id='right' ng-model="exportedDataset" item-name='label' click-function="" show-search-bar=true />
-			
+					<div layout="column" layout-fill>
+						<md-checkbox  ng-show="exportedDataset.length>0" ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
+							<div flex style="position: relative;" ng-show="showDataset">
+								<angular-table id='datasetlistImported' 
+									ng-model=exportedDataset
+									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
+									columnsSearch='["label"]' 
+									show-search-bar=true
+									highlights-selected-item=true 
+									multi-select=true
+									selected-item=datasetSelected
+									no-pagination=true
+									scope-functions=tableFunction>
+								</angular-table> 
+							</div>
+							
+						
+					</div>
 					</div>
 					</div>
 				</md-tab>

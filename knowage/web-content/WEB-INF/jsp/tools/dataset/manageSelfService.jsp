@@ -81,7 +81,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {
 <script type="text/javascript">
 
 <% if (checkCache){ %>
-	alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
+debugger alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
 <% }else{ %>
 
 

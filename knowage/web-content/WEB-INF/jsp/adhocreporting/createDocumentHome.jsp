@@ -46,7 +46,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script type="text/javascript">
 
 <% if (checkCache){ %>
-	alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
+debugger alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
 <% }else{ %>
 
     Ext.onReady(function(){
