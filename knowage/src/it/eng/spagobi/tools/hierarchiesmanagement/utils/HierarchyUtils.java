@@ -11,13 +11,19 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -373,25 +379,6 @@ public class HierarchyUtils {
 
 		List<Field> result = new ArrayList<Field>();
 
-		// // first we take real fields from generic fields...
-		// for (int i = 0; i < genFields.size(); i++) {
-		//
-		// Field tmpField = genFields.get(i);
-		//
-		// for (int j = 0; j < bkpGenFields.length; j++) {
-		//
-		// if (tmpField.getId().equals(bkpGenFields[j])) {
-		// result.add(tmpField);
-		// break;
-		// }
-		//
-		// }
-		//
-		// }
-		// // ...then we build a field for the others backup info
-		// Field bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
-		// result.add(bkpField);
-
 		// Create fixed fields (code, name, description and timestamp where only name and description are editable)
 		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false);
 		result.add(bkpField);
@@ -407,4 +394,146 @@ public class HierarchyUtils {
 		return result;
 	}
 
+	public static boolean deleteHierarchy(String dimension, String hierarchyName, IDataSource dataSource, Connection connection) throws SQLException {
+		// delete hierarchy
+		logger.debug("START");
+
+		try {
+			logger.debug("Preparing delete statement. Name of the hierarchy is [" + hierarchyName + "]");
+
+			// 1 - get hierarchy table postfix(ex: _CDC)
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+
+			// 2 - create query text
+			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String tableName = hierarchies.getHierarchyTableName(dimension);
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "=\"" + hierarchyName + "\" ";
+
+			logger.debug("The delete query is [" + queryText + "]");
+
+			// 3 - Execute DELETE statement
+			Statement statement = connection.createStatement();
+			statement.executeUpdate(queryText);
+			statement.close();
+
+			logger.debug("Delete query successfully executed");
+			logger.debug("END");
+
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while deleting custom hierarchy");
+			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
+		}
+
+		return true;
+	}
+
+	/**
+	 *
+	 * @param lstFields
+	 * @param name
+	 * @return the position of the field with the input name in order to the stmt
+	 */
+	public static int getPosField(LinkedHashMap<String, String> lstFields, String name) {
+		int toReturn = 1;
+
+		for (String key : lstFields.keySet()) {
+			if (key.equalsIgnoreCase(name))
+				return toReturn;
+
+			toReturn++;
+		}
+		logger.info("Attribute '" + name + "' non found in fields' list ");
+		return -1;
+	}
+
+	public static int getTotalNodeFieldsNumber(int totalLevels, List<Field> nodeMetadataFields) {
+		int toReturn = 0;
+
+		for (int i = 0, l = nodeMetadataFields.size(); i < l; i++) {
+			Field f = nodeMetadataFields.get(i);
+			if (f.isSingleValue()) {
+				toReturn += 1;
+			} else {
+				toReturn += totalLevels;
+			}
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Sets records' value to the tree structure (leaf informations, date and strings)
+	 */
+	public static HierarchyTreeNodeData setDataValues(String dimension, String nodeCode, HierarchyTreeNodeData data, IRecord record, IMetaData metadata) {
+		// inject leafID into node
+
+		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+
+		IField leafIdField = record.getFieldAt(metadata.getFieldIndex(hierarchies.getHierarchyTableForeignKeyName(dimension)));
+		String leafIdString = null;
+		if (leafIdField.getValue() instanceof Integer) {
+			Integer leafId = (Integer) leafIdField.getValue();
+			leafIdString = String.valueOf(leafId);
+		} else if (leafIdField.getValue() instanceof Long) {
+			Long leafId = (Long) leafIdField.getValue();
+			leafIdString = String.valueOf(leafId);
+		}
+		data.setLeafId(leafIdString);
+
+		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_CD));
+		String leafParentCodeString = (String) leafParentCodeField.getValue();
+		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
+		nodeCode = leafParentCodeString + "_" + nodeCode;
+		data.setLeafParentCode(leafParentCodeString);
+		// data.setLeafOriginalParentCode(leafParentCodeString); // backup code
+
+		IField leafParentNameField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_NM));
+		String leafParentNameString = (String) leafParentNameField.getValue();
+		data.setLeafParentName(leafParentNameString);
+
+		IField beginDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.BEGIN_DT));
+		Date beginDtDate = (Date) beginDtField.getValue();
+		data.setBeginDt(beginDtDate);
+
+		IField endDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.END_DT));
+		Date endDtDate = (Date) endDtField.getValue();
+		data.setEndDt(endDtDate);
+
+		HashMap mapAttrs = new HashMap();
+		int numLevels = Integer.valueOf((String) hierarchies.getConfig(dimension).get(HierarchyConstants.NUM_LEVELS));
+		Integer maxDepth = (Integer) (record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.MAX_DEPTH)).getValue());
+
+		// add leaf field attributes for automatic edit field GUI
+		ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
+		for (int f = 0, lf = leafFields.size(); f < lf; f++) {
+			Field fld = leafFields.get(f);
+			String idFld = fld.getId();
+			if (!fld.isSingleValue()) {
+				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld + maxDepth));
+				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+			} else {
+				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld));
+				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+			}
+		}
+		data.setAttributes(mapAttrs);
+		return data;
+	}
+
+	public static JSONObject setDetailsInfo(JSONObject nodeJSONObject, HierarchyTreeNodeData nodeData) {
+		try {
+			JSONObject toReturn = nodeJSONObject;
+
+			toReturn.put(HierarchyConstants.BEGIN_DT, nodeData.getBeginDt());
+			toReturn.put(HierarchyConstants.END_DT, nodeData.getEndDt());
+
+			HashMap mapAttrs = nodeData.getAttributes();
+			HierarchyUtils.createJSONArrayFromHashMap(mapAttrs, toReturn);
+
+			return toReturn;
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy details structure to JSON", t);
+		}
+
+	}
 }
