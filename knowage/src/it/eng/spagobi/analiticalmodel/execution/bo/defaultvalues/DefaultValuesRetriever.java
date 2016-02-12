@@ -82,4 +82,45 @@ public class DefaultValuesRetriever {
 		return defaultValues;
 	}
 
+	public DefaultValuesList getDefaultQueryValues(BIObjectParameter biparam,
+			ExecutionInstance executionInstance, IEngUserProfile userProfile) {
+		
+		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		ILovDetail lovProvDet = executionInstance.getLovDetail(biparam);
+		String columnName = null;
+		String lovResult = null;
+		try {
+			lovResult = executionCacheManager.getLovResult(userProfile,
+					lovProvDet,
+					executionInstance.getDependencies(biparam),
+					executionInstance, true);
+			
+			columnName = lovProvDet.getValueColumnName();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// get all the rows of the result
+		LovResultHandler lovResultHandler = null;
+		try {
+			lovResultHandler = new LovResultHandler(lovResult);
+		} catch (SourceBeanException e) {
+			e.printStackTrace();
+		}
+		
+		DefaultValuesList defaultValuesList = new DefaultValuesList();
+		List<SourceBean> rows = lovResultHandler.getRows();
+		
+		for(SourceBean row : rows) {
+			String rowValue = (String) row.getAttribute(columnName);
+			
+			DefaultValue defaultValue = new DefaultValue();
+			defaultValue.setValue(rowValue);
+			
+			defaultValuesList.add(defaultValue);
+		}
+				
+		
+		return defaultValuesList;
+	}
 }

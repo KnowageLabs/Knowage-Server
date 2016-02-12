@@ -782,8 +782,8 @@ public class ExecutionInstance implements Serializable {
 			return new ArrayList();
 		}
 
-		// we need to process default values and non-default values separately: default values do not require validation, non-default values instead require
-		// validation
+		// we need to process default values and non-default values separately: default values do not require validation, 
+		// non-default values instead require validation
 
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 		DefaultValuesList allDefaultValues = retriever.getDefaultValues(biparam, this, this.userProfile);
@@ -792,7 +792,14 @@ public class ExecutionInstance implements Serializable {
 
 		// validation must proceed only with non-default values
 		// from the complete list of values, get the values that are not default values
-		List nonDefaultValues = this.getNonDefaultValues(biparam, allDefaultValues);
+		List nonDefaultValues = null;
+		if (lov.getITypeCd().equalsIgnoreCase("QUERY")) {
+			DefaultValuesList allDefaultQueryValues = retriever.getDefaultQueryValues(biparam, this, this.userProfile);
+			nonDefaultValues = this.getNonDefaultQueryValues(biparam, allDefaultQueryValues);
+		} else {
+			nonDefaultValues = this.getNonDefaultValues(biparam, allDefaultValues);
+		}
+		
 		if (nonDefaultValues.isEmpty()) {
 			logger.debug("All selected values are default values; no need to validate them");
 			return new ArrayList();
@@ -851,6 +858,37 @@ public class ExecutionInstance implements Serializable {
 				if (!defaultValues.contains(value)) {
 					logger.debug("Value [" + value + "] is not a default value.");
 					toReturn.add(value);
+				}
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	private List<String> getNonDefaultQueryValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+		logger.debug("IN");
+		List<String> toReturn = new ArrayList<String>();
+		List<String> values = analyticalDocumentParameter.getParameterValues();
+		if (values != null && values.size() > 0) {
+			for (int i = 0; i < values.size(); i++) {
+				// Removes the single quotes from each single parameter value
+				String value = values.get(i).toString().replaceAll("^'(.*)'$", "$1");
+				if (!defaultValues.contains(value)) {
+					// if is multivalue the values come as a single string value
+					if(analyticalDocumentParameter.isMultivalue()) {
+						String[] singleLineValues = value.split("','");
+						
+						for(String singleValue : singleLineValues) {
+							if (!defaultValues.contains(singleValue)) {
+								logger.debug("Value [" + value + "] is not a default value.");
+								toReturn.add(value);
+								break;
+							}
+						}
+					} else {
+						logger.debug("Value [" + value + "] is not a default value.");
+						toReturn.add(value);
+					}
 				}
 			}
 		}
