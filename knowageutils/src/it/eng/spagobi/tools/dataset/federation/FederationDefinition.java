@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class FederationDefinition {
 
 	private int federation_id = -1;
@@ -28,8 +30,11 @@ public class FederationDefinition {
 	private String relationships;
 
 	private Set<IDataSet> sourceDatasets;
-	
-	private boolean degenerated; //true if the federation is degenerated.. When a user creates a derived dataset the system creates a federation that links the original dataste and the derived one
+
+	private boolean degenerated; // true if the federation is degenerated.. When
+									// a user creates a derived dataset the
+									// system creates a federation that links
+									// the original dataste and the derived one
 
 	public int getFederation_id() {
 		return federation_id;
@@ -67,6 +72,7 @@ public class FederationDefinition {
 		return relationships;
 	}
 
+	@JsonIgnore
 	public JSONObject getRelationshipsAsJSONObject() {
 		JSONObject relations = null;
 		if (getRelationships() != null && getRelationships().length() > 0) {
@@ -84,10 +90,11 @@ public class FederationDefinition {
 	/**
 	 * Flats the relationships and return the single relations between couple
 	 * tables
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
+	@JsonIgnore
 	public JSONArray getFlatReslationsShips() throws JSONException {
 
 		JSONArray flatJSONArray = new JSONArray();
@@ -108,6 +115,7 @@ public class FederationDefinition {
 		this.relationships = relationships;
 	}
 
+	@JsonIgnore
 	public Set<IDataSet> getSourceDatasets() {
 		return sourceDatasets;
 	}
@@ -123,7 +131,5 @@ public class FederationDefinition {
 	public void setDegenerated(boolean degenerated) {
 		this.degenerated = degenerated;
 	}
-	
-	
 
 }

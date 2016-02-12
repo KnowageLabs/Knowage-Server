@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -98,6 +99,27 @@ public class RestFederationDefinition {
 		}
 	}
 
+	@PUT
+	@Path("/{id}")
+	public Integer modifyFederation(@Context HttpServletRequest req) {
+		try {
+			logger.debug("Editing the federation");
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
+			logger.debug("The federation definition label is " + fdsNew.getLabel());
+			logger.debug("The federation definition ID is " + fdsNew.getFederation_id());
+
+			Integer id = editFederationDefinition(fdsNew, true);
+
+			logger.debug("Saving OK");
+			logger.debug("OUT");
+			return id;
+		} catch (Exception e) {
+			logger.error("Error saving federation", e);
+			throw new SpagoBIRuntimeException("Error saving federation", e);
+		}
+	}
+
 	//
 	// /**
 	// * Saves the federation definition in the db. Gets the definition from the
@@ -155,6 +177,18 @@ public class RestFederationDefinition {
 
 	}
 
+	public int editFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError {
+		logger.debug("The federation definition label is " + federation.getLabel());
+
+		ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
+		if (duplicated) {
+			return federatedDatasetDao.modifySbiFederationDefinition(federation);
+		} else {
+			return federatedDatasetDao.modifySbiFederationDefinitionNoDuplicated(federation);
+		}
+
+	}
+
 	/**
 	 * Gets a specific federation definition
 	 *
@@ -208,7 +242,7 @@ public class RestFederationDefinition {
 		fds.setName(name);
 		fds.setDescription(description);
 		fds.setDegenerated(degenerated);
-		
+
 		if (relationships != null && relationships.length() > 0) {
 			fds.setRelationships(relationships);
 			fds.setSourceDatasets(deserializeDatasets(relationships));

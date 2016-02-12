@@ -28,8 +28,9 @@
 		 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 			String relString = "";
 			String lisOfDSL = "";
+			String federationID = "";
 			if(request.getParameter("id")!=null){
-				String federationID = request.getParameter("id");
+				federationID = request.getParameter("id");
 				if(federationID!=null && federationID.length()!=0){
 					FederationDefinition obj = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(new Integer(federationID));
 					Set<IDataSet> datasets = obj.getSourceDatasets();
@@ -50,6 +51,7 @@
 			var value = '<%= lisOfDSL %>';
 			var valueRelString = '<%= relString  %>';
 			var contextName = '<%=contextName %>';
+			var federation_id = '<%=federationID %>';
 		</script> 
 	</head>
 
@@ -136,7 +138,6 @@
 					
 					<md-content	class="associationsBox">
 						<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
-
 						<div ng-repeat="dataset in ctrl.listaNew track by $index">
 							<div class="datasetInAssociationBox">
 								<md-card style="height:93%">
@@ -148,7 +149,6 @@
 									</md-toolbar>
 									
 									<md-content ng-show="true" class="listBox" layout="column">
-										
 										<angular-list
 											layout-fill
 											id='{{dataset.label}}'
@@ -174,7 +174,7 @@
 					<md-toolbar >
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
+						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
 						</md-icon></md-button> 
 					</div>
 		
@@ -187,20 +187,19 @@
 							<md-content >
 							
 								<md-list >
-									<div ng-repeat="k in ctrl.multiArray track by $index">
+									<div ng-repeat="k in multiRelationships">
 										
 										<md-list-item class="associationItem">
-											
-											<div ng-style="myStyle"  ng-click="ctrl.retrieveSelections(k)" ng-repeat="bla in k track by $index">
+											<div ng-style="myStyle" ng-click="ctrl.retrieveSelectionsString(k)">
 											<span>
-												<span ng-if="$index==0">
-												{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>&nbsp; &#10140; &nbsp;{{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+												<span>
+												{{k}}
 											</span>
 											
 											</div>
 											<span flex=""></span>
 											 
-											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background deleteIcon" ng-click="ctrl.deleteFromMultiArray(k)">
+											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background deleteIcon" ng-click="ctrl.deleteRelationship(k)">
 														 <i class="fa fa-times-circle" ></i>
 													</md-button>
 										
