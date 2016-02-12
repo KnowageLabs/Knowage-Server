@@ -428,6 +428,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
+			this.updateSbiCommonInfo4Update(hibMenu);
 			tmpSession.save(hibMenu);
 
 			tx.commit();
