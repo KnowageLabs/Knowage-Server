@@ -104,7 +104,7 @@ geoM.service(
 					params.LAYERS = geoModule_templateLayerData.layerName;
 					// var params={};
 					params.SLD_BODY = sldBody;
-					
+
 					layerServ.templateLayer = new ol.layer.Tile(
 							{
 								source : new ol.source.TileWMS(
@@ -123,8 +123,8 @@ geoM.service(
 							{
 								features : (new ol.format.GeoJSON()).readFeatures(geoModule_templateLayerData,
 										{
-											// dataProjection: 'EPSG:4326',
-											featureProjection : 'EPSG:3857'
+									// dataProjection: 'EPSG:4326',
+									featureProjection : 'EPSG:3857'
 										})
 							});
 
@@ -182,7 +182,7 @@ geoM.service(
 					style : selectStyle
 				});
 				$map.addInteraction(select);
-				
+
 				select.on('select',	function(evt) {
 					if (geo_interaction.type == "identify"
 						&& (evt.selected[0] == undefined || geo_interaction.distance_calculator)
@@ -202,20 +202,20 @@ geoM.service(
 									'INFO_FORMAT' : 'application/json'
 								});
 						$http.get(urlInfo).success(function(data,status,headers,config) {
-									sbiModule_logger.log("getGetFeatureInfoUrl caricati",data);
-									if (data.hasOwnProperty("errors")) {
-										sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti",data.errors);
-									} else {
-										if (data.features.length == 0) {
-											layerServ.overlay.setPosition(undefined);
-										} else {
-											layerServ.doClickAction(evt,data.features[0].properties)
-										}
-									}
-								})
-								.error(function(data,status,headers,config) {
-											sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti ",status);
-										});
+							sbiModule_logger.log("getGetFeatureInfoUrl caricati",data);
+							if (data.hasOwnProperty("errors")) {
+								sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti",data.errors);
+							} else {
+								if (data.features.length == 0) {
+									layerServ.overlay.setPosition(undefined);
+								} else {
+									layerServ.doClickAction(evt,data.features[0].properties)
+								}
+							}
+						})
+						.error(function(data,status,headers,config) {
+							sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti ",status);
+						});
 
 					} else {
 						var prop = evt.selected.length ? evt.selected[0].getProperties(): null;
@@ -246,19 +246,19 @@ geoM.service(
 				$map.addInteraction(dragBox);
 
 				dragBox.on('boxend',function(e) {
-							var selection = [];
-							var extent = dragBox.getGeometry().getExtent();
+					var selection = [];
+					var extent = dragBox.getGeometry().getExtent();
 
-							var vectorSource = layerServ.templateLayer.getSource();
-							vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
-								sFeatures.push(feature);
-								selection.push(feature);
-									});
+					var vectorSource = layerServ.templateLayer.getSource();
+					vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
+						sFeatures.push(feature);
+						selection.push(feature);
+					});
 
-							layerServ.selectedFeatures = selection;
-							geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+					layerServ.selectedFeatures = selection;
+					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
-						});
+				});
 
 				// clear selection when drawing a new box and when
 				// clicking on the map
@@ -300,7 +300,7 @@ geoM.service(
 							if (geom[1] > extent[1]) {
 								if (geom[2] < extent[2]) {
 									if (geom[3] < extent[3]) {
-									// it is inside the polygon
+										// it is inside the polygon
 										sFeatures.push(feature);
 										selection.push(feature);
 									}
@@ -313,7 +313,7 @@ geoM.service(
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
-			
+
 				});
 				// clear selection when drawing a new box and when
 				// clicking on the map
@@ -325,7 +325,7 @@ geoM.service(
 			}
 			this.spy = function() {
 				var element;
-			
+
 				var sFeatures = select.getFeatures();
 				var imagery = new ol.layer.Tile({
 					source : new ol.source.MapQuest({
@@ -341,7 +341,7 @@ geoM.service(
 				imagery.setZIndex(100000);
 				var radius ;
 				var ray ;
-				
+
 				document.addEventListener('keydown', function(evt) {
 
 					if(evt.which === 17 && geo_interaction.selectedFilterType == "near"){
@@ -351,12 +351,12 @@ geoM.service(
 						$map.removeLayer(imagery);
 					}
 				})
-			
+
 				// get the pixel position with every move
 				var mousePosition = null;
 
 				container.addEventListener('mousemove',function(event) {
-					
+
 					mousePosition = $map.getEventPixel(event);
 					$map.render();
 				});
@@ -369,7 +369,7 @@ geoM.service(
 
 				// before rendering the layer, do some clipping
 				imagery.on('precompose', function(event) {
-					
+
 					var ctx = event.context;
 					var pixelRatio = event.frameState.pixelRatio;
 					ctx.save();
@@ -378,7 +378,7 @@ geoM.service(
 					ray = radius;
 					if (mousePosition) {
 						// only show a circle around the mouse 
-					
+
 						ctx.arc(mousePosition[0] * pixelRatio,mousePosition[1] * pixelRatio, radius *  pixelRatio, 0, 2 * Math.PI);
 						coordinate = [mousePosition[0], mousePosition[1]];
 						var endCoordinate = [coordinate[0]+radius*  pixelRatio,coordinate[1]+radius*  pixelRatio];
@@ -396,7 +396,7 @@ geoM.service(
 				imagery.on('postcompose', function(event) {
 					var ctx = event.context;
 					ctx.restore();
-					
+
 				});
 
 
@@ -407,19 +407,19 @@ geoM.service(
 				var myCircle;
 				var sFeatures = select.getFeatures();
 
-				
+
 				var features = layerServ.templateLayer.getSource().getFeatures();
 				if (features.length > 0) {
 					var selection = [];
 					features.forEach(function(feature) {
-		
+
 						var geom = feature.getGeometry().getCoordinates();
 						for (var i = 0; i < geom[0][0].length; i++) {
 							var coordFeature = geom[0][0][i];							
 							var x=coordFeature[0];
 							var y = coordFeature[1] ;
 
-							
+
 							if (layerServ.findIntersect(x, y , coordinate, ray)) {
 								// ok
 								selection.push(feature);
@@ -433,17 +433,17 @@ geoM.service(
 
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			
+
 				}
 
 
 
 			}
-			
-			
+
+
 			this.findIntersect = function(x, y, center, ray) {
 				//intersect inside a circle
-				
+
 				var x = Math.pow(x - center[0], 2);
 				var y = Math.pow(y - center[1], 2);
 				var difference = x + y;
@@ -453,8 +453,8 @@ geoM.service(
 					return false;
 				}
 			}
-			
-		
+
+
 
 
 			this.setInteraction = function() {
@@ -479,7 +479,7 @@ geoM.service(
 				}
 			}
 			this.doClickAction = function(evt, prop) {
-			
+
 				layerServ.selectedFeatures = evt.target.getFeatures().getArray();
 				geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
@@ -505,7 +505,7 @@ geoM.service(
 				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "inside") {
 					layerServ.insideFeature();
 				} else if (geo_interaction.type == "cross") {
-					
+
 					layerServ.overlay.setPosition(undefined); // hides
 					// eventual messages present on the map
 
@@ -526,30 +526,30 @@ geoM.service(
 				}
 			}
 
-			
-			
+
+
 			this.calculateDistance = function(coord,endCoord){
 				//calculate ray in km
 				var wgs84Ellipsoid = new ol.Ellipsoid(6378137, 1 / 298.257223563);
 				var sourceProj = $map.getView().getProjection();
-				
+
 				var c1 = ol.proj.transform(coord, sourceProj, 'EPSG:4326');
 				var c2 = ol.proj.transform(endCoord, sourceProj, 'EPSG:4326');
-				
+
 				return wgs84Ellipsoid.vincentyDistance(c1,c2);
 			}
-			
+
 			this.calculateRay = function(distance){
 				//random coordinate
 				var x = -12821852.872668605;
 				var y = 5021607.010222939;
 				var xF = x + distance;
 				var yF = y + distance;
-				
+
 				var coord = $map.getPixelFromCoordinate([x,y]);
 				var coordF =  $map.getPixelFromCoordinate([xF,yF]);
 				return layerServ.calculateDistance(coord,coordF);
-				
+
 			}
 			this.updateTemplateLayer = function(legendType) {
 				geoModule_thematizer.updateLegend(legendType);
@@ -588,27 +588,27 @@ geoM.service(
 				}
 			};
 
-			
-			
+
+
 			this.toggleLayer = function(layerConf) {
-				
+
 				if (this.loadedLayer[layerConf.layerId] != undefined) {
 					$map.removeLayer(this.loadedLayer[layerConf.layerId]);
 					delete this.loadedLayer[layerConf.layerId];
 					delete this.loadedLayerOBJ[layerConf.layerId];
 					geoModule_template.layersLoaded[layerConf.label]=false;
-					
+
 				} else {
 					var layer = this.createLayer(layerConf, false);
 					if(layer.hasOwnProperty("$$state")){
 						layer.then(function(tmpLayer) {
 							layerServ.updateLayerLoaded(tmpLayer,layerConf)
 
-							});
+						});
 					}else{
 						layerServ.updateLayerLoaded(layer,layerConf)
 					}
-					
+
 				}
 			};
 
@@ -627,7 +627,7 @@ geoM.service(
 				var arr_tmp=[];
 				for(var key in layerServ.filters){
 					if(key==layerConf.layerId){
-			
+
 					}else{
 						arr_tmp[key]=layerServ.filters[key];
 					}
@@ -639,7 +639,7 @@ geoM.service(
 				var tmpLayer;
 				var asyncCall;
 				var name = layerConf.layerName;
-				
+
 				switch (layerConf.type) {
 				case 'WMS':
 					tmpLayer = new ol.layer.Tile({
@@ -649,9 +649,9 @@ geoM.service(
 									params : JSON.parse(layerConf.layerParams),
 									options : JSON.parse(layerConf.layerOptions)
 								})),
-					crossOriginKeyword: 'anonymous',
-					name: name,
-					type: 'WMS'
+								crossOriginKeyword: 'anonymous',
+								name: name,
+								type: 'WMS'
 					});
 					break;
 
@@ -661,7 +661,7 @@ geoM.service(
 						format : new ol.format.GeoJSON(),
 						name: name,
 						type: 'WFS'
-						// options : JSON.parse(layerConf.layerOptions)
+							// options : JSON.parse(layerConf.layerOptions)
 					});
 
 					tmpLayer = new ol.layer.Vector({
@@ -706,12 +706,12 @@ geoM.service(
 					break;
 
 				case 'File':
-					
+
 					tmpLayer= this.getLayerFromFile(layerConf);
 					tmpLayer.name= name,
 					tmpLayer["type"]= 'File'
-					break;
-					
+						break;
+
 				default:
 					console.error('Layer type [' + layerConf.type + '] not supported');
 				break;
@@ -722,162 +722,197 @@ geoM.service(
 				} else {
 
 				}
-				
-					return tmpLayer;
-			
+
+				return tmpLayer;
+
 			};
-			
+
 			this.getLayerFromFile=function(layerConf){
 				var deferredLayer = $q.defer();
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
 				sbiModule_restServices.post("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
 				.success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							sbiModule_logger.log("file layer non Ottenuto");
-						} else {
-							sbiModule_logger.trace("file layer caricato",data);
-		
-							var vectorSource = new ol.source.Vector(
-									{
-										features : (new ol.format.GeoJSON()).readFeatures(data,
-												{
-													featureProjection : 'EPSG:3857'
-												})
-									});
+						function(data, status, headers, config) {
+							if (data.hasOwnProperty("errors")) {
+								sbiModule_logger.log("file layer non Ottenuto");
+							} else {
+								sbiModule_logger.trace("file layer caricato",data);
 
-							var tmpLayer= new ol.layer.Vector({
-								source : vectorSource,
-								style: layerServ.applyFilter
-							}); 
-							deferredLayer.resolve(tmpLayer);
-						}
-				})
-				.error(function(data, status, headers, config) {
-					sbiModule_logger.log("file layer non Ottenuto");
-				});
-				
-				 return deferredLayer.promise;
+								var vectorSource = new ol.source.Vector(
+										{
+											features : (new ol.format.GeoJSON()).readFeatures(data,
+													{
+												featureProjection : 'EPSG:3857'
+													})
+										});
+
+								var tmpLayer= new ol.layer.Vector({
+									source : vectorSource,
+									style: layerServ.applyFilter
+								}); 
+								deferredLayer.resolve(tmpLayer);
+							}
+						})
+						.error(function(data, status, headers, config) {
+							sbiModule_logger.log("file layer non Ottenuto");
+						});
+
+				return deferredLayer.promise;
 
 			}
 			this.removeSelectPopup=function(){
 				layerServ.overlay.setPosition(undefined);
 				select.getFeatures().clear();
 			}
-			
+
 			this.applyFilter = function(feature, resolution){
-					
-				
-					   var image = new ol.style.Circle({
-					        radius: 5,
-					        fill: null,
-					        stroke: new ol.style.Stroke({color: 'red', width: 1})
-					      });
 
-					      var styles = {
-					        'Point': new ol.style.Style({
-					          image: image
-					        }),
-					        'LineString': new ol.style.Style({
-					          stroke: new ol.style.Stroke({
-					            color: 'green',
-					            width: 1
-					          })
-					        }),
-					        'MultiLineString': new ol.style.Style({
-					          stroke: new ol.style.Stroke({
-					            color: 'green',
-					            width: 1
-					          })
-					        }),
-					        'MultiPoint': new ol.style.Style({
-					          image: image
-					        }),
-					        'MultiPolygon': new ol.style.Style({
-								stroke: new ol.style.Stroke({
-									color: "#3399cc",
-									width: 1
-								})
+
+				var image = new ol.style.Circle({
+					radius: 5,
+					fill: null,
+					stroke: new ol.style.Stroke({color: 'red', width: 1})
+				});
+
+				var styles = {
+						'Point': new ol.style.Style({
+							image: image
+						}),
+						'LineString': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: 'green',
+								width: 1
+							})
+						}),
+						'MultiLineString': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: 'green',
+								width: 1
+							})
+						}),
+						'MultiPoint': new ol.style.Style({
+							image: image
+						}),
+						'MultiPolygon': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: "#3399cc",
+								width: 1
+							})
+						}),
+						'Polygon': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: "#3399cc",
+								width: 1
+							})
+						}),
+
+						'GeometryCollection': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: 'magenta',
+								width: 2
 							}),
-					        'Polygon': new ol.style.Style({
-								stroke: new ol.style.Stroke({
-									color: "#3399cc",
-									width: 1
-								})
+							fill: new ol.style.Fill({
+								color: 'magenta'
 							}),
-					          
-					        'GeometryCollection': new ol.style.Style({
-					          stroke: new ol.style.Stroke({
-					            color: 'magenta',
-					            width: 2
-					          }),
-					          fill: new ol.style.Fill({
-					            color: 'magenta'
-					          }),
-					          image: new ol.style.Circle({
-					            radius: 10,
-					            fill: null,
-					            stroke: new ol.style.Stroke({
-					              color: 'magenta'
-					            })
-					          })
-					        }),
-					        'Circle': new ol.style.Style({
-					          stroke: new ol.style.Stroke({
-					            color: 'red',
-					            width: 2
-					          }),
-					          fill: new ol.style.Fill({
-					            color: 'rgba(255,0,0,0.2)'
-					          })
-					        })
-					      };
-	
-					
-				
-					
-					
-				if(layerServ.layerWithoutFilter ){
+							image: new ol.style.Circle({
+								radius: 10,
+								fill: null,
+								stroke: new ol.style.Stroke({
+									color: 'magenta'
+								})
+							})
+						}),
+						'Circle': new ol.style.Style({
+							stroke: new ol.style.Stroke({
+								color: 'red',
+								width: 2
+							}),
+							fill: new ol.style.Fill({
+								color: 'rgba(255,0,0,0.2)'
+							})
+						})
+				};
+				var layer_founded;
+				var sameFeature = function(featureTemp){
+					return (feature === featureTemp) ? true : false;
+				};
+				$map.getLayers().forEach(function(layer){
+					var source = layer.getSource();
+					if(source instanceof ol.source.Vector){
+						var features = source.getFeatures();
+						if(features.length > 0){
+							var found = features.some(sameFeature);
+							if(found){
+								layer_founded = layer;
+							}
+						}
+					}
+				});
+
+
+				/*	if(layerServ.layerWithoutFilter){
 					return [styles[feature.getGeometry().getType()]];
+				}*/
+
+
+				var applFilter=undefined;
+
+				var propertiesFeature = feature.getProperties();
+
+				var cont = 0;
+				var idLayer ;
+				for(var layerCurr in layerServ.loadedLayer){
+					if(layer_founded==layerServ.loadedLayer[layerCurr]){
+						idLayer = layerCurr;
+						break;
+					}
 				}
-				
-//				if(feature.getGeometry().getType()!='MultiPolygon'){
-//					return [styles[feature.getGeometry().getType()]];
-//				}
-				var applFilter=false;
-
-					var propertiesFeature = feature.getProperties();
-
-
-
-					for(var key in layerServ.filters){
+				for(var key in layerServ.filters){
+					if(key==idLayer){
 						for(var i =0;i<layerServ.filters[key].length;i++){
 
 							var value = propertiesFeature[layerServ.filters[key][i].filter];
-							if(layerServ.filters[key][i].model!=""){
-
-								applFilter=true;
+							if(layerServ.filters[key][i].model==""){
+								cont ++;
+								//applFilter=true;
 							}
 							var valuesInsert = layerServ.filters[key][i].model.split(",");
 
 							for(var k=0;k<valuesInsert.length;k++){
 								if(value==valuesInsert[k]){
 									//if contains filter
-									 return  [styles[feature.getGeometry().getType()]];
+									return  [styles[feature.getGeometry().getType()]];
 								}
 							}
 						}
+						if(cont == layerServ.filters[key].length){
+							applFilter = false ;
+						}else{
+							applFilter = true;
+						}
 					}
-					
+
+
+				}
+				if(applFilter==undefined){
+					applFilter = false ;
+				}
+
+
+
+
+
+
+
 
 				if(applFilter){
-				
+
 					return null;
-					}else{
-						
-				
-						 return  [styles[feature.getGeometry().getType()]];
-					}
+				}else{
+
+
+					return  [styles[feature.getGeometry().getType()]];
+				}
 
 
 			}
@@ -886,11 +921,13 @@ geoM.service(
 			this.setLayerFilter= function(layerConf,filters) {
 				layerServ.filters=filters;
 			}
-	
-	
-				
+
+
+
 		});
-	
+
+
+
 geoM.factory('geoModule_constant', function(sbiModule_translate) {
 	var cont = {
 			analysisLayer : sbiModule_translate.load("gisengine.constant.analysisLayer"),
