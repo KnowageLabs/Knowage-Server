@@ -237,7 +237,7 @@ public class Helper {
 		}
 	}
 
-	private static synchronized MessageDigest getMD5Instance() throws NoSuchAlgorithmException {
+	private static MessageDigest getMD5Instance() throws NoSuchAlgorithmException {
 		// MessageDigest is not thread safe and is not particularly expensive to construct, so instance it each time.
 		return MessageDigest.getInstance("MD5");
 	}
@@ -261,7 +261,7 @@ public class Helper {
 		}
 	}
 
-	private static synchronized MessageDigest getSHA256Instance() throws NoSuchAlgorithmException {
+	private static MessageDigest getSHA256Instance() throws NoSuchAlgorithmException {
 		// MessageDigest is not thread safe and is not particularly expensive to construct, so instance it each time.
 		return MessageDigest.getInstance("SHA-256");
 	}
