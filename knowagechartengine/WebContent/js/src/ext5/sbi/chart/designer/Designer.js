@@ -1979,29 +1979,38 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  						 */  	  						
 	  	  						if (chartType == "HEATMAP") {
 		  	  						if (this.store.data.length == 0 && data.records.length == 1) {
-		  	  							if (data.records[0].data.categoryDataType != "Timestamp") {	  	  								
-		  	  								/**
-		  	  								 * Show the message that tells user that he should firstly define
-		  	  								 * (drop) the item for the categories (attributes) container that
-		  	  								 * is of a DATE type (Timestamp).
-		  	  								 */
-			  	  							Ext.Msg.show({
-		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
-		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
-		  		            					icon : Ext.Msg.WARNING,
-		  		            					closable : false,
-		  		            					buttons : Ext.Msg.OK,
-		  		            					minWidth: 200,
-		  		            					
-		  		            					buttonText : {
-		  		            						ok : LN('sbi.chartengine.generic.ok')
-		  		            					}
-	  	  									});	
-		  	  								
-		  	  								return false;
-	  	  								}	  	  								
+		  	  							/**
+		  	  							 * first category doesn't have to be strictly of  type DATE(Timpestamp)
+		  	  							 * validation removed
+		  	  							 * @author Ana Tomic (ana.tomic@mht.net)
+		  	  							 */
+//		  	  							if (data.records[0].data.categoryDataType != "Timestamp") {	  	  								
+//		  	  								/**
+//		  	  								 * Show the message that tells user that he should firstly define
+//		  	  								 * (drop) the item for the categories (attributes) container that
+//		  	  								 * is of a DATE type (Timestamp).
+//		  	  								 */
+//			  	  							Ext.Msg.show({
+//		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
+//		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
+//		  		            					icon : Ext.Msg.WARNING,
+//		  		            					closable : false,
+//		  		            					buttons : Ext.Msg.OK,
+//		  		            					minWidth: 200,
+//		  		            					
+//		  		            					buttonText : {
+//		  		            						ok : LN('sbi.chartengine.generic.ok')
+//		  		            					}
+//	  	  									});	
+//		  	  								
+//		  	  								return false;
+//	  	  								}	  	  								
 	  	  							}
-		  	  						else if (this.store.data.length == 1 && data.records.length == 1) {	  	  	
+		  	  						else if (this.store.data.length == 1 && data.records.length == 1) {	 
+		  	  							/**
+		  	  							 * if the one of the categories is DATE(Timestamp) has to be selected as the first one
+		  	  							 * validation is used
+		  	  							 */
 		  	  							if (dropPosition == "after" && data.records[0].data.categoryDataType == "Timestamp" ||
 		  	  								dropPosition == "before" && data.records[0].data.categoryDataType != "Timestamp") {
 			  	  							Ext.Msg.show ({
@@ -2022,19 +2031,22 @@ Ext.define('Sbi.chart.designer.Designer', {
 		  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
 		  	  							 * is of DATE (Timestamp) type.
 		  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  	  							 * 
+		  	  							 * this validation is not used because heatmap doesn't need strictly date
+		  	  							 * @author Ana Tomic (ana.tomic@mht.net)
 		  	  							 */
-		  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
-		  	  									data.records[0].data.categoryDataType != "Timestamp") {
-		  	  								Ext.Msg.show({
-		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
-		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
-		  		            					icon : Ext.Msg.WARNING,
-		  		            					closable : false,
-		  		            					buttons : Ext.Msg.OK
-	  										});
-		  	  								
-		  	  								return false;
-	  	  								}
+//		  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
+//		  	  									data.records[0].data.categoryDataType != "Timestamp") {
+//		  	  								Ext.Msg.show({
+//		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
+//		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
+//		  		            					icon : Ext.Msg.WARNING,
+//		  		            					closable : false,
+//		  		            					buttons : Ext.Msg.OK
+//	  										});
+//		  	  								
+//		  	  								return false;
+//	  	  								}
 	  	  							}
 		  	  						else {
 		  	  							/**

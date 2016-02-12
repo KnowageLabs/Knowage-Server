@@ -124,7 +124,11 @@ function getCrossParamsForHeatmap(point,chartConf){
     	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
     	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
     	params.point.category=chartConf.additionalData.columns[0].value;
+    	if(chartConf.chart.xAxisDate){
     	params.point.name= new Date(point.x);
+    	}else{
+    	params.point.name=	chartConf.additionalData.firstCategory[point.x];
+    	}
     	params.point.series.name=chartConf.additionalData.serie.value;
     	params.point.y=point.value;
     	params.point.group.name=chartConf.additionalData.columns[1].value;
@@ -425,9 +429,12 @@ function prepareChartConfForTreemap(chartConf) {
 
 function prepareChartConfForHeatmap(chartConf) {
 	var start;
-    
-    var startDate= new Date(chartConf.additionalData.dateresult[0]);
-    var endDate= new Date(chartConf.additionalData.dateresult[1]);
+	 var startDate;
+	 var endDate;
+    if(chartConf.chart.xAxisDate){
+     startDate= new Date(chartConf.additionalData.firstCategory[0]);
+     endDate= new Date(chartConf.additionalData.firstCategory[1]); 
+    }
     var points=[];
     var data=chartConf.data[0];
     var minValue=data[0][chartConf.additionalData.serie.value];
@@ -442,8 +449,14 @@ function prepareChartConfForHeatmap(chartConf) {
     		maxValue=data[i][chartConf.additionalData.serie.value];
     	}
     	
+    	var xValue;
+    	if(chartConf.chart.xAxisDate){
+    		xValue=new Date(data[i][chartConf.additionalData.columns[0].value]).getTime();
+    	}else{
+    		xValue=chartConf.additionalData.firstCategory.indexOf(data[i][chartConf.additionalData.columns[0].value]);
+    	}
     	var point={
-    		"x":new Date(data[i][chartConf.additionalData.columns[0].value]).getTime(),
+    		"x":xValue,
     		"y":chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value]),
     		"value":data[i][chartConf.additionalData.serie.value],
     		"label":data[i][chartConf.additionalData.columns[1].value]
@@ -543,6 +556,119 @@ function prepareChartConfForHeatmap(chartConf) {
 	}
     
     var chartHeight = (chartConf.chart.height!="") ? chartConf.chart.height : window.innerHeight;
+    var xAxisObject={};
+    var serieColSize=0;
+    var tooltipObject={};
+    if(chartConf.chart.xAxisDate){
+    	xAxisObject={
+                type: 'datetime', // the numbers are given in milliseconds
+                min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables 
+                max: Date.UTC(endDate.getUTCFullYear(),endDate.getUTCMonth(),endDate.getUTCDate()),  
+                
+                title:
+            	{
+                	text: (chartConf.xaxis.title.text!=undefined && chartConf.xaxis.title.text!="") ? chartConf.xaxis.title.text : undefined,	
+                	align: chartConf.xaxis.title.align,
+                	
+                	style:
+            		{
+                		color: (chartConf.xaxis.title.style.color!=undefined && chartConf.xaxis.title.style.color!="" && chartConf.xaxis.title.style.color!="transparent") ? chartConf.xaxis.title.style.color : '',	
+        				fontStyle: (chartConf.xaxis.title.style.fontStyle!=undefined && chartConf.xaxis.title.style.fontStyle!="") ? chartConf.xaxis.title.style.fontStyle : '',
+    					textDecoration: (chartConf.xaxis.title.style.textDecoration!=undefined && chartConf.xaxis.title.style.textDecoration!="") ? chartConf.xaxis.title.style.textDecoration : '',
+    					fontSize: (chartConf.xaxis.title.style.fontSize!=undefined && chartConf.xaxis.title.style.fontSize!="") ? chartConf.xaxis.title.style.fontSize : '',
+    					fontFamily:(chartConf.xaxis.title.style.fontFamily!=undefined && chartConf.xaxis.title.style.fontFamily!="") ? chartConf.xaxis.title.style.fontFamily : ''
+            		}
+            	},
+                
+                labels: {
+                    x: 5,
+                    y: 15,
+                    format: '{value:%B %Y}',// long month
+                    rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
+                    align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
+                    style:{
+                    	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
+                        fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
+                        textDecoration: (chartConf.xaxis.labels.style.textDecoration!=undefined && chartConf.xaxis.labels.style.textDecoration!="") ? chartConf.xaxis.labels.style.textDecoration : '',
+                        fontSize: (chartConf.xaxis.labels.style.fontSize!=undefined && chartConf.xaxis.labels.style.fontSize!="") ? chartConf.xaxis.labels.style.fontSize : '',
+                        fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : '',
+               	}	
+                },
+                tickInterval:30*24*3600*1000,
+                showLastLabel: true,
+                tickLength: 16
+            };
+    	
+    	serieColSize=24 * 36e5;
+    
+          tooltipObject={
+        		
+              	headerFormat: '<b>'+chartConf.additionalData.serie.value+'</b><br/>',
+                pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>',
+                  style:{ 
+                  	 color: chartConf.tooltip.style.fontColor,
+                       fontSize: chartConf.tooltip.style.fontSize,
+                       fontFamily: chartConf.tooltip.style.fontFamily
+                  } 
+          };
+          
+    }else{
+    	xAxisObject={
+    			type: 'category', 
+    			categories:chartConf.additionalData.firstCategory,
+                title:
+            	{
+                	text: (chartConf.xaxis.title.text!=undefined && chartConf.xaxis.title.text!="") ? chartConf.xaxis.title.text : undefined,	
+                	align: chartConf.xaxis.title.align,
+                	
+                	style:
+            		{
+                		color: (chartConf.xaxis.title.style.color!=undefined && chartConf.xaxis.title.style.color!="" && chartConf.xaxis.title.style.color!="transparent") ? chartConf.xaxis.title.style.color : '',	
+        				fontStyle: (chartConf.xaxis.title.style.fontStyle!=undefined && chartConf.xaxis.title.style.fontStyle!="") ? chartConf.xaxis.title.style.fontStyle : '',
+    					textDecoration: (chartConf.xaxis.title.style.textDecoration!=undefined && chartConf.xaxis.title.style.textDecoration!="") ? chartConf.xaxis.title.style.textDecoration : '',
+    					fontSize: (chartConf.xaxis.title.style.fontSize!=undefined && chartConf.xaxis.title.style.fontSize!="") ? chartConf.xaxis.title.style.fontSize : '',
+    					fontFamily:(chartConf.xaxis.title.style.fontFamily!=undefined && chartConf.xaxis.title.style.fontFamily!="") ? chartConf.xaxis.title.style.fontFamily : ''
+            		}
+            	},
+                
+                labels: {
+               
+                  // x: 5,
+                  // y: 15,
+                    rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
+                    align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
+                    style:{
+                    	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
+                        fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
+                        textDecoration: (chartConf.xaxis.labels.style.textDecoration!=undefined && chartConf.xaxis.labels.style.textDecoration!="") ? chartConf.xaxis.labels.style.textDecoration : '',
+                        fontSize: (chartConf.xaxis.labels.style.fontSize!=undefined && chartConf.xaxis.labels.style.fontSize!="") ? chartConf.xaxis.labels.style.fontSize : '',
+                        fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : '',
+               	    }	
+                },
+                
+                 showLastLabel: true,
+//               tickInterval:1,
+                 tickLength: 16
+            };
+    	serieColSize=1;
+    	tooltipFormatter= function () {
+            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ': <b>' +
+            this.point.value + '</b> | ' + this.series.yAxis.categories[this.point.y] + '';
+    };
+    
+    tooltipObject={
+    		
+              formatter:tooltipFormatter,
+              style:{ 
+              	 color: chartConf.tooltip.style.fontColor,
+                   fontSize: chartConf.tooltip.style.fontSize,
+                   fontFamily: chartConf.tooltip.style.fontFamily
+              } 
+      };
+    
+    }
+    
+    
     
     return {
        
@@ -585,44 +711,7 @@ function prepareChartConfForHeatmap(chartConf) {
             }
 		},
 
-        xAxis: {
-            type: 'datetime', // the numbers are given in milliseconds
-            min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables 
-            max: Date.UTC(endDate.getUTCFullYear(),endDate.getUTCMonth(),endDate.getUTCDate()),  
-            
-            title:
-        	{
-            	text: (chartConf.xaxis.title.text!=undefined && chartConf.xaxis.title.text!="") ? chartConf.xaxis.title.text : undefined,	
-            	align: chartConf.xaxis.title.align,
-            	
-            	style:
-        		{
-            		color: (chartConf.xaxis.title.style.color!=undefined && chartConf.xaxis.title.style.color!="" && chartConf.xaxis.title.style.color!="transparent") ? chartConf.xaxis.title.style.color : '',	
-    				fontStyle: (chartConf.xaxis.title.style.fontStyle!=undefined && chartConf.xaxis.title.style.fontStyle!="") ? chartConf.xaxis.title.style.fontStyle : '',
-					textDecoration: (chartConf.xaxis.title.style.textDecoration!=undefined && chartConf.xaxis.title.style.textDecoration!="") ? chartConf.xaxis.title.style.textDecoration : '',
-					fontSize: (chartConf.xaxis.title.style.fontSize!=undefined && chartConf.xaxis.title.style.fontSize!="") ? chartConf.xaxis.title.style.fontSize : '',
-					fontFamily:(chartConf.xaxis.title.style.fontFamily!=undefined && chartConf.xaxis.title.style.fontFamily!="") ? chartConf.xaxis.title.style.fontFamily : ''
-        		}
-        	},
-            
-            labels: {
-                x: 5,
-                y: 15,
-                format: '{value:%B %Y}',// long month
-                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
-                align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,	
-                style:{
-                	color: (chartConf.xaxis.labels.style.color!=undefined && chartConf.xaxis.labels.style.color!="" && chartConf.xaxis.labels.style.color!="transparent") ? chartConf.xaxis.labels.style.color : '',
-                    fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
-                    textDecoration: (chartConf.xaxis.labels.style.textDecoration!=undefined && chartConf.xaxis.labels.style.textDecoration!="") ? chartConf.xaxis.labels.style.textDecoration : '',
-                    fontSize: (chartConf.xaxis.labels.style.fontSize!=undefined && chartConf.xaxis.labels.style.fontSize!="") ? chartConf.xaxis.labels.style.fontSize : '',
-                    fontFamily: (chartConf.xaxis.labels.style.fontFamily!=undefined && chartConf.xaxis.labels.style.fontFamily!="") ? chartConf.xaxis.labels.style.fontFamily : '',
-           	}	
-            },
-            tickInterval:30*24*3600*1000,
-            showLastLabel: true,
-            tickLength: 16
-        },
+        xAxis: xAxisObject,
 
         yAxis: 
         {
@@ -708,19 +797,11 @@ function prepareChartConfForHeatmap(chartConf) {
             symbolHeight: Number(chartConf.legend.symbolHeight)
         },
         
-        tooltip: {
-        	headerFormat: '<b>'+chartConf.additionalData.serie.value+'</b><br/>',
-            pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>',
-            style:{ 
-            	 color: chartConf.tooltip.style.fontColor,
-                 fontSize: chartConf.tooltip.style.fontSize,
-                 fontFamily: chartConf.tooltip.style.fontFamily
-            }
-        },
+        tooltip: tooltipObject,
         series: [{
             borderWidth: 0,
             nullColor: '#EFEFEF',
-            colsize: 24 * 36e5, // one day    
+            colsize: serieColSize,   
             data:points,
             events: {
             click: function(event){

@@ -45,11 +45,20 @@
 
 #set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper, $groupingFunction))
 
-#set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
+#set($firstCategory='')
+#set($isFirstDate=$datasettransformer.isFirstCategoryDate($firstresult,$columnsNeeded[0]))
 
+#if($isFirstDate==true)
+#set($firstCategory = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
+#else
+#set($firstCategory = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
+#end
+
+##set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
+##set($dummy = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
 #set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
 
-#set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded))
+#set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded,$isFirstDate))
 
 #set($axisList = $chart.AXES_LIST.AXIS)
 
@@ -91,6 +100,7 @@
         #if($chart.isCockpitEngine=='true')
   		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
+  		xAxisDate: $isFirstDate,
   		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',
@@ -442,7 +452,7 @@
 	## (danilo.ristovski@mht.net)	
 	additionalData:
 	{
-		dateresult: $dateresult,
+		firstCategory: $firstCategory,
   		storeresult: $storeresult,
   		serie: $serieName,
   		columns: $columnNames
