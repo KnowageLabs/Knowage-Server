@@ -19,6 +19,8 @@
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
+
 
 <%
 	RequestContainer aRequestContainer = null;
@@ -54,6 +56,11 @@
 	
 	// create message builder
 	msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	
+	//get the current theme name
+	String currTheme = ThemesManager.getCurrentTheme(aRequestContainer);
+	if (currTheme == null)
+		currTheme = ThemesManager.getDefaultTheme();
 	
 	// get other spago object
 	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
