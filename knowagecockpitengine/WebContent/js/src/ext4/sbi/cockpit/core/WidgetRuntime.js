@@ -42,6 +42,13 @@ Sbi.cockpit.core.WidgetRuntime = function(config) {
 		, hideBorders: true
 		, frame: false
 		, defaultMsg: ' '
+		, listeners: {
+			afterrender: function(me){
+				if(me.loadingMask !== null) {
+					me.loadingMask.show();
+				}
+            }
+		}
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetRuntime', defaultSettings);
@@ -790,19 +797,13 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 
     , showLoadingMask: function() {
     	Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: IN");
+    	if(this.loadingMask === null) {
+			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: initializing mask...");
+			this.loadingMask = new Ext.LoadMask(this, {msg:"Please wait..."});
+			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: mask succesfully initialized");
+		}
     	if(this.rendered === true) {
-			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
-					"widget is rendered so need to be masked");
-			if(this.loadingMask === null) {
-				Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
-				"initializing mask...");
-				this.loadingMask = new Ext.LoadMask(this, {msg:"Please wait..."});
-				Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: " +
-				"mask succesfully initialized");
-			}
 			this.loadingMask.show();
-		} else{
-			Sbi.trace("[WidgetRuntime.showLoadingMask][" + this.getId() + "]: no need to mask because the widget is not rendered yet");
 		}
     	Sbi.trace("[WidgetRuntime.showLoadingMask]: OUT");
     }
