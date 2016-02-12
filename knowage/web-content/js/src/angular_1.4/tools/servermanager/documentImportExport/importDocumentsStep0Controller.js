@@ -288,3 +288,10 @@ $scope.deleteAssociationsFile=function(item){
 		 
 	};
 }
+
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);

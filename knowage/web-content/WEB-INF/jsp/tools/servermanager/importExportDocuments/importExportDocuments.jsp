@@ -10,6 +10,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
+
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
 <script type="text/javascript"
@@ -22,9 +24,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep3Controller.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep4Controller.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
-<%-- 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css"> --%>
+
 
 <!-- 	breadCrumb -->
 <script type="text/javascript"
@@ -33,40 +33,43 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
 
 </head>
-<body class="bodyStyle" ng-app="importExportDocumentModule" id="ng-app">
+<body class="bodyStyle kn-importExportDocument" ng-app="importExportDocumentModule" id="ng-app">
 	<!-- TODO using correct message -->
 	<div ng-controller="importExportController " layout="column"
 		layout-fill layout-wrap class="contentdemoBasicUsage">
 
 		<md-toolbar class="miniheadimportexport">
 		<div class="md-toolbar-tools">
-			<i class="fa fa-exchange md-padding"></i>
+			<i class="fa fa-exchange fa-2x"></i>
 			<h2 class="md-flex">{{translate.load("SBISet.importexport","component_impexp_messages");}}</h2>
 		</div>
 		</md-toolbar>
 
-		<md-content flex layout-wrap> <!-- 		md-center-tabs md-stretch-tabs="always" -->
+		<md-content class="mainContainer" flex layout-wrap> <!-- 		md-center-tabs md-stretch-tabs="always" -->
 		<md-tabs layout-fill class="absolute"> <!-- Export -->
 			<md-tab id="exportTab"> 
 		 		<md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
+				  <md-card>
 					<md-content ng-controller="exportController">
 						<div ng-if="flags.waitExport" layout="column" layout-padding
 							layout-align="space-around center">
 							<h3 class="md-subhead">{{translate.load("SBISet.importexport.opProg","component_impexp_messages");}}</h3>
-							<i class="fa fa-spinner fa-spin fa-4x"></i>
+							<i class="fa fa-spinner fa-pulse fa-4x"></i>
 				
 						</div>
-						<h3 ng-if="flags.viewDownload" class="md-body-2">
-							<md-button ng-click="toggleViewDownload()"
-								class="md-icon-button md-primary" aria-label="Settings">
-							<md-icon md-font-icon="fa fa-times"></md-icon> </md-button>
+						<div ng-if="flags.viewDownload" class="md-body-2 kn-info">
+							
 				
-							<span>{{translate.load("SBISet.importexport.opComplete","component_impexp_messages");}}</span>
-							<md-button ng-click="downloadFile()">{{translate.load("Sbi.download","component_impexp_messages");}}
-							{{downloadedFileName}}.zip</md-button>
-							<br> <span>{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</span>
-						</h3>
+							<span><i class="fa fa-file-archive-o"></i>&nbsp; {{downloadedFileName}}.zip </span>
+							<md-button class="md-raised" ng-click="downloadFile()">{{translate.load("Sbi.download","component_impexp_messages");}}
+							</md-button>
+							<md-button ng-click="toggleViewDownload()"
+								class="md-icon-button md-primary kn-close-Info" aria-label="Settings">
+							<md-icon md-font-icon="fa fa-times"></md-icon> </md-button>							
+							<p >{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</p>
+
+						</div>
 
 						<div layout="column" layout-padding layout-wrap>
 							<div layout="row" layout-wrap class="w100" >
@@ -97,12 +100,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							</div>
 						</div>
 				</md-content>
+			   </md-card>	
 			 </md-tab-body>
 		 </md-tab> 
 		 <!-- Import -->
 		  <md-tab id="importTab">
 		  	<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
+				  <md-card>
 					<md-content ng-controller="importController" layout="column" layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
 						<bread-crumb
 							ng-model=stepItem item-name='name' selected-index='selectedStep'
@@ -117,6 +122,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 					</md-content>
+				  </md-card>	
 				</md-tab-body> 
 			</md-tab> 
 		</md-tabs>
