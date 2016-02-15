@@ -1937,21 +1937,46 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	if (recordsNumber == 1){
 		var rawData = store.getAt(0).raw;
 		if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
-			store.status = "error";
-
-			var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
-			for(var i = 0; i < rawData.errors.length; i++) {
-				msg += "<li>" + rawData.errors[i].message + ";";
+			
+			/**
+		     * https://production.eng.it/jira/browse/KNOWAGE-56
+		     * We need to understand if a dataset is parametric
+		     * in order to show a different message for the first
+		     * load store, instead of the error message.
+		     * Phase 3): for the first load of a parametric dataset,
+		     * show a warning message
+		     * 
+		     * @modifiedBy Giorgio Federici (giofeder, giorgio.federici@eng.it)
+		     */
+			
+			if(store.storeConf.isParametricDataset && Sbi.isEmptyObject(this.getStoreParametersValues(store.storeConf.storeId))){
+								
+				Ext.Msg.show({
+					   title: LN('sbi.cockpit.storemanager.loadparametricdataset.firstload.warning.title'),
+					   msg: LN('sbi.cockpit.storemanager.loadparametricdataset.firstload.warning.msg'),
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.WARNING,
+					   modal: false
+				});
+				
+			} else {
+			
+				store.status = "error";
+	
+				var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
+				for(var i = 0; i < rawData.errors.length; i++) {
+					msg += "<li>" + rawData.errors[i].message + ";";
+				}
+				msg += "</ul>";
+	
+				Ext.Msg.show({
+					   title: "Service error",
+					   msg: msg,
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.ERROR,
+					   modal: false
+				});
 			}
-			msg += "</ul>";
-
-			Ext.Msg.show({
-				   title: "Service error",
-				   msg: msg,
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR,
-				   modal: false
-			});
 		
 
 	}

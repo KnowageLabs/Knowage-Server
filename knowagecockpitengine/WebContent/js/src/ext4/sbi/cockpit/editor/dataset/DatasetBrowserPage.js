@@ -107,6 +107,17 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 		} else {
 			state.unselectedDatasetLabel = null;
 		}
+		
+		/**
+	     * https://production.eng.it/jira/browse/KNOWAGE-56
+	     * We need to understand if a dataset is parametric
+	     * in order to show a different message for the first
+	     * load store, instead of the error message.
+	     * Phase 1): if the dataset is parametric, add a prop to the state
+	     * 
+	     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+	     */
+		this.datasetsBrowserPanel.isParametricDataset(state);
 
 		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
 		return state;

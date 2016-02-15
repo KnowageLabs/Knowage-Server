@@ -356,6 +356,69 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		}
 		Sbi.trace("[DatasetsBrowserPanel.refreshView]: OUT");
 	}
+	
+	/**
+     * https://production.eng.it/jira/browse/KNOWAGE-56
+     * We need to understand if a dataset is parametric
+     * in order to show a different message for the first
+     * load store, instead of the error message.
+     * Phase 1): if the dataset is parametric, add a prop to the state
+     * 
+     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+     */
+	
+	, isParametricDataset: function(state){
+		Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: IN");
+		
+		if (!this.viewPanel){
+			Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: Invalid DatasetsBrowserView!");
+			return;
+		} else {
+			
+			//get nodes html array from DatasetsBrowserView
+			var nodes = this.viewPanel.getSelectedNodes();
+			
+			if(Sbi.isNotValorized(nodes)){
+				Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: There aren't select nodes into DatasetsBrowserView");
+				return;
+			} else {
+				
+				//we should have a records with just an item:
+				//the selected dataset
+				var records = this.viewPanel.getRecords(nodes);
+				
+				if(Sbi.isValorized(records) && records.length > 0){
+					var rawDataset = records[0].raw;
+					
+					if(Sbi.isValorized(rawDataset)){
+						
+						var pars = rawDataset.pars;
+						
+						if(Sbi.isValorized(pars) && pars.length > 0){
+							
+							Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: Selected dataset is parametric. Params added to the state");
+							state.isParametricDataset = true;
+							
+						} else {
+							Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: Selected dataset is not parametric");
+							return;
+						}
+						
+					} else {
+						Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: Selected record doesn't have a valid raw object!");
+						return;
+					}
+					
+				} else {
+					Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: No records into DatasetsBrowserView");
+					return;
+				}
+			}
+			
+		}
+		
+		Sbi.trace("[DatasetsBrowserPanel.getParametricDatasetParams]: OUT");
+	}
 
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods

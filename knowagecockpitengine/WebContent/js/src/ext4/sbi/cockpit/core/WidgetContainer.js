@@ -662,6 +662,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 				}
 			}
 			
+			/**
+		     * https://production.eng.it/jira/browse/KNOWAGE-56
+		     * We need to understand if a dataset is parametric
+		     * in order to show a different message for the first
+		     * load store, instead of the error message.
+		     * Phase 2): if the dataset is parametric, add a prop to the store conf, 
+		     * in order to keep track in the store load event
+		     * 
+		     * @author Giorgio Federici (giofeder, giorgio.federici@eng.it)
+		     */
+			if(wizardState.isParametricDataset){
+				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: The dataset of this widget is parametric!");
+				storeConf.isParametricDataset = wizardState.isParametricDataset;
+			}
+			
 			// the method addStore add the store only if it is not contained yet in the manager
 			Sbi.storeManager.addStore(storeConf);
 			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
