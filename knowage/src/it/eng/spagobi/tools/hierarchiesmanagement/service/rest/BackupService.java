@@ -57,8 +57,8 @@ public class BackupService {
 			// Information for persistence
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			String dimension = requestVal.getString("dimension");
-			String hierarchyNameNew = req.getParameter("HIER_NM");
-			String hierarchyNameOrig = req.getParameter("HIER_NM_ORIG");
+			String hierarchyNameNew = requestVal.getString("HIER_NM");
+			String hierarchyNameOrig = requestVal.getString("HIER_NM_ORIG");
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
@@ -80,9 +80,9 @@ public class BackupService {
 			for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
 				Field f = generalMetadataFields.get(i);
 				String key = f.getId();
-				String value = requestVal.getString(key);
-				lstFields.put(key, value);
+				String value = (!requestVal.isNull(key)) ? requestVal.getString(key) : null;
 				if (key != null && value != null) {
+					lstFields.put(key, value);
 					String sep = (i < l - 1) ? "= ?, " : "= ? ";
 					String column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 					columnsBuffer.append(column + sep);
