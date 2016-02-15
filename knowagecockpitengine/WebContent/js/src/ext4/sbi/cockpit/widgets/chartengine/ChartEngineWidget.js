@@ -268,9 +268,8 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	, refresh:  function() {
     	Sbi.trace("[ChartEngineWidget.refresh]: IN");
     	
-    	this.chartEngineServicePostCall();
     	Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.refresh.call(this);
-
+    	
 		Sbi.trace("[ChartEngineWidget.refresh]: OUT");
 	},
 	
