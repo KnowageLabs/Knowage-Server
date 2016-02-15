@@ -273,7 +273,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	
 	/*Map used to store the old row before the modification*/
 	$scope.storeOldValue = function(item,itemOld,cell,listId,row,column){
-		$scope.oldBackups[item.HIER_CD+'_'+item.BACKUP_TIMESTAMP] = itemOld;
+		$scope.oldBackups[item.HIER_CD+'_'+item.BACKUP_TIMESTAMP] = angular.copy(itemOld);
 		return true;
 	}
 	
