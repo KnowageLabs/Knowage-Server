@@ -3,10 +3,10 @@
 	<cube reference="Mondrian_what_if_mysql"/>
 	
 	<MDXquery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+		SELECT {[Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]
 	</MDXquery>
 	<MDXMondrianQuery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+		SELECT {[Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales] 
 	</MDXMondrianQuery>
 	
 	
@@ -14,19 +14,19 @@
 		<CONNECTION>
 		<USR>root</USR>
 		<PWD>root</PWD>
-		<CATALOG>\Olap\FoodMartMySQL.xml</CATALOG>
+		<CATALOG>\Olap\FoodMartMySQL3.xml</CATALOG>
 		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
 		</CONNECTION>
 	</STANDALONE>
 	
 	
-	<SCENARIO name="scenario" editCube="Sales_Edit" initialVersion="0">
+	<!--  SCENARIO name="scenario" editCube="Sales_Edit" initialVersion="0">
 		<MEASURE>Store Sales</MEASURE>
 		<MEASURE>Store Cost</MEASURE>
 		<VARIABLE name="var" value="5"/>
 		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
-	</SCENARIO>
+	</SCENARIO-->
 	
 	<TOOLBAR>
 		<BUTTON_MDX visible="false" menu="true" />                            
