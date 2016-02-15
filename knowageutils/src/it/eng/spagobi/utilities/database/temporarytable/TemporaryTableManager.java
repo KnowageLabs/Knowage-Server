@@ -30,10 +30,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
- * @author Zerbetto Davide (davide.zerbetto@eng.it)
- *
- *         DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle and DB2
- *
+ * @author Zerbetto Davide (davide.zerbetto@eng.it) DATE CONTRIBUTOR/DEVELOPER NOTE 24-06-2013 Zerbetto Davide/Andrea Fantappiè Tablespace management on Oracle
+ *         and DB2
  */
 public class TemporaryTableManager {
 
@@ -182,7 +180,7 @@ public class TemporaryTableManager {
 
 				/*
 				 * If table are on other schema must set catalog name as schema name otherwise it look for table [schema].[name] on datasource db
-				 *
+				 * 
 				 * Andrea Fantappiè
 				 */
 				if (driverName.contains("MySQL"))
@@ -366,9 +364,29 @@ public class TemporaryTableManager {
 			int selectIndex = baseQuery.toUpperCase().indexOf("SELECT");
 
 			String noSelect = baseQuery.substring(selectIndex + 6);
-			String prefix = "select TOP(100) PERCENT ";
-			baseQuery = prefix + noSelect;
+			logger.debug("No Select Query " + noSelect);
+			// remove spaces
+			noSelect = noSelect.trim();
+			logger.debug("No Select trimmed query " + noSelect);
 
+			int distinctIndex = noSelect.toUpperCase().indexOf("DISTINCT ");
+			boolean distinct = false;
+			if (distinctIndex == 0) {
+				logger.debug("Remove distinct clause");
+				distinct = true;
+				noSelect = noSelect.substring(distinctIndex + 8);
+				noSelect = noSelect.trim();
+				logger.debug("No dstinct trimmetd query " + noSelect);
+			}
+			// remove also distinct if present
+			String prefix = "";
+			if (distinct) {
+				prefix = "select distinct TOP(100) PERCENT ";
+			} else {
+				prefix = "select TOP(100) PERCENT ";
+
+			}
+			baseQuery = prefix + noSelect;
 			String sql = "select * " + "into " + tableName + " " + "from " + "( " + baseQuery + " ) aaa";
 
 			executeStatement(sql, dataSource, queryTimeout);
@@ -403,7 +421,7 @@ public class TemporaryTableManager {
 
 	/**
 	 * Add tablespace to sql statement Only for DB2 and Oracle
-	 *
+	 * 
 	 * @param dialect
 	 * @param sql
 	 * @return SQL statement with tablespace information
