@@ -297,6 +297,7 @@
 		</md-content>
 	</div>
 	
+	<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT)) {%>
 	<md-toolbar class="minihead unselectedItem"
 			ng-class="activityEventCtrl.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row">
@@ -304,4 +305,5 @@
 			<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.saveasdl"></md-checkbox>
 		</div>
 	</md-toolbar>
+	<%} %>
 </div>

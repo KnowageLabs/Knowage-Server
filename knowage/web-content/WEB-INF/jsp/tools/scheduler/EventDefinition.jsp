@@ -248,24 +248,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<md-tab id="eventTabDocuments">
 					<md-tab-label>{{translate.load("sbi.scheduler.schedulation.events.documentsmanagement")}}</md-tab-label>
 					<md-tab-body layout="column" >
-						<div class="h100" ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/template/documentManagementDetail.jsp'"></div>
+						<div class="h100"><%@include file="/js/src/angular_1.4/scheduler/template/documentManagementDetail.jsp"%></div>
 					</md-tab-body> 
 				</md-tab>
-				
-				
 			</md-tabs>
-
 			
 			<div layout="row"  class=" bottomButtonsBox">
-				 <div ng-if="!contactForm.$valid">
-				        <md-icon md-font-icon="fa fa-info-circle" style="    color:  #104D71;    line-height: 20px;"></md-icon>
-				        <md-tooltip>
-				        <ul style="padding: 0px;" >
-						  <li style="display: block;" ng-repeat="(key, errors) in contactForm.$error track by $index"> 
-						    <ul style="padding: 0px;">
-						      <li style="display: block;" ng-repeat="e in errors">{{ e.$name }} <i class="fa fa-arrow-right"></i> <span style="color: red;    font-size: 12px;    font-weight: 900;">{{ key }}</span>.</li>
-						    </ul>
-						  </li>
+			 	<div ng-if="!contactForm.$valid">
+	       			<md-icon md-font-icon="fa fa-info-circle" style="    color:  #104D71;    line-height: 20px;"></md-icon>
+			        <md-tooltip>
+			        	<ul style="padding: 0px;" >
+					  		<li style="display: block;" ng-repeat="(key, errors) in contactForm.$error track by $index"> 
+						    	<ul style="padding: 0px;">
+						      		<li style="display: block;" ng-repeat="e in errors">{{ e.$name }} <i class="fa fa-arrow-right"></i> <span style="color: red;    font-size: 12px;    font-weight: 900;">{{ key }}</span>.</li>
+					    		</ul>
+						  	</li>
 						</ul>
 					</md-tooltip>
 				</div>
