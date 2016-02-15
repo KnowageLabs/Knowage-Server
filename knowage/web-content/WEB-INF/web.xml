@@ -149,7 +149,7 @@
 		Link the key to all engines :
 			<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 		Enable the filter uncommenting the following lines -->
-	<!-- HMAC filter 
+	<!-- HMAC filter--> 
 	 <filter>
         <filter-name>HMACFilter</filter-name>
         <filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
@@ -161,7 +161,7 @@
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
 	</filter-mapping>
-    HMAC filter ends -->
+    <!-- HMAC filter ends -->
  
     <!-- START LISTENERS -->
     <listener>

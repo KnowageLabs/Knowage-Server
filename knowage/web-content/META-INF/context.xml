@@ -18,4 +18,5 @@
 	<!--ResourceLink global="spagobi_domain" name="spagobi_domain" type="java.lang.String"/ -->
 	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager"
 		type="jcommonj.work.WorkManager" />
+		<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 </Context>
