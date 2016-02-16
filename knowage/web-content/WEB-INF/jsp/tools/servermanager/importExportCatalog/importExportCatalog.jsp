@@ -15,6 +15,7 @@
 <head>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css">
 <!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
 <link rel="stylesheet" type="text/css"
 	href="/knowage/themes/glossary/css/tree-style.css">
@@ -126,10 +127,11 @@
 					</div>
 					<div layout="column" layout-fill>
 						<md-checkbox  ng-show="exportedDataset.length>0" ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
+							<h4 ng-show="showDataset">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>
 							<div flex style="position: relative;" ng-show="showDataset">
 								<angular-table id='datasetlistImported' 
 									ng-model=exportedDataset
-									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
+									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
 									columnsSearch='["label"]' 
 									show-search-bar=true
 									highlights-selected-item=true 

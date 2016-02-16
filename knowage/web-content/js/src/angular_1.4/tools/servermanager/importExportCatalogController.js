@@ -19,7 +19,12 @@ app.directive("fileread", [function () {
 		}
 	}
 }]);
+/*app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);*/
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
 
 function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
