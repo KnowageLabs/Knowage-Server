@@ -1,12 +1,14 @@
 package it.eng.spagobi.kpi.bo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Rule {
+public class Rule implements Serializable {
 
 	private Integer id;
 	private String name;
 	private String definition;
+	private boolean newRecord;
 
 	private List<RuleOutput> ruleOutputs;
 
@@ -70,4 +72,28 @@ public class Rule {
 		this.ruleOutputs = ruleOutputs;
 	}
 
+	/**
+	 * @return the newRecord
+	 */
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	/**
+	 * @param newRecord
+	 *            the newRecord to set
+	 */
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Rule && id.equals(((Rule) o).getId());
+	}
 }
