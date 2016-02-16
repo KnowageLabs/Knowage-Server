@@ -77,7 +77,6 @@ public class CrossNavigationService {
 	@Path("/save")
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
 	public Response save(@Context HttpServletRequest req) throws JSONException {
-		// JSONObject jo = new JSONObject();
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			NavigationDetail nd = (NavigationDetail) JsonConverter.jsonToObject(requestVal, NavigationDetail.class);
@@ -86,7 +85,6 @@ public class CrossNavigationService {
 			dao.setUserProfile(profile);
 			boolean isAnyLink = false;
 			if (nd.getSimpleNavigation() == null || nd.getSimpleNavigation().getName() == null || nd.getSimpleNavigation().getName().isEmpty()) {
-				// jo.append("errors", "sbi.crossnavigation.error.name");
 				throw new SpagoBIServiceException(req.getPathInfo(), "Name is mandatory");
 			} else if (nd.getToPars() != null && !nd.getToPars().isEmpty()) {
 				for (SimpleParameter sp : nd.getToPars()) {
@@ -100,17 +98,9 @@ public class CrossNavigationService {
 				throw new SpagoBIServiceException(req.getPathInfo(), "Create at least one link");
 			} else {
 				if (nd.isNewRecord()) {
-					// try {
 					dao.insert(nd);
-					// } catch (SpagoBIDOAException e) {
-					// jo.append("errors", "sbi.crossnavigation.error.duplicate");
-					// }
 				} else {
-					// try {
 					dao.update(nd);
-					// } catch (SpagoBIDOAException e) {
-					// jo.append("errors", "sbi.crossnavigation.error.notExists");
-					// }
 				}
 			}
 		} catch (Exception e) {
