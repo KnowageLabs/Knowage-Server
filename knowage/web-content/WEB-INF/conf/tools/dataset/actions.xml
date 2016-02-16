@@ -17,6 +17,9 @@
  	<CONFIG/>
  </ACTION>
  
+ <ACTION name="EXPORT_EXCEL_DATASET_ACTION" class="it.eng.spagobi.tools.dataset.service.ExportExcelDatasetAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 
 </ACTIONS>
 

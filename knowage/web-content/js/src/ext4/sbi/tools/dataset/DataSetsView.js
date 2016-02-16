@@ -133,6 +133,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		var author = LN('sbi.generic.author');
 		var currentUser = this.config.user;
 		var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
+		var buttonExportCSV= '<li class="MyDataExportExcel" style="padding-top : 3px;"><a id="MEEX" href="#" title="Export"></a></li>';
 		
 		
 		this.tpl = new Ext.XTemplate(
@@ -152,7 +153,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 										'<span class="shadow"></span>',
 										'<div class="hover">',
 			                                '<div class="box-actions-container">'+
-								            '    <ul class="box-actions">'+	    
+								            '    <ul class="box-actions" style="padding-left: 5px;">'+	    
 								            '		<tpl for="actions">'+  
 								        	' 			<tpl if="name != \'delete\' && this.includeAction(name) == true ">'+
 								        	'					<tpl if="name == \'detaildataset\' && parent.owner == \''+currentUser+'\' && ( parent.dsTypeCd == \'File\' || parent.dsTypeCd == \'Qbe\' || parent.dsTypeCd == \'Ckan\' ) ">'+
@@ -164,6 +165,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									        '			</tpl>'+
 									        '		</tpl>'+
 									        buttonHelpOnLine +
+									        buttonExportCSV + 
 								            '    </ul>'+
 								            '</div>'+
 								            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
@@ -263,6 +265,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
         var actionInfo = e.getTarget('li[class=info]',10,true);				// for CKAN
         var actionHelpOnLine = e.getTarget('li[class=MyDataHelpOnLine]', 10, true);
+        var actionExportExcel = e.getTarget('li[class=MyDataExportExcel]', 10, true);
+        
         
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
         
@@ -321,7 +325,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	}
    			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);      	
         }*/
-        
+		 else if(actionExportExcel!=null){
+	    	Sbi.debug('DataSetView Export Excel raise event...'); 
+	    	parent.execShowExportExcel(record.data.id);
+	    	//scope.fireEvent('info', record.data);
+	    }
         
         return true;
     }

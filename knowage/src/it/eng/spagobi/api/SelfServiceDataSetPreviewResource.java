@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -50,12 +51,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/selfservicedataset")
+@ManageAuthorization
 public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 	private static final String DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL = "datasetview.jsp";
 	private static final int MAX_DATASET_PAGE_SIZE = 10;
 
 	static private Logger logger = Logger.getLogger(SelfServiceDataSetPreviewResource.class);
+
+	@GET
+	@Path("/export/{label}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String exportData(@PathParam("label") String label, @Context HttpServletRequest req) {
+		String res = loadData(label, req, 0, Integer.MAX_VALUE, 0, null, null, null, null, null, null, null);
+		return res;
+	}
 
 	@GET
 	@Path("/values/{label}")
@@ -341,6 +351,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 		logger.debug("Parameters fo the dataset loaded: " + parametersMap);
 	}
 
+	@Override
 	public Locale buildLocaleFromSession() {
 		Locale locale = null;
 		Object countryO = getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);

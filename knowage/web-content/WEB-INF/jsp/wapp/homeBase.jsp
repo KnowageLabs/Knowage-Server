@@ -123,6 +123,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    	}
    	
    	/**
+   	*
+   	*/
+	function execShowExportExcel(id){  		
+   		console.log('execShowExportExcel id ' + id);
+   		window.location.href = '<%=contextName %>/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+id;
+			    	  
+	}
+   	
+   	
+   	
+   	
+   	/**
    	* @parameter value - If present then this function is called as setter method, otherwise as a getter one.  
    	*/
    	function mapFilterSelectedProp(value) {
