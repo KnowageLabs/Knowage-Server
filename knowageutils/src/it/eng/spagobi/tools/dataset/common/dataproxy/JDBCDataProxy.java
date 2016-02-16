@@ -180,9 +180,23 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		logger.debug("IN");
 		int resultNumber = 0;
 		Statement stmt = null;
+
 		ResultSet rs = null;
+
+		String statement = this.getStatement();
+		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
+
+		String dialect = dataSource.getHibDialectName();
+		logger.debug("Dialect " + dialect);
+		logger.debug("Statement is " + statement);
+
+		if (dialect.toUpperCase().contains("SQLSERVER") && statement.toUpperCase().contains("ORDER BY")) {
+			logger.debug("we are in SQL SERVER and ORDER BY case");
+			statement = modifySQLServerQuery(statement);
+		}
+
 		try {
-			String sqlQuery = "SELECT COUNT(*) FROM (" + this.getStatement() + ") temptable";
+			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") temptable";
 			logger.debug("Executing query " + sqlQuery + " ...");
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sqlQuery);
@@ -195,6 +209,38 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		}
 		logger.debug("OUT : returning " + resultNumber);
 		return resultNumber;
+	}
+
+	private String modifySQLServerQuery(String statement) {
+		logger.debug("IN");
+		int selectIndex = statement.toUpperCase().indexOf("SELECT");
+		String noSelect = statement.substring(selectIndex + 6);
+		logger.debug("No Select Query " + noSelect);
+		// remove spaces
+		noSelect = noSelect.trim();
+		logger.debug("No Select trimmed query " + noSelect);
+
+		int distinctIndex = noSelect.toUpperCase().indexOf("DISTINCT ");
+		boolean distinct = false;
+		if (distinctIndex == 0) {
+			logger.debug("Remove distinct clause");
+			distinct = true;
+			noSelect = noSelect.substring(distinctIndex + 8);
+			noSelect = noSelect.trim();
+			logger.debug("No dstinct trimmetd query " + noSelect);
+		}
+
+		// remove also distinct if present
+		String prefix = "";
+		if (distinct) {
+			prefix = "select distinct TOP(100) PERCENT ";
+		} else {
+			prefix = "select TOP(100) PERCENT ";
+
+		}
+		statement = prefix + noSelect;
+		logger.debug("Statement for SQL SERVER " + statement);
+		return statement;
 	}
 
 	protected int getResultNumber(ResultSet resultSet) throws SQLException {
