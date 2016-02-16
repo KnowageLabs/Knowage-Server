@@ -12,19 +12,13 @@ public class SimpleParameter implements Serializable {
 	 */
 	private Integer id;
 	private String name;
-	private String type;
+	private Integer type;
 	private List<SimpleParameter> links = new ArrayList<>();
-
-	private static final String DEFAULT_TYPE = "input";
 
 	public SimpleParameter() {
 	}
 
-	public SimpleParameter(Integer id, String name) {
-		this(id, name, DEFAULT_TYPE);
-	}
-
-	public SimpleParameter(Integer id, String name, String type) {
+	public SimpleParameter(Integer id, String name, Integer type) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
@@ -48,7 +42,7 @@ public class SimpleParameter implements Serializable {
 	/**
 	 * @return the type
 	 */
-	public String getType() {
+	public Integer getType() {
 		return type;
 	}
 
@@ -56,7 +50,7 @@ public class SimpleParameter implements Serializable {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(String type) {
+	public void setType(Integer type) {
 		this.type = type;
 	}
 

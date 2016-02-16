@@ -16,13 +16,13 @@
 				<param name="initial_value">1</param>	
 		   </generator>
         </id>
-        <!-- 
-        <many-to-one name="fromKey" column="FROM_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" lazy="false" />
-         -->
          
         <property name="fromKeyId" column="FROM_KEY" type="int" />
-        
-        <many-to-one name="toKey" column="TO_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"  lazy="false" />
+        <property name="toKeyId" column="TO_KEY" type="int" />
+        <!-- 
+        <many-to-one name="fromKey" column="FROM_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" lazy="false" insert="false" update="false"/>
+         -->
+        <many-to-one name="toKey" column="TO_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"  lazy="false" insert="false" update="false"/>
         <many-to-one name="sbiCrossNavigation" column="CN_ID" class="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" not-null="true" />
         
         <property name="fromType" column="FROM_TYPE" type="int" />
