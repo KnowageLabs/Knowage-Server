@@ -5,13 +5,19 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 /**
@@ -24,11 +30,13 @@ public class KpiService {
 
 	List<RuleOutput> measures = new ArrayList<>();
 	List<Alias> aliases = new ArrayList<>();
+	List<Rule> rules = new ArrayList<>();
 	{
 		Rule rule = new Rule();
 		rule.setId(1);
 		rule.setName("Regola1");
 		rule.setDefinition("select ...");
+		rules.add(rule);
 
 		RuleOutput m = new RuleOutput();
 		m.setAlias("Measure 1");
@@ -101,4 +109,29 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
+	@POST
+	@Path("/saveRule")
+	public Response saveRule(@Context HttpServletRequest req) {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
+			if (rule.isNewRecord()) {
+				rule.setId(rules.size());
+				rules.add(rule);
+			} else {
+				Rule oldRule = rules.get(rules.indexOf(rule));
+				oldRule.setName(rule.getName());
+				oldRule.setDefinition(rule.getDefinition());
+				oldRule.setRuleOutputs(rule.getRuleOutputs());
+				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
+					if (!measures.contains(ruleOutput)) {
+						measures.add(ruleOutput);
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
+		}
+		return Response.ok().build();
+	}
 }
