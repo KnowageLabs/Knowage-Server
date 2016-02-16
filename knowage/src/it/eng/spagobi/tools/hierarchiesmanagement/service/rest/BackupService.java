@@ -73,7 +73,7 @@ public class BackupService {
 				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy", "No datasource found for saving hierarchy");
 			}
 
-			// 3 - define update command
+			// 3 - define update command getting values from the request
 			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
 			StringBuffer columnsBuffer = new StringBuffer(" ");
 			// general fields:

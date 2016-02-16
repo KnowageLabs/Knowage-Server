@@ -35,16 +35,18 @@ public class Dimension {
 	String hierarchyTable;
 	String fkName;
 	ArrayList<Field> metadataFields;
+	ArrayList<Filter> metadataFilters;
 
 	/**
 	 * @param nodeCode
 	 * @param nodeName
 	 */
 	public Dimension(String label) {
-		this(label, "", "", "", "", new ArrayList<Field>());
+		this(label, "", "", "", "", new ArrayList<Field>(), new ArrayList<Filter>());
 	}
 
-	public Dimension(String label, String name, String datasource, String hierarchyTable, String fkName, ArrayList<Field> metadataFields) {
+	public Dimension(String label, String name, String datasource, String hierarchyTable, String fkName, ArrayList<Field> metadataFields,
+			ArrayList<Filter> metadataFilters) {
 		super();
 		this.label = label;
 		this.name = name;
@@ -52,6 +54,7 @@ public class Dimension {
 		this.hierarchyTable = hierarchyTable;
 		this.fkName = fkName;
 		this.metadataFields = metadataFields;
+		this.metadataFilters = metadataFilters;
 	}
 
 	/**
@@ -144,4 +147,18 @@ public class Dimension {
 		this.metadataFields = metadataFields;
 	}
 
+	/**
+	 * @return the metadataFilters
+	 */
+	public ArrayList<Filter> getMetadataFilters() {
+		return this.metadataFilters;
+	}
+
+	/**
+	 * @param metadataFilters
+	 *            the metadataFilters to set
+	 */
+	public void setMetadataFilters(ArrayList<Filter> metadataFilters) {
+		this.metadataFilters = metadataFilters;
+	}
 }

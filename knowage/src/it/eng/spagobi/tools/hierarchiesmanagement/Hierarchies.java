@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -182,6 +184,7 @@ public class Hierarchies {
 	 *            the dimension name
 	 * @return the dimension object with all attributes
 	 */
+	@SuppressWarnings("unused")
 	public Dimension getDimension(String dimension) {
 		Dimension toReturn = new Dimension(dimension);
 		SourceBean sb = getTemplate();
@@ -193,6 +196,7 @@ public class Hierarchies {
 			String dimensionLabel = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
 			if (dimensionLabel.equalsIgnoreCase(dimension)) {
 				toReturn.setName(sbRow.getAttribute(HierarchyConstants.NAME) != null ? sbRow.getAttribute(HierarchyConstants.NAME).toString() : null);
+				// set dimension fields metadata
 				List lstFields = sbRow.getAttributeAsList(HierarchyConstants.DIM_FIELDS + "." + HierarchyConstants.FIELD);
 				ArrayList<Field> metadataDimension = new ArrayList<Field>();
 				for (Iterator iter = lstFields.iterator(); iter.hasNext();) {
@@ -221,6 +225,41 @@ public class Hierarchies {
 					metadataDimension.add(field);
 				}
 				toReturn.setMetadataFields(metadataDimension);
+				// set dimension filters metadata
+				List lstFilters = sbRow.getAttributeAsList(HierarchyConstants.DIM_FILTERS + "." + HierarchyConstants.FILTER);
+				ArrayList<Filter> metadataFilterDim = new ArrayList<Filter>();
+				for (Iterator iter = lstFilters.iterator(); iter.hasNext();) {
+					SourceBean sbFilter = (SourceBean) iter.next();
+					String filterName = sbFilter.getAttribute(HierarchyConstants.FILTER_NAME) != null ? sbFilter.getAttribute(HierarchyConstants.FILTER_NAME)
+							.toString() : null;
+					String filterType = sbFilter.getAttribute(HierarchyConstants.FILTER_TYPE) != null ? sbFilter.getAttribute(HierarchyConstants.FILTER_TYPE)
+							.toString() : null;
+					String filterDefault = sbFilter.getAttribute(HierarchyConstants.FILTER_DEFAULT) != null ? sbFilter.getAttribute(
+							HierarchyConstants.FILTER_DEFAULT).toString() : null;
+
+					boolean checkCondition = true;
+					int idx = 0;
+					LinkedHashMap<String, String> conditions = new LinkedHashMap<String, String>();
+					while (checkCondition) {
+						idx++;
+						if (sbFilter.getAttribute(HierarchyConstants.FILTER_CONDITION + idx) != null) {
+							String condition = sbFilter.getAttribute(HierarchyConstants.FILTER_CONDITION + idx).toString();
+							conditions.put(HierarchyConstants.FILTER_CONDITION + idx, condition);
+						} else {
+							// there aren't conditions for the filter
+							if (conditions.size() == 0) {
+								logger.error("The dimension has the filter " + filterName
+										+ " without valid conditions! No optional filter will be added on the GUI. Check the template!! ");
+							}
+							break;
+						}
+
+					}
+					Filter filter = new Filter(filterName, filterType, filterDefault, conditions);
+					metadataFilterDim.add(filter);
+				}
+				toReturn.setMetadataFilters(metadataFilterDim);
+
 			}
 		}
 		return toReturn;

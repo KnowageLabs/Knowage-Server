@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -96,6 +97,47 @@ public class HierarchyUtils {
 	}
 
 	/**
+	 * This method creates a JSON from a Hierarchy filter
+	 *
+	 * @param filter
+	 *            Filter read from hierarchies config
+	 * @return a JSON that represents a filter
+	 * @throws JSONException
+	 */
+	private static JSONObject createJSONObjectFromFilter(Filter filter) throws JSONException {
+
+		logger.debug("START");
+
+		JSONObject result = new JSONObject();
+
+		Assert.assertNotNull(filter, "Impossible to create a JSON from a null filter");
+
+		if (filter.getName() != null)
+			result.put(HierarchyConstants.FILTER_NAME, filter.getName());
+		logger.debug("Filter [" + HierarchyConstants.FILTER_NAME + "] is " + filter.getName());
+
+		if (filter.getType() != null)
+			result.put(HierarchyConstants.FILTER_TYPE, filter.getType());
+		logger.debug("Filter [" + HierarchyConstants.FILTER_TYPE + "] is " + filter.getType());
+
+		if (filter.getDefaultValue() != null)
+			result.put(HierarchyConstants.FILTER_DEFAULT, filter.getDefaultValue());
+		logger.debug("Filter [" + HierarchyConstants.FILTER_DEFAULT + "] is " + filter.getDefaultValue());
+
+		HashMap<String, String> conditions = filter.getConditions();
+		for (int i = 1; i <= conditions.size(); i++) {
+			String key = HierarchyConstants.FILTER_CONDITION + i;
+			String value = conditions.get(key);
+			result.put(key, value);
+			logger.debug("Filter [" + HierarchyConstants.FILTER_CONDITION + i + "] is " + filter.getConditions());
+		}
+
+		logger.debug("END");
+		return result;
+
+	}
+
+	/**
 	 * This method creates a JSON array from a list of fields
 	 *
 	 * @param fields
@@ -118,6 +160,27 @@ public class HierarchyUtils {
 		logger.debug("END");
 		return result;
 
+	}
+
+	/**
+	 * This method creates a JSON array from a list of filters
+	 *
+	 * @param filters
+	 *            List of Filters read from hierarchies config
+	 * @return a JSON array that represents filters
+	 * @throws JSONException
+	 */
+	public static JSONArray createJSONArrayFromFiltersList(List<Filter> filters) throws JSONException {
+		logger.debug("START");
+
+		JSONArray result = new JSONArray();
+
+		for (Filter tmpFilter : filters) {
+			result.put(createJSONObjectFromFilter(tmpFilter));
+		}
+
+		logger.debug("END");
+		return result;
 	}
 
 	/**

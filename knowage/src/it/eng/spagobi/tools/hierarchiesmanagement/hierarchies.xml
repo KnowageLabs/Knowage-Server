@@ -1,7 +1,7 @@
 <HIERARCHY_EDITOR_DEFINITION>
 	<DIMENSIONS>
-		<DIMENSION NAME="dim_cdc" LABEL="CDC" PREFIX="CDC" DATASOURCE ="BIENG">
-			<HIERARCHY_TABLE NAME = "hier_cdc" />
+		<DIMENSION NAME="DIM_CDC_TEST" LABEL="CDC" PREFIX="CDC" DATASOURCE ="BIENG">
+			<HIERARCHY_TABLE NAME = "HIER_CDC_TEST" />
 			<HIERARCHY_FK NAME = "CDC_LEAF_ID" />
 			<CONFIGS>
 				<CONFIG NUM_LEVELS="15" />
@@ -17,9 +17,14 @@
 				<CONFIG NODE="CDC_CD_LEV*|CDC_NM_LEV*|FORM_LIV*|ORDER_LEV*" />
 				<CONFIG LEAF="CDC_CD_LEAF|CDC_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
-				<CONFIG FILL_EMPTY="YES" />
+				<CONFIG FILL_EMPTY="YES" /> <!-- YES/NO -->
 				<CONFIG FILL_VALUE="OTHER" />
-			</CONFIGS>			
+			</CONFIGS>		
+			<DIM_FILTERS>
+				<!-- all fields references into the FORMULAS must be valid FIELD ID of the DIM_FIELDS  section. The number of FORMULAS properties is open. -->
+				<FILTER TYPE="Date" NAME="Validity Hierarchy Date" CONDITION1=" BEGIN_HIER_DT &gt; " CONDITION2=" END_HIER_DT &lt; " DEFAULT=""/>
+				<FILTER TYPE="Date" NAME="Validity After Date" CONDITION1=" BEGIN_DT &gt; " DEFAULT="" />				
+			</DIM_FILTERS>
 			<DIM_FIELDS>
 				<FIELD ID="CDC_ID" NAME="Identifier" VISIBLE="false" EDITABLE="false" TYPE="Number" />
 				<FIELD ID="CDC_CD" NAME="Code" VISIBLE="true" EDITABLE="false" TYPE="String" />
@@ -29,9 +34,7 @@
 				<FIELD ID="CDC_CD_TYPE"  NAME="M/P/S" VISIBLE="false" EDITABLE="false" TYPE="String" />
 				<FIELD ID="TYPE_CDC"  NAME="Type" VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="DEN_COMPANY_NM" NAME="Company Name" VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="FL_PATR"  NAME="Flag Patr." VISIBLE="false" EDITABLE="false" TYPE="String"/>				
-				<FIELD ID="BEGIN_DT" NAME="Begin Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
-				<FIELD ID="END_DT"  NAME="End Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="FL_PATR"  NAME="Flag Patr." VISIBLE="false" EDITABLE="false" TYPE="String"/>							
 				<FIELD ID="CONS_SEG_ENG" NAME="Consolidation Segment"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="SEGMENTS_CD_ENG" NAME="Segment"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="BUSINESS_UNIT_CD_ENG" NAME="Business unit"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
@@ -42,12 +45,10 @@
 				<FIELD ID="DEPARTMENT_4_ENG" NAME="Sub Department i.i.i"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="CDC_PARENT_CD" PARENT="true" NAME="Cdc Parent Code"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="CDC_PARENT_NM"  PARENT="true" NAME="Cdc Parent Name"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<!--<FIELD ID="SEGMENT_PARENT_CD" PARENT="true" NAME="Segment Parent Code"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="SEGMENT_PARENT_NM"  PARENT="true" NAME="Segment Parent Name"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="BU_PARENT_CD" PARENT="true" NAME="BU Parent Code"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="BU_PARENT_NM"  PARENT="true" NAME="BU Parent Name"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="DEPARTMENT_PARENT_CD" PARENT="true" NAME="Department Parent Code"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="DEPARTMENT_PARENT_NM"  PARENT="true" NAME="Department Parent Name"  VISIBLE="false" EDITABLE="false" TYPE="String"/> -->
+				<FIELD ID="BEGIN_DT" NAME="Begin Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="END_DT"  NAME="End Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="BEGIN_HIER_DT" NAME="Begin Hier Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="END_HIER_DT"  NAME="End Hier Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
 			</DIM_FIELDS>
 			
 			<HIER_FIELDS>
@@ -67,12 +68,6 @@
 					<FIELD ID="CDC_NM_LEV" SINGLE_VALUE="false" NAME="Name" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
 					<FIELD ID="ORDER_LEV" SINGLE_VALUE="false"  NAME="Order" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="Number"/>
 					<FIELD ID="FORM_LIV" SINGLE_VALUE="false"  NAME="Form Liv." VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>	
-<!--				<FIELD ID="ORIG_HIER_CD" SINGLE_VALUE="true"  NAME="Code hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
-					<FIELD ID="ORIG_HIER_NM" SINGLE_VALUE="true"  NAME="Name hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
-					<FIELD ID="ORIG_NODE_CD" SINGLE_VALUE="true"  NAME="Code node orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
-					<FIELD ID="ORIG_NODE_NM" SINGLE_VALUE="true"  NAME="Name node orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
-					<FIELD ID="ORIG_HIER_LEV" SINGLE_VALUE="true"  NAME="Level orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
-					-->
 				</NODE_FIELDS>
 				<LEAF_FIELDS> <!-- non dovrebbero essere MAI modificabili -->
 				<!--	<FIELD ID="HIER_ID"  VISIBLE="false" EDITABLE="false" required="true" TYPE="Number" /> -->
@@ -87,8 +82,8 @@
 			</HIER_FIELDS>
 		</DIMENSION>
 		
-		<DIMENSION NAME="dim_account" LABEL="ACCOUNT" PREFIX="ACCOUNT" DATASOURCE ="BIENG">
-			<HIERARCHY_TABLE NAME = "hier_account" />
+		<DIMENSION NAME="DIM_ACCOUNT_TEST" LABEL="ACCOUNT" PREFIX="ACCOUNT" DATASOURCE ="BIENG">
+			<HIERARCHY_TABLE NAME = "HIER_ACCOUNT_TEST" />
 			<HIERARCHY_FK NAME = "ACCOUNT_LEAF_ID" />
 			<CONFIGS>
 				<CONFIG NUM_LEVELS="15" />
@@ -104,7 +99,7 @@
 				<CONFIG NODE="ACCOUNT_CD_LEV*|ACCOUNT_NM_LEV*|SIGN_LIV*|G_SIGN_LIV*" />
 				<CONFIG LEAF="ACCOUNT_CD_LEAF|ACCOUNT_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
-				<CONFIG FILL_EMPTY="YES" />
+				<CONFIG FILL_EMPTY="YES" /> <!-- YES/NO -->
 				<CONFIG FILL_VALUE="OTHER" />
 			</CONFIGS>			
 			<DIM_FIELDS>
@@ -136,11 +131,6 @@
 					<FIELD ID="ACCOUNT_NM_LEV" SINGLE_VALUE="false" NAME="Name" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
 					<FIELD ID="G_SIGN_LIV" SINGLE_VALUE="false" NAME="Sign Grouped Lev." VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
 					<FIELD ID="SIGN_LIV" SINGLE_VALUE="false" NAME="Sign Lev." VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
-<!--				<FIELD ID="ORIG_HIER_CD" SINGLE_VALUE="true"  NAME="Code hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
-					<FIELD ID="ORIG_HIER_NM" SINGLE_VALUE="true"  NAME="Name hier. orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
-					<FIELD ID="ORIG_NODE_CD" SINGLE_VALUE="true"  NAME="Code node orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>
-					<FIELD ID="ORIG_NODE_NM" SINGLE_VALUE="true"  NAME="Name node orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	
-					<FIELD ID="ORIG_HIER_LEV" SINGLE_VALUE="true"  NAME="Level orig." VISIBLE="true" EDITABLE="false" REQUIRED="false" TYPE="String"/>	-->
 				</NODE_FIELDS>
 				<LEAF_FIELDS>
 					<!-- <FIELD ID="HIER_ID"  VISIBLE="false" EDITABLE="false" required="true" TYPE="Number" /> -->

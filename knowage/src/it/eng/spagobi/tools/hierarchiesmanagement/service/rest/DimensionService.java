@@ -7,6 +7,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
 import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -103,6 +104,35 @@ public class DimensionService {
 			}
 			result.put(HierarchyConstants.MATCH_LEAF_FIELDS, matchDim);
 
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while creating dimensions json");
+			throw new SpagoBIServiceException("An unexpected error occured while creating dimensions json", t);
+		}
+
+		logger.debug("END");
+		return result.toString();
+
+	}
+
+	// Get metadata of filter of dimension
+	@GET
+	@Path("/dimensionFilterMetadata")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDimensionFilters(@QueryParam("dimension") String dimensionLabel) {
+
+		logger.debug("START");
+
+		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+
+		Dimension dimension = hierarchies.getDimension(dimensionLabel);
+
+		List<Filter> metadataFilters = new ArrayList<Filter>(dimension.getMetadataFilters());
+
+		JSONObject result = new JSONObject();
+
+		try {
+			JSONArray jsonFilterDimension = HierarchyUtils.createJSONArrayFromFiltersList(metadataFilters);
+			result.put(HierarchyConstants.DIM_FILTERS, jsonFilterDimension);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while creating dimensions json");
 			throw new SpagoBIServiceException("An unexpected error occured while creating dimensions json", t);

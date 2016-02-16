@@ -27,6 +27,9 @@ public class HierarchyConstants {
 	// DIM_FIELDS SECTION
 	public final static String DIM_FIELDS = "DIM_FIELDS";
 
+	// DIM_FILTERS SECTION
+	public final static String DIM_FILTERS = "DIM_FILTERS";
+
 	// HIER_FIELDS SECTIONS
 	public final static String HIER_FIELDS = "HIER_FIELDS";
 	public final static String GENERAL_FIELDS = "GENERAL_FIELDS";
@@ -45,6 +48,13 @@ public class HierarchyConstants {
 	public final static String FIELD_SINGLE_VALUE = "SINGLE_VALUE";
 	public final static String FIELD_REQUIRED = "REQUIRED";
 	public final static String FIELD_FIX_VALUE = "FIX_VALUE";
+
+	// FILTERS
+	public final static String FILTER = "FILTER";
+	public final static String FILTER_NAME = "NAME";
+	public final static String FILTER_TYPE = "TYPE";
+	public final static String FILTER_DEFAULT = "DEFAULT";
+	public final static String FILTER_CONDITION = "CONDITION";
 
 	// dialects for correct definition of date's functions
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
