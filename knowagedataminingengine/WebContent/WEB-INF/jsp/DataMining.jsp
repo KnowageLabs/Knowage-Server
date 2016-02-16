@@ -110,9 +110,9 @@ author:...
 				    Set Command Variables
 				</md-tooltip>
 				<md-icon ng-show="!variableForm" class="fa fa-cogs center-ico"></md-icon>
-				<md-tooltip md-direction="bottom" ng-if="variableForm">
-				    Return Output Page
-				</md-tooltip>
+					<md-tooltip md-direction="bottom" ng-if="variableForm">
+					    Return Output Page
+					</md-tooltip>
 				<md-icon ng-show="variableForm" class="fa fa-undo center-ico"></md-icon>	
 			</md-button>
 		</md-content>
@@ -132,10 +132,10 @@ author:...
 							 		</label>
 								 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>
 							 </md-input-container>
-						 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, out, variable, 'set', 'command')" ng-disabled="variable.currentVal.length <= 0">
+						 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, undefined, variable, 'set', 'command')" ng-disabled="variable.currentVal.length <= 0">
 			 				 	Set
 							</md-button>
-							<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, out, variable, 'reset','command')" ng-disabled="variable.currentVal == variable.defaultVal">
+							<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, undefined, variable, 'reset','command')" ng-disabled="variable.currentVal == variable.defaultVal">
 			 				 	Reset
 							</md-button>
 						 </md-content>
@@ -193,7 +193,7 @@ author:...
 									 	</div>
 									 </md-toolbar>
 									 <div ng-repeat = "variable in out.variables">
-										 <md-content layout='row' layout-margin layout-align="center center">
+										 <md-content layout='row' layout-wrap layout-align="center center">
 											 <md-input-container flex='70'>
 											    <label><b>{{ variable.name }}</b></label>
 											 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>

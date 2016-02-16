@@ -338,7 +338,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	};
 	
 	$scope.setVariable= function(cmd, output, variable, action, type){
-		 var promiseResult = $scope.createResultPromise();
+		
 		 //find commandName and outputName from the tabs selected 
 		 var commandName = cmd.name;
 		 var variables = type == 'command' ?  cmd.variables : output.variables;
@@ -354,10 +354,18 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 		 	.success(function(data){
 		 		//if success resolve the command promise, rerun the command 
 		 		var parameters = {};
+		 		//$scope.results[commandName]
 				parameters.commandName = commandName;
-				parameters.singleOutput = output;
 				parameters.variables = variables;
-				promiseResult.resolve(parameters);
+				if (output !== undefined){
+					var promiseResult = $scope.createResultPromise();
+					parameters.singleOutput = ouput ;
+					promiseResult.resolve(parameters);
+				}else{
+					var promiseOutputs = $scope.createOutputsPromise();
+					parameters.outputs = cmd.outputs;
+					promiseOutputs.resolve(parameters)
+				}
 				})
 			.error(function(data, status){
 				promiseResult.reject();

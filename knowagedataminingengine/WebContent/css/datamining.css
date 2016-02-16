@@ -43,6 +43,7 @@ md-dialog.upload-dialog {
 div .border-container {
 	 border-radius: 25px;
      border: 2px solid #B0BEC5;
+     padding-bottom: 1.2rem;
 }
 
 .element-border {
