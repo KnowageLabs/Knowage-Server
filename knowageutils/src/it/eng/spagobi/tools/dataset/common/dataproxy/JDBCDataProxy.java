@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
 public class JDBCDataProxy extends AbstractDataProxy {
 
@@ -120,9 +119,9 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
-					
-					//if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
-					if(!SqlUtils.isHiveLikeDialect(dialect)){
+
+					// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
+					if (!SqlUtils.isHiveLikeDialect(dialect)) {
 						// try to calculate the query total result number using
 						// inline view
 						resultNumber = getResultNumber(connection);
@@ -131,22 +130,22 @@ public class JDBCDataProxy extends AbstractDataProxy {
 						// total result number
 						dataReader.setCalculateResultNumberEnabled(false);
 						notCountingStrategyUsedSuccessfully = true;
-					}else{
+					} else {
 						logger.debug("It's a BigData datasource so count data iterating result set till max ");
 						dataReader.setCalculateResultNumberEnabled(true);
-					}					
+					}
 				} catch (Throwable t) {
-					logger.debug("KO Calculation of result set total number using inlineview",t);
-					try{
+					logger.debug("KO Calculation of result set total number using inlineview", t);
+					try {
 						logger.debug("Loading data using scrollable resultse tecnique");
 						resultNumber = getResultNumber(resultSet);
 						logger.debug("OK data loaded using scrollable resultse tecnique : resultNumber = " + resultNumber);
 						dataReader.setCalculateResultNumberEnabled(false);
 						notCountingStrategyUsedSuccessfully = true;
-					}catch (SQLException e){
-						logger.debug("KO data loaded using scrollable resultse tecnique",e );
+					} catch (SQLException e) {
+						logger.debug("KO data loaded using scrollable resultse tecnique", e);
 						dataReader.setCalculateResultNumberEnabled(true);
-						
+
 					}
 				}
 			} else {
