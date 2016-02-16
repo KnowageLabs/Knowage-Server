@@ -77,16 +77,16 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('list',
 		function($compile) {
 	return {
-		template:'<div   flex="40" class="md-container kn-list">'+
+		template:'<div   flex="40" class="md-container kn-list" layout="column" layout-wrap>'+
 		' <md-toolbar>'+
-		'<div class="md-toolbar-tools">'+
-		' <h2 class="md-flex">{{AWD_listController.title}}</h2>'+
-		'<md-button  ng-disabled="ALD_controller.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && ALD_controller.showNewButton!=false" ng-click="newFuncName()" class="md-fab md-fab-top-right ">'+
-		' <md-icon md-font-icon="fa-plus" class="fa s32 md-primary md-hue-2" ></md-icon>'+
-		'</md-button>'+
-		'</div>'+
+		'	<div class="md-toolbar-tools">'+
+		'	 <h2 class="md-flex">{{AWD_listController.title}}</h2>'+
+		'	<md-button  ng-disabled="ALD_controller.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && ALD_controller.showNewButton!=false" ng-click="newFuncName()" class="md-fab md-fab-top-right ">'+
+		' 	<md-icon md-font-icon="fa-plus" class="fa s32 md-primary md-hue-2" ></md-icon>'+
+		'	</md-button>'+
+		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content layout-margin class="h100">'+
+		'<md-content layout-margin flex>'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -109,18 +109,19 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		}
 	}
 })
+
 .directive('detail',
-		function() {
+		function($compile) {
 	return {
-		template:'<div flex class="md-container kn-detail">'+
+		template:'<div   flex class="md-container kn-detail" layout="column" layout-wrap>'+
 		' <md-toolbar>'+
-		'<div class="md-toolbar-tools">'+
-		' <h2 class="flex">{{AWD_detailController.title}}</h2>'+
-		'<md-button aria-label="cancel" ng-disabled="ALD_controller.disableCancelButton" ng-if="cancelFuncName!=undefined && ALD_controller.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.general.cancel")}}</md-button>'+
-		'<md-button aria-label="save" ng-disabled="ALD_controller.disableSaveButton" ng-if="saveFuncName!=undefined && ALD_controller.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
-		'</div>'+
+		'	<div class="md-toolbar-tools">'+
+		'		<h2 class="md-flex">{{AWD_detailController.title}}</h2>'+
+		'		<md-button aria-label="cancel" ng-disabled="ALD_controller.disableCancelButton" ng-if="cancelFuncName!=undefined && ALD_controller.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.general.cancel")}}</md-button>'+
+		'		<md-button aria-label="save" ng-disabled="ALD_controller.disableSaveButton" ng-if="saveFuncName!=undefined && ALD_controller.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
+		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content layout-margin class="h100" ng-show="ALD_controller.showDetail!=false">'+
+		'<md-content layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -128,8 +129,10 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		controllerAs:"AWD_detailController",
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
-			transclude(function(clone) {
-				angular.element(element[0].querySelector('div.md-container>md-content')).append(clone);
+			transclude(scope,function(clone,scope) {
+				var contElem=element[0].querySelector("div.md-container>md-content ")
+				angular.element(contElem).append(clone);
+//				$compile(contElem)(scope);
 			});
 
 			ctrl.title=attrs.label;
@@ -138,11 +141,9 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 					ctrl.title=value;
 				}
 			});	
-
-		},
+		}
 	}
 })
-
 
 function templatesControllerFunction($scope,sbiModule_translate) {
 	$scope.translate=sbiModule_translate;

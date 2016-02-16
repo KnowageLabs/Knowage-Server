@@ -12,6 +12,9 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -27,6 +30,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 @Path("/2.0/datasources")
 @ManageAuthorization
@@ -212,6 +216,46 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 
 		}
+	}
+
+	@GET
+	@Path("/structure/{dsId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
+	public String getDataSourceStruct(@PathParam("dsId") Integer dsId) {
+
+		logger.debug("IN");
+		JSONObject tableContent = new JSONObject();
+		try {
+
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSourceDAO.setUserProfile(getUserProfile());
+			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
+
+			Connection conn = dataSource.getConnection();
+			DatabaseMetaData md = conn.getMetaData();
+			ResultSet rs = md.getTables(null, null, "%", null);
+			while (rs.next()) {
+				JSONObject column = new JSONObject();
+				ResultSet tabCol = md.getColumns(rs.getString(1), rs.getString(2), rs.getString(3), "%");
+				while (tabCol.next()) {
+					column.put(tabCol.getString(4), "null");
+				}
+				tableContent.put(rs.getString(3), column);
+			}
+
+		} catch (Exception e) {
+
+			logger.error("Error while loading a single data set", e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+
+		} finally {
+
+			logger.debug("OUT");
+
+		}
+
+		return tableContent.toString();
 	}
 
 }

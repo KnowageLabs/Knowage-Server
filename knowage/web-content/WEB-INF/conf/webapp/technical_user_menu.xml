@@ -187,46 +187,46 @@
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"
 			iconCls="charts">
-		<ITEM	code="kpiDefinition" 
-			title="#menu.KpiModel"
-			groupingMenu="true"
-			iconCls="traffic">
-			<ITEM	title="#menu.KpiDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/kpiico16.png" />
-			<ITEM	title="#menu.ThresholdDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_THRESHOLDS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/thr16.png" />
-			<ITEM	title="#menu.ModelDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODELS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/modeldef16.png" />
-			<ITEM	title="#menu.ModelInstanceDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/model16.png" />
-			<ITEM	title="#menu.GrantDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" />
-			<ITEM	title="#menu.GoalDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/goal16.png" />
-			<ITEM	title="#menu.ResourcesDefinition"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/res16.png" />
-			<ITEM	title="#menu.ManageAlarms"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ALARMS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/alarm16.png" />
-			<ITEM	title="#menu.ManageContacts"
-					functionality="KpiManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_CONTACTS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/mail_generic16.png" />
+		<ITEM	code="kpiDefinition" title="#menu.KpiModel" groupingMenu="true" iconCls="traffic">
+			<ITEM	title="#menu.kpi.kpiDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp" />	
+			<ITEM	title="#menu.kpi.measureRoleDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRoleDefinition.jsp" />	
+			
+<!-- 			<ITEM	title="#menu.KpiDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/kpiico16.png" /> -->
+<!-- 			<ITEM	title="#menu.ThresholdDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_THRESHOLDS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/thr16.png" /> -->
+<!-- 			<ITEM	title="#menu.ModelDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODELS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/modeldef16.png" /> -->
+<!-- 			<ITEM	title="#menu.ModelInstanceDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/model16.png" /> -->
+<!-- 			<ITEM	title="#menu.GrantDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" /> -->
+<!-- 			<ITEM	title="#menu.GoalDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/goal16.png" /> -->
+<!-- 			<ITEM	title="#menu.ResourcesDefinition" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/res16.png" /> -->
+<!-- 			<ITEM	title="#menu.ManageAlarms" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ALARMS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/alarm16.png" /> -->
+<!-- 			<ITEM	title="#menu.ManageContacts" -->
+<!-- 					functionality="KpiManagement" -->
+<!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_CONTACTS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
+<!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/mail_generic16.png" /> -->
 
 		</ITEM>
 		<ITEM	code="subscription" 
