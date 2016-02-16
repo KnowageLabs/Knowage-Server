@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPUnknown;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 
@@ -55,7 +56,7 @@ public class DatasetsExecutor {
 
 					// tries to get it from user workspace
 					REXP datasetNameInR = re.parseAndEval(ds.getName());
-					if (datasetNameInR.isNull()) {
+					if (datasetNameInR.isNull() || datasetNameInR instanceof REXPUnknown) {
 						logger.debug("File ds: gets default DS");
 						Boolean defaultExists = getAndEvalDefaultDataset(ds);
 						if (!defaultExists) {

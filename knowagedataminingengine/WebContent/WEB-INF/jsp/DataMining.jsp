@@ -96,7 +96,7 @@ author:...
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
 	</head>
 <body class="bodyStile">
-	<div div ng-controller="Controller as ctrl" ng-cloak id="popupContainer">
+	<div div ng-controller="Controller" ng-cloak id="popupContainer">
 		<md-content layout-margin layout="row" layout-align = "start stretch ">
 			<md-input-container flex="50">
 				<md-select placeholder="Select Command" ng-model="cmd" ng-change="calculateResult(cmd)">
@@ -144,8 +144,8 @@ author:...
 			</md-content>
 			<md-content ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-wrap>
 				<div flex="30">
-					<md-select placeholder="Select Dataset to Upload" ng-model="dataset"">
-						<md-option ng-repeat="ds in datasets[cmd.name]" ng-value="ds">
+					<md-select placeholder="Select Dataset to Upload" ng-model="dataset">
+						<md-option ng-value="ds" ng-repeat="ds in datasets[cmd.name]" >
 							{{ds.label}}
 						</md-option>
 					</md-select>

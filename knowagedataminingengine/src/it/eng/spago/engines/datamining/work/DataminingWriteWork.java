@@ -17,6 +17,7 @@ public class DataminingWriteWork implements Work {
 
 	public void run() {
 		rEngine = REngine.getLastEngine();
+
 		if (rEngine == null) {
 			try {
 				/*

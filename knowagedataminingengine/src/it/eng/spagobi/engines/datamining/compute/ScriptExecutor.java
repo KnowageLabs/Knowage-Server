@@ -207,7 +207,10 @@ public class ScriptExecutor {
 					String[] libs = libraryNames.split(",");
 					for (int i = 0; i < libs.length; i++) {
 						String lib = libs[i].trim();
-						re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
+						REXP rLibrary = re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
+						if (rLibrary.inherits("try-error")) {
+							logger.error("Impossible to load library: " + lib);
+						}
 					}
 				}
 			}

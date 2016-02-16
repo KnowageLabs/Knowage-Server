@@ -130,7 +130,7 @@ public class OutputExecutor {
 
 			REXP rexp = null;
 
-			if (function != null) {
+			if (function != null && function.length() > 0) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
 					rexp = re.parseAndEval("try(" + function + ")");

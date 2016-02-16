@@ -127,12 +127,12 @@ public class DataMiningExecutor {
 		try {
 			workerManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 			commonj.work.WorkManager workManager = workerManager.getInnerInstance();
-			Work work = new DataminingWriteWork();
+			DataminingWriteWork work = new DataminingWriteWork();
 			WorkItem workItem = workManager.schedule(work);
 			workItems.add(workItem);
 			workManager.waitForAll(workItems, timeout);
 			workResult = (DataminingWriteWork) workItem.getResult();
-			if (workResult != null){
+			if (workResult != null) {
 				rEng = workResult.getrEngine();
 			}
 			work.release();
@@ -224,12 +224,12 @@ public class DataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 * 
-	 * 
+	 *
+	 *
 	 * protected void loadUserWorkSpace() throws IOException {
-	 * 
+	 *
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 * 
+	 *
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

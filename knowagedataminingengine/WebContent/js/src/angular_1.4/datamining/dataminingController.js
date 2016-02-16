@@ -1,8 +1,8 @@
 var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
-app.controller('Controller', ['$sce','sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
+app.controller('Controller', ['sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
 
-function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
+function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
 	
 	/*****************************/
 	/** Initialization          **/
@@ -220,7 +220,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	/** START                   **/
 	/*****************************/
 	$scope.commandPromise = $scope.createCommandPromise();
-	var tmpConfig = angular.fromJson(angular.toJson($scope.config));
+	var tmpConfig = angular.copy($scope.config);
 	//STARTING the chain of promise, is promise is a restService command
 	// GET command -> GET datasets -> GET ouputs -> GET results   
 	restServices.get($scope.pathRest.vers, $scope.pathRest.command, null, tmpConfig)
@@ -261,19 +261,19 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 			}
 		}
 		$scope.visibleUploadButton = enable;
-	}
+	};
 	
 	$scope.chooseFile = function (){
 		var input = angular.element(document).find('#uploadFile');
 		input.triggerHandler('click');
-	}
+	};
 	
 	$scope.setFileName = function (element){
 		$scope.file = element.files[0];
 		$timeout(function(){
 			$scope.fileName = element.files[0].name;
 		},0,true);
-	}
+	};
 	
 	$scope.uploadFile = function(cmd,dataset){
 		var commandName = cmd.name;
@@ -286,20 +286,19 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 		        fd.append(dataset.name, $scope.file);
 				var tmpPromise = restServices.postMultiPart(urlUpload, dataset.name, fd, tmpConfig);
 				//if loadDataset is correct start to update the dataset in the server using a promise
-				$scope.createPromiseUpload($scope,tmpPromise,dataset.name, $scope.file, tmpConfig);
+				$scope.createPromiseUpload(tmpPromise,dataset.name, $scope.file, tmpConfig);
 			}
 		}
-	}
+	};
 	
-	$scope.createPromiseUpload = function(scope, promiseUpload, datasetName, file, conf){
-		var that = this;
+	$scope.createPromiseUpload = function(promiseUpload, datasetName, file, conf){
+		var that = {};
 		that.datasetName = datasetName;
 		that.file = file;
 		that.conf = conf;
-		that.scope = scope;
 		promiseUpload.success(function(data){
 			if (data.success == true){
-				var urlUpdate =  that.scope.pathRest.vers + '/' + that.scope.pathRest.dataset+'/'+that.scope.pathRest.updateDataset;
+				var urlUpdate =  $scope.pathRest.vers + '/' + $scope.pathRest.dataset+'/'+ $scope.pathRest.updateDataset;
 				var tmpConfig = angular.fromJson(angular.toJson(that.conf));
 				var promiseUpdate = restServices.get(urlUpdate, that.file.name +'/'+ that.datasetName, null, tmpConfig);
 				promiseUpdate.success(function(data){
@@ -329,6 +328,10 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	$scope.rerunScript = function (cmd){
 		 var commandPromise = $scope.createCommandPromise();
 		 commandPromise.resolve(cmd);
+		 //force to delete the selected dataset
+		 if (this.$parent && this.$parent.$parent){
+			 this.$parent.$parent.dataset = undefined;
+		 }
 		 $scope.toogleRerunButton();
 		 $scope.file = undefined;
 		 $scope.fileName='';
@@ -373,7 +376,7 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 		        .textContent(message) //FROM angular material 1.0 
 		        .ok('Ok')
 			);
-	}
+	};
 	
 	//Create a dialog containing an updating bar
 	$scope.showDialogUpdating = function (){
@@ -390,18 +393,18 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 			controller: $scope.dialogController
 		});
 		return dialog;
-	}
+	};
 	
 	$scope.toogleVariableForm = function (cmd){
 		$scope.variableForm=!$scope.variableForm;
-	}
+	};
 	
 	$scope.dialogController = function ($scope, $mdDialog, translate) {
 		$scope.translate = translate;
 		$scope.closeDialog = function() {
 		    $mdDialog.hide();
 		};
-	}
+	};
 	
 	$scope.toogleRerunButton = function(){
 		$scope.visibilityRerunButton = !$scope.visibilityRerunButton; 
@@ -409,10 +412,12 @@ function dataMiningFunction ($sce,sbiModule_logger,datamining_template,sbiModule
 	
 	$scope.toogleOuputVariables = function(){
 		$scope.visibleOuputVariables = !$scope.visibleOuputVariables;
-		}
+	};
 	
 	$scope.toogleCommandVariables = function(){
 		$scope.visibleCommandVariables = !$scope.visibleCommandVariables ;
-		}
+	};
+	
+	
 }
 
