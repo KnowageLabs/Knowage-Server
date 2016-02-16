@@ -5,6 +5,19 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -25,24 +38,11 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-
 /**
  * Implement CRUD operations over spagobi datsets
- * 
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO {
 
@@ -332,7 +332,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Insert data set.
-	 * 
+	 *
 	 * @param dataSet
 	 *            the a data set
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
@@ -448,12 +448,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// save teh federations
 			if (dataSet.getDatasetFederation() != null) {
 				SbiFederationDefinition federationDefinition;
-				if(dataSet.getDatasetFederation().getFederation_id()<0){
+				if (dataSet.getDatasetFederation().getFederation_id() < 0) {
 					logger.debug("The federation is not saved.. Adding it");
 					// adding the tenant to the dataset... It has been lost because the service doesn't pass the value
 					dataSet.getDatasetFederation().getSourceDatasets().iterator().next().setOrganization(getTenant());
 
-					
 					SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl) DAOFactory.getFedetatedDatasetDAO();
 					federationDefinition = dao.saveSbiFederationDefinition(dataSet.getDatasetFederation(), false, session, transaction);
 
@@ -487,7 +486,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-
+			t.printStackTrace();
 			throw new SpagoBIDOAException("An unexpected error occured while inserting dataset", t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -499,7 +498,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return idToReturn;
 	}
 
-	
 	// ========================================================================================
 	// READ operations (cRud)
 	// ========================================================================================
@@ -690,7 +688,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Returns List of all existent IDataSets with current active version
-	 * 
+	 *
 	 * @param offset
 	 *            starting element
 	 * @param fetchSize
@@ -794,7 +792,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Returns List of all existent IDataSets with current active version for the owner
-	 * 
+	 *
 	 * @param offset
 	 *            starting element
 	 * @param fetchSize
@@ -912,7 +910,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Returns List of all existent SbiDataSet elements (NO DETAIL, only name, label, descr...).
-	 * 
+	 *
 	 * @param offset
 	 *            starting element
 	 * @param fetchSize
@@ -986,7 +984,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Counts number of BIObj associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return Integer, number of BIObj associated
@@ -1025,7 +1023,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Counts number of existent DataSets
-	 * 
+	 *
 	 * @return Integer, number of existent DataSets
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1061,7 +1059,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Checks for bi obj associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return true, if checks for bi obj associated
@@ -1141,7 +1139,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Checks for bi kpi associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return true, if checks for bi kpi associated
@@ -1186,7 +1184,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Checks for bi lovs associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return true, if checks for lovs associated
@@ -1235,7 +1233,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Modify data set.
-	 * 
+	 *
 	 * @param aDataSet
 	 *            the a data set
 	 * @throws EMFUserError
@@ -1375,7 +1373,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Returns the Higher Version Number of a selected DS
-	 * 
+	 *
 	 * @param dsId
 	 *            the a data set ID
 	 * @throws EMFUserError
@@ -1415,7 +1413,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> if it is not referenced by some analytical documents.
-	 * 
+	 *
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
 	 * @throws SpagoBIDOAException
@@ -1466,19 +1464,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
 			List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(datasetId, session);
-			
-			
-			
+
 			if (!federationsAssociated.isEmpty()) {
-				
-				//check if its a derived dataset.. In this case delete also the federation..
+
+				// check if its a derived dataset.. In this case delete also the federation..
 
 				for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
 					FederationDefinition fedDef = (FederationDefinition) iterator.next();
 					logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
 				}
-				
-				
+
 			}
 
 			// boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
@@ -1531,8 +1526,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-
-			
 			transaction.commit();
 
 		}
@@ -1545,8 +1538,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				DatasetException de = (DatasetException) t;
 				throw de;
 			} else {
-				String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
-						+ datasetId + "]";
+				String msg = (t.getMessage() != null) ? t.getMessage()
+						: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
 				throw new SpagoBIDOAException(msg, t);
 			}
 		} finally {
@@ -1559,7 +1552,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> ALSO if is referenced by some analytical documents.
-	 * 
+	 *
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
 	 */
@@ -1605,8 +1598,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
-					+ datasetId + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
 			throw new SpagoBIDOAException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -1618,7 +1611,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Restore an Older Version of the dataset
-	 * 
+	 *
 	 * @param dsId
 	 *            the a data set ID
 	 * @param dsVersion
@@ -1676,7 +1669,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete the dataset version whose id is equal to <code>datasetVersionId</code> if and only if it is inactive.
-	 * 
+	 *
 	 * @param datasetVersionId
 	 *            the id of the version of the dataset to delete. Cannot be null.
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database. false otherwise (the version does not exist or
@@ -1725,8 +1718,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum
-					+ "]", t);
+			throw new SpagoBIDOAException(
+					"An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1739,7 +1732,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete all inactive versions of dataset whose id is equal to <code>datasetId</code>
-	 * 
+	 *
 	 * @param datasetId
 	 *            the id of the of the dataset whose incative version must be deleted
 	 * @return true if the incative versions of dataset whose id is equal to <code>datasetId</code> have been succesfully deleted from database. false otherwise
@@ -1792,8 +1785,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId
-					+ "]", t);
+			throw new SpagoBIDOAException(
+					"An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1819,7 +1812,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * copy a dataset
-	 * 
+	 *
 	 * @param hibDataSet
 	 * @return
 	 */
@@ -1832,39 +1825,39 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		/*
 		 * SbiDataSet hibNew = null;
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiFileDataSet){ hibNew = new SbiFileDataSet();
 		 * ((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQueryDataSet){ hibNew = new SbiQueryDataSet();
 		 * ((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 		 * ((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
 		 * ((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiWSDataSet){ hibNew = new SbiWSDataSet(); ((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
 		 * ((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiScriptDataSet){ hibNew =new SbiScriptDataSet(); ((SbiScriptDataSet) hibNew
 		 * ).setScript(((SbiScriptDataSet)hibDataSet).getScript()); ((SbiScriptDataSet) hibNew
 		 * ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiJClassDataSet){ hibNew =new SbiJClassDataSet(); ((SbiJClassDataSet) hibNew
 		 * ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiCustomDataSet){ hibNew =new SbiCustomDataSet(); ((SbiCustomDataSet) hibNew
 		 * ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData()); ((SbiCustomDataSet) hibNew
 		 * ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQbeDataSet){ hibNew =new SbiQbeDataSet(); ((SbiQbeDataSet) hibNew
 		 * ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery()); ((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
 		 * ((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource()); ((SbiQbeDataSet) hibNew
 		 * ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
-		 * 
-		 * 
+		 *
+		 *
 		 * }
-		 * 
+		 *
 		 * hibNew.setCategory(hibDataSet.getCategory()); hibNew.setDsMetadata(hibDataSet.getDsMetadata()); hibNew.setMetaVersion(hibDataSet.getMetaVersion());
 		 * hibNew.setParameters(hibDataSet.getParameters()); hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		 * hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue()); hibNew.setPivotRowName(hibDataSet.getPivotRowName());

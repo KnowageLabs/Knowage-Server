@@ -920,8 +920,13 @@ public class DataSetFactory {
 
 				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
 
-				ISbiFederationDefinitionDAO dao = DAOFactory.getFedetatedDatasetDAO();
-				Set<IDataSet> sourcesDatasets = dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
+				Set<SbiDataSet> sources = sbiFederation.getSourceDatasets();
+				Set<IDataSet> sourcesDatasets = new HashSet<>();
+				for (SbiDataSet s : sources) {
+					IDataSet IDs = toDataSetForImport(s, userProfile);
+					sourcesDatasets.add(IDs);
+
+				}
 
 				UserProfile profile = (UserProfile) userProfile;
 				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), (String) profile.getUserId());
@@ -929,7 +934,15 @@ public class DataSetFactory {
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
 				SbiFederationDefinition sbiFedDef = sbiDataSet.getFederation();
-				FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
+				// FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
+				FederationDefinition fd = new FederationDefinition();
+				fd.setDegenerated(sbiFedDef.isDegenerated());
+				fd.setDescription(sbiFedDef.getDescription());
+				fd.setLabel(sbiFedDef.getLabel());
+				fd.setName(sbiFedDef.getName());
+				fd.setRelationships(sbiFedDef.getRelationships());
+				fd.setSourceDatasets(sourcesDatasets);
+
 				((FederatedDataSet) ds).setDatasetFederation(fd);
 
 				// START -> This code should work instead of CheckQbeDataSets around the projects
