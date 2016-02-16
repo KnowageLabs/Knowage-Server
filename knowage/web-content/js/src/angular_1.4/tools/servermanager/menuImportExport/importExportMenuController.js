@@ -424,3 +424,10 @@ function importFuncController(
 	$scope.stepControl;
 	$scope.IEDConf = importExportMenuModule_importConf;
 };
+
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
