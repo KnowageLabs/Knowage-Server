@@ -2,6 +2,7 @@ package it.eng.spagobi.engine.chart.api;
 
 import static it.eng.spagobi.engine.util.ChartEngineUtil.ve;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
@@ -9,6 +10,7 @@ import it.eng.spagobi.engine.util.ChartEngineDataUtil;
 import it.eng.spagobi.engine.util.ChartEngineUtil;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -55,10 +57,20 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
-			@FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
+			@FormParam("datasetLabel") String datasetLabel, @FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData,
+			@Context HttpServletResponse servletResponse) {
 		try {
 			ChartEngineInstance engineInstance = getEngineInstance();
 			IDataSet dataSet = engineInstance.getDataSet();
+
+			/*
+			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset is null and we have datasetlabel valorized, probabily we are calling this REST
+			 * service from the cockpit. So, we need to get the dataset from his label
+			 */
+			if (dataSet == null && datasetLabel != null) {
+				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+				dataSet = dataSetDao.loadDataSetByLabel(datasetLabel);
+			}
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			if (driverParams != null && !driverParams.isEmpty()) {
 				refreshDriverParams(analyticalDrivers, driverParams);

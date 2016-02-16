@@ -1980,8 +1980,20 @@ Ext.define('Sbi.chart.designer.Designer', {
   							var parameters = 
   							{
 								jsonTemplate: Ext.JSON.encode(sbiJson),
-								exportWebApp: true	
+								exportWebApp: true
 							};
+  							
+  							/**
+  							 * https://production.eng.it/jira/browse/KNOWAGE-581 
+  							 * in CockpitEngine, the dataset for the preview could be null,
+  							 * so we need to add the label as a parameter. So, server side
+  							 * we can get the dataset from the label
+  							 * 
+  							 * @author Giorgio Federici (giorgio.federici@eng.it)
+  							 */
+  							if(isCockpit){
+  								parameters.datasetLabel = datasetLabel;
+  							}
   							
 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 								var chartConf = response.responseText;								
