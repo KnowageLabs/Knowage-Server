@@ -8,7 +8,7 @@ public class Rule {
 	private String name;
 	private String definition;
 
-	private List<Measure> measures;
+	private List<RuleOutput> ruleOutputs;
 
 	/**
 	 * @return the id
@@ -56,18 +56,18 @@ public class Rule {
 	}
 
 	/**
-	 * @return the measures
+	 * @return the ruleOutputs
 	 */
-	public List<Measure> getMeasures() {
-		return measures;
+	public List<RuleOutput> getRuleOutputs() {
+		return ruleOutputs;
 	}
 
 	/**
-	 * @param measures
-	 *            the measures to set
+	 * @param ruleOutputs
+	 *            the ruleOutputs to set
 	 */
-	public void setMeasures(List<Measure> measures) {
-		this.measures = measures;
+	public void setRuleOutputs(List<RuleOutput> ruleOutputs) {
+		this.ruleOutputs = ruleOutputs;
 	}
 
 }

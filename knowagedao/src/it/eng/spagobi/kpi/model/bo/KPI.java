@@ -1,6 +1,5 @@
 package it.eng.spagobi.kpi.model.bo;
 
-import java.util.List;
 
 public class KPI {
 
@@ -10,8 +9,6 @@ public class KPI {
 	private String cardinality;
 	private String placeholder;
 	private String category;
-
-	private List<Measure> measures;
 
 	/**
 	 * @return the id
@@ -101,21 +98,6 @@ public class KPI {
 	 */
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	/**
-	 * @return the measures
-	 */
-	public List<Measure> getMeasures() {
-		return measures;
-	}
-
-	/**
-	 * @param measures
-	 *            the measures to set
-	 */
-	public void setMeasures(List<Measure> measures) {
-		this.measures = measures;
 	}
 
 }

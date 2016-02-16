@@ -2,7 +2,7 @@ package it.eng.spagobi.kpi.model.bo;
 
 import java.util.Date;
 
-public class Measure {
+public class RuleOutput {
 
 	private Integer id;
 	private String alias;
@@ -11,6 +11,7 @@ public class Measure {
 	private Integer ruleId;
 	private String category;
 	private String type;
+	private Integer typeId;
 	private String author;
 	private Date dateCreation;
 
@@ -147,6 +148,21 @@ public class Measure {
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the typeId
+	 */
+	public Integer getTypeId() {
+		return typeId;
+	}
+
+	/**
+	 * @param typeId
+	 *            the typeId to set
+	 */
+	public void setTypeId(Integer typeId) {
+		this.typeId = typeId;
 	}
 
 }
