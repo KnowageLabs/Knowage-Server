@@ -31,7 +31,7 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-				<md-content layout='row' layout-fill flex='50'>
+				<md-content layout='row'>
 					<angular-table 
 						ng-model="backupTable"
 						columns = "columnsTable"
@@ -39,7 +39,6 @@
 					    columns-search="columnSearchTable"
 					    show-search-bar = "true"
 					    speed-menu-option="backupSpeedMenu"
-					    no-pagination = "true"
 					    allow-edit="true"
 					    edit-function = "storeOldValue(	item,itemOld,cell,listId,row,column)"
 					></angular-table>
