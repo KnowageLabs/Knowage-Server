@@ -3,7 +3,6 @@ package it.eng.spagobi.tools.crossnavigation;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -24,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -41,9 +41,9 @@ public class CrossNavigationService {
 
 	@GET
 	@Path("/listNavigation")
-	@Produces(MediaType.APPLICATION_JSON)
+	// @Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
-	public String listNavigation(@Context HttpServletRequest req) {
+	public Response listNavigation(@Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -51,7 +51,7 @@ public class CrossNavigationService {
 
 			List<SimpleNavigation> lst = dao.listNavigation();
 
-			return JsonConverter.objectToJson(lst, lst.getClass());
+			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
@@ -61,13 +61,13 @@ public class CrossNavigationService {
 	@Path("/{id}/load")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
-	public String loadNavigation(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+	public Response loadNavigation(@PathParam("id") Integer id, @Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
 			NavigationDetail nd = dao.loadNavigation(id);
-			return JsonConverter.objectToJson(nd, nd.getClass());
+			return Response.ok(JsonConverter.objectToJson(nd, nd.getClass())).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
@@ -75,10 +75,9 @@ public class CrossNavigationService {
 
 	@POST
 	@Path("/save")
-	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
-	public String save(@Context HttpServletRequest req) throws JSONException {
-		JSONObject jo = new JSONObject();
+	public Response save(@Context HttpServletRequest req) throws JSONException {
+		// JSONObject jo = new JSONObject();
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			NavigationDetail nd = (NavigationDetail) JsonConverter.jsonToObject(requestVal, NavigationDetail.class);
@@ -87,7 +86,8 @@ public class CrossNavigationService {
 			dao.setUserProfile(profile);
 			boolean isAnyLink = false;
 			if (nd.getSimpleNavigation() == null || nd.getSimpleNavigation().getName() == null || nd.getSimpleNavigation().getName().isEmpty()) {
-				jo.append("errors", "sbi.crossnavigation.error.name");
+				// jo.append("errors", "sbi.crossnavigation.error.name");
+				throw new SpagoBIServiceException(req.getPathInfo(), "Name is mandatory");
 			} else if (nd.getToPars() != null && !nd.getToPars().isEmpty()) {
 				for (SimpleParameter sp : nd.getToPars()) {
 					if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
@@ -97,34 +97,34 @@ public class CrossNavigationService {
 				}
 			}
 			if (!isAnyLink) {
-				jo.append("errors", "sbi.crossnavigation.error.par");
+				throw new SpagoBIServiceException(req.getPathInfo(), "Create at least one link");
 			} else {
 				if (nd.isNewRecord()) {
-					try {
-						dao.insert(nd);
-					} catch (SpagoBIDOAException e) {
-						jo.append("errors", "sbi.crossnavigation.error.duplicate");
-					}
+					// try {
+					dao.insert(nd);
+					// } catch (SpagoBIDOAException e) {
+					// jo.append("errors", "sbi.crossnavigation.error.duplicate");
+					// }
 				} else {
-					try {
-						dao.update(nd);
-					} catch (SpagoBIDOAException e) {
-						jo.append("errors", "sbi.crossnavigation.error.notExists");
-					}
+					// try {
+					dao.update(nd);
+					// } catch (SpagoBIDOAException e) {
+					// jo.append("errors", "sbi.crossnavigation.error.notExists");
+					// }
 				}
 			}
 		} catch (Exception e) {
+			logger.error("Error while saving Cross Navigation", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
-		return jo.toString();
+		return Response.ok().build();
 	}
 
 	@POST
 	@Path("/remove")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
-	public String remove(@Context HttpServletRequest req) {
-		JSONObject jo = new JSONObject();
+	public Response remove(@Context HttpServletRequest req) {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			JSONObject o = new JSONObject(requestVal);
@@ -133,6 +133,6 @@ public class CrossNavigationService {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
-		return jo.toString();
+		return Response.ok().build();
 	}
 }

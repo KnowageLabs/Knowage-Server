@@ -26,17 +26,23 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				loadingSpinner : false,
 				loadNavigationList : function(){
 					ctr.navigationList.loadingSpinner = true;
-					sbiModule_restServices.get('1.0/crossNavigation/listNavigation', "", null).success(function(data) {
+					sbiModule_restServices.promiseGet('1.0/crossNavigation/listNavigation', "", null)
+					.then(function(response) {
 						ctr.navigationList.loadingSpinner = false;
-						ctr.list = data;
-					}).error(function(){ctr.navigationList.loadingSpinner = false;});
+						ctr.list = response.data;
+					},function(response){
+						ctr.navigationList.loadingSpinner = false;
+					});
 				},
 				loadSelectedNavigation : function(item){
 					ctr.detailLoadingSpinner = true;
-					sbiModule_restServices.get('1.0/crossNavigation/'+item.id+'/load', "", null).success(function(data) {
+					sbiModule_restServices.promiseGet('1.0/crossNavigation/'+item.id+'/load', "", null)
+					.then(function(response) {
+						var data = response.data;
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
-						ctr.detail.title = data.simpleNavigation.name;
+					},function(response){
+						console.log(response);
 					});
 				},
 				dsSpeedMenu :  [{
@@ -45,13 +51,12 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
                 	action : function(item, event){ctr.navigationList.removeItem(item, event);}
                 }],
                 removeItem : function(item, event){
-					sbiModule_restServices.post('1.0/crossNavigation/remove', "", "{'id':"+item.id+"}").success(function(data) {
-						if(data.hasOwnProperty("errors")){
-							$scope.showActionOK("sbi.crossnavigation.remove.ko");
-						}else{
-							$scope.showActionOK("sbi.crossnavigation.remove.ok");
-							ctr.navigationList.loadNavigationList();
-						}
+					sbiModule_restServices.promisePost('1.0/crossNavigation/remove', "", "{'id':"+item.id+"}")
+					.then(function(response) {
+						ctr.navigationList.loadNavigationList();
+						$scope.showActionOK("sbi.crossnavigation.remove.ok");
+					},function(response){
+						$scope.showActionOK("sbi.crossnavigation.remove.ko");
 					});
 				}
 			};
@@ -62,51 +67,76 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				ctr.detail = newRecord();
 			};
 			ctr.saveFunc = function(){
-				sbiModule_restServices.post('1.0/crossNavigation/save', "", ctr.detail).success(
-					function(data,status,headers,config){
-						if(data.hasOwnProperty("errors")){
-							$scope.showActionOK(data.errors);
-						}else{
-							$scope.showActionOK("sbi.crossnavigation.save.ok");
-							ctr.navigationList.loadNavigationList();
-						}
-					}
-				);
+				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
+				.then(function(response){
+					$scope.showActionOK("sbi.crossnavigation.save.ok");
+					ctr.navigationList.loadNavigationList();
+					ctr.detail = newRecord();
+				},function(response){
+					$scope.showActionOK(response.data.errors);
+				});
 			};
 			ctr.cancelFunc = function(){
 				ctr.detail = newRecord();
 			};
 			
-			
-
-			ctr.listDocuments = function(source){
-				ctr.clickOnSelectedDoc = function(item, listId, closeDialog){
-					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
-					if(source=='A'){
-						ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
-					}else{
-						ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
+			function loadInputParameters(documentLabel,callbackFunction){
+				sbiModule_restServices.promiseGet('2.0/documents/'+documentLabel+'/parameters', "", null)
+				.then(function(response) {
+					var data = response.data;
+					var parameters = [];
+					for(var i=0;i<data.length;i++){
+						parameters.push({'id':data[i].id,'name':data[i].label,'type':1});
 					}
-					sbiModule_restServices.get('2.0/documents/'+item.DOCUMENT_NAME+'/parameters', "", null).success(function(data) {
-						var parameters = [];
-						for(var i=0;i<data.length;i++){
-							parameters.push({'id':data[i].id,'name':data[i].label,'type':'input'});
-						}
-						if(source=='A'){
-							ctr.detail.fromPars = parameters;
-						}else{
-							ctr.detail.toPars = parameters;
-						}
+					callbackFunction(parameters);
+				},function(response){});
+			}
+			
+			function loadOutputParameters(documentId,callbackFunction){
+				sbiModule_restServices.promiseGet('2.0/documents/'+documentId+'/listOutParams', "", null)
+				.then(function(response) {
+					var data = response.data;
+					var parameters = [];
+					for(var i=0;i<data.length;i++){
+						parameters.push({'id':data[i].id,'name':data[i].name,'type':0});
+					}
+					callbackFunction(parameters);
+				},function(response){});
+			}
+			
+			ctr.listLeftDocuments = function(){
+				ctr.listDocuments(function(item, listId, closeDialog){
+					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
+					ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
+					loadInputParameters(item.DOCUMENT_NM,function(data){
+						ctr.detail.fromPars = data;
+						loadOutputParameters(item.DOCUMENT_ID,function(data){
+							ctr.detail.fromPars = ctr.detail.fromPars.concat(data);
+							closeDialog();
+						});
+					});
+				});
+			};
+			
+			ctr.listRightDocuments = function(){
+				ctr.listDocuments(function(item, listId, closeDialog){
+					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
+					ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
+					loadInputParameters(item.DOCUMENT_NM,function(data){
+						ctr.detail.toPars = data;
 						closeDialog();
 					});
-				};
+				});
+			};
+			
+			ctr.listDocuments = function(clickOnSelectedDocFunction){
 				$mdDialog.show({
 					controller: DialogController,
 					templateUrl: 'dialog1.tmpl.html',
 					parent: angular.element(document.body),
 					clickOutsideToClose:false,
 					locals: {
-						clickOnSelectedDoc: ctr.clickOnSelectedDoc
+						clickOnSelectedDoc: clickOnSelectedDocFunction
 					}
 				});
 				
@@ -121,7 +151,6 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						scope.listDoc = data.item;
 					});
 				}
-				
 			};
 			
 			ctr.treeOptions = {

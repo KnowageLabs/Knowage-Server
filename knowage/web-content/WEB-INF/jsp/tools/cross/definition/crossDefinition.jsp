@@ -44,7 +44,7 @@
     </div>
 	<span flex class="flex"></span>
     <div >
-        {{par.type}}
+        {{(par.type==1?translate.load('sbi.crossnavigation.input'):translate.load('sbi.crossnavigation.output'))}}
     </div>
 </div>
 </script>
@@ -55,7 +55,7 @@
     </div>
 	<span flex class="flex"></span>
     <div >
-        {{par.type}}
+        {{(par.type==1?translate.load('sbi.crossnavigation.input'):translate.load('sbi.crossnavigation.output'))}}
     </div>
   </div>
   <ol ui-tree-nodes="" ng-model="par.links" ng-class="{hidden: collapsed}" ng-if="!par.links.length" >
@@ -120,7 +120,7 @@
 			</div>
 		</list>
 		
-        <detail label="ctrl.detail.title || ''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+        <detail label="ctrl.detail.simpleNavigation?ctrl.detail.simpleNavigation.name:''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">
@@ -138,7 +138,7 @@
 						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fromDoc" readonly>
 						</md-input-container>
-						<md-button ng-click="ctrl.listDocuments('A')" class="md-fab" > 
+						<md-button ng-click="ctrl.listLeftDocuments()" class="md-fab" > 
 							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon" >
 							</md-icon> 
 						</md-button>
@@ -148,7 +148,7 @@
 						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.toDoc" readonly> </md-input-container>
 						</md-input-container>
-						<md-button ng-click="ctrl.listDocuments('B')" class="md-fab" > 
+						<md-button ng-click="ctrl.listRightDocuments()" class="md-fab" > 
 							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon">
 							</md-icon> 
 						</md-button>
