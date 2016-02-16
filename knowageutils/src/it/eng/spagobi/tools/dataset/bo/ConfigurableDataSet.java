@@ -131,7 +131,13 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 				dataProxy.setStatement(stm);
 			}
 			
-			dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
+			if(maxResults==-1){
+				logger.debug("It's a load data without pagination so don't count the number of values");
+				dataProxy.setCalculateResultNumberOnLoad(false);
+			}else{
+				dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
+			}
+			
 	
 			dataStore = dataProxy.load(dataReader); 
 	

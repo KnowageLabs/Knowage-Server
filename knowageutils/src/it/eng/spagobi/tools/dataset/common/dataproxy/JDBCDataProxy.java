@@ -115,40 +115,39 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
 
-			boolean inlineViewStrategyUsedSuccessfully = false;
+			boolean notCountingStrategyUsedSuccessfully = false;
 			int resultNumber = -1;
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
-					// try to calculate the query total result number using
-					// inline view
-					if (dialect.contains("hbase") || dialect.contains("hive")) {
-						resultNumber = getResultNumber(resultSet);
-					} else {
+					
+					//if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
+					if(!SqlUtils.isHiveLikeDialect(dialect)){
+						// try to calculate the query total result number using
+						// inline view
 						resultNumber = getResultNumber(connection);
-					}
-
-					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-					// ok, no need to ask the datareader to calculate the query
-					// total result number
-					dataReader.setCalculateResultNumberEnabled(false);
-					inlineViewStrategyUsedSuccessfully = true;
+						logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+						// ok, no need to ask the datareader to calculate the query
+						// total result number
+						dataReader.setCalculateResultNumberEnabled(false);
+						notCountingStrategyUsedSuccessfully = true;
+					}else{
+						logger.debug("It's a BigData datasource so count data iterating result set till max ");
+						dataReader.setCalculateResultNumberEnabled(true);
+					}					
 				} catch (Throwable t) {
-					logger.warn("Error while try to get query total result number using inline view stategy", t);
-					// something went wrong, we need to ask the datareader to
-					// calculate the query total result number
-					try {
-
-						logger.debug("Calculation of result set total number for Hive query language : resultNumber = " + resultNumber);
-						// ok, no need to ask the datareader to calculate the
-						// query total result number
+					logger.debug("KO Calculation of result set total number using inlineview",t);
+					try{
+						logger.debug("Loading data using scrollable resultse tecnique");
+						resultNumber = getResultNumber(resultSet);
+						logger.debug("OK data loaded using scrollable resultse tecnique : resultNumber = " + resultNumber);
+						dataReader.setCalculateResultNumberEnabled(false);
+						notCountingStrategyUsedSuccessfully = true;
+					}catch (SQLException e){
+						logger.debug("KO data loaded using scrollable resultse tecnique",e );
 						dataReader.setCalculateResultNumberEnabled(true);
-						inlineViewStrategyUsedSuccessfully = false;
-
-					} catch (Throwable th) {
-						dataReader.setCalculateResultNumberEnabled(true);
+						
 					}
-
 				}
 			} else {
 				logger.debug("Calculation of result set total number is NOT enabled");
@@ -163,7 +162,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
 
-			if (inlineViewStrategyUsedSuccessfully) {
+			if (notCountingStrategyUsedSuccessfully) {
 				dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
 			}
 
@@ -199,7 +198,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return resultNumber;
 	}
 
-	protected int getResultNumber(ResultSet resultSet) throws Exception {
+	protected int getResultNumber(ResultSet resultSet) throws SQLException {
 		logger.debug("IN");
 
 		int rowcount = 0;
