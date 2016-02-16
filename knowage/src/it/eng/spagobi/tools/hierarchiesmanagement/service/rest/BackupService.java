@@ -88,18 +88,23 @@ public class BackupService {
 					columnsBuffer.append(column + sep);
 				}
 			}
+
 			String columns = columnsBuffer.toString();
+			// clean eventual last ','
+			if (columns.trim().endsWith(","))
+				columns = columns.substring(0, columns.lastIndexOf(","));
 			String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
 			databaseConnection = dataSource.getConnection();
 			Statement stmt = databaseConnection.createStatement();
+			boolean doUpdateRelationsMT = false;
 
 			if (!hierarchyNameNew.equalsIgnoreCase(hierarchyNameOrig)) {
 				// if the name is changed check its univocity
-				String selectQuery = "SELECT count(*) as num FROM " + hierarchyTable + " WHERE  HIER_NM = " + hierNameColumn + "= ?";
+				String selectQuery = "SELECT count(*) as num FROM " + hierarchyTable + " WHERE  HIER_NM = ? ";
 
 				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
-				selectPs.setString(1, hierNameColumn);
+				selectPs.setString(1, hierarchyNameNew);
 				ResultSet rs = selectPs.executeQuery();
 
 				if (rs.next()) {
@@ -109,7 +114,7 @@ public class BackupService {
 						throw new SpagoBIServiceException("", "A hierarchy with name " + hierarchyNameNew + "  already exists. Change name.");
 					}
 				}
-
+				doUpdateRelationsMT = true;
 			}
 			String updateQuery = "UPDATE " + hierarchyTable + " SET " + columns + " WHERE " + hierNameColumn + "= ?";
 			logger.debug("The update query is [" + updateQuery + "]");
@@ -125,10 +130,28 @@ public class BackupService {
 			for (String key : lstFields.keySet()) {
 				String value = lstFields.get(key);
 				updatePs.setObject(pos, value);
+				pos++;
 			}
+
+			// set the key placeholder
+			updatePs.setObject(pos, hierarchyNameOrig);
 
 			updatePs.executeUpdate();
 			logger.debug("Update query executed!");
+
+			if (doUpdateRelationsMT) {
+				// update the HIER_NM_T to mantein the correct relations (if there are some records into the HIER_MASTER_TECHNICAL with the original name)
+				String columnNmT = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
+				String updateQueryRel = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + columnNmT + " = ? WHERE " + columnNmT + "= ?";
+				logger.debug("The update query of relations is [" + updateQuery + "]");
+
+				PreparedStatement updatePsRel = databaseConnection.prepareStatement(updateQueryRel);
+				updatePsRel.setObject(1, hierarchyNameNew);
+				updatePsRel.setObject(2, hierarchyNameOrig);
+
+				updatePsRel.executeUpdate();
+				logger.debug("Update query on realtions MT executed!");
+			}
 
 			// end transaction
 			logger.debug("Executing commit. End transaction!");
