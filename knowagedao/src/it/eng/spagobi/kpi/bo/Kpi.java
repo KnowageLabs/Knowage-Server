@@ -1,7 +1,7 @@
-package it.eng.spagobi.kpi.model.bo;
+package it.eng.spagobi.kpi.bo;
 
 
-public class KPI {
+public class Kpi {
 
 	private Integer id;
 	private String name;

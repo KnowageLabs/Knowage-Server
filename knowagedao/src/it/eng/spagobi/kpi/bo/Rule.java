@@ -1,4 +1,4 @@
-package it.eng.spagobi.kpi.model.bo;
+package it.eng.spagobi.kpi.bo;
 
 import java.util.List;
 
