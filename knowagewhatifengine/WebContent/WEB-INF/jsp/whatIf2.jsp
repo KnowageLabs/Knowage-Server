@@ -14,7 +14,7 @@
 <title>OLAP</title>
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
-	var test = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
+	var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
 	
 </script>
 </head>

@@ -1,11 +1,11 @@
 <div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 
-			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true" ng-drag-data="column">
+			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true" ng-drag-data="column" ng-drag-success="dragSuccess('left',$index)">
 				<div class="name">
 					<div class="rotate-text">{{column.name}}</div>
 				</div>	
 				<div class="action">
-					<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e)">
+					<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
 						<md-icon md-font-icon="fa fa-filter"></md-icon>
 					</md-button>
 				</div>

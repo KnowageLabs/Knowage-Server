@@ -10,7 +10,7 @@
 
 @-moz-document url-prefix() { 
   .top-alignment {
-     height:15%;
+     height:35%;
   }
 }
 
@@ -73,9 +73,11 @@
 }
 
 .main-toolbar-button{
-	min-width:0px;
+	min-width:32px;
 	min-height:0px;
 	height:32px;
+	background-position:center;
+	background-repeat: no-repeat;
 }
 .dimension-top-toolbar{
     border-radius: 0px 7px 7px 0px;
@@ -258,4 +260,9 @@ table tr:nth-child(even) {
   height:auto;
   top:1em; /* (line-height/2) */
   bottom:0;
+}
+
+.mdx-dialog{
+	padding-left: 32px;
+	padding-right: 32px;
 }

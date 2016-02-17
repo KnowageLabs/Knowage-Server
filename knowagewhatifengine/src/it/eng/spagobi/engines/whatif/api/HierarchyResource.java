@@ -13,6 +13,33 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.olap4j.OlapException;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.Property.StandardMemberProperty;
+import org.pivot4j.PivotModel;
+import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.PlaceMembersOnAxes;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
@@ -24,29 +51,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-
-import org.apache.log4j.Logger;
-import org.olap4j.OlapException;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
-import org.olap4j.metadata.Property.StandardMemberProperty;
-import org.pivot4j.PivotModel;
-import org.pivot4j.transform.ChangeSlicer;
-import org.pivot4j.transform.PlaceMembersOnAxes;
 
 @Path("/1.0/hierarchy")
 public class HierarchyResource extends AbstractWhatIfEngineService {
@@ -197,6 +201,111 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
 		}
 
+	}
+
+	@GET
+	@Path("/{hierarchy}/filtertree2/{axis}")
+	@Produces("text/html; charset=UTF-8")
+	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+			@PathParam("axis") int axis) {
+		Hierarchy hierarchy = null;
+
+		List<Member> list = new ArrayList<Member>();
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+
+		logger.debug("Getting the hierarchy " + hierarchyUniqueName + "from the cube");
+		try {
+			NamedList<Hierarchy> hierarchies = model.getCube().getHierarchies();
+			for (int i = 0; i < hierarchies.size(); i++) {
+				String hName = hierarchies.get(i).getUniqueName();
+				if (hName.equals(hierarchyUniqueName)) {
+					hierarchy = hierarchies.get(i);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logger.debug("Error getting the hierarchy " + hierarchy, e);
+			throw new SpagoBIEngineRuntimeException("Error getting the hierarchy " + hierarchy, e);
+		}
+
+		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
+		Level l = hierarchy.getLevels().get(0);
+		System.out.println(hierarchy.getLevels().size());
+		try {
+			list = l.getMembers();
+			for (int i = 0; i < list.size(); i++) {
+				nodes.add(new NodeFilter(list.get(i)));
+			}
+		} catch (OlapException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		JSONArray serializedobject = new JSONArray();
+
+		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+			NodeFilter nodeFilter = (NodeFilter) iterator.next();
+			try {
+				serializedobject.put(nodeFilter.serialize());
+			} catch (JSONException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			return serializedobject.toString();
+		} catch (Exception e) {
+			logger.error("Error serializing the MemberEntry", e);
+			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
+		}
+
+	}
+
+	private class NodeFilter {
+		private String id;
+		private String name;
+		private boolean collapsed;
+		private List<NodeFilter> children;
+
+		public NodeFilter(Member m) throws OlapException {
+			super();
+
+			this.id = m.getUniqueName();
+			this.name = m.getCaption();
+			this.collapsed = false;
+			this.children = new ArrayList<HierarchyResource.NodeFilter>();
+
+			if (m != null) {
+				List<Member> list = (List<Member>) m.getChildMembers();
+				if (list != null && list.size() > 0) {
+					for (int i = 0; i < list.size(); i++) {
+						NodeFilter nf = new NodeFilter(list.get(i));
+						children.add(nf);
+					}
+				}
+			}
+		}
+
+		public JSONObject serialize() throws JSONException {
+			JSONObject obj = new JSONObject();
+			obj.put("id", id);
+			obj.put("name", name);
+			obj.put("collapsed", collapsed);
+
+			JSONArray children = new JSONArray();
+			// obj.put("children", children);
+
+			for (Iterator iterator = this.children.iterator(); iterator.hasNext();) {
+				NodeFilter nodeFilter = (NodeFilter) iterator.next();
+				// obj.put("children", nodeFilter.serialize());
+				children.put(nodeFilter.serialize());
+			}
+
+			obj.put("children", children);
+			return obj;
+		}
 	}
 
 	private List<SbiVersion> getVersions() {

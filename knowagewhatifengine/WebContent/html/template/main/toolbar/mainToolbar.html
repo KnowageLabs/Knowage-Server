@@ -6,21 +6,20 @@
 		
 		<md-button class="groupX right">Replace</md-button>
 		
-		<md-button class="fa fa-certificate main-toolbar-button" ng-repeat="btn in toolbarButtons">
-			
+		<md-button class="main-toolbar-button {{btn.img}}" ng-repeat="btn in toolbarButtons">
 			<md-tooltip md-direction="bottom">
-				{{btn}}
+				{{btn.tooltip}}
 			</md-tooltip>
 		</md-button>
 		
-		<md-button ng-click="openMdxQueryDialog(e)">
+		<md-button class="main-toolbar-button" ng-click="openMdxQueryDialog(e)">
 			Send MDX
 			<md-tooltip md-direction="bottom">
 				Send MDX
 			</md-tooltip>
 		</md-button>
 		
-		<md-button ng-click="openShowMdxDialog(e)">
+		<md-button ng-click="openShowMdxDialog(e)" class="main-toolbar-button">
 			Show MDX
 			<md-tooltip md-direction="bottom">
 				Show MDX
