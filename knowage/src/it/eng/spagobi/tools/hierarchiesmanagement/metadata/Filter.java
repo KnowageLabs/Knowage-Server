@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.hierarchiesmanagement.metadata;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -32,7 +33,7 @@ public class Filter {
 	String name;
 	String type;
 	String defaultValue;
-	LinkedHashMap<String, String> conditions;
+	HashMap<String, String> conditions;
 
 	/**
 	 * @param name
@@ -74,11 +75,11 @@ public class Filter {
 		this.defaultValue = defaultValue;
 	}
 
-	public LinkedHashMap<String, String> getConditions() {
+	public HashMap<String, String> getConditions() {
 		return conditions;
 	}
 
-	public void setConditions(LinkedHashMap<String, String> conditions) {
+	public void setConditions(HashMap<String, String> conditions) {
 		this.conditions = conditions;
 	}
 

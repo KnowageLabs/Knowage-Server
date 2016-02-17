@@ -53,6 +53,7 @@ public class HierarchyConstants {
 	public final static String FILTER = "FILTER";
 	public final static String FILTER_NAME = "NAME";
 	public final static String FILTER_TYPE = "TYPE";
+	public final static String FILTER_VALUE = "VALUE";
 	public final static String FILTER_DEFAULT = "DEFAULT";
 	public final static String FILTER_CONDITION = "CONDITION";
 

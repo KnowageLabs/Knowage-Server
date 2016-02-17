@@ -131,7 +131,13 @@ public class HierarchyMasterService {
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
 			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
+			String optionalFilters = (requestVal.isNull("optionalFilter")) ? null : requestVal.getString("optionalFilter");
 
+			// ONLY FOR TEST
+			// optionalFilters =
+			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
+			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
+			// FINE TEST
 			if ((dimensionLabel == null) || (validityDate == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
 			}
@@ -164,8 +170,8 @@ public class HierarchyMasterService {
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
 
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, filterDate, filterHierarchy,
-					filterHierType, hierTableName, prefix);
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
+					filterHierarchy, filterHierType, hierTableName, prefix);
 
 			dbConnection.setAutoCommit(false);
 

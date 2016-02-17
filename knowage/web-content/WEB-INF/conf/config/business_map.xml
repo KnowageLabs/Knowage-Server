@@ -94,6 +94,7 @@
 		<MAP_REST_SERVICE serviceUrl="/dimensions" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/dimensions/getDimensions" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionMetadata" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionFilterMetadata" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionData" businessProcess="HierarchiesManagement" />		
 		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getHierarchyTree" businessProcess="HierarchiesManagement" />

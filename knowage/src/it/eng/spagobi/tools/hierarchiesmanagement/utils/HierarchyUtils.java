@@ -2,6 +2,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement.utils;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -296,12 +297,84 @@ public class HierarchyUtils {
 		return convertedDate;
 	}
 
+	/**
+	 * Return a 'fixed' condition for test validity post the input date (used by trees)
+	 *
+	 * @param dataSource
+	 * @param filterDate
+	 * @param beginDtColumn
+	 * @return String with condition
+	 */
 	public static String createDateAfterCondition(IDataSource dataSource, String filterDate, String beginDtColumn) {
 
 		String fDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
 		String dateAfterCondition = " AND " + beginDtColumn + " >= " + fDateConverted;
 
 		return dateAfterCondition;
+
+	}
+
+	/**
+	 * Return a condition for test validity on a date (used by dimension OPTIONAL filters)
+	 *
+	 * @param dataSource
+	 * @param filterConditions
+	 *            : an hashmap with one or more conditions that will added on the input date
+	 * @param filterValue
+	 *            : the value of the date to test
+	 * @return String with conditions
+	 */
+	public static String createDateFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
+		String toReturn = "";
+		String fDateConverted = HierarchyUtils.getConvertedDate(filterValue, dataSource);
+
+		for (int c = 1; c <= filterConditions.size(); c++) {
+			String condition = filterConditions.get(HierarchyConstants.FILTER_CONDITION + c);
+			toReturn += " AND " + condition + " " + fDateConverted;
+		}
+		return toReturn;
+
+	}
+
+	/**
+	 * Return a condition for test validity on a string (used by dimension OPTIONAL filters)
+	 *
+	 * @param dataSource
+	 * @param filterConditions
+	 *            : an hashmap with one or more conditions that will added on the input value
+	 * @param filterValue
+	 *            : the string value to test
+	 * @return String with conditions
+	 */
+	public static String createStringFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
+		String toReturn = "";
+
+		for (int c = 1; c <= filterConditions.size(); c++) {
+			String condition = filterConditions.get(HierarchyConstants.FILTER_CONDITION + c);
+			toReturn += " AND " + condition + " '" + filterValue + "'";
+		}
+		return toReturn;
+
+	}
+
+	/**
+	 * Return a condition for test validity on a number (used by dimension OPTIONAL filters)
+	 *
+	 * @param dataSource
+	 * @param filterConditions
+	 *            : an hashmap with one or more conditions that will added on the input value
+	 * @param filterValue
+	 *            : the numeric value to test
+	 * @return String with conditions
+	 */
+	public static String createNumberFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
+		String toReturn = "";
+
+		for (int c = 1; c <= filterConditions.size(); c++) {
+			String condition = filterConditions.get(HierarchyConstants.FILTER_CONDITION + c);
+			toReturn += " AND " + condition + " " + filterValue;
+		}
+		return toReturn;
 
 	}
 
@@ -352,13 +425,13 @@ public class HierarchyUtils {
 	}
 
 	public static IDataStore getDimensionDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
-			String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
+			String optionalFilter, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
 
 		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
 		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
 
-		// 2 - execute query to get dimension data
-		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, filterDate, filterHierarchy,
+		// 1 - execute query to get dimension data
+		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterHierarchy,
 				filterHierType, hierTableName, dimFilterField, hierFilterField);
 
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
@@ -380,7 +453,7 @@ public class HierarchyUtils {
 	}
 
 	private static String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
-			String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField, String hierFilterField) {
+			String optionalFilter, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField, String hierFilterField) {
 
 		logger.debug("START");
 
@@ -413,10 +486,40 @@ public class HierarchyUtils {
 
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
 
-		if (filterDate != null) {
-			logger.debug("Filter date is [" + filterDate + "]");
+		if (optionalFilter != null) {
+			logger.debug("Optional Filters are [" + optionalFilter + "]");
 
-			query.append(HierarchyUtils.createDateAfterCondition(dataSource, filterDate, beginDtColumn));
+			// get optional filters and add them to the query
+			JSONObject filtersJSONObject = ObjectUtils.toJSONObject(optionalFilter);
+			try {
+				JSONArray filtersJSONArray = (!filtersJSONObject.isNull(HierarchyConstants.DIM_FILTERS)) ? ObjectUtils.toJSONArray(filtersJSONObject
+						.get(HierarchyConstants.DIM_FILTERS)) : null;
+				for (int i = 1; i <= filtersJSONArray.length(); i++) {
+					JSONObject filter = filtersJSONArray.getJSONObject(i - 1);
+					String filterType = (String) filter.get(HierarchyConstants.FILTER_TYPE);
+					String filterValue = (!filter.isNull(HierarchyConstants.FILTER_VALUE)) ? (String) filter.get(HierarchyConstants.FILTER_VALUE) : null;
+					HashMap<String, String> filterCondition = new HashMap<String, String>();
+					int cIdx = 1;
+					while (!filter.isNull(HierarchyConstants.FILTER_CONDITION + cIdx)) {
+						filterCondition.put(HierarchyConstants.FILTER_CONDITION + cIdx, (String) filter.get(HierarchyConstants.FILTER_CONDITION + cIdx));
+						cIdx++;
+					}
+					String filterString = "";
+					if (filterValue != null) {
+						if (filterType.equals(HierarchyConstants.FIELD_TP_STRING)) {
+							filterString = HierarchyUtils.createStringFilterCondition(dataSource, filterCondition, filterValue);
+						} else if (filterType.equals(HierarchyConstants.FIELD_TP_NUMBER)) {
+							filterString = HierarchyUtils.createNumberFilterCondition(dataSource, filterCondition, filterValue);
+						} else if (filterType.equals(HierarchyConstants.FIELD_TP_DATE)) {
+							filterString = HierarchyUtils.createDateFilterCondition(dataSource, filterCondition, filterValue);
+						}
+						query.append(filterString);
+					}
+				}
+			} catch (JSONException je) {
+				logger.error("Error while getting optional filters. Error: " + je);
+				throw new SpagoBIServiceException("An unexpected error occured while deserializing optional filters structure from JSON", je);
+			}
 		}
 
 		if (filterHierarchy != null) {

@@ -184,7 +184,6 @@ public class Hierarchies {
 	 *            the dimension name
 	 * @return the dimension object with all attributes
 	 */
-	@SuppressWarnings("unused")
 	public Dimension getDimension(String dimension) {
 		Dimension toReturn = new Dimension(dimension);
 		SourceBean sb = getTemplate();

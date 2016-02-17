@@ -66,7 +66,7 @@ public class HierarchyService {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
 			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
-			@QueryParam("filterDimension") String filterDimension, @QueryParam("optionDate") String optionDate,
+			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String optionDate,
 			@QueryParam("optionHierarchy") String optionHierarchy, @QueryParam("optionHierType") String optionHierType) {
 		logger.debug("START");
 
@@ -702,24 +702,15 @@ public class HierarchyService {
 
 		HierarchyTreeNode treeNode = null;
 		// first search parent node (with all path)
-		int localLevel = 0;
-		for (Iterator<HierarchyTreeNode> treeIterator = root.iterator(); treeIterator.hasNext();) {
-			localLevel++;
-			Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
-			treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel);
-
-			if (lastLevelFound == null) {
-				break;
-			} else if (treeNode.getKey().equals(lastLevelFound) && localLevel == nodeLevel) {
-				// parent node found
-				break;
+		Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
+		treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel);
+		if ((lastValorizedLevel + 1) == nodeLevel) {
+			// then check if node was already added as a child of this parent
+			if (!treeNode.getChildrensKeys().contains(nodeCode)) {
+				// node not already attached to the level
+				HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+				treeNode.add(aNode, nodeCode);
 			}
-		}
-		// then check if node was already added as a child of this parent
-		if (!treeNode.getChildrensKeys().contains(nodeCode)) {
-			// node not already attached to the level
-			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
-			treeNode.add(aNode, nodeCode);
 		}
 
 		// ONLY FOR DEBUG
