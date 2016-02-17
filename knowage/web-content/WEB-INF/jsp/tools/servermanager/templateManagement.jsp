@@ -16,16 +16,15 @@
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/tree-style.css">
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
+<%-- breadCrumb --%>
+<script type="text/javascript"	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css">
 
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
 <!-- controller -->
-<script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
+<script type="text/javascript"	src="/knowage/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
 
 
 
@@ -33,72 +32,74 @@
 </head>
 <body class="bodyStyle">
 
-	<div ng-controller="Controller " layout="column" layout-wrap layout-fill>
+	<div ng-controller="Controller " layout="column" layout-wrap>
 
-			<md-toolbar  >
-				
-			<div class="md-toolbar-tools">
-				<h2>{{translate.load("sbi.templatemanagemenent");}}</h2>
-				
-			</div>
-			</md-toolbar>
-			<md-content layout="column" layout-wrap flex>
-			<md-input-container class="small counter"> 
-				<p>
-				<h4>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</h4>
+		<md-toolbar class="miniheadimportexport">
+		<div class="md-toolbar-tools">
 
-				</p>
+			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent");}}</h2>
+		</div>
+		</md-toolbar>
+
+
+		<md-content layout="column" layout-wrap >
+		<div >
+			<md-input-container class="small counter">
+				<p><h4>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</h4></p>
 			</md-input-container>
-			<div layout="row" layout-wrap >
-				<div flex= 10>
-				<md-input-container class="small counter"> 
-					<h4>{{translate.load("sbi.templatemanagemenent.choosedate");}}:</h4>
+		</div>
+		<div layout="row" layout-wrap>
+			<div flex=10>
+				<md-input-container class="small counter">
+				<h4>{{translate.load("sbi.templatemanagemenent.choosedate");}}:</h4>
 				</md-input-container>
-				</div>
-				<div flex= 20>
-				  
-					<md-datepicker   ng-model="dateSelected.data" name="Select Data" ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
-					
-				</div>
-				<div flex= 5 class="dialog-demo-content">
-					<md-input-container class="small counter"> 
-						<md-button ng-click="loadDocuments($event)" aria-label="load Documents"
-							class="md-fab md-ExtraMini"  > <md-icon
-							md-font-icon="fa fa-search"  >
-						</md-icon> </md-button>
-					</md-input-container>
-				</div>
-					
 			</div>
-			<div layout="row" layout-wrap>
-			<div flex=60 ng-show="documents.length!=0"><h4>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</h4></div>
-			<div flex= 5 class="dialog-demo-content" style="margin-top:-10px">
-					<md-input-container class="small counter"> 
-						<md-button ng-click="deleteTemplate($event)" aria-label="delete Templates"
-							class="md-fab md-ExtraMini" style="margin-left: -66px; margin-top:14px;background:#153E7E" > <md-icon
-							md-font-icon="fa fa-trash" style=" margin-top: 6px ; color: white;" >
-						</md-icon> </md-button>
-					</md-input-container>
-				</div>
+			<div flex=20>
+				<md-datepicker ng-model="dateSelected.data" name="Select Data"
+					ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+
 			</div>
-			<div id="lista" flex>
-			<div layout="row" layout-wrap>
-				<div ng-show="flagSelect">
-				<md-checkbox  ng-show="flagSelect" ng-checked="flagCheck" ng-click="selectAll()">Select All</md-checkbox>
-				</div>
-			</div>
-			<div layout="row" layout-wrap ng-repeat="doc in documents">
-								
-				<md-checkbox ng-checked="exists(doc, docChecked)"
-					ng-click="toggle(doc, docChecked)"> {{ doc.name }} </md-checkbox>
-		
-			</div>
-			
+			<div flex=5 class="dialog-demo-content">
+				<md-input-container class="small counter"> <md-button
+					ng-click="loadDocuments($event)" aria-label="load Documents"
+					class="md-fab md-ExtraMini"> <md-icon
+					md-font-icon="fa fa-search"> </md-icon> </md-button> </md-input-container>
 			</div>
 
-			
+		</div>
+		<div layout="row" layout-wrap  ng-show="documents.length!=0">
+			<div flex=60>
+				<h4>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</h4>
+			</div>
+			<div flex=5 class="dialog-demo-content">
+				<md-input-container class="small counter"> <md-button
+					ng-click="deleteTemplate($event)" aria-label="delete Templates"
+					class="md-fab md-ExtraMini">
+				<md-icon md-font-icon="fa fa-trash"> </md-icon> </md-button> </md-input-container>
+			</div>
+		</div>
+			<div id="lista"  ng-show="documents.length!=0" >
+			<document-tree ng-model="tree" id="impExpTree" create-tree="true"
+										selected-item="docChecked" multi-select="true" show-files="true">
+									</document-tree>
+	<!-- 	<div layout="row" layout-wrap>
+				<div>
+					<md-checkbox ng-checked="flagCheck" ng-click="selectAll()">{{translate.load("sbi.importusers.selectall");}}</md-checkbox>
+				</div>
+			</div>
+			<div layout="row" layout-wrap flex>
+				<div flex="90" ng-repeat="doc in documents">
+					<md-checkbox ng-checked="exists(doc, docChecked)"
+						ng-click="toggle(doc, docChecked)"> {{ doc.name }}</md-checkbox>
+
+				</div>
+
+			</div> -->	
+	</div>
+
+
 	</md-content>
-	
+
 	</div>
 
 </body>

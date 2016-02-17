@@ -116,7 +116,7 @@
 				<md-tab	id="userImportTab"  >
 					<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 					<md-tab-body> 
-					<md-content ng-controller="userImportController" layout="column" layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
+					<md-content ng-controller="userImportController"  layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
 						<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'>
 						</bread-crumb>
 

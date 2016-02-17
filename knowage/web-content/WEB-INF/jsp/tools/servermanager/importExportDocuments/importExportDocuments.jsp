@@ -108,7 +108,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		  	<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
 				  <md-card>
-					<md-content ng-controller="importController" layout="column" layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
+					<md-content ng-controller="importController"  layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
 						<bread-crumb
 							ng-model=stepItem item-name='name' selected-index='selectedStep'
 							control='stepControl'>

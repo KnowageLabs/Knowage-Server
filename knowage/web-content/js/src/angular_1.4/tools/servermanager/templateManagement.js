@@ -1,17 +1,19 @@
 var app = angular.module('templateManagement', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
+                                               'angular_list', 'angular_table' ,'document_tree','sbiModule','componentTreeModule', 'angular_2_col']);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
 	'blue-grey');
 });
+
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
     $mdThemingProvider.theme('knowage')
 
 $mdThemingProvider.setDefaultTheme('knowage');
 }]);
+
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
 
 
@@ -28,20 +30,36 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.flagCheck=false;
 	$scope.flagSelect=false;
 	$scope.confirm="";
-	
-	
+	$scope.folders=[];
+	$scope.tree=[];
 	
 	
 	$scope.loadDocuments = function(ev){
 		if($scope.data_format){
 			//get the date selected
-		
+			sbiModule_restServices.get("2.0", "folders","includeDocs=true").success(function(data){
+				//if not errors in response, copy the data
+				if (data.errors === undefined){
+					$scope.folders=angular.copy(data);
+					$scope.tree = angular.copy(data);
+					$scope.createTree();
+					console.log("folder",$scope.folders);
+				}else{
+					$scope.folders=[];
+				}
+			}).error(function(data, status){
+				$scope.folders=[];
+				$scope.tree=[];
+				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
+			});
+			
 			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("layer non Ottenuti");
 							$scope.flagSelect=false;
 						} else {
+							
 							$scope.documents=data;
 							$scope.flagSelect=true;
 						}
@@ -51,12 +69,43 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						console.log("layer non Ottenuti " + status);
 					})
 					$scope.parseDate();
+			
+			
+			
+			
 		}else{
 			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
 		}
 		
 	}
-	
+	$scope.createTree = function(){
+		for(var i=0;i<$scope.folders.length;i++){
+			$scope.tree[i].biObjects=[];
+			if($scope.folders[i]["biObjects"].length!=0){
+				for(var j=0;j<$scope.folders[i]["biObjects"].length;j++){
+					for(var k=0;k<$scope.documents.length;k++){
+					if($scope.folders[i]["biObjects"][j].name==$scope.documents[k].name){
+						$scope.tree[i].biObjects.push($scope.folders[i]["biObjects"][j]);
+					}
+					}
+				}
+			}
+		}
+	}
+	  $scope.indexInList=function(item, list) {
+
+			for (var i = 0; i < list.length; i++) {
+				for(var j=0;j< list[i]["biObjects"].length;j++){
+					var object = list[i]["biObjects"][j];
+					if(object.name==item.name){
+						return i;
+					}
+				}
+
+			}
+
+			return -1;
+		};
 	$scope.parseDate = function(){
 		//parse the date in the format yyyy-mm-gg
 		if($scope.dateSelected.data){
@@ -95,7 +144,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				
 				 var request = [];
 					for(var i=0;i<$scope.docChecked.length;i++){
-						var obj={id:$scope.docChecked[i], data:$scope.data_format};
+						var obj={id:$scope.docChecked[i]["id"], data:$scope.data_format};
 						request.push(obj);
 					}
 					sbiModule_restServices.post("template",'deleteTemplate',request).success(
