@@ -18,7 +18,7 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
     columns: [{
         xtype: 'treecolumn',
         dataIndex: 'key',
-        flex: 1
+        flex: 2
     },{
         dataIndex: 'value',
         align: 'left',
