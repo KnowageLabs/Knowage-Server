@@ -15,7 +15,7 @@
         <many-to-one name="sbiOrganizations" class="it.eng.spagobi.commons.metadata.SbiTenant" update="false" insert="false" fetch="select">
             <column name="ORGANIZATION_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiProductType" class="it.eng.spagobi.commons.metadata.SbiProductType" update="false" insert="false" fetch="select">
+        <many-to-one name="sbiProductType" class="it.eng.spagobi.commons.metadata.SbiProductType" lazy="false" update="false" insert="false" fetch="select">
             <column name="PRODUCT_TYPE_ID" not-null="true" />
         </many-to-one>
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
