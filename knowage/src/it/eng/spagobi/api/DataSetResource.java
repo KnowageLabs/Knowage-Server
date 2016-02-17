@@ -764,10 +764,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui Ã¨ possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
-	 *            rifattorizzata al più presto.
+	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset Ã¨ una follia che andrebbe
+	 *            rifattorizzata al piÃ¹ presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -945,13 +945,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		JSONObject labelsJSON = new JSONObject();
 
 		Iterator<String> keys = labels.keys();
-		while(keys.hasNext()){
+		while (keys.hasNext()) {
 			String label = keys.next();
 			try {
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 				dataSetManagementAPI.setUserProfile(getUserProfile());
 				String tableName = dataSetManagementAPI.persistDataset(label);
-				//dataSetManagementAPI.createIndexes(label, new HashSet<String>());
+				// dataSetManagementAPI.createIndexes(label, new HashSet<String>());
 				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
 				if (tableName != null) {
 					labelsJSON.put(label, tableName);
