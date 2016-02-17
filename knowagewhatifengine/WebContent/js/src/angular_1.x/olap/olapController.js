@@ -32,7 +32,15 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.rightPanel = templateRoot + '/right/rightPanel.html';
 	
 	$scope.rows;
+	$scope.maxRows = 5;
+	$scope.topSliderNeeded;
+	$scope.topStart = 0;
+	
 	$scope.columns;
+	$scope.maxCols = 3;
+	$scope.leftSliderNeeded;
+	$scope.leftStart = 0;
+	
 	$scope.toolbarButtons = [];
 	$scope.filterCardList = [];
 	$scope.showMdxVar = "";
@@ -60,6 +68,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	checkShift = function(){
 		$scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters ? true
 				: false;
+		
+		$scope.topSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
+		
+		$scope.leftSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
 	}
 	
 	filterXMLResult = function(res) {
@@ -100,6 +112,22 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.filterCardList[0] = last;
 		}
 
+	}
+	
+	$scope.dimensionShift = function(direction){
+		if(direction == 'left' && $scope.rows.length-1-$scope.topStart >= $scope.maxRows){
+		      $scope.topStart++;      
+	    }
+	    if(direction == 'right' && $scope.topStart>0){
+	      $scope.topStart--;
+	    }
+	    if(direction == 'up' && $scope.columns.length-1-$scope.leftStart >= $scope.maxCols){
+	    	$scope.leftStart++;
+	    }
+	    if(direction == 'down' && $scope.leftStart){
+	    	$scope.leftStart--;
+	    }
+	    
 	}
 	
 	$scope.sendMdxQuery = function(mdx) {

@@ -1,16 +1,30 @@
 <div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+	<div style="min-width:32px; min-height:32px; margin-bottom: 2%;">
+		<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
+			<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
+		</md-button>
+	</div>	
+	
+	<div style="height:calc(100% - 64px);">
+	<div class="filter-toolbar-element-left" ng-repeat="column in columns|limitTo:maxCols:leftStart" ng-drag="true" ng-drag-data="column" ng-drag-success="dragSuccess('left',$index)">
+		<div class="name">
+			<div class="rotate-text">{{column.name}}</div>
+		</div>	
+		<div class="action">
+			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
+				<md-icon md-font-icon="fa fa-filter"></md-icon>
+			</md-button>
+		</div>
+	</div>
+	</div>
+	
 
-			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true" ng-drag-data="column" ng-drag-success="dragSuccess('left',$index)">
-				<div class="name">
-					<div class="rotate-text">{{column.name}}</div>
-				</div>	
-				<div class="action">
-					<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
-						<md-icon md-font-icon="fa fa-filter"></md-icon>
-					</md-button>
-				</div>
-			</div>
+	<div style="min-width:32px;min-height:32px;margin-top: 2%">
+		<md-button style="right:10px;"class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
+		<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
+	</md-button>
 	</div>
-	<div ng-bind-html="table" compile-template>
-		
-	</div>
+</div>
+
+<div ng-bind-html="table" compile-template>		
+</div>

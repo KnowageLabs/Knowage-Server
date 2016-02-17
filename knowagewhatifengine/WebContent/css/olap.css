@@ -90,6 +90,7 @@
 
 .md-toolbar-tools{
     height: 32px;
+    padding:0px !important;
 }
 
 .dialog-toolbar{
@@ -116,6 +117,7 @@
   border-radius:5px; 
   border:2px solid white;
   margin-right: 10px;
+  margin-top:2%;
   cursor: pointer;
   font-weight: normal;
   font-size: 15px !important;
@@ -146,7 +148,8 @@
   width: 80%;
   border-radius: 5px;
   margin-left: 4%;
-  margin-top: 4%;
+  margin-top: 2%;
+  margin-bottom:10px;
   font-weight: normal;
   font-size: 15px !important;
   color:white;
