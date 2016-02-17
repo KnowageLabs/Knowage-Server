@@ -19,6 +19,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -67,8 +68,28 @@ public class RestFederationDefinition {
 			logger.debug("OUT");
 			return id;
 		} catch (Exception e) {
-			logger.error("Error saving federation", e);
-			throw new SpagoBIRuntimeException("Error saving federation", e);
+
+			String state = ((SQLException) e.getCause().getCause()).getSQLState();
+			String sqle = ((SQLException) e.getCause().getCause()).getMessage();
+
+			if (state.equals("23000")) {
+
+				if (sqle.contains("LABEL")) {
+					logger.error("Duplicate key endtry while saving federation", e);
+					throw new SpagoBIRuntimeException("There is already a federation with same label", e);
+				} else if (sqle.contains("NAME")) {
+					logger.error("Duplicate key endtry while saving federation", e);
+					throw new SpagoBIRuntimeException("There is already a federation with same name!", e);
+				}
+
+				logger.error("Duplicate key endtry while saving federation", e);
+				throw new SpagoBIRuntimeException("There is already a federation with same label and/or name!", e);
+
+			} else {
+				logger.error("Error saving federation", e);
+				throw new SpagoBIRuntimeException("Error saving federation", e);
+			}
+
 		}
 	}
 
