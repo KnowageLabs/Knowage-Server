@@ -1063,6 +1063,20 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					//Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (measures are not equals)");
 					return false;
 				}
+				
+				/**
+				 * https://production.eng.it/jira/browse/KNOWAGE-149
+				 * When measures come from cockpit charts, there is another prop: orderType.
+				 * So, in order to correctly update the aggregations, if orderType is valorized,
+				 * it's mandatory to check it.
+				 * 
+				 * @author Giorgio Federici (giorgio.federici@eng.it)
+				 */
+				
+				if(Sbi.isValorized(agg1.measures[i].orderType) && Sbi.isValorized(agg2.measures[i].orderType) 
+						&& (agg1.measures[i].orderType != agg2.measures[i].orderType)){
+					return false;
+				}
 			}
 
 			if( (Sbi.isValorized(agg1.categories) && Sbi.isNotValorized(agg2.categories))

@@ -23,7 +23,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class ProjectionCriteria {
 
@@ -33,6 +33,10 @@ public class ProjectionCriteria {
 	String aggregateFunction; // optional aggregate function like SUM, AVG, etc...
 	String aliasName; // alias for the column
 
+	// ORDER field
+	// https://production.eng.it/jira/browse/KNOWAGE-149
+	String orderType;
+
 	public ProjectionCriteria(String dataset, String columnName, String aggregateFunction, String aliasName) {
 		this.dataset = dataset;
 		this.columnName = columnName;
@@ -41,6 +45,18 @@ public class ProjectionCriteria {
 		// this.aliasName = aggregateFunction + "(" + aliasName + ")";
 		// } else {
 		this.aliasName = aliasName;
+		// }
+	}
+
+	public ProjectionCriteria(String dataset, String columnName, String aggregateFunction, String aliasName, String orderType) {
+		this.dataset = dataset;
+		this.columnName = columnName;
+		this.aggregateFunction = aggregateFunction;
+		// if (aggregateFunction != null) {
+		// this.aliasName = aggregateFunction + "(" + aliasName + ")";
+		// } else {
+		this.aliasName = aliasName;
+		this.orderType = orderType;
 		// }
 	}
 
@@ -95,6 +111,14 @@ public class ProjectionCriteria {
 	 */
 	public void setAliasName(String aliasName) {
 		this.aliasName = aliasName;
+	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
 	}
 
 }

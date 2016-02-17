@@ -389,10 +389,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String aliasName = measureObject.getString("alias");
 
+			// https://production.eng.it/jira/browse/KNOWAGE-149
+			String orderTypeFinal = (measureObject.opt("orderType") != null) ? orderTypeFinal = measureObject.opt("orderType").toString().toUpperCase() : null;
+
 			IAggregationFunction function = AggregationFunctions.get(measureObject.getString("funct"));
 			if (function != AggregationFunctions.NONE_FUNCTION) {
 				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), aliasName);
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), aliasName, orderTypeFinal);
 				projectionCriterias.add(aProjectionCriteria);
 			} else {
 				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);

@@ -186,6 +186,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 					serie['columnName'] = chartSeries[i].column;
 					serie['funct'] = Sbi.isValorized(chartSeries[i].groupingFunction) ? chartSeries[i].groupingFunction : 'SUM';
 					serie['alias'] = serie['columnName'] + '_' + serie['funct'];
+					serie['orderType'] = chartSeries[i].orderType;
 					
 					measures.push(serie);					
 				}
