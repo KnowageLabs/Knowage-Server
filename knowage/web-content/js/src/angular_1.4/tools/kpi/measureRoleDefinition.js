@@ -15,16 +15,39 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate){
 	$scope.newMeasureFunction=function(){
 		
 	} 
+	
+	$scope.aliasList=["pippo","pino","pippino"];
 }
  
 function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
-	$scope.dataSourceTable= {
-            users: {name: null, score: null, birthDate: null},
-            countries: {name: null, population: null, size: null}
-          }
+	$scope.dataSourceTable= {};
 	$scope.selectedDatasource={};
+	$scope.dataSourcesIsSelected=false;
 	$scope.datasourcesList=[];
-	$scope.measureQuery="SELECT  usr.name FROM users AS usr WHERE usr.score>100";
+	$scope.measureQuery="SELECT\n\nFROM\n\nWHERE";// "SELECT  usr.name FROM users AS usr WHERE usr.score>100";
+	
+	
+	CodeMirror.registerHelper(
+		    "hint", "alias",
+		    function (mirror, options) {
+//		        CodeMirror.commands.autocomplete(mirror, CodeMirror.hint.ajax, { async: true })
+		    	var cur = mirror.getCursor();
+		        var tok = mirror.getTokenAt(cur);
+		        var start= tok.string.trim()==""? tok.start+1 : tok.start;
+	        	var end= tok.end;
+	        	
+	        	var hintList=[];
+	        	for(var i=0;i< $scope.aliasList.length;i++){
+	        		 if(tok.string.trim()=="" || $scope.aliasList[i].startsWith(tok.string)){
+	        			 hintList.push($scope.aliasList[i]);
+	        		 }
+	        	}
+		        
+		        return {list:hintList, 
+		        	from: CodeMirror.Pos(cur.line,start),
+	                to: CodeMirror.Pos(cur.line, end)}
+		    })
+	
 	$scope.codemirrorOptions = {
 			mode: 'text/x-mysql',
 			indentWithTabs: true,
@@ -34,9 +57,49 @@ function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_re
         autofocus: true,
         theme:"eclipse",
         lineNumbers: true, 
-        extraKeys: {"Ctrl-Space": "autocomplete"},
+        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) }},
         hintOptions: {tables:$scope.dataSourceTable}
 		};
+	
+	
+
+	
+	$scope.keyAssistFunc=function(cm){
+		var isAlias=$scope.isAliasCM(cm);
+        if(isAlias){
+        	CodeMirror.showHint(cm, CodeMirror.hint.alias);
+        }else{
+        	CodeMirror.showHint(cm, CodeMirror.hint.autocomplete);
+        }
+	}
+	
+	$scope.isAliasCM=function(cm){
+		
+		var cursor = cm.getCursor();
+		var token= cm.getTokenAt(cursor);
+		
+		if(token.string.trim()!=""){
+			var tmpCursor=CodeMirror.Pos(cursor.line,token.start);
+			tmpCursor.ch=token.start;
+			token=cm.getTokenAt(tmpCursor);
+		}
+		
+		var beforeCursor=CodeMirror.Pos(cursor.line,token.start);
+		beforeCursor.ch=token.start;
+		var beforeToken=cm.getTokenAt(beforeCursor);
+		
+		if(beforeToken.string.toLowerCase()=="as"){
+			var text= cm.getDoc().getRange(CodeMirror.Pos(0,0),beforeCursor);
+			  var patt = new RegExp("^select ((?!FROM).)* AS$","ig");
+			if(!patt.test(text.replace(/\n/g, " "))){
+				return false;
+			}else{
+				return true;
+			}
+		}
+     return false;
+	}
+	
 	
 	$scope.loadDatasources=function(){
 		sbiModule_restServices.promiseGet("datasources","")
@@ -51,11 +114,14 @@ function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_re
 	$scope.alterDatasource=function(datasrc){
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/"+datasrc)
 		.then(function(response){
+			$scope.dataSourcesIsSelected=true;
 			angular.copy(response.data,$scope.dataSourceTable);
 		},function(response){
 			console.log("errore")
 		});
 	}
+	
+	
 }
 function measureListControllerFunction($scope,sbiModule_translate,$mdDialog){
 	$scope.translate=sbiModule_translate;

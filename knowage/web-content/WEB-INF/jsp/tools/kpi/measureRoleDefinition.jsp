@@ -68,7 +68,7 @@ position:relative
 					          </md-option>
 					        </md-select>
 					     </md-input-container> 
-					    <md-whiteframe class="md-whiteframe-2dp relative" layout-margin flex  >
+					    <md-whiteframe ng-show="dataSourcesIsSelected" class="md-whiteframe-2dp relative" layout-margin flex  >
 							<ui-codemirror class="absolute" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model=measureQuery></ui-codemirror> 
 					     </md-whiteframe>
 					</div>
