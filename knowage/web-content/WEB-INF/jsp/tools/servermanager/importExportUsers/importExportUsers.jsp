@@ -17,6 +17,7 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
  
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
 <!-- controller -->
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/servermanager/userImportExport/importExportUsersController.js"></script>

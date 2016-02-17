@@ -41,7 +41,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<md-toolbar class="miniheadimportexport">
 		<div class="md-toolbar-tools">
 			<i class="fa fa-exchange fa-2x"></i>
-			<h2 class="md-flex">{{translate.load("SBISet.importexport","component_impexp_messages");}}</h2>
+			<h2 class="md-flex">{{translate.load("sbi.impexpdocuments");}}</h2>
 		</div>
 		</md-toolbar>
 

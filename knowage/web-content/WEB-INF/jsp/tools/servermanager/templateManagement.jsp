@@ -20,7 +20,7 @@
 	href="/knowage/themes/glossary/css/tree-style.css">
 <link rel="stylesheet" type="text/css"
 	href="/knowage/themes/glossary/css/generalStyle.css">
-
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
 
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
 <!-- controller -->
@@ -35,7 +35,7 @@
 
 	<div ng-controller="Controller " layout="column" layout-wrap layout-fill>
 
-			<md-toolbar style="font:Roboto; padding:14px;background:#3b678c;font-size:18px;    color: #FFFFFF" >
+			<md-toolbar  >
 				
 			<div class="md-toolbar-tools">
 				<h2>{{translate.load("sbi.templatemanagemenent");}}</h2>
@@ -63,8 +63,8 @@
 				<div flex= 5 class="dialog-demo-content">
 					<md-input-container class="small counter"> 
 						<md-button ng-click="loadDocuments($event)" aria-label="load Documents"
-							class="md-fab md-ExtraMini" style="margin-left: -66px; margin-top:14px;background:#153E7E" > <md-icon
-							md-font-icon="fa fa-search" style=" margin-top: 6px ; color: white;" >
+							class="md-fab md-ExtraMini"  > <md-icon
+							md-font-icon="fa fa-search"  >
 						</md-icon> </md-button>
 					</md-input-container>
 				</div>

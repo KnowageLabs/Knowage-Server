@@ -17,13 +17,8 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css">
 <!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/tree-style.css">
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/generalStyle.css">
 
 
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
 <!-- controller -->
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/servermanager/importExportCatalogController.js"></script>
@@ -43,9 +38,8 @@
 			<h2 class="md-flex" >{{translate.load("sbi.importexportcatalog");}}</h2>
 		</div>
 	</md-toolbar>
-	<md-content layout="column" layout-wrap flex>
-		<md-tabs md-select="ImportExport" flex
-					 md-border-bottom> 
+	<md-content layout="column" layout-wrap flex  class="mainContainer">
+		<md-tabs md-select="ImportExport" layout-fill class="absolute"> 
 				<md-tab label="Export" md-on-select="setTab('Export')"
 					md-active="isSelectedTab('Export')">
 					<md-tab-body>
@@ -92,7 +86,7 @@
 					</md-content>
 					</md-tab-body>
 				</md-tab>
-				<md-tab	label="Import" md-on-select="setTab('Import')"
+				<md-tab	label="Import" md-on-select="setTab('Import')" id="importTab"
 					md-active="isSelectedTab('Import')">
 					<div  layout="column" layout-wrap>
 					<div layout="row" layout-wrap>

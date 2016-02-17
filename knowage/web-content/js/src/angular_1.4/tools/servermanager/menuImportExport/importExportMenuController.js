@@ -15,7 +15,12 @@ app.factory('importExportMenuModule_importConf', function() {
 		}
 	};
 });
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
 app.controller('importExportMenuController', 
 		['sbiModule_download',
 		 'sbiModule_device',

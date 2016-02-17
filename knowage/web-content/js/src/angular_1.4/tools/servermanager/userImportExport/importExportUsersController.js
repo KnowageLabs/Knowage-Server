@@ -20,7 +20,12 @@ app.directive("fileread", [function () {
 	}
 }]);
 
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
 app.factory("importExportDocumentModule_importConf", function() {
 	 var current_data = {}; 
 	 var default_values = {
