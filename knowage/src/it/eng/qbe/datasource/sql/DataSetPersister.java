@@ -2,12 +2,6 @@ package it.eng.qbe.datasource.sql;
 
 import it.eng.spagobi.api.v2.DataSetResource;
 
-
-import java.util.List;
-
-
-
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,17 +17,11 @@ public class DataSetPersister{
 	 * @return
 	 * @throws Exception
 	 */
-	public JSONObject cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
+	public JSONObject cacheDataSets(JSONObject datasetLabels, String userId) throws Exception {
 
-		JSONArray datasetLabelsArray = new JSONArray();
-		
-		for(int i=0; i<datasetLabels.size(); i++){
-			datasetLabelsArray.put(datasetLabels.get(i));
-		}
-		
 		
 		DataSetResource ds = new DataSetResource();
-		String respString = ds.persistDataSets(datasetLabelsArray);
+		String respString = ds.persistDataSets(datasetLabels);
 		
 		
 		JSONObject ja = new JSONObject(respString);

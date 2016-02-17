@@ -168,7 +168,14 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 
 		String userId = (String) dataSourceProperties.get(EngineConstants.ENV_USER_ID);
-		JSONObject datasetLabels = FederationUtils.createDatasetsOnCache(datasetNames, userId);
+		
+		JSONObject datasetLabels = null;
+		try {
+			datasetLabels = FederationUtils.createDatasetsOnCache(federation.getDataSetRelationKeysMap(), userId);
+		} catch (JSONException e1) {
+			logger.error("Error caching the datasets",e1);
+			throw new SpagoBIRuntimeException("Error caching the datasets", e1);
+		}
 		setDataset2CacheTableName(datasetLabels);
 
 		// create the jdbc datasets linked to the tables on cache

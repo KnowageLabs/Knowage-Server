@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
@@ -192,10 +193,12 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		List<IDataSet> originalDataSets = new ArrayList<IDataSet>();
 		List<String> dsLabels = new ArrayList<String>();
+
 		if(dataset!=null){
 			//in case of qbe on a single dataset
 			dsLabels.add(dataset.getLabel());
 			originalDataSets.add(dataset);
+			
 		}else{
 			//in case of qbe on federation
 			Iterator<IDataSet> sourceDatasets = dsf.getSourceDatasets().iterator();
@@ -203,6 +206,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 				IDataSet iDataSet = (IDataSet) sourceDatasets.next();
 				dsLabels.add(iDataSet.getLabel());
 				originalDataSets.add(iDataSet);
+			
 			}
 		}
 
@@ -218,7 +222,13 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		//save in cache the derived datasets
 		logger.debug("Saving the datasets on cache");
 
-		JSONObject datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsLabels, getUserId());
+		JSONObject datasetPersistedLabels= null;
+		try {
+			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserId());
+		} catch (JSONException e1) {
+			logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+			throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+		}
 		for (int i = 0; i < dsLabels.size(); i++) {
 			String dsLabel = dsLabels.get(i);
 			//adds the link between dataset and cached table name
@@ -245,7 +255,6 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		
 		logger.debug("Adding relationships on envinronment");
 		JSONObject relations = dsf.getRelationshipsAsJSONObject();
-
 
 		env.put(EngineConstants.ENV_RELATIONS, relations);
 		env.put(EngineConstants.ENV_DATASET_CACHE_MAP,mapNameTable);

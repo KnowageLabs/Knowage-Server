@@ -52,7 +52,6 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -762,10 +761,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui Ã¨ possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset Ã¨ una follia che andrebbe
-	 *            rifattorizzata al piÃ¹ presto.
+	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
+	 *            rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -937,19 +936,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/list/persist")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String persistDataSets(@QueryParam("labels") JSONArray labels) {
+	public String persistDataSets(@QueryParam("labelsAndKeys") JSONObject labels) {
 		logger.debug("IN");
 
 		JSONObject labelsJSON = new JSONObject();
 
-		for (int i = 0; i < labels.length(); i++) {
-			String label = null;
+		Iterator<String> keys = labels.keys();
+		while(keys.hasNext()){
+			String label = keys.next();
 			try {
-				label = labels.getString(i);
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 				dataSetManagementAPI.setUserProfile(getUserProfile());
 				String tableName = dataSetManagementAPI.persistDataset(label);
-				dataSetManagementAPI.createIndexes(label, new HashSet<String>());
+				//dataSetManagementAPI.createIndexes(label, new HashSet<String>());
 				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
 				if (tableName != null) {
 					labelsJSON.put(label, tableName);

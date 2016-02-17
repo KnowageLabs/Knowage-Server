@@ -8,12 +8,10 @@ package it.eng.qbe.datasource.sql;
 
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientResponse;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -32,19 +30,13 @@ public class DataSetPersister extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public JSONObject cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
+	public JSONObject cacheDataSets(JSONObject datasetLabels, String userId) throws Exception {
 
 		logger.debug("IN");
 
 		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
-		
-		JSONArray datasetLabelsArray = new JSONArray();
-		
-		for(int i=0; i<datasetLabels.size(); i++){
-			datasetLabelsArray.put(datasetLabels.get(i));
-		}
-		
-		parameters.put("labels", datasetLabelsArray);
+
+		parameters.put("labelsAndKeys", datasetLabels);
 
 		logger.debug("Call persist service in post");
 		ClientResponse resp = executePostService(parameters, serviceUrl, userId, null, null);
