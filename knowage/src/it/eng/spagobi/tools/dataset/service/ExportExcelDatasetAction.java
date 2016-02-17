@@ -58,17 +58,20 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			String resourcePath = SpagoBIUtilities.readJndiResource(path);
 			XSSFWorkbook wb = null;
 			try {
-				FileInputStream fileInputStream = new FileInputStream(resourcePath + "\\dataset\\export\\template.xlsm");
+				// FileInputStream fileInputStream = new FileInputStream(resourcePath + "\\dataset\\export\\template.xlsm");
+				String serviceClassPath = ExportExcelDatasetAction.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+						.replace(ExportExcelDatasetAction.class.getSimpleName() + ".class", "");
+				FileInputStream fileInputStream = new FileInputStream(serviceClassPath + "export_dataset_template.xlsm");
 				try {
 					wb = new XSSFWorkbook(fileInputStream);
 				} catch (IOException e) {
 					logger.error("Input Output Exception " + e.getMessage());
-					throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xls template file ", e);
+					throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ", e);
 				}
 
 			} catch (FileNotFoundException e1) {
 				logger.error("Impossible to find xls template file " + e1.getMessage());
-				throw new SpagoBIServiceException(this.getActionName(), "Impossible to find xls template file ", e1);
+				throw new SpagoBIServiceException(this.getActionName(), "Impossible to find xlsm export template file ", e1);
 			}
 			if (wb != null) {
 				XSSFSheet sheet = wb.getSheet("datastore");
