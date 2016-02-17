@@ -67,7 +67,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							<md-button ng-click="toggleViewDownload()"
 								class="md-icon-button md-primary kn-close-Info" aria-label="Settings">
 							<md-icon md-font-icon="fa fa-times"></md-icon> </md-button>							
-							<p >{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</p>
+<!-- 							<p >{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</p> -->
 
 						</div>
 
