@@ -18,7 +18,7 @@
 	
 </script>
 </head>
-<body ng-controller="olapController">
+<body ng-controller="olapController" >
 	<div layout="row">
 		
 		<div layout="column" flex=80>
