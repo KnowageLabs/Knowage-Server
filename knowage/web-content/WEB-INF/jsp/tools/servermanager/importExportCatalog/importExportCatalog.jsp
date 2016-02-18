@@ -20,9 +20,12 @@
 <!-- controller -->
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/servermanager/importExportCatalogController.js"></script>
-
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
 </head>
-<body class="bodyStyle">
+<body class="bodyStyle kn-importExportDocument">
 
 	<div ng-controller="Controller " layout="column" layout-wrap
 		layout-fill>
@@ -36,7 +39,7 @@
 			<md-tabs md-select="ImportExport" layout-fill class="absolute">
 				<md-tab label="Export" md-on-select="setTab('Export')" md-active="isSelectedTab('Export')"> 
 			
-					<md-tab-body layout-fill>
+					<md-tab-body layout-fill><md-card>
 						<md-content layout-fill layout="column" layout-wrap>
 							<div layout="row" layout-wrap>
 								<div flex=35>
@@ -57,7 +60,7 @@
 								</div>
 							</div>
 							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
-							<div flex style="position: relative;" ng-show="showDataset">
+							<div flex ng-show="showDataset">
 								<angular-table id='datasetlist' ng-model=dataset
 									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
 									columnsSearch='["label"]' show-search-bar=true
@@ -67,42 +70,39 @@
 								</angular-table>
 							</div>
 
-						</md-content> 
+						</md-content> </md-card>
 					</md-tab-body> 
 				</md-tab> 
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
-					<div layout="column" layout-wrap>
-						<div layout="row" layout-wrap>
-							<div flex=15>
-								<h3>{{translate.load("sbi.importusers.import");}}</h3>
+					<md-tab-body layout-fill ><md-card>
+					<md-content ng-cloak>
+					
+					
+					<div layout="row" layout-wrap>
+								<h3>{{translate.load("sbi.importusers.import")}}</h3>
 							</div>
-							<div flex=20>
-								<file-upload flex id="AssociationFileUploadImport"
-									ng-model="importFile"></file-upload>
+							<div layout="row" layout-wrap >
+								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+								<md-button ng-click="upload($event)" aria-label="upload Menu"
+										class="md-fab md-mini"  > <md-icon
+										md-font-icon="fa fa-upload"  >
 							</div>
-							<div flex=10>
-								<md-input-container class="small counter"> <md-button
-									ng-click="upload($event)" aria-label="upload Catalog"
-									class="md-fab md-mini"> <md-icon
-									md-font-icon="fa fa-upload fa-2x"> </md-icon> </md-button> </md-input-container>
-							</div>
-							<span flex=20></span>
-							<div flex=20>
+							<div layout="row" layout-wrap >
 								<md-radio-group layout="row" ng-model="typeSaveMenu">
-									<md-radio-button value="Override">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-									<md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}}</md-radio-button>
-								</md-radio-group>
+								      <md-radio-button value="Override" ng-click="reloadTree()">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+								      <md-radio-button value="Missing" ng-click="reloadTree()">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+								    </md-radio-group>
+								
+								<span flex></span>
+									<md-button ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 							</div>
-							<md-input-container class="small counter"> 
-								<md-button ng-click="save($event)" aria-label="upload Users">{{translate.load("sbi.importusers.startimport");}}</md-button>
-							</md-input-container>
-						</div>
+				
 					<div layout="column" layout-fill>
 						<md-checkbox ng-show="exportedDataset.length>0"
 							ng-checked="exists('DatasetImported',listTypeImported)"
 							ng-click="toggle('DatasetImported',listTypeImported)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
 						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>
-						<div flex style="position: relative;" ng-show="showDatasetImported">
+						<div flex  ng-show="showDatasetImported">
 							<angular-table id='datasetlistImported' ng-model=exportedDataset
 								columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
 								columnsSearch='["label"]' show-search-bar=true
@@ -112,7 +112,8 @@
 							</angular-table>
 						</div>
 					</div>
-				</div>
+					</md-content></md-card>
+					</md-tab-body>
 			</md-tab>
 
 		</md-tabs>

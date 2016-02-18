@@ -48,22 +48,23 @@
 
 
 </head>
-<body class="bodyStyle">
+<body class="bodyStyle kn-importExportDocument">
 
 <div ng-controller="userImportExportController" layout="column" layout-wrap layout-fill>
 
 	
 	<md-toolbar  class="miniheadimportexport">
 		<div class="md-toolbar-tools">
-			<i class="fa fa-exchange md-padding"></i>
+			<i class="fa fa-exchange"></i>
 			<h2 class="md-flex" >{{translate.load("sbi.impexpusers");}}</h2>
 		</div>
 	</md-toolbar>
-	<md-content layout="column" layout-wrap flex>
+	<md-content layout="column" class="mainContainer" layout-wrap flex>
 		<md-tabs  layout-fill class="absolute"> 
 			<md-tab  id="userExportTab" >
 			<md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
+				<md-card>
 				<md-content layout="column" layout-wrap ng-controller="userExportController" >
 					<div layout="row" layout-wrap>
 						<div flex>
@@ -73,9 +74,9 @@
 						</div>
 					 
 					 <div layout="row" layout-wrap >
-						<md-checkbox   style="line-height: 61px;"  ng-model="exportCheckboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
-						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
-						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  style="line-height: 61px;"  ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
+						<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
+						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
+						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
 					 </div>
 						<div>
 							<md-input-container class="small counter"> 
@@ -109,6 +110,7 @@
 					</div>
 			
 					</md-content>
+					</md-card>
 					</md-tab-body>
 					
 				</md-tab>
@@ -116,6 +118,7 @@
 				<md-tab	id="userImportTab"  >
 					<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 					<md-tab-body> 
+					<md-card>
 					<md-content ng-controller="userImportController"  layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
 						<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'>
 						</bread-crumb>
@@ -128,6 +131,7 @@
 
 
 					</md-content>
+					</md-card>
 				</md-tab-body> 
 				</md-tab>
 				
