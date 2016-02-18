@@ -827,6 +827,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						item.filterHierType = $scope.hierType.toUpperCase();
 						item.filterHierarchy = newHier.HIER_NM;
 					}
+
+					if ($scope.seeHideLeafDim == true){
+						item.optionDate = $scope.formatDate($scope.dimDate);
+						item.optionHierarchy = $scope.hierMaster ? $scope.hierMaster.HIER_NM : undefined;
+						item.optionHierType = $scope.hierMaster ? $scope.hierMaster.HIER_TP : undefined;
+					}
 					for ( var k in newHier) {
 						if (newHier[k] instanceof Date) {
 							item[k] = $scope.formatDate(newHier[k]);
@@ -869,7 +875,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				    validityDate: $scope.formatDate(date),
 				    filterHierarchy: hier.HIER_NM,
 				    filterHierType: hier.HIER_TP,
-				    optionalFilter : $scope.convertFiltersDim($scope.dimFilters)
+				    optionalFilter : $scope.convertFiltersDim($scope.dimFilters)				   
+			};
+			if ($scope.seeHideLeafDim == true){
+					item.optionDate = $scope.formatDate($scope.dimDate);
+					item.optionHierarchy = $scope.hierMaster ? $scope.hierMaster.HIER_NM : undefined;
+					item.optionHierType = $scope.hierMaster ? $scope.hierMaster.HIER_TP : undefined;
 			}
 			
 			$scope.restService.post("hierarchiesMaster","syncronizeHierarchyMaster",item)
