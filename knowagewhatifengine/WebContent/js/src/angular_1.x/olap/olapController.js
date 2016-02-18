@@ -1,5 +1,5 @@
-var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable'])
-.directive('compileTemplate', function($compile, $parse){
+var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable']);
+olapMod.directive('compileTemplate', function($compile, $parse){
     return {
         link: function(scope, element, attr){
             var parsed = $parse(attr.ngBindHtml);
@@ -12,57 +12,53 @@ var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDrag
         }         
     }
 });;
+olapMod.directive('scrolly', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var raw = element[0];
+            console.log('loading directive');
+                
+            element.bind('scroll', function () {
+                
+                console.log(raw.scrollTop );
+				var pos = Math.round(raw.scrollTop/100);
+				scope.startFrom(pos);
+                
+               
+            });
+        }
+    };
+});
+
 olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",'$sce','$mdToast',
 		olapFunction ]);
 
-function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast) {
-	
-	templateRoot = "/knowagewhatifengine/html/template";
-	
-	$scope.templateList = templateRoot + '/main/filter/treeFirstLevel.html';
-	$scope.templateListChild = templateRoot + '/main/filter/treeDeeperLevels.html';
-	$scope.filterCard = templateRoot + '/main/filter/filterCard.html';
-	$scope.filterPanel = templateRoot + '/main/filter/filterPanel.html';
-	$scope.mainToolbar = templateRoot + '/main/toolbar/mainToolbar.html';
-	$scope.olapPanel = templateRoot + '/main/olap/olapPanel.html';
-	$scope.rowToolbar = templateRoot + '/main/olap/rowToolbar.html';
-	$scope.leftToolbarPlusMain = templateRoot + '/main/olap/leftToolbarPlusMain.html';
+function olapFunction($scope, $timeout, $window,$mdDialog, $http,$sce,$event) {
 
-	$scope.leftPanel = templateRoot + '/left/leftPanel.html';
-	$scope.rightPanel = templateRoot + '/right/rightPanel.html';
-	
-	$scope.rows;
-	$scope.maxRows = 5;
-	$scope.topSliderNeeded;
-	$scope.topStart = 0;
-	
-	$scope.columns;
-	$scope.maxCols = 3;
-	$scope.leftSliderNeeded;
-	$scope.leftStart = 0;
-	
-	$scope.toolbarButtons = [];
-	$scope.filterCardList = [];
-	$scope.showMdxVar = "";
-
-	$scope.draggedFrom = "";
-	$scope.dragIndex;
-	
-	$scope.doneonce =false;
-	$scope.level;
-	$scope.data=[];
-	$scope.loadedData = [];
-	$scope.dataPointers = [];
-	$scope.numVisibleFilters = 5;
-	$scope.shiftNeeded;
-
-	angular.element(document).ready(function() {
-		$scope.sendMdxQuery('null');
-
-	});
-
-	var counter = 0;
-
+  $scope.templateList = '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html';
+  $scope.templateListChild = '/knowagewhatifengine/html/template/main/filter/treeDeeperLevels.html';
+  $scope.filterCard = '/knowagewhatifengine/html/template/main/filter/filterCard.html';
+  $scope.mainToolbar = '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html';
+  $scope.filterPanel = '/knowagewhatifengine/html/template/main/filter/filterPanel.html';
+  $scope.olapPanel = '/knowagewhatifengine/html/template/main/olap/olapPanel.html';
+  $scope.rowToolbar = '/knowagewhatifengine/html/template/main/olap/rowToolbar.html';
+  $scope.leftToolbarPlusMain = '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html';
+  $scope.leftPanel = '/knowagewhatifengine/html/template/left/leftPanel.html';
+  $scope.rightPanel = '/knowagewhatifengine/html/template/right/rightPanel.html';
+  
+  $scope.rows;
+  $scope.columns;  
+  $scope.toolbarButtons=[];
+  $scope.filterCardList = [];
+  $scope.showMdxVar = "";
+	$scope.ready = true;
+  
+  $scope.numVisibleFilters = 5;
+  $scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters? true : false; 
+  
+  angular.element(document).ready(function () {
+	  $scope.sendMdxQuery('null');
 	console.log(JSsbiExecutionID);
 	
 	checkShift = function(){
@@ -79,6 +75,46 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
 		
+  });
+	
+
+  
+  $scope.data1=[];
+  
+  var counter=0;
+  
+  console.log(JSsbiExecutionID);
+  
+  filterXMLResult = function(res){
+	  var regEx = /([A-Z]+_*)+/g;
+	  var i;
+	  
+	  while(i = regEx.exec(res))
+		  $scope.toolbarButtons.push(messageResource.get("sbi.olap.toolbar."+i[0],'messages'));
+  }
+  
+  filterXMLResult(test);
+  
+  $scope.filterShift = function(direction){
+	  var length = $scope.filterCardList.length;
+	  
+	  var first = $scope.filterCardList[0];
+	  var last = $scope.filterCardList[length-1];
+	  
+	  
+	  if(direction == "left"){
+		  for(var i=0; i<length;i++){
+			  $scope.filterCardList[i] = $scope.filterCardList[i+1];
+		  }
+		  
+		  $scope.filterCardList[length-1] = first;
+	  }
+	  else{
+		  for(var i=length-2; i>=0;i--){
+			  $scope.filterCardList[i+1] = $scope.filterCardList[i];
+		  }
+		  $scope.filterCardList[0] = last;
+	  }
 		while (i = regEx.exec(res)){
 			var btn = {};
 			btn.tooltip = messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
@@ -142,6 +178,100 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			// this callback will be called asynchronously
 			// when the response is available
 
+  }
+  $scope.next = function(){
+	  
+	  $http({
+		  method: 'GET',
+		  url: '/knowagewhatifengine/restful-services/1.0/member/sort/1/0/[[Measures].[Unit Sales]]/BASC?SBI_EXECUTION_ID='+JSsbiExecutionID
+		  
+		}).then(function successCallback(response) {
+			
+		    // this callback will be called asynchronously
+		    // when the response is available
+			console.log(response.data.table);
+			$scope.table = $sce.trustAsHtml( response.data.table);
+			console.log($http.url);
+			$scope.rows = response.data.rows;
+			$scope.columns = response.data.columns;
+			$scope.filterCardList = response.data.filters;
+			$scope.showMdxVar = response.data.mdxFormatted;
+			
+		  }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			console.log("Error!")
+		  });
+	  
+  }
+  $scope.startFrom = function(start){
+	  if($scope.ready){
+		  $scope.ready = false;
+		  
+		  $http({
+		  method: 'GET',
+		  url: '/knowagewhatifengine/restful-services/1.0/member/start/1/'+start+'?SBI_EXECUTION_ID='+JSsbiExecutionID
+		  
+		}).then(function successCallback(response) {
+			
+		    // this callback will be called asynchronously
+		    // when the response is available
+			
+			$scope.table = $sce.trustAsHtml( response.data.table);
+			$scope.ready = true;
+			$scope.rows = response.data.rows;
+			$scope.columns = response.data.columns;
+			$scope.filterCardList = response.data.filters;
+			$scope.showMdxVar = response.data.mdxFormatted;
+			
+		  }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			console.log("Error!")
+		  });
+	  }
+	  
+	  
+	  
+  }
+  
+   $scope.previous = function(){
+	   
+	  $http({
+		  method: 'GET',
+		  url: '/knowagewhatifengine/restful-services/1.0/member/sort/1/0/[[Measures].[Unit Sales]]/BDESC?SBI_EXECUTION_ID='+JSsbiExecutionID
+		  
+		}).then(function successCallback(response) {
+			
+		    // this callback will be called asynchronously
+		    // when the response is available
+			console.log(response.data.table);
+			$scope.table = $sce.trustAsHtml( response.data.table);
+			console.log($http.url);
+			$scope.rows = response.data.rows;
+			$scope.columns = response.data.columns;
+			$scope.filterCardList = response.data.filters;
+			$scope.showMdxVar = response.data.mdxFormatted;
+			
+		  }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			console.log("Error!")
+		  });
+	  
+  }
+  
+  $scope.sendMdxQuery = function(mdx) {
+	  $http({
+		  method: 'POST',
+		  url: '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='+JSsbiExecutionID,
+		  data: mdx
+		}).then(function successCallback(response) {
+			
+		    // this callback will be called asynchronously
+		    // when the response is available
+			console.log(response.data.table);
+			$scope.table = $sce.trustAsHtml( response.data.table);
 			$scope.table = $sce.trustAsHtml(response.data.table);
 			console.log($http.url);
 			$scope.rows = response.data.rows;
@@ -458,3 +588,5 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 
 }
+
+
