@@ -90,6 +90,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.changeDrillType = function(type){
 		$scope.modelConfig.drillType = type;
 		console.log($scope.modelConfig.drillType);
+		$scope.sendModelConfig($scope.modelConfig);
 	}
 	
 	$scope.btnFunctions = function(name){
