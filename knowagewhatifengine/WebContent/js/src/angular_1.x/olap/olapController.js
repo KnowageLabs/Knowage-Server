@@ -39,6 +39,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	templateRoot = "/knowagewhatifengine/html/template";
 	
+	/*$scope.drillType = {"position":"position","member":"member","replace":"replace"}; // enum
+	$scope.modelConfig = {
+			"drillType":"",
+			"showParentMembers":false,
+			"hideSpans":false,
+			"showProperties":false,
+			"suppressEmpty":false};*/
 	$scope.templateList = templateRoot + '/main/filter/treeFirstLevel.html';
 	$scope.templateListChild = templateRoot + '/main/filter/treeDeeperLevels.html';
 	$scope.filterCard = templateRoot + '/main/filter/filterCard.html';
@@ -76,7 +83,15 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.numVisibleFilters = 5;
 	$scope.shiftNeeded;
 	
+	$scope.modelConfig;
+	
 	$scope.ready = true;
+	
+	$scope.hideSpans = function(){
+		$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
+		console.log($scope.modelConfig.hideSpans);
+		//console.log(name);
+	}
 	/**dragan*/
 	 $scope.startFrom = function(start){
 		   if($scope.ready){
@@ -164,7 +179,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	/**dragan*/
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
-
 	});
 
 	var counter = 0;
@@ -188,7 +202,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		while (i = regEx.exec(res)){
 			var btn = {};
 			btn.tooltip = messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
-			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png); 
+			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
 			$scope.toolbarButtons.push(btn);	
 		}
 			
@@ -257,7 +271,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.showMdxVar = response.data.mdxFormatted;
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-
+			$scope.modelConfig = response.data.modelConfig;
+			console.log("MC");
+			console.log($scope.modelConfig);
 			console.log("rows->");
 			console.log($scope.rows);
 			console.log("columns->");

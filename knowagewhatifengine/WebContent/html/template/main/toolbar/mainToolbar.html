@@ -6,7 +6,7 @@
 		
 		<md-button class="groupX right">Replace</md-button>
 		
-		<md-button class="main-toolbar-button {{btn.img}}" ng-repeat="btn in toolbarButtons">
+		<md-button class="main-toolbar-button {{btn.img}}" ng-repeat="btn in toolbarButtons" ng-click="hideSpans()">
 			<md-tooltip md-direction="bottom">
 				{{btn.tooltip}}
 			</md-tooltip>
