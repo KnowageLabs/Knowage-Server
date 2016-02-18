@@ -17,7 +17,18 @@
 		   </generator>
         </id>
         
-        <property name="name" column="NAME" />
+        <property name="ruleId" column="RULE_ID" type="int" length="11" not-null="true"/>
+        <property name="typeId" column="TYPE_ID" type="int" length="11" not-null="true"/>
+        
+        <many-to-one name="SbiKpiAlias" class="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiAlias" lazy="false" cascade="all,delete-orphan">
+            <column name="ALIAS_ID" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
+            <column name="TYPE_ID" not-null="true" />
+        </many-to-one>
+        
+		<property name="category" column="CATEGORY" type="string" length="40"/>        
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">

@@ -44,12 +44,12 @@ import it.eng.spagobi.images.dao.IImagesDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmEventDAO;
-import it.eng.spagobi.kpi.config.dao.IKpiDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiErrorDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiInstPeriodDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.dao.IMeasureUnitDAO;
 import it.eng.spagobi.kpi.config.dao.IPeriodicityDAO;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.goal.dao.IGoalDAO;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
@@ -537,7 +537,19 @@ public class DAOFactory {
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
-	public static IKpiDAO getKpiDAO() throws EMFUserError {
+	public static it.eng.spagobi.kpi.config.dao.IKpiDAO getKpiDAO() throws EMFUserError {
+		return (it.eng.spagobi.kpi.config.dao.IKpiDAO) createDAOInstance("OldKpiDAO");
+	}
+
+	/**
+	 * Gets the KPI dao.
+	 * 
+	 * @return the KPI dao
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static IKpiDAO getNewKpiDAO() throws EMFUserError {
 		return (IKpiDAO) createDAOInstance("KpiDAO");
 	}
 

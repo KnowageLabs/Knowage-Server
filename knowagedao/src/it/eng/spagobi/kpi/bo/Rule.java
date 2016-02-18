@@ -5,12 +5,23 @@ import java.util.List;
 
 public class Rule implements Serializable {
 
+	private static final long serialVersionUID = -9167429953532804049L;
+	/**
+	 * 
+	 */
 	private Integer id;
 	private String name;
 	private String definition;
 	private boolean newRecord;
 
 	private List<RuleOutput> ruleOutputs;
+
+	public Rule() {
+	}
+
+	public Rule(Integer id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the id
@@ -89,11 +100,11 @@ public class Rule implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return id;
+		return id == null ? super.hashCode() : id.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof Rule && id.equals(((Rule) o).getId());
+		return o instanceof Rule && id != null && id.equals(((Rule) o).getId());
 	}
 }

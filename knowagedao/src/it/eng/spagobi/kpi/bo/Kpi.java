@@ -1,14 +1,30 @@
 package it.eng.spagobi.kpi.bo;
 
+import java.io.Serializable;
+import java.util.List;
 
-public class Kpi {
+public class Kpi implements Serializable {
 
+	private static final long serialVersionUID = -3696035077361936505L;
+	/**
+	 * 
+	 */
 	private Integer id;
 	private String name;
 	private String definition;
-	private String cardinality;
-	private String placeholder;
+	private String cardinality; // json
+	private String placeholder; // json
 	private String category;
+	private Integer categoryId;
+	private boolean newRecord;
+	private List<Threshold> listThreshold; // lazy
+
+	public Kpi() {
+	}
+
+	public Kpi(Integer id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the id
@@ -98,6 +114,61 @@ public class Kpi {
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	/**
+	 * @return the categoryId
+	 */
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	/**
+	 * @param categoryId
+	 *            the categoryId to set
+	 */
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	/**
+	 * @return the listThreshold
+	 */
+	public List<Threshold> getListThreshold() {
+		return listThreshold;
+	}
+
+	/**
+	 * @param listThreshold
+	 *            the listThreshold to set
+	 */
+	public void setListThreshold(List<Threshold> listThreshold) {
+		this.listThreshold = listThreshold;
+	}
+
+	@Override
+	public int hashCode() {
+		return id == null ? super.hashCode() : id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Kpi && id != null && id.equals(((Kpi) o).getId());
+	}
+
+	/**
+	 * @return the newRecord
+	 */
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	/**
+	 * @param newRecord
+	 *            the newRecord to set
+	 */
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
 	}
 
 }

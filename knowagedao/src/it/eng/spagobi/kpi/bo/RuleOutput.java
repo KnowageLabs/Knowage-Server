@@ -1,15 +1,23 @@
 package it.eng.spagobi.kpi.bo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class RuleOutput {
+public class RuleOutput implements Serializable {
 
+	private static final long serialVersionUID = 6239303686402587566L;
+	/**
+	 * 
+	 */
 	private Integer id;
 	private String alias;
 	private Integer aliasId;
 	private String rule;
 	private Integer ruleId;
 	private String category;
+	private Integer categoryId;
+	private String hierarchy;
+	private Integer hierarchyId;
 	private String type;
 	private Integer typeId;
 	private String author;
@@ -165,4 +173,58 @@ public class RuleOutput {
 		this.typeId = typeId;
 	}
 
+	/**
+	 * @return the categoryId
+	 */
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	/**
+	 * @param categoryId
+	 *            the categoryId to set
+	 */
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	/**
+	 * @return the hierarchy
+	 */
+	public String getHierarchy() {
+		return hierarchy;
+	}
+
+	/**
+	 * @param hierarchy
+	 *            the hierarchy to set
+	 */
+	public void setHierarchy(String hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	/**
+	 * @return the hierarchyId
+	 */
+	public Integer getHierarchyId() {
+		return hierarchyId;
+	}
+
+	/**
+	 * @param hierarchyId
+	 *            the hierarchyId to set
+	 */
+	public void setHierarchyId(Integer hierarchyId) {
+		this.hierarchyId = hierarchyId;
+	}
+
+	@Override
+	public int hashCode() {
+		return id == null ? super.hashCode() : id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId());
+	}
 }

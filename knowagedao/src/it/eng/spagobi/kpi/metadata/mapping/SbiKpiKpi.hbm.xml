@@ -6,18 +6,20 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiAlias" table="SBI_KPI_ALIAS">
+    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiKpi" table="SBI_KPI_KPI">
         
         <id name="id" type="integer">
            <column name="ID" />
 		   <generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_KPI_ALIAS</param>	
+				<param name="segment_value">SBI_KPI_KPI</param>	
 				<param name="initial_value">1</param>	
 		   </generator>
         </id>
         
         <property name="name" column="NAME" type="string" length="40" not-null="true"/>
+        <property name="definition" column="DEFINITION" type="string" length="1000" not-null="true"/>
+        <property name="category" column="CATEGORY" type="string" length="1000" not-null="true"/>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
