@@ -15,6 +15,8 @@
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
+	var drillType = '<%= whatIfEngineInstance.getModelConfig().getDrillType() %>'
+	
 	
 </script>
 </head>
