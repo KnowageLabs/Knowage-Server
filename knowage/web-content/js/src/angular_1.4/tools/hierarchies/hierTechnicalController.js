@@ -238,7 +238,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				$scope.showConfirm($scope.translate.load("sbi.generic.info"),'Are you sure to descard the hierarchy modification?');
 				//TODO active this
 			}
-			var dateFormatted =$scope.formatDate(date);
+			var dateFormatted = $scope.formatDate(date);
 			var keyMap = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM + '_' + dateFormatted;
 			var config = {};
 			config.params = {
@@ -248,11 +248,15 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				validityDate : dateFormatted
 			};
 			if (dateFilter !== undefined && dateFilter!== null && dateFilter.length > 0){
-				config.params.filterDate = ''+dateFilter;
+				config.params.filterDate = ''+ dateFilter;
 				keyMap = keyMap + '_' + dateFilter;
 			}
 			if (seeElement == true){
 				config.params.filterDimension = seeElement;
+				//In show missing element filter are passed the date and hierarchy of the other tree (if Source tree, are passed date and tree of Target, and vice versa)
+				config.params.optionDate =  choose == 'src'  ?  $scope.formatDate($scope.dateTarget) : $scope.formatDate($scope.dateSrc);
+				config.params.optionHierarchy = choose == 'src'  ? ($scope.hierTarget ? $scope.hierTarget.HIER_NM : undefined) : ($scope.hierSrc ? $scope.hierSrc.HIER_NM : undefined);
+				config.params.optionHierType = choose == 'src'  ? ($scope.hierTarget ? $scope.hierTarget.HIER_TP : undefined) : ($scope.hierSrc ? $scope.hierSrc.HIER_TP : undefined);
 				keyMap = keyMap + '_' + seeElement;
 			}
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
@@ -773,8 +777,11 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.formatDate = function (date){
-		var mm = (date.getMonth()+1) < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
-		return date.getFullYear() + '-' + mm +'-'+ date.getDate();
+		if (date){
+			var mm = (date.getMonth()+1) < 10 ? '0'+ (date.getMonth()+1) : ''+(date.getMonth()+1);
+			return date.getFullYear() + '-' + mm +'-'+ date.getDate();
+		}
+		return undefined;
 	}
 	
 	$scope.toogleLoading = function(choose, forceValue){
