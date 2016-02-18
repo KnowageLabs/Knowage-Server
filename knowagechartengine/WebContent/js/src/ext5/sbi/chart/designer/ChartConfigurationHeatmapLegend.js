@@ -56,6 +56,7 @@ Ext.define
         			emptyText: LN("sbi.chartengine.configuration.heatmapLegendVertAlign.emptyText"),
         			width: Sbi.settings.chart.configurationStep.widthOfFields,
         			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+        			
         			listeners:
 					{
         				verticAlignPicked: function()
@@ -97,6 +98,7 @@ Ext.define
            		 	minValue: '50',
            		 	emptyText: LN("sbi.chartengine.configuration.heatmapSymbolHeight.emptyText"),
            		 	padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+           		 	
            		 	listeners:
            		 	{
            		 		change: function(thisEl, newValue, oldValue)

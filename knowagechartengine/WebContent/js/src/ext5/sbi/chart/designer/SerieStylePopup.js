@@ -286,6 +286,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //		};
 		
 		var serieColor = dataAtRow.get('serieColor').replace('#', '');
+		
 		this.serieColorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 			id: "serieColorFieldSet",
 			fieldLabel : LN('sbi.chartengine.designer.color'),
@@ -293,6 +294,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			labelWidth : LABEL_WIDTH,
 			value: serieColor
 		});
+		
 		this.serieFieldSet.add(this.serieColorPicker);
 		
 		/**

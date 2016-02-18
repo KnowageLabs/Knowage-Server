@@ -95,17 +95,17 @@ Ext.define("Sbi.chart.designer.ChartConfigurationHeatmapTooltip", {
 
 		this.add(style);
 
-//		this.colorPicker = Ext.create('Sbi.chart.designer.ColorPickerContainer', {    		
+//		this.colorPicker = Ext.create('Sbi.chart.designer.ColorPickerContainer', {  
+		
 		this.colorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker', {    		
 			viewModel: this.viewModel,
 			bind : '{configModel.tipColor}',
 			fieldBind : '{configModel.tipColor}', 
 			fieldLabel : LN('sbi.chartengine.configuration.color'),
 			emptyText: LN('sbi.chartengine.configuration.fontColor.emptyText'),
-//			customLabel: LN("sbi.chartengine.configuration.color"),
 			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-			isColorMandatory: true,
 			width: Sbi.settings.chart.configurationStep.widthOfFields,
+//			isColorMandatory: true,
 //			initiator: "heatmapTooltipColor",
 		});
 		

@@ -14,6 +14,23 @@ Sbi.settings.cockpit = {
 };
 
 /**
+ * Unicode for the flag sign for madnatory fields. This valu will be taken
+ * for these two properties of this JS file:
+ * 	- Sbi.settings.chart.configurationStep.unicodeValueForFlag
+ * 	- Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+ * 
+ * The first one is needed just for color GUI elements in order to handle
+ * their labels (their behavior).
+ * 
+ * The second one is needed by all mandatory fields so they can take it for
+ * their marking as mandatory (labels contain this unicode).
+ * 
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+var unicodeForFlagValue = 9873;
+var unicodeForFlagString = ' [&#' + unicodeForFlagValue + ']';
+
+/**
  * Configurations for the Designer. 
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
@@ -42,11 +59,14 @@ Sbi.settings.chart =
 		
 	configurationStep:
 	{
+		unicodeValueForFlag: unicodeForFlagValue, 
+		unicodeForFlagString: unicodeForFlagString,
+		
 		/**
 		 * Property for the sign that will represent mandatory fields on
 		 * the Designer.
 		 */
-		htmlForMandatoryFields: "<span style='color: rgb(255, 0, 0);'> [&#9873]</span>",
+		htmlForMandatoryFields: "<span style='color: rgb(255, 0, 0);'> [&#" + unicodeForFlagValue + "]</span>",
 		/**
 		 * All GUI fields that appear inside the Designer (in its panels 
 		 * and popups) should take this width.

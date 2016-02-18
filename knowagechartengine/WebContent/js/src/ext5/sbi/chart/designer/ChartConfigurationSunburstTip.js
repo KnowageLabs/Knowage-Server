@@ -98,18 +98,46 @@ Ext.define
 //	        			initiator: "sunburstTooltipColor"
 //	        		}
 //	        );
+	        
+	        /**
+	         * Set the field label as the one when the color value is missing (plain (original) text
+	         * with flag for mandatory fields) on the very beginning. This is needed for backup style
+	         * and all those that do not contain any color value for the color element (in their
+	         * structure). There will be no setting of color value inside the ColorPicker when there
+	         * is no value for that particular color.
+	         * 
+	         * The 'isColorMandatory' serves as a flag for ColorPicker so it can know of this file
+	         * should fire an appropriate event while listening for changing of the value inside of 
+	         * the color picker text field.
+	         * 
+	         * The 'initiator' is needed for forwarding the information about the color text field
+	         * for which the appropriate event is fired (because many of them can fire when e.g. 
+	         * changing/applying the style).
+	         * 
+	         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	         */
 	        this.colorPicker = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 	        	viewModel: this.viewModel,
+	        	id: "tipColorPicker",
 	        	fieldBind: '{configModel.tipColor}',
 	        	bind: '{configModel.tipColor}',
-				fieldLabel : LN('sbi.chartengine.configuration.sunburst.tip.fontColor'),
+				fieldLabel: LN('sbi.chartengine.configuration.sunburst.tip.fontColor')
+							+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
 				emptyText: LN('sbi.chartengine.configuration.axistitlecolor.emptyText'),
 				width: Sbi.settings.chart.configurationStep.widthOfFields,
 				adding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 				isColorMandatory: true,
-//	        			initiator: "sunburstTooltipColor"
+    			initiator: "sunburstTooltipColor"
 			});
 	        
+	        /**
+			 * If the style defines the value of the color for this color field the field's 
+			 * label will be updated with the text that does not include the flag for the 
+			 * mandatory field (the symbol that tells the user that the value for the
+			 * mandatory color field is missing - not specified).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 	        this.colorPicker.on
 	        (
         		"colorRendered", 
@@ -122,18 +150,43 @@ Ext.define
         				        				
         				if (fontColor && fontColor!="" && fontColor!="transparent")
     					{
-        					globalScope.colorPicker.items.items[0]
+        					globalScope.colorPicker
         						.labelEl.update(LN('sbi.chartengine.configuration.sunburst.tip.fontColor')+":");
     					}
         				else
     					{
-        					globalScope.colorPicker.items.items[0]
+        					globalScope.colorPicker
     							.labelEl.update(LN('sbi.chartengine.configuration.sunburst.tip.fontColor')
     												+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
     					}
     				}        			
     			}
     		);
+	        
+	        /**
+	         * When the color value is not valid, fired this event from the ColorPicker, so the text
+	         * of the color field is going to be as the one when the value is missing (with the flag
+	         * for mandatory field).
+	         * 
+	         * NOTE: The same goes for other color picker in this file (colorPickerBrushColor).
+	         * 
+	         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	         */
+	        this.colorPicker.on
+	        (
+	        	"colorNotValid",
+	        	
+	        	function(actualColorField)
+	        	{	        		
+	        		if (actualColorField == "sunburstTooltipColor")
+    				{
+	        			globalScope.colorPicker
+							.labelEl.update(LN('sbi.chartengine.configuration.sunburst.tip.fontColor')
+											+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+    					
+    				}
+	        	}
+	        );
 	        
 	        this.add(this.colorPicker);
 	        

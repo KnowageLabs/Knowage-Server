@@ -21,6 +21,33 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 		}
 	},
 
+	/**
+	 * Listen for every change that is made for the value of the color text field
+	 * (manually (typing the hexadecimal code value of the color or picking one
+	 * among predefined ones) or by applying a style). If the field for which the
+	 * change is made is mandatory for particular chart type, fire an appropriate
+	 * event depending on the content of the color text field (valid or not valid).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	listeners:
+	{
+		change: function(el,color)
+		{				
+			if (this.isColorMandatory)
+			{				
+				if (color!="" && color.toLowerCase()!="transparent" && this.validateValue(color))
+				{
+					this.fireEvent("colorRendered",this.config.initiator);
+				}
+				else
+				{
+					this.fireEvent("colorNotValid",this.config.initiator);
+				}
+			}
+		}		
+	},
+	
 	validateValue : function(value){
 		if(!this.getEl()) {
 			return true;
@@ -40,7 +67,7 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 				return false;
 			}	 
 		}
-
+		
 		this.markInvalid();
 		this.setColor(value);
 		return true;
@@ -59,7 +86,16 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 		
 		Sbi.chart.designer.components.ColorPicker.superclass.setValue.call(this, value);
 		if(this.regex6Digits.test(value) || this.regexTransparent.test(value)) {
-			this.setColor(value);
+			this.setColor(value);	
+			
+//			/**
+//			 * Important when this component is mandatory for the chart.
+//			 * Firing an event will inform us that color is picked and we
+//			 * don't need the flag that warns the user.
+//			 * 
+//			 * @author: danristo (danilo.ristovski@mht.net)
+//			 */
+//			this.fireEvent("colorPicked",this.config.initiator);
 		}
 	},
 	
