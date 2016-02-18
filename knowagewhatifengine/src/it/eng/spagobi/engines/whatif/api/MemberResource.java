@@ -11,6 +11,7 @@ package it.eng.spagobi.engines.whatif.api;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +30,6 @@ import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-import org.pivot4j.PivotModel;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
@@ -45,15 +45,14 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
 			@PathParam("memberUniqueName") String memberUniqueName) {
-
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drilldown start " + format.format(new Date());
 		System.out.println(time);
-
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(1));
 		CellSet cellSet = model.getCellSet();
-		model.setSorting(false);
 		// Axes of the resulting query.
 		List<CellSetAxis> axes = cellSet.getAxes();
 
@@ -66,7 +65,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Position p = CubeUtilities.getPosition(positions, positionUniqueName);
 
 		List<Member> m = p.getMembers();
-		Member m2 = m.get(memberPos);
+		Member m2;// = m.get(memberPos);
 
 		try {
 			m2 = CubeUtilities.getMember(model.getCube(), memberUniqueName);
@@ -96,8 +95,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
+		model.setSubset(rowsOrColumns, subsetStart, 10);
 		time = "Drilldown end " + format.format(new Date());
 		System.out.println(time);
+		System.out.println();
+		System.out.println();
 		String table = renderModel(model);
 
 		return table;
@@ -109,11 +111,15 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
 			@PathParam("memberUniqueName") String memberUniqueName) {
-
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "Drillup start " + format.format(new Date());
+		System.out.println(time);
 		List<Member> m = null;
 		Member m2 = null;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		model.removeSubset(model.getCellSet().getAxes().get(1));
 		CellSet cellSet = model.getCellSet();
 
 		// Axes of the resulting query.
@@ -165,6 +171,12 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
+		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+		model.setSubset(rowsOrColumns, subsetStart, 10);
+		time = "Drillup end " + format.format(new Date());
+		System.out.println(time);
+		System.out.println();
+		System.out.println();
 		return renderModel(model);
 	}
 
@@ -174,26 +186,75 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType) {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
+		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(1));
 		CellSet cellSet = model.getCellSet();
-		model.setSorting(true);
-		model.setSortCriteria(SortCriteria.valueOf(sortType));
-
-		/*
-		 * if (type.equals(SortCriteria.ASC)) {
-		 * model.setSortCriteria(SortCriteria.ASC); } else if
-		 * (type.equals(SortCriteria.DESC)) {
-		 * model.setSortCriteria(SortCriteria.ASC); }
-		 */
 		CellSetAxis axisToSort = cellSet.getAxes().get(axisToSortpos);
 		CellSetAxis axisM = cellSet.getAxes().get(axis);
 		List<Position> positions = axisM.getPositions();
-		// Position position = positions.get(0);
 
 		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
+
+		model.setSorting(true);
+		model.setSortCriteria(SortCriteria.valueOf(sortType));
+
 		model.sort(axisToSort, position);
 
+		model.setSubset(axisToSort, subsetStart, 10);
+		return renderModel(model);
+	}
+
+	@GET
+	@Path("/next/{axis}/{step}")
+	public String next(@PathParam("axis") Integer axis, @PathParam("step") Integer step) {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		CellSet cellSet = model.getCellSet();
+
+		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
+
+		model.next(axisToSet, step);
+
+		return renderModel(model);
+	}
+
+	@GET
+	@Path("/previous/{axis}/{step}")
+	public String previous(@PathParam("axis") Integer axis, @PathParam("step") Integer step) {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		CellSet cellSet = model.getCellSet();
+
+		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
+
+		model.previous(axisToSet, step);
+
+		return renderModel(model);
+	}
+
+	@GET
+	@Path("/start/{axis}/{start}")
+	public String startFrom(@PathParam("axis") Integer axis, @PathParam("start") Integer start) {
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "Start from start " + format.format(new Date());
+		System.out.println(time);
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		CellSet cellSet = model.getCellSet();
+
+		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
+
+		model.startFrom(axisToSet, start);
+		time = "Start from end " + format.format(new Date());
+		System.out.println(time);
+		System.out.println();
+		System.out.println();
 		return renderModel(model);
 	}
 
