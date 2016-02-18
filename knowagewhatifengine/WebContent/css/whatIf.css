@@ -22,6 +22,11 @@
     
 }
 
+.x-pivot-table thead {
+	
+	overflow:auto;
+}
+
 
 .x-pivot-header-column {
 	
