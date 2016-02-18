@@ -46,6 +46,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,10 +62,11 @@ import javax.ws.rs.core.Response;
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
-import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
@@ -108,16 +110,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public String setMdx() throws OlapException {
 		logger.debug("IN");
 		String table = "";
-		String uniqueName = "[Product].[All Products]";
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
-		/*
-		 *
-		 *
-		 *
-		 */
+		CellSet cellSet = model.getCellSet();
+
+		// Axes of the resulting query.
+		List<CellSetAxis> axes = cellSet.getAxes();
+
+		// The ROWS axis
+		CellSetAxis rowsOrColumns = axes.get(1);
 		String requestBody = "";
 
 		try {
@@ -134,11 +137,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("No query found");
 		}
 
-		model.setSortCriteria(SortCriteria.BDESC);
-		model.setSorting(true);
-
+		// model.setSubset(rowsOrColumns, 0, 15);
+		renderModel(model);
+		model.setSubset(rowsOrColumns, 0, 15);
 		table = renderModel(model);
-
 		logger.debug("OUT");
 		return table;
 
