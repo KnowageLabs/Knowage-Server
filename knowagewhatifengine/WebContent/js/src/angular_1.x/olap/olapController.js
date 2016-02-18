@@ -92,6 +92,29 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		console.log($scope.modelConfig.hideSpans);
 		//console.log(name);
 	}
+	
+	$scope.btnFunctions = function(name){
+		switch(name){
+		case "BUTTON_FATHER_MEMBERS":
+			$scope.modelConfig.showParentMembers = !$scope.modelConfig.showParentMembers;
+			console.log($scope.modelConfig.showParentMembers);
+			break;
+		case "BUTTON_HIDE_SPANS":
+			$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
+			console.log($scope.modelConfig.hideSpans);
+			break;
+		case "BUTTON_SHOW_PROPERTIES":
+			$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
+			console.log($scope.modelConfig.showProperties);
+			break;
+		case "BUTTON_HIDE_EMPTY":
+			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
+			console.log($scope.modelConfig.suppressEmpty);
+			break;	
+		default:
+			console.log("something else clicked");
+		}
+	}
 	/**dragan*/
 	 $scope.startFrom = function(start){
 		   if($scope.ready){
