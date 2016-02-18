@@ -24,19 +24,32 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
+import org.olap4j.Position;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.impl.PivotModelImpl;
+import org.pivot4j.impl.Quax;
+import org.pivot4j.mdx.Exp;
+import org.pivot4j.mdx.FunCall;
+import org.pivot4j.mdx.Literal;
+import org.pivot4j.mdx.MdxStatement;
+import org.pivot4j.mdx.QueryAxis;
+import org.pivot4j.mdx.Syntax;
 import org.pivot4j.transform.ChangeSlicer;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
@@ -52,6 +65,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	@Override
 	public synchronized CellSet getCellSet() {
 		// get cellset from super class (Mondrian)
+
 		CellSet cellSet = super.getCellSet();
 
 		// since the getCellSet method is invoked many times, we get the
@@ -99,6 +113,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	public SpagoBIPivotModel(OlapDataSource dataSource) {
 		super(dataSource);
 		this.calculatedFields = new ArrayList<CalculatedMember>();
+
 	}
 
 	public SpagoBICellSetWrapper getCellSetWrapper() {
@@ -244,4 +259,140 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.targetsClickable = targetsClickable;
 	}
 
+	public void setSubset(CellSetAxis axis, Integer startFrom, Integer count) {
+
+		QueryAxis qa = getQueryAxis(axis);
+
+		if (isSubset(qa)) {
+
+			FunCall f = getSubSetFunction(qa);
+
+		} else {
+			Exp setForAx = qa.getExp();
+			axis.getPositionCount();
+
+			List<Exp> args = new ArrayList<Exp>(3);
+
+			args.add(setForAx);
+			args.add(Literal.create(startFrom));
+			args.add(Literal.create(count));
+			FunCall subset = new FunCall("Subset", Syntax.Function, args);
+			qa.setExp(subset);
+		}
+
+		fireModelChanged();
+	}
+
+	public void startFrom(CellSetAxis axis, Integer start) {
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "startForm method start " + format.format(new Date());
+		System.out.println(time);
+		QueryAxis qa = getQueryAxis(axis);
+		FunCall f = getSubSetFunction(qa);
+
+		Exp exp = f.getArgs().get(0);
+		qa.setExp(exp);
+		fireModelChanged();
+		time = "startForm method 296 " + format.format(new Date());
+		System.out.println(time);
+		// Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
+		// System.out.println(rowCount);
+
+		f.getArgs().set(1, Literal.create(start));
+		f.getArgs().set(2, Literal.create(10));
+		qa.setExp(f);
+		time = "startForm method end " + format.format(new Date());
+		System.out.println(time);
+		System.out.println();
+		System.out.println();
+		fireModelChanged();
+
+	}
+
+	public void removeSubset(CellSetAxis axis) {
+		QueryAxis qa = getQueryAxis(axis);
+		FunCall f = getSubSetFunction(qa);
+
+		Exp exp = f.getArgs().get(0);
+		qa.setExp(exp);
+		fireModelChanged();
+
+	}
+
+	public void next(CellSetAxis axis, Integer step) {
+
+		QueryAxis qa = getQueryAxis(axis);
+		FunCall f = getSubSetFunction(qa);
+		Integer start = Integer.parseInt(f.getArgs().get(1).toString());
+		Exp exp = f.getArgs().get(0);
+		qa.setExp(exp);
+		fireModelChanged();
+		System.out.println(getCellSet().getAxes().get(1).getPositionCount());
+		if (getCellSet().getAxes().get(1).getPositionCount() > step) {
+			start = start + step;
+		}
+
+		f.getArgs().set(1, Literal.create(start));
+		f.getArgs().set(2, Literal.create(10));
+		qa.setExp(f);
+		fireModelChanged();
+
+	}
+
+	public void previous(CellSetAxis axis, Integer step) {
+
+		QueryAxis qa = getQueryAxis(axis);
+
+		FunCall f = getSubSetFunction(qa);
+		Double d = (Double.parseDouble(f.getArgs().get(1).toString()));
+
+		Integer start = d.intValue();
+		if (start >= step) {
+			start = start - step;
+		}
+
+		f.getArgs().set(1, Literal.create(start));
+		qa.setExp(f);
+		fireModelChanged();
+
+	}
+
+	private QueryAxis getQueryAxis(CellSetAxis axis) {
+		List<Position> positions = axis.getPositions();
+		Dimension dim = positions.get(0).getMembers().get(0).getDimension();
+
+		Quax quax = getQueryAdapter().findQuax(dim);
+		MdxStatement pq = getQueryAdapter().getParsedQuery();
+
+		QueryAxis qa = pq.getAxis(Axis.Factory.forOrdinal(quax.getOrdinal()));
+
+		return qa;
+	}
+
+	private boolean isSubset(QueryAxis qa) {
+		FunCall f = (FunCall) qa.getExp();
+		if (f.getFunction().equalsIgnoreCase("Subset")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private FunCall getSubSetFunction(QueryAxis qa) {
+		FunCall f = (FunCall) qa.getExp();
+		f.getFunction();
+		return f;
+
+	}
+
+	public Integer getSubsetStart(CellSetAxis axis) {
+		QueryAxis qa = getQueryAxis(axis);
+		if (isSubset(qa)) {
+			FunCall f = getSubSetFunction(qa);
+			Double d = (Double.parseDouble(f.getArgs().get(1).toString()));
+			return d.intValue();
+		}
+
+		return 0;
+	}
 }
