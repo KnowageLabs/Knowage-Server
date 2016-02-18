@@ -71,22 +71,30 @@
         #end
         
         #if($chart.height != '')
-        height: $chart.height,
+        	height: $chart.height,
         #end
         
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided. 
+    		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
+    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
      	#if($chart.heightDimType)
        	 	heightDimType: '$chart.heightDimType',
         #end
         
         #if($chart.width != '')
-    	width: $chart.width,
+    		width: $chart.width,
     	#end
     	
     	#if($chart.widthDimType)
         	widthDimType: '$chart.widthDimType',
         #end
     	
-    	 #*
+    	#*
         	Remove border around the chart if this property is set to true.
         	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         *#

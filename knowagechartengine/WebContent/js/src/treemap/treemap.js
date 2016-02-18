@@ -1,5 +1,5 @@
 function renderTreemap(chartConf) {
-    
+	
     chartConf = prepareChartConfForTreemap(chartConf);
     
     /**
@@ -239,13 +239,10 @@ function prepareChartConfForTreemap(chartConf) {
 	{
 		chartObject = 
 		{
-			//renderTo: 'mainPanel',    			
-//    			height: (chartConf.chart.height!=undefined || chartConf.chart.height!="") ? chartConf.chart.height : "",
-//    			width: (chartConf.chart.width!=undefined || chartConf.chart.width!="") ? chartConf.chart.width : "",
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 					
 			/**
-			 * Leave some ebough space for the "Back" button for drill up.
+			 * Leave enough space for the "Back" button for drill up.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			marginBottom: chartConf.chart.marginBottom ? chartConf.chart.marginBottom : undefined,
@@ -268,18 +265,25 @@ function prepareChartConfForTreemap(chartConf) {
 	{
 		chartObject =     	
 		{
-				//renderTo: 'mainPanel',
-				height:  Number(chartConf.chart.height),
-				width:  Number(chartConf.chart.width),
-				marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
-						style: {
-							fontFamily: chartConf.chart.style.fontFamily,
-							fontSize: chartConf.chart.style.fontSize,
-							fontWeight: chartConf.chart.style.fontWeight,
-							fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-									textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-											fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
-						}
+			height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
+			width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
+					
+			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
+					
+			/**
+			 * Leave enough space for the "Back" button for drill up.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			marginBottom: chartConf.chart.marginBottom ? chartConf.chart.marginBottom : undefined,
+					
+					style: {
+						fontFamily: chartConf.chart.style.fontFamily,
+						fontSize: chartConf.chart.style.fontSize,
+						fontWeight: chartConf.chart.style.fontWeight,
+						fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+								textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+										fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+					}
 		};
 		
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
@@ -530,9 +534,11 @@ function prepareChartConfForHeatmap(chartConf) {
     	chartObject = 
     	{
         	renderTo: 'mainPanel',
-        	height:  Number(chartConf.chart.height),
-			width:  Number(chartConf.chart.width),
-            type: 'heatmap',
+        	
+        	height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
+			width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
+            
+			type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
             //margin: [200, 200, 200, 200],
             

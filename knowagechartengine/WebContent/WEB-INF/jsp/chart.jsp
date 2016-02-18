@@ -421,8 +421,11 @@ author:
  			}
  			
 			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-				 			 						
+				 			 					
 				var chartConf = Ext.JSON.decode(response.responseText, true);	
+				
+				var typeChart = chartConf.chart.type.toUpperCase();		 				
+				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 				
 				/* 
 					Set the initial size of the chart if the height and width are not 
@@ -434,14 +437,12 @@ author:
 				var heightDimType = chartConf.chart.heightDimType;
 				
 				var widthChart = chartConf.chart.width;
-				var widthDimType = chartConf.chart.widthDimType;
-				
-				//console.log(chartConf.chart);
+				var widthDimType = chartConf.chart.widthDimType;				
 				
 				var mainPanelTemp = Ext.getCmp("mainPanel");
 				
 				mainPanelTemp.setStyle("overflow","auto");
-				// Ext.getBody()			
+				// Ext.getBody()		
 				
 				if (!heightChart)
 				{
@@ -449,9 +450,13 @@ author:
 				}
 				else if (heightDimType == "percentage")
 				{
-					mainPanelTemp.setStyle("height",heightChart+"%");
-					chartConf.chart.height = undefined;
+					mainPanelTemp.setStyle("height",heightChart+"%");					
 					mainPanelTemp.setStyle("overflow-y","hidden");
+					
+					if (!isD3Chart)
+					{
+						chartConf.chart.height = undefined;
+					}
 				}		
 				
 				if (!widthChart)
@@ -460,9 +465,13 @@ author:
 				}
 				else if (widthDimType == "percentage")
 				{
-					mainPanelTemp.setStyle("width",widthChart+"%");
-					chartConf.chart.width = undefined;
+					mainPanelTemp.setStyle("width",widthChart+"%");					
 					mainPanelTemp.setStyle("overflow-x","hidden");
+					
+					if (!isD3Chart)
+					{
+						chartConf.chart.width = undefined;
+					}
 				} 	
 				
 				//var highchartsContainer = Ext.query(".highcharts-container")[0];
@@ -472,11 +481,7 @@ author:
 				mainPanelTemp.getEl().scrollIntoView(Ext.getBody(), null, true)*/
 				/*var ttt = Ext.create('Ext.dom.Element',mainPanelTemp);
 				
-				ttt.getEl().scrollIntoView(Ext.getBody(), null, true);*/
-				
-				var typeChart = chartConf.chart.type.toUpperCase();
-		 				
-				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");		
+				ttt.getEl().scrollIntoView(Ext.getBody(), null, true);*/		
 				 						
 				/* 
 				if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!="")) {
@@ -498,39 +503,26 @@ author:
 					@author: danristo (danilo.ristovski@mht.net)
 				*/
 				if (isD3Chart) {	
-					 if (typeChart == "PARALLEL") {
-						isChartParallel = true;
-						
-						// HEIGHT
-						parallelTableRowElements = chartConf.table.numberOfRows;
-						parallelTableRowHeight = chartConf.table.heightRow;
-						parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
-						parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
-						parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
-						parallelTablePaddingTop = chartConf.table.paddingTop;
-						parallelTablePaddingBottom = chartConf.table.paddingBottom;
-						
-						// WIDTH
-						parallelLegendWidth = chartConf.legend.width; 		 								
-					} 
 					
-					if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST") {
-						if (heightChart == "") {
+					isChartHeightEmpty = false;
+					isChartWidthEmpty = false;
+					
+					if ((heightDimType=="pixels" && heightChart=="") ||
+							(widthDimType=="pixels" && widthChart == "")) 
+					{
+						if (heightDimType=="pixels" && heightChart == "") 
+						{
 							chartConf.chart.height = window.innerHeight-2;		 							
 							isChartHeightEmpty = true;		 							
-						} else {
-							isChartHeightEmpty = false;
-						}
+						} 
 						
-						//if (widthChart == "" || typeChart == "SUNBURST") {
-						if (widthChart == "") {
+						if (widthDimType=="pixels" && widthChart == "") 
+						{
 							chartConf.chart.width = window.innerWidth;		 							
 							isChartWidthEmpty = true;
-						} else {
-							isChartWidthEmpty = false;
-						}		 						
-					} 	
-					
+						}
+					}
+						
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
 					
@@ -540,7 +532,6 @@ author:
 						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
 						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
 					*/
-					
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
 					

@@ -1819,11 +1819,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  			 * shown completely.
 	  			 * 
 	  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	  			 */				
-				if (heightImg+32 >= globalThis.previewPanel.getHeight())
+	  			 */						
+				if (heightImg+32 > globalThis.previewPanel.getHeight())
 				{
-					heightImg -= 32;
-					widthImg -= 32;
+					/**
+					 * Keep the ration for the width of the image.
+					 */
+					heightImg -= 32;				
+					widthImg -= 32*(widthImg/heightImg);
 				}
 				
 				var previewImg = Ext.create('Ext.Img', {
@@ -4433,232 +4436,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN('sbi.chartengine.configuration.fontsize'),
 								LN("sbi.chartengine.configuration.parallel.tooltip.title")
 							]
-						) : errorMsg;
-				
-				/*/if (parallelTooltipMinWidthGUI == null)
-				{
-					if (parallelTooltipMinWidthCModel == null || parallelTooltipMinWidthCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					/*if (parallelTooltipMinWidthGUI < checkParamValuesForCharts.parallel.tooltip.minWidth.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
-								checkParamValuesForCharts.parallel.tooltip.minWidth.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipMinWidthGUI > checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
-								checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					} */
-				//} 
-				
-				/*if (parallelTooltipMaxWidthGUI == null)
-				{
-					if (parallelTooltipMaxWidthCModel == null || parallelTooltipMaxWidthCModel=="")
-					{						
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipMaxWidthGUI < checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue)
-					{						
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
-								checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipMaxWidthGUI > checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
-								checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				} */
-				
-				/*if (parallelTooltipMinHeighGUI == null)
-				{
-					if (parallelTooltipMinHeightCModel == null || parallelTooltipMinHeightCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipMinHeighGUI < checkParamValuesForCharts.parallel.tooltip.minHeight.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
-								checkParamValuesForCharts.parallel.tooltip.minHeight.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipMinHeighGUI > checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
-								checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				}*/
-				
-				/*if (parallelTooltipMaxHeightGUI == null)
-				{
-					if (parallelTooltipMaxHeightCModel == null || parallelTooltipMaxHeightCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipMaxHeightGUI < checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
-								checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipMaxHeightGUI > checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
-								checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				}*/
-				
-				/*if (parallelTooltipPaddingGUI == null)
-				{
-					if (parallelTooltipPaddingCModel == null || parallelTooltipPaddingCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipPaddingGUI < checkParamValuesForCharts.parallel.tooltip.textPadding.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
-								checkParamValuesForCharts.parallel.tooltip.textPadding.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipPaddingGUI > checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
-								checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				}*/
+						) : errorMsg;				
 					
 				if (parallelTooltipBorderGUI == null)
 				{
@@ -4830,6 +4608,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 //						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	
 			}
 			else if(chartType=="CHORD"){
+				
 				var parallelTooltip = Ext.getCmp("chartParallelTooltip");
 				
 				//=====
@@ -5182,9 +4961,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
 								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
 							]
-						) : errorMsg;
-							
-							
+						) : errorMsg;							
 							
 				(chartViewModelData.toolbarFontFamily=="" || chartViewModelData.toolbarFontFamily==null || chartViewModelData.toolbarFontFamily==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
@@ -5928,50 +5705,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						);
 					}
 				}	
-				
-//				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
-//						errorMsg += Sbi.locale.sobstituteParams
-//						(
-//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-//							
-//							[
-//								LN('sbi.chartengine.configuration.font'),
-//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-//							]
-//						) : errorMsg;
-//				
-//				(heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
-//						errorMsg += Sbi.locale.sobstituteParams
-//						(
-//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-//							
-//							[
-//								LN('sbi.chartengine.configuration.fontsize'),
-//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-//							]
-//						) : errorMsg;
-//				
-//				(heatmapTooltipFontColorCModel=="transparent" || heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
-//						errorMsg += Sbi.locale.sobstituteParams
-//						(
-//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-//							
-//							[
-//								LN('sbi.chartengine.configuration.color'),
-//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-//							]
-//						) : errorMsg;
-//							
-//				(heatmapTooltipFontStyleCModel=="" ||  heatmapTooltipFontStyleCModel==null ||  heatmapTooltipFontStyleCModel==undefined) ? 
-//						errorMsg += Sbi.locale.sobstituteParams
-//						(
-//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-//							
-//							[
-//								LN('sbi.chartengine.configuration.fontstyle'),
-//								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
-//							]
-//						) : errorMsg;
+
 			}
 
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();

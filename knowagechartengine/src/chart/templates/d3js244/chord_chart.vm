@@ -28,12 +28,37 @@
 	chart:
 	{		
 		type: '$chart.type',
-		height: '$chart.height',
-		width: '$chart.width',
+		
+		#if($chart.height != '')
+    		height: $chart.height,
+    	#end
+		
+		#if($chart.width != '')
+    		width: '$chart.width',
+    	#end		
+        
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided. 
+    		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
+    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType)
+       	 	heightDimType: '$chart.heightDimType',
+        #end
+    	
+    	#if($chart.widthDimType)
+        	widthDimType: '$chart.widthDimType',
+        #end
+		
 		isCockpit: $chart.isCockpitEngine,
+		
 		#if($chart.isCockpitEngine=='true')
   		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
+  		
 		style:
 		{
 			backgroundColor: '$chart.style.backgroundColor',
@@ -46,9 +71,7 @@
 			#elseif($chart.style.fontWeight == 'bold')		        			
     			fontWeight: '$chart.style.fontWeight',
     		#end
-		}
-		
-		
+		}		
 	},
 	
 	## Axises selection

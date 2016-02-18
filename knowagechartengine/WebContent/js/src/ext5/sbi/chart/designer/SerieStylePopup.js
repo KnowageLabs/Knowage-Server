@@ -517,13 +517,18 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //				return styleColor;
 //			}
 //		};
-		var serieTooltipColor = dataAtRow.get('serieTooltipColor').replace('#', '');
+		
+		var serieTooltipColor = dataAtRow.get('serieTooltipColor') ? 
+								dataAtRow.get('serieTooltipColor').replace('#', '') : 
+								"";
+		
 		this.tooltipColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 			fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
 			emptyText: LN('sbi.chartengine.configuration.seriestooltipcolor.emptyText'),
 			labelWidth : LABEL_WIDTH,
 			value: serieTooltipColor
 		});
+		
 		this.tooltipFieldSet.add(this.tooltipColor);
 		
 //		var serieTooltipBackgroundColor = dataAtRow.get('serieTooltipBackgroundColor');
@@ -565,7 +570,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //				        	return styleColor;
 //				        }
 //		};
-		var serieTooltipBackgroundColor = dataAtRow.get('serieTooltipBackgroundColor').replace('#', '');
+
+		var serieTooltipBackgroundColor = 	dataAtRow.get('serieTooltipBackgroundColor') ? 
+											dataAtRow.get('serieTooltipBackgroundColor').replace('#', '') : 
+											"";
+		
 		this.tooltipBackgroundColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 			fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
 			emptyText: LN('sbi.chartengine.configuration.seriestooltipbackgroundcolor.emptyText'),

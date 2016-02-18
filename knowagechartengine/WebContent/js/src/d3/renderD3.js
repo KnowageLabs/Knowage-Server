@@ -140,10 +140,35 @@ function renderWordCloud(chartConf,catchSVG){
 		
 	}    
     
+	/**
+	 * Normalize height and/or width of the chart if the dimension type for that dimension is
+	 * "percentage". This way the chart will take the appropriate percentage of the screen's
+	 * particular dimension (height/width).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	if (chartConf.chart.heightDimType == "percentage")
+	{
+    	var heightNormalized = chartConf.chart.height ? window.innerHeight*Number(chartConf.chart.height)/100 : window.innerHeight;
+	}
+	else
+	{
+		var heightNormalized = chartConf.chart.height ? Number(chartConf.chart.height) : window.innerHeight;
+	}	
+	
+	if (chartConf.chart.widthDimType == "percentage")
+	{
+		var widthNormalized = chartConf.chart.width ? window.innerWidth*Number(chartConf.chart.width)/100 : window.innerWidth;
+	}
+	else
+	{
+		var widthNormalized = chartConf.chart.width ? Number(chartConf.chart.width) : window.innerWidth;
+	}
+	
 		(function() {
                
 			function cloud() {
-				var size = [chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+				var size = [widthNormalized, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 						+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6],
 				text = cloudText,
 				font = cloudFont,
@@ -557,7 +582,7 @@ function renderWordCloud(chartConf,catchSVG){
         
 		var wordFontSize= d3.scale.linear().domain([minValue,maxic]).range([minfontsize,maxfontsize]);
 		
-		var layout=d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+		var layout=d3.layout.cloud().size([widthNormalized, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
 			 wordSize= wordFontSize(d.value);
@@ -590,8 +615,8 @@ function renderWordCloud(chartConf,catchSVG){
 			.append("div").attr("id","main"+randomId)
 			.attr("class","d3-container")
 			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-			.style("height",chartConf.chart.height)
-			.style("width",chartConf.chart.width)			
+			.style("height",heightNormalized)
+			.style("width",widthNormalized)			
 			.style("font-family", chartConf.chart.style.fontFamily)	
 			.style("font-style", chartConf.chart.style.fontStyle)
     		.style("font-weight", chartConf.chart.style.fontWeight)
@@ -708,8 +733,8 @@ function renderWordCloud(chartConf,catchSVG){
 		var bacground=d3.select("#main"+randomId)
 			.append("div").attr("id","chart"+randomId)
 			.append("svg")
-			.attr("width", chartConf.chart.width)
-			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+			.attr("width", widthNormalized)
+			.attr("height", heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
          
 		
@@ -807,8 +832,8 @@ function renderWordCloud(chartConf,catchSVG){
 				 * Call the function that enables positioning of the 
 				 * tooltip according to its dimensions.
 				 */			
-				var chartHeight = Number(chartConf.chart.height);
-				var chartWidth = Number(chartConf.chart.width);
+				var chartHeight = Number(heightNormalized);
+				var chartWidth = Number(widthNormalized);
 				
 				positionTheTooltip(chartHeight,chartWidth,ttText);							
 				
@@ -823,8 +848,6 @@ function renderWordCloud(chartConf,catchSVG){
 				
 				
 			});
-			
-			
 			
 			}	
 		}
@@ -858,17 +881,8 @@ function renderWordCloud(chartConf,catchSVG){
 				
 		/* Check if configurable (from the Designer point of view)
 		 * parameters are defined through the Designer. If not set
-		 * the predefined values, instead. */			
-
-//		console.log(d3.select("body").selectAll("*").remove());
-//		d3.selectAll("*").remove();
+		 * the predefined values, instead. */		
 		
-//		var chartHeight = (jsonObject.chart.height != '$chart.height') ? parseInt(jsonObject.chart.height) : 400 ;
-//		var chartHeight = null;
-//		var chartFontFamily = (jsonObject.chart.style.fontFamily != '$chart.style.fontFamily') ? jsonObject.chart.style.fontFamily : "" ;
-//		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "" ;
-//		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "" ;
-//		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "" ;
 		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 100 ;
 		
 		/* 'topPadding':	padding (empty space) between the breadcrumb 
@@ -881,9 +895,35 @@ function renderWordCloud(chartConf,catchSVG){
 		var topPadding = 30;
 		var bottomPadding = 30;
 		
+		var bcHeightFactor = 1;
+		var bcWidthFactor = 1;
+		
+		/**
+		 * TODO: Normalize width and height of the breadcrumbs.
+		 * Uncomment if needed!
+		 * Danilo (18.02)
+		 */
+//		if (jsonObject.chart.heightDimType == "percentage")
+//		{
+//			bcHeightFactor = (jsonObject.chart.height && Number(jsonObject.chart.height)>0) ?  Number(jsonObject.chart.height)/100 : 1;
+//		} 
+//		else
+//		{
+//			bcHeightFactor = (jsonObject.chart.height && Number(jsonObject.chart.height)>0) ?  Number(jsonObject.chart.height)/window.innerHeight : 1;
+//		}	
+//		
+//		if (jsonObject.chart.widthDimType == "percentage")
+//		{
+//			bcWidthFactor = (jsonObject.chart.width && Number(jsonObject.chart.width)>0) ?  Number(jsonObject.chart.width)/100 : 1;
+//		} 
+//		else
+//		{
+//			bcWidthFactor = (jsonObject.chart.width && Number(jsonObject.chart.width)>0) ?  Number(jsonObject.chart.width)/window.innerWidth : 1;
+//		}	
+		
 		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width);
-		var bcHeight = parseInt(jsonObject.toolbar.style.height);
+		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width)*bcHeightFactor;
+		var bcHeight = parseInt(jsonObject.toolbar.style.height)*bcWidthFactor;
 		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
 		var bcTail = parseInt(jsonObject.toolbar.style.tail);
 		
@@ -892,22 +932,47 @@ function renderWordCloud(chartConf,catchSVG){
 	     * Hence, radius of the circular Sunburst chart is going to be half of
 	     * the lesser dimension of that window. */				
 	    //var width = parseInt(jsonObject.chart.width);
-	    var width = jsonObject.chart.width;
-	    var height = 0;
+//	    var width = jsonObject.chart.width;
+//	    var height = 0;
+	    
+		/**
+		 * Normalize height and/or width of the chart if the dimension type for that dimension is
+		 * "percentage". This way the chart will take the appropriate percentage of the screen's
+		 * particular dimension (height/width).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+	    if (jsonObject.chart.heightDimType == "percentage")
+		{
+	    	var heightNormalized = jsonObject.chart.height ? window.innerHeight*Number(jsonObject.chart.height)/100 : window.innerHeight;
+		}
+		else
+		{
+			var heightNormalized = jsonObject.chart.height ? Number(jsonObject.chart.height) : window.innerHeight;
+		}	
+		
+		if (jsonObject.chart.widthDimType == "percentage")
+		{
+			var width = jsonObject.chart.width ? window.innerWidth*Number(jsonObject.chart.width)/100 : window.innerWidth;
+		}
+		else
+		{
+			var width = jsonObject.chart.width ? Number(jsonObject.chart.width) : window.innerWidth;
+		}
 	    
 	    if (jsonObject.toolbar.style.position=="bottom")
     	{
-	    	height = jsonObject.chart.height 
-			- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
-					+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
-					)*1.4 - bottomPadding - topPadding - bcHeight;
+	    	height = heightNormalized
+						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
+							+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
+								- bottomPadding - topPadding - bcHeight;
     	}
 	    else
     	{
-	    	height = jsonObject.chart.height 
+	    	height = heightNormalized 
 						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
-								+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
-					)*1.4 - topPadding*2 - bottomPadding - bcHeight;
+								+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
+									- topPadding*2 - bottomPadding - bcHeight;
     	}
 		
 //	    var height = jsonObject.chart.height;
@@ -960,8 +1025,8 @@ function renderWordCloud(chartConf,catchSVG){
 			.append("div").attr("id","main"+ randomId)
 			.attr("class","d3-container")
 			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-			.style("height", jsonObject.chart.height)
-			.style("width", jsonObject.chart.width)
+			.style("height", heightNormalized)
+			.style("width", width)
 			.style("font-family", jsonObject.chart.style.fontFamily)
 			.style("font-size", jsonObject.chart.style.fontSize)
 			.style("font-style",jsonObject.chart.style.fontStyle)
@@ -1810,8 +1875,7 @@ function renderWordCloud(chartConf,catchSVG){
 
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
-			});
-		
+			});		
 		
 		var len = records.length;
 		
@@ -1881,9 +1945,34 @@ function renderWordCloud(chartConf,catchSVG){
 
 		var brushx = -Number(brushWidth)/2;
 
+		/**
+		 * Normalize height and/or width of the chart if the dimension type for that dimension is
+		 * "percentage". This way the chart will take the appropriate percentage of the screen's
+		 * particular dimension (height/width).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (data.chart.heightDimType == "percentage")
+		{
+	    	var heightNormalized = data.chart.height ? window.innerHeight*Number(data.chart.height)/100 : window.innerHeight;
+		}
+		else
+		{
+			var heightNormalized = data.chart.height ? Number(data.chart.height) : window.innerHeight;
+		}	
+		
+		if (data.chart.widthDimType == "percentage")
+		{
+			var widthNormalized = data.chart.width ? window.innerWidth*Number(data.chart.width)/100 : window.innerWidth;
+		}
+		else
+		{
+			var widthNormalized = data.chart.width ? Number(data.chart.width) : window.innerWidth;
+		}
+		
 		var m = [40, 40, 40, 100],
-		w = data.chart.width - m[1] - m[3],
-		h = data.chart.height - m[0] - m[2];
+		w = widthNormalized - m[1] - m[3],
+		h = heightNormalized - m[0] - m[2];
 
 		/**
 		 * Configuration that we get directly from the VM (needed for displaying
@@ -1893,10 +1982,10 @@ function renderWordCloud(chartConf,catchSVG){
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		
+		var legendWidth = widthNormalized*0.2;
 		
-		var legendWidth = data.chart.width*0.2;
-		if(data.chart.width < 1000){
-			legendWidth=data.chart.width*0.25;
+		if(widthNormalized < 1000){
+			legendWidth=widthNormalized*0.25;
 		}
 		
 		var tableRowElements = data.table.numberOfRows;
@@ -1945,8 +2034,8 @@ function renderWordCloud(chartConf,catchSVG){
 			.append("div").attr("id","main"+randomId)
 			.attr("classs","d3-container")
 			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-			.style("height",data.chart.height)
-			.style("width",data.chart.width)
+			.style("height",heightNormalized)
+			.style("width",widthNormalized)
 			.style("background-color",data.chart.style.backgroundColor)
 			.style("font-family", data.chart.style.fontFamily)
 			.style("font-size",  data.chart.style.fontSize)
@@ -1995,27 +2084,27 @@ function renderWordCloud(chartConf,catchSVG){
 		 * Height of the DIV that holds the chart itself (axes).
 		 * @author Ana Tomic
 		 */
-		var chartDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight - buttonHeight-10;
+		var chartDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - tableHeight - buttonHeight-10;
 		
 		/**
 		 * Add brush clearing selections button to the main DIV.
 		 * @author Ana Tomic
 		 */
 		d3.select("#main"+randomId).append("div").attr("id","clearButton"+randomId).style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
-		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",data.chart.width).style("height",chartDivHeight);
+		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",widthNormalized).style("height",chartDivHeight);
 			
-		var axesDivHeight = data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
+		var axesDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
 		
 		var svg = d3.select("#chart"+randomId)
 			.append("div")
 				.style("float","left")
-				.style("width",data.chart.width-legendWidth)
+				.style("width",widthNormalized-legendWidth)
 				// "...-180" for table height plus pagination height (150+30)
 				// "...-20" for bottom padding of the pagination  
 				.style("height", chartDivHeight)
 				.append("svg:svg")
 			//.style("font-size",18)
-				.style("width", data.chart.width-legendWidth)
+				.style("width", widthNormalized-legendWidth)
 				// "...-180" for table height plus pagination height (150+30)
 				// "...-20" for bottom padding of the pagination  
 				.style("height", chartDivHeight)
@@ -2226,8 +2315,8 @@ function renderWordCloud(chartConf,catchSVG){
 							 * Call the function that enables positioning of the 
 							 * tooltip according to its dimensions.
 							 */			
-							var chartHeight = Number(data.chart.height);
-							var chartWidth = Number(data.chart.width);
+							var chartHeight = Number(heightNormalized);
+							var chartWidth = Number(widthNormalized);
 							
 							positionTheTooltip(chartHeight,chartWidth,ttText);	
 							
@@ -2251,8 +2340,8 @@ function renderWordCloud(chartConf,catchSVG){
 					 * Call the function that enables positioning of the 
 					 * tooltip according to its dimensions.
 					 */			
-					var chartHeight = Number(data.chart.height);
-					var chartWidth = Number(data.chart.width);
+					var chartHeight = Number(heightNormalized);
+					var chartWidth = Number(widthNormalized);
 					
 					positionTheTooltip(chartHeight,chartWidth,ttText);	
 				}
@@ -2408,14 +2497,14 @@ function renderWordCloud(chartConf,catchSVG){
 	
 		var tableDiv = d3.select("#main"+randomId)
 							.append("div").attr("id","tableDiv")
-							.style("width",data.chart.width)						
+							.style("width",widthNormalized)						
 							.style("padding-bottom",10)
 							.style("padding-top",30);
 		
 		var table = tableDiv.append("div").attr("id","tDiv"+randomId).attr("align","center")
-		                .attr("width", data.chart.width)
+		                .attr("width", widthNormalized)
 		                .append("table")
-						.style("width", data.chart.width)
+						.style("width", widthNormalized)
 						
 						/**
 						 * The next style parameter setting allow us to reset font stylization provided 
@@ -2509,7 +2598,7 @@ function renderWordCloud(chartConf,catchSVG){
 		      .style("border","1px solid black")
 		      .attr("border-collapse","collapse")
 		     .append("tr")
-		     .style("width", data.chart.width-legendWidth)
+		     .style("width", widthNormalized-legendWidth)
 		     .style("height","30px")
 		     .selectAll("th")
 		     .data(tableColumns).enter()
@@ -2522,7 +2611,7 @@ function renderWordCloud(chartConf,catchSVG){
 		.data(currentTableData)
 		     .enter()
 		     .append("tr")
-		     .style("width", data.chart.width-legendWidth)
+		     .style("width", widthNormalized-legendWidth)
 		     .style("background-color",function(d,i){
 		    	 if(i%2==1)return "lightgray";
 		     })
@@ -2792,9 +2881,6 @@ function renderWordCloud(chartConf,catchSVG){
 		.append("td")
 		.text(function(d){return d.value})
 		.style("text-align","center");
-
-
-
 	}
 
 	function updateTable(){
@@ -2847,25 +2933,21 @@ function renderWordCloud(chartConf,catchSVG){
 	}
 
 	function showNext(){
+		
 		prevButton.attr("disabled",null);
 		firstDisplayed=firstDisplayed+5;
 		lastDisplayed=lastDisplayed+5;
+		
 		if(lastDisplayed>allTableData.length){
 			lastDisplayed=allTableData.length;
 		}
-
-
-
+		
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
-
-
 
 		if(lastDisplayed === allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-
-
 
 		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
 			/**
@@ -2892,8 +2974,6 @@ function renderWordCloud(chartConf,catchSVG){
 			.style("text-decoration",data.legend.element.style.textDecoration);
 		
 		updateTable();	
-
-
 	}
 
 	function showPrev(){
@@ -2909,8 +2989,6 @@ function renderWordCloud(chartConf,catchSVG){
 		else{
 			lastDisplayed=lastDisplayed-5;
 		}
-
-
 
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
@@ -2946,7 +3024,6 @@ function renderWordCloud(chartConf,catchSVG){
 		updateTable();	
 
 	}
-	
 	
 	function clearSelection(){
 		columns.filter(function(p) { return y[p].brush.clear(); });
@@ -3098,8 +3175,8 @@ function renderChordChart(jsonData)
 				 * Call the function that enables positioning of the 
 				 * tooltip according to its dimensions.
 				 */			
-				var chartHeight = Number(jsonData.chart.height);
-				var chartWidth = Number(jsonData.chart.width);
+				var chartHeight = jsonData.chart.height ? Number(jsonData.chart.height) : window.innerHeight;
+				var chartWidth = jsonData.chart.width ? Number(jsonData.chart.width) : window.innerWidth;
 				
 				positionTheTooltip(chartHeight,chartWidth,ttText);	
 				
@@ -3126,9 +3203,7 @@ function renderChordChart(jsonData)
 				tooltip.
 				   // attr("hidden","false").
 					transition().duration(50).style("opacity","0");
-					//tooltip.style("background",myColors(d[groupcolumn]));
-				
-				
+					//tooltip.style("background",myColors(d[groupcolumn]));				
 			}			
 		};
 	}
@@ -3313,7 +3388,6 @@ function renderChordChart(jsonData)
 	   		ttp+="&nbsp : &nbsp";
 	   		ttp+=columnsPairedWithRows[i].pairedWith[j].value;
 	   		ttp+="<br>"
-	   		
 	   	}
 	   	
 	   	return ttp;
@@ -3332,17 +3406,35 @@ function renderChordChart(jsonData)
 	 * the chart (values on ticks) ??? */
 	
 	var emptySplitDivHeight = 0;
-	
+		
 	/**
-	 * Width and height of the chart
+	 * Normalize height and/or width of the chart if the dimension type for that dimension is
+	 * "percentage". This way the chart will take the appropriate percentage of the screen's
+	 * particular dimension (height/width).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	var width = jsonData.chart.width;
-	var height = jsonData.chart.height;
+	if (jsonData.chart.heightDimType == "percentage")
+	{
+		var height = jsonData.chart.height ? window.innerHeight*Number(jsonData.chart.height)/100 : window.innerHeight;
+	}
+	else
+	{
+		var height = jsonData.chart.height ? Number(jsonData.chart.height) : window.innerHeight;
+	}	
+	
+	if (jsonData.chart.widthDimType == "percentage")
+	{
+		var width = jsonData.chart.width ? window.innerWidth*Number(jsonData.chart.width)/100 : window.innerWidth;
+	}
+	else
+	{
+		var width = jsonData.chart.width ? Number(jsonData.chart.width) : window.innerWidth;
+	}
 	
 	var chartDivWidth=width;
 	var chartDivHeight=height;
 	var heightForChartSvg = height;
-	
 	
 	if(jsonData.title.text!="" || jsonData.subtitle.text!=""){
 		emptySplitDivHeight=10;
@@ -3354,9 +3446,6 @@ function renderChordChart(jsonData)
 				 +emptySplitDivHeight)*1.2;
 	
 	}
-	
-	
-	
 	
 	var innerRadius = Math.min(width, height) * .35;
     var outerRadius = innerRadius * 1.1;
@@ -3372,6 +3461,8 @@ function renderChordChart(jsonData)
 	
 	var randomId=  Math.round((Math.random())*10000);
 	
+	//-- mainPanelTemp.setStyle("overflow-y","hidden"); --
+	
 	d3.select("body")
 		.append("div").attr("id","main"+randomId)
 		.attr("class","d3-container")
@@ -3379,7 +3470,6 @@ function renderChordChart(jsonData)
 		// Set the real height of the entire chart (the one that user specified)
 		.style("height",height)	
 		.style("width",width)
-		.style("margin","auto")	// TODO: Danilo (5.2)
 		.style("background-color",jsonData.chart.style.backgroundColor)
 		.style("font-style",jsonData.chart.style.fontStyle)
 		.style("font-weight",jsonData.chart.style.fontWeight)
