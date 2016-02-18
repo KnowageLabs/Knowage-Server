@@ -52,7 +52,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 					    	scope.iconFolder = 'fa fa-folder';
 					    	scope.iconFolderOpen = 'fa fa-folder-open';	
 					    	scope.iconLeaf = 'fa fa-leaf';
-					    	
+					    	scope.iconDocument = 'fa fa-file';
 					    	scope.seeTree = false;
 					    	
 					    	scope.createTreeStructure = function (folders){

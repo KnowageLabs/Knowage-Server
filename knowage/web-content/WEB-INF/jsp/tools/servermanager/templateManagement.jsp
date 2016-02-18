@@ -78,11 +78,11 @@
 				<md-icon md-font-icon="fa fa-trash"> </md-icon> </md-button> </md-input-container>
 			</div>
 		</div>
-			<div id="lista"  ng-show="documents.length!=0" >
+			<div id="lista"   >
 			<document-tree ng-model="tree" id="impExpTree" create-tree="true"
 										selected-item="docChecked" multi-select="true" show-files="true">
 									</document-tree>
-	<!-- 	<div layout="row" layout-wrap>
+	<!-- <div layout="row" layout-wrap>
 				<div>
 					<md-checkbox ng-checked="flagCheck" ng-click="selectAll()">{{translate.load("sbi.importusers.selectall");}}</md-checkbox>
 				</div>
@@ -94,7 +94,7 @@
 
 				</div>
 
-			</div> -->	
+			</div>  -->
 	</div>
 
 

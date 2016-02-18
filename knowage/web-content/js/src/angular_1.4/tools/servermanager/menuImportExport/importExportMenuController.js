@@ -56,14 +56,16 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			fd.append('exportedArchive', $scope.importFile.file);
 			sbiModule_restServices.post("1.0/serverManager/importExport/menu", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
-				
+				if (data.hasOwnProperty("ERROR")){
+						$mdToast.show($mdToast.simple().content(data.errors[0].message).position('top').action(
+						'OK').highlightAction(false).hideDelay(5000));
+				}
 				if(data.STATUS=="NON OK"){
-					$mdToast.show($mdToast.simple().content("data.ERROR").position('top').action(
+					$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
 				}
 				else if(data.STATUS=="OK"){
 					//check role missing
-					
 					//clean the vector 
 					$scope.menu=[];
 					$scope.currentMenu=[];
