@@ -166,10 +166,13 @@ public class CubeUtilities {
 		if (hierarchies != null) {
 			for (int i = 0; i < hierarchies.size(); i++) {
 				Hierarchy aHierarchy = hierarchies.get(i);
-				Dimension aDimension = aHierarchy.getDimension();
-				if (!dimensions.contains(aDimension)) {
-					dimensions.add(aDimension);
+				if (aHierarchy != null) {
+					Dimension aDimension = aHierarchy.getDimension();
+					if (!dimensions.contains(aDimension)) {
+						dimensions.add(aDimension);
+					}
 				}
+
 			}
 		}
 
