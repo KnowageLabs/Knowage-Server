@@ -119,4 +119,16 @@
 	.trashcan-background{
 		background-color: $baseColor !important;
 	}
+
+	.fedAssociationsBoxEllipsis {
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    width: 250px
+	}
+
+	.fedAssociationsBoxCard {
+	    height: 93%
+	}
+
+
 }
