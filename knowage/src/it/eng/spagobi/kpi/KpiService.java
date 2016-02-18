@@ -1,15 +1,25 @@
 package it.eng.spagobi.kpi;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +30,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
  * 
@@ -28,110 +42,163 @@ import javax.ws.rs.core.Response;
 @ManageAuthorization
 public class KpiService {
 
-	List<RuleOutput> measures = new ArrayList<>();
-	List<Alias> aliases = new ArrayList<>();
-	List<Rule> rules = new ArrayList<>();
-	{
-		Rule rule = new Rule();
-		rule.setId(1);
-		rule.setName("Regola1");
-		rule.setDefinition("select ...");
-		rules.add(rule);
-
-		RuleOutput m = new RuleOutput();
-		m.setAlias("Measure 1");
-		m.setAliasId(1);
-		m.setAuthor("Salvo L.");
-		m.setCategory("categoria 1");
-		m.setType("Measure");
-		m.setRule("Regola1");
-		m.setRuleId(1);
-		measures.add(m);
-
-		m = new RuleOutput();
-		m.setAlias("Measure 2");
-		m.setAliasId(2);
-		m.setAuthor("Salvo L.");
-		m.setCategory("categoria 1");
-		m.setType("Measure");
-		m.setRule("Regola1");
-		m.setRuleId(1);
-		measures.add(m);
-
-		Alias alias = new Alias();
-		alias.setId(1);
-		alias.setName("Measure 1");
-		aliases.add(alias);
-		alias = new Alias();
-		alias.setId(2);
-		alias.setName("Measure 2");
-		aliases.add(alias);
-		alias = new Alias();
-		alias.setId(3);
-		alias.setName("Measure 3");
-		aliases.add(alias);
-		alias = new Alias();
-		alias.setId(4);
-		alias.setName("Measure 4");
-		aliases.add(alias);
-		alias = new Alias();
-		alias.setId(5);
-		alias.setName("Aereoporto");
-		aliases.add(alias);
-		alias = new Alias();
-		alias.setId(6);
-		alias.setName("Volo");
-		aliases.add(alias);
-	}
+	private static final String MISURE_NAME = "nomeMisura";
+	private static final String MISURE_ATTRIBUTES = "attributi";
 
 	@GET
 	@Path("/listMeasure")
-	public Response listMeasure() {
-
+	public Response listMeasure(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<RuleOutput> measures = dao.listRuleOutput();
 		return Response.ok(JsonConverter.objectToJson(measures, measures.getClass())).build();
 	}
 
 	@GET
 	@Path("/{id}/loadRule")
-	public Response loadRule(@PathParam("id") Integer id) {
-		for (RuleOutput measure : measures) {
-			if (measure.getId().equals(id)) {
-				return Response.ok(JsonConverter.objectToJson(measure, measure.getClass())).build();
-			}
-		}
-		return Response.ok().build();
+	public Response loadRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		Rule r = dao.loadRule(id);
+		return Response.ok(JsonConverter.objectToJson(r, r.getClass())).build();
 	}
 
 	@GET
 	@Path("/listAlias")
-	public Response listAlias() {
-
+	public Response listAlias(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Alias> aliases = dao.listAlias();
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
 	@POST
 	@Path("/saveRule")
-	public Response saveRule(@Context HttpServletRequest req) {
+	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
+			checkMandatory(rule);
 			if (rule.isNewRecord()) {
-				rule.setId(rules.size());
-				rules.add(rule);
+				dao.insertRule(rule);
 			} else {
-				Rule oldRule = rules.get(rules.indexOf(rule));
-				oldRule.setName(rule.getName());
-				oldRule.setDefinition(rule.getDefinition());
-				oldRule.setRuleOutputs(rule.getRuleOutputs());
-				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-					if (!measures.contains(ruleOutput)) {
-						measures.add(ruleOutput);
-					}
-				}
+				dao.updateRule(rule);
 			}
+
 		} catch (IOException e) {
 			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
 		}
 		return Response.ok().build();
 	}
+
+	@GET
+	@Path("/listKpi")
+	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Kpi> kpis = dao.listKpi();
+		return Response.ok(JsonConverter.objectToJson(kpis, kpis.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadKpi")
+	public Response loadKpi(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		Kpi kpi = getKpiDAO(req).loadKpi(id);
+		return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
+	}
+
+	@POST
+	@Path("/saveKpi")
+	public Response loadKpi(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
+
+			checkMandatory(kpi);
+			checkCardinality(kpi.getCardinality());
+			checkPlaceholder(kpi.getPlaceholder());
+
+			if (kpi.isNewRecord()) {
+				dao.insertKpi(kpi);
+			} else {
+				dao.updateKpi(kpi);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
+	private void checkPlaceholder(String placeholder) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private class Measure {
+		String name;
+		List<String> selectedAttrs = new ArrayList<>();
+	}
+
+	private void checkCardinality(String cardinality) throws JSONException, SpagoBIException {
+		JSONArray measureArray = new JSONArray(cardinality);
+		List<Measure> measureLst = new ArrayList<>();
+		for (int i = 0; i < measureArray.length(); i++) {
+			JSONObject misuraJson = measureArray.getJSONObject(i);
+			JSONObject attrs = misuraJson.optJSONObject(MISURE_ATTRIBUTES);
+			Measure measure = new Measure();
+			measure.name = misuraJson.getString(MISURE_NAME);
+			measureLst.add(measure);
+			if (attrs != null) {
+				Iterator<String> attrNames = attrs.keys();
+				while (attrNames.hasNext()) {
+					String attr = attrNames.next();
+					if (attrs.optBoolean(attr)) {
+						measure.selectedAttrs.add(attr);
+					}
+				}
+			}
+		}
+		Collections.sort(measureLst, new Comparator<Measure>() {
+			@Override
+			public int compare(Measure m1, Measure m2) {
+				return m1.selectedAttrs.size() - m2.selectedAttrs.size();
+			}
+		});
+		for (int i = 1; i < measureLst.size(); i++) {
+			Measure prevMeasure = measureLst.get(i - 1);
+			Measure currMeasure = measureLst.get(i);
+			System.out.println("check " + prevMeasure.name + " with " + currMeasure.name);
+			if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
+				throw new SpagoBIException("Check on measure [" + prevMeasure.name + "] failed");
+			}
+		}
+	}
+
+	private static void setProfile(HttpServletRequest req, ISpagoBIDao dao) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		dao.setUserProfile(profile);
+	}
+
+	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
+		// TODO getNewKpiDAO
+		IKpiDAO dao = DAOFactory.getNewKpiDAO();
+		setProfile(req, dao);
+		return dao;
+	}
+
+	private void checkMandatory(Kpi kpi) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void checkMandatory(Rule rule) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

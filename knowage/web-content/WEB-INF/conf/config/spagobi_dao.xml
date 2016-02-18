@@ -61,7 +61,7 @@
 		<DAO name="MenuRolesDAO" implementation="it.eng.spagobi.wapp.dao.MenuRolesDAOImpl" />
 		<DAO name="BIObjectRatingDAO"
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.BIObjectRatingDAOHibImpl" />
-		<!-- DAO name="KpiDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiDAOImpl" / -->
+		<DAO name="OldKpiDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiDAOImpl" />
 		<DAO name="KpiDAO" implementation="it.eng.spagobi.kpi.dao.KpiDAOImpl" />
 		<DAO name="AlarmEventDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl" />
 		<DAO name="AlarmDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmDAOHibImpl" />
