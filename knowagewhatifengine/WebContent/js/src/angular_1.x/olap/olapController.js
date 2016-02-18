@@ -87,7 +87,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	$scope.ready = true;
 	
-	
+	$scope.changeDrillType = function(type){
+		$scope.modelConfig.drillType = type;
+		console.log($scope.modelConfig.drillType);
+	}
 	
 	$scope.btnFunctions = function(name){
 		switch(name){
@@ -139,7 +142,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			console.log("Error!")
 		});
 		 
-	 }
+	}
 	/**dragan*/
 	 $scope.startFrom = function(start){
 		   if($scope.ready){

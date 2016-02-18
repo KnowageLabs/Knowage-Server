@@ -1,10 +1,10 @@
 <md-toolbar class='md-toolbar-tools knowage-blue'>
 	<section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-		<md-button class="groupX left">Position</md-button>
+		<md-button class="groupX left" ng-click="changeDrillType('position')">Position</md-button>
 		
-		<md-button class="groupX middle">Member</md-button>
+		<md-button class="groupX middle" ng-click="changeDrillType('member')">Member</md-button>
 		
-		<md-button class="groupX right">Replace</md-button>
+		<md-button class="groupX right" ng-click="changeDrillType('replace')">Replace</md-button>
 		
 		<md-button class="main-toolbar-button {{btn.img}}" ng-repeat="btn in toolbarButtons" ng-click="btnFunctions(btn.img)">
 			<md-tooltip md-direction="bottom">
@@ -25,8 +25,8 @@
 				Show MDX
 			</md-tooltip>
 		</md-button>
-		<md-button ng-click="sortBASC()">BASC</md-button>
-		<md-button ng-click="sortBDESC()">BDESC</md-button>
+		<md-button ng-click="sortBASC()" class="main-toolbar-button">BASC</md-button>
+		<md-button ng-click="sortBDESC()" class="main-toolbar-button">BDESC</md-button>
 		
 
 	</section>
