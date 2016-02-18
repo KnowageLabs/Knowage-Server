@@ -596,7 +596,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	}
 	
 	$scope.removeFilter = function(choose){
-		if (choose = 'src'){
+		if (choose == 'src'){
 			$scope.filterBySrcTrigger = "";
 			$scope.filterBySrc = "";
 			$scope.orderBySrcTrigger = "";
@@ -607,7 +607,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			}
 			$scope.dateFilterSrc = undefined;
 			$scope.seeHideLeafSrc = false;
-		}else if (choose = 'target'){
+		}else if (choose == 'target'){
 			$scope.filterByTargetTrigger = "";
 			$scope.filterByTarget = "";
 			$scope.orderByTargetTrigger = "";
