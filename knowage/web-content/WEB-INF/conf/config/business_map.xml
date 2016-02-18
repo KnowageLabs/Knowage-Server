@@ -104,7 +104,8 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteHierarchy" businessProcess="HierarchiesManagement" />		
 		<MAP_REST_SERVICE serviceUrl="/hierarchies/getRelationsMasterTechnical" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/getHierarchiesMaster" businessProcess="HierarchiesManagement" />	
-		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/createHierarchyMaster" businessProcess="HierarchiesManagement" />		
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/createHierarchyMaster" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster/syncronizeHierarchyMaster" businessProcess="HierarchiesManagement" />			
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesTechnical/getHierarchiesTechnical" businessProcess="HierarchiesManagement" />						 						 						
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/modifyHierarchyBkps" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/restoreHierarchyBkps" businessProcess="HierarchiesManagement" />

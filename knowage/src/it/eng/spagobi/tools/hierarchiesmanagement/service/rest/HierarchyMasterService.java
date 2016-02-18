@@ -204,6 +204,101 @@ public class HierarchyMasterService {
 
 	}
 
+	@POST
+	@Path("/syncronizeHierarchyMaster")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String syncronizeHierarchyMaster(@Context HttpServletRequest req) throws SQLException {
+
+		logger.debug("START");
+
+		Connection dbConnection = null;
+
+		try {
+
+			// JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			//
+			// String dimensionLabel = requestVal.getString("dimension");
+			// String validityDate = requestVal.getString("validityDate");
+			// String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
+			// String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
+			// String optionalFilters = (requestVal.isNull("optionalFilter")) ? null : requestVal.getString("optionalFilter");
+
+			// ONLY FOR TEST
+			// optionalFilters =
+			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
+			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
+			String dimensionLabel = "CDC";
+			String validityDate = "2016-02-17";
+			String filterHierarchy = "anto1";
+			String filterHierType = "MASTER";
+			String optionalFilters = "{\"DIM_FILTERS\":[]}";
+			// FINE TEST
+			if ((dimensionLabel == null) || (validityDate == null)) {
+				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master", "wrong request parameters");
+			}
+
+			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
+
+			if (dataSource == null) {
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+			}
+
+			dbConnection = dataSource.getConnection();
+
+			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
+			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
+
+			Dimension dimension = hierarchies.getDimension(dimensionLabel);
+			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
+
+			Hierarchy hierarchy = hierarchies.getHierarchy(dimensionLabel);
+			Assert.assertNotNull(hierarchy, "Impossible to find a valid hierarchy for dimension [" + dimensionLabel + "]");
+
+			String dimensionName = dimension.getName();
+			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
+			String prefix = hierarchies.getPrefix(dimensionLabel);
+
+			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
+
+			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
+			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
+
+			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+
+			String masterConfig = getHierMasterConfig(dataSource, dbConnection, filterHierarchy);
+
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
+					filterHierarchy, filterHierType, hierTableName, prefix);
+
+			dbConnection.setAutoCommit(false);
+
+			Iterator iterator = dataStore.iterator();
+
+			while (iterator.hasNext()) {
+
+				IRecord record = (IRecord) iterator.next();
+				// insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
+				// dimensionName, validityDate, hierConfig);
+
+			}
+
+			dbConnection.commit();
+
+		} catch (Throwable t) {
+			if (dbConnection != null && !dbConnection.isClosed()) {
+				dbConnection.rollback();
+			}
+			logger.error("An unexpected error occured while retriving dimension data");
+			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
+		} finally {
+			dbConnection.close();
+		}
+
+		logger.debug("END");
+		return "{\"response\":\"ok\"}";
+
+	}
+
 	public void saveHierarchyMasterConfiguration(Connection dbConnection, IDataSource dataSource, JSONObject requestVal) throws SQLException, JSONException {
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
@@ -431,7 +526,7 @@ public class HierarchyMasterService {
 		int lvlIndex = levelsMap.size();
 
 		int lvlsLength = lvls.length();
-		logger.debug("The user has specified [" + lvlsLength + "] level/s");
+		logger.debug("The user has specified [" + lvlsLength + "] levels");
 
 		for (int k = 0; k < lvlsLength; k++) {
 			// a level found, increment the index level counter
@@ -800,5 +895,40 @@ public class HierarchyMasterService {
 		if (lvlIndex > numLevels) {
 			throw new SQLException("Creation failed. You have " + lvlIndex + " levels, but the maximum is " + numLevels + " levels");
 		}
+	}
+
+	private String getHierMasterConfig(IDataSource dataSource, Connection dbConnection, String hierarchyName) {
+		logger.debug("START");
+		String toReturn = null;
+
+		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
+		String hierNmColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG, dataSource);
+
+		String selectClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
+
+		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " WHERE HIER_NM = ? ";
+
+		try (Statement stmt = dbConnection.createStatement(); PreparedStatement selectPs = dbConnection.prepareStatement(selectQuery)) {
+
+			selectPs.setString(1, hierarchyName);
+
+			logger.debug("Preparing select statement. Name of the master configuration is [" + hierarchyName + "]");
+
+			ResultSet rs = selectPs.executeQuery();
+
+			logger.debug("Select query executed! Processing result set...");
+
+			if (rs.next()) {
+				toReturn = rs.getString(HierarchyConstants.HIER_MASTERS_CONFIG);
+			}
+		} catch (Throwable t) {
+			logger.error("An unexpected error occured while restoring hierarchy backup");
+			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", t);
+		}
+
+		logger.debug("Getted configuration for hierarchy master: " + hierarchyName + " - " + toReturn);
+		logger.debug("END");
+		return toReturn;
 	}
 }
