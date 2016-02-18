@@ -152,7 +152,9 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		
 	}
 	$scope.save = function(ev){
-		if($scope.typeSaveMenu == 'Missing'){
+		if($scope.tree.length==0){
+			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
+		}else if($scope.typeSaveMenu == 'Missing' ){
 			//missing user
 			$scope.removeCircularDependences($scope.tree);
 			
@@ -190,11 +192,11 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			}).error(function(data, status, headers, config) {
 				console.log("ERRORS "+status,4000);
 			})
+		
+			
 		}else if($scope.tree.length!=0){
 			$scope.showAction(sbiModule_translate.load("sbi.importmenu.selectmode"));
-		}else{
-			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
-		}		
+		}
 
 	}
 	$scope.reload = function(){
