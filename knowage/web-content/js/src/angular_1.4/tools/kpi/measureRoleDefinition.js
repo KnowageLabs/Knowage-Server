@@ -1,9 +1,7 @@
 var app = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
-
     $mdThemingProvider.theme('knowage')
-
-$mdThemingProvider.setDefaultTheme('knowage');
+    $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
 app.controller('measureRoleMasterController', [ '$scope','sbiModule_translate' ,measureRoleMasterControllerFunction ]);

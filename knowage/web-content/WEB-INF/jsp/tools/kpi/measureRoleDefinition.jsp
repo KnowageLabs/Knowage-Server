@@ -17,7 +17,7 @@
 <title>Measure Role definition</title>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
   <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
