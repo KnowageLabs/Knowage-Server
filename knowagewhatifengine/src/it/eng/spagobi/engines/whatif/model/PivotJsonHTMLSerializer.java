@@ -95,9 +95,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("IN");
 
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-		String time = "Serilize start " + format.format(new Date());
-		System.out.println(time);
 		String table = "";
 
 		logger.debug("Creating the renderer");
@@ -106,6 +103,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRendereCallback callback = new WhatIfHTMLRendereCallback(writer);
+
 		logger.debug("Setting the properties of the renderer");
 
 		renderer.setShowParentMembers(false); // Optionally make the parent
@@ -114,15 +112,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 												// title headers.
 
 		callback.setCellSpacing(0);
-		// callback.setRowHeaderStyleClass(" x-pivot-header ");
-		// callback.setColumnHeaderStyleClass(" x-pivot-header-column");
-		// callback.setCornerStyleClass(" x-pivot-header");
-		// callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
-		// callback.setTableStyleClass("x-pivot-table");
-		// callback.setRowStyleClass(" generic-row-style ");
+		callback.setRowHeaderStyleClass(" x-pivot-header ");
+		callback.setColumnHeaderStyleClass(" x-pivot-header-column");
+		callback.setCornerStyleClass(" x-pivot-header");
+		callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
+		callback.setTableStyleClass("x-pivot-table");
+		callback.setRowStyleClass(" generic-row-style ");
 
-		// callback.setEvenRowStyleClass(" even-row ");
-		// callback.setOddRowStyleClass(" odd-row ");
+		callback.setEvenRowStyleClass(" even-row ");
+		callback.setOddRowStyleClass(" odd-row ");
 
 		// callback.setEvenColumnStyleClass(" even-column ");
 		// callback.setOddColumnStyleClass(" odd-column ");
@@ -186,14 +184,14 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
 			modelConfig.setActualVersion(actualVersion);
 		}
-
-		logger.debug("Rendering the model");
-		time = "Serilize render start " + format.format(new Date());
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
+		String time = "Serilize start " + format.format(new Date());
 		System.out.println(time);
 		renderer.render(value, callback);
-		time = "Serilize render end " + format.format(new Date());
+		time = "Serilize end " + format.format(new Date());
 		System.out.println(time);
-
+		System.out.println();
+		System.out.println();
 		try {
 			writer.flush();
 			writer.close();
@@ -204,16 +202,18 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		CellSet cellSet = value.getCellSet();
+
 		List<CellSetAxis> axis = cellSet.getAxes();
 
 		try {
 
 			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
 			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
-			List<Dimension> axisDimensions = CubeUtilities.getDimensions(axisHierarchies);
+			// List<Dimension> axisDimensions =
+			// CubeUtilities.getDimensions(axisHierarchies);
 			List<Dimension> otherHDimensions = CubeUtilities.getDimensions(value.getCube().getHierarchies());
 
-			otherHDimensions.removeAll(axisDimensions);
+			// otherHDimensions.removeAll(axisDimensions);
 
 			jgen.writeStartObject();
 			jgen.writeStringField(TABLE, table);
@@ -238,10 +238,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			logger.error("Error serializing the pivot table", e);
 			throw new SpagoBIRuntimeException("Error serializing the pivot table", e);
 		}
-		time = "Serilize end " + format.format(new Date());
-		System.out.println(time);
-		System.out.println();
-		System.out.println();
+
 		logger.debug("OUT");
 
 	}
@@ -254,9 +251,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
-		serializeDimensions(jgen, dimensions, axisPos, field, false, null);
-
+		if (hierarchies != null) {
+			List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
+			serializeDimensions(jgen, dimensions, axisPos, field, false, null);
+		}
 	}
 
 	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model)
