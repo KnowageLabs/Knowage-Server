@@ -57,7 +57,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			sbiModule_restServices.post("1.0/serverManager/importExport/menu", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("ERROR")){
-						$mdToast.show($mdToast.simple().content(data.errors[0].message).position('top').action(
+						$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
 						'OK').highlightAction(false).hideDelay(5000));
 				}
 				if(data.STATUS=="NON OK"){
@@ -93,7 +93,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				
 			})
 			.error(function(data, status, headers, config) {
-				$mdToast.show($mdToast.simple().content("errore").position('top').action(
+				$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
 				'OK').highlightAction(false).hideDelay(5000));
 				
 			});
