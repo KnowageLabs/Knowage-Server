@@ -16,6 +16,7 @@ package it.eng.spagobi.engines.whatif.api;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 import java.util.List;
 
@@ -28,7 +29,6 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-import org.pivot4j.PivotModel;
 import org.pivot4j.transform.SwapAxes;
 
 @Path("/1.0/axis")
@@ -58,7 +58,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	public String swapAxis() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 		if (transform.isSwapAxes()) {
@@ -67,6 +67,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			transform.setSwapAxes(true);
 		}
 
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 15);
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
