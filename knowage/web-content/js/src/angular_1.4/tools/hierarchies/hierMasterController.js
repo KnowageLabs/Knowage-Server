@@ -222,7 +222,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				validityDate : dateFormatted
 			}
 			if (optionalFilter == true && $scope.dimFilters.length > 0){
-				 config.optionalFilter = $scope.convertFiltersDim($scope.dimFilters);
+				 config.params.optionalFilter = $scope.convertFiltersDim($scope.dimFilters);
 			}
 			if (filterDate !== undefined && filterDate !== null && filterDate.toString().length > 0) {
 				config.params.filterDate = $scope.formatDate(filterDate);
