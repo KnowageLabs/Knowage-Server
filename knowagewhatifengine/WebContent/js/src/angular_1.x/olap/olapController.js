@@ -119,6 +119,33 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	/*dragan**/
 	 
+	 /*service for placing member on axis**/
+	 $scope.putMemberOnAxis = function(axis,member){
+		 
+		 $http(
+				{
+					method : 'POST',
+					url : '/knowagewhatifengine/restful-services/1.0/'+axis+'?SBI_EXECUTION_ID='
+							+ JSsbiExecutionID,
+					data : member
+				}).then(function successCallback(response) {
+
+			// this callback will be called asynchronously
+			// when the response is available
+
+			$scope.table = $sce.trustAsHtml(response.data.table);
+			$scope.modelConfig = response.data.modelConfig;
+			console.log($scope.modelConfig);
+		}, function errorCallback(response) {
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+			console.log("Error!")
+		});
+		 
+	}
+	
+	/*dragan**/
+	 
 	 /*service for sending modelConfig**/
 	 
 	 $scope.sendModelConfig = function(modelConfig){
