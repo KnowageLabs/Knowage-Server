@@ -6,16 +6,17 @@
 	</div>	
 	
 	<div style="height:calc(100% - 64px);">
-	<div class="filter-toolbar-element-left" ng-repeat="column in columns|limitTo:maxCols:leftStart" ng-drag="true" ng-drag-data="column" ng-drag-success="dragSuccess('left',$index)">
+	<div class="filter-toolbar-element-left" ng-repeat="row in rows|limitTo:maxRows:leftStart" ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
 		<div class="name">
-			<div class="rotate-text">{{column.name}}</div>
+			<div class="rotate-text">{{row.name}}</div>
 		</div>	
 		<div class="action">
-			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
+			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, row.uniqueName,row.axis,null)">
 				<md-icon md-font-icon="fa fa-filter"></md-icon>
 			</md-button>
 		</div>
 	</div>
+	
 	</div>
 	
 
@@ -28,7 +29,9 @@
 
 <md-content scrolly>
  <div style="background-color: #3b678c;height: 216000px;" scrolly>
- 	dra
+ 	&nbsp;
+ 	&nbsp;
+ 	&nbsp;
  </div>
  </md-content>
 

@@ -10,10 +10,10 @@
 		</md-button>
 	</div>
 			
-	<div class="filter-toolbar-element" layout="row" ng-repeat="row in rows | limitTo:maxRows:topStart" ng-drag="true" ng-drag-data="row"  ng-drag-success="dragSuccess('top',$index)">
-		<div class="name">{{row.name}}</div>
+	<div class="filter-toolbar-element" layout="row" ng-repeat="column in columns | limitTo:maxCols:topStart" ng-drag="true" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
+		<div class="name">{{column.name}}</div>
 		<div class="action">
-			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, row.uniqueName,row.axis,null)">
+			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
 				<md-icon md-font-icon="fa fa-filter"></md-icon>
 			</md-button>
 		</div>

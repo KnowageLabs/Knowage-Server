@@ -52,19 +52,19 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.filterPanel = templateRoot + '/main/filter/filterPanel.html';
 	$scope.mainToolbar = templateRoot + '/main/toolbar/mainToolbar.html';
 	$scope.olapPanel = templateRoot + '/main/olap/olapPanel.html';
-	$scope.rowToolbar = templateRoot + '/main/olap/rowToolbar.html';
+	$scope.topToolbar = templateRoot + '/main/olap/topToolbar.html';
 	$scope.leftToolbarPlusMain = templateRoot + '/main/olap/leftToolbarPlusMain.html';
 
 	$scope.leftPanel = templateRoot + '/left/leftPanel.html';
 	$scope.rightPanel = templateRoot + '/right/rightPanel.html';
 	
 	$scope.rows;
-	$scope.maxRows = 5;
+	$scope.maxRows = 3;
 	$scope.topSliderNeeded;
 	$scope.topStart = 0;
 	
 	$scope.columns;
-	$scope.maxCols = 3;
+	$scope.maxCols = 5;
 	$scope.leftSliderNeeded;
 	$scope.leftStart = 0;
 	
@@ -125,7 +125,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		 $http(
 				{
 					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/'+axis+'?SBI_EXECUTION_ID='
+					url : '/knowagewhatifengine/restful-services/1.0/axis/'+axis+'/placeMembersOnAxis?SBI_EXECUTION_ID='
 							+ JSsbiExecutionID,
 					data : member
 				}).then(function successCallback(response) {
@@ -268,9 +268,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters ? true
 				: false;
 		
-		$scope.topSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
+		$scope.topSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
 		
-		$scope.leftSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
+		$scope.leftSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
 	}
 	
 	filterXMLResult = function(res) {
@@ -314,13 +314,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 	
 	$scope.dimensionShift = function(direction){
-		if(direction == 'left' && $scope.rows.length-1-$scope.topStart >= $scope.maxRows){
+		if(direction == 'left' && $scope.columns.length-1-$scope.topStart >= $scope.maxCols){
 		      $scope.topStart++;      
 	    }
 	    if(direction == 'right' && $scope.topStart>0){
 	      $scope.topStart--;
 	    }
-	    if(direction == 'up' && $scope.columns.length-1-$scope.leftStart >= $scope.maxCols){
+	    if(direction == 'up' && $scope.rows.length-1-$scope.leftStart >= $scope.maxRows){
 	    	$scope.leftStart++;
 	    }
 	    if(direction == 'down' && $scope.leftStart){
@@ -481,37 +481,19 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 * Drag and drop functionalities start
 	 **/	
 	$scope.dropTop = function(data, ev) {
-		var leftLength = $scope.columns.length;
-		var topLength = $scope.rows.length;
+		var leftLength = $scope.rows.length;
+		var topLength = $scope.columns.length;
 		console.log("drop");
 		console.log($scope.draggedFrom);
+		console.log("**********data*************")
+		console.log(data);
 
 		if ($scope.draggedFrom == 'left' && leftLength == 1){
-			$scope.showSimpleToast("Row");
+			$scope.showSimpleToast("Column");
 		}
 			
 		else {
 			if ($scope.draggedFrom == 'left') {
-				$scope.columns.splice($scope.dragIndex, 1);
-				$scope.rows.push(data);
-			}
-			if ($scope.draggedFrom == 'filter') {
-				$scope.filterCardList.splice($scope.dragIndex, 1);
-				$scope.rows.push(data);
-			}
-		}
-		checkShift();
-	}
-
-	$scope.dropLeft = function(data, ev) {
-		var topLength = $scope.rows.length;
-		console.log("drop");
-		console.log($scope.draggedFrom);
-
-		if ($scope.draggedFrom == 'top' && topLength == 1)
-			$scope.showSimpleToast("Column");
-		else {
-			if ($scope.draggedFrom == 'top') {
 				$scope.rows.splice($scope.dragIndex, 1);
 				$scope.columns.push(data);
 			}
@@ -520,28 +502,59 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.columns.push(data);
 			}
 		}
+		//$scope.putMemberOnAxis(1,$scope.columns);
+		checkShift();
+	}
+
+	$scope.dropLeft = function(data, ev) {
+		var topLength = $scope.columns.length;
+		console.log("drop");
+		console.log($scope.draggedFrom);
+		console.log("**********data*************")
+		console.log(data);
+
+		
+		if ($scope.draggedFrom == 'top' && topLength == 1)
+			$scope.showSimpleToast("Row");
+		else {
+			if ($scope.draggedFrom == 'top') {
+				$scope.columns.splice($scope.dragIndex, 1);
+				$scope.rows.push(data);
+			}
+			if ($scope.draggedFrom == 'filter') {
+				$scope.filterCardList.splice($scope.dragIndex, 1);
+				$scope.rows.push(data);
+			}
+		}
+
+		//$scope.putMemberOnAxis(0,$scope.rows);
 		checkShift();
 		//
 	}
 
 	$scope.dropFilter = function(data, ev) {
-		var leftLength = $scope.columns.length;
-		var topLength = $scope.rows.length;
+		console.log("**********data*************")
+		console.log(data);
+
+		var leftLength = $scope.rows.length;
+		var topLength = $scope.columns.length;
 
 		if ($scope.draggedFrom == 'left' && leftLength == 1)
-			$scope.showSimpleToast("Row");
-		else if ($scope.draggedFrom == 'top' && topLength == 1)
 			$scope.showSimpleToast("Column");
+		else if ($scope.draggedFrom == 'top' && topLength == 1)
+			$scope.showSimpleToast("Row");
 		else {
 			if ($scope.draggedFrom == 'top') {
-				$scope.rows.splice($scope.dragIndex, 1);
-				$scope.filterCardList.push(data);
-			}
-			if ($scope.draggedFrom == 'left') {
 				$scope.columns.splice($scope.dragIndex, 1);
 				$scope.filterCardList.push(data);
 			}
+			if ($scope.draggedFrom == 'left') {
+				$scope.rows.splice($scope.dragIndex, 1);
+				$scope.filterCardList.push(data);
+			}
 		}
+
+		//$scope.putMemberOnAxis(-1,$scope.filterCardList);
 		checkShift();
 	}
 
