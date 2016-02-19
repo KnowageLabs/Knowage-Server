@@ -297,6 +297,16 @@
         <!-- Document Output Parameters -->
         <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
         
+        <!-- KPI Configuration -->
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiAlias.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiPlaceholder.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiRule.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiRuleOutput.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiThreshold.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiThresholdValue.hbm.xml" />
+        
+        
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
