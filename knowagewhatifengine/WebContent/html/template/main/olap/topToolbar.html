@@ -8,15 +8,21 @@
 		<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded">
 			<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
 		</md-button>
-	</div>
-			
-	<div class="filter-toolbar-element" layout="row" ng-repeat="column in columns | limitTo:maxCols:topStart" ng-drag="true" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
+	</div >
+	<div ng-repeat="column in columns | limitTo:maxCols:topStart" layout="row" style="height: 80%; margin-top: 5%;margin-right: 10px;">
+	<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
 		<div class="name">{{column.name}}</div>
 		<div class="action">
 			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
 				<md-icon md-font-icon="fa fa-filter"></md-icon>
 			</md-button>
 		</div>
+	</div>
+	<div ng-hide="swapColumnsButton(column.positionInAxis)">
+		<md-button class="md-icon-button" style="margin-left:0px!important;margin-right:0px!important;">
+			<md-icon md-font-icon="fa fa-arrows-h" style="color:white;"></md-icon>	
+		</md-button>
+	</div>
 	</div>
 	
 	<div style="min-width:32px;min-height:32px;margin-left:1%">

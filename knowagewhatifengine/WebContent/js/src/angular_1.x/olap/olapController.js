@@ -168,7 +168,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		   if($scope.ready){
 		    $scope.ready = false;
 		    
-		    sbiModule_restServices.promiseGet("1.0",'/member/start/1/'+start+'?SBI_EXECUTION_ID='+JSsbiExecutionID)
+		    sbiModule_restServices.promiseGet("1.0","/member/start/1/'+start+'?SBI_EXECUTION_ID="+JSsbiExecutionID)
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.ready = true;
@@ -587,6 +587,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				.position("top right")
 				.hideDelay(3000)
 		);
+	}
+	
+	$scope.swapColumnsButton = function(myPosition){
+		if(myPosition+1 == $scope.columns.length )
+			return true;
+		else
+			return false;
 	}
 
 }
