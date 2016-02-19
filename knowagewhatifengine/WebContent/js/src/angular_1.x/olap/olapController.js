@@ -126,6 +126,24 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				
 			});	
 	}
+	 
+	 /*dragan**/
+	 
+	 /*service for moving hierarchies**/
+	 $scope.moveHierarchies = function(axis,hierarchieUniqeName,newPosition,direction){
+		 
+		 sbiModule_restServices.promisePost
+		 ('1.0/axis/'+axis+'/moveHierarchies/'+hierarchieUniqeName+'/'+newPosition+'/'+direction+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
+			.then(function(response) {
+				$scope.table = $sce.trustAsHtml(response.data.table);
+				$scope.modelConfig = response.data.modelConfig;
+				console.log($scope.modelConfig);
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				
+			});	
+	}
 	
 	/*dragan**/
 	 
@@ -150,7 +168,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		   if($scope.ready){
 		    $scope.ready = false;
 		    
-		    sbiModule_restServices.promiseGet("1.0","/member/start/1/'+start+'?SBI_EXECUTION_ID="+JSsbiExecutionID)
+		    sbiModule_restServices.promiseGet("1.0",'/member/start/1/'+start+'?SBI_EXECUTION_ID='+JSsbiExecutionID)
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.ready = true;
