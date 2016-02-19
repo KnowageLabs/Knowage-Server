@@ -184,7 +184,7 @@
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 21px;  /* Preferred icon size */
+  font-size: 18px;  /* Preferred icon size */
   display: inline-block;
   width: 1em;
   height: 1em;
@@ -314,6 +314,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   overflow: hidden;
   -webkit-transform: translate3d(-90%, 0, 0);
   transform: translate3d(-90%, 0, 0);
+  height: inherit;
 }
 
 #contieniLinkAdmin h4 {
@@ -362,6 +363,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 }
 
 #contieniLinkAdmin.open {
+  top: 10px;
+  bottom: 10px;	
   min-width: 600px;
   width: 90%;
   -webkit-transform: translate3d(0, 0, 0);
@@ -371,7 +374,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 
 #contieniLinkAdmin .row{
   padding-left: 300px;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 
