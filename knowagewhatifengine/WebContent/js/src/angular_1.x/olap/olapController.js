@@ -125,7 +125,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		 $http(
 				{
 					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/axis/'+axis+'/placeMembersOnAxis?SBI_EXECUTION_ID='
+					url : '/knowagewhatifengine/restful-services/1.0/axis/'+member.axis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+axis+'?SBI_EXECUTION_ID='
 							+ JSsbiExecutionID,
 					data : member
 				}).then(function successCallback(response) {
@@ -502,7 +502,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.columns.push(data);
 			}
 		}
-		//$scope.putMemberOnAxis(1,$scope.columns);
+		$scope.putMemberOnAxis(1,data);
 		checkShift();
 	}
 
@@ -527,7 +527,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			}
 		}
 
-		//$scope.putMemberOnAxis(0,$scope.rows);
+		$scope.putMemberOnAxis(0,data);
 		checkShift();
 		//
 	}
@@ -554,7 +554,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			}
 		}
 
-		//$scope.putMemberOnAxis(-1,$scope.filterCardList);
+		$scope.putMemberOnAxis(-1,data);
 		checkShift();
 	}
 
