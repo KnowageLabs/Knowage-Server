@@ -1,4 +1,4 @@
-<md-content layout-fill>
+<md-content layout-fill ng-controller="kpiDefinitionCardinalityController">
 	<table flex class="cardinalityTable" >
 		<tr>
 			<th></th>

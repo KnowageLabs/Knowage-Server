@@ -1,0 +1,43 @@
+.cardinalityTable .measureCell{
+text-align: center;
+height: 30px;
+ 
+}
+
+
+.cardinalityTable .invalidCell{
+ color: lightgray;
+line-height: 30px;
+}
+
+
+.cardinalityTable .selectedCell{
+color: green;
+ line-height: 30px;
+}
+.cardinalityTable .selectableCell{
+color: lightgray;
+ line-height: 30px;
+}
+
+.cardinalityTable{
+width:100% ;
+ table-layout: fixed;
+ border-collapse: collapse;
+}
+
+.cardinalityTable .attributeRow{
+ border-bottom: 1px solid #ECEFF1; 
+}
+
+.disabledCell{
+background-color: gray;}
+
+.absolute{
+position:absolute
+}
+
+.headerColumnMeasure{
+text-align: center;
+font-size: 14px;
+}
