@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiThreshold" table="SBI_KPI_THRESHOLD">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiThreshold" table="SBI_KPI_THRESHOLD">
         
         <id name="id" type="integer">
            <column name="ID" />
@@ -17,9 +17,17 @@
 		   </generator>
         </id>
         
-        <property name="name" column="NAME" />
-        <property name="description" column="DESCRIPTION" type="string" length="40" />
-        <property name="definition" column="DEFINITION" type="string" length="1024" />
+        <property name="name" column="NAME" length="40" type="string"/>
+        <property name="description" column="DESCRIPTION" type="string" length="1024" />
+        
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="TYPE_ID" />
+        </many-to-one>
+        
+        <set name="sbiKpiThresholdValues" cascade="all,delete-orphan" lazy="false">
+            <key column="RULE_ID" />
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue" />
+        </set>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">

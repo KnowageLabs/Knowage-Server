@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiKpi" table="SBI_KPI_KPI">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiKpi" table="SBI_KPI_KPI">
         
         <id name="id" type="integer">
            <column name="ID" />
@@ -19,7 +19,14 @@
         
         <property name="name" column="NAME" type="string" length="40" not-null="true"/>
         <property name="definition" column="DEFINITION" type="string" length="1000" not-null="true"/>
-        <property name="category" column="CATEGORY" type="string" length="1000" not-null="true"/>
+        <property name="cardinality" column="CARDINALITY" type="string" length="1024" not-null="true"/>
+        <property name="placeholder" column="PLACEHOLDER" type="string" length="1024" not-null="true"/>
+        <property name="thresholdId" column="THRESHOLD_ID" type="int" length="11" not-null="true"/>
+		        
+        <property name="categoryId" column="CATEGORY_ID" type="int" length="11" not-null="true"/>
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
+            <column name="CATEGORY_ID" not-null="true" />
+        </many-to-one>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">

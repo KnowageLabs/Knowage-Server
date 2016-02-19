@@ -6,6 +6,7 @@ import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Threshold;
 
 import java.util.List;
 
@@ -13,7 +14,9 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<RuleOutput> listRuleOutput();
 
-	public List<RuleOutput> listMeasure();
+	public List<RuleOutput> listRuleOutputByType(String type);
+
+	public RuleOutput loadMeasureByName(String name);
 
 	public void insertRule(Rule rule);
 
@@ -36,4 +39,14 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Alias> listAlias();
 
 	public List<Placeholder> listPlaceholder();
+
+	public List<Threshold> listThreshold();
+
+	public Threshold loadThreshold(Integer id);
+
+	public void insertThreshold(Threshold t);
+
+	public void updateThreshold(Threshold id);
+
+	public void removeThreshold(Integer id);
 }

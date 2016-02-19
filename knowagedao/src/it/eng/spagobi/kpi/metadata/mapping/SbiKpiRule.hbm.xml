@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiRule" table="SBI_KPI_RULE">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiRule" table="SBI_KPI_RULE">
         
         <id name="id" type="integer">
            <column name="ID" />
@@ -17,17 +17,17 @@
 		   </generator>
         </id>
         
-        <property name="name" column="NAME" />
-        <property name="definition" column="DEFINITION" />
+        <property name="name" column="NAME" type="string" not-null="true" length="40"/>
+        <property name="definition" column="DEFINITION" type="string" not-null="true" length="1024"/>
         
         <set name="sbiKpiRuleOutputs" cascade="all,delete-orphan" lazy="true">
-            <key column="EXT_ROLE_ID" />
-            <one-to-many class="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiRuleOutput" />
+            <key column="RULE_ID" />
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput" />
         </set>
         
         <set name="sbiKpiPlaceholders" table="SBI_KPI_RULE_PLACEHOLDER" cascade="all,delete-orphan" lazy="true">
 			<key column="RULE_ID"/>
-			<many-to-many column="PLACEHOLDER_ID"  class="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiPlaceholder"/>
+			<many-to-many column="PLACEHOLDER_ID"  class="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder"/>
 		</set> 
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

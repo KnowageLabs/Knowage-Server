@@ -6,34 +6,30 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput" table="SBI_KPI_RULE_OUTPUT">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue" table="SBI_KPI_THRESHOLD_VALUE">
         
         <id name="id" type="integer">
            <column name="ID" />
 		   <generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_KPI_RULE_OUTPUT</param>	
+				<param name="segment_value">SBI_KPI_THRESHOLD_VALUE</param>	
 				<param name="initial_value">1</param>	
 		   </generator>
         </id>
         
-        <property name="ruleId" column="RULE_ID" type="int" length="11" not-null="true"/>
-        <property name="typeId" column="TYPE_ID" type="int" length="11" not-null="true"/>
-		<property name="categoryId" column="CATEGORY_ID" type="int" length="11"/>        
+        <property name="position" column="POSITION" type="int" length="11"/>
+        <property name="label" column="LABEL" type="string" length="40"/>
+
+        <property name="minValue" column="MIN_VALUE" type="big_decimal" precision="22" scale="0"/>
+        <property name="includeMin" column="INCLUDE_MIN" type="boolean" />
+        <property name="maxValue" column="MAX_VALUE" type="big_decimal" precision="22" scale="0"/>
+        <property name="includeMax" column="INCLUDE_MAX" type="boolean" />
+        <property name="color" column="COLOR" type="string" length="20" />
         
-        <many-to-one name="sbiKpiAlias" class="it.eng.spagobi.kpi.metadata.SbiKpiAlias" lazy="false" cascade="all">
-            <column name="ALIAS_ID" not-null="true" />
+        <many-to-one name="severity" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="SEVERITY_ID" />
         </many-to-one>
-        
-        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
-            <column name="TYPE_ID" not-null="true" />
-        </many-to-one>
-        
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
-            <column name="CATEGORY_ID" not-null="true" />
-        </many-to-one>
-        
-        
+         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

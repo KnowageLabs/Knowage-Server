@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiAlias" table="SBI_KPI_ALIAS">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiAlias" table="SBI_KPI_ALIAS">
         
         <id name="id" type="integer">
            <column name="ID" />

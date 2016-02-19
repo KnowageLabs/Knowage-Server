@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.model.metadata.mapping.SbiKpiPlaceholder" table="SBI_KPI_PLACEHOLDER">
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder" table="SBI_KPI_PLACEHOLDER">
         
         <id name="id" type="integer">
            <column name="ID" />
@@ -17,7 +17,7 @@
 		   </generator>
         </id>
         
-        <property name="name" column="NAME" />
+        <property name="name" column="NAME" type="string" length="40" not-null="true"/>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
