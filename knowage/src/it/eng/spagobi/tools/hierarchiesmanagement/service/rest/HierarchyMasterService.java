@@ -131,7 +131,7 @@ public class HierarchyMasterService {
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
 			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
-			String optionalFilters = (requestVal.isNull("optionalFilter")) ? null : requestVal.getString("optionalFilter");
+			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
 
 			// ONLY FOR TEST
 			// optionalFilters =
@@ -149,6 +149,7 @@ public class HierarchyMasterService {
 			}
 
 			dbConnection = dataSource.getConnection();
+			dbConnection.setAutoCommit(false);
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
@@ -173,12 +174,10 @@ public class HierarchyMasterService {
 			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
 					filterHierarchy, filterHierType, hierTableName, prefix);
 
-			dbConnection.setAutoCommit(false);
-
 			Iterator iterator = dataStore.iterator();
 
 			while (iterator.hasNext()) {
-
+				// dataStore.
 				IRecord record = (IRecord) iterator.next();
 				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
 						dimensionName, validityDate, hierConfig);
@@ -215,24 +214,29 @@ public class HierarchyMasterService {
 
 		try {
 
-			// JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-			//
-			// String dimensionLabel = requestVal.getString("dimension");
-			// String validityDate = requestVal.getString("validityDate");
-			// String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
-			// String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
-			// String optionalFilters = (requestVal.isNull("optionalFilter")) ? null : requestVal.getString("optionalFilter");
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			String dimensionLabel = requestVal.getString("dimension");
+			String validityDate = requestVal.getString("validityDate");
+			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
+			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
+			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
 
 			// ONLY FOR TEST
 			// optionalFilters =
 			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
 			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
-			String dimensionLabel = "CDC";
-			String validityDate = "2016-02-17";
-			String filterHierarchy = "anto1";
-			String filterHierType = "MASTER";
-			String optionalFilters = "{\"DIM_FILTERS\":[]}";
+			// JSONObject requestVal = null;
+			// String dimensionLabel = "CDC";
+			// String validityDate = "2016-02-17";
+			// String filterHierarchy = "anto1";
+			// String filterHierType = "MASTER";
+			// String optionalFilters = "{\"DIM_FILTERS\":[]}";
+			String optionDate = null;
+			String optionHierarchy = null;
+			String optionHierType = null;
 			// FINE TEST
+
 			if ((dimensionLabel == null) || (validityDate == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master", "wrong request parameters");
 			}
@@ -244,6 +248,7 @@ public class HierarchyMasterService {
 			}
 
 			dbConnection = dataSource.getConnection();
+			dbConnection.setAutoCommit(false);
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
@@ -267,20 +272,35 @@ public class HierarchyMasterService {
 
 			String masterConfig = getHierMasterConfig(dataSource, dbConnection, filterHierarchy);
 
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					filterHierarchy, filterHierType, hierTableName, prefix);
+			// 1 - Backup the original hierarchy (always)
+			HashMap<String, Object> paramsMap = new HashMap<String, Object>();
+			paramsMap.put("validityDate", validityDate);
+			paramsMap.put("hierarchyTable", hierTableName);
+			paramsMap.put("hierTargetName", filterHierarchy);
+			paramsMap.put("hierTargetType", filterHierType);
+			paramsMap.put("doPropagation", true); // for default try to backup relations between MASTER and TECHNICAL
+			// HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
+			//
+			// // 2 - Get the original Hierarchy
+			// IDataStore dsHierarchy = HierarchyUtils.getHierarchyDataStore(dataSource, dimensionLabel, filterHierType, filterHierarchy, validityDate, null,
+			// optionDate, optionHierarchy, optionHierType);
+			//
+			// // 3 - Get the dimension datastore: it will be used to create the new version of the hierarchy
+			// IDataStore dsDimension = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
+			// filterHierarchy, filterHierType, hierTableName, prefix);
 
-			dbConnection.setAutoCommit(false);
+			// 4 - Iterate on the hierarchy datastore and check if the record is present into the dimension datastore:
+			// If it exists do nothing
+			// If it doesn't exist add the original record into the dimension datatore (merge)
 
-			Iterator iterator = dataStore.iterator();
-
-			while (iterator.hasNext()) {
-
-				IRecord record = (IRecord) iterator.next();
-				// insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
-				// dimensionName, validityDate, hierConfig);
-
-			}
+			// 5 - insert the new (merged) hierarchy
+			// Iterator iterator = dsDimension.iterator();
+			// while (iterator.hasNext()) {
+			// // iterate on dimension records
+			// IRecord record = (IRecord) iterator.next();
+			// insertHierarchyMaster(dbConnection, dataSource, record, dsDimension, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
+			// dimensionName, validityDate, hierConfig);
+			// }
 
 			dbConnection.commit();
 
@@ -460,12 +480,11 @@ public class HierarchyMasterService {
 				logger.debug("The general field [" + id + "] is not present in the request JSON");
 				continue;
 			}
+			String value = requestVal.getString(id);
+			logger.debug("The general field [" + id + "] has value [" + value + "] in the request JSON");
 
 			// create a column from the the general field id and take the value from the request JSON
 			String column = AbstractJDBCDataset.encapsulateColumnName(id, dataSource);
-			String value = requestVal.getString(id);
-
-			logger.debug("The general field [" + id + "] has value [" + value + "] in the request JSON");
 
 			// updating sql clauses for columns and values
 			columnsClause.append(column + sep);

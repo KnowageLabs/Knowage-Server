@@ -222,7 +222,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				validityDate : dateFormatted
 			}
 			if (optionalFilter == true && $scope.dimFilters.length > 0){
-				 config.params.optionalFilter = $scope.convertFiltersDim($scope.dimFilters);
+				config.params.optionalFilters = [];
+				config.params.optionalFilters.push($scope.convertFiltersDim($scope.dimFilters));
 			}
 			if (filterDate !== undefined && filterDate !== null && filterDate.toString().length > 0) {
 				config.params.filterDate = $scope.formatDate(filterDate);
@@ -817,7 +818,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					var item = {
 						dimension : $scope.dim.DIMENSION_NM,
 						validityDate : dateFormatted,
-						optionalFilter : $scope.convertFiltersDim($scope.dimFilters)
+						optionalFilters : $scope.convertFiltersDim($scope.dimFilters)
 					};
 					
 					if (filterDate !== undefined && filterDate !== null) {
@@ -875,8 +876,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				    validityDate: $scope.formatDate(date),
 				    filterHierarchy: hier.HIER_NM,
 				    filterHierType: hier.HIER_TP,
-				    optionalFilter : $scope.convertFiltersDim($scope.dimFilters)				   
+				    optionalFilters : $scope.convertFiltersDim($scope.dimFilters)				   
 			};
+		    
 			if ($scope.seeHideLeafDim == true){
 					item.optionDate = $scope.formatDate($scope.dimDate);
 					item.optionHierarchy = $scope.hierMaster ? $scope.hierMaster.HIER_NM : undefined;
@@ -1308,7 +1310,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.convertFiltersDim = function(filtersArray){
 		if (filtersArray.length > 0){
 			 var optionalFilter = angular.copy(filtersArray);
-			 for (var k in optionalFilter){
+//			 for (var k in optionalFilter){
+			 for (var k=0; k<optionalFilter.length;k++){
 				 if (optionalFilter[k].TYPE.toUpperCase()=='DATE'){
 					 optionalFilter[k].VALUE = $scope.formatDate(optionalFilter[k].VALUE); 
 				 }
