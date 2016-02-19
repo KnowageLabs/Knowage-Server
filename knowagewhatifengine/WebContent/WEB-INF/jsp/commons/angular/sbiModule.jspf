@@ -1,0 +1,281 @@
+
+
+
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<script>
+var sbiM=angular.module('sbiModule',["toastr"]);
+
+sbiM.factory('sbiModule_config',function(){
+	return {
+    	contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
+	};
+});
+
+sbiM.service('sbiModule_logger',function(){
+	this.exec=true;
+	this.log = function(val1,val2,val3){
+		if(this.exec){
+		console.log("[LOG] ",val1,(val2 || ""),(val3|| ""));
+		}
+	};
+	
+	this.trace = function(val1,val2,val3){
+		if(this.exec){
+		console.log("[TRACE] ",val1,(val2 || ""),(val3|| ""));
+		}
+	};
+	
+});
+
+sbiM.service('sbiModule_messaging',function(toastr){
+	this.showErrorMessage = function(msg,title){
+		
+		toastr.error(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showWarningMessage = function(msg,title){
+		
+		toastr.warning(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showInfoMessage = function(msg,title){
+		
+		toastr.info(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showSuccessMessage = function(msg,title){
+		
+		toastr.success(msg,title, {
+			  closeButton: true
+			});
+	};
+	
+});
+
+sbiM.service('sbiModule_translate', function() {
+	this.addMessageFile = function(file){
+		messageResource.load([file,"messages"], function(){});
+	};
+	
+	this.load = function(key,sourceFile) {
+		var sf= sourceFile == undefined? 'messages' : sourceFile;
+		return messageResource.get(key, sf);
+	};
+});
+
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger) {
+	
+	var alteredContextPath=null;
+
+	this.alterContextPath=function(cpat){
+		alteredContextPath=cpat;
+	}
+
+	function getBaseUrl(endP_path) {
+		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
+		alteredContextPath=null;
+		return burl ;
+	};
+
+	this.get = function(endP_path, req_Path, item, conf) {
+		(item == undefined || item==null) ? 
+				item = "" : 
+					item = "?" + encodeURIComponent(item)
+							.replace(/'/g,"%27")
+							.replace(/"/g,"%22")
+							.replace(/%3D/g,"=")
+							.replace(/%26/g,"&");
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
+		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+	};
+
+	this.remove = function(endP_path, req_Path, item, conf) {
+		item == undefined ? item = "" : item = "?" + item;
+		sbiModule_logger.trace("REMOVE: "+endP_path+"/"+req_Path + "" + item,conf);
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
+	};
+
+	this.post = function(endP_path, req_Path, item, conf) {
+		sbiModule_logger.trace("POST: "+endP_path+"/"+ req_Path,item,conf);
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
+	this.put = function(endP_path, req_Path, item, conf) {
+		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
+	this.delete = function(endP_path, req_Path, item, conf) {
+		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
+		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
+		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
+	};
+
+
+	
+	/*
+	NEW METHODS
+	*/
+	
+	var genericErrorHandling = function(data, status, headers, config, deferred) {
+
+  		deferred.reject(data, status, headers, config);
+	};
+	
+	var handleResponse = function(data, status, headers, config, deferred) {
+		if(data.data != null){
+			if ( data.data.hasOwnProperty("errors")) {
+				
+				genericErrorHandling(data, status, headers, config, deferred);
+			} else {
+				deferred.resolve(data, status, headers, config);
+			}	
+		}else{
+			if ( data.status == 201) {
+				deferred.resolve(data, status, headers, config);
+				
+			} else {
+				genericErrorHandling(data, status, headers, config, deferred);
+			}	
+			
+		}
+		
+	};
+
+	// SAMPLE METHOD, this will be the implementation
+	this.promiseGet = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		// Required for passing JSON on a GET request
+		if (item == undefined || item==null) {
+			item = "";
+		}else {
+			item = "?" + 
+				encodeURIComponent(item)
+				.replace(/'/g,"%27")
+				.replace(/"/g,"%22")
+				.replace(/%3D/g,"=")
+				.replace(/%26/g,"&");
+		}
+		
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePost = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("POST: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePut = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("PUT: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promiseDelete = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.delete(getBaseUrl(endP_path) + "" + req_Path, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+  });
+
+sbiM.factory('sbiModule_device',function($window){
+	var deviceObj = {};
+	var browserObj = {};
+	
+	var userAgent = $window.navigator.userAgent;
+	if (/Firefox[\/\s](\d+\.\d+)/.test(userAgent)){
+		//detecting Firefox
+		browserObj.name='firefox';
+		browserObj.version = RegExp.$1;
+	}else if(/Chrome[\/\s](\d+\.\d+)/.test(userAgent)){
+		//detecting Chrome
+		browserObj.name='chrome';
+		browserObj.version = RegExp.$1;
+	}else{
+		//detecting IE
+		var detectIEregexp = "";
+		if (userAgent.indexOf('MSIE') != -1){
+			detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x		
+		}else{ // if no "MSIE" string in userAgent
+			detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/;
+		}
+		if (detectIEregexp.test(userAgent)){ //if some form of IE
+			browserObj.name='internet explorer';
+			browserObj.version = RegExp.$1;
+		 }
+	 }
+	if (/iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Android/i.test(userAgent)){
+		deviceObj.isMobile = true;
+	}else{
+		deviceObj.isMobile = false;
+	}
+	deviceObj.platform = $window.navigator.platform;	
+
+	return{
+		browser : browserObj,
+		device : deviceObj
+	}
+});
+</script>

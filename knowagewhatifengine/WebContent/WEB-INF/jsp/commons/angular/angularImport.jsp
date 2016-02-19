@@ -35,3 +35,9 @@
 	
 	<!-- ng-draggable -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/ng-draggable/ngDraggable.js"></script>
+	
+	<!-- toastr -->
+	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.tpls.js"></script>
+	
+	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
