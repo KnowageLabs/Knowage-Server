@@ -1,4 +1,4 @@
-var olapMod = angular.module('olapManager', [ 'ngMaterial', 'ngSanitize','ngDraggable'])
+var olapMod = angular.module('olapManager', [ 'sbiModule','ngMaterial', 'ngSanitize','ngDraggable'])
 .directive('compileTemplate', function($compile, $parse){
     return {
         link: function(scope, element, attr){
@@ -32,20 +32,12 @@ olapMod.directive('scrolly', function () {
     };
 });
 
-olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",'$sce','$mdToast',
-		olapFunction ]);
+olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",'$sce','$mdToast'                                    
+,'sbiModule_messaging','sbiModule_restServices',olapFunction ]);
 
-function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast) {
+function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast,sbiModule_messaging,sbiModule_restServices) {
 	
 	templateRoot = "/knowagewhatifengine/html/template";
-	
-	/*$scope.drillType = {"position":"position","member":"member","replace":"replace"}; // enum
-	$scope.modelConfig = {
-			"drillType":"",
-			"showParentMembers":false,
-			"hideSpans":false,
-			"showProperties":false,
-			"suppressEmpty":false};*/
 	$scope.templateList = templateRoot + '/main/filter/treeFirstLevel.html';
 	$scope.templateListChild = templateRoot + '/main/filter/treeDeeperLevels.html';
 	$scope.filterCard = templateRoot + '/main/filter/filterCard.html';
@@ -122,30 +114,17 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 /*service for placing member on axis**/
 	 $scope.putMemberOnAxis = function(fromAxis,member){
 		 
-		 $http(
-				{
-					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/axis/'
-							+fromAxis+'/moveDimensionToOtherAxis/'
-							+member.uniqueName+'/'
-							+member.axis+'?SBI_EXECUTION_ID='
-							+ JSsbiExecutionID,
-					data : member
-				}).then(function successCallback(response) {
-					
-
-			// this callback will be called asynchronously
-			// when the response is available
-
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.modelConfig = response.data.modelConfig;
-			console.log($scope.modelConfig);
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-			console.log("Error!")
-		});
-		 
+		 sbiModule_restServices.promisePost
+		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
+			.then(function(response) {
+				$scope.table = $sce.trustAsHtml(response.data.table);
+				$scope.modelConfig = response.data.modelConfig;
+				console.log($scope.modelConfig);
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				
+			});	
 	}
 	
 	/*dragan**/
@@ -154,109 +133,66 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 
 	 $scope.sendModelConfig = function(modelConfig){
 		 
-		 $http(
-				{
-					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/modelconfig?SBI_EXECUTION_ID='
-							+ JSsbiExecutionID,
-					data : modelConfig
-				}).then(function successCallback(response) {
-
-			// this callback will be called asynchronously
-			// when the response is available
-
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.modelConfig = response.data.modelConfig;
-			 console.log($scope.modelConfig);
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-			console.log("Error!")
-		});
-		 
+		 sbiModule_restServices.promisePost
+		 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
+			.then(function(response) {
+				$scope.table = $sce.trustAsHtml(response.data.table);
+				$scope.modelConfig = response.data.modelConfig;
+				console.log($scope.modelConfig);
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				
+			});	
 	}
 	/**dragan*/
 	 $scope.startFrom = function(start){
 		   if($scope.ready){
 		    $scope.ready = false;
 		    
-		    $http({
-		    method: 'GET',
-		    url: '/knowagewhatifengine/restful-services/1.0/member/start/1/'+start+'?SBI_EXECUTION_ID='+JSsbiExecutionID
-		    
-		  }).then(function successCallback(response) {
-		   
-		      // this callback will be called asynchronously
-		      // when the response is available
-		   
-		   $scope.table = $sce.trustAsHtml( response.data.table);
-		   $scope.ready = true;
-		   $scope.rows = response.data.rows;
-		   $scope.columns = response.data.columns;
-		   $scope.filterCardList = response.data.filters;
-		   $scope.showMdxVar = response.data.mdxFormatted;
-		   
-		    }, function errorCallback(response) {
-		      // called asynchronously if an error occurs
-		      // or server returns response with an error status.
-		   console.log("Error!")
-		    });
+		    sbiModule_restServices.promiseGet("1.0","/member/start/1/'+start+'?SBI_EXECUTION_ID="+JSsbiExecutionID)
+			.then(function(response) {
+				$scope.table = $sce.trustAsHtml( response.data.table);
+				   $scope.ready = true;
+				   $scope.rows = response.data.rows;
+				   $scope.columns = response.data.columns;
+				   $scope.filterCardList = response.data.filters;
+				   $scope.showMdxVar = response.data.mdxFormatted;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+			});	
 		   }
-		   
-		   
-		   
 		  }
 	 
 	 $scope.sortBDESC = function(){
-		    
-		   $http({
-		    method: 'GET',
-		    url: '/knowagewhatifengine/restful-services/1.0/member/sort/1/0/[[Measures].[Unit Sales]]/BDESC?SBI_EXECUTION_ID='+JSsbiExecutionID
-		    
-		  }).then(function successCallback(response) {
-		   
-		      // this callback will be called asynchronously
-		      // when the response is available
-		   console.log(response.data.table);
-		   $scope.table = $sce.trustAsHtml( response.data.table);
-		   console.log($http.url);
-		   $scope.rows = response.data.rows;
-		   $scope.columns = response.data.columns;
-		   $scope.filterCardList = response.data.filters;
-		   $scope.showMdxVar = response.data.mdxFormatted;
-		   
-		    }, function errorCallback(response) {
-		      // called asynchronously if an error occurs
-		      // or server returns response with an error status.
-		   console.log("Error!")
-		    });
-		   
+		 
+		 sbiModule_restServices.promiseGet("1.0","/member/sort/1/0/[[Measures].[Unit Sales]]/BDESC?SBI_EXECUTION_ID="+JSsbiExecutionID)
+			.then(function(response) {
+				   $scope.table = $sce.trustAsHtml( response.data.table);
+				   $scope.rows = response.data.rows;
+				   $scope.columns = response.data.columns;
+				   $scope.filterCardList = response.data.filters;
+				   $scope.showMdxVar = response.data.mdxFormatted;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+			});	
 		  }
 	 
 	 $scope.sortBASC = function(){
-		    
-		   $http({
-		    method: 'GET',
-		    url: '/knowagewhatifengine/restful-services/1.0/member/sort/1/0/[[Measures].[Unit Sales]]/BASC?SBI_EXECUTION_ID='+JSsbiExecutionID
-		    
-		  }).then(function successCallback(response) {
-		   
-		      // this callback will be called asynchronously
-		      // when the response is available
-		   console.log(response.data.table);
-		   $scope.table = $sce.trustAsHtml( response.data.table);
-		   console.log($http.url);
-		   $scope.rows = response.data.rows;
-		   $scope.columns = response.data.columns;
-		   $scope.filterCardList = response.data.filters;
-		   $scope.showMdxVar = response.data.mdxFormatted;
-		   
-		    }, function errorCallback(response) {
-		      // called asynchronously if an error occurs
-		      // or server returns response with an error status.
-		   console.log("Error!")
-		    });
-		   
+		 
+		 sbiModule_restServices.promiseGet("1.0","/member/sort/1/0/[[Measures].[Unit Sales]]/BASC?SBI_EXECUTION_ID="+JSsbiExecutionID)
+			.then(function(response) {
+				   $scope.table = $sce.trustAsHtml( response.data.table);
+				   $scope.rows = response.data.rows;
+				   $scope.columns = response.data.columns;
+				   $scope.filterCardList = response.data.filters;
+				   $scope.showMdxVar = response.data.mdxFormatted;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+			});	
 		  }
 
 	/**dragan*/
@@ -334,17 +270,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 	
 	$scope.sendMdxQuery = function(mdx) {
-		$http(
-				{
-					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/model/?SBI_EXECUTION_ID='
-							+ JSsbiExecutionID,
-					data : mdx
-				}).then(function successCallback(response) {
-
-			// this callback will be called asynchronously
-			// when the response is available
-
+		sbiModule_restServices.promisePost("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID,"",mdx)
+		.then(function(response) {
 			$scope.table = $sce.trustAsHtml(response.data.table);
 			console.log($http.url);
 			$scope.rows = response.data.rows;
@@ -355,19 +282,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			$scope.modelConfig = response.data.modelConfig;
-			console.log("MC");
-			console.log($scope.modelConfig);
-			console.log("rows->");
-			console.log($scope.rows);
-			console.log("columns->");
-			console.log($scope.columns);
-			console.log("filters->");
-			console.log($scope.filterCardList);
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-			console.log("Error!")
-		});
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("Error", 'Error');
+			
+		});	
 	}
 
 	console.log(JSsbiExecutionID);
@@ -376,110 +295,57 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 * Tree structure service
 	 **/
 	$scope.getHierarchyMembers = function(uniqueName,axis,node){
-	  $http({
-		  method: 'GET',
-		  url: '/knowagewhatifengine/restful-services/1.0/hierarchy/' /*TODO*/
-			  	+ uniqueName
-			  	+ '/filtertree2/'
-			  	+ axis
-			  	+ '?SBI_EXECUTION_ID='
-			  	+ JSsbiExecutionID
-			  	+ '&node='+node,
-	  
-	  }).then(function successCallback(response) {
-		  $scope.data = response.data;
-		  $scope.loadedData.push(response.data);
-		  $scope.dataPointers.push(uniqueName);
-		  	console.log($scope.loadedData);
-		  	console.log($scope.dataPointers);
-	  },function errorCallback(response) {
-		    // called asynchronously if an error occurs
-		    // or server returns response with an error status.
-		  });
-	  
-	   
+		
+		sbiModule_restServices.promiseGet
+		("1.0",'/hierarchy/'+ uniqueName+ '/filtertree2/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node)
+		.then(function(response) {
+			  $scope.data = response.data;
+			  $scope.loadedData.push(response.data);
+			  $scope.dataPointers.push(uniqueName);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+		});	
 	}
 
-	$scope.drillDown = function(axis, position, member, uniqueName,
-			positionUniqueName) {
-		$http(
-				{
-					method : 'GET',
-					url : '/knowagewhatifengine/restful-services/1.0/member/drilldown/'
-							+ axis
-							+ '/'
-							+ position
-							+ '/'
-							+ member
-							+ '/'
-							+ positionUniqueName
-							+ '/'
-							+ uniqueName
-							+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID,
-
-				}).then(function successCallback(response) {
+	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
+		sbiModule_restServices.promiseGet
+		("1.0",'/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
 			$scope.table = $sce.trustAsHtml(response.data.table);
-
 			$scope.showMdxVar = response.data.mdxFormatted;
-
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-		});
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+		});		
 	}
 
-	$scope.drillUp = function(axis, position, member, uniqueName,
-			positionUniqueName) {
-		$http(
-				{
-					method : 'GET',
-					url : '/knowagewhatifengine/restful-services/1.0/member/drillup/'
-							+ axis
-							+ '/'
-							+ position
-							+ '/'
-							+ member
-							+ '/'
-							+ positionUniqueName
-							+ '/'
-							+ uniqueName
-							+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID,
-
-				}).then(function successCallback(response) {
-
+	$scope.drillUp = function(axis, position, member, uniqueName,positionUniqueName) {
+		sbiModule_restServices.promiseGet
+		("1.0",'/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
 			$scope.table = $sce.trustAsHtml(response.data.table);
 			$scope.showMdxVar = response.data.mdxFormatted;
-
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-		});
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+		});		
 	}
 
 	$scope.swapAxis = function() {
-		$http(
-				{
-					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/axis/swap?SBI_EXECUTION_ID='
-							+ JSsbiExecutionID,
-
-				}).then(function successCallback(response) {
-					var x;
-					console.log(response.data.table);
-					$scope.table = $sce.trustAsHtml(response.data.table);
-					
-					x = $scope.rows;
-					$scope.rows = $scope.columns;
-					$scope.columns = x;
-		}, function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-		});
+		sbiModule_restServices.promisePost("1.0/axis/swap?SBI_EXECUTION_ID="+JSsbiExecutionID,"")
+		.then(function(response) {
+			var x;
+			$scope.table = $sce.trustAsHtml(response.data.table);
+			x = $scope.rows;
+			$scope.rows = $scope.columns;
+			$scope.columns = x;
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("Error", 'Error');
+			
+		});	
 	}
-
-	$scope.cubes = [ "AAA", "BBB", "CCC" ];
-	$scope.dimensions = [ "COUNTRY", "DATE", "REGION", "PRODUCT" ];
-	$scope.vals = [ "val1", "val2", "val3" ];
 
 	$scope.openFilters = function(ev) {
 		$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(
@@ -503,7 +369,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			data.axis = 0;
 
 			if ($scope.draggedFrom == 'left' && leftLength == 1){
-				$scope.showSimpleToast("Column");
+				sbiModule_messaging.showErrorMessage("Column", 'Error');
+
 			}
 				
 			else {
@@ -536,7 +403,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			data.axis = 1;
 			
 			if ($scope.draggedFrom == 'top' && topLength == 1)
-				$scope.showSimpleToast("Row");
+				//$scope.showSimpleToast("Row");
+				sbiModule_messaging.showErrorMessage("Row", 'Error');
 			else {
 				if ($scope.draggedFrom == 'top') {
 					$scope.columns.splice($scope.dragIndex, 1);
@@ -568,9 +436,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			data.axis = -1;
 			
 			if ($scope.draggedFrom == 'left' && leftLength == 1)
-				$scope.showSimpleToast("Column");
+				//$scope.showSimpleToast("Column");
+				sbiModule_messaging.showErrorMessage("Column", 'Error');
 			else if ($scope.draggedFrom == 'top' && topLength == 1)
-				$scope.showSimpleToast("Row");
+				//$scope.showSimpleToast("Row");
+				sbiModule_messaging.showErrorMessage("Row", 'Error');
 			else {
 				if ($scope.draggedFrom == 'top') {
 					$scope.columns.splice($scope.dragIndex, 1);
