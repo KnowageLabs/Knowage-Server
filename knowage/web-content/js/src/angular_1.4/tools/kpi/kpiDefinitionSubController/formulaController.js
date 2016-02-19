@@ -4,7 +4,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.measureFormula="";
 	$scope.currentKPI ={
-			"formula": "";
+			"formula": ""
 	}
 	
 	$scope.codemirrorOptions = {

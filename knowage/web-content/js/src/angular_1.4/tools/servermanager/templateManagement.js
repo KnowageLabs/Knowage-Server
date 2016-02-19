@@ -34,7 +34,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.tree=[];
 	
 	
-	$scope.loadDocuments = function(ev){
+	$scope.loadDocuments = function(){
 		if($scope.data_format){
 			//get the date selected
 			sbiModule_restServices.get("2.0", "folders","includeDocs=true").success(function(data){
@@ -68,13 +68,14 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						$scope.flagSelect=false;
 						console.log("layer non Ottenuti " + status);
 					})
-					$scope.parseDate();
+					//$scope.parseDate();
 			
 			
 			
 			
 		}else{
-			$scope.openDialog(ev,sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
+			showAction(sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
+			
 		}
 		
 	}
@@ -114,6 +115,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			var month=$scope.data_format.getMonth()+1;
 			var day=$scope.data_format.getDate();
 			$scope.data_format=year+"-"+month+"-"+day;
+			$scope.loadDocuments();
 		}else{
 			$scope.data_format = null;
 		}
@@ -254,5 +256,22 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		
 		
 	}
+	
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
+	};
 }
 
