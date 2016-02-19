@@ -466,12 +466,13 @@
 	<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
 	
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
-		domainCd="KPIRULE_OUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		
 	<DOMAIN valueCd="ATTRIBUTE" valueNm="sbidomains.nm.attribute"
-		domainCd="KPIRULE_OUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.attribute" />
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.attribute" />
 		
 	<DOMAIN valueCd="TEMPORAL_ATTRIBUTE" valueNm="sbidomains.nm.temporalattribute"
-		domainCd="KPIRULE_OUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
 
+	
 </DOMAINS>

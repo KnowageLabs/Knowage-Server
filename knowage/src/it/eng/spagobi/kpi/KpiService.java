@@ -4,10 +4,12 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -42,15 +44,23 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class KpiService {
 
-	private static final String MISURE_NAME = "nomeMisura";
-	private static final String MISURE_ATTRIBUTES = "attributi";
+	private static final String MEASURE_NAME = "measureName";
+	private static final String MEASURE_ATTRIBUTES = "attributes";
 
 	@GET
 	@Path("/listMeasure")
 	public Response listMeasure(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<RuleOutput> measures = dao.listRuleOutput();
+		List<RuleOutput> measures = dao.listRuleOutputByType("MEASURE");
 		return Response.ok(JsonConverter.objectToJson(measures, measures.getClass())).build();
+	}
+
+	@GET
+	@Path("/{name}/existsMeasure")
+	public String loadMeasureByName(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		RuleOutput ruleOutput = dao.loadMeasureByName(name);
+		return ruleOutput != null ? "true" : "false";
 	}
 
 	@GET
@@ -104,6 +114,21 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
 	}
 
+	@GET
+	@Path("/listThreshold")
+	public Response listThreshold(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Threshold> tt = dao.listThreshold();
+		return Response.ok(JsonConverter.objectToJson(tt, tt.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadThreshold")
+	public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		Threshold t = getKpiDAO(req).loadThreshold(id);
+		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
+	}
+
 	@POST
 	@Path("/saveKpi")
 	public Response loadKpi(@Context HttpServletRequest req) throws EMFUserError {
@@ -149,9 +174,9 @@ public class KpiService {
 		List<Measure> measureLst = new ArrayList<>();
 		for (int i = 0; i < measureArray.length(); i++) {
 			JSONObject misuraJson = measureArray.getJSONObject(i);
-			JSONObject attrs = misuraJson.optJSONObject(MISURE_ATTRIBUTES);
+			JSONObject attrs = misuraJson.optJSONObject(MEASURE_ATTRIBUTES);
 			Measure measure = new Measure();
-			measure.name = misuraJson.getString(MISURE_NAME);
+			measure.name = misuraJson.getString(MEASURE_NAME);
 			measureLst.add(measure);
 			if (attrs != null) {
 				Iterator<String> attrNames = attrs.keys();
@@ -185,19 +210,22 @@ public class KpiService {
 	}
 
 	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
-		// TODO getNewKpiDAO
+		// TODO rename getNewKpiDAO to getKpiDAO
 		IKpiDAO dao = DAOFactory.getNewKpiDAO();
 		setProfile(req, dao);
 		return dao;
 	}
 
 	private void checkMandatory(Kpi kpi) {
-		// TODO Auto-generated method stub
-
+		if (kpi.getName() == null || kpi.getCategory() == null || kpi.getDefinition() == null || kpi.getCardinality() == null) {
+			throw new SpagoBIDOAException("all fields are mandatory");
+		}
 	}
 
 	private void checkMandatory(Rule rule) {
-		// TODO Auto-generated method stub
+		if (rule.getName() == null || rule.getDefinition() == null) {
+			throw new SpagoBIDOAException("all fields are mandatory");
+		}
 
 	}
 
