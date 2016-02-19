@@ -93,7 +93,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								 </md-radio-group>
 								
 								<span flex></span>
-								<md-button ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+								<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 							</div>
 						
 							<div layout="row" layout-wrap>

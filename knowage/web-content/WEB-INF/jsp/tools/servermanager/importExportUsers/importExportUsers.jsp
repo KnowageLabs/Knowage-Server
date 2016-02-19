@@ -66,38 +66,43 @@
 				<md-tab-body> 
 				<md-card>
 				<md-content layout="column" layout-wrap ng-controller="userExportController" >
-					<div layout="row" layout-wrap>
-						<div flex>
-							<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-									<input class="input_class" ng-model="nameExport" required maxlength="100" ng-maxlength="100" md-maxlength="100" />
-							</md-input-container>
-						</div>
-					 
-					 <div layout="row" layout-wrap >
-						<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder" aria-label="Checkbox 1">{{translate.load("sbi.impexpusers.exportPersonalFolder")}}</md-checkbox>
-						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
-						<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
-					 </div>
-						<div>
-							<md-input-container class="small counter"> 
-								
-								<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download Users"
-									class="md-fab md-mini"  > <md-icon
-									md-font-icon="fa fa-download fa-2x"  >
-								</md-icon> </md-button>
-								<div ng-show="wait">
-								<i  class="fa fa-spinner fa-spin fa-4x"></i>
-								</div>
-								
-								<!--  <md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>-->
-							</md-input-container>
-						</div>
-					</div>
-					 
-					<div id="lista" style="background:#eceff1">
+		<div layout="row" layout-wrap >
+			<div flex >
+				<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+				<input class="input_class" ng-model="nameExport" required
+					maxlength="100" ng-maxlength="100" md-maxlength="100" /> </md-input-container>
+			</div>
+			
+				<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder"
+					aria-label="Checkbox 1"><h4>{{translate.load("sbi.impexpusers.exportPersonalFolder");}}</h4></md-checkbox>
+			
+			
+				<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"
+					ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</h4></md-checkbox>
+			
+			
+				<md-checkbox  ng-if="exportCheckboxs.exportPersonalFolder"
+					ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</h4></md-checkbox>
+			
+			<div>
+				<md-input-container class="small counter"> <md-button
+					ng-show="!wait" ng-click="prepare($event)"
+					aria-label="download Users" class="md-fab md-mini"> <md-icon
+					md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
+				<div ng-show="wait">
+					<i class="fa fa-spinner fa-spin fa-4x"></i>
+				</div>
+
+				<!--  <md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>-->
+				</md-input-container>
+			</div>
+		</div>
+
+		<div id="lista">
 						<div layout="row" layout-wrap>
 							<div >
-							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()">{{translate.load("sbi.importusers.selectall");}}</md-checkbox>
+							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()"><h4>{{translate.load("sbi.importusers.selectall");}}</h4></md-checkbox>
+							
 							</div>
 						</div>
 						<div layout="row" layout-wrap flex>
