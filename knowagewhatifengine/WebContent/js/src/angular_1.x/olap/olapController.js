@@ -120,15 +120,19 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	/*dragan**/
 	 
 	 /*service for placing member on axis**/
-	 $scope.putMemberOnAxis = function(axis,member){
+	 $scope.putMemberOnAxis = function(fromAxis,member){
 		 
 		 $http(
 				{
 					method : 'POST',
-					url : '/knowagewhatifengine/restful-services/1.0/axis/'+member.axis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+axis+'?SBI_EXECUTION_ID='
+					url : '/knowagewhatifengine/restful-services/1.0/axis/'
+							+fromAxis+'/moveDimensionToOtherAxis/'
+							+member.uniqueName+'/'
+							+member.axis+'?SBI_EXECUTION_ID='
 							+ JSsbiExecutionID,
 					data : member
 				}).then(function successCallback(response) {
+					
 
 			// this callback will be called asynchronously
 			// when the response is available
@@ -460,8 +464,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 							+ JSsbiExecutionID,
 
 				}).then(function successCallback(response) {
-			console.log(response.data.table);
-			$scope.table = $sce.trustAsHtml(response.data.table);
+					var x;
+					console.log(response.data.table);
+					$scope.table = $sce.trustAsHtml(response.data.table);
+					
+					x = $scope.rows;
+					$scope.rows = $scope.columns;
+					$scope.columns = x;
 		}, function errorCallback(response) {
 			// called asynchronously if an error occurs
 			// or server returns response with an error status.
@@ -483,53 +492,67 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.dropTop = function(data, ev) {
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
+		var fromAxis = data.axis;
 		console.log("drop");
 		console.log($scope.draggedFrom);
 		console.log("**********data*************")
 		console.log(data);
+		
+		if(fromAxis!=0){
+			data.positionInAxis = topLength;
+			data.axis = 0;
 
-		if ($scope.draggedFrom == 'left' && leftLength == 1){
-			$scope.showSimpleToast("Column");
-		}
-			
-		else {
-			if ($scope.draggedFrom == 'left') {
-				$scope.rows.splice($scope.dragIndex, 1);
-				$scope.columns.push(data);
+			if ($scope.draggedFrom == 'left' && leftLength == 1){
+				$scope.showSimpleToast("Column");
 			}
-			if ($scope.draggedFrom == 'filter') {
-				$scope.filterCardList.splice($scope.dragIndex, 1);
-				$scope.columns.push(data);
+				
+			else {
+				if ($scope.draggedFrom == 'left') {
+					$scope.rows.splice($scope.dragIndex, 1);
+					$scope.columns.push(data);
+				}
+				if ($scope.draggedFrom == 'filter') {
+					$scope.filterCardList.splice($scope.dragIndex, 1);
+					$scope.columns.push(data);
+				}
 			}
+			$scope.putMemberOnAxis(fromAxis,data);
+			checkShift();
+			console.log($scope.columns);
 		}
-		$scope.putMemberOnAxis(1,data);
-		checkShift();
 	}
 
 	$scope.dropLeft = function(data, ev) {
+		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
+		var fromAxis = data.axis;
 		console.log("drop");
 		console.log($scope.draggedFrom);
 		console.log("**********data*************")
 		console.log(data);
-
 		
-		if ($scope.draggedFrom == 'top' && topLength == 1)
-			$scope.showSimpleToast("Row");
-		else {
-			if ($scope.draggedFrom == 'top') {
-				$scope.columns.splice($scope.dragIndex, 1);
-				$scope.rows.push(data);
+		if(fromAxis != 1){
+			data.positionInAxis = leftLength;
+			data.axis = 1;
+			
+			if ($scope.draggedFrom == 'top' && topLength == 1)
+				$scope.showSimpleToast("Row");
+			else {
+				if ($scope.draggedFrom == 'top') {
+					$scope.columns.splice($scope.dragIndex, 1);
+					$scope.rows.push(data);
+				}
+				if ($scope.draggedFrom == 'filter') {
+					$scope.filterCardList.splice($scope.dragIndex, 1);
+					$scope.rows.push(data);
+				}
 			}
-			if ($scope.draggedFrom == 'filter') {
-				$scope.filterCardList.splice($scope.dragIndex, 1);
-				$scope.rows.push(data);
-			}
+
+			$scope.putMemberOnAxis(fromAxis,data);
+			checkShift();
+			console.log($scope.rows);
 		}
 
-		$scope.putMemberOnAxis(0,data);
-		checkShift();
-		//
 	}
 
 	$scope.dropFilter = function(data, ev) {
@@ -538,24 +561,31 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
+		var fromAxis = data.axis;
+		
+		if(fromAxis!=-1){
+			data.positionInAxis = $scope.filterCardList.length;
+			data.axis = -1;
+			
+			if ($scope.draggedFrom == 'left' && leftLength == 1)
+				$scope.showSimpleToast("Column");
+			else if ($scope.draggedFrom == 'top' && topLength == 1)
+				$scope.showSimpleToast("Row");
+			else {
+				if ($scope.draggedFrom == 'top') {
+					$scope.columns.splice($scope.dragIndex, 1);
+					$scope.filterCardList.push(data);
+				}
+				if ($scope.draggedFrom == 'left') {
+					$scope.rows.splice($scope.dragIndex, 1);
+					$scope.filterCardList.push(data);
+				}
+			}
 
-		if ($scope.draggedFrom == 'left' && leftLength == 1)
-			$scope.showSimpleToast("Column");
-		else if ($scope.draggedFrom == 'top' && topLength == 1)
-			$scope.showSimpleToast("Row");
-		else {
-			if ($scope.draggedFrom == 'top') {
-				$scope.columns.splice($scope.dragIndex, 1);
-				$scope.filterCardList.push(data);
-			}
-			if ($scope.draggedFrom == 'left') {
-				$scope.rows.splice($scope.dragIndex, 1);
-				$scope.filterCardList.push(data);
-			}
+			$scope.putMemberOnAxis(fromAxis,data);
+			checkShift();
 		}
-
-		$scope.putMemberOnAxis(-1,data);
-		checkShift();
+		
 	}
 
 	$scope.dragSuccess = function(df, index) {
