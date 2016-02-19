@@ -22,6 +22,19 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/cardinalityController.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/kpiCustomStyle.css", currTheme)%>">
 
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
+  <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
+ <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/ui-codemirror.js"></script> 
+ <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js"></script>  
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/formulaController.js"></script>
+
+
+
 </head>
 <body>
 	<angular-list-detail ng-controller="kpiDefinitionMasterController">
@@ -31,26 +44,32 @@
 		<md-tabs layout-fill class="absolute">
 			
 				<md-tab id="tab1">
-       				<md-tab-label>{{translate.load("sbi.ds.query")}}</md-tab-label>
+       				<md-tab-label>{{translate.load("sbi.kpi.formula")}}</md-tab-label>
         			<md-tab-body>
-        			TODO
+        			<%@include	file="./kpiTemplate/formulaTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
 				<md-tab id="tab2">
-       				<md-tab-label>{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-tab-label>
+       				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
         			TODO
 					</md-tab-body>
 				</md-tab>
 				
 				<md-tab id="tab3">
-       				<md-tab-label>Cardinality</md-tab-label>
+       				<md-tab-label>{{translate.load("sbi.kpi.cardinality")}}</md-tab-label>
         			<md-tab-body >
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
+				<md-tab id="tab4">
+       				<md-tab-label>{{translate.load("sbi.kpi.filters")}}</md-tab-label>
+        			<md-tab-body>
+        			TODO
+					</md-tab-body>
+				</md-tab>
 			</md-tabs>
 		
 	

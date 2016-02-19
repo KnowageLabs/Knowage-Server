@@ -37,6 +37,14 @@ background-color: gray;}
 position:absolute
 }
 
+.relative{
+position: relative
+}
+
+.CodeMirror { 
+  height: auto;
+}
+
 .headerColumnMeasure{
 text-align: center;
 font-size: 14px;
