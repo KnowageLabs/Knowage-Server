@@ -1,0 +1,15 @@
+.absolute{
+position:absolute
+}
+
+.relative{
+position:relative
+}
+
+.CodeMirror { 
+  height: auto;
+}
+
+.metadataTabs{
+    min-width: 250px;
+    }

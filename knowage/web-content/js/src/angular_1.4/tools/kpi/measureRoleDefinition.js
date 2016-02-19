@@ -1,126 +1,59 @@
-var app = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror']);
-app.config(['$mdThemingProvider', function($mdThemingProvider) {
+var measureRoleApp = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror']);
+measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('measureRoleMasterController', [ '$scope','sbiModule_translate' ,measureRoleMasterControllerFunction ]);
-app.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog' ,measureListControllerFunction ]);
-app.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureDetailControllerFunction ]); 
+measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate' ,measureRoleMasterControllerFunction ]);
+measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog' ,measureListControllerFunction ]);
+measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureDetailControllerFunction ]); 
 
 function measureRoleMasterControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.newMeasureFunction=function(){
-		
 	} 
 	
 	$scope.aliasList=["pippo","pino","pippino"];
 }
  
 function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
-	$scope.dataSourceTable= {};
-	$scope.selectedDatasource={};
-	$scope.dataSourcesIsSelected=false;
-	$scope.datasourcesList=[];
-	$scope.measureQuery="SELECT\n\nFROM\n\nWHERE";// "SELECT  usr.name FROM users AS usr WHERE usr.score>100";
-	
-	
-	CodeMirror.registerHelper(
-		    "hint", "alias",
-		    function (mirror, options) {
-//		        CodeMirror.commands.autocomplete(mirror, CodeMirror.hint.ajax, { async: true })
-		    	var cur = mirror.getCursor();
-		        var tok = mirror.getTokenAt(cur);
-		        var start= tok.string.trim()==""? tok.start+1 : tok.start;
-	        	var end= tok.end;
-	        	
-	        	var hintList=[];
-	        	for(var i=0;i< $scope.aliasList.length;i++){
-	        		 if(tok.string.trim()=="" || $scope.aliasList[i].startsWith(tok.string)){
-	        			 hintList.push($scope.aliasList[i]);
-	        		 }
-	        	}
-		        
-		        return {list:hintList, 
-		        	from: CodeMirror.Pos(cur.line,start),
-	                to: CodeMirror.Pos(cur.line, end)}
-		    })
-	
-	$scope.codemirrorOptions = {
-			mode: 'text/x-mysql',
-			indentWithTabs: true,
-		    smartIndent: true,
-        lineWrapping : true,
-        matchBrackets : true,
-        autofocus: true,
-        theme:"eclipse",
-        lineNumbers: true, 
-        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) }},
-        hintOptions: {tables:$scope.dataSourceTable}
-		};
-	
-	
-
-	
-	$scope.keyAssistFunc=function(cm){
-		var isAlias=$scope.isAliasCM(cm);
-        if(isAlias){
-        	CodeMirror.showHint(cm, CodeMirror.hint.alias);
-        }else{
-        	CodeMirror.showHint(cm, CodeMirror.hint.autocomplete);
-        }
-	}
-	
-	$scope.isAliasCM=function(cm){
+	$scope.currentMeasure={
+			"query":"SELECT  usr.name as pippo FROM users AS usr WHERE usr.score>100"
+				};
+ 	
+	$scope.loadMetadata=function(){
+		//remove select clausole
+		var tmpText= $scope.currentMeasure.query.replace(/\n/g, " ").toLowerCase();
 		
-		var cursor = cm.getCursor();
-		var token= cm.getTokenAt(cursor);
-		
-		if(token.string.trim()!=""){
-			var tmpCursor=CodeMirror.Pos(cursor.line,token.start);
-			tmpCursor.ch=token.start;
-			token=cm.getTokenAt(tmpCursor);
+		if((tmpText.match(/(^|\s)select($|\s)/g) || []).length>1){
+			alert("too many select clausole");
+			return;
 		}
 		
-		var beforeCursor=CodeMirror.Pos(cursor.line,token.start);
-		beforeCursor.ch=token.start;
-		var beforeToken=cm.getTokenAt(beforeCursor);
+		if((tmpText.match(/(^|\s)from($|\s)/g) || []).length>1){
+			alert("too many from clausole");
+			return;
+		}
 		
-		if(beforeToken.string.toLowerCase()=="as"){
-			var text= cm.getDoc().getRange(CodeMirror.Pos(0,0),beforeCursor);
-			  var patt = new RegExp("^select ((?!FROM).)* AS$","ig");
-			if(!patt.test(text.replace(/\n/g, " "))){
-				return false;
-			}else{
-				return true;
+		var selectIndex=tmpText.search(/(^|\s)select($|\s)/);
+		var fromIndex=tmpText.search(/(^|\s)from($|\s)/);
+		if(selectIndex!=-1 && fromIndex!=-1){
+			var aliasSubstring=tmpText.substring(selectIndex+6,fromIndex);
+			var splittedAliasSubStr= aliasSubstring.trim().split(',');
+			
+			var tmpAliasList=[];
+			for(var i=0;i<splittedAliasSubStr.length;i++){
+				var tmpSplit= splittedAliasSubStr[i].trim().split(" as ");
+				tmpAliasList.push(tmpSplit[tmpSplit.length-1]);
 			}
+			
+			alert(tmpAliasList)
+		}else{
+			alert("query non completa")
 		}
-     return false;
 	}
-	
-	
-	$scope.loadDatasources=function(){
-		sbiModule_restServices.promiseGet("datasources","")
-		.then(function(response){
-			angular.copy(response.data.root,$scope.datasourcesList);
-		},function(response){
-			console.log("errore")
-		});
-	}
-	$scope.loadDatasources();
-	
-	$scope.alterDatasource=function(datasrc){
-		sbiModule_restServices.promiseGet("2.0/datasources","structure/"+datasrc)
-		.then(function(response){
-			$scope.dataSourcesIsSelected=true;
-			angular.copy(response.data,$scope.dataSourceTable);
-		},function(response){
-			console.log("errore")
-		});
-	}
-	
-	
 }
+
 function measureListControllerFunction($scope,sbiModule_translate,$mdDialog){
 	$scope.translate=sbiModule_translate;
 	$scope.measureList=[
