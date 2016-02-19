@@ -165,6 +165,50 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
     color: white;
 }
 
+// Calendar - Date Picker
+.md-knowage-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-knowage-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
+    background: $baseColor;
+    color: $lightTextColor;
+    border-color: transparent;
+}
+
+.md-knowage-theme .md-calendar-date-selection-indicator:hover {
+    background: $secondaryColor;
+}
+
+.md-knowage-theme .md-datepicker-input-container {
+    border-bottom-color: $baseColor;
+    
+    &.md-datepicker-focused {
+        border-bottom-color: $baseColor;
+    }
+}
+
+.md-knowage-theme .md-datepicker-input {
+    color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-calendar-day-header {
+    background: $calendarHeaderBackground;
+    color: $calendarHeaderTextColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {
+    border: 1px solid $baseColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {
+    background: $secondaryColor;
+}
+
 //Info box 
 .kn-info {
     margin: 10px;
