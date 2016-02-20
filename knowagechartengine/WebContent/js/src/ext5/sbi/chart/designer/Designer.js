@@ -1810,6 +1810,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var serverPort = this.serverPort;
   			
 			function setPreviewImage(src,heightImg,widthImg) {
+				
 				previewPanel.removeAll();
 				
 				/**
@@ -2780,13 +2781,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   		            			 */
   		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+  		            			
   		            			if (activeTab.getId() == 'advancedEditor') {  	
   		            				var json = activeTab.getChartData(); 
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
-
   		            			
   		            			if (errorMessages == false) {
   		            				Ext.Msg.show({
@@ -2794,7 +2795,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					message : LN('sbi.chartengine.designer.savetemplate.msg'),
   		            					icon : Ext.Msg.QUESTION,
   		            					closable : false,
-  		            					buttons : Ext.Msg.OKCANCEL,
+  		            					buttons : Ext.Msg.OKCANCEL,  		            					
   		            					buttonText : {
   		            						ok : LN('sbi.generic.save'),
   		            						cancel : LN('sbi.generic.cancel')
@@ -2829,6 +2830,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					}
   		            				});
   		            			} else {
+  		            				
   		            				Ext.Msg.show({
   		            					title : LN('sbi.chartengine.validation.errormessage'),
   		            					message : errorMessages,
@@ -2836,6 +2838,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					closable : false,
   		            					buttons : Ext.Msg.OK
   		            				});
+  		            				
   		            			}
   		            		}
   		            	},
@@ -3541,12 +3544,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		/**
 		 * Returns a list of validation errors as string format
-		 * @extendedBy: danristo (danilo.ristovski@mht.net)
+		 * @editedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 * */		
 		validateTemplate: function() {
-			var errorMsg = '';			
-			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
+			var errorMsg = '';		
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+						
 			/**
 			 * We will use chart model (data from the ChartUtils.js 'cModel')
 			 * that holds all the parameters that user specified on the 
@@ -3554,7 +3558,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (viewModel) we are going to have up-to-date data (parameters)
 			 * about the chart that we are creating.
 			 * 
-			 * @commentBy danristo (danilo.ristovski@mht.net)
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var chartViewModelData = this.cViewModel.data.configModel.data;
 			
@@ -3563,14 +3567,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * The maximum number of series that the PIE chart can contain.
 			 * 
-			 * @author danristo (danilo.ristovski@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var maxNumOfSeriesForPieChart = 4; 
 			
 			/**
 			 * Validation for Step 1 if the mandatory items are not specified.
 			 * 
-			 * @commentBy danristo (danilo.ristovski@mht.net)
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (numberOfSerieItems == 0) {
 				
@@ -3578,7 +3582,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					/**
 					 * TREEMAP, WORDCLOUD and CHORD charts need exactly one serie item.
-					 * @author: danristo (danilo.ristovski@mht.net)
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.exactlyOne') + '<br>';
 				}
@@ -3586,7 +3590,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					/**
 					 * PARALLEL chart needs at least two serie items.
-					 * @author: danristo (danilo.ristovski@mht.net)
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
 				}
@@ -3602,7 +3606,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					/**
 					 * PARALLEL chart needs at least two serie items.
-					 * @author danristo (danilo.ristovski@mht.net)
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
 				}
@@ -3695,7 +3699,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					);
 				}
 			}
-						
 			
 			/**
 			 * ********************************************************************
@@ -3746,6 +3749,339 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			}			
 
+			/**
+			 * TODO: check if this is ok!
+			 * 
+			 * Calling static function for validation of all color pickers' values from the outside
+			 * 
+			 * Danilo
+			 */
+			var colorPicker = Sbi.chart.designer.components.ColorPicker;
+			
+			var backgroundColorModel = this.cViewModel.data.configModel.get("backgroundColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(backgroundColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.bckgColorNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.backgroundcolor"),
+						LN("sbi.chartengine.configuration")
+					]
+				);
+			}
+			
+			var titleFontColorModel = this.cViewModel.data.configModel.get("titleColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(titleFontColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.color"),
+						LN("sbi.chartengine.configuration"),
+						LN("sbi.chartengine.configuration.configurationButton.label"),
+						LN("sbi.chartengine.configuration.title"),
+					]
+				);
+			}
+			
+			var subtitleFontColorModel = this.cViewModel.data.configModel.get("subtitleColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(subtitleFontColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.color"),
+						LN("sbi.chartengine.configuration"),
+						LN("sbi.chartengine.configuration.configurationButton.label"),
+						LN("sbi.chartengine.configuration.subtitle"),
+					]
+				);
+			}
+			
+			var nodataFontColorModel = this.cViewModel.data.configModel.get("nodataColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(nodataFontColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.color"),
+						LN("sbi.chartengine.configuration"),
+						LN("sbi.chartengine.configuration.configurationButton.label"),
+						LN("sbi.chartengine.configuration.nodata"),
+					]
+				);
+			}
+			
+			/**
+			 * TODO: check if this is ok
+			 * 
+			 * Validation of other colors, that are part of the JSON template
+			 * 
+			 * Danilo
+			 */
+			/**
+			 * START [1]
+			 */
+			var currentJsonTemplate = Sbi.chart.designer.Designer.exportAsJson(true);
+			
+			/**
+			 * SERIE tag
+			 */
+			var seriesArray = (currentJsonTemplate.CHART.VALUES && currentJsonTemplate.CHART.VALUES.SERIE) ? 
+					currentJsonTemplate.CHART.VALUES.SERIE : null;
+			
+			if (seriesArray!=null)
+			{
+				for (i=0; i<seriesArray.length; i++)
+				{
+					var serieItem = seriesArray[i];
+					
+					/**
+					 * Serie -> Serie item color
+					 */
+					if (serieItem.color)
+					{
+						var serieColor = (serieItem.color.indexOf("#")==0) ? serieItem.color.replace('#', '') : serieItem.color;
+						
+						if (!colorPicker.validateValue(serieColor))
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.structure.serieStyleConfPopup.colorValuesInvalid"),
+								
+								[
+								 	LN("sbi.chartengine.designer.color"),
+								 	serieItem.name,
+								 	LN('sbi.chartengine.designer.series')
+								]
+							);
+						}
+					}
+					
+					/**
+					 * Tooltip -> Font color
+					 */
+					if (serieItem.TOOLTIP && serieItem.TOOLTIP.style)
+					{
+						var seriesItemTooltipStyle = serieItem.TOOLTIP.style;
+						var colorAttrStartIndex = seriesItemTooltipStyle.indexOf("color:");						
+						
+						if (colorAttrStartIndex >= 0)
+						{							
+							var colorStartingPart = seriesItemTooltipStyle.substring(colorAttrStartIndex,seriesItemTooltipStyle.length);
+							var seriesItemTooltipFontColorTemp = colorStartingPart.substring("color:".length,colorStartingPart.indexOf(";"));
+							
+							var seriesItemTooltipFontColor = (seriesItemTooltipFontColorTemp.indexOf("#")==0) ? seriesItemTooltipFontColorTemp.replace('#', '') : 
+												seriesItemTooltipFontColorTemp;
+							
+							if (!colorPicker.validateValue(seriesItemTooltipFontColor))
+							{
+								errorMsg += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.serieStyleConfPopup.colorValuesInvalid"),
+									
+									[
+									 	LN("sbi.chartengine.designer.tooltip.color"),
+									 	serieItem.name,
+									 	LN('sbi.chartengine.designer.tooltip')
+									]
+								);
+							}
+						}
+					}
+					
+					/**
+					 * Tooltip -> Background color
+					 */
+					if (serieItem.TOOLTIP && serieItem.TOOLTIP.backgroundColor)
+					{
+						var seriesItemTooltipBckgColor = serieItem.TOOLTIP.backgroundColor;					
+												
+						seriesItemTooltipBckgColor = (seriesItemTooltipBckgColor.indexOf("#")==0) ? seriesItemTooltipBckgColor.replace('#', '') : 
+															seriesItemTooltipBckgColor;
+												
+						if (!colorPicker.validateValue(seriesItemTooltipBckgColor))
+						{
+							errorMsg += Sbi.locale.sobstituteParams
+							(
+								LN("sbi.chartengine.validation.structure.serieStyleConfPopup.colorValuesInvalid"),
+								
+								[
+								 	LN("sbi.chartengine.designer.backgroundcolor"),
+								 	serieItem.name,
+								 	LN('sbi.chartengine.designer.tooltip')
+								]
+							);
+						}						
+					}
+				}
+			}			
+			
+			/**
+			 * AXIS tag
+			 */
+			var axesListArray = (currentJsonTemplate.CHART.AXES_LIST && currentJsonTemplate.CHART.AXES_LIST.AXIS) ? 
+					currentJsonTemplate.CHART.AXES_LIST.AXIS : null;
+			
+			var checkAxisStyleConfigColors = function(yAxisPanelsNumbers,axis,configuration,firstArg,thirdArg)
+			{
+				var configurationStyle = configuration.style;
+				
+				var colorAttrStartIndex = configurationStyle.indexOf("color:");						
+				
+				if (colorAttrStartIndex >= 0)
+				{
+					var colorStartingPart = configurationStyle.substring(colorAttrStartIndex,configurationStyle.length);
+					var configurationColorTemp = colorStartingPart.substring("color:".length,colorStartingPart.indexOf(";"));
+											
+					var axisColor = (configurationColorTemp.indexOf("#")==0) ? configurationColorTemp.replace('#', '') : 
+										configurationColorTemp;
+					
+					var axisType = "";
+					(axis.alias=="X") ? axisType="X" : axisType="Y";
+					
+					var axisFinalString = axisType=="Y" ? (axisType + " axis panel #" + yAxisPanelsNumbers[axis.alias]) : 
+											(axisType + " axis panel");
+					
+					if (!colorPicker.validateValue(axisColor))
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.structure.axisStyleConfPopup.colorValuesInvalid"),
+							
+							[								 	
+							 	firstArg,
+							 	axisFinalString,
+							 	thirdArg
+							]
+						);
+					}
+				}
+			}						
+			
+			if (axesListArray!=null)
+			{
+				if (chartType.toUpperCase() == "GAUGE")
+				{
+					for (i=0; i<axesListArray.length; i++)
+					{
+						if (axesListArray[i].alias == "Y")
+						{
+							var axis = axesListArray[i];
+							
+							var gaugeLineColor = axis.lineColor;
+							gaugeLineColor = (gaugeLineColor.indexOf("#")==0) ? gaugeLineColor.replace('#', '') : gaugeLineColor;
+							
+							if (!colorPicker.validateValue(gaugeLineColor))
+							{
+								errorMsg += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.colorNotValid"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.additionalParams.lineColor"),
+										LN("sbi.chartengine.axisstylepopup.additionalParams.title")
+									]
+								);
+							}
+							
+							var gaugeTickColor = axis.tickColor;
+							gaugeTickColor = (gaugeTickColor.indexOf("#")==0) ? gaugeTickColor.replace('#', '') : gaugeTickColor;
+							
+							if (!colorPicker.validateValue(gaugeTickColor))
+							{
+								errorMsg += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.colorNotValid"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.mainTickParams.tickColor"),
+										LN("sbi.chartengine.axisstylepopup.mainTickParams.title")
+									]
+								);
+							}
+							
+							var gaugeMinorTickColor = axis.minorTickColor;
+							gaugeMinorTickColor = (gaugeMinorTickColor.indexOf("#")==0) ? gaugeMinorTickColor.replace('#', '') : gaugeMinorTickColor;
+							
+							if (!colorPicker.validateValue(gaugeMinorTickColor))
+							{
+								errorMsg += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.colorNotValid"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.minorTickParams.tickColor"),
+										LN("sbi.chartengine.axisstylepopup.minorTickParams.title")
+									]
+								);
+							}
+						}
+					}
+				}
+				else
+				{
+					var yAxisPanelsNumbers = {};
+					var counter = 2;
+					
+					for (i=0; i<axesListArray.length; i++)
+					{
+						if (axesListArray[i].alias == "Y")
+						{
+							yAxisPanelsNumbers[axesListArray[i].alias] = 1;
+						}
+						else if (axesListArray[i].alias != "X")
+						{
+							yAxisPanelsNumbers[axesListArray[i].alias] = counter;
+							counter++;
+						}
+					}
+					
+					for (i=0; i<axesListArray.length; i++)
+					{
+						checkAxisStyleConfigColors(yAxisPanelsNumbers,axesListArray[i],axesListArray[i],LN("sbi.chartengine.axisstylepopup.color"),LN("sbi.chartengine.axisstylepopup.axis"));
+						checkAxisStyleConfigColors(yAxisPanelsNumbers,axesListArray[i],axesListArray[i].TITLE,LN("sbi.chartengine.axisstylepopup.color"),LN("sbi.chartengine.axisstylepopup.title"));
+						
+						/**
+						 * Check because the X axis does not have these two tags
+						 */
+						axesListArray[i].MAJORGRID ? 
+								checkAxisStyleConfigColors
+								(	
+									yAxisPanelsNumbers,axesListArray[i],
+									axesListArray[i].MAJORGRID,
+									LN("sbi.chartengine.axisstylepopup.color"),
+									LN("sbi.chartengine.axisstylepopup.majorgrid")
+								) : null;
+						
+						axesListArray[i].MINORGRID ? 
+								checkAxisStyleConfigColors
+								(	
+									yAxisPanelsNumbers,axesListArray[i],
+									axesListArray[i].MINORGRID,
+									LN("sbi.chartengine.axisstylepopup.color"),
+									LN("sbi.chartengine.axisstylepopup.minorgrid")
+								) : null;		
+					}
+				}
+			}			
+			
+			/**
+			 * END [1]
+			 */
+			
 			/**
 			 * ************************************************************
 			 * Validate chart's opacity on mouse over (Sunburst) in the 

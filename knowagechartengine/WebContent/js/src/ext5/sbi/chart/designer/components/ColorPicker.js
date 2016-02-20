@@ -48,11 +48,44 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 		}		
 	},
 	
+	/**
+	 * TODO: check if this is ok!
+	 * 
+	 * Static function for validation of all color pickers' values from the outside
+	 * (Desinger)
+	 * 
+	 * Danilo
+	 */
+	statics: 
+	{		
+		validateValue: function(value)
+		{			
+			var regex6Digits = /^[0-9a-f]{6}$/i;
+			var regexTransparent = /^transparent$/i;					
+			
+			if(value !== undefined && value !== null && value !== '')
+			{
+				if(value.length != 6 && value.length != ('transparent').length) 
+				{
+					return false;
+				}
+				
+				if((value.length < 1 && !true) 
+						|| (!regex6Digits.test(value) && !regexTransparent.test(value))) 
+				{					
+					return false;
+				}	 
+			}
+		
+			return true;
+		}
+	},
+	
 	validateValue : function(value){
 		if(!this.getEl()) {
 			return true;
 		}
-
+		
 		if(value !== undefined && value !== null && value !== ''){
 			if(value.length != 6 && value.length != ('transparent').length) {
 				this.markInvalid(Ext.String.format(this.lengthText, value));
