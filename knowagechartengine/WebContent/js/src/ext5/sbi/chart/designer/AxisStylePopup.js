@@ -337,45 +337,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisFieldSet.add(this.styleAlignComboBox);
 		}
 		
-//		var axisStyleColor = this.axisData.styleColor;		
-//		this.styleColor = {
-//				xtype : 'fieldcontainer',
-//				layout : 'hbox',
-//				items: [
-//				        Ext.create('Ext.form.field.Base', {
-//				        	id: 'styleColorField',
-//				        	fieldStyle : (axisStyleColor && axisStyleColor.trim() != '' && axisStyleColor.trim() != 'transparent') ? 
-//				        			'background-image: none; background-color: ' + axisStyleColor.trim() : '',
-//				        			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
-//				        			labelWidth : LABEL_WIDTH,
-//				        			readOnly : true,
-//				        			flex: 15,
-//				        			
-//				        			getStyle: function() {
-//				        				return this.getFieldStyle( );
-//				        			}
-//				        }), {
-//				        	xtype : 'button',
-//				        	layout : 'hbox',
-//				        	menu : Ext.create('Ext.menu.ColorPicker',{
-//				        		listeners : {
-//				        			select : function(picker, selColor) {
-//				        				var style = 'background-image: none; background-color: #' + selColor;
-//				        				Ext.getCmp('styleColorField').setFieldStyle(style);
-//				        			}
-//				        		}
-//				        	}),
-//				        	flex: 1                
-//				        }
-//				        ],
-//				        getColor: function(){
-//				        	var styleColor = this.items[0].getStyle();
-//				        	var indexOfSharp = styleColor.indexOf('#');
-//				        	styleColor = styleColor.substring(indexOfSharp);
-//				        	
-//				        	return styleColor;
-//				        }
-//		};
 		var axisStyleColor = (this.axisData.styleColor || '').replace('#', '');		
 		this.styleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
@@ -454,46 +415,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
 			});
 			this.majorgridFieldSet.add(this.majorgridStyleTypelineComboBox);
-			
-//			var majorgridStyleColor = this.axisData.majorgridStyleColor;
-//			this.majorgridStyleColor = {
-//					xtype : 'fieldcontainer',
-//					layout : 'hbox',
-//					items: [
-//					        Ext.create('Ext.form.field.Base', {
-//					        	id: 'majorgridStyleColorColorField',
-//					        	fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
-//					        			'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
-//					        			fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
-//					        			labelWidth : LABEL_WIDTH,
-//					        			readOnly : true,
-//					        			flex: 15,
-//					        			
-//					        			getStyle: function() {
-//					        				return this.getFieldStyle( );
-//					        			}
-//					        }), {
-//					        	xtype : 'button',
-//					        	layout : 'hbox',
-//					        	menu : Ext.create('Ext.menu.ColorPicker',{
-//					        		listeners : {
-//					        			select : function(picker, selColor) {
-//					        				var style = 'background-image: none; background-color: #' + selColor;
-//					        				Ext.getCmp('majorgridStyleColorColorField').setFieldStyle(style);
-//					        			}
-//					        		}
-//					        	}),
-//					        	flex: 1                
-//					        }
-//					        ],
-//					        getColor: function(){
-//					        	var styleColor = this.items[0].getStyle();
-//					        	var indexOfSharp = styleColor.indexOf('#');
-//					        	styleColor = styleColor.substring(indexOfSharp);
-//					        	
-//					        	return styleColor;
-//					        }
-//			};
+
 			var majorgridStyleColor = (this.axisData.majorgridStyleColor || '').replace('#', '');
 			this.majorgridStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
@@ -519,46 +441,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
 			});
 			this.minorgridFieldSet.add(this.minorgridStyleTypelineComboBox);
-			
-//			var minorgridStyleColor = this.axisData.minorgridStyleColor;
-//			this.minorgridStyleColor = {
-//					xtype : 'fieldcontainer',
-//					layout : 'hbox',
-//					items: [
-//					        Ext.create('Ext.form.field.Base', {
-//					        	id: 'minorgridStyleColorColorField',
-//					        	fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
-//					        			'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
-//					        			fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
-//					        			labelWidth : LABEL_WIDTH,
-//					        			readOnly : true,
-//					        			flex: 15,
-//					        			
-//					        			getStyle: function() {
-//					        				return this.getFieldStyle( );
-//					        			}
-//					        }), {
-//					        	xtype : 'button',
-//					        	layout : 'hbox',
-//					        	menu : Ext.create('Ext.menu.ColorPicker',{
-//					        		listeners : {
-//					        			select : function(picker, selColor) {
-//					        				var style = 'background-image: none; background-color: #' + selColor;
-//					        				Ext.getCmp('minorgridStyleColorColorField').setFieldStyle(style);
-//					        			}
-//					        		}
-//					        	}),
-//					        	flex: 1                
-//					        }
-//					        ],
-//					        getColor: function(){
-//					        	var styleColor = this.items[0].getStyle();
-//					        	var indexOfSharp = styleColor.indexOf('#');
-//					        	styleColor = styleColor.substring(indexOfSharp);
-//					        	
-//					        	return styleColor;
-//					        }
-//			};
+
 			var minorgridStyleColor = (this.axisData.minorgridStyleColor || '').replace('#', '');
 			this.minorgridStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
@@ -638,51 +521,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * LINE COLOR
 			 * 		Description: Color of the speedometer line
 			 */
-//			var lineColor = this.axisData.lineColor;
-//			this.lineColor = {
-//					xtype : 'fieldcontainer',
-//					layout : 'hbox',
-//					
-//					items: [
-//					        Ext.create('Ext.form.field.Base', {
-//					        	id: 'yAxisLineColor',
-//					        	fieldStyle : (lineColor && lineColor.trim() != '') ? 
-//					        			'background-image: none; background-color: ' + lineColor.trim() : '',
-//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.additionalParams.lineColor"),
-//					        			labelWidth : LABEL_WIDTH,
-//					        			readOnly : true,
-//					        			flex: 15,
-//					        			
-//					        			getStyle: function() {
-//					        				return this.getFieldStyle();
-//					        			}
-//					        }), 
-//					        
-//					        {
-//					        	xtype : 'button',
-//					        	layout : 'hbox',
-//					        	
-//					        	menu : Ext.create('Ext.menu.ColorPicker', {	                        
-//					        		listeners : {
-//					        			select : function(picker, selColor) {
-//					        				var style = 'background-image: none; background-color: #' + selColor;
-//					        				Ext.getCmp('yAxisLineColor').setFieldStyle(style);
-//					        			}
-//					        		}	
-//					        	}),
-//					        	
-//					        	flex: 1                
-//					        }
-//					        ],
-//					        
-//					        getColor: function() {
-//					        	var styleColor = this.items[0].getStyle();
-//					        	var indexOfSharp = styleColor.indexOf('#');
-//					        	styleColor = styleColor.substring(indexOfSharp);
-//					        	
-//					        	return styleColor;
-//					        }
-//			};
 			var lineColor = (this.axisData.lineColor || '').replace('#', '');
 			this.lineColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.additionalParams.lineColor'),
@@ -815,54 +653,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 		Description: 	
 			 * 			Axis main tick color
 			 */
-//			var tickColor = this.axisData.tickColor;
-//			this.tickColor = {
-//					xtype : 'fieldcontainer',
-//					layout : 'hbox',
-//					
-//					items: [
-//					        Ext.create('Ext.form.field.Base', {
-//					        	id: 'tickColorYAxis',
-//					        	fieldStyle : (tickColor && tickColor.trim() != '') ? 
-//					        			'background-image: none; background-color: ' + tickColor.trim() : '',
-//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.mainTickParams.tickColor"),
-//					        			labelWidth : LABEL_WIDTH,
-//					        			readOnly : true,
-//					        			flex: 15,
-//					        			
-//					        			getStyle: function() 
-//					        			{
-//					        				return this.getFieldStyle();
-//					        			}
-//					        }), 
-//					        {
-//					        	xtype : 'button',
-//					        	layout : 'hbox',
-//					        	
-//					        	menu : Ext.create('Ext.menu.ColorPicker',{	                        
-//					        		listeners : 
-//					        		{
-//					        			select : function(picker, selColor) 
-//					        			{
-//					        				var style = 'background-image: none; background-color: #' + selColor;
-//					        				Ext.getCmp('tickColorYAxis').setFieldStyle(style);
-//					        			}
-//					        		}	
-//					        	}),
-//					        	
-//					        	flex: 1                
-//					        }
-//					        ],
-//					        
-//					        getColor: function()
-//					        {
-//					        	var styleColor = this.items[0].getStyle();
-//					        	var indexOfSharp = styleColor.indexOf('#');
-//					        	styleColor = styleColor.substring(indexOfSharp);
-//					        	
-//					        	return styleColor;
-//					        }
-//			};
 			var tickColor = (this.axisData.tickColor || '').replace('#', '');
 			this.tickColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.mainTickParams.tickColor'),
@@ -995,55 +785,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 		Description: 	
 			 * 			Axis minor tick color
 			 */
-//			var minorTickColor = this.axisData.minorTickColor;
-//			this.minorTickColor = {
-//					xtype : 'fieldcontainer',
-//					layout : 'hbox',
-//					
-//					items: [
-//					        Ext.create('Ext.form.field.Base', {
-//					        	id: 'minorTickColor',
-//					        	fieldStyle : (minorTickColor && minorTickColor.trim() != '') ? 
-//					        			'background-image: none; background-color: ' + minorTickColor.trim() : '',
-//					        			fieldLabel : LN("sbi.chartengine.axisstylepopup.minorTickParams.tickColor"),
-//					        			labelWidth : LABEL_WIDTH,
-//					        			readOnly : true,
-//					        			flex: 15,
-//					        			
-//					        			getStyle: function() 
-//					        			{
-//					        				return this.getFieldStyle();
-//					        			}
-//					        }), 
-//					        
-//					        {
-//					        	xtype : 'button',
-//					        	layout : 'hbox',
-//					        	
-//					        	menu : Ext.create('Ext.menu.ColorPicker', {	                        
-//					        		listeners : 
-//					        		{
-//					        			select : function(picker, selColor) 
-//					        			{
-//					        				var style = 'background-image: none; background-color: #' + selColor;
-//					        				Ext.getCmp('minorTickColor').setFieldStyle(style);
-//					        			}
-//					        		}	
-//					        	}),
-//					        	
-//					        	flex: 1                
-//					        }
-//					        ],
-//					        
-//					        getColor: function()
-//					        {
-//					        	var styleColor = this.items[0].getStyle();
-//					        	var indexOfSharp = styleColor.indexOf('#');
-//					        	styleColor = styleColor.substring(indexOfSharp);
-//					        	
-//					        	return styleColor;
-//					        }
-//			};
 			var minorTickColor = (this.axisData.minorTickColor || '').replace('#', '');
 			this.minorTickColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 				fieldLabel : LN('sbi.chartengine.axisstylepopup.minorTickParams.tickColor'),
@@ -1455,45 +1196,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 		}
 		
-//		var titleStyleColor = this.axisData.titleStyleColor;
-//		this.titleStyleColor = {
-//				xtype : 'fieldcontainer',
-//				layout : 'hbox',
-//				items: [
-//				        Ext.create('Ext.form.field.Base', {
-//				        	id: 'titleStyleColorColorField',
-//				        	fieldStyle : (titleStyleColor && titleStyleColor.trim() != '') ? 
-//				        			'background-image: none; background-color: ' + titleStyleColor.trim() : '',
-//				        			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
-//				        			labelWidth : LABEL_WIDTH,
-//				        			readOnly : true,
-//				        			flex: 15,
-//				        			
-//				        			getStyle: function() {
-//				        				return this.getFieldStyle( );
-//				        			}
-//				        }), {
-//				        	xtype : 'button',
-//				        	layout : 'hbox',
-//				        	menu : Ext.create('Ext.menu.ColorPicker',{
-//				        		listeners : {
-//				        			select : function(picker, selColor) {
-//				        				var style = 'background-image: none; background-color: #' + selColor;
-//				        				Ext.getCmp('titleStyleColorColorField').setFieldStyle(style);
-//				        			}
-//				        		}
-//				        	}),
-//				        	flex: 1                
-//				        }
-//				        ],
-//				        getColor: function(){
-//				        	var styleColor = this.items[0].getStyle();
-//				        	var indexOfSharp = styleColor.indexOf('#');
-//				        	styleColor = styleColor.substring(indexOfSharp);
-//				        	
-//				        	return styleColor;
-//				        }
-//		};
 		var titleStyleColor = (this.axisData.titleStyleColor || '').replace('#', '');
 		this.titleStyleColor = Ext.create('Sbi.chart.designer.components.ColorPicker',{
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
@@ -1546,56 +1248,154 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
     	var isYAxis = this.isYAxis;
     	
 		var styleRotate = this.styleRotateNumberField.getValue();
-		this.axisData.styleRotate = styleRotate;
+//		this.axisData.styleRotate = styleRotate;
 
 		var styleAlign = this.styleAlignComboBox.getValue();
-		this.axisData.styleAlign = styleAlign;
+//		this.axisData.styleAlign = styleAlign;		
 		
 		var axisStyleColor = this.styleColor.getColor();
-		this.axisData.styleColor = axisStyleColor;
+//		this.axisData.styleColor = axisStyleColor;
 
 		var styleFont = this.styleFontComboBox.getValue();
-		this.axisData.styleFont = styleFont;
+//		this.axisData.styleFont = styleFont;
 
 		var styleFontWeigh = this.styleFontWeighComboBox.getValue();
-		this.axisData.styleFontWeigh = styleFontWeigh;
+//		this.axisData.styleFontWeigh = styleFontWeigh;
 
 		var styleFontSize = this.styleFontSizeComboBox.getValue();
-		this.axisData.styleFontSize = styleFontSize;
+//		this.axisData.styleFontSize = styleFontSize;
 		
 		if(this.styleOpposite) {
 			var styleOpposite = this.styleOpposite.getValue();
-			this.axisData.styleOpposite = styleOpposite;
+//			this.axisData.styleOpposite = styleOpposite;
 		}
 
 		if(isYAxis) {
 			var majorgridInterval = this.majorgridIntervalNumberField.getValue();
-			this.axisData.majorgridInterval = majorgridInterval;
+//			this.axisData.majorgridInterval = majorgridInterval;
 	
 			var majorgridStyleTypeline = this.majorgridStyleTypelineComboBox.getValue();
-			this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
+//			this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
 	
 			var majorgridStyleColor = this.majorgridStyleColor.getColor();
-			this.axisData.majorgridStyleColor = majorgridStyleColor;
+//			this.axisData.majorgridStyleColor = majorgridStyleColor;
 	
 			var minorgridInterval = this.minorgridIntervalNumberField.getValue();
-			this.axisData.minorgridInterval = minorgridInterval;
+//			this.axisData.minorgridInterval = minorgridInterval;
 	
 			var minorgridStyleTypeline = this.minorgridStyleTypelineComboBox.getValue();
-			this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
+//			this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
 	
 			var minorgridStyleColor = this.minorgridStyleColor.getColor();
-			this.axisData.minorgridStyleColor = minorgridStyleColor;
+//			this.axisData.minorgridStyleColor = minorgridStyleColor;
+		}				
+		
+		// var titleText = this.titleTextTextField.getValue();
+		// this.axisData.titleText = titleText;
+
+		var titleStyleAlign = this.titleStyleAlignComboBox.getValue();
+//		this.axisData.titleStyleAlign = titleStyleAlign;
+
+		var titleStyleColor = this.titleStyleColor.getColor();
+//		this.axisData.titleStyleColor = titleStyleColor;
+
+		var titleStyleFont = this.titleStyleFontComboBox.getValue();
+//		this.axisData.titleStyleFont = titleStyleFont;
+
+		var titleStyleFontWeigh = this.titleStyleFontWeighComboBox.getValue();
+//		this.axisData.titleStyleFontWeigh = titleStyleFontWeigh;
+
+		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
+//		this.axisData.titleStyleFontSize = titleStyleFontSize;
+		
+		/**
+		 * TODO: Check if this is ok
+		 * 
+		 * Danilo
+		 */
+		var errorMessages = "";
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+		
+		var colorPicker = Sbi.chart.designer.components.ColorPicker;
+		
+		if (axisStyleColor && axisStyleColor!=null)
+		{
+			axisStyleColor = (axisStyleColor.indexOf("#")==0) ? axisStyleColor.replace('#', '') : axisStyleColor;
+			
+			if (!colorPicker.validateValue(axisStyleColor))
+			{
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+					
+					[
+					 	LN("sbi.chartengine.axisstylepopup.color"),
+					 	LN("sbi.chartengine.axisstylepopup.axis")						
+					]
+				);
+			}
+		}
+		
+		if (titleStyleColor && titleStyleColor!=null)
+		{
+			titleStyleColor = (titleStyleColor.indexOf("#")==0) ? titleStyleColor.replace('#', '') : titleStyleColor;
+			
+			if (!colorPicker.validateValue(titleStyleColor))
+			{
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+					
+					[
+					 	LN("sbi.chartengine.axisstylepopup.color"),
+					 	LN("sbi.chartengine.axisstylepopup.title")						
+					]
+				);
+			}
+		}
+		
+		if (majorgridStyleColor && majorgridStyleColor!=null)
+		{
+			majorgridStyleColor = (majorgridStyleColor.indexOf("#")==0) ? majorgridStyleColor.replace('#', '') : majorgridStyleColor;
+			
+			if (!colorPicker.validateValue(majorgridStyleColor))
+			{
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+					
+					[
+					 	LN("sbi.chartengine.axisstylepopup.color"),
+					 	LN("sbi.chartengine.axisstylepopup.majorgrid")						
+					]
+				);
+			}
+		}
+		
+		if (minorgridStyleColor && minorgridStyleColor!=null)
+		{
+			minorgridStyleColor = (minorgridStyleColor.indexOf("#")==0) ? minorgridStyleColor.replace('#', '') : minorgridStyleColor;
+			
+			if (!colorPicker.validateValue(minorgridStyleColor))
+			{
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+					
+					[
+					 	LN("sbi.chartengine.axisstylepopup.color"),
+					 	LN("sbi.chartengine.axisstylepopup.minorgrid")
+					]
+				);
+			}
 		}
 		
 		/**
 		 * Validation for the GAUGE chart's values of the axis style configuration 
 		 * parameters.
 		 * 
-		 * @author: danristo (danilo.ristovski@mht.net)
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		var errorMessages = "";
-		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		
 		// ** START **
 		if (chartType == "GAUGE")
@@ -1697,6 +1497,29 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * If values for these parameters are provided by the user they must be valid (correct).
 			 */
 			
+			/**
+			 * TODO: Check if this is ok
+			 * 
+			 * Danilo
+			 */
+			if (lineColorYAxis && lineColorYAxis!=null)
+			{
+				lineColorYAxis = (lineColorYAxis.indexOf("#")==0) ? lineColorYAxis.replace('#', '') : lineColorYAxis;
+				
+				if (!colorPicker.validateValue(lineColorYAxis))
+				{
+					errorMessages += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+						
+						[
+						 	LN("sbi.chartengine.axisstylepopup.additionalParams.lineColor"),
+						 	LN("sbi.chartengine.axisstylepopup.additionalParams.title")							
+						]
+					);
+				}
+			}
+			
 			!(lineWidthYAxis!=null && lineWidthYAxis < this.lineWidthYAxis.minValue) ? lineWidthYAxis :
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -1708,6 +1531,29 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 						LN('sbi.chartengine.axisstylepopup.additionalParams.title')
 					]
 				);
+			
+			/**
+			 * TODO: Check if this is ok
+			 * 
+			 * Danilo
+			 */
+			if (tickColor && tickColor!=null)
+			{
+				tickColor = (tickColor.indexOf("#")==0) ? tickColor.replace('#', '') : tickColor;
+				
+				if (!colorPicker.validateValue(tickColor))
+				{
+					errorMessages += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+						
+						[
+							LN("sbi.chartengine.axisstylepopup.mainTickParams.tickColor"),
+						 	LN("sbi.chartengine.axisstylepopup.mainTickParams.title")
+						]
+					);
+				}
+			}
 			
 			!(tickPixelInterval!=null && tickPixelInterval < this.tickPixelInterval.minValue) ? tickPixelInterval :
 				errorMessages += Sbi.locale.sobstituteParams
@@ -1744,6 +1590,30 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 						LN('sbi.chartengine.axisstylepopup.mainTickParams.title')
 					]
 				);
+			
+			/**
+			 * TODO: Check if this is ok
+			 * 
+			 * Danilo
+			 */
+			if (minorTickColor && minorTickColor!=null)
+			{
+				minorTickColor = (minorTickColor.indexOf("#")==0) ? minorTickColor.replace('#', '') : tickColor;
+				
+				if (!colorPicker.validateValue(minorTickColor))
+				{
+					errorMessages += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.structure.axisStyleConfPopupOpened.colorValuesInvalid"),
+						
+						[
+
+							LN("sbi.chartengine.axisstylepopup.minorTickParams.tickColor"),
+						 	LN("sbi.chartengine.axisstylepopup.minorTickParams.title")
+						]
+					);
+				}
+			}
 			
 			!(minorTickInterval!=null && minorTickInterval < this.minorTickInterval.minValue) ? minorTickInterval :
 				errorMessages += Sbi.locale.sobstituteParams
@@ -1925,20 +1795,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * errors (in a meanwhile, the initial one (axis style configuration
 			 * popup will stay active (opened) in the background.
 			 */
-			if (errorMessages!="")
-			{
-				Ext.Msg.show
-				(
-					{
-						title : LN("sbi.chartengine.validation.structure.massageWarning.headerTitle"),
-						message : errorMessages,
-						icon : Ext.Msg.WARNING,
-						closable : true,
-						buttons : Ext.Msg.OK
-					}
-				);
-			}
-			else
+			if (errorMessages=="")
 			{
 				this.axisData.min = minValueYAxis;		
 				this.axisData.max = maxValueYAxis;			
@@ -1971,25 +1828,29 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				this.axisData.color = colorPlotband;
 			}							
 			// ** END **
-		}		
+		}
 		
-		// var titleText = this.titleTextTextField.getValue();
-		// this.axisData.titleText = titleText;
-
-		var titleStyleAlign = this.titleStyleAlignComboBox.getValue();
-		this.axisData.titleStyleAlign = titleStyleAlign;
-
-		var titleStyleColor = this.titleStyleColor.getColor();
-		this.axisData.titleStyleColor = titleStyleColor;
-
-		var titleStyleFont = this.titleStyleFontComboBox.getValue();
-		this.axisData.titleStyleFont = titleStyleFont;
-
-		var titleStyleFontWeigh = this.titleStyleFontWeighComboBox.getValue();
-		this.axisData.titleStyleFontWeigh = titleStyleFontWeigh;
-
-		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
-		this.axisData.titleStyleFontSize = titleStyleFontSize;
+		if (errorMessages!="")
+		{
+			Ext.Msg.show
+			(
+				{
+					title:	Sbi.locale.sobstituteParams
+							(
+									LN("sbi.chartengine.validation.structure.axisAndSeriesStyleConfigPopup.messageWarning.headerTitle"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.popup.title")
+									]
+							),
+							
+					message : errorMessages,
+					icon : Ext.Msg.WARNING,
+					closable : true,
+					buttons : Ext.Msg.OK
+				}
+			);
+		}
 		
 		/**
 		 * In the case of the GAUGE chart only if there are no error
@@ -1997,19 +1858,41 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		 * window.
 		 * 
 		 * @modifiedBy: danristo (danilo.ristovski@mht.net)
-		 */
-		if (chartType == "GAUGE")
-		{			
-			if (errorMessages=="")
-			{
-				this.destroy();
-			}			
-		}
-		else
+		 */		
+		if (errorMessages=="")
 		{
+			this.axisData.styleRotate = styleRotate;
+			this.axisData.styleAlign = styleAlign;
+			this.axisData.styleColor = axisStyleColor;
+			this.axisData.styleFont = styleFont;
+			this.axisData.styleFontWeigh = styleFontWeigh;
+			
+			this.axisData.styleFontSize = styleFontSize;
+			
+			if(this.styleOpposite) 
+			{
+				this.axisData.styleOpposite = styleOpposite;
+			}
+			
+			if (isYAxis)
+			{
+				this.axisData.majorgridInterval = majorgridInterval;
+				this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
+				this.axisData.majorgridStyleColor = majorgridStyleColor;
+				this.axisData.minorgridInterval = minorgridInterval;
+				this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
+				this.axisData.minorgridStyleColor = minorgridStyleColor;
+
+			}
+			
+			this.axisData.titleStyleAlign = titleStyleAlign;
+			this.axisData.titleStyleColor = titleStyleColor;
+			this.axisData.titleStyleFont = titleStyleFont;
+			this.axisData.titleStyleFontWeigh = titleStyleFontWeigh;
+			this.axisData.titleStyleFontSize = titleStyleFontSize;
+			
 			this.destroy();
 		}
-			
     },
 
 	items: [],

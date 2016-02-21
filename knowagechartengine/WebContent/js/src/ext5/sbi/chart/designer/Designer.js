@@ -3824,6 +3824,53 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
+			var legendTitleColorModel = this.cViewModel.data.configModel.get("legendTitleColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(legendTitleColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.color"),
+						LN("sbi.chartengine.configuration.legend"),
+						LN("sbi.chartengine.configuration.configurationButton.label"),
+						LN("sbi.chartengine.configuration.title")						
+					]
+				);
+			}
+			
+			var legendFontColorModel = this.cViewModel.data.configModel.get("legendColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(legendFontColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorLegendNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.color"),
+						LN("sbi.chartengine.configuration.legend")
+					]
+				);
+			}
+			
+			var legendBackgroundColorModel = this.cViewModel.data.configModel.get("legendBackgroundColor").toUpperCase();
+			
+			if (!colorPicker.validateValue(legendBackgroundColorModel))
+			{
+				errorMsg += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.configuration.titleSubtitleNoData.fontColorLegendNotValid"),
+					
+					[
+						LN("sbi.chartengine.configuration.backgroundcolor"),
+						LN("sbi.chartengine.configuration.legend")
+					]
+				);
+			}
+			
 			/**
 			 * TODO: check if this is ok
 			 * 
@@ -4251,36 +4298,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					tooltip:
 					{
-						/*minWidth:
-						{
-							minValue: Ext.getCmp("parallelTooltipMinWidth").minValue,
-							maxValue: Ext.getCmp("parallelTooltipMinWidth").maxValue
-						},
-						
-						maxWidth:
-						{
-							minValue: Ext.getCmp("parallelTooltipMaxWidth").minValue,
-							maxValue: Ext.getCmp("parallelTooltipMaxWidth").maxValue
-						},
-						
-						minHeight:
-						{
-							minValue: Ext.getCmp("parallelTooltipMinHeight").minValue,
-							maxValue: Ext.getCmp("parallelTooltipMinHeight").maxValue
-						},
-						
-						maxHeight:
-						{
-							minValue: Ext.getCmp("parallelTooltipMaxHeight").minValue,
-							maxValue: Ext.getCmp("parallelTooltipMaxHeight").maxValue
-						},
-						
-						textPadding:
-						{
-							minValue: Ext.getCmp("parallelTooltipPadding").minValue,
-							maxValue: Ext.getCmp("parallelTooltipPadding").maxValue
-						},
-						*/
 						borderWidth:
 						{
 							minValue: Ext.getCmp("parallelTooltipBorder").minValue,

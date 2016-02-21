@@ -34,6 +34,14 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         this.title = config.title && config.title != null ? config.title: this.title;
         Ext.apply(this.config,config);
         
+        /**
+         * TODO: Check if this is ok
+         * 
+         * Danilo
+         */
+        this.colorPickerElement = null;
+        this.bckgColorPickerElement = null;
+        
         var globalScope = this;
         
         if(this.config.bindFontAlign) {
@@ -170,6 +178,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			isColorMandatory: this.config.isFontColorMandatory
 		});
 		this.add(color);
+		
+		this.colorPickerElement = color;       
 				
 		if(this.config.bindBackgroundColor){
 //			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
@@ -199,6 +209,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 	    				: LN('sbi.chartengine.configuration.backgroundcolor')
 			});
 			this.add(bkgrColor);
+			
+			this.bckgColorPickerElement = bkgrColor;
 		}
     },
     
@@ -211,6 +223,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
      */
     listeners: {
     	close: function() {
+    		
+    		var errorMsg = "";
+    		var globalScope = this;
+    		
     		if (this.getComponent("borderWidthLegend")) {    			
     			/**
         		 * Validate the border with parameter for the Legend panel 
@@ -218,7 +234,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         		 * Configure button).
         		 */
         		var errorMsg = "";
-        		var globalThis = this;
+        		
         		
         		var borderWidthLegendField = this.getComponent("borderWidthLegend");
         		var borderWidthLegendValue = borderWidthLegendField.value;
@@ -241,26 +257,95 @@ Ext.define('Sbi.chart.designer.StylePopup',{
     				}
     			}
         		
-        		if (errorMsg != "") {
-        			var msg = Ext.Msg.show({						
-    					title : LN('sbi.chartengine.validation.errormessage'),
-    					message : errorMsg,
-    					icon : Ext.Msg.WARNING,
-    					closable : false,
-    					buttons : Ext.Msg.OK,
+//        		if (errorMsg != "") {
+//        			var msg = Ext.Msg.show({						
+//    					title : LN('sbi.chartengine.validation.errormessage'),
+//    					message : errorMsg,
+//    					icon : Ext.Msg.WARNING,
+//    					closable : false,
+//    					buttons : Ext.Msg.OK,
+//    					
+//    					fn : function()
+//    					{
+//    						/**
+//    						 * Show again the initial popup (with the form)
+//    						 * so the user can correct inappropriate value
+//    						 * for the border width.
+//    						 */
+//    	                    globalScope.show();
+//    	                }
+//					});
+//    			}       			
+			} 
+    		
+    		/**
+    		 * TODO: Check if this is ok
+    		 * 
+    		 * Validation for StylePopup color pickers.
+    		 * 
+    		 * Danilo
+    		 */    		
+    		var colorPicker = Sbi.chart.designer.components.ColorPicker;
+    		
+    		if (this.bckgColorPickerElement && this.bckgColorPickerElement!=null)
+			{
+    			var bckgColor = this.bckgColorPickerElement.getValue();
+    			var bckgColor = (bckgColor.indexOf("#")==0) ? bckgColor.replace('#', '') : bckgColor;
+    			
+    			if (!colorPicker.validateValue(bckgColor))
+    			{
+    				errorMsg += Sbi.locale.sobstituteParams
+    				(
+    					LN("sbi.chartengine.validation.configuration.genericConf.title.colorElementNotValid"),
     					
-    					fn : function()
-    					{
-    						/**
-    						 * Show again the initial popup (with the form)
-    						 * so the user can correct inappropriate value
-    						 * for the border width.
-    						 */
-    	                    globalThis.show();
-    	                }
-					});
-    			}       			
-			}    			
+    					[
+    						LN("sbi.chartengine.configuration.backgroundcolor")
+    					]
+    				);
+    			}
+			}
+    		
+    		if (this.colorPickerElement && this.colorPickerElement!=null)
+			{
+    			var color = this.colorPickerElement.getValue();
+    			var color = (color.indexOf("#")==0) ? color.replace('#', '') : color;
+    			
+    			if (!colorPicker.validateValue(color))
+    			{
+    				errorMsg += Sbi.locale.sobstituteParams
+    				(
+    					LN("sbi.chartengine.validation.configuration.genericConf.title.colorElementNotValid"),
+    					
+    					[
+    					 	this.colorPickerElement.fieldLabel
+    					]
+    				);
+    			}
+			}    		
+
+    		if (errorMsg != "") 
+    		{
+    			Ext.Msg.show
+    			(
+					{						
+						title : LN('sbi.chartengine.validation.errormessage'),
+						message : errorMsg,
+						icon : Ext.Msg.WARNING,
+						closable : false,
+						buttons : Ext.Msg.OK,
+						
+						fn : function()
+						{
+							/**
+							 * Show again the initial popup (with the form)
+							 * so the user can correct inappropriate value
+							 * for the border width.
+							 */
+							globalScope.show();
+		                }
+					}
+				);
+			}  
     	}
 	}
 });
