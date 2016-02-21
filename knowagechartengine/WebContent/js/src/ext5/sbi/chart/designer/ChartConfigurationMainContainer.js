@@ -431,6 +431,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
+			
+			/**
+			 * TODO: add comments
+			 * Danilo
+			 */
+			listeners:
+			{
+				change: function(a,b)
+				{
+					Ext.getCmp("chartLegend").fireEvent("showLegendClicked",b);
+				}
+			}
 		});
         	
     	this.add(showLegend);   

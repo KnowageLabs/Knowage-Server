@@ -55,17 +55,22 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
     
     constructor: function(config) {
         this.callParent(config);
-        
+
         this.viewModel = config.viewModel;
         
         var legend = Ext.create('Sbi.chart.designer.ChartConfigurationLegend',{
         	margin: config.margin,
+        	/**
+        	 * TODO: add comments
+        	 * Danilo
+        	 */
+        	collapsed: !JSON.parse(this.viewModel.data.configModel.get("showLegend")),
 			viewModel: this.viewModel
 		});
         this.legend = legend;
         
 		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
-			margin: config.margin,
+			margin: config.margin,			
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
 		

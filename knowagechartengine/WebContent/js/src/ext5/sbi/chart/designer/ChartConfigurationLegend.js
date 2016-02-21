@@ -15,16 +15,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	items : [],
 	stylePanelLegend : {},
 
-	bind : {
-		// disabled: '{!configModel.showLegend}'
-		
-		/**
-		 * @author Danilo Ristovski (danristo,
-		 *         danilo.ristovski@mht.net)
-		 */
-		collapsed : '{!configModel.showLegend}'
-	},
-
 	/**
 	 * Listening for showing the Legend panel. When this event
 	 * fires that means we have a legend that should be shown
@@ -40,16 +30,28 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	 * @author Danilo Ristovski (danristo,
 	 *         danilo.ristovski@mht.net)
 	 */
-	listeners : {
-		show : function () {
-			this.collapsed = "bottom";
-		}
+	listeners : 
+	{
+		/**
+		 * TODO: add comment and correct the one before listeners segment!!!
+		 * Danilo
+		 */
+		showLegendClicked: function(param)
+		{
+			!param ? this.collapse() : this.expand();
+		}	
 	},
 
 	constructor : function (config) {
 		this.callParent(config);
 		this.viewModel = config.viewModel;
 
+		/**
+		 * TODO: comment
+		 * Danilo
+		 */
+		this.collapsed = config.collapsed;
+		
 		this.stylePanelLegend = Ext.create('Sbi.chart.designer.StylePopup', {
 			title : LN('sbi.chartengine.configuration.legendstyle'),
 			viewModel : this.viewModel,
@@ -194,26 +196,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 				}
 			}]
 		}, 
-		/**
-		 * The 'floating' option (parameter) is removed from the Legend.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-//		{
-//			xtype : 'fieldcontainer',
-//	
-//			layout : Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
-//
-//			defaults : {
-//				margin : Sbi.settings.chart.configurationStep.marginOfInnerFieldset,
-//			},
-//			items : [{
-//				xtype : 'checkboxfield',
-//				bind : '{configModel.legendFloating}',
-//				id : 'floating',
-//				labelSeparator : '',
-//				fieldLabel : LN('sbi.chartengine.configuration.floating')
-//			}]
-//		},
+		
 		];
 		this.add(item);
 
