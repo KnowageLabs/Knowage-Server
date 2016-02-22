@@ -1531,79 +1531,55 @@ Ext.define('Sbi.chart.designer.Designer', {
   			(
 				"resize", 
 				
-				function()
+				function(element,widthCurrent,heightCurrent)
 				{
 					/**
-					 * Take the calculation of the resizing if the image is already rendered.
+					 * If the image that is currently set inside the Preview panel is one
+					 * of these two (the one displayed when loading the chart and data and
+					 * the one for displaying the information that it is not possible to
+					 * display (render, export) the chart) while resizing the panel, take
+					 * care of the size of this image (the one of these two that is currently 
+					 * displayed).
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */					
+					var notAvailableImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
+					var loadingImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png';
+										
+					/**
+					 * Flags that will help us know if the current image is one of the two
+					 * mentioned above.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					if (srcImg && srcImg!=null)
+					var doNotEnterResizeForChart = false;
+					var loading = false;
+					var notAvailable = false;
+					
+					if (srcImg && srcImg!=null && (notAvailableImg==srcImg || loadingImg==srcImg))
 					{
-//						console.log(widthChartJson);
-//						console.log(heightChartJson);
-//						
-//						console.log(heightDimType);
-//						console.log(widthDimType);
-//						
-//						var heightChartJsonTemp = null;
-//						var widthChartJsonTemp = null;
-//							  							
-//						if (heightDimType == "percentage")
-//						{  								
-//							if (!heightChartJson || heightChartJson == "")
-//							{
-//								heightChartJsonTemp = window.innerHeight;
-//							}
-//							else
-//							{
-//								heightChartJsonTemp = window.innerHeight*(Number(heightChartJson)/100);
-//							}
-//						}
-//						else
-//						{
-//							heightChartJsonTemp = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
-//						}
-//							
-//						if (widthDimType == "percentage")
-//						{
-//							if (!widthChartJson || widthChartJson == "")
-//							{
-//								widthChartJsonTemp = window.innerWidth;
-//							}
-//							else
-//							{
-//								widthChartJsonTemp = window.innerWidth*(Number(widthChartJson)/100);
-//							}
-//						}
-//						else
-//						{
-//							widthChartJsonTemp = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-//						}
-//						
-//						var ratioChartJson = widthChartJsonTemp/heightChartJsonTemp;
-//						
-//						var heightPrevPan = globalThis.previewPanel.getHeight();
-//						var widthPrevPan = globalThis.previewPanel.getWidth();
-//						
-//						var widthImg = 0;
-//						var heightImg = 0;
-//						
-//						widthImg = (widthChartJsonTemp <= widthPrevPan) ? widthChartJsonTemp : widthPrevPan;
-//						heightImg = widthImg/ratioChartJson;
-//						
-//						var ratioImg = widthImg/heightImg;
-//						
-//						console.log(ratioImg);
-//						
-//						heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
-//						widthImg = heightImg*ratioImg;
-//						console.log(Ext.getCmp("AAADDD"));
-//						/**
-//						 * Call the method that sets the rendered image inside the Preview panel.
-//						 */
-//  						setPreviewImage(srcImg,heightImg,widthImg);
-//  						console.log("USAO resize");
-//  						console.log(previewPanel);
-//  						Ext.getCmp("AAADDD").getEl().fireEvent('click');
+						doNotEnterResizeForChart = true;
+						
+						if (notAvailableImg==srcImg)
+							notAvailable = true;
+						else
+							loading = true;
+					}
+					
+					/**
+					 * If the image is already rendered inside the Preview panel, check if the one
+					 * is displaying one of two non-chart information (loading image or image not
+					 * available). If the image is not one of two mentioned, the 'if' branch is
+					 * executed. Otherwise, in the 'else' branch we will rerender the image with 
+					 * particular information. 
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (srcImg && srcImg!=null && !doNotEnterResizeForChart)
+					{	
+						/**
+						 * Take the calculation of the resizing if the image is already rendered.
+						 */
 						
 						var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
 						
@@ -1616,8 +1592,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				  			 * from respective dimensions of the entire window). 
 				  			 * 
 				  			 * @author Daniele Davì
-						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				  			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				  			 */
 							heightChartJson = sbiJson.CHART.height;
 							widthChartJson = sbiJson.CHART.width;
@@ -1626,68 +1602,59 @@ Ext.define('Sbi.chart.designer.Designer', {
 							widthDimType = sbiJson.CHART.widthDimType;
 							  							
 							if (heightDimType == "percentage")
-						{  								
+							{  								
 								if (!heightChartJson || heightChartJson == "")
 								{
 									sbiJson.CHART.height = window.innerHeight;
-//									heightChartJson = window.innerHeight;
 								}
 								else
-							{
+								{
 									sbiJson.CHART.height = window.innerHeight*(Number(heightChartJson)/100);
-//									heightChartJson = window.innerHeight*(Number(heightChartJson)/100);
+								}
 							}
-						}
 							else
-						{
+							{
 								sbiJson.CHART.height = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
-//								heightChartJson = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
-						}
+							}
 							
 							if (widthDimType == "percentage")
-						{
+							{
 								if (!widthChartJson || widthChartJson == "")
 								{
 									sbiJson.CHART.width = window.innerWidth;
-//									widthChartJson = window.innerWidth;
 								}
 								else
 							{
 									sbiJson.CHART.width = window.innerWidth*(Number(widthChartJson)/100);
-//									widthChartJson = window.innerWidth*(Number(widthChartJson)/100);
 							}
 						}
-							else
+						else
 						{
-								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-//								widthChartJson = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
+							sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
 						}  							
 							
-							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
+						var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
 							
-							var heightPrevPan = globalThis.previewPanel.getHeight();
-							var widthPrevPan = globalThis.previewPanel.getWidth();
-							
-							/**
+						/**
             			 * Set the "Loading preview..." image at the beginning of export,
             			 * so the user can know that the request for the image is sent.
             			 * 
             			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
             			 */
-            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png',heightPrevPan,widthPrevPan);
+						setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png',heightCurrent,widthCurrent);
+            			
+						var widthImg = 0;
+						var heightImg = 0;
 							
-							var widthImg = 0;
-							var heightImg = 0;
+						widthImg = (sbiJson.CHART.width <= widthCurrent) ? sbiJson.CHART.width : widthCurrent;
+						heightImg = widthImg/ratioChartJson;
 							
-							widthImg = (sbiJson.CHART.width <= widthPrevPan) ? sbiJson.CHART.width : widthPrevPan;
-							heightImg = widthImg/ratioChartJson;
+						var ratioImg = widthImg/heightImg;
 							
-							var ratioImg = widthImg/heightImg;
+						console.log("ratio: ", ratioImg);
 							
-							console.log(ratioImg);
-							
-							heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
-							widthImg = heightImg*ratioImg;
+						heightImg = (heightImg <= heightCurrent) ? heightImg : heightCurrent;
+						widthImg = heightImg*ratioImg;
 							
 							/**
 							 * We added new property to the 'parameters', the 'exportWebApp'.
@@ -1699,108 +1666,126 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * 
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
-							var parameters = 
-							{
+						var parameters = 
+						{
 							jsonTemplate: Ext.JSON.encode(sbiJson),
 							exportWebApp: true	
 						};
 							
 						chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-							var chartConf = response.responseText;								
-							
-							/**
-							 * If chart types of documents (charts) that user wants to render in the
-							 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
-							 * HEATMAP we need to prepare data that we receive from the VM of that
-							 * chart type by sending them to the 'treemap.js'.
-							 * 
-							 * @author Daniele Davì
-							 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-							 */
-							
-							/**
-							 * Conversion of JSON text (string) into the JSON object that we need for
-							 * the function that prepares all the data needed for the TREEMAP or
-							 * HEATMAP rendering-exporting engine.
-							 * 
-							 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-							 */
-							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
-							
-							if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
-							{
-								var jsonChartConf = Ext.JSON.decode(chartConf);
 								
-								if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
-									chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
-								}
-								else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
-									chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
-								}
-							}								
-							
-							
-							/**
-				  			 * The height and width of the chart are set inside the 'chartConf'
-				  			 * parameter.
-				  			 * 
-				  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				  			 */
-							var parameters = {
-  									options: chartConf,
-  									content:'options',
-  									type:'image/png',
-  									//height: 298,
-  									//width: previewPanel.getWidth(),
-  									scale: undefined,
-  									constr:'Chart',
-  									callback: undefined,
-  									async: 'true'
-  							};
-							
-  							chartExportWebServiceManager.run('exportPng', parameters, [], 
-									function (response) {
-      								var src = '/highcharts-export-web/'+response.responseText;
-      								
-      								/**
-      					  			 * 
-      					  			 * 
-      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-      					  			 */
-      								srcImg = src;
-      								setPreviewImage(src,heightImg,widthImg);	      								
-      							},
-      							function (response) {
-      									      								
-      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-      								setPreviewImage(src);	
-      								
-      								if (response.status == 0)
-  									{
-      									Sbi.exception.ExceptionHandler.showErrorMessage
-	    								(
-	    									LN("sbi.chartengine.preview.error.wrongData.bodyText"),
-	    									LN("sbi.chartengine.preview.error.title")
-	    								);
-  									}
-      								
-      							}
-  							);
-						}
-						,
+								var chartConf = response.responseText;								
+								
+								/**
+								 * If chart types of documents (charts) that user wants to render in the
+								 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
+								 * HEATMAP we need to prepare data that we receive from the VM of that
+								 * chart type by sending them to the 'treemap.js'.
+								 * 
+								 * @author Daniele Davì
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+								 */
+								
+								/**
+								 * Conversion of JSON text (string) into the JSON object that we need for
+								 * the function that prepares all the data needed for the TREEMAP or
+								 * HEATMAP rendering-exporting engine.
+								 * 
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+								 */
+								var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+								
+								if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
+								{
+									var jsonChartConf = Ext.JSON.decode(chartConf);
+									
+									if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
+										chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
+									}
+									else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
+										chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
+									}
+								}						
+								
+								/**
+					  			 * The height and width of the chart are set inside the 'chartConf'
+					  			 * parameter.
+					  			 * 
+					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					  			 */
+								var parameters = {
+	  									options: chartConf,
+	  									content:'options',
+	  									type:'image/png',
+	  									//height: 298,
+	  									//width: previewPanel.getWidth(),
+	  									scale: undefined,
+	  									constr:'Chart',
+	  									callback: undefined,
+	  									async: 'true'
+	  							};
+								
+	  							chartExportWebServiceManager.run('exportPng', parameters, [], 
+										function (response) {
+	      								var src = '/highcharts-export-web/'+response.responseText;
+	      								
+	      								/**
+	      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	      					  			 */
+	      								srcImg = src;
+	      								setPreviewImage(src,heightImg,widthImg);	      								
+	      							},
+	      							function (response) {
+	      									      								
+	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
+	      								setPreviewImage(src,heightCurrent,widthCurrent);	
+	      								srcImg = src;
+	      								
+	      								if (response.status == 0)
+	  									{
+	      									Sbi.exception.ExceptionHandler.showErrorMessage
+		    								(
+		    									LN("sbi.chartengine.preview.error.wrongData.bodyText"),
+		    									LN("sbi.chartengine.preview.error.title")
+		    								);
+	  									}
+	      								
+	      							}
+	  							);
+							}
+							,
 							function (response) {
 							
 								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-								setPreviewImage(src);
+								setPreviewImage(src,heightCurrent,widthCurrent);
+								srcImg = src;
 								
 								Sbi.exception.ExceptionHandler.showErrorMessage
-							(
-								LN("sbi.chartengine.preview.error.missingData.bodyText"),
-								LN("sbi.chartengine.preview.error.title")
-							);
+								(
+										LN("sbi.chartengine.preview.error.missingData.bodyText"),
+										LN("sbi.chartengine.preview.error.title")
+								);
 								
 							});
-					}
+						}
+						else
+						{		
+							/**
+							 * Depending on the type of the information that is displayed (non-chart one)
+							 * we will rerender the image so it can fit current dimensions of the Preview
+							 * panel, while resizing.
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							if (loading)
+							{
+								setPreviewImage(loadingImg,heightCurrent,widthCurrent);
+							}
+							else if (notAvailable)
+							{							
+								setPreviewImage(notAvailableImg,heightCurrent,widthCurrent);
+							}
+						}					
 				}
   			);
   			
@@ -1915,18 +1900,15 @@ Ext.define('Sbi.chart.designer.Designer', {
   								if (!heightChartJson || heightChartJson == "")
   								{
   									sbiJson.CHART.height = window.innerHeight;
-//  									heightChartJson = window.innerHeight;
   								}
   								else
 								{
   									sbiJson.CHART.height = window.innerHeight*(Number(heightChartJson)/100);
-//  									heightChartJson = window.innerHeight*(Number(heightChartJson)/100);
 								}
 							}
   							else
 							{
   								sbiJson.CHART.height = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
-//  								heightChartJson = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
 							}
   							
   							if (widthDimType == "percentage")
@@ -1934,18 +1916,15 @@ Ext.define('Sbi.chart.designer.Designer', {
   								if (!widthChartJson || widthChartJson == "")
   								{
   									sbiJson.CHART.width = window.innerWidth;
-//  									widthChartJson = window.innerWidth;
   								}
   								else
 								{
   									sbiJson.CHART.width = window.innerWidth*(Number(widthChartJson)/100);
-//  									widthChartJson = window.innerWidth*(Number(widthChartJson)/100);
 								}
 							}
   							else
 							{
   								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-//  								widthChartJson = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
 							}  							
   							
   							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
@@ -2032,8 +2011,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 									else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
 										chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
 									}
-								}								
-															
+								}						
+								
 								/**
 					  			 * The height and width of the chart are set inside the 'chartConf'
 					  			 * parameter.
@@ -2067,7 +2046,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      							function (response) {
 	      									      								
 	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-	      								setPreviewImage(src);	
+	      								setPreviewImage(src,previewPanel.getHeight(),widthImg.getWidth());		      								
+	      								srcImg = src;
 	      								
 	      								if (response.status == 0)
       									{
@@ -2085,7 +2065,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   							function (response) {
 								
   								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-  								setPreviewImage(src);
+  								setPreviewImage(src,previewPanel.getHeight(),previewPanel.getWidth());
+  								srcImg = src;
   								
   								Sbi.exception.ExceptionHandler.showErrorMessage
 								(

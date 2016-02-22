@@ -120,16 +120,19 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 		Sbi.chart.designer.components.ColorPicker.superclass.setValue.call(this, value);
 		if(this.regex6Digits.test(value) || this.regexTransparent.test(value)) {
 			this.setColor(value);	
-			
-//			/**
-//			 * Important when this component is mandatory for the chart.
-//			 * Firing an event will inform us that color is picked and we
-//			 * don't need the flag that warns the user.
-//			 * 
-//			 * @author: danristo (danilo.ristovski@mht.net)
-//			 */
-//			this.fireEvent("colorPicked",this.config.initiator);
 		}
+		
+		/**
+		 * TODO: Mark color picker fields as invalid if the style that is applied to the one
+		 * in the popup is with the invalid color value (e.g. for the Axis style popup).
+		 * 
+		 * Danilo
+		 */
+//		else
+//		{
+//			Sbi.chart.designer.components.ColorPicker.superclass.markInvalid.call(this, "");
+//		}
+			
 	},
 	
 	setRawValue : function(hex){
