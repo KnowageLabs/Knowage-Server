@@ -203,8 +203,16 @@ author:
 		var parallelTitleHeight = "";
 		var parallelSubtitleHeight = "";
 				
-		function exportChart(exportType) {		
-			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
+		function exportChart(exportType) {
+		
+			var chartType = chartConfiguration.chart.type.toUpperCase();
+		
+			var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
+			
+			if (!isD3Chart) {
+				document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
+			}
+			
 			
 			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
 			thisContextName.replace('/','');
@@ -228,74 +236,81 @@ author:
 				driverParams: '<%=driverParams%>'
  			};
 			
-			chartServiceManager.run('jsonChartTemplate', parameters, [], 
-				function (response) {
-					var chartConf = response.responseText;
-					Ext.DomHelper.useDom = true; 
-					// need to use dom because otherwise an html string is composed as a string concatenation,
-			        // but, if a value contains a " character, then the html produced is not correct!!!
-			        // See source of DomHelper.append and DomHelper.overwrite methods
-			        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-					var dh = Ext.DomHelper;
-					var form = document.getElementById('export-chart-form');
-			        if (form === undefined || form === null) {
-			    		var form = dh.append(Ext.getBody(), { 
-				        	// creating the hidden input in form
-			            	id: 'export-chart-form'
-			          		, tag: 'form'
-			          		, method: 'post'
-			          		, cls: 'export-form'					       
-			          	});
-				       // creating the hidden inputs in form:
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'options'
-							, value: ''
-						});
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'content'
-							, value: '' 
-						});
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'type'
-							, value: '' 
-						});
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'width'
-							, value: ''
-						});
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'constr'
-							, value: '' 
-						});
-			          	dh.append(form, {					
-							tag: 'input'
-							, type: 'hidden'
-							, name: 'async'
-							, value: ''
-						});
-		          	}              				       	
-		         	form.elements[0].value = chartConf;
-		         	form.elements[1].value = 'options';
-		         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
-		         	form.elements[3].value = '600';
-		         	form.elements[4].value = 'Chart';
-		         	form.elements[5].value = 'false';
-					form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
-		         	form.target = '_blank'; // result into a new browser tab
-		         	form.submit();
-		         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
-				}					
-			);
+							
+			if (isD3Chart) {
+				exportD3Chart(protocol, hostName,serverPort,exportType);
+			}else{
+				chartServiceManager.run('jsonChartTemplate', parameters, [], 
+						function (response) {
+							var chartConf = response.responseText;
+							Ext.DomHelper.useDom = true; 
+							// need to use dom because otherwise an html string is composed as a string concatenation,
+					        // but, if a value contains a " character, then the html produced is not correct!!!
+					        // See source of DomHelper.append and DomHelper.overwrite methods
+					        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+							var dh = Ext.DomHelper;
+							var form = document.getElementById('export-chart-form');
+					        if (form === undefined || form === null) {
+					    		var form = dh.append(Ext.getBody(), { 
+						        	// creating the hidden input in form
+					            	id: 'export-chart-form'
+					          		, tag: 'form'
+					          		, method: 'post'
+					          		, cls: 'export-form'					       
+					          	});
+						       // creating the hidden inputs in form:
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'options'
+									, value: ''
+								});
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'content'
+									, value: '' 
+								});
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'type'
+									, value: '' 
+								});
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'width'
+									, value: ''
+								});
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'constr'
+									, value: '' 
+								});
+					          	dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'async'
+									, value: ''
+								});
+				          	}              				       	
+				         	form.elements[0].value = chartConf;
+		         			form.elements[1].value = 'options';
+				         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
+				         	form.elements[3].value = '600';
+				         	form.elements[4].value = 'Chart';
+				         	form.elements[5].value = 'false';
+							form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+				         	form.target = '_blank'; // result into a new browser tab
+				         	form.submit();
+				         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
+						}					
+					);
+			}
+			
+			
 		};
 		
 		/*  
@@ -309,9 +324,78 @@ author:
 			} else {
 				return fontSize;
 			}
-		};				
+		};	
+		
+		function exportD3Chart(protocol, hostName,serverPort,exportType){
+						var body = Ext.select("body");
+						var html = body.elements[0].innerHTML;
+						var encoded = btoa(html);
+
+						Ext.DomHelper.useDom = true; 
+						// need to use dom because otherwise an html string is composed as a string concatenation,
+				        // but, if a value contains a " character, then the html produced is not correct!!!
+				        // See source of DomHelper.append and DomHelper.overwrite methods
+				        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+						var dh = Ext.DomHelper;
+						var form = document.getElementById('export-chart-form');
+				        if (form === undefined || form === null) {
+				    		var form = dh.append(Ext.getBody(), { 
+					        	// creating the hidden input in form
+				            	id: 'export-chart-form'
+				          		, tag: 'form'
+				          		, method: 'post'
+				          		, cls: 'export-form'					       
+				          	});
+					       // creating the hidden inputs in form:
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'options'
+								, value: ''
+							});
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'content'
+								, value: '' 
+							});
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'type'
+								, value: '' 
+							});
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'width'
+								, value: ''
+							});
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'constr'
+								, value: '' 
+							});
+				          	dh.append(form, {					
+								tag: 'input'
+								, type: 'hidden'
+								, name: 'async'
+								, value: ''
+							});
+			          	}              				       	
+			         	form.elements[0].value = encoded;
+			         	form.elements[1].value = 'html';
+			         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
+			         	form.elements[3].value = '600';
+			         	form.elements[4].value = 'Chart';
+			         	form.elements[5].value = 'false';
+						form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+			         	form.target = '_blank'; // result into a new browser tab
+			         	form.submit();
+		};
 	
- 		Ext.onReady(function(){
+ 	Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
  			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading'); 			
  			
@@ -320,6 +404,7 @@ author:
  				width: '100%',
  			    height: '100%',
 				bodyStyle : 'background:transparent;',
+				style: "margin: auto !important;",	// TODO: Danilo (make some comment): KNOWAGE-623
  			   	//style: "overflow: auto",
  			    renderTo: Ext.getBody()
  			});
@@ -424,6 +509,8 @@ author:
 				 			 					
 				var chartConf = Ext.JSON.decode(response.responseText, true);	
 				
+				//	chartConf.colors = {}; // TODO: remove this when the VM model 'colors' property is redefined
+				
 				var typeChart = chartConf.chart.type.toUpperCase();		 				
 				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 				
@@ -526,24 +613,10 @@ author:
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
 					
-				} else {	 						
-					/*
-						var typeChart = chartConf.chart.type.toUpperCase();	 							
-						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
-						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
-					*/
+				} else {
+					
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
-					
-					/*console.log("CCC2");
-					console.log(Ext.query(".highcharts-container")[0]);
-					
-					var highchartsContainer = Ext.query(".highcharts-container")[0];
-					var ttt = Ext.create('Ext.dom.Element',highchartsContainer);
-					console.log(ttt);
-					ttt.scrollIntoView(Ext.getBody(), null, true);*/
-					
-					//highchartsContainer.set("");
 					
 				}			
 				

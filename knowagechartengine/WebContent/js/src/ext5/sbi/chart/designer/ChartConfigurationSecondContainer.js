@@ -58,13 +58,19 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 
         this.viewModel = config.viewModel;
         
+        /**
+         * If the "showLegend" parameter is false or undefined, the temporary parameter's value 
+         * for the indication whether the Legend panel should be collapsed is true. Otherwise, 
+         * take the boolean value of the parameter (no matter if it is true or false and if this 
+         * value is in a form of a string or boolean).
+         * 
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+         */
+        var legendPanelCollapsed = !this.viewModel.data.configModel.get("showLegend") ? true : JSON.parse(this.viewModel.data.configModel.get("showLegend"));
+        
         var legend = Ext.create('Sbi.chart.designer.ChartConfigurationLegend',{
         	margin: config.margin,
-        	/**
-        	 * TODO: add comments
-        	 * Danilo
-        	 */
-        	collapsed: !JSON.parse(this.viewModel.data.configModel.get("showLegend")),
+        	collapsed: legendPanelCollapsed,
 			viewModel: this.viewModel
 		});
         this.legend = legend;

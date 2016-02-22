@@ -1320,9 +1320,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		if (axisStyleColor && axisStyleColor!=null)
 		{
-			axisStyleColor = (axisStyleColor.indexOf("#")==0) ? axisStyleColor.replace('#', '') : axisStyleColor;
+			var axisStyleColorTemp = (axisStyleColor.indexOf("#")==0) ? axisStyleColor.replace('#', '') : axisStyleColor;
 			
-			if (!colorPicker.validateValue(axisStyleColor))
+			if (!colorPicker.validateValue(axisStyleColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -1338,9 +1338,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		if (titleStyleColor && titleStyleColor!=null)
 		{
-			titleStyleColor = (titleStyleColor.indexOf("#")==0) ? titleStyleColor.replace('#', '') : titleStyleColor;
+			var titleStyleColorTemp = (titleStyleColor.indexOf("#")==0) ? titleStyleColor.replace('#', '') : titleStyleColor;
 			
-			if (!colorPicker.validateValue(titleStyleColor))
+			if (!colorPicker.validateValue(titleStyleColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -1356,9 +1356,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		if (majorgridStyleColor && majorgridStyleColor!=null)
 		{
-			majorgridStyleColor = (majorgridStyleColor.indexOf("#")==0) ? majorgridStyleColor.replace('#', '') : majorgridStyleColor;
+			var majorgridStyleColorTemp = (majorgridStyleColor.indexOf("#")==0) ? majorgridStyleColor.replace('#', '') : majorgridStyleColor;
 			
-			if (!colorPicker.validateValue(majorgridStyleColor))
+			if (!colorPicker.validateValue(majorgridStyleColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -1374,9 +1374,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		if (minorgridStyleColor && minorgridStyleColor!=null)
 		{
-			minorgridStyleColor = (minorgridStyleColor.indexOf("#")==0) ? minorgridStyleColor.replace('#', '') : minorgridStyleColor;
+			var minorgridStyleColorTemp = (minorgridStyleColor.indexOf("#")==0) ? minorgridStyleColor.replace('#', '') : minorgridStyleColor;
 			
-			if (!colorPicker.validateValue(minorgridStyleColor))
+			if (!colorPicker.validateValue(minorgridStyleColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -1504,9 +1504,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 			if (lineColorYAxis && lineColorYAxis!=null)
 			{
-				lineColorYAxis = (lineColorYAxis.indexOf("#")==0) ? lineColorYAxis.replace('#', '') : lineColorYAxis;
+				var lineColorYAxisTemp = (lineColorYAxis.indexOf("#")==0) ? lineColorYAxis.replace('#', '') : lineColorYAxis;
 				
-				if (!colorPicker.validateValue(lineColorYAxis))
+				if (!colorPicker.validateValue(lineColorYAxisTemp))
 				{
 					errorMessages += Sbi.locale.sobstituteParams
 					(
@@ -1539,9 +1539,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 			if (tickColor && tickColor!=null)
 			{
-				tickColor = (tickColor.indexOf("#")==0) ? tickColor.replace('#', '') : tickColor;
+				var tickColorTemp = (tickColor.indexOf("#")==0) ? tickColor.replace('#', '') : tickColor;
 				
-				if (!colorPicker.validateValue(tickColor))
+				if (!colorPicker.validateValue(tickColorTemp))
 				{
 					errorMessages += Sbi.locale.sobstituteParams
 					(
@@ -1598,9 +1598,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 			if (minorTickColor && minorTickColor!=null)
 			{
-				minorTickColor = (minorTickColor.indexOf("#")==0) ? minorTickColor.replace('#', '') : tickColor;
+				var minorTickColorTemp = (minorTickColor.indexOf("#")==0) ? minorTickColor.replace('#', '') : tickColor;
 				
-				if (!colorPicker.validateValue(minorTickColor))
+				if (!colorPicker.validateValue(minorTickColorTemp))
 				{
 					errorMessages += Sbi.locale.sobstituteParams
 					(

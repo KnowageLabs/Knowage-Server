@@ -1891,7 +1891,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            		fn: function(){			
 	            			
   							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
-							
+							  							
   							/**
   				  			 * Code that serves for the calculation of the size of the image that is going to
   				  			 * be rendered and displayed inside the Preview panel of the Designer. Calculation
@@ -2001,7 +2001,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   							}
   							
 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-								var chartConf = response.responseText;								
+								var chartConf = response.responseText;
 								
 								/**
 								 * If chart types of documents (charts) that user wants to render in the
@@ -2033,8 +2033,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 										chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
 									}
 								}								
-								
-								
+															
 								/**
 					  			 * The height and width of the chart are set inside the 'chartConf'
 					  			 * parameter.
@@ -3758,9 +3757,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			var colorPicker = Sbi.chart.designer.components.ColorPicker;
 			
-			var backgroundColorModel = this.cViewModel.data.configModel.get("backgroundColor").toUpperCase();
+			var backgroundColorModel = this.cViewModel.data.configModel.get("backgroundColor");
 			
-			if (!colorPicker.validateValue(backgroundColorModel))
+			if (backgroundColorModel && !colorPicker.validateValue(backgroundColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3773,9 +3772,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var titleFontColorModel = this.cViewModel.data.configModel.get("titleColor").toUpperCase();
+			var titleFontColorModel = this.cViewModel.data.configModel.get("titleColor");
 			
-			if (!colorPicker.validateValue(titleFontColorModel))
+			if (titleFontColorModel && !colorPicker.validateValue(titleFontColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3790,9 +3789,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var subtitleFontColorModel = this.cViewModel.data.configModel.get("subtitleColor").toUpperCase();
+			var subtitleFontColorModel = this.cViewModel.data.configModel.get("subtitleColor");
 			
-			if (!colorPicker.validateValue(subtitleFontColorModel))
+			if (subtitleFontColorModel && !colorPicker.validateValue(subtitleFontColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3807,9 +3806,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var nodataFontColorModel = this.cViewModel.data.configModel.get("nodataColor").toUpperCase();
+			var nodataFontColorModel = this.cViewModel.data.configModel.get("nodataColor");
 			
-			if (!colorPicker.validateValue(nodataFontColorModel))
+			if (nodataFontColorModel && !colorPicker.validateValue(nodataFontColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3824,9 +3823,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var legendTitleColorModel = this.cViewModel.data.configModel.get("legendTitleColor").toUpperCase();
+			var legendTitleColorModel = this.cViewModel.data.configModel.get("legendTitleColor");
 			
-			if (!colorPicker.validateValue(legendTitleColorModel))
+			if (legendTitleColorModel && !colorPicker.validateValue(legendTitleColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3841,9 +3840,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var legendFontColorModel = this.cViewModel.data.configModel.get("legendColor").toUpperCase();
+			var legendFontColorModel = this.cViewModel.data.configModel.get("legendColor");
 			
-			if (!colorPicker.validateValue(legendFontColorModel))
+			if (legendFontColorModel && !colorPicker.validateValue(legendFontColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(
@@ -3856,9 +3855,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				);
 			}
 			
-			var legendBackgroundColorModel = this.cViewModel.data.configModel.get("legendBackgroundColor").toUpperCase();
+			var legendBackgroundColorModel = this.cViewModel.data.configModel.get("legendBackgroundColor");
 			
-			if (!colorPicker.validateValue(legendBackgroundColorModel))
+			if (legendBackgroundColorModel && !colorPicker.validateValue(legendBackgroundColorModel.toUpperCase()))
 			{
 				errorMsg += Sbi.locale.sobstituteParams
 				(

@@ -529,9 +529,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		if (serieColor && serieColor!=null)
 		{
-			serieColor = (serieColor.indexOf("#")==0) ? serieColor.replace('#', '') : serieColor;
+			var serieColorTemp = (serieColor.indexOf("#")==0) ? serieColor.replace('#', '') : serieColor;
 			
-			if (!colorPicker.validateValue(serieColor))
+			if (!colorPicker.validateValue(serieColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -547,9 +547,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		if (serieTooltipColor && serieTooltipColor!=null)
 		{
-			serieColor = (serieTooltipColor.indexOf("#")==0) ? serieTooltipColor.replace('#', '') : serieTooltipColor;
+			var serieTooltipColorTemp = (serieTooltipColor.indexOf("#")==0) ? serieTooltipColor.replace('#', '') : serieTooltipColor;
 			
-			if (!colorPicker.validateValue(serieTooltipColor))
+			if (!colorPicker.validateValue(serieTooltipColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -565,9 +565,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		if (serieTooltipBackgroundColor && serieTooltipBackgroundColor!=null)
 		{
-			serieTooltipBackgroundColor = (serieTooltipBackgroundColor.indexOf("#")==0) ? serieTooltipBackgroundColor.replace('#', '') : serieTooltipBackgroundColor;
+			var serieTooltipBackgroundColorTemp = (serieTooltipBackgroundColor.indexOf("#")==0) ? serieTooltipBackgroundColor.replace('#', '') : serieTooltipBackgroundColor;
 			
-			if (!colorPicker.validateValue(serieTooltipBackgroundColor))
+			if (!colorPicker.validateValue(serieTooltipBackgroundColorTemp))
 			{
 				errorMessages += Sbi.locale.sobstituteParams
 				(
@@ -635,7 +635,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			dataAtRow.set('serieTooltipFont', serieTooltipFont);
 			dataAtRow.set('serieTooltipFontWeight', serieTooltipFontWeight);
 			dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
-
+			
 			this.destroy();
 		}
 		

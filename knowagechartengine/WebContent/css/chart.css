@@ -3,6 +3,7 @@
 	margin-left: 5px;
 }
 
+
 .tool-icon {
 	width: 20px;
 	height: 20px;
@@ -17,6 +18,10 @@ background-image:none;
  background: url(../img/icon_deleteAll.png);
 }
 
-. highcharts-container {
+.highcharts-container{
 	margin: auto;
+}
+
+.icon-info {
+	background-image: url(../img/icon-info15.png) !important;
 }
