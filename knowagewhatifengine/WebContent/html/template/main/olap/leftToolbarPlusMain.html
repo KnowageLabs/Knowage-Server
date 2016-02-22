@@ -6,7 +6,8 @@
 	</div>	
 	
 	<div style="height:calc(100% - 64px);">
-	<div class="filter-toolbar-element-left" ng-repeat="row in rows|limitTo:maxRows:leftStart" ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
+	<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
+	<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
 		<div class="name">
 			<div class="rotate-text">{{row.name}}</div>
 		</div>	
@@ -16,9 +17,13 @@
 			</md-button>
 		</div>
 	</div>
-	
+	<div ng-hide="row.positionInAxis == rows.length-1">
+		<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
+			<md-icon md-font-icon="fa fa-arrows-v" style="color:white;"></md-icon>	
+		</md-button>
 	</div>
-	
+	</div>
+	</div>
 
 	<div style="min-width:32px;min-height:32px;margin-top: 2%">
 		<md-button style="right:10px;"class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
@@ -28,7 +33,7 @@
 </div>
 
 <md-content scrolly>
- <div style="background-color: #3b678c;height: 216000px;" scrolly>
+ <div style="height: 216000px;" scrolly><!-- background-color: #3b678c; -->
  	&nbsp;
  	&nbsp;
  	&nbsp;

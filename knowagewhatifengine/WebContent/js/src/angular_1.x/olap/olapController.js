@@ -81,7 +81,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	$scope.changeDrillType = function(type){
 		$scope.modelConfig.drillType = type;
-		console.log($scope.modelConfig.drillType);
 		$scope.sendModelConfig($scope.modelConfig);
 	}
 	
@@ -130,10 +129,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 /*dragan**/
 	 
 	 /*service for moving hierarchies**/
-	 $scope.moveHierarchies = function(axis,hierarchieUniqeName,newPosition,direction){
+	 $scope.moveHierarchies = function(axis,hierarchieUniqeName,newPosition,direction,member){
 		 
 		 sbiModule_restServices.promisePost
-		 ('1.0/axis/'+axis+'/moveHierarchies/'+hierarchieUniqeName+'/'+newPosition+'/'+direction+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
+		 ('1.0/axis/'+axis+'/moveHierarchy/'+hierarchieUniqeName+'/'+newPosition+'/'+direction+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;
@@ -229,6 +228,18 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$scope.topSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
 		
 		$scope.leftSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
+	};
+	
+	fixAxisPosition = function(axis){
+		var data;
+		
+		if(axis == "top")
+			data = $scope.columns;
+		if(axis == "left")
+			data = $scope.rows;
+		
+		for(var i=0;i<data.length;i++)
+			data[i].positionInAxis = i;
 	}
 	
 	filterXMLResult = function(res) {
@@ -403,6 +414,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			}
 			$scope.putMemberOnAxis(fromAxis,data);
 			checkShift();
+			fixAxisPosition("left");
 			console.log($scope.columns);
 		}
 	}
@@ -421,7 +433,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			data.axis = 1;
 			
 			if ($scope.draggedFrom == 'top' && topLength == 1)
-				//$scope.showSimpleToast("Row");
 				sbiModule_messaging.showErrorMessage("Row", 'Error');
 			else {
 				if ($scope.draggedFrom == 'top') {
@@ -436,6 +447,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 
 			$scope.putMemberOnAxis(fromAxis,data);
 			checkShift();
+			fixAxisPosition("top");
 			console.log($scope.rows);
 		}
 
@@ -449,15 +461,18 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		var topLength = $scope.columns.length;
 		var fromAxis = data.axis;
 		
+		if(data.measure){
+			sbiModule_messaging.showErrorMessage("Measures can not be used as a filters!", 'Error');
+			return null;
+		}
+		
 		if(fromAxis!=-1){
 			data.positionInAxis = $scope.filterCardList.length;
 			data.axis = -1;
 			
 			if ($scope.draggedFrom == 'left' && leftLength == 1)
-				//$scope.showSimpleToast("Column");
 				sbiModule_messaging.showErrorMessage("Column", 'Error');
 			else if ($scope.draggedFrom == 'top' && topLength == 1)
-				//$scope.showSimpleToast("Row");
 				sbiModule_messaging.showErrorMessage("Row", 'Error');
 			else {
 				if ($scope.draggedFrom == 'top') {
@@ -579,21 +594,31 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		}
 	}
 	
-	//just for example 
-	$scope.showSimpleToast = function(s){
-		$mdToast.show(
-				$mdToast.simple()
-				.textContent(s+" area can not be empty!")
-				.position("top right")
-				.hideDelay(3000)
-		);
-	}
-	
-	$scope.swapColumnsButton = function(myPosition){
-		if(myPosition+1 == $scope.columns.length )
-			return true;
-		else
-			return false;
-	}
+	$scope.switchPosition = function(data){
+		 $scope.moveHierarchies(data.axis, data.uniqueName, data.positionInAxis+1,1,data);
+		 if(data.axis == 0){			 
+			 var pom = $scope.columns[data.positionInAxis];
+			 var pia = data.positionInAxis;
 
+			 $scope.columns[pia].positionInAxis = pia + 1;
+			 $scope.columns[pia+1].positionInAxis = pia;
+			 
+			 $scope.columns[pia] = $scope.columns[pia+1];
+			 $scope.columns[pia+1] = pom;
+			 
+		 }
+		 else if(data.axis == 1){			 
+			 var pom = $scope.rows[data.positionInAxis];
+			 var pia = data.positionInAxis;
+
+			 $scope.rows[pia].positionInAxis = pia + 1;
+			 $scope.rows[pia+1].positionInAxis = pia;
+			 
+			 $scope.rows[pia] = $scope.rows[pia+1];
+			 $scope.rows[pia+1] = pom;
+			 
+		 }
+
+
+	}
 }
