@@ -5752,7 +5752,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LN("sbi.chartengine.validation.configuration.minValue"),
 								
 								[
-									LN('sbi.chartengine.configuration.wordcloud.minFontSize'),
+									LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
 									checkParamValuesForCharts.wordcloud.maxFontSize.minValue,
 									LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
 								]
@@ -5880,7 +5880,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				 if(wordcloudMinFont > wordcloudMaxFont)
+				 if(Number(wordcloudMinFont) > Number(wordcloudMaxFont))
 				    {
 					     errorMsg += Sbi.locale.sobstituteParams
 					     (
