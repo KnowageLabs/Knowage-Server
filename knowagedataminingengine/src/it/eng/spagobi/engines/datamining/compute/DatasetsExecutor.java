@@ -43,7 +43,7 @@ public class DatasetsExecutor {
 		this.re = re;
 	}
 
-	protected void evalDatasetsNeeded(HashMap paramsFilled) throws IOException, REngineException, REXPMismatchException {
+	protected String evalDatasetsNeeded(HashMap paramsFilled) throws IOException, REngineException, REXPMismatchException {
 		logger.debug("IN");
 		if (re != null && dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
@@ -70,7 +70,13 @@ public class DatasetsExecutor {
 								fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 
 								String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + options + ");";
-								re.parseAndEval(stringToEval);
+								REXP resultRead = re.parseAndEval(stringToEval);
+								if (resultRead.inherits("try-error")) {
+									logger.error("Impossibile to read the dataset with command: " + stringToEval);
+									return resultRead.asString();
+								} else {
+									logger.debug("Dataset " + ds.getName() + "sucessfull read");
+								}
 
 							}
 						}
@@ -98,6 +104,7 @@ public class DatasetsExecutor {
 			}
 		}
 		logger.debug("OUT");
+		return "";
 	}
 
 	protected boolean getAndEvalDefaultDataset(DataMiningDataset ds) throws IOException, REngineException, REXPMismatchException {

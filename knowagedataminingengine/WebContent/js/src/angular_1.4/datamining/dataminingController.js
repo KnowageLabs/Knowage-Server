@@ -36,6 +36,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	$scope.config = {};
 	$scope.imgWidth=480;
 	$scope.imgHeight=480;
+	$scope.pendingRequest = 0;
 	
 	$scope.config.params = {
 			'SBI_EXECUTION_ID' : datamining_template.ajaxBaseParams.SBI_EXECUTION_ID
@@ -53,6 +54,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	 //if necessary, convert result in html (e.g. result is image base64)
 	 $scope.createResultPromise = function(){
 		 var promiseResult = $q.defer();
+		 $scope.pendingRequest++;
 		//promise resolve function -> begin GET to take the results
 		 promiseResult.promise.then(function(data) {
 			 var commandName = data.commandName;
@@ -74,7 +76,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 					 }else if (data.error){
 						 $scope.results[commandName][output.outputName].error = data.error;
 					 }
-					 
+					 $scope.pendingRequest--;
 				 })
 				 .error(function(data, status){
 					var error = 'GET RESULT error with status: ' + status;
@@ -85,10 +87,12 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 					}
 					$scope.results[commandName][output.outputName].error = error;
 					$scope.log.error(error);
+					$scope.pendingRequest--;
 				 });
 		 },function(error) {
 				promiseResult.reject();
 				$scope.log.error('Promise Result error ' + error);
+				$scope.pendingRequest--;
 		 });
 		 
 		 return promiseResult;

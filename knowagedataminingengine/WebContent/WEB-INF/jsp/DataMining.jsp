@@ -95,9 +95,9 @@ author:...
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
 	</head>
-<body class="bodyStile">
-	<div div ng-controller="Controller" ng-cloak id="popupContainer">
-		<md-content layout-margin layout="row" layout-align = "start stretch ">
+<body class="bodyStile" ng-controller="Controller" ng-class="{'loading-body' : pendingRequest > 0}" ng-cloak>
+	<div id="popupContainer">
+		<md-content ng-hide = "pendingRequest > 0" layout-margin layout="row" layout-align = "start stretch ">
 			<md-input-container flex="50">
 				<md-select placeholder="Select Command" ng-model="cmd" ng-change="calculateResult(cmd)">
 		          <md-option ng-repeat="cmd in commands" ng-value="cmd">
@@ -116,7 +116,13 @@ author:...
 				<md-icon ng-show="variableForm" class="fa fa-undo center-ico"></md-icon>	
 			</md-button>
 		</md-content>
-		<md-content layout="column" layout-margin>
+		<div class="loading-message" ng-if="pendingRequest > 0" layout="row" layout-align="center center">
+				<i class="fa fa-spinner fa-spin fa-5x"></i>
+				<span class="loading-padding">
+				{{translate.load("sbi.dm.execution.loading");}} 
+				</span>
+		</div>
+		<md-content ng-hide = "pendingRequest > 0" layout="column" layout-margin>
 			<md-content ng-if="variableForm" layout-wrap>
 				<div class = "border-container" >
 					<md-toolbar class="md-blue minihead element-border">
@@ -125,7 +131,7 @@ author:...
 					 	</div>
 					 </md-toolbar>
 				 	<div ng-repeat = "variable in cmd.variables">
-						 <md-content layout='row' layout-margin layout-align="center center">
+						 <md-content layout='row' layout-wrap layout-align="center center">
 							 <md-input-container flex='70'>
 							 		<label>
 							 		 <b>{{ variable.name }}</b> 

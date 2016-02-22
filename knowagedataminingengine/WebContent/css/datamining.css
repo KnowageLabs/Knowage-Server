@@ -85,3 +85,18 @@ svg {
 	margin-top: 8px;
 }
 
+.loading-message {
+    z-index: 100;
+    top: 50%;
+    left: 40%;
+    position: absolute;
+    background-color: #ededed;
+}
+
+.loading-message>span{
+	padding-left:2rem;
+}
+
+.loading-body {
+	background-color: #ededed;
+}

@@ -32,7 +32,6 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 
-import commonj.work.Work;
 import commonj.work.WorkException;
 import commonj.work.WorkItem;
 
@@ -178,24 +177,23 @@ public class DataMiningExecutor {
 	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun) throws Exception {
 		logger.debug("IN");
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
-
+		DataMiningResult result = null;
 		setupEnvonment(userProfile);
 		logger.debug("Set up environment");
 		// datasets preparation
-		datasetsExecutor.evalDatasetsNeeded(params);// only
+		String error = datasetsExecutor.evalDatasetsNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
 		logger.debug("Loaded datasets");
-		// those
-		// needed
-		// by
-		// command
-		// and
-		// output
 
 		// evaluates script code
 		scriptExecutor.evalScript(command, rerun);
 		logger.debug("Evaluated script");
 		// create output
-		DataMiningResult result = outputExecutor.evalOutput(output, scriptExecutor);
+		result = outputExecutor.evalOutput(output, scriptExecutor);
 		logger.debug("Got result");
 		// save result of script computation objects and datasets to
 		// user workspace
