@@ -10,7 +10,7 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 	, config:{title: LN('sbi.cockpit.filter.editor.wizard.title')
 			  , width: 1000
 			  , height: 500
-			  , closable: true
+			  , closable: false
 			  , closeAction: 'close'
 //			  , plain: true
 			  , modal: true

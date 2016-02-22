@@ -738,7 +738,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	, onShowFilterEditorWizard: function(){
 		var config = {};
 		config.storesList = Sbi.storeManager.getStoreIds();
-		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
+		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.storesList) + "]");
 		config.filters = Sbi.storeManager.getParameters();
 		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.filters is equal to [" + Sbi.toSource(config.filters) + "]");
 		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");
