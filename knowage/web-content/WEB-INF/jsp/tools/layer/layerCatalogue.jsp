@@ -17,15 +17,9 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
-<script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
-
-
-
-
-
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/layer/layerCatalogue.js")%>"></script>
 
 <script type="text/ng-template" id="dialog1.tmpl.html">
 <md-dialog aria-label="Select type of download"  ng-cloak>
@@ -80,7 +74,7 @@
 	</list> 
 	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'>
 
-	<div  layout-fill class="containerDiv">
+	<div layout-fill class="containerDiv">
 		<!-- 				ng-submit="forms.contactForm.$valid && saveLayer()" -->
 		<form name="forms.contactForm" layout-fill id="layerform"
 			class="detailBody mozSize md-whiteframe-z1" novalidate>
@@ -96,9 +90,8 @@
 				
 				<div flex=25>
 					<md-input-container class="small counter"> <label>{{translate.load("sbi.glossary.category")}}</label>
-					<md-select aria-label="aria-label"
-						ng-model="selectedLayer.category_id"> <md-option
-						ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
+					<md-select aria-label="aria-label" ng-model="selectedLayer.category_id">
+						<md-option ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
 					</md-select> </md-input-container>
 				</div>
 			</div>

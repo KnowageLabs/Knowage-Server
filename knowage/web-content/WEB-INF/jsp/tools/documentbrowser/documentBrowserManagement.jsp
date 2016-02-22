@@ -8,13 +8,14 @@
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<!-- Styles -->
-	<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentbrowser/css/md-data-table.min.css">
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentbrowser/css/documentBrowser.css">
+	<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/generalStyle.css")%>">
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/documentbrowser/css/md-data-table.min.css")%>">
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/documentbrowser/css/documentBrowser.css")%>">
 	
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script>
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/documentBrowser.js")%>"></script>
+	
 	
 	<title>Document Browser</title>
 </head>
@@ -34,7 +35,8 @@
 		<md-toolbar class="header">
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
 				<!-- Folders button -->
-				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
+				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders"
+						style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
 					<i class="fa fa-bars" style="color:white"></i>
 				</md-button>
 				
@@ -83,8 +85,7 @@
 			</div>
 		</md-toolbar>
 	
-		<section layout="row" flex>
-			
+		<section layout="row">
 			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
 				<md-toolbar class="header">
 	       			<h3 class="md-toolbar-tools">Folders</h3>
@@ -104,13 +105,15 @@
 							<thead md-order="documentsOrderProperty" style="height: 75px;">
 								<tr>
 									<th name="Type" order-by="typeCode"></th>
-									<th  name="Name" order-by="name"></th>
-									<th  name="Author" order-by="creationUser"></th>
-									<th  name="Date"  order-by="creationDate"></th>
+									<th name="Name" order-by="name"></th>
+									<th name="Author" order-by="creationUser"></th>
+									<th name="Date" order-by="creationDate"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
+								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty" 
+										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)" 
+										ng-class="{'selected-doc':wasSelected(document)}">
 									<td>{{document.typeCode}}</td>
 									<td>{{document.name}}</td>
 									<td>{{document.creationUser}}</td>
@@ -125,7 +128,9 @@
 				<div layout="column" ng-hide="!showDocumentGridView || showSearchView" flex>
 					<div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;">
 						<md-whiteframe flex="25" layout layout-align="center center" ng-repeat="document in folderDocuments">
-							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="alert(document.name)" ng-class="{'selected-doc':wasSelected(document)}">
+							<md-card style="width: 150px;" ng-click="selectDocument(document)"
+									ng-dblclick="alert(document.name)"
+									ng-class="{'selected-doc':wasSelected(document)}">
 								<!-- <img src="preview-images/{{document.PREVIEW_FILE}}" class="md-card-image" alt="{{document.name}}" style="width: 150px; height: 126px;"></img> -->
 								<md-card-content style="padding:0px; padding-left:2px; text-align:center;">
 									<div>{{document.name | limitEllipses:20}}</div>
@@ -144,13 +149,15 @@
 							<thead md-order="documentsOrderProperty" style="height: 75px;">
 								<tr>
 									<th name="Type" order-by="typeCode"></th>
-									<th  name="Name" order-by="name"></th>
-									<th  name="Author" order-by="creationUser"></th>
-									<th  name="Date"  order-by="creationDate"></th>
+									<th name="Name" order-by="name"></th>
+									<th name="Author" order-by="creationUser"></th>
+									<th name="Date" order-by="creationDate"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr md-auto-select ng-repeat="document in searchDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
+								<tr md-auto-select ng-repeat="document in searchDocuments | orderBy: documentsOrderProperty"
+										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)"
+										ng-class="{'selected-doc':wasSelected(document)}">
 									<td>{{document.typeCode}}</td>
 									<td>{{document.name}}</td>
 									<td>{{document.creationUser}}</td>
@@ -166,19 +173,23 @@
 				<md-toolbar class="header" style="height: 75px;">
 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1>
 					<div layout="row" layout-align="center center">
-						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="alert('Executing '+selectedDocument.name+'...')">
+						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom"
+								ng-click="executeDocument(selectedDocument)">
 							<i class="fa fa-play-circle" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" ng-click="alert('Editing '+selectedDocument.name+'...')">
+						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" 
+								ng-click="alert('Editing '+selectedDocument.name+'...')">
 							<i class="fa fa-pencil" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" ng-click="alert('Cloning '+selectedDocument.name+'...')">
+						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" 
+								ng-click="alert('Cloning '+selectedDocument.name+'...')">
 							<i class="fa fa-clone" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" ng-click="alert('Deleting '+selectedDocument.name+'...')">
+						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" 
+								ng-click="alert('Deleting '+selectedDocument.name+'...')">
 							<i class="fa fa-trash-o" style="color:white"></i>
 						</md-button>
 					</div>
@@ -209,7 +220,7 @@
 	
 	<script type="text/ng-template" id="folders_renderer.html">
 		<div ng-click="setSelectedFolder(folder)" class="customTreeNode" ui-tree-handle>
-			<md-button  ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}">
+			<md-button ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}">
 			<md-icon>{{folder.subfolders.length>0?(folder.showSubfolders?"&#xE313;":"&#xE315;"):""}}</md-icon>
 			<md-icon>&#xE2C7;</md-icon>&nbsp;{{folder.NAME}}
 			</md-button>

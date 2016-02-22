@@ -55,9 +55,10 @@ var stringStartsWith=function (s, prefix) {
 	return s.toLowerCase().slice(0, prefix.length) == prefix.toLowerCase();
 };
 
-var app = angular.module('documentBrowserModule', ['md.data.table','ngMaterial','ui.tree','sbiModule','document_tree']);
+var app = angular.module('documentBrowserModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree']);
 
-app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'setFocus', function($scope, $mdSidenav, sbiModule_translate, sbiModule_restServices, setFocus) {
+app.controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus', 
+                                              function($scope, $http, $mdSidenav, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus) {
 	
 	$scope.folders = [];
 	
@@ -92,10 +93,11 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 				folder.selected = true;
 				folder.showSubfolders = (folder.showSubfolders ? false : true);
 				
-				sbiModule_restServices.get("2.0/documents", "?folderId=" + folder.id, null)
-					.success(function(data) {
-						$scope.folderDocuments = data;
-					});
+				sbiModule_restServices
+				.get("2.0/documents", "?folderId=" + folder.id, null)
+				.success(function(data) {
+					$scope.folderDocuments = data;
+				});
 			}
 		}
 	};
@@ -118,6 +120,10 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 	$scope.lastDocumentSelected = null;
 	$scope.showDocumentDetail = false;
 	
+	$scope.redirectIframe = function(url){
+		document.location.replace(url);
+	}
+	
 	$scope.setDetailOpen = function(isOpen) {
 		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
 			$scope.toggleDocumentDetail();
@@ -130,13 +136,29 @@ app.controller( 'documentBrowserController', ['$scope', '$mdSidenav', 'sbiModule
 		if (document !== null) {
 			$scope.lastDocumentSelected = document;
 		}
-		var alreadySelected = document !== null && $scope.selectedDocument === document;
+		var alreadySelected = (document !== null && $scope.selectedDocument === document);
 		$scope.selectedDocument = document;
 		if (alreadySelected) {
 			$scope.setDetailOpen(!$scope.showDocumentDetail);
 		} else {
 			$scope.setDetailOpen(document !== null);
 		}
+	};
+	
+	$scope.executeDocument = function(document) {
+		console.log('document -> ', document);
+		
+		var params = {};
+		
+		var url = sbiModule_config.contextName 
+			+ '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&SBI_ENVIRONMENT=DOCBROWSER'
+			+ '&OBJECT_ID=' + document.id
+			+ '&OBJECT_LABEL=' + document.label
+			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
+			+ '&SBI_EXECUTION_ID=null'
+			;
+		
+		$scope.redirectIframe(url);
 	};
 
 	$scope.wasSelected = function(document) {

@@ -72,7 +72,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	});   
 	
 	if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
-		c.title = 'Document browser';
+//		c.title = 'Document browser';
+		c.title = LN('sbi.browser.title');
 		
 	}else{
 		c.title='';
