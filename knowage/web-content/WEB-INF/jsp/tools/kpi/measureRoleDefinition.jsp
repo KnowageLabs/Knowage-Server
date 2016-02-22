@@ -63,7 +63,8 @@
 				<md-tab id="tab3">
        				<md-tab-label>{{translate.load("sbi.ds.test")}}</md-tab-label>
         			<md-tab-body>
-        			{{currentMeasure.query}}
+        			<%@include	file="./measureRoleTemplate/previewTemplate.jsp"%>
+        			
 					</md-tab-body>
 				</md-tab>
 				

@@ -18,36 +18,35 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate){
  
 function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	$scope.currentMeasure={
-			"query":"SELECT  usr.name as pippo FROM users AS usr WHERE usr.score>100"
+			"query":"SELECT  usr.name as pippo FROM users AS usr WHERE usr.score>100",
+			"metadata":[]
 				};
  	
 	$scope.loadMetadata=function(){
 		//remove select clausole
 		var tmpText= $scope.currentMeasure.query.replace(/\n/g, " ").toLowerCase();
 		
-		if((tmpText.match(/(^|\s)select($|\s)/g) || []).length>1){
-			alert("too many select clausole");
-			return;
-		}
-		
-		if((tmpText.match(/(^|\s)from($|\s)/g) || []).length>1){
-			alert("too many from clausole");
-			return;
-		}
+//		if((tmpText.match(/(^|\s)select($|\s)/g) || []).length>1){
+//			alert("too many select clausole");
+//			return;
+//		}
+//		
+//		if((tmpText.match(/(^|\s)from($|\s)/g) || []).length>1){
+//			alert("too many from clausole");
+//			return;
+//		}
 		
 		var selectIndex=tmpText.search(/(^|\s)select($|\s)/);
 		var fromIndex=tmpText.search(/(^|\s)from($|\s)/);
 		if(selectIndex!=-1 && fromIndex!=-1){
 			var aliasSubstring=tmpText.substring(selectIndex+6,fromIndex);
 			var splittedAliasSubStr= aliasSubstring.trim().split(',');
-			
-			var tmpAliasList=[];
+			angular.copy([],$scope.currentMeasure.metadata);
 			for(var i=0;i<splittedAliasSubStr.length;i++){
 				var tmpSplit= splittedAliasSubStr[i].trim().split(" as ");
-				tmpAliasList.push(tmpSplit[tmpSplit.length-1]);
+				$scope.currentMeasure.metadata.push(tmpSplit[tmpSplit.length-1]);
 			}
-			
-			alert(tmpAliasList)
+			 
 		}else{
 			alert("query non completa")
 		}
@@ -61,11 +60,13 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog){
 	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
 	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
 	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},
-	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
+	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},
+	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
 	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
 	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
 	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},
-	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
+	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},
+	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
 	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
 	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
 	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},

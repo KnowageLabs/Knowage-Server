@@ -2,10 +2,10 @@
 
 <div layout="row" layout-wrap>
 
-<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin >
+<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" mtd in currentMeasure.metadata">
   <md-toolbar>
       <div class="md-toolbar-tools">
-		<span>numScuole</span>
+		<span>{{mtd}}</span>
 		</div>
 </md-toolbar>
 <md-content layout-margin>

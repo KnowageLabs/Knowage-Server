@@ -70,7 +70,12 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 		
 		if(beforeToken.string.toLowerCase()=="as"){
 			var text= cm.getDoc().getRange(CodeMirror.Pos(0,0),beforeCursor);
-			  var patt = new RegExp("^select ((?!FROM).)* AS$","ig");
+			//^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$
+			//^select ((?!FROM).)* AS$
+			//^((.*[\)]\s*select)|(\s*select)) ((?!FROM).)* AS$
+			  
+			  
+			var patt = new RegExp(/^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$/ig);
 			if(!patt.test(text.replace(/\n/g, " "))){
 				return false;
 			}else{
