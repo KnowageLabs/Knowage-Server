@@ -4,6 +4,13 @@ public class Placeholder extends Alias {
 
 	private Integer ruleId;
 
+	public Placeholder() {
+	}
+
+	public Placeholder(Integer id, String name) {
+		super(id, name);
+	}
+
 	/**
 	 * @return the ruleId
 	 */

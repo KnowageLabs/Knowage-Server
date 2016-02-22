@@ -7,6 +7,13 @@ public class SbiKpiAlias extends SbiHibernateModel {
 	private Integer id;
 	private String name;
 
+	public SbiKpiAlias() {
+	}
+
+	public SbiKpiAlias(Integer id) {
+		this.id = id;
+	}
+
 	/**
 	 * @return the id
 	 */

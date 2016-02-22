@@ -1,6 +1,7 @@
 package it.eng.spagobi.kpi.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rule implements Serializable {
@@ -14,7 +15,7 @@ public class Rule implements Serializable {
 	private String definition;
 	private boolean newRecord;
 
-	private List<RuleOutput> ruleOutputs;
+	private List<RuleOutput> ruleOutputs = new ArrayList<>();
 
 	public Rule() {
 	}

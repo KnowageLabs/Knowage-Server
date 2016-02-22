@@ -31,7 +31,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 *
+	 * 
 	 * @param valueId
 	 *            the value id
 	 */
@@ -43,7 +43,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value id.
-	 *
+	 * 
 	 * @return the value id
 	 */
 	public Integer getValueId() {
@@ -52,7 +52,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value id.
-	 *
+	 * 
 	 * @param valueId
 	 *            the new value id
 	 */
@@ -62,7 +62,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the domain cd.
-	 *
+	 * 
 	 * @return the domain cd
 	 */
 	public String getDomainCd() {
@@ -71,7 +71,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the domain cd.
-	 *
+	 * 
 	 * @param domainCd
 	 *            the new domain cd
 	 */
@@ -81,7 +81,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the domain nm.
-	 *
+	 * 
 	 * @return the domain nm
 	 */
 	public String getDomainNm() {
@@ -90,7 +90,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the domain nm.
-	 *
+	 * 
 	 * @param domainNm
 	 *            the new domain nm
 	 */
@@ -100,7 +100,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value cd.
-	 *
+	 * 
 	 * @return the value cd
 	 */
 	public String getValueCd() {
@@ -109,7 +109,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value cd.
-	 *
+	 * 
 	 * @param valueCd
 	 *            the new value cd
 	 */
@@ -119,7 +119,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value nm.
-	 *
+	 * 
 	 * @return the value nm
 	 */
 	public String getValueNm() {
@@ -128,7 +128,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value nm.
-	 *
+	 * 
 	 * @param valueNm
 	 *            the new value nm
 	 */
@@ -138,7 +138,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value ds.
-	 *
+	 * 
 	 * @return the value ds
 	 */
 	public String getValueDs() {
@@ -147,7 +147,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value ds.
-	 *
+	 * 
 	 * @param valueDs
 	 *            the new value ds
 	 */

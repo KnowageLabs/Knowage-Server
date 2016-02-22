@@ -5,6 +5,14 @@ public class Alias {
 	private Integer id;
 	private String name;
 
+	public Alias() {
+	}
+
+	public Alias(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
 	/**
 	 * @return the id
 	 */
