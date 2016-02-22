@@ -48,7 +48,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -194,7 +194,7 @@ public class KpiService {
 		} catch (JSONException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-		return Response.ok(ret).build();
+		return Response.ok(ret.toString()).build();
 	}
 
 	@POST
