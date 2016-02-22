@@ -156,7 +156,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 		}
 		if (engine == null) {
-			logger.error("A null engine has been returned for label " + engineLabel);
+			logger.debug("A null engine has been returned for label " + engineLabel);
 		}
 		logger.debug("OUT");
 		return engine;
@@ -231,7 +231,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 		}
 		if (engine == null) {
-			logger.error("No engine with driver [" + driver + "] was found.");
+			logger.debug("No engine with driver [" + driver + "] was found.");
 		}
 		logger.debug("OUT");
 		return engine;
@@ -404,7 +404,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 		}
 		if (realResult.isEmpty()) {
-			logger.error("No engines was found.");
+			logger.debug("No engines was found.");
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -517,7 +517,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 		}
 		if (realResult.isEmpty()) {
-			logger.error("No engines was found.");
+			logger.debug("No engines was found.");
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -578,7 +578,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 					aSession.close();
 			}
 		}
-		logger.debug("IN");
+		logger.debug("OUT");
 
 	}
 
@@ -800,7 +800,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 					aSession.close();
 			}
 		}
-		logger.debug("IN");
+		logger.debug("OUT");
 		return bool;
 	}
 
