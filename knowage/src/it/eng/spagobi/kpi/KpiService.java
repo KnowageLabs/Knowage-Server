@@ -3,6 +3,7 @@ package it.eng.spagobi.kpi;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.kpi.bo.Alias;
@@ -13,6 +14,15 @@ import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -44,14 +54,35 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class KpiService {
 
+	private static final String MEASURE = "MEASURE";
+	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
+	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
+
+	@GET
+	@Path("/listMeasureCategory")
+	public Response listMeasureCategory(@Context HttpServletRequest req) throws EMFUserError {
+		IDomainDAO domain = DAOFactory.getDomainDAO();
+		setProfile(req, domain);
+		List categories = domain.loadListDomainsByTypeAndTenant(KPI_MEASURE_CATEGORY);
+		return Response.ok(JsonConverter.objectToJson(categories, categories.getClass())).build();
+	}
+
+	@GET
+	@Path("/listKpiCategory")
+	public Response listKpiCategory(@Context HttpServletRequest req) throws EMFUserError {
+		IDomainDAO domain = DAOFactory.getDomainDAO();
+		setProfile(req, domain);
+		List categories = domain.loadListDomainsByTypeAndTenant(KPI_KPI_CATEGORY);
+		return Response.ok(JsonConverter.objectToJson(categories, categories.getClass())).build();
+	}
 
 	@GET
 	@Path("/listMeasure")
 	public Response listMeasure(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<RuleOutput> measures = dao.listRuleOutputByType("MEASURE");
+		List<RuleOutput> measures = dao.listRuleOutputByType(MEASURE);
 		return Response.ok(JsonConverter.objectToJson(measures, measures.getClass())).build();
 	}
 
@@ -77,6 +108,93 @@ public class KpiService {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Alias> aliases = dao.listAlias();
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
+	}
+
+	@POST
+	@Path("/queryPreview")
+	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
+
+		Integer dataSourceId = null;
+		String query = null;
+		Integer maxItem = null;
+		try {
+			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
+			dataSourceId = obj.getInt("dataSourceId");
+			query = obj.getString("query");
+			maxItem = obj.getInt("maxItem");
+		} catch (IOException | JSONException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+
+		IDataSet dataSet = null;
+		String queryScript = "";
+		String queryScriptLanguage = "";
+
+		JSONObject jsonDsConfig = new JSONObject();
+		try {
+			jsonDsConfig.put(DataSetConstants.QUERY, query);
+			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, "");
+			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, "");
+			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceId);
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+
+		if (dataSourceId != null) {
+			IDataSource dataSource;
+			try {
+				// dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
+				if (dataSource != null) {
+					if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
+						dataSet = new MongoDataSet();
+					} else {
+						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+					}
+					((ConfigurableDataSet) dataSet).setDataSource(dataSource);
+					((ConfigurableDataSet) dataSet).setQuery(query);
+					((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
+					((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
+				} else {
+					throw new SpagoBIServiceException(req.getPathInfo(), "A datasource with id " + dataSourceId + " could not be found");
+				}
+			} catch (EMFUserError e) {
+				e.printStackTrace();
+				throw new SpagoBIServiceException(req.getPathInfo(), "Error while retrieving Datasource with id=" + dataSourceId, e);
+			}
+		}
+		dataSet.setConfiguration(jsonDsConfig.toString());
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(getProfile(req)));
+
+		IDataStore dataStore = null;
+		try {
+			dataStore = dataSet.test(0, maxItem, maxItem);
+			if (dataStore == null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "Impossible to read resultset");
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing dataset ", t);
+		}
+		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
+		JSONObject ret = new JSONObject();
+		try {
+			JSONArray fields = dataSetJSON.getJSONObject(JSONDataWriter.METADATA).getJSONArray("fields");
+			JSONArray columns = new JSONArray();
+			ret.put("columns", columns);
+			// skipping i=0 that is "recNo" value
+			for (int i = 1; i < fields.length(); i++) {
+				JSONObject column = fields.getJSONObject(i);
+				JSONObject col = new JSONObject();
+				col.put("name", column.getString("name"));
+				col.put("label", column.getString("header"));
+				columns.put(col);
+			}
+			ret.put("rows", dataSetJSON.get(JSONDataWriter.ROOT));
+		} catch (JSONException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.ok(ret).build();
 	}
 
 	@POST
@@ -159,6 +277,11 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
+	/* Private methods */
+
+	/**
+	 * @param placeholder
+	 */
 	private void checkPlaceholder(String placeholder) {
 		// TODO Auto-generated method stub
 
@@ -204,9 +327,12 @@ public class KpiService {
 		}
 	}
 
+	private static IEngUserProfile getProfile(HttpServletRequest req) {
+		return (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	}
+
 	private static void setProfile(HttpServletRequest req, ISpagoBIDao dao) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		dao.setUserProfile(profile);
+		dao.setUserProfile(getProfile(req));
 	}
 
 	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
