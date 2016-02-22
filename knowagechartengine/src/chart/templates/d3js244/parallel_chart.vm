@@ -41,7 +41,11 @@
 
 #foreach($value in $serie) 
 	 #set($serieNeeded[$serieCounter] = $value.column)
+	 #if($chart.LIMIT.groupByCategory == 'true')
 	 #set($groupingFunction[$serieCounter] = $value.groupingFunction)
+	 #else
+	 #set($groupingFunction[$serieCounter]="NONE")
+	 #end
 	 #set($serieCounter = $serieCounter + 1)
 #end
 

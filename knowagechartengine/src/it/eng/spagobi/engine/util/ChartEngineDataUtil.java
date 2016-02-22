@@ -70,7 +70,8 @@ public class ChartEngineDataUtil {
 
 		Monitor monitorLD = MonitorFactory.start("SpagoBI_Chart.GetChartDataAction.service.LoadData");
 
-		dataSet.loadData();// start, limit, rowsLimit); // ??????????????????????????
+		dataSet.loadData();// start, limit, rowsLimit); //
+							// ??????????????????????????
 
 		monitorLD.stop();
 
@@ -121,10 +122,13 @@ public class ChartEngineDataUtil {
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**
-			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
-			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
-			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
-			 * 
+			 * We are sending additional information about the web application
+			 * from which we call the VM. This boolean will tell us if we are
+			 * coming from the Highcharts Export web application. The value of
+			 * "exportWebApp" input parameter contains this boolean. This
+			 * information is useful when we have drilldown, i.e. more than one
+			 * category for the Highcharts chart (BAR, LINE).
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false);
@@ -158,6 +162,9 @@ public class ChartEngineDataUtil {
 
 		JSONArray seriesArray = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("SERIE");
 		JSONObject singleSerie = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONObject("SERIE");
+
+		String chartType = jo.getJSONObject("CHART").getString("type");
+
 		if (seriesArray != null) {
 			for (int i = 0; i < seriesArray.length(); i++) {
 				JSONObject thisSerie = (JSONObject) seriesArray.get(i);
@@ -171,6 +178,14 @@ public class ChartEngineDataUtil {
 			String serieColumn = serie.getString("column");
 			String serieName = serie.getString("name");
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
+
+			/**
+			 * parallel chart needs possibility to work without aggregation
+			 * function
+			 */
+			if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
+				serieFunction = "NONE";
+			}
 
 			if (!isDrilldown || serieName.equalsIgnoreCase(drilldownSerie)) {
 				String fieldAlias = serieColumn + (!isDrilldown ? "_" + serieFunction : "");
@@ -188,7 +203,8 @@ public class ChartEngineDataUtil {
 			if (category != null) {
 				categories.put(category);
 			}
-			// multiple categories for non conventional charts es. SUNBURST/TREEMAP
+			// multiple categories for non conventional charts es.
+			// SUNBURST/TREEMAP
 			else {
 				JSONArray optJSONArray = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("CATEGORY");
 				categories = (optJSONArray != null) ? optJSONArray : categories;
@@ -198,9 +214,15 @@ public class ChartEngineDataUtil {
 				JSONObject cat = (JSONObject) categories.get(i);
 
 				/*
-				 * Modified default and static ordering type for the categories from "DESC" (descending) to "ASC" (ascending). (danilo.ristovski@mht.net)
+				 * Modified default and static ordering type for the categories
+				 * from "DESC" (descending) to "ASC" (ascending).
+				 * (danilo.ristovski@mht.net)
 				 */
-				q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "ASC", null);
+				if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
+					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, "ASC", null);
+				} else {
+					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "ASC", null);
+				}
 			}
 		} else {
 			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "ASC", null);
@@ -357,7 +379,11 @@ public class ChartEngineDataUtil {
 
 	protected static String getFieldColumnType(IFieldMetaData fieldMetaData) {
 		String fieldColumnType = fieldMetaData.getType().toString();
-		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".") + 1); // clean the class type name
+		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".") + 1); // clean
+																							// the
+																							// class
+																							// type
+																							// name
 		return fieldColumnType;
 	}
 }

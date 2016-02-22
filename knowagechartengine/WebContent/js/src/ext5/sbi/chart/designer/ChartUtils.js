@@ -1451,8 +1451,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				limitStyle += 'orderTopMinBottomMax:'
 				 + ((chartModel.get('orderTopMinBottomMax')) ? chartModel.get('orderTopMinBottomMax')
 					 : '') + ';';
-
+                var groupByCategory= chartModel.get('groupByCategory') ? chartModel.get('groupByCategory')
+   					 : false;
 				LIMIT['style'] = limitStyle;
+				LIMIT['groupByCategory']=groupByCategory;
+				
 				CHART['LIMIT'] = LIMIT;
 
 				var PARALLEL_TOOLTIP = {};
@@ -1835,12 +1838,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var jsonParallelTooltipStyle = null;
 			var jsonParallelLegendTitle = null;
 			var jsonParallelLegendElement = null;
-
+            
+            
 			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL') {
 								
 				jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? 
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LIMIT.style) : '';
-
+				
 				jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? 
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style) : '';
 					
@@ -1852,6 +1856,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ?
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : '';
+						
 			}
 
 			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD') {
@@ -2022,7 +2027,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
                 wordLayout: jsonTemplate.CHART.wordLayout,
                 preventOverlap: jsonTemplate.CHART.preventOverlap,
-				
 				/**
 				 * Added for the SUNBURST chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -2060,7 +2064,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				maxNumberOfLines : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : null,
 				serieFilterColumn : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : null,
 				orderTopMinBottomMax : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : null,
-
+                groupByCategory:jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : false,
 				/**
 				 * Added for the PARALLEL chart (AXES_LINES tag)
 				 * (danilo.ristovski@mht.net)

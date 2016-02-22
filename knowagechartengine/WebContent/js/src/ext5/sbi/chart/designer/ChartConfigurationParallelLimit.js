@@ -17,7 +17,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 150,
+		height: 180,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),
 		bodyPadding: 10,
@@ -188,10 +188,27 @@ Ext.define
          			}
 	         	}
 			 );
+			
+			this.groupByCategoryCheckbox=Ext.create
+	    	(
+	    			{
+	    				xtype: 'checkboxfield',
+	    				id: 'GroupByCategoryParallel',
+	    				bind : '{configModel.groupByCategory}',
+	    					
+	    					
+	    				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+	    				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+	    				
+	    				labelSeparator: '',
+	    				fieldLabel: LN("sbi.chartengine.configuration.parallel.groupByCategory"),
+	    			}	
+	        	);
 						
 			this.add(this.seriesColumnsOnYAxisCombo);
 			this.add(this.maxNumberOfLines);			
 			this.add(this.orderTopMinBottomMax);
+			this.add(this.groupByCategoryCheckbox);
 		},
 		
 		addItem: function(data)
