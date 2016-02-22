@@ -78,6 +78,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.modelConfig;
 	
 	$scope.ready = true;
+	$scope.sortingEnabled = false;
+	
+	$scope.enableDisableSorting = function(){
+		$scope.sortingEnabled = !$scope.sortingEnabled;
+	}
 	
 	$scope.changeDrillType = function(type){
 		$scope.modelConfig.drillType = type;

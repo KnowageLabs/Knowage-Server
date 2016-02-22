@@ -269,3 +269,11 @@ table tr:nth-child(even) {
 	padding-left: 32px;
 	padding-right: 32px;
 }
+
+.sorting-d-btn{
+	background-image: url(../img/sorting-disabled.png);
+}
+
+.sorting-e-btn{
+	background-image: url(../img/sorting-enabled.png);
+}

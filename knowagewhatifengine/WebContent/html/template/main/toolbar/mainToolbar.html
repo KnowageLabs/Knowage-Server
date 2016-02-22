@@ -11,7 +11,20 @@
 				{{btn.tooltip}}
 			</md-tooltip>
 		</md-button>
+		<!-- Temporary solution for sorting and stuff -->
+		<md-button ng-class=" sortingEnabled ? 'main-toolbar-button sorting-e-btn' : 'main-toolbar-button sorting-d-btn'" ng-click="enableDisableSorting()" >
+			<md-tooltip md-direction="bottom">
+				{{sortingEnabled?'Disable sorting' : 'Enable sorting'}}
+			</md-tooltip>
+		</md-button>
 		
+		<md-button class="main-toolbar-button">
+			Drill trough
+			<md-tooltip md-direction="bottom">
+				Drill trough
+			</md-tooltip>
+		</md-button>
+		<!-- Temporary solution for sorting and stuff -->
 		<md-button class="main-toolbar-button" ng-click="openMdxQueryDialog(e)">
 			Send MDX
 			<md-tooltip md-direction="bottom">
