@@ -8,7 +8,9 @@ import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +20,7 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 
 	protected AbstractDataSource dataSource;
 
+	
 	protected void addRelationshipsBetweenRootEntities(ModelStructure modelStructure) {
 
 		String modelName = dataSource.getConfiguration().getModelName();
@@ -26,10 +29,15 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, false);
 		List<IModelRelationshipDescriptor> relationships = dataSource.getConfiguration().loadRelationships();
 
+		
+		Map<String,DeserializedRelation> mergedRelations = new HashMap<String, DeserializedRelation>();
+		
+		//take all the relations that have same source and target and merge in the same relation
+		//so if we have 2 relation like this:
+		//--Entity A (field a)--> Entity B (field b)
+		//--Entity A (field a1)--> Entity B (field b1)
+		// we merge these 2 relations in Entity A (field a, field a1)--> Entity B (field b, field b1)
 		for (IModelRelationshipDescriptor relationship : relationships) {
-			if (relationship.getType().equals("many-to-one") == false && relationship.getType().equals("optional-many-to-one") == false)
-				continue;
-
 			IModelEntity sourceEntity = rootEntitiesGraph.getRootEntityByName(relationship.getSourceEntityUniqueName());
 			if (sourceEntity == null)
 				throw new RuntimeException("Impossibe to find source entity whose name is equal to [" + relationship.getSourceEntityUniqueName() + "]");
@@ -80,14 +88,95 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 				}
 				destinationFields.add(field);
 			}
-			try {
-				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(),
+			
+			//search if the exist already a relation between the 2 entities. The name of relation has to be the same
+			DeserializedRelation aDeserializedRelation = new DeserializedRelation(sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(),
 						relationship.getLabel());
-				logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
-			} catch (Throwable t) {
-				logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+			
+			DeserializedRelation aDeserializedRelationInMap = mergedRelations.get(sourceEntity.getUniqueName()+destinationEntity.getUniqueName()+relationship.getLabel());
+			
+			if(aDeserializedRelationInMap == null){
+				mergedRelations.put(sourceEntity.getUniqueName()+destinationEntity.getUniqueName()+relationship.getLabel(),aDeserializedRelation);
+			}else{
+				aDeserializedRelationInMap.addSources(sourceFields);
+				aDeserializedRelationInMap.addTo(destinationFields);
 			}
 		}
+		
+		
+		for (String relationshipName : mergedRelations.keySet()) {
+			DeserializedRelation aDeserializedRelation = mergedRelations.get(relationshipName);
+			try {
+				modelStructure.addRootEntityRelationship(modelName, aDeserializedRelation.getFromEntity(), aDeserializedRelation.getFromFields(), aDeserializedRelation.getToEntity(), aDeserializedRelation.getToFields(), aDeserializedRelation.getType(),
+						aDeserializedRelation.getRelationName());
+				logger.debug("Succesfully added relationship between [" + aDeserializedRelation.getFromEntity().getName() + "] and [" + aDeserializedRelation.getToEntity().getName() + "]");
+			} catch (Throwable t) {
+				logger.error("Impossible to add relationship between [" + aDeserializedRelation.getFromEntity().getName() + "] and [" + aDeserializedRelation.getToEntity().getName() + "]", t);
+			}
+		}
+	}
+	
+	private class DeserializedRelation{
+
+		IModelEntity fromEntity;
+		List<IModelField> fromFields;
+		IModelEntity toEntity;
+		List<IModelField> toFields;
+		String type; 
+		String relationName;
+		
+		public DeserializedRelation(IModelEntity fromEntity,
+				List<IModelField> fromFields, IModelEntity toEntity,
+				List<IModelField> toFields, String type, String relationName) {
+			super();
+			this.fromEntity = fromEntity;
+			this.fromFields = fromFields;
+			this.toEntity = toEntity;
+			this.toFields = toFields;
+			this.type = type;
+			this.relationName = relationName;
+		}
+
+		public IModelEntity getFromEntity() {
+			return fromEntity;
+		}
+
+		public List<IModelField> getFromFields() {
+			return fromFields;
+		}
+
+		public IModelEntity getToEntity() {
+			return toEntity;
+		}
+
+		public List<IModelField> getToFields() {
+			return toFields;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public String getRelationName() {
+			return relationName;
+		}
+		
+		public void addSources(List<IModelField> first ){
+			merge(fromFields, first);
+		}
+		
+		public void addTo(List<IModelField> first ){
+			merge(toFields, first);
+		}
+		
+		private void merge(List<IModelField> first , List<IModelField> second){
+			for(int i=0; i<second.size(); i++){
+				if(!first.contains(second.get(i))){
+					first.add(second.get(i));
+				}
+			}
+		}
+		
 	}
 
 }
