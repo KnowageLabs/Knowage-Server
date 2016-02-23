@@ -20,6 +20,7 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
+import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.ui.CellTypes;
 import org.pivot4j.ui.command.DrillDownCommand;
@@ -39,7 +40,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		super(writer);
 		memberPositions = new HashMap<Member, Integer>();
 		showProperties = true;
-
+		setRowHeaderLevelPadding(20);
 	}
 
 	@Override
@@ -75,6 +76,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		String drillMode = context.getRenderer().getDrillDownMode();
 		if (!isEmptyNonPropertyCell(context)) {
+			if (context.getCellType() == CellTypes.VALUE) {
+				Map<String, String> attributes = new TreeMap<String, String>();
+
+				startElement("img", attributes);
+				endElement("img");
+
+			}
 
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
@@ -130,6 +138,46 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 								}
 
 							}
+							if (cmd.equalsIgnoreCase("sort")) {
+								int axisToSort = 0;
+								if (axis == Axis.ROWS.axisOrdinal()) {
+									axisToSort = Axis.COLUMNS.axisOrdinal();
+								} else {
+									axisToSort = Axis.ROWS.axisOrdinal();
+								}
+
+								if (context.getModel().isSorting()) {
+									if (context.getModel().isSorting(context.getPosition())) {
+										if (context.getModel().getSortCriteria().equals(SortCriteria.ASC)
+												|| context.getModel().getSortCriteria().equals(SortCriteria.BASC)) {
+											attributes.put("src", "../img/green_arrow_up.png");
+											attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + positionUniqueName + "','"
+													+ SortCriteria.DESC + "' )");
+											System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+											startElement("img", attributes);
+											endElement("img");
+										} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC)
+												|| context.getModel().getSortCriteria().equals(SortCriteria.BDESC)) {
+											attributes.put("src", "../img/red_arrow_down.png");
+											attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + positionUniqueName + "','"
+													+ SortCriteria.ASC + "' )");
+											System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+											startElement("img", attributes);
+											endElement("img");
+										}
+									} else {
+										attributes.put("src", "../img/no-sort.png");
+										attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + positionUniqueName + "','" + SortCriteria.ASC
+												+ "' )");
+										System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+										startElement("img", attributes);
+										endElement("img");
+									}
+								} else {
+
+								}
+
+							}
 
 						}
 					}
@@ -140,6 +188,72 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("style", "padding : 2px");
 						startElement("img", attributes);
 						endElement("img");
+					}
+				}
+			} else if (context.getMember() != null && context.getMember().getMemberType() != null
+					&& context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
+				int axis = 0;
+				if (context.getAxis() != null) {
+					axis = context.getAxis().axisOrdinal();
+				}
+
+				int axisToSort = 0;
+				if (axis == Axis.ROWS.axisOrdinal()) {
+					axisToSort = Axis.COLUMNS.axisOrdinal();
+				} else {
+					axisToSort = Axis.ROWS.axisOrdinal();
+				}
+
+				Map<String, String> attributes = new TreeMap<String, String>();
+				for (UICommand<?> command : commands) {
+					String cmd = command.getName();
+					if (cmd.equalsIgnoreCase("sort")) {
+
+						if (context.getModel().isSorting()) {
+							if (context.getModel().isSorting(context.getPosition())) {
+								if (context.getModel().getSortCriteria().equals(SortCriteria.ASC)
+										|| context.getModel().getSortCriteria().equals(SortCriteria.BASC)) {
+									if (axisToSort == Axis.ROWS.axisOrdinal()) {
+										attributes.put("src", "../img/ASC-rows.png");
+									} else {
+										attributes.put("src", "../img/ASC-columns.png");
+									}
+
+									attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+											+ "','" + SortCriteria.DESC + "' )");
+									System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+									startElement("img", attributes);
+									endElement("img");
+								} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC)
+										|| context.getModel().getSortCriteria().equals(SortCriteria.BDESC)) {
+
+									if (axisToSort == Axis.ROWS.axisOrdinal()) {
+										attributes.put("src", "../img/DESC-rows.png");
+									} else {
+										attributes.put("src", "../img/DESC-columns.png");
+									}
+
+									attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+											+ "','" + SortCriteria.ASC + "' )");
+									System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+									startElement("img", attributes);
+									endElement("img");
+								}
+							} else {
+								if (axisToSort == Axis.ROWS.axisOrdinal()) {
+									attributes.put("src", "../img/noSortRows.png");
+								} else {
+									attributes.put("src", "../img/noSortColumns.png");
+								}
+
+								attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "','"
+										+ SortCriteria.ASC + "' )");
+								System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+								startElement("img", attributes);
+								endElement("img");
+							}
+
+						}
 					}
 				}
 			}
