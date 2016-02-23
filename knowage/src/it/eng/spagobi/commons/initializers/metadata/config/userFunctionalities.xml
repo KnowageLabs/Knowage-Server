@@ -30,7 +30,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ConstraintView" description="ConstraintView" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterView"description="ParameterView" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterView" description="ParameterView" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DatasetManagement" description="DatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMoveDownState" description="DocumentMoveDownState" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMoveUpState" description="DocumentMoveUpState" />
