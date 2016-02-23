@@ -125,10 +125,20 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
 			@PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
-		return renderModel(getPivotModel());
+		model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+		String table = renderModel(model);
+		return table;
 	}
 
 	/**
