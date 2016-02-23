@@ -38,8 +38,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
-	List<Threshold> thresholds = new ArrayList<>();
-	List<Kpi> kpis = new ArrayList<>();
 
 	@Override
 	public void insertRule(final Rule rule) {
