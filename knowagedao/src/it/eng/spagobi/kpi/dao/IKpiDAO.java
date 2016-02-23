@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
-	public List<RuleOutput> listRuleOutput();
+	// public List<RuleOutput> listRuleOutput();
 
 	public List<RuleOutput> listRuleOutputByType(String type);
 

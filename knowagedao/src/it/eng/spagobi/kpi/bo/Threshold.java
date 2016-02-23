@@ -1,6 +1,8 @@
 package it.eng.spagobi.kpi.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Threshold implements Serializable {
 
@@ -10,9 +12,11 @@ public class Threshold implements Serializable {
 	 */
 	private Integer id;
 	private String description;
-	private String definition; // JSON
+	private String name;
 	private Integer typeId;
 	private String type;
+
+	private final List<ThresholdValue> thresholdValues = new ArrayList<>();
 
 	public Threshold() {
 	}
@@ -52,18 +56,18 @@ public class Threshold implements Serializable {
 	}
 
 	/**
-	 * @return the definition
+	 * @return the name
 	 */
-	public String getDefinition() {
-		return definition;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * @param definition
-	 *            the definition to set
+	 * @param name
+	 *            the name to set
 	 */
-	public void setDefinition(String definition) {
-		this.definition = definition;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -94,6 +98,13 @@ public class Threshold implements Serializable {
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the thresholdValues
+	 */
+	public List<ThresholdValue> getThresholdValues() {
+		return thresholdValues;
 	}
 
 	@Override

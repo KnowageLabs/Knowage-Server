@@ -26,8 +26,8 @@
         <property name="includeMax" column="INCLUDE_MAX" type="boolean" />
         <property name="color" column="COLOR" type="string" length="20" />
         
-        <many-to-one name="severity" class="it.eng.spagobi.commons.metadata.SbiDomains" >
-            <column name="SEVERITY_ID" />
+        <many-to-one name="severity" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false">
+            <column name="SEVERITY_ID" not-null="false"/>
         </many-to-one>
          
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

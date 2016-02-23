@@ -13,6 +13,7 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	private Integer id;
 	private int ruleId;
 	private int typeId;
+	private SbiKpiRule sbiKpiRule;
 	private SbiKpiAlias sbiKpiAlias;
 	private SbiDomains type;
 	private SbiDomains category;
@@ -124,6 +125,21 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	 */
 	public void setCategory(SbiDomains category) {
 		this.category = category;
+	}
+
+	/**
+	 * @return the sbiKpiRule
+	 */
+	public SbiKpiRule getSbiKpiRule() {
+		return sbiKpiRule;
+	}
+
+	/**
+	 * @param sbiKpiRule
+	 *            the sbiKpiRule to set
+	 */
+	public void setSbiKpiRule(SbiKpiRule sbiKpiRule) {
+		this.sbiKpiRule = sbiKpiRule;
 	}
 
 }
