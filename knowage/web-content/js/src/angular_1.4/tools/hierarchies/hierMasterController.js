@@ -229,6 +229,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				config.params.filterDate = $scope.formatDate(filterDate);
 			}
 			if (hier && (filterHierarchy=="true" || filterHierarchy==true)) {
+				config.params.filterDate = $scope.formatDate($scope.dateTree);
 				config.params.filterHierType = $scope.hierType.toUpperCase();
 				config.params.filterHierarchy = hier.HIER_NM;
 			}
@@ -459,7 +460,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				node[metadata[i].ID] = new Date();
 			} else {
 				node[metadata[i].ID] = '';
-			}c
+			}
 			if (metadata[i].FIX_VALUE && metadata[i].FIX_VALUE.length > 0) {
 				node[metadata[i].ID] = metadata[i].FIX_VALUE;
 			}
@@ -874,6 +875,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			var item = {
 				    dimension: dim.DIMENSION_NM,
 				    validityDate: $scope.formatDate(date),
+				    validityTreeDate: $scope.formatDate($scope.dateTree),
 				    filterHierarchy: hier.HIER_NM,
 				    filterHierType: hier.HIER_TP,
 				    optionalFilters : $scope.convertFiltersDim($scope.dimFilters)				   

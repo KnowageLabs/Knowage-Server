@@ -187,6 +187,7 @@ public class BackupService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimension = requestVal.getString("dimension");
+			String hierarchyBkpCode = requestVal.getString("code");
 			String hierarchyBkpName = requestVal.getString("name");
 
 			if ((dimension == null) || (hierarchyBkpName == null)) {
@@ -198,7 +199,7 @@ public class BackupService {
 
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimension);
 
-			restoreBackupHierarchy(dataSource, hierarchyBkpName, hierarchyTable);
+			restoreBackupHierarchy(dataSource, hierarchyBkpCode, hierarchyBkpName, hierarchyTable);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while restoring a backup hierarchy");
@@ -213,8 +214,8 @@ public class BackupService {
 	@GET
 	@Path("/getHierarchyBkps")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getHierarchyBkps(@QueryParam("dimension") String dimension, @QueryParam("hierarchyName") String hierarchyName,
-			@QueryParam("hierarchyType") String hierarchyType) throws SQLException {
+	public String getHierarchyBkps(@QueryParam("dimension") String dimension, @QueryParam("hierarchyCode") String hierarchyCode,
+			@QueryParam("hierarchyName") String hierarchyName, @QueryParam("hierarchyType") String hierarchyType) throws SQLException {
 
 		logger.debug("START");
 
@@ -236,7 +237,7 @@ public class BackupService {
 
 			List<Field> bkpFields = HierarchyUtils.createBkpFields(genFields, HierarchyConstants.BKP_GEN_FIELDS);
 
-			String queryText = selectHierarchyBkps(dataSource, hierarchyTable, hierarchyName, hierarchyType, bkpFields);
+			String queryText = selectHierarchyBkps(dataSource, hierarchyTable, hierarchyCode, hierarchyName, hierarchyType, bkpFields);
 
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -269,27 +270,27 @@ public class BackupService {
 
 	}
 
-	private void restoreBackupHierarchy(IDataSource dataSource, String hierBkpName, String hierTableName) {
+	private void restoreBackupHierarchy(IDataSource dataSource, String hierBkpCode, String hierBkpName, String hierTableName) {
 
 		logger.debug("START");
+		String hierNm = "";
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
 		// relations table (propagation management)
-		// String timestampBkp = hierBkpName.substring(hierBkpName.lastIndexOf("_"));
 		String hierCDTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
 		String hierNMTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 
-		String selectQuery = "SELECT DISTINCT(" + hierCdColumn + ") FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+		String selectQuery = "SELECT DISTINCT(" + hierNameColumn + ") FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND " + bkpColumn + " = ?";
 		String selectQueryRel = "SELECT DISTINCT(" + hierCDTColumn + ") FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn
 				+ "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The select query is [" + selectQuery + "]");
 		logger.debug("The select query for relations TM is [" + selectQueryRel + "]");
 
-		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierNameColumn + "= ? AND " + bkpColumn + " = ?";
+		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND " + bkpColumn + " = ?";
 		String deleteQueryRel = "DELETE FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn + "= ? AND " + bkpColumn + " = ?";
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
@@ -313,27 +314,22 @@ public class BackupService {
 
 			// begin transaction
 			databaseConnection.setAutoCommit(false);
-
 			logger.debug("Auto-commit false. Begin transaction!");
 
-			selectPs.setString(1, hierBkpName);
-
 			logger.debug("Preparing select statement. Name of the hierarchy backup is [" + hierBkpName + "]");
-
-			selectPs.setBoolean(2, true);
+			selectPs.setString(1, hierBkpCode);
+			selectPs.setBoolean(2, false);
 
 			ResultSet rs = selectPs.executeQuery();
 
 			logger.debug("Select query executed! Processing result set...");
 
 			if (rs.next()) {
-
-				String hierCd = rs.getString(HierarchyConstants.HIER_CD);
-
-				deletePs.setString(1, hierCd);
+				hierNm = rs.getString(HierarchyConstants.HIER_NM);
+				deletePs.setString(1, hierBkpCode);
 				deletePs.setBoolean(2, false);
 
-				logger.debug("Preparing delete statement. Field [" + HierarchyConstants.HIER_CD + "] has value = " + hierCd);
+				logger.debug("Preparing delete statement. Field [" + HierarchyConstants.HIER_CD + "] has value = " + hierBkpCode);
 
 				deletePs.executeUpdate();
 
@@ -341,7 +337,7 @@ public class BackupService {
 
 				logger.debug("Preparing update statement.");
 
-				updatePs.setString(1, hierCd);
+				updatePs.setString(1, hierNm);
 				updatePs.setBoolean(2, false);
 				updatePs.setString(3, hierBkpName);
 
@@ -351,39 +347,20 @@ public class BackupService {
 			}
 
 			// MT Relations management
-			selectPsRel.setString(1, hierBkpName);
+			logger.debug("Preparing delete statement for relations MT. Field [" + HierarchyConstants.HIER_NM_T + "] has value = " + hierNm);
+			deletePsRel.setString(1, hierNm);
+			deletePsRel.setBoolean(2, false);
 
-			logger.debug("Preparing select statement. Name of the hierarchy backup is [" + hierBkpName + "]");
+			deletePsRel.executeUpdate();
+			logger.debug("Delete query on relations MT executed!");
 
-			selectPsRel.setBoolean(2, true);
+			logger.debug("Preparing update on relations MT statement.");
+			updatePsRel.setString(1, hierNm);
+			updatePsRel.setBoolean(2, false);
+			updatePsRel.setString(3, hierBkpName);
 
-			ResultSet rsRel = selectPsRel.executeQuery();
-
-			logger.debug("Select query fore relations MT executed! Processing result set...");
-
-			if (rsRel.next()) {
-
-				String hierCdT = rsRel.getString(HierarchyConstants.HIER_CD_T);
-
-				deletePsRel.setString(1, hierCdT);
-				deletePsRel.setBoolean(2, false);
-
-				logger.debug("Preparing delete statement for relations MT. Field [" + HierarchyConstants.HIER_CD_T + "] has value = " + hierCdT);
-
-				deletePsRel.executeUpdate();
-
-				logger.debug("Delete query on relations MT executed!");
-
-				logger.debug("Preparing update on relations MT statement.");
-
-				updatePsRel.setString(1, hierCdT);
-				updatePsRel.setBoolean(2, false);
-				updatePsRel.setString(3, hierBkpName);
-
-				updatePsRel.executeUpdate();
-
-				logger.debug("Update query on relations MT executed!");
-			}
+			updatePsRel.executeUpdate();
+			logger.debug("Update query on relations MT executed!");
 
 			logger.debug("Executing commit. End transaction!");
 			databaseConnection.commit();
@@ -397,7 +374,8 @@ public class BackupService {
 
 	}
 
-	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyName, String hierarchyType, List<Field> bkpFields) {
+	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyCode, String hierarchyName, String hierarchyType,
+			List<Field> bkpFields) {
 
 		logger.debug("START");
 
@@ -427,9 +405,13 @@ public class BackupService {
 
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierTableName + " WHERE " + bkpColumn + " = 1 ");
 
-		if (hierarchyName != null) {
-			query.append(" AND " + hierCdColumn + "= \"" + hierarchyName + "\"");
+		if (hierarchyCode != null) {
+			query.append(" AND " + hierCdColumn + "= \"" + hierarchyCode + "\"");
 		}
+		//
+		// if (hierarchyName != null) {
+		// query.append(" AND " + hierNameColumn + "= \"" + hierarchyName + "\"");
+		// }
 
 		if (hierarchyType != null) {
 			query.append(" AND " + hierTypeColumn + "= \"" + hierarchyType + "\"");

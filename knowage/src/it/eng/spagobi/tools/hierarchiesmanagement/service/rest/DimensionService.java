@@ -146,20 +146,14 @@ public class DimensionService {
 	@Path("/dimensionData")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDimensionData(@QueryParam("dimension") String dimensionLabel, @QueryParam("validityDate") String validityDate,
-			@QueryParam("filterHierarchy") String filterHierarchy, @QueryParam("filterHierType") String filterHierType,
-			@QueryParam("optionalFilters") String optionalFilters) {
+			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy,
+			@QueryParam("filterHierType") String filterHierType, @QueryParam("optionalFilters") String optionalFilters) {
 
 		logger.debug("START");
 
 		JSONObject result = new JSONObject();
 
 		try {
-			// ONLY FOR TEST
-			// optionalFilters =
-			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
-			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
-			// FINE TEST
-
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
 
@@ -179,10 +173,9 @@ public class DimensionService {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
 
-			// IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, filterDate, filterHierarchy,
-			// filterHierType, hierTableName, prefix);
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					filterHierarchy, filterHierType, hierTableName, prefix);
+			boolean exludeHierLeaf = (filterHierarchy != null) ? true : false;
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters, filterDate,
+					filterHierarchy, filterHierType, hierTableName, prefix, exludeHierLeaf);
 
 			// Create JSON for Dimension data from datastore
 			JSONArray rootArray = HierarchyUtils.createRootData(dataStore);

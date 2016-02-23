@@ -64,7 +64,7 @@ public class HierarchyService {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
 			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
-			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String optionDate,
+			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String filterDate, @QueryParam("optionDate") String optionDate,
 			@QueryParam("optionHierarchy") String optionHierarchy, @QueryParam("optionHierType") String optionHierType) {
 		logger.debug("START");
 
@@ -87,8 +87,9 @@ public class HierarchyService {
 
 			// 2 - get datastore with all hierachies' leafs
 			IMetaData metadata = null;
-			IDataStore dataStore = HierarchyUtils.getHierarchyDataStore(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDimension,
-					optionDate, optionHierarchy, optionHierType);
+			boolean excludeDimLeaf = (filterDimension != null || optionHierarchy != null) ? true : false;
+			IDataStore dataStore = HierarchyUtils.getHierarchyDataStore(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDate,
+					filterDimension, optionDate, optionHierarchy, optionHierType, excludeDimLeaf);
 
 			// 4 - Create ADT for Tree from datastore
 			hierarchyTree = createHierarchyTreeStructure(dataStore, dimension, metadata);

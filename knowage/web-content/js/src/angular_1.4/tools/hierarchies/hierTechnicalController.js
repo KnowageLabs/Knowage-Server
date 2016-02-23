@@ -252,7 +252,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				keyMap = keyMap + '_' + dateFilter;
 			}
 			if (seeElement == true){
-				config.params.filterDimension = seeElement;
+//				config.params.filterDimension = seeElement; //filteDimension is always false into the TECHNICAL tab
 				//In show missing element filter are passed the date and hierarchy of the other tree (if Source tree, are passed date and tree of Target, and vice versa)
 				config.params.optionDate =  choose == 'src'  ?  $scope.formatDate($scope.dateTarget) : $scope.formatDate($scope.dateSrc);
 				config.params.optionHierarchy = choose == 'src'  ? ($scope.hierTarget ? $scope.hierTarget.HIER_NM : undefined) : ($scope.hierSrc ? $scope.hierSrc.HIER_NM : undefined);

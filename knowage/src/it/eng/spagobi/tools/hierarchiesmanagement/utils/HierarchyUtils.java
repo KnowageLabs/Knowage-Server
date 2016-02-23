@@ -381,15 +381,20 @@ public class HierarchyUtils {
 
 	}
 
-	public static String createNotInHierarchyCondition(IDataSource dataSource, String hierarchyTable, String hierNameCol, String hierarchyName,
-			String hierTypeCol, String hierarchyType, String dimFilterFieldCol, String selectFilterField, String vDateWhereClause) {
+	public static String createInHierarchyCondition(IDataSource dataSource, String hierarchyTable, String hierNameCol, String hierarchyName,
+			String hierTypeCol, String hierarchyType, String dimFilterFieldCol, String selectFilterField, String vFilterDateWhereClause, boolean exludeHierLeaf) {
 
 		logger.debug("Filter Hierarchy [" + hierarchyName + "]");
 
 		StringBuffer query = new StringBuffer();
+		String clauseIn = (exludeHierLeaf) ? " NOT IN " : " IN ";
+		if (vFilterDateWhereClause != null && !vFilterDateWhereClause.equals("")) {
+			vFilterDateWhereClause = " AND " + vFilterDateWhereClause;
+		} else
+			vFilterDateWhereClause = "";
 
-		query.append(" AND " + dimFilterFieldCol + " NOT IN (SELECT " + selectFilterField + " FROM " + hierarchyTable);
-		query.append(" WHERE " + hierNameCol + " = \"" + hierarchyName + "\" AND " + hierTypeCol + " = \"" + hierarchyType + "\" AND " + vDateWhereClause
+		query.append(" AND " + dimFilterFieldCol + clauseIn + " (SELECT " + selectFilterField + " FROM " + hierarchyTable);
+		query.append(" WHERE " + hierNameCol + " = \"" + hierarchyName + "\" AND " + hierTypeCol + " = \"" + hierarchyType + "\" " + vFilterDateWhereClause
 				+ " )");
 
 		return query.toString();
@@ -428,14 +433,29 @@ public class HierarchyUtils {
 	}
 
 	public static IDataStore getDimensionDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
-			String optionalFilter, String filterHierarchy, String filterHierType, String hierTableName, String prefix) {
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix, boolean exludeHierLeaf) {
 
 		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
 		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
 
 		// 1 - execute query to get dimension data
-		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterHierarchy,
-				filterHierType, hierTableName, dimFilterField, hierFilterField);
+		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
+				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
+
+		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+
+		return dataStore;
+	}
+
+	public static IDataStore getDimensionFromHierDataStore(IDataSource dataSource, String dimensionName, List<Field> metadataFields, String validityDate,
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String prefix, boolean exludeHierLeaf) {
+
+		String dimFilterField = prefix + HierarchyConstants.DIM_FILTER_FIELD;
+		String hierFilterField = prefix + HierarchyConstants.SELECT_HIER_FILTER_FIELD;
+
+		// 1 - execute query to get dimension data
+		String queryText = HierarchyUtils.createDimensionFromHierDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
+				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
 
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -456,7 +476,36 @@ public class HierarchyUtils {
 	}
 
 	private static String createDimensionDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
-			String optionalFilter, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField, String hierFilterField) {
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField,
+			String hierFilterField, boolean exludeHierLeaf) {
+
+		logger.debug("START");
+
+		StringBuffer query = getDimensionQuerySB(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate, filterHierarchy,
+				filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
+
+		logger.debug("Query for dimension data is: " + query);
+		logger.debug("END");
+		return query.toString();
+	}
+
+	private static String createDimensionFromHierDataQuery(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField,
+			String hierFilterField, boolean exludeHierLeaf) {
+
+		logger.debug("START");
+
+		StringBuffer query = getDimensionFromHierQuerySB(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate, filterHierarchy,
+				filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
+
+		logger.debug("Query for dimension data is: " + query);
+		logger.debug("END");
+		return query.toString();
+	}
+
+	private static StringBuffer getDimensionQuerySB(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField,
+			String hierFilterField, boolean exludeHierLeaf) {
 
 		logger.debug("START");
 
@@ -479,13 +528,11 @@ public class HierarchyUtils {
 		String selectClause = selectClauseBuffer.toString();
 
 		// where
-
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 
 		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
-
-		String vDateWhereClause = vDateConverted + " >= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+		String vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
 
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
 
@@ -493,14 +540,8 @@ public class HierarchyUtils {
 			logger.debug("Optional Filters are [" + optionalFilter + "]");
 
 			// get optional filters and add them to the query
-			// JSONObject filtersJSONObject = ObjectUtils.toJSONObject(optionalFilter);
 			JSONArray filtersJSONArray = ObjectUtils.toJSONArray(optionalFilter);
 			try {
-				// JSONArray filtersJSONArray = (!filtersJSONObject.isNull(HierarchyConstants.DIM_FILTERS)) ? ObjectUtils.toJSONArray(filtersJSONObject
-				// .get(HierarchyConstants.DIM_FILTERS)) : null;
-				// JSONArray filtersJSONArray = (!filtersJSONObject.isNull("optionalFilter")) ? ObjectUtils.toJSONArray(filtersJSONObject.get(optionalFilter))
-				// : null;
-
 				for (int i = 1; i <= filtersJSONArray.length(); i++) {
 					JSONObject filter = filtersJSONArray.getJSONObject(i - 1);
 					String filterType = (String) filter.get(HierarchyConstants.FILTER_TYPE);
@@ -531,19 +572,71 @@ public class HierarchyUtils {
 
 		if (filterHierarchy != null) {
 			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
+			String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+			String vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
 
 			String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 			String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 			String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
 			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
 
-			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
-					dimFilterFieldCol, selectFilterField, vDateWhereClause));
+			query.append(HierarchyUtils.createInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
+					dimFilterFieldCol, selectFilterField, vFilterDateWhereClause, exludeHierLeaf));
 		}
 
-		logger.debug("Query for dimension data is: " + query);
 		logger.debug("END");
-		return query.toString();
+		return query;
+	}
+
+	private static StringBuffer getDimensionFromHierQuerySB(IDataSource dataSource, List<Field> metadataFields, String dimensionName, String validityDate,
+			String optionalFilter, String filterDate, String filterHierarchy, String filterHierType, String hierTableName, String dimFilterField,
+			String hierFilterField, boolean exludeHierLeaf) {
+		logger.debug("START");
+
+		String selectClause = getDimenensionSelectClause(dataSource, metadataFields);
+
+		// where
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE 1=1 ");
+
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+		String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
+		String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
+		String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
+		String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
+		String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+		String vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
+
+		query.append(HierarchyUtils.createInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
+				dimFilterFieldCol, selectFilterField, vFilterDateWhereClause, false));
+
+		logger.debug("END");
+		return query;
+	}
+
+	private static String getDimenensionSelectClause(IDataSource dataSource, List<Field> metadataFields) {
+		String toReturn = "";
+		logger.debug("START");
+
+		StringBuffer selectClauseBuffer = new StringBuffer(" ");
+		String sep = ",";
+
+		int fieldsSize = metadataFields.size();
+
+		for (int i = 0; i < fieldsSize; i++) {
+			Field tmpField = metadataFields.get(i);
+			String column = AbstractJDBCDataset.encapsulateColumnName(tmpField.getId(), dataSource);
+
+			if (i == fieldsSize - 1) {
+				sep = " ";
+			}
+
+			selectClauseBuffer.append(column + sep);
+		}
+
+		toReturn = selectClauseBuffer.toString();
+
+		return toReturn;
 	}
 
 	public static List<Field> createBkpFields(List<Field> genFields, String[] bkpGenFields) {
@@ -711,11 +804,11 @@ public class HierarchyUtils {
 	}
 
 	public static IDataStore getHierarchyDataStore(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate,
-			String filterDimension, String optionDate, String optionHierarchy, String optionHierType) {
+			String filterDate, String filterDimension, String optionDate, String optionHierarchy, String optionHierType, boolean exludeHierLeaf) {
 
 		// 1 - execute query to get hierarchy data
-		String queryText = HierarchyUtils.createHierarchyDataQuery(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDimension,
-				optionDate, optionHierarchy, optionHierType);
+		String queryText = HierarchyUtils.createHierarchyDataQuery(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDate,
+				filterDimension, optionDate, optionHierarchy, optionHierType, exludeHierLeaf);
 
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -746,7 +839,7 @@ public class HierarchyUtils {
 	 * @return String the query to extract the hierarchy (all nodes and leaves)
 	 */
 	private static String createHierarchyDataQuery(IDataSource dataSource, String dimension, String hierarchyType, String hierarchyName, String hierarchyDate,
-			String filterDimension, String optionDate, String optionHierarchy, String optionHierType) {
+			String filterDate, String filterDimension, String optionDate, String optionHierarchy, String optionHierType, boolean exludeHierLeaf) {
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
@@ -819,7 +912,6 @@ public class HierarchyUtils {
 		String hierDateBeginColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String hierDateEndColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String vDateConverted = HierarchyUtils.getConvertedDate(hierarchyDate, dataSource);
-
 		String vDateWhereClause = vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn;
 
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = \"" + hierarchyName
@@ -828,26 +920,31 @@ public class HierarchyUtils {
 		if (filterDimension != null) {
 			logger.debug("Filter dimension is [" + filterDimension + "]");
 
+			String vDateOptionConverted = HierarchyUtils.getConvertedDate(optionDate, dataSource);
+			String vDateOptionWhereClause = vDateOptionConverted + " >= " + hierDateBeginColumn + " AND " + vDateOptionConverted + " <= " + hierDateEndColumn;
 			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
 			String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD", dataSource);
 
 			query.append(" AND " + dimFilterField + " NOT IN (SELECT " + selectFilterField + "FROM " + dimensionName);
-			query.append(" WHERE " + vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn + ")");
+			query.append(" WHERE " + vDateOptionWhereClause + ")");
 		}
 
-		if (optionDate != null) {
+		if (filterDate != null) {
 			logger.debug("Filter date is [" + optionDate + "]");
 
-			query.append(HierarchyUtils.createDateAfterCondition(dataSource, optionDate, hierDateBeginColumn));
+			query.append(HierarchyUtils.createDateAfterCondition(dataSource, filterDate, hierDateBeginColumn));
 		}
 
 		if (optionHierarchy != null) {
 			logger.debug("Filter Hierarchy is [" + optionHierarchy + "]");
 
+			String vDateOptionConverted = HierarchyUtils.getConvertedDate(optionDate, dataSource);
+			String vDateOptionWhereClause = vDateOptionConverted + " >= " + hierDateBeginColumn + " AND " + vDateOptionConverted + " <= " + hierDateEndColumn;
+
 			String dimFilterField = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
 
-			query.append(HierarchyUtils.createNotInHierarchyCondition(dataSource, hierarchyTable, hierNameColumn, optionHierarchy, hierTypeColumn,
-					optionHierType, dimFilterField, dimFilterField, vDateWhereClause));
+			query.append(HierarchyUtils.createInHierarchyCondition(dataSource, hierarchyTable, hierNameColumn, optionHierarchy, hierTypeColumn, optionHierType,
+					dimFilterField, dimFilterField, vDateOptionWhereClause, exludeHierLeaf));
 		}
 		// order cluase
 		query.append(" ORDER BY " + orderClauseBuffer.toString());
@@ -876,6 +973,7 @@ public class HierarchyUtils {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(calendar.getTime());
 		long timestamp = calendar.getTimeInMillis();
+		String newHierName = (String) paramsMap.get("hierTargetName") + "_" + timestamp;
 
 		Date vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
 
@@ -887,7 +985,7 @@ public class HierarchyUtils {
 		logger.debug("The update query is [" + updateQuery + "]");
 
 		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
-			preparedStatement.setString(1, (String) paramsMap.get("hierTargetName") + "_" + timestamp);
+			preparedStatement.setString(1, newHierName);
 			preparedStatement.setBoolean(2, true);
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
 			preparedStatement.setString(4, (String) paramsMap.get("hierTargetName"));
@@ -896,7 +994,6 @@ public class HierarchyUtils {
 			preparedStatement.setDate(7, vDateConverted);
 
 			preparedStatement.executeUpdate();
-			preparedStatement.close();
 
 			logger.debug("Update query successfully executed");
 			logger.debug("END");
@@ -908,12 +1005,7 @@ public class HierarchyUtils {
 
 		if (paramsMap.get("doPropagation") != null && (Boolean) paramsMap.get("doPropagation")) {
 			String hierNameTargetColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
-			String hierNameSourceColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
 
-			// String updateRelQuery = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNameTargetColumn + "= ?, " + bkpColumn +
-			// " = ?, "
-			// + bkpTimestampColumn + "= ? WHERE " + hierNameTargetColumn + "= ? AND " + hierNameSourceColumn + "= ?";
-			//
 			String updateRelQuery = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNameTargetColumn + "= ?, " + bkpColumn + " = ?, "
 					+ bkpTimestampColumn + "= ? WHERE " + hierNameTargetColumn + "= ? AND " + bkpColumn + "= ?";
 
@@ -923,9 +1015,6 @@ public class HierarchyUtils {
 			HashMap fixedValuesMap = new HashMap();
 			fixedValuesMap.put(HierarchyConstants.HIER_NM_T, paramsMap.get("hierTargetName"));
 			String relValuesColumns = getRelationalValuesColumns(dataSource, fixedValuesMap);
-			// String insertOrigRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns + ") select  " + relValuesColumns
-			// + " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where " + hierNameTargetColumn + "= ? AND " + hierNameSourceColumn
-			// + "= ? and " + bkpColumn + "= ?";
 			String insertOrigRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns + ") select  " + relValuesColumns
 					+ " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where " + hierNameTargetColumn + "= ? and " + bkpColumn + "= ?";
 
@@ -935,23 +1024,19 @@ public class HierarchyUtils {
 					PreparedStatement preparedRelStatement = databaseConnection.prepareStatement(updateRelQuery);
 					PreparedStatement preparedInsRelStatement = databaseConnection.prepareStatement(insertOrigRelQuery)) {
 
-				preparedRelStatement.setString(1, (String) paramsMap.get("hierTargetName") + "_" + timestamp);
+				preparedRelStatement.setString(1, newHierName);
 				preparedRelStatement.setBoolean(2, true);
 				preparedRelStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
 				preparedRelStatement.setString(4, (String) paramsMap.get("hierTargetName"));
 				preparedRelStatement.setBoolean(5, false);
-				// preparedRelStatement.setString(5, (String) paramsMap.get("hierSourceName"));
 
 				preparedRelStatement.executeUpdate();
-				preparedRelStatement.close();
 
 				// duplicate original record for don't loose relations in the new version (insert from select)
 				preparedInsRelStatement.setString(1, (String) paramsMap.get("hierTargetName") + "_" + timestamp);
-				// preparedInsRelStatement.setString(2, (String) paramsMap.get("hierSourceName"));
 				preparedInsRelStatement.setBoolean(2, true);
 
 				preparedInsRelStatement.executeUpdate();
-				preparedInsRelStatement.close();
 
 				logger.debug("Insert original relations query successfully executed");
 
@@ -965,7 +1050,6 @@ public class HierarchyUtils {
 			logger.debug("Update relations query successfully executed");
 
 		}
-
 	}
 
 	/**

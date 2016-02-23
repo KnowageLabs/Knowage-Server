@@ -5,6 +5,8 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
@@ -133,11 +135,6 @@ public class HierarchyMasterService {
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
 			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
 
-			// ONLY FOR TEST
-			// optionalFilters =
-			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
-			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
-			// FINE TEST
 			if ((dimensionLabel == null) || (validityDate == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
 			}
@@ -170,9 +167,9 @@ public class HierarchyMasterService {
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
-
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					filterHierarchy, filterHierType, hierTableName, prefix);
+			boolean exludeHierLeaf = (filterHierarchy != null) ? true : false;
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters, filterDate,
+					filterHierarchy, filterHierType, hierTableName, prefix, exludeHierLeaf);
 
 			Iterator iterator = dataStore.iterator();
 
@@ -218,24 +215,14 @@ public class HierarchyMasterService {
 
 			String dimensionLabel = requestVal.getString("dimension");
 			String validityDate = requestVal.getString("validityDate");
+			String validityTreeDate = requestVal.getString("validityTreeDate");
+			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
 			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
 			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
-
-			// ONLY FOR TEST
-			// optionalFilters =
-			// "{\"DIM_FILTERS\":[{\"NAME\":\"Validity Hierarchy Date\",\"TYPE\":\"Date\",\"CONDITION1\":\" BEGIN_HIER_DT <= \",\"CONDITION2\":\" END_HIER_DT >= \", VALUE:\"2016-02-16\"},"
-			// + "{\"NAME\":\"Validity After Date\",\"TYPE\":\"Date\",\"DEFAULT\":\"\",\"CONDITION1\":\" BEGIN_DT >= \", VALUE:\"2014-02-16\"}]}";
-			// JSONObject requestVal = null;
-			// String dimensionLabel = "CDC";
-			// String validityDate = "2016-02-17";
-			// String filterHierarchy = "anto1";
-			// String filterHierType = "MASTER";
-			// String optionalFilters = "{\"DIM_FILTERS\":[]}";
-			String optionDate = null;
-			String optionHierarchy = null;
-			String optionHierType = null;
-			// FINE TEST
+			String optionDate = (requestVal.isNull("optionDate")) ? null : requestVal.getString("optionDate");
+			String optionHierarchy = (requestVal.isNull("optionHierarchy")) ? null : requestVal.getString("optionHierarchy");
+			String optionHierType = (requestVal.isNull("optionHierType")) ? null : requestVal.getString("optionHierType");
 
 			if ((dimensionLabel == null) || (validityDate == null)) {
 				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master", "wrong request parameters");
@@ -248,7 +235,6 @@ public class HierarchyMasterService {
 			}
 
 			dbConnection = dataSource.getConnection();
-			dbConnection.setAutoCommit(false);
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
@@ -270,42 +256,82 @@ public class HierarchyMasterService {
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
 
+			// read original configuration of MASTER table from DB
 			String masterConfig = getHierMasterConfig(dataSource, dbConnection, filterHierarchy);
+			if (masterConfig == null) {
+				logger.error("Impossible synchronize the hierarchy. Original configuration not found!");
+				throw new SpagoBIServiceException("Error",
+						"Impossible synchronize the hierarchy. Original configuration not found. Probably the hierarchy was created throught external tools.");
+			}
+			requestVal = new JSONObject(masterConfig);
 
+			// 2 - Get the dimension datastore (throught the input parameters): it will be used to create the new version of the hierarchy
+			boolean exludeHierLeaf = false;
+			String hierNameForDim = null; // hiername for fil
+			if (optionHierarchy != null) {
+				exludeHierLeaf = true;
+				hierNameForDim = optionHierarchy;
+			}
+			IDataStore dsNewDimensions = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
+					hierNameForDim, filterDate, filterHierType, hierTableName, prefix, exludeHierLeaf);
+
+			// 3 - Get the dimension leaves already present into the original Hierarchy
+			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
+					optionalFilters, filterDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
+
+			// 4 - Iterate on the dimensions' leaves used by the hierarchy datastore and check if the record is present into the dimension datastore:
+			// If it exists do nothing (get the new last)
+			// If it doesn't exist add the original record into the dimension datatore (merge action)
+			IMetaData metaDim = dsDimensionsFromHier.getMetaData();
+			int posCD = -1;
+			for (int i = 0; i < metaDim.getFieldCount(); i++) {
+				IFieldMetaData fieldMeta = metaDim.getFieldMeta(i);
+				if (fieldMeta.getName().equals(prefix + HierarchyConstants.DIM_FILTER_FIELD)) {
+					posCD = i;
+					break;
+				}
+			}
+			if (posCD == -1) {
+				logger.error("Impossible synchronize the hierarchy.");
+				throw new SpagoBIServiceException("Error", "Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD
+						+ " not found into the resultset. ");
+			}
+
+			Iterator iterFromHier = dsDimensionsFromHier.iterator();
+			while (iterFromHier.hasNext()) {
+				// iterate on dimension records
+				IRecord hierRecord = (IRecord) iterFromHier.next();
+				IField f = hierRecord.getFieldAt(posCD);
+				List recs = dsNewDimensions.findRecords(posCD, f.getValue());
+				if (recs.size() == 0) {
+					dsNewDimensions.appendRecord(hierRecord);
+				}
+			}
+			// begin transaction
+			dbConnection.setAutoCommit(false);
 			// 1 - Backup the original hierarchy (always)
-			HashMap<String, Object> paramsMap = new HashMap<String, Object>();
-			paramsMap.put("validityDate", validityDate);
+			HashMap paramsMap = new HashMap();
+			paramsMap.put("validityDate", validityTreeDate);
 			paramsMap.put("hierarchyTable", hierTableName);
 			paramsMap.put("hierTargetName", filterHierarchy);
 			paramsMap.put("hierTargetType", filterHierType);
-			paramsMap.put("doPropagation", true); // for default try to backup relations between MASTER and TECHNICAL
-			// HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
-			//
-			// // 2 - Get the original Hierarchy
-			// IDataStore dsHierarchy = HierarchyUtils.getHierarchyDataStore(dataSource, dimensionLabel, filterHierType, filterHierarchy, validityDate, null,
-			// optionDate, optionHierarchy, optionHierType);
-			//
-			// // 3 - Get the dimension datastore: it will be used to create the new version of the hierarchy
-			// IDataStore dsDimension = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-			// filterHierarchy, filterHierType, hierTableName, prefix);
+			paramsMap.put("doPropagation", true);
 
-			// 4 - Iterate on the hierarchy datastore and check if the record is present into the dimension datastore:
-			// If it exists do nothing
-			// If it doesn't exist add the original record into the dimension datatore (merge)
+			HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
 
-			// 5 - insert the new (merged) hierarchy
-			// Iterator iterator = dsDimension.iterator();
-			// while (iterator.hasNext()) {
-			// // iterate on dimension records
-			// IRecord record = (IRecord) iterator.next();
-			// insertHierarchyMaster(dbConnection, dataSource, record, dsDimension, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
-			// dimensionName, validityDate, hierConfig);
-			// }
+			// 5 - insert the new hierarchy (merged)
+			Iterator iterFromDim = dsNewDimensions.iterator();
+			while (iterFromDim.hasNext()) {
+				// iterate on dimension records
+				IRecord record = (IRecord) iterFromDim.next();
+				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
+						dimensionName, validityDate, hierConfig);
+			}
 
 			dbConnection.commit();
 
 		} catch (Throwable t) {
-			if (dbConnection != null && !dbConnection.isClosed()) {
+			if (dbConnection.getAutoCommit() == false && dbConnection != null && !dbConnection.isClosed()) {
 				dbConnection.rollback();
 			}
 			logger.error("An unexpected error occured while retriving dimension data");

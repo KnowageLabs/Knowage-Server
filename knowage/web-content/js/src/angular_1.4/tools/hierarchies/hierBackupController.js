@@ -143,6 +143,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var config = {
 					params : {
 						dimension: dim.DIMENSION_NM,
+						hierarchyCode: hier.HIER_CD,
 						hierarchyName: hier.HIER_NM,
 						hierarchyType: type
 					}
@@ -202,6 +203,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 		if (dim && backup){
 			var item = {
 					dimension: dim.DIMENSION_NM,
+					code: backup.HIER_CD,
 					name: backup.HIER_NM
 					};
 			var title = $scope.translate.load("sbi.generic.confirmRestore");
