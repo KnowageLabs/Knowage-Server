@@ -41,10 +41,7 @@
         </property> 
         <property name="sbiVersionDe" type="string">
             <column name="SBI_VERSION_DE" length="10" not-null="false" />
-        </property>                 
-        <property name="organization" type="string">
-            <column name="ORGANIZATION" length="20" not-null="false" />
-        </property>  			 
+        </property>			 
   </component> 
   
         <many-to-one name="sbiUser" class="it.eng.spagobi.profiling.bean.SbiUser" update="false" insert="false" >
