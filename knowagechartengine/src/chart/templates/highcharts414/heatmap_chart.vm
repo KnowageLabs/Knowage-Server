@@ -140,8 +140,14 @@
   		}
   },
   
- 	colors: 
- 	[ 	 
+ 	#*
+    	TODO: Add comments: when there are no colors set inside the color palette.
+    	
+    	Danilo
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
+    colors: [	 
  		#*
  			If user specified more than one color from the color palette
  			on the Designer when creating the chart, then we have an array
@@ -194,6 +200,9 @@
 			
 		#end		
     ],
+ 	#else
+    	colors: {},
+	#end
  
  	emptymessage:
 	{

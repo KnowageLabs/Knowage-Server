@@ -75,18 +75,23 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		hidden: ChartUtils.isChartHeightDisabled()  // added by: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
         
+        /**
+         * TODO: Insert comments
+         * Danilo
+         */
         this.heightDimTypePicker = 
         {
         	xtype: "combo",
         	
-        	store: {
-                fields: [ 'typeValue', 'typeAbbr' ],
-                
+        	store: 
+        	{
+                fields: [ 'typeValue', 'typeAbbr' ],                
                 data: [ {"typeValue": "px", "typeAbbr":'pixels'}, {"typeValue": "%","typeAbbr":'percentage'} ]
             },
             
-            displayField : 'typeValue',
-            valueField : 'typeAbbr',
+            displayField: 'typeValue',
+            valueField: 'typeAbbr',
+            value: Sbi.settings.chart.configurationStep.defaultDimensionType,
             bind : '{configModel.heightDimType}',
             fieldLabel : "",          
             editable : false,            
@@ -106,6 +111,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		hidden: ChartUtils.isChartWidthDisabled() // modifiedby: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
     	};
         
+        /**
+         * TODO: Insert comments
+         * Danilo
+         */
         this.widthDimTypePicker = 
         {
         	xtype: "combo",
@@ -118,6 +127,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             
             displayField : 'typeValue',
             valueField : 'typeAbbr',
+            value: Sbi.settings.chart.configurationStep.defaultDimensionType,
             bind : '{configModel.widthDimType}',
             fieldLabel : "",          
             editable : false,            

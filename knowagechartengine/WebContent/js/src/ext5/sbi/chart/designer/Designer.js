@@ -312,6 +312,39 @@ Ext.define('Sbi.chart.designer.Designer', {
 			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
 			
 			/**
+			 * TODO: Add comments
+			 * 
+			 * Reconfiguration of the COLOR tag of the COLORPALETTE so when there is a single
+			 * color inside the Color palette element we would have an array with the single 
+			 * object (color element) instead of current object. The problem starts when merging
+			 * the basicTemplate that has an array of colors and the jsonTemplate that comes with
+			 * an object (instead of an array).
+			 * 
+			 * Danilo
+			 */
+			/**
+			 * Checking the number of properties inside the COLOR tag of the COLORPALETTE. If there is
+			 * at least one property in it, that is enough to treat it as a object.
+			 */
+			var colorPaletteConfig = jsonTemplate.CHART.COLORPALETTE;
+			
+			/**
+			 * Number of properties inside the object
+			 */
+			var numOfObjectsProps = (colorPaletteConfig && colorPaletteConfig.COLOR && colorPaletteConfig.COLOR!=null
+									 && !Array.isArray(colorPaletteConfig.COLOR)) ? 
+										Object.getOwnPropertyNames(colorPaletteConfig.COLOR).length : 0;
+			
+			if (colorPaletteConfig && 
+					colorPaletteConfig.COLOR && 
+						numOfObjectsProps>0 &&
+							colorPaletteConfig.COLOR.length==undefined)
+			{
+				var source = jsonTemplate.CHART.COLORPALETTE.COLOR;
+				jsonTemplate.CHART.COLORPALETTE.COLOR = Sbi.chart.designer.ChartUtils.convertObjectToArray(source);
+			}
+			
+			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
 			 * (of type BAR) in order to make the union of all of the JSON elements within
 			 * these two types - the base one and the current one. 			 
@@ -573,30 +606,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */			
 			this.chartTypeSelector.on
 			(
-				"resetStep2",
+				"updateConfigurationTab",
 				
 				function() 
 				{	
 					/**
 					 * Get the main configuration panel (the one on the top of the Step 2 tab of the Designer page)
 					 * and the second configuration panel (everything under the main panel).
-					 */					
+					 */		
 					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
 					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);	
-					
-					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
-//					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
-					
+						
+//					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
+					var chartLegendCheckBox = Ext.getCmp("showLegend");
 //					var chartWidth = mainConfigurationPanel.getComponent("widthFieldset");	
 					var chartOrientation = mainConfigurationPanel.getComponent("chartOrientationCombo");
 					//var chartWidth = mainConfigurationPanel.getComponent("chartWidthNumberfield");	
-					
+						
 					/**
 					 * The main configuration panel element (opacity on mouse over) to show
 					 * on the Step 2 main configuration panel when the SUNBURST is selected.
 					 */
 					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
-					
+						
 					/**
 					 * "Show table" checkbox for the PARALLEL chart serves as a indicator of
 					 * whether the PARALLEL table should be shown when rendering the chart.
@@ -604,7 +636,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Cofiguration tab of the Designer.
 					 */
 					var showTableParallel = mainConfigurationPanel.getComponent("showTableParallel");
-					
+							
 					/**
 					 * The additional second configuration panel elements to show when the SUNBURST is selected.
 					 */
@@ -613,12 +645,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 //					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
 					var sunburstToolbar = secondConfigurationPanel.getComponent("chartToolbar");
 					var sunburstTip = secondConfigurationPanel.getComponent("chartTip");
-
+						
 					/**
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
 					 */
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
-					
+						
 					/**
 					 * The additional second configuration panel elements to show when the PARALLEL is selected.
 					 */
@@ -627,24 +659,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
 					var parallelLegendTitlePanel = secondConfigurationPanel.getComponent("chartParallelLegendTitle");
 					var parallelLegendElementPanel = secondConfigurationPanel.getComponent("chartParallelLegendElement");
-					
+						
 					/**
 					 * The second configuration panel element for hiding/showing when the SCATTER is selected.
 					 */
 					var scatterConfiguration = secondConfigurationPanel.getComponent("chartScatterConfiguration");
-					
+						
 					/**
 					 * The additional second configuration panel element to show when the HEATMAP is selected.
 					 */
 //					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
 					var showHeatmapLegend = secondConfigurationPanel.getComponent("chartHeatmapLegend");
 					var showHeatmapTooltip = secondConfigurationPanel.getComponent("chartHeatmapTooltip");
-					
+						
 					/**
 					 * The additional second configuration panel element to show when the GAUGE is selected.
 					 */
 					var gaugePanePanel = secondConfigurationPanel.getComponent("gaugePaneConfiguration");
-									
+											
 					/**
 					 * Determine which is the newly chosen chart type in order to show/hide
 					 * suitable GUI elements on the Step 2 (and Step 1, only for the GAUGE
@@ -669,6 +701,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Show/hide the legend check box (show/hide the legend) on the 
 					 * main configuration panel on the Step 2 tab of the Designer page.
 					 */
+					//globalThis.chartTypeSelector.suspendEvents(false); 
+					
 					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge 
 								|| isChartChord) {	
@@ -819,7 +853,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						globalThis.bottomXAxisesPanel.show();
 						gaugePanePanel.hide();
 					}
-
+					
+					//globalThis.chartTypeSelector.resumeEvents();
+					
 					/**
 					 * This is JSON template that we take form the Advance editor (previously, Step 3)
 					 * so we can be up-to-date with current structure of the document inside the Designer.
@@ -3564,7 +3600,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * TREEMAP, WORDCLOUD and CHORD charts need exactly one serie item.
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.exactlyOne') + '<br>';
+					errorMsg += LN('sbi.chartengine.validation.addserie.exactlyOne');
 				}
 				else if (chartType == "PARALLEL")
 				{
@@ -3572,11 +3608,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * PARALLEL chart needs at least two serie items.
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
+					errorMsg += LN('sbi.chartengine.validation.addserie.atLeastTwo');
 				}
 				else
 				{
-					errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
+					errorMsg += LN('sbi.chartengine.validation.addserie');
 				}
 				
 			}
@@ -3588,7 +3624,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * PARALLEL chart needs at least two serie items.
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
+					errorMsg += LN('sbi.chartengine.validation.addserie.atLeastTwo');
 				}
 			}
 			
@@ -3609,26 +3645,26 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (categoriesAsJson.length != 1)
 					{
-						errorMsg += "- " + LN("sbi.chartengine.validation.exactlyOneCategory") + '<br>'; 
+						errorMsg += LN("sbi.chartengine.validation.exactlyOneCategory"); 
 					}
 				}
 				else if (chartType == "HEATMAP" || chartType == "CHORD")
 				{
 					if (categoriesAsJson.length != 2)
 					{
-						errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
+						errorMsg += LN("sbi.chartengine.validation.exactlyTwoCategories"); 
 					}
 				}
 				else if (chartType == "TREEMAP" || chartType=="SUNBURST")
 				{
 					if (categoriesAsJson.length < 2)
 					{
-						errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
+						errorMsg += LN("sbi.chartengine.validation.atLeastTwoCategories");
 					}
 				}
 				else if (categoriesPicked==null || categoriesPicked.length==0)
 				{
-					errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
+					errorMsg += LN('sbi.chartengine.validation.addcategory');
 				}				
 			}			
 				
@@ -6057,11 +6093,9 @@ Ext.define('Sbi.chart.designer.Designer', {
     				if((selectedChartType == 'pie' && (serieType != '' && serieType != 'pie')) || 
     					((selectedChartType == 'bar' || selectedChartType == 'line') && (serieType == 'pie'))) {
     					
-						errorMsg += "- " 
-							+ Sbi.locale.sobstituteParams(
+						errorMsg += Sbi.locale.sobstituteParams(
 								LN('sbi.chartengine.validation.wrongserietype'), 
-								[selectedChartType, serieType, serieColumn, serieName]) 
-							+ '<br>';
+								[selectedChartType, serieType, serieColumn, serieName]);
     				}
     			}
     		}

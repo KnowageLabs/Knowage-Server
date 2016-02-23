@@ -101,7 +101,13 @@ Sbi.settings.chart =
     	{
         	type:'hbox',
         	align:"center"
-		}
+		},
+	
+		/**
+		 * Set the default dimension type for dimensions of the chart (height and 
+		 * width) to be pixels ("px"). 
+		 */
+		defaultDimensionType: "px"
 	},
 	
 	/**

@@ -6,7 +6,7 @@
 
 		<generic>
 
-			<CHART height="" width="" isCockpitEngine="false" orientation="" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;" styleName="empty">
+			<CHART height="" heightDimType="" width="" widthDimType="" isCockpitEngine="false" orientation="" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;" styleName="empty">
 
 				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:;" text=""/>
 
@@ -54,7 +54,7 @@
 		</generic>
 
 		<wordcloud>
-			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding=''/>
+			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' wordLayout='' maxWords='' minAngle='' preventOverlap='' sizeCriteria='' wordPadding=''/>
 		</wordcloud>
 
 		<bar>
@@ -144,7 +144,7 @@
 
 				<AXES_LIST>
 
-					<AXIS lineColor="" lineWidth="" max=""  min="" minorTickColor="" minorTickLength="" minorTickPosition="" minorTickWidth=""
+					<AXIS lineColor="" lineWidth="" minorTickColor="" minorTickLength="" minorTickPosition="" minorTickWidth=""
 		         offset="" minorTickInterval="" tickColor="" tickLength="" type='Serie'
 		         tickPixelInterval="" tickPosition="" tickWidth="" style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:;">
 

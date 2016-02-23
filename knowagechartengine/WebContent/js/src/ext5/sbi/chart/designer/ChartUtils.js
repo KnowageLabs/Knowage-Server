@@ -330,7 +330,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			result['CHART'] = CHART;
 
-			//console.log(result); 
+			// RESULT SHOW
+//			console.log(result); 
 
 			return result;
 		},
@@ -880,10 +881,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			CHART['width'] = (chartModel.get('width') != undefined) ? 
 				chartModel.get('width') : '';
 				
+			/**
+			 * TODO: Add comments
+			 * + default cim type is px
+			 * Danilo
+			 */
 			CHART['heightDimType'] = (chartModel.get('heightDimType') != undefined) ? 
-					chartModel.get('heightDimType') : '';					
+					chartModel.get('heightDimType') : Sbi.settings.chart.configurationStep.defaultDimensionType;					
 			CHART['widthDimType'] = (chartModel.get('widthDimType') != undefined) ? 
-					chartModel.get('widthDimType') : '';
+					chartModel.get('widthDimType') : Sbi.settings.chart.configurationStep.defaultDimensionType;
 				
 			/**
 			 * Set the visibility state of the border of the chart depending on the 
@@ -1455,7 +1461,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
    					 : false;
 				LIMIT['style'] = limitStyle;
 				LIMIT['groupByCategory']=groupByCategory;
-				
+
 				CHART['LIMIT'] = LIMIT;
 
 				var PARALLEL_TOOLTIP = {};
@@ -1838,13 +1844,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var jsonParallelTooltipStyle = null;
 			var jsonParallelLegendTitle = null;
 			var jsonParallelLegendElement = null;
-            
-            
+
 			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL') {
 								
 				jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? 
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LIMIT.style) : '';
-				
+
 				jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? 
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style) : '';
 					
@@ -1856,7 +1861,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ?
 						Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : '';
-						
 			}
 
 			if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD') {
@@ -1932,6 +1936,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			var colorPalette = [];
+			
+			
+			
 			if (jsonTemplate.CHART.COLORPALETTE
 				 && jsonTemplate.CHART.COLORPALETTE.COLOR) {
 				Ext.Array.each(
@@ -1948,16 +1955,25 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					});
 				});
 			}
-			
+		
 			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
 				/**
 				 * Generic parameters for charts. They are common for all chart types.
-				 * @commentBy: danristo (danilo.ristovski@mht.net)
+				 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				height : jsonTemplate.CHART.height,
 				width : jsonTemplate.CHART.width,
-				heightDimType: jsonTemplate.CHART.heightDimType,
-				widthDimType: jsonTemplate.CHART.widthDimType,
+				
+				/**
+				 * TODO: Add comments 
+				 * + default dim type is px
+				 * Danilo
+				 */
+				heightDimType: (jsonTemplate.CHART.heightDimType && jsonTemplate.CHART.heightDimType!="") ? 
+									jsonTemplate.CHART.heightDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
+				widthDimType: (jsonTemplate.CHART.widthDimType && jsonTemplate.CHART.widthDimType!="") ? 
+									jsonTemplate.CHART.widthDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
+									
 				orientation : jsonTemplate.CHART.orientation ? 
 						jsonTemplate.CHART.orientation : 'vertical',
 				backgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),
@@ -2027,6 +2043,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
                 wordLayout: jsonTemplate.CHART.wordLayout,
                 preventOverlap: jsonTemplate.CHART.preventOverlap,
+				
 				/**
 				 * Added for the SUNBURST chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -2065,6 +2082,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				serieFilterColumn : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : null,
 				orderTopMinBottomMax : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : null,
                 groupByCategory:jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : false,
+				
 				/**
 				 * Added for the PARALLEL chart (AXES_LINES tag)
 				 * (danilo.ristovski@mht.net)
@@ -2748,7 +2766,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return newTarget;
 			
 		},
-
+		
 		removeNotFoundItems : function (target, source) {
 			var newTarget = ChartUtils.clone(target);
 
@@ -2770,6 +2788,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 		stringEndsWith: function(string, suffix) {
 		    return suffix == '' || string.slice(-suffix.length) == suffix;
+		},
+		
+		/**
+		 * TODO: Added 23.02
+		 * 
+		 * Danilo
+		 */
+		convertObjectToArray: function(source)
+		{
+			var tempObject = [];
+			tempObject.push(source);
+			
+			return tempObject;
 		}
 	}
 });

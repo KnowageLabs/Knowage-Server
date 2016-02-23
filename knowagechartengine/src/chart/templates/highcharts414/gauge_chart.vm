@@ -13,6 +13,21 @@
 *#
 #set($seriesColorsMap = $chart.COLORPALETTE.COLOR)
 
+#*
+	If the color palette is not empty and if the data structure of the palette is HashMap, 
+	which means that it contains a single color, take that map and put it inside the list
+	so we can proceed equally in this case as it (palette) contains more than one color.
+	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#if("$!seriesColorsMap"!="" && $seriesColorsMap.class.name == "java.util.LinkedHashMap")
+
+	#set($seriesColorsMapTemp = [])
+	#set($workAroundNoPrint = $seriesColorsMapTemp.add($seriesColorsMap))	
+	#set($seriesColorsMap = $seriesColorsMapTemp)
+	
+#end
+
 #set($rows = $data.rows) ## data in table rows
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
@@ -35,7 +50,7 @@
 			in the case where we have more than one Y-axis ticks on lines 
 			will have wrong values.
 			
-			@author: danristo (danilo.ristovski@mht.net)
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		*#
 		alignTicks: false,
 
@@ -458,7 +473,24 @@
     	#set($counterYAxis = 0)
     	#set($seriesCounter = 0)
     	#set($seriesDataLabelsCounter = 0)
-    	#set($relatedSerieColor = "#000000")
+    	
+    	#*
+    		Color that will be taken by the current serie and all its' elements (dial, data labels,
+    		tooltip). It will be determined basing on the following code.
+    		
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+    	#set($relatedSerieColor = "") 
+    	
+    	#*
+    		Counter for colors that are taken from the color palette already. This is important
+    		because when there is no color provided for the current serie item, the next available
+    		in the palette is taken as the serie color. When all available colors are taken from the
+    		palette, the empty value (string) will be set as a color value (Highcharts now takes care).
+    		    		
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+    	#set($colorFromPaletteCounter = 0)
     	
     	#foreach($valueKey in $seriesMap.keySet())
     	
@@ -468,34 +500,45 @@
 		    	name: '$relatedSerie.name',
 		    	
 		    	#*
-		    		If the color for the current serie is not defined by the
-		    		user, take the color from the appropriate place in the
-		    		color palette that is enabled for the GAUGE chart type.
-		    		Namely, take the first available color from the palette.
+		    		If the color for the current serie is not defined by the user, take the color from 
+		    		the appropriate place in the color palette that is enabled for the GAUGE chart type.
+		    		Namely, take the first available color from the palette. Otherwise, take the serie's
+		    		color value.
+		    		
 		    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		    	*#
-		    	#if($relatedSerie.color != "")
-		    	
+		    	#if($relatedSerie.color != "")		
+		    	    	
 		    		color: '$relatedSerie.color',
-		    		#set($relatedSerieColor = $relatedSerie.color)
-		    		
-		    	#else
-		    	
-		    		#*
-		    			If the color palette does not contain enough colors (items)
-		    			according to the number of series for which user did not 
-		    			provide a serie color, the Highcharts will take care of it.		    			
-		    			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		    		*#
-		    		#if ($seriesCounter <= ((-1) + $seriesColorsMap.size()))
-			    		color: '$seriesColorsMap[$seriesCounter].value',
-			    		#set($relatedSerieColor = $seriesColorsMap[$seriesCounter].value)
-		    		#else
-		    			color: "",
-		    			#set($relatedSerieColor = "")
+		    		#set($relatedSerieColor = $relatedSerie.color)	
+		    			    		
+		    	#else	
+		    		    
+    		    	#*
+    		    		If color palette is not empty, is array of colors and counter of already taken
+    		    		colors from the palette is not bigger than the number of items in the palette,
+    		    		take the color value from the first available palette element and set the color
+    		    		keeper for the current serie to this color value ("relatedSerieColor").
+    		    		
+    		    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    		    	*#		
+		    		#if ("$!seriesColorsMap"!="" && $seriesColorsMap.class.name == "java.util.ArrayList" && 		    				
+	    						$colorFromPaletteCounter<=(-1) + $seriesColorsMap.size())
+		    				
+		    				#set($relatedSerieColor = $seriesColorsMap[$colorFromPaletteCounter].value)	
+    						#set($colorFromPaletteCounter = $colorFromPaletteCounter+1)
+    						
+    				#else
+    					
+    					#*
+	    		    		Otherwise, set the color to an empty value.	    		    		
+	    		    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    		    		*#
+    					#set($relatedSerieColor = "")	
+    					
 		    		#end
 		    		
-		    		#set($seriesCounter = $seriesCounter+1)
+		    		color: '$relatedSerieColor',
 		    		
 		    	#end
 		    	
@@ -705,6 +748,8 @@
 	        },
 	    #end
 	],
+    
+    
     
     tooltip: {
         useHTML: true,

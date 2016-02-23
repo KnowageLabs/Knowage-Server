@@ -132,19 +132,56 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                        select : function(picker, selColor) {
 
 	                        	var order = 0;
+	                        	
+	                        	/**
+	                        	 * TODO: Check if this is ok
+	                        	 * 
+	                        	 * Needed for the adding a space to the panel that contains
+	                        	 * the palette when adding new color item. If the user is
+	                        	 * trying to add new color into the pallete that already 
+	                        	 * exists in it, do not provide additional space (this 
+	                        	 * new-old color will just be put at the end of the grid and
+	                        	 * the height of the panel remains). The result will be that
+	                        	 * these two variables contain the same value (same number of
+	                        	 * color items inside the palette).
+	                        	 * 
+	                        	 * Danilo
+	                        	 */
+	                        	var numberOfElementsStart = grid.store.data.length > 0 ? grid.store.data.length : 0;
+	                        	var numberOfElementsEnd = 0;
+	                        	
 	                        	if(grid.store.data && grid.store.data.items) {
-	                        		order = grid.store.data.length > 0? 
-	                        				grid.store.getAt(grid.store.data.items.length-1).get('order') + 1
+	                        		
+	                        		// Original
+//	                        		order = grid.store.data.length > 0 ? 
+//	                        				grid.store.getAt(grid.store.data.items.length-1).get('order') + 1
+//	                        				: 1;
+	                        				
+	                        		/**
+	                        		 * TODO: Check if its is ok 
+	                        		 * 
+	                        		 * Set the order value of the color inside the palette as the increment of
+	                        		 * the 'order' property value of the last existing color in it (palette).
+	                        		 * 
+	                        		 * Danilo
+	                        		 */
+	                        		order = grid.store.data.length > 0 ? 
+	                        				(Number(grid.store.getAt(grid.store.data.items.length-1).get('order')) + 1)+""
 	                        				: 1;
+	                        				
 	                        	}
 	                        	
-	                        	grid.store.add({
-	                        		id: 'addedColor_' + ChartConfigurationPalette.idSeed,
+	                        	grid.getStore().add({
+//	                        		id: ChartConfigurationPalette.idSeed,	// Original
+	                        		id: selColor,	// TODO: Check if its is ok (set the unique ID)
 	                            	gradient:'',
-	                            	name: 'addedColor_' + ChartConfigurationPalette.idSeed++,
+//	                            	name: ChartConfigurationPalette.idSeed++,	// Original
+	                            	name: selColor,	// TODO: Check if its is ok (set the unique name)
 	                            	order: order,
 	                            	value: selColor
 	                            });	
+	                        	
+	                        	numberOfElementsEnd = grid.store.data.length;
 	                        	
 	                        	/**
 	                    		 * When user click on the plus button, the color he picked will be added
@@ -156,7 +193,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    		 * 
 	                    		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                    		 */
-	                        	globalScope.height = globalScope.height + 20;
+	                        	// TODO: my change for handling extension of the height of the palette
+	                        	numberOfElementsEnd>numberOfElementsStart ? globalScope.height = globalScope.height + 20 : null;
 	    	                	globalScope.update();
 	    	                	
 	    	                	/**
@@ -177,6 +215,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                text: '-',
 	                handler: function(){
 	                    var selectedRows = grid.getSelectionModel().getSelection();
+	                    
 	                    if (selectedRows.length) {
 	                    	grid.store.remove(selectedRows);
 	                    } else {

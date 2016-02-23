@@ -88,6 +88,13 @@
         plotShadow: false
     },
     
+    #*
+    	TODO: Add comments: when there are no colors set inside the color palette.
+    	
+    	Danilo
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
     colors: [
 		#*
 			If user specifies at least 2 colors (class name of the structure that hold data
@@ -121,7 +128,9 @@
 			
 		#end
     ],
-    
+    #else
+    	colors: {},
+	#end
     
     title: {
         text: '$chart.TITLE.text',

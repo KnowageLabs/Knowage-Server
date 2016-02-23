@@ -6,7 +6,7 @@
 		
 		<generic>
 			
-			<CHART height="" width="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:Arial;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" styleName="basic">
+			<CHART height="" heightDimType="" width="" widthDimType="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:Arial;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" styleName="basic">
 	
 				<TITLE style="align:center;fontFamily:Arial;fontSize:20px;fontWeight:bold;color:#000000;" text="Insert your title"/>
 				
@@ -46,7 +46,7 @@
 				<VALUES>					
 					<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true">
 						<TOOLTIP backgroundColor=""
-							style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;" templateHtml=""/>
+							style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;"/>
 					</SERIE>
 				</VALUES>
 				
@@ -54,7 +54,7 @@
 		</generic>
 		
 		<wordcloud>
-			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' maxWords='100' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
+			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' wordLayout='horizontal' maxWords='100' preventOverlap='true' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
 		</wordcloud>
 		
 		<bar>
@@ -134,7 +134,7 @@
 		
 				<AXES_LIST>
 		
-					<AXIS lineColor="#000000" lineWidth="1" max="60"  min="1" minorTickColor="#000000" 	  minorTickLength="5" minorTickPosition="inside" minorTickWidth="1"
+					<AXIS lineColor="#000000" lineWidth="1" minorTickColor="#000000" minorTickLength="5" minorTickPosition="inside" minorTickWidth="1"
 			              offset="1" minorTickInterval="0.2" tickColor="#000000" tickLength="10" type='Serie'
 			              tickPixelInterval="10" tickPosition="inside" tickWidth="2" style="rotate:;align:;color:#000000;fontFamily:Arial;fontWeight:normal;fontSize:14px;opposite:false;">
 						  
@@ -143,7 +143,7 @@
 						<LABELS distance="35" rotation="1"/>
 				
 						<PLOTBANDS>
-							<PLOT color="#000000" from="20" to="40"/>
+							<PLOT color="" from="" to=""/>
 						</PLOTBANDS>
 					</AXIS>
 			
@@ -153,15 +153,13 @@
 			
 				</AXES_LIST>
 		
-				<PANE endAngle="121" startAngle="-121"/>
+				<PANE endAngle="120" startAngle="-120"/>
 		
 				<VALUES>
 	
 					<SERIE animation="true" color="#0000FF" pointInterval="1" postfixChar="aaa" precision="4" prefixChar="bbb" showInLegend="true"
 		                   showValue="true">
-						<TOOLTIP backgroundColor="#EEDDAA" style="color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;align:left" templateHtml="AAA"/>
-						<DIAL backgroundColorDial="#DDEEAA"/>
-						<DATA_LABELS colorDataLabels="#AA00AA" formatDataLabels="{y}" yPositionDataLabels="-10"/>
+						<TOOLTIP backgroundColor="#EEDDAA" style="color:#006699;fontFamily:Verdana;fontWeight:bold;fontSize:14px;align:left"/>
 					</SERIE>
 				
 				</VALUES>

@@ -110,7 +110,14 @@
   		}
  },
  
- colors: [
+ 	#*
+    	TODO: Add comments: when there are no colors set inside the color palette.
+    	
+    	Danilo
+    *#
+   	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
+   		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
+    colors: [
  	
  		#*
  			Since the Highcharts library for this chart defines default color
@@ -128,6 +135,9 @@
 			'$chart.COLORPALETTE.COLOR.value'
 		#end
     ],
+    #else
+    	colors: {},
+	#end
  
  	emptymessage: {
 		text: '$chart.EMPTYMESSAGE.text',
