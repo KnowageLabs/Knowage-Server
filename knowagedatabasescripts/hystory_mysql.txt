@@ -3043,3 +3043,6 @@ ALTER TABLE `SBI_PARAMETERS`
 -- 23.02.2015 Francesco Lucchi MySQL_drop.sql: 1) disabled foreign keys checks during DROP statement execution in order to avoid errors;
                                                2) removed "DROP TABLE hibernate_sequences CASCADE;" (duplicated).
                                                3) removed "DROP TABLE SBI_ORGANIZATION_ENGINE CASCADE;".
+											   4) added some DROPs.
+
+-- 23.02.2015 Francesco Lucchi Athena_mysql_drop.sql: added some DROPs.
