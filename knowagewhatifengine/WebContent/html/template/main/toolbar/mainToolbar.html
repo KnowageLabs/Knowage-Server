@@ -18,6 +18,12 @@
 			</md-tooltip>
 		</md-button>
 		
+		<md-button class="main-toolbar-button sorting-settings" ng-click="openSortingSettingsDialog(e)" >
+			<md-tooltip md-direction="bottom">
+				Sorting settings
+			</md-tooltip>
+		</md-button>
+		
 		<md-button class="main-toolbar-button">
 			Drill trough
 			<md-tooltip md-direction="bottom">
@@ -38,7 +44,7 @@
 				Show MDX
 			</md-tooltip>
 		</md-button>
-		<md-button ng-click="sortDisable()" class="main-toolbar-button">Disable Sorting</md-button>
+		<md-button ng-click="sortDisable()" class="main-toolbar-button" ng-hide="true">Disable Sorting</md-button>
 		<md-button ng-click="sortBDESC()" class="main-toolbar-button">BDESC</md-button>
 		
 

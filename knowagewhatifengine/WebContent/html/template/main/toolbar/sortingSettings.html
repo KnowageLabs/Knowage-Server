@@ -1,0 +1,20 @@
+<md-dialog style='height:30%; width:30%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>Sorting settings</p>
+	</md-toolbar>
+	
+	<md-content class="dialog-style">
+		<md-radio-group ng-model="sortingSetting">
+      			<md-radio-button value="true">True</md-radio-button>
+      			<md-radio-button value="false"> False </md-radio-button>
+    	</md-radio-group>
+    	
+		<md-dialog-actions layout="row">
+			<md-button ng-click="">
+				Save
+			</md-button>
+		</md-dialog-actions>
+	</md-content>
+	
+</md-dialog>

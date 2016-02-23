@@ -272,8 +272,15 @@ table tr:nth-child(even) {
 
 .sorting-d-btn{
 	background-image: url(../img/sorting-disabled.png);
+	background-size:23px 23px; 
 }
 
 .sorting-e-btn{
 	background-image: url(../img/sorting-enabled.png);
+		background-size:23px 23px; 
+}
+
+.sorting-settings{
+	background-image: url(../img/settings.png);
+	background-size:16px 16px;
 }
