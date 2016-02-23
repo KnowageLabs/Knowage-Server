@@ -1,3 +1,9 @@
+Insert in this file the history of DB Schema, only for PostgreSQL
+Every items must have:
+- The Developer who has made the change
+- The SQL script that updates the schema ( schema, index and FK )
+- The Date
+
 -- ##################################################################################################
 -- 	Before 2.0
 -- ##################################################################################################
@@ -2659,3 +2665,14 @@ CREATE TABLE SBI_OBJ_DATA_SET (
 
 -- 10.02.2015 Alessandro Portosa: changed the type of field NAME of SBI_CACHE_ITEM from all the DB scripts
 	e.g. ALTER TABLE SBI_CACHE_ITEM ALTER COLUMN NAME TEXT NOT NULL
+
+-- 23.02.2015 Francesco Lucchi PG_create.sql: 1) removed old columns from SBI_OBJECTS, SBI_DATA_SET, SBI_ORGANIZATION_DATASOURCE tables.
+                                              2) added SBI_FEDERATION_DEFINITION, SBI_DATA_SET_FEDERATION tables.
+                                              3) added constraints for SBI_DATA_SET_FEDERATION, SBI_DATA_SET, SBI_FEDERATION_DEFINITION tables.
+											  
+-- 23.02.2015 Francesco Lucchi PG_drop.sql: added DROP statements for SBI_OBJ_DATA_SET CASCADE, SBI_FEDERATION_DEFINITION CASCADE, SBI_DATA_SET_FEDERATION CASCADE tables.
+
+-- 23.02.2015 Francesco Lucchi Athena_pg_create.sql: added file.
+
+-- 23.02.2015 Francesco Lucchi Athena_pg_drop.sql: added file.
+
