@@ -119,6 +119,16 @@ function positionTheTooltip(chartHeight,chartWidth,ttText)
 	}*/
 }
 
+/**
+ * function returns array of ten colors that will be used by default 
+ * if no color is set in designer 
+ */
+function  getDefaultColorPalette(){
+	var defaultColors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', 
+	         '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'];
+	return defaultColors;
+}
+
 function renderWordCloud(chartConf,catchSVG){
 
 	var maxic = 0;
@@ -875,7 +885,7 @@ function renderWordCloud(chartConf,catchSVG){
     
 	function renderSunburst(jsonObject)
 	{
-		
+		console.log(jsonObject);
 		/*The part that we need to place into HTML (JSP) in order to attach 
 		 * given data to them - we are going to create it through D3 notation */
 				
@@ -1247,14 +1257,25 @@ function renderWordCloud(chartConf,catchSVG){
 //			 	"#FF9900"	// orange			 			 	
 //		 	];
 			
+			
+
 			var storeFirstLayerColor = new Array();
 			var allColorsLayered = new Array();
 			
-			var allColorsUserPicked = jsonObject.colors;
+			var allColorsUserPicked;
+			if(jsonObject.colors.length >0){
+				allColorsUserPicked= jsonObject.colors;
+				
+			}else{
+				allColorsUserPicked=getDefaultColorPalette();
+			}
 			
 			// START: TODO: maybe not necessary (danristo)
 			var differentLayersArray = new Array();
 			var numberOfLayers = -1;
+		   
+			//count of elements on layer 0 indicates how many colors are needed
+			var numberOfCategories=0;
 			
 			for (j=0; j<nodes.length; j++)
 			{
@@ -1263,7 +1284,23 @@ function renderWordCloud(chartConf,catchSVG){
 					differentLayersArray.push(nodes[j].layer);
 					numberOfLayers++;
 				}
+				
+				if(nodes[j].layer==0){
+					numberOfCategories++;
+				}
 			}
+			//if not enough colors specified fills from color pallete
+			
+			if(allColorsUserPicked.length < numberOfCategories ){
+				colorPalette=allColorsUserPicked;
+				picked=allColorsUserPicked.length;
+				for(i=0;i<numberOfCategories-picked;i++){
+					allColorsUserPicked.push(colorPalette[i%colorPalette.length]);
+					
+				}
+				
+			}
+			
 			// END : maybe not necessary
 						
 			for (p=0; p<allColorsUserPicked.length; p++)
@@ -1929,7 +1966,8 @@ function renderWordCloud(chartConf,catchSVG){
 
         var colors = [];
 
-		var colorsResponse = data.chart.colors;
+		var colorsResponse=data.chart.colors;
+		
 	
 	 var colorsResponseDec = Ext.decode(colorsResponse);
      
@@ -1938,6 +1976,10 @@ function renderWordCloud(chartConf,catchSVG){
 			colors.push(colorsResponseDec[i][i]);
 		
 		}
+     
+     if(colors.length == 0){
+    	 colors=getDefaultColorPalette();
+     }
 
      var myColors=d3.scale.ordinal().domain(groups).range(colors);
 
@@ -3454,10 +3496,17 @@ function renderChordChart(jsonData)
      * Number of row/column elements of the squared martix
      */
     var elemSize = jsonData.data[0].results;
+    
+    var colors;
+    if(jsonData.colors.length > 0){
+    	colors=jsonData.colors;
+    }else{
+    	colors=getDefaultColorPalette();
+    }
 	
 	var fill = d3.scale.ordinal()
     			.domain(d3.range(elemSize))
-				.range(jsonData.colors);
+				.range(colors);
 	
 	var randomId=  Math.round((Math.random())*10000);
 	

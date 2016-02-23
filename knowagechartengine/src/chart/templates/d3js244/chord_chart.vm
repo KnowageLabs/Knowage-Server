@@ -275,12 +275,14 @@
 				will take predefined value for the color (#000000) (else-case).	Otherwise, 
 				we will take the single value specified in the palette (if-case).
 				@author: danristo (danilo.ristovski@mht.net)
+				
+				If user does not specify any color inside the color palette
+				handled by renderD3, removed from velocity
+				@author: atomic (ana.tomic@mht.net)
 			*#
 			
 			#if ($chart.COLORPALETTE.COLOR)
 				'$chart.COLORPALETTE.COLOR.value'
-			#else
-				'#518BC6'
 			#end
 			
 		#end

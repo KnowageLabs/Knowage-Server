@@ -94,18 +94,20 @@
 	
 	#set($colorsRequired = [$colorsPallete.COLOR.value])	
 	
-#elseif(!$colorsPallete.COLOR.value && $colorCounter == 0)
+
 
 	#*
 		If user did not specify any color in color pallete of the
 		Designer, take this single predefined value for the color
 		of the lines (no matter how many of them there are on the
 		chart). The color value "#518BC6" is the default one.
-		
 		@author: danristo (danilo.ristovski@mht.net)
+		
+		this case is removed from velocity 
+		handled by renderD3
+		@author: atomic (ana.tomic@mht.net)
 	*#
 
-	#set($colorsRequired = ["#518BC6"])
 	
 #end
 
