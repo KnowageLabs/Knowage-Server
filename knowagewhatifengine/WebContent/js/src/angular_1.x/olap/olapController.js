@@ -87,6 +87,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	$scope.enableDisableSorting = function(){
 		$scope.sortingEnabled = !$scope.sortingEnabled;
+		$scope.sortDisable();
 	}
 	
 	$scope.changeDrillType = function(type){
@@ -544,7 +545,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				checkShift();
 			}
 		}
-		
 		
 	}
 
