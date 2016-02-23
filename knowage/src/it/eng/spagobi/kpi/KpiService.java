@@ -110,6 +110,15 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
+	/**
+	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
+	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
+	 * "1"},...]}
+	 * 
+	 * @param req
+	 * @return
+	 * @throws EMFUserError
+	 */
 	@POST
 	@Path("/queryPreview")
 	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
