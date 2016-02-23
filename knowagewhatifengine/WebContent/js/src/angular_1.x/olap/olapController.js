@@ -546,6 +546,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			}
 		}
 		
+		
 	}
 
 	$scope.dragSuccess = function(df, index) {

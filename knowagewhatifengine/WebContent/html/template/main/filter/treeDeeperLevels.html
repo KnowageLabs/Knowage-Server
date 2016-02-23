@@ -1,8 +1,10 @@
 <li ng-repeat="item in item.children"  >
 	<div>
-		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed" ng-click="expandTreeAsync(item)"> 
+			<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf" ng-click=""> 
 		</md-icon>
-		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed" ng-click="hideAsyncTree(item)"> 
+		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" ng-click="expandTreeAsync(item)"> 
+		</md-icon>
+		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
 		</md-icon> 
 		{{item.name}}
 		<ul  ng-model="item.children" ng-show="item.collapsed" ng-include="templateListChild">

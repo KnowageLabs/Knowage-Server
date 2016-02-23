@@ -13,7 +13,7 @@
 	<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
 		<div class="name">{{column.name}}</div>
 		<div class="action">
-			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e, column.uniqueName,column.axis,null)">
+			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
 				<md-icon md-font-icon="fa fa-filter"></md-icon>
 			</md-button>
 		</div>
