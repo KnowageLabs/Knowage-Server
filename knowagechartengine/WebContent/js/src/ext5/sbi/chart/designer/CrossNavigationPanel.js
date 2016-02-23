@@ -125,16 +125,16 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				    		xtype: 'button',
 				    		text: LN('sbi.chartengine.designer.crossnavigation.lookup'),
 				    		handler: function(obj) {
-//				    			var filterField = Ext.getCmp('filterField').getValue();
+				    			var filterField = Ext.getCmp('filterField').getValue();
 				    			
 				    			documentStore.load(
-//		    					{
-//				    				params: {
-//				    					'name': filterField,
-//				    					'label': filterField,
-//				    					'description': filterField
-//				    				}
-//				    			}
+		    					{
+				    				params: {
+				    					'name': filterField,
+				    					'label': filterField,
+				    					'description': filterField
+				    				}
+				    			}
 		    					);
 				    		}
 				    	}]
@@ -166,6 +166,8 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 			    	        		});
 			    	        		
 			    	        		CROSS_NAVIGATION_PANEL.documentName = record.data.label;
+
+			    	        		documentNameText.setValue(record.data.name);
 			    	        		
 			    	        		documentParamStore.load();
 	
