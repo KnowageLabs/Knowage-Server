@@ -202,9 +202,26 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			});	
 		  }
 	 
-	 $scope.sortBASC = function(){
+	 $scope.sortDisable = function(){
 		 
-		 sbiModule_restServices.promiseGet("1.0","/member/sort/1/0/[[Measures].[Unit Sales]]/BASC?SBI_EXECUTION_ID="+JSsbiExecutionID)
+		 sbiModule_restServices.promiseGet("1.0","/member/sort/disable?SBI_EXECUTION_ID="+JSsbiExecutionID)
+			.then(function(response) {
+				   $scope.table = $sce.trustAsHtml( response.data.table);
+				   $scope.rows = response.data.rows;
+				   $scope.columns = response.data.columns;
+				   $scope.filterCardList = response.data.filters;
+				   $scope.showMdxVar = response.data.mdxFormatted;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+			});	
+		  }
+	 
+	 /** dragan  sorting */
+	 
+	  $scope.sort = function(axisToSort,axis,positionUniqueName,sortType){
+		 
+		 sbiModule_restServices.promiseGet("1.0",'/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+'B'+sortType+'?SBI_EXECUTION_ID='+JSsbiExecutionID)
 			.then(function(response) {
 				   $scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.rows = response.data.rows;
