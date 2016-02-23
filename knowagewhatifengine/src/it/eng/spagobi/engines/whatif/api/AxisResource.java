@@ -66,8 +66,13 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		} else {
 			transform.setSwapAxes(true);
 		}
-
-		model.setSubset(model.getCellSet().getAxes().get(1), 0, 15);
+		model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
