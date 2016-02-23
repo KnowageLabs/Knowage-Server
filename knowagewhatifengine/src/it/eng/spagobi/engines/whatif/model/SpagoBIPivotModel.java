@@ -195,6 +195,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	 */
 	@Override
 	public void refresh() {
+
 		super.refresh();
 		this.setCellSetWrapper(null);
 	}
@@ -313,8 +314,22 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		QueryAxis qa = getQueryAxis(axis);
 		FunCall f = getSubSetFunction(qa);
 
-		Exp exp = f.getArgs().get(0);
-		qa.setExp(exp);
+		if (f.getFunction().equalsIgnoreCase("Subset")) {
+			Exp exp = f.getArgs().get(0);
+			qa.setExp(exp);
+		}
+		fireModelChanged();
+
+	}
+
+	public void removeOrder(CellSetAxis axis) {
+		QueryAxis qa = getQueryAxis(axis);
+		FunCall f = getSubSetFunction(qa);
+		if (f.getFunction().equalsIgnoreCase("Order")) {
+			Exp exp = f.getArgs().get(0);
+			qa.setExp(exp);
+		}
+
 		fireModelChanged();
 
 	}
