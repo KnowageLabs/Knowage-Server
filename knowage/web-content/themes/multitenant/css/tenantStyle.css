@@ -1,3 +1,10 @@
+.loading-message {
+    z-index: 100;
+    top: 50%;
+    left: 40%;
+    position: absolute;
+}
+
 #listItemTemplate:hover {
 	color: #0099CC;
 	background-color: #FFFFFF;

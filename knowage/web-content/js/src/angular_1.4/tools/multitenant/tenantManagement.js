@@ -2,10 +2,10 @@
 var app = angular.module('tenantManagementApp',['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                 'sbiModule','angular_2_col']);
 		
-app.controller('Controller', ['sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
+app.controller('Controller', ['$timeout','sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
 
 
-function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageTenantFunction($timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
 	
 	var path = "multitenant";
 	$scope.log = sbiModule_logger;
@@ -21,7 +21,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	
 	$scope.datasourcesSelected = [];
 	$scope.productsSelected = [];
-	
+	$scope.loadinMessage = false;
 	$scope.idx_tab = 0;
 	$scope.showForm = false;
 	$scope.indexOf = function(myArray, myElement) {
@@ -120,6 +120,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			form.$setPristine();
 		}
 		$scope.idx_tab = 0;
+		$scope.showForm= false;
 	};
 	
 	$scope.solveMissingId = function (tenant){
@@ -134,6 +135,9 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 				} else{
 					$scope.showAlert('ERROR', ' Impossible to insert Tenant');
 				}
+				$scope.showLoading(false);
+			}).error(function(data,status){
+				$scope.showLoading(false);
 			})
 	};
 	
@@ -225,6 +229,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 			newTenant.DS_LIST.push({ "ID" : ""+$scope.datasourcesSelected[i].ID, "LABEL" : ""+$scope.datasourcesSelected[i].LABEL, "DESCRIPTION" : ""+$scope.datasourcesSelected[i].DESCRIPTION });
 		}
 		$scope.newTenant = newTenant;
+		$scope.showLoading(true);
 		sbiModule_restServices.post(path,"save",angular.toJson(newTenant)).success(function(data){
 			if (data.errors === undefined){
 				var tenantReceived = angular.fromJson(data);
@@ -242,23 +247,33 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 						var name = newTenant.MULTITENANT_NAME;
 						var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name.toLowerCase()+'_admin"';
 						$scope.showAlert('INFO - '+ name , message);
+						$scope.showLoading(false);
 					}
 				}else{
 					//updating the table
 					var idx = $scope.indexOf($scope.tenants,newTenant);
 					$scope.tenants[idx]=angular.copy(newTenant);
 					var name = newTenant.MULTITENANT_NAME;
-					var message = $scope.translate.load('sbi.multitenant.saved') + ' "' +name.toLowerCase()+'_admin"';
+					var message = $scope.translate.load('sbi.multitenant.updated');
 					$scope.showAlert('INFO - '+ name , message);
+					$scope.showLoading(false);
 					}
 			}else{
 				$scope.showAlert('ERROR', 'Impossible to save tenant');
+				$scope.showLoading(false);
 			}
+			//$scope.resetForm(form);
 			
-			$scope.resetForm(form);
-			
+		}).error(function(data,status){
+			$scope.showLoading(false);
 		});
 	};
+	
+	$scope.showLoading = function(value){
+		$timeout(function(){
+			$scope.loadinMessage = value;
+		},0,true);
+	}
 	
 	//Create an alert dialog with a message
 	$scope.showAlert = function (title, message){

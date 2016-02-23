@@ -59,8 +59,14 @@
 			  </left-col>
 			  
 			  <right-col>
-			  	<form name="tenantForm" novalidate>		  
-				  <div ng-show="showForm">
+			  	<form name="tenantForm" novalidate>	
+			  	  <div  ng-show="loadinMessage" class="loading-message">
+						<i class="fa fa-spinner fa-spin fa-5x"></i>
+							<span class="">
+							{{translate.load("sbi.generic.wait");}} 
+							</span>
+			  	  </div> 
+				  <div ng-show="showForm && !loadinMessage">
 					<md-content layout="column" >
 						<md-toolbar class="md-blue minihead">
 							<div class="md-toolbar-tools h100 ">
