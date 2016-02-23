@@ -29,6 +29,8 @@ public interface IDataSource {
 
 	IModelStructure getModelStructure(UserProfile profile);
 
+	IModelStructure getModelStructure(boolean getFullModel);
+
 	IModelAccessModality getModelAccessModality();
 
 	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality);
@@ -46,4 +48,5 @@ public interface IDataSource {
 	ITransaction getTransaction();
 
 	IPersistenceManager getPersistenceManager();
+
 }

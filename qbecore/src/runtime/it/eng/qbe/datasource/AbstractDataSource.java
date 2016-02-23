@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
  * @author Andrea Gioia
  */
 public abstract class AbstractDataSource implements IDataSource {
+	public static final String ALL_FIELDS_ACCESSIBLE = "_ALL_FIELD_ACCESSIBLE_";
 
 	protected String name;
 	protected IDataSourceConfiguration configuration;
@@ -99,6 +100,11 @@ public abstract class AbstractDataSource implements IDataSource {
 
 	@Override
 	public IModelStructure getModelStructure(UserProfile profile) {
+		return getModelStructure();
+	}
+
+	@Override
+	public IModelStructure getModelStructure(boolean getFullModel) {
 		return getModelStructure();
 	}
 

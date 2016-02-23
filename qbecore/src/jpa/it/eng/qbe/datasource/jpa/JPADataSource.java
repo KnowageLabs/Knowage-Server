@@ -62,7 +62,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (configuration instanceof FileDataSourceConfiguration) {
 			this.configuration = configuration;
 		} else if (configuration instanceof CompositeDataSourceConfiguration) {
-			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations().get(0);
+			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations()
+					.get(0);
 			if (subConf instanceof FileDataSourceConfiguration) {
 				this.configuration = subConf;
 				this.configuration.loadDataSourceProperties().putAll(configuration.loadDataSourceProperties());
@@ -86,7 +87,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
+	 * @see
+	 * it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang
+	 * .String)
 	 */
 	@Override
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
@@ -154,7 +157,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		IDataSource dataSource = (IDataSource) configuration.loadDataSourceProperties().get("datasource");
 		// FOR SPAGOBIMETA
 		if (dataSource == null) {
-			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties().get("connection");
+			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties()
+					.get("connection");
 			if (connectionDescriptor != null) {
 				dataSource = connectionDescriptor.getDataSource();
 			}
@@ -174,8 +178,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 			List<Filter> filtersOnProfileAttributes = getFiltersOnProfileAttributes();
 			if (!filtersOnProfileAttributes.isEmpty() || !fieldsFilteredByRole.isEmpty()) {
-				logger.debug("One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
-				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes, fieldsFilteredByRole, profile));
+				logger.debug(
+						"One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
+				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes,
+						fieldsFilteredByRole, profile));
 			}
 		}
 		return dataMartModelStructure;
@@ -184,6 +190,16 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	@Override
 	public IModelStructure getModelStructure() {
 		return getModelStructure(userProfile);
+	}
+
+	@Override
+	public IModelStructure getModelStructure(boolean getFullModel) {
+		if (getFullModel && this.userProfile == null) {
+			this.userProfile = new UserProfile("", "");
+			this.userProfile.setAttributes(new HashMap<>());
+			this.userProfile.setAttributeValue(ALL_FIELDS_ACCESSIBLE, "true");
+		}
+		return getModelStructure();
 	}
 
 	private List<Filter> getFiltersOnProfileAttributes() {
@@ -208,10 +224,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 				IModelField field = fieldsIt.next();
 				String attributeName = (String) field.getProperty("attribute");
 				if (attributeName != null && !attributeName.trim().equals("")) {
-					logger.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName);
-					// Filter filter = new Filter(entity.getUniqueName(), "F{" + field.getName() + "} = {" + attributeName + "}");
+					logger.debug("Found profile attribute filter on field " + field.getUniqueName()
+							+ ": profile attribute is " + attributeName);
+					// Filter filter = new Filter(entity.getUniqueName(), "F{" +
+					// field.getName() + "} = {" + attributeName + "}");
 					List<String> values = new ArrayList<String>();
-					// we put just the profile attribute name, it's value will be evaluated later, when evaluating the filters
+					// we put just the profile attribute name, it's value will
+					// be evaluated later, when evaluating the filters
 					values.add(attributeName);
 					Filter filter = new Filter(field, values);
 					toReturn.add(filter);
@@ -259,7 +278,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
 		}
 
-		// at the moment (04/2015) hibernate doesn't provide a dialect for hive or hbase with phoenix. But its similar to the postrges one
+		// at the moment (04/2015) hibernate doesn't provide a dialect for hive
+		// or hbase with phoenix. But its similar to the postrges one
 		if (SqlUtils.isHiveLikeDialect(dialect)) {
 			dialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}

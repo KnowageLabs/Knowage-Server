@@ -5,7 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.query.filters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+
 import it.eng.qbe.dataset.QueryTransformer;
+import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -19,22 +32,11 @@ import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph;
 import it.eng.qbe.statement.graph.validator.ConnectionValidator;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
 
 public class ProfileAttributesModelAccessModality extends AbstractModelAccessModality {
 
@@ -44,7 +46,8 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 	private Map<String, List<String>> fieldsFilteredByRole = null;
 	private UserProfile userProfile = null;
 
-	public ProfileAttributesModelAccessModality(List<Filter> filtersOnProfileAttributes, Map<String, List<String>> fieldsFilteredByRole, UserProfile profile) {
+	public ProfileAttributesModelAccessModality(List<Filter> filtersOnProfileAttributes,
+			Map<String, List<String>> fieldsFilteredByRole, UserProfile profile) {
 		this.filtersOnProfileAttributes = filtersOnProfileAttributes;
 		this.fieldsFilteredByRole = fieldsFilteredByRole;
 		this.userProfile = profile;
@@ -91,19 +94,27 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 		Query filteredQuery = applyFilter(filter, query, dataSource);
 
 		IModelStructure modelStructure = dataSource.getModelStructure();
-		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(dataSource.getConfiguration().getModelName(), false);
+		RootEntitiesGraph rootEntitiesGraph = modelStructure
+				.getRootEntitiesGraph(dataSource.getConfiguration().getModelName(), false);
 		Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
 
 		Set<IModelEntity> entities = filteredQuery.getQueryEntities(dataSource);
-		QueryGraph queryGraph = GraphManager.getDefaultCoverGraphInstance(ShortestPathsCoverGraph.class.getName()).getCoverGraph(graph, entities);
-		boolean valid = GraphManager.getGraphValidatorInstance(ConnectionValidator.class.getName()).isValid(queryGraph, entities);
+		QueryGraph queryGraph = GraphManager.getDefaultCoverGraphInstance(ShortestPathsCoverGraph.class.getName())
+				.getCoverGraph(graph, entities);
+		boolean valid = GraphManager.getGraphValidatorInstance(ConnectionValidator.class.getName()).isValid(queryGraph,
+				entities);
 
-		// Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(dataSource);
+		// Map<IModelField, Set<IQueryField>> modelFieldsMap =
+		// filteredQuery.getQueryFields(dataSource);
 		// Set<IModelField> modelFields = modelFieldsMap.keySet();
-		// Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
+		// Set<IModelEntity> modelEntities =
+		// Query.getQueryEntities(modelFields);
 		// QueryGraph queryGraph = filteredQuery.getQueryGraph();
-		// boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph, modelEntities);
-		logger.debug("Filter on field [" + filter.getField().getUniqueName() + "] is " + (valid ? "APPLICABLE" : "NOT APPLICABLE"));
+		// boolean valid =
+		// GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph,
+		// modelEntities);
+		logger.debug("Filter on field [" + filter.getField().getUniqueName() + "] is "
+				+ (valid ? "APPLICABLE" : "NOT APPLICABLE"));
 		return valid;
 	}
 
@@ -124,12 +135,15 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 		Iterator<Filter> it = appliableFilters.iterator();
 		while (it.hasNext()) {
 			Filter filter = it.next();
-			// at this stage, the Filter contains just a reference to the user profile attribute, we now get actual values
+			// at this stage, the Filter contains just a reference to the user
+			// profile attribute, we now get actual values
 			List<String> values = null;
 			try {
 				String profileAttributeName = filter.getValues().get(0);
-				if (userProfileAttributes == null || userProfileAttributes.isEmpty() || !userProfileAttributes.containsKey(profileAttributeName)) {
-					throw new SpagoBIRuntimeException("User profile attribute " + profileAttributeName + " not found!!");
+				if (userProfileAttributes == null || userProfileAttributes.isEmpty()
+						|| !userProfileAttributes.containsKey(profileAttributeName)) {
+					throw new SpagoBIRuntimeException(
+							"User profile attribute " + profileAttributeName + " not found!!");
 				}
 				String profileAttributeValue = (String) userProfileAttributes.get(profileAttributeName);
 				logger.debug("Evaluating user profile attribute: [" + profileAttributeValue + "]");
@@ -144,27 +158,36 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 		return toReturn;
 	}
 
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean isFieldAccessible(IModelField field) {
+
+		boolean allFieldsAccessible = false;
+		try {
+			allFieldsAccessible = this.userProfile != null && "".equals(this.userProfile.getUserName())
+					&& "".equals(this.userProfile.getOrganization())
+					&& "true".equals(this.userProfile.getUserAttribute(AbstractDataSource.ALL_FIELDS_ACCESSIBLE));
+		} catch (EMFInternalError e1) {
+		}
+
 		String fieldUniqueName = field.getUniqueName();
-		boolean fieldFilteredByRole = fieldsFilteredByRole.containsKey(fieldUniqueName);
+		boolean fieldFilteredByRole = !allFieldsAccessible && fieldsFilteredByRole.containsKey(fieldUniqueName);
 		boolean fieldVisibleByRole = false;
-		if(fieldFilteredByRole) {
+		if (fieldFilteredByRole) {
 			try {
 				Collection<String> userRoles = this.userProfile.getRoles();
 				for (String roleOwned : userRoles) {
 					List<String> rolesAllowed = fieldsFilteredByRole.get(fieldUniqueName);
 					for (String roleAllowed : rolesAllowed) {
-						if(roleOwned.equals(roleAllowed)) {
+						if (roleOwned.equals(roleAllowed)) {
 							fieldVisibleByRole = true;
 							break;
 						}
 					}
 				}
 			} catch (Exception e) {
-				logger.error("ProfileAttributesModelAccessModality encountered problem while evaluating "+fieldUniqueName+" access modality!", e);
+				logger.error("ProfileAttributesModelAccessModality encountered problem while evaluating "
+						+ fieldUniqueName + " access modality!", e);
 			}
 		}
 		return !fieldFilteredByRole || fieldVisibleByRole;
