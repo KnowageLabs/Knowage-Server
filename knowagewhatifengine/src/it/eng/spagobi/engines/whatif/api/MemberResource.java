@@ -34,6 +34,7 @@ import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
+import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.command.DrillDownCommand;
 
 @Path("/1.0/member")
@@ -187,19 +188,25 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
 		model.removeSubset(model.getCellSet().getAxes().get(1));
 		CellSet cellSet = model.getCellSet();
 		CellSetAxis axisToSort = cellSet.getAxes().get(axisToSortpos);
 		CellSetAxis axisM = cellSet.getAxes().get(axis);
+
 		List<Position> positions = axisM.getPositions();
 
 		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
 
 		model.setSorting(true);
 		model.setSortCriteria(SortCriteria.valueOf(sortType));
+		if (transform.isSwapAxes()) {
 
+			axisToSort = axisM;
+
+		}
 		model.sort(axisToSort, position);
 
 		model.setSubset(axisToSort, subsetStart, 10);
@@ -207,16 +214,22 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/next/{axis}/{step}")
-	public String next(@PathParam("axis") Integer axis, @PathParam("step") Integer step) {
+	@Path("/sort/disable")
+	public String sorten() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		if (model.isSorting()) {
+			model.setSorting(false);
+			Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+			model.removeSubset(model.getCellSet().getAxes().get(1));
+			model.removeOrder(model.getCellSet().getAxes().get(1));
+			model.setSubset(model.getCellSet().getAxes().get(1), subsetStart, 10);
+		} else {
+			model.setSorting(true);
 
-		CellSet cellSet = model.getCellSet();
+		}
 
-		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
-
-		model.next(axisToSet, step);
+		model.refresh();
 
 		return renderModel(model);
 	}
