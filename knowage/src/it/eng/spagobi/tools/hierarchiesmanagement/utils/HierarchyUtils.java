@@ -545,7 +545,7 @@ public class HierarchyUtils {
 				for (int i = 1; i <= filtersJSONArray.length(); i++) {
 					JSONObject filter = filtersJSONArray.getJSONObject(i - 1);
 					String filterType = (String) filter.get(HierarchyConstants.FILTER_TYPE);
-					String filterValue = (!filter.isNull(HierarchyConstants.FILTER_VALUE)) ? (String) filter.get(HierarchyConstants.FILTER_VALUE) : null;
+					String filterValue = (!filter.isNull(HierarchyConstants.FILTER_VALUE)) ? filter.get(HierarchyConstants.FILTER_VALUE).toString() : null;
 					HashMap<String, String> filterCondition = new HashMap<String, String>();
 					int cIdx = 1;
 					while (!filter.isNull(HierarchyConstants.FILTER_CONDITION + cIdx)) {
