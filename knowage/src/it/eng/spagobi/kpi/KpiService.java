@@ -406,6 +406,9 @@ public class KpiService {
 		if (rule.getDefinition() == null) {
 			throw new SpagoBIDOAException("Rule Definition is mandatory");
 		}
+		if (rule.getDataSourceId() == null) {
+			throw new SpagoBIDOAException("Rule Datasource is mandatory");
+		}
 	}
 
 }
