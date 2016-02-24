@@ -34,16 +34,16 @@
 	src="/knowage/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
 
 </head>
-<body class="bodyStyle kn-templatemanagement ">
+<body class="bodyStyle kn-templatemanagement kn-importExportDocument">
 
 	<div ng-controller="Controller " layout="column" layout-wrap>
-
 		<md-toolbar class="miniheadimportexport">
 		<div class="md-toolbar-tools">
-			<i class="fa fa-file"></i>
+			<i class="fa fa-file fa-2x"></i>
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent");}}</h2>
 		</div>
 		</md-toolbar>
+	
 
 
 		<md-content layout="column" class="mainContainer" layout-wrap>
@@ -53,7 +53,7 @@
 		</div>
 		</md-toolbar> <md-content layout="row">
 		<div flex=30>
-			<h4>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</h4>
+			<p>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</p>
 		</div>
 		<div flex>
 			<md-datepicker ng-model="dateSelected.data" name="Select Data"
@@ -67,7 +67,7 @@
 		</div>
 		</md-toolbar>
 		<div layout-wrap ng-show="documents.length!=0">
-			<h4>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</h4>
+			<p>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</p>
 			<md-button class="md-raised" ng-click="deleteTemplate($event)"
 				aria-label="delete Templates">{{translate.load("sbi.federationdefinition.delete");}}</md-button>
 

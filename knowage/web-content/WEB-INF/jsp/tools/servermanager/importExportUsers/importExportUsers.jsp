@@ -55,7 +55,7 @@
 	
 	<md-toolbar  class="miniheadimportexport">
 		<div class="md-toolbar-tools">
-			<i class="fa fa-exchange"></i>
+			<i class="fa fa-exchange fa-2x""></i>
 			<h2 class="md-flex" >{{translate.load("sbi.impexpusers");}}</h2>
 		</div>
 	</md-toolbar>
