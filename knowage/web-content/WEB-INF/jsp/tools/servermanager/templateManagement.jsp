@@ -46,7 +46,7 @@
 	
 
 
-		<md-content layout="column" class="mainContainer" layout-wrap>
+		<md-content layout="column" layout-fill class="mainContainer" layout-wrap>
 		<md-card> <md-toolbar class="cardHeader">
 		<div class="md-toolbar-tools">
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent.choosedate");}}</h2>
