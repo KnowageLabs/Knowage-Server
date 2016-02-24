@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -281,7 +282,7 @@ public class KpiService {
 				dao.updateKpi(kpi);
 			}
 
-			return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
+			return Response.ok().build();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
@@ -291,6 +292,14 @@ public class KpiService {
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
+	}
+
+	@DELETE
+	@Path("/{id}/deleteThreshold")
+	public Response deleteThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeThreshold(id);
+		return Response.ok().build();
 	}
 
 	@POST
@@ -312,7 +321,9 @@ public class KpiService {
 		}
 	}
 
-	/* Private methods */
+	/* ***
+	 * Private methods ***
+	 */
 
 	/**
 	 * @param placeholder
