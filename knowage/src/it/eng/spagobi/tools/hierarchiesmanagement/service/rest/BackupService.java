@@ -158,7 +158,7 @@ public class BackupService {
 			databaseConnection.commit();
 
 		} catch (Throwable t) {
-			if (databaseConnection != null && !databaseConnection.isClosed()) {
+			if (!databaseConnection.getAutoCommit() && databaseConnection != null && !databaseConnection.isClosed()) {
 				databaseConnection.rollback();
 			}
 			logger.error("An unexpected error occured while modifing custom hierarchy");

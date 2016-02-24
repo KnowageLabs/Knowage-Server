@@ -31,7 +31,11 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-				<md-content layout='row'>
+				<md-content class='force-100width' ng-show='showLoadingBackup' layout='row' layout-align ='space-around center'>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<h4>{{translate.load("sbi.generic.wait");}}</h4>
+				</md-content>
+				<md-content layout='row'  ng-if="!showLoadingBackup">
 					<angular-table 
 						ng-model="backupTable"
 						columns = "columnsTable"

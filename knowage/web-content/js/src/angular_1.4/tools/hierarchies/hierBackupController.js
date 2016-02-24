@@ -140,6 +140,7 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 		var type = $scope.hierTypeBackup;
 		var dim = $scope.dimBackup;
 		var hier = $scope.hierBackup;
+		$scope.toogleLoading("backup", true);
 		if (type && dim && hier){
 			var config = {
 					params : {
@@ -155,13 +156,16 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 						if (data.errors === undefined){
 							$scope.createTable(data);
 							$scope.oldBackups= {};
+							$scope.toogleLoading("backup", false);
 						}else{
+							$scope.toogleLoading("backup", false);
 							$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 						}
 					})	
 				.error(function(data, status){
 					var message = 'GET backup error of ' + data + ' with status :' + status;
-					$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
+					$scope.toogleLoading("backup", false);
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),message);					
 				});
 		}
 	}
@@ -179,7 +183,7 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 			var title = $scope.translate.load("sbi.generic.update2");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
-			$scope.toogleLoading("save", true);
+			$scope.toogleLoading("backup", true);
 			response.then(function(){
 				$scope.restService.post("hierarchiesBackup","modifyHierarchyBkps",item)
 					.success(
@@ -191,12 +195,12 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							};
-							$scope.toogleLoading("save", false);
+							$scope.toogleLoading("backup", false);
 						})	
 					.error(function(data, status){
 						var message = 'POST edit backup error of ' + data + ' with status :' + status;
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
-						$scope.toogleLoading("save", false);
+						$scope.toogleLoading("backup", false);
 					})				
 				,function(){}
 			});
@@ -349,15 +353,15 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 		if (forceValue !== undefined){
 			loading = !forceValue;
 		}else{
-			 loading = choose ==  "save" ? $scope.showLoadingMaster : $scope.showLoading;
+			 loading = choose ==  "save" ? $scope.showLoadingBackup : $scope.showLoading;
 		}
 		if (loading){
 			$timeout(function(){
-				choose == "save" ? $scope.showLoadingMaster = false : $scope.showLoading = false;
+				choose == "save" ? $scope.showLoadingBackup = false : $scope.showLoading = false;
 			},100,true);
 		}else{
 			$timeout(function(){
-				choose == "save" ? $scope.showLoadingMaster = true : $scope.showLoading = true;
+				choose == "save" ? $scope.showLoadingBackup = true : $scope.showLoading = true;
 			},100,true);
 		}
 	}
