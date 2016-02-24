@@ -386,7 +386,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	};
 	
 	/* Get the tree when selected data, dimension, type hierarchy and hierarchy */
-	$scope.getTree = function(dateFilter, seeElement) {
+	$scope.getTree = function(dateFilter, seeElement, forceLoad) {
 		var type = $scope.hierType;
 		var dim = $scope.dim;
 		var date = $scope.dateTree;
@@ -411,7 +411,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				config.params.optionDate =  $scope.formatDate($scope.dateDim);
 				keyMap = keyMap + '_' + seeElement;
 			}
-			if (!$scope.hierTreeCache[keyMap]) {
+			if (!$scope.hierTreeCache[keyMap] || forceLoad ) {
 				$scope.toogleLoading('tree',true);
 				$scope.restService.get("hierarchies", "getHierarchyTree", null, config)
 					.success(
@@ -723,6 +723,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.cleanTree = function(tree) {
 		var treeCleaned = angular.copy(tree);
 		var elements = [ treeCleaned ];
+		var missimgPlaceholder = false;
 		do {
 			var el = elements.shift();
 			el.checked = el.visible = el.expanded = el.type = el.sortDirection = undefined;
@@ -894,7 +895,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					} else {
 						$scope.showAlert($scope.translate.load("sbi.generic.error"), data.errors[0].message);
 					}
-					$scope.toogleLoading("master", false);
+					$scope.getTree(undefined, undefined, true);
+					$scope.toogleLoading("master", false);					
 				})
 				.error(function(data,status){
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),$scope.translate.load("sbi.hierarchies.synchronization.error"));
@@ -968,7 +970,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}
 		// get the Tree if one off two filters are active. Else if the filters were applyed before, but not now, get the tree without them
 		if ((seeElement !== undefined && seeElement == true) || (dateFormatted !== undefined && dateFormatted.length > 0)) {
-			$scope.getTree(dateFormatted, seeElement);
+			$scope.getTree(dateFormatted, seeElement, undefined);
 			$scope.hasFilterElementOrDate = true;
 		}else if ($scope.hasFilterElementOrDate == true){
 			$scope.getTree();
