@@ -11,8 +11,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <!-- %@ page trimDirectiveWhitespaces="true"% -->
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
-<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/sbi_default/css/home40/layout.css" type="text/css" />
-
 <%
 /*
 	if(isFirstUrlToCallEqualsToDefaultPage == true && jsonMenuList.length() > 0 ){
@@ -92,7 +90,8 @@ Ext.onReady(function () {
 <div data-ng-controller="menuCtrl" ng-app="menuApp">
 <div id="divContainer" class="overlayButtonBar ">
 	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=contextName %>/themes/sbi_default/css/menuBar/logo_knowage.png" width="120"/></a>
+	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" width="120"/></a>
+	
 </div>
 <menu-aside></menu-aside>
 
