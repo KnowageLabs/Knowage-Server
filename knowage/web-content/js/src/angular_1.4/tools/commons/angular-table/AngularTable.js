@@ -82,7 +82,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 						//create tbody
 						tbody.attr('angular-table-body',"");
 						
-						scope.initializeColumns = function(){
+						scope.initializeColumns = function(noCompile){
 							//create the column of the table. If attrs.column is present load only this column, else load all the columns
 							scope.tableColumns=[];
 							
@@ -113,7 +113,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 									col=JSON.parse(col);
 								}
 								 
-								for(var i=0;i<col.length;i++){
+								for(var i in col){
 									var tmpColData={};
 									if(Object.prototype.toString.call(col[i])=="[object Object]"){
 										//json of parameter like name, label,size
@@ -151,9 +151,14 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 								thead.attr('speed-menu-option',true);
 								tbody.attr('speed-menu-option',true);
 							}
+							
+							if(noCompile!=true){
+								$compile(thead)(scope);
+//								$compile(tbody)(scope);
+							}
 						}
 
-						scope.initializeColumns();
+						scope.initializeColumns(true);
 						
 						//check for pagination
 						if(!attrs.totalItemCount){
@@ -164,7 +169,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 							tbody.attr('local-pagination',true);
 						}
 						if(attrs.noPagination && (attrs.noPagination == true || attrs.noPagination == "true")){
-							scope.itemsPerPage=999;
+							scope.itemsPerPage=99999;
 						}else{
 							scope.itemsPerPage=3;
 						}
@@ -348,18 +353,23 @@ function TableControllerFunction($scope,$timeout){
 		var box=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]
 		if(box==undefined){return;}
 
-		var tableAction=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0];
-		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0];
+//		var tableAction=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0];
+//		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0];
+		var tableContainer=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox #angularTableContentBox'))[0]
 		var headButton =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0];
 		var listItemTemplBox = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0];
 
-		var boxHeight = box.offsetHeight;
-		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
-		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
+//		var boxHeight = box.offsetHeight;
+//		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
+//		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
 		var headButtonHeight= headButton==undefined? 0 : headButton.offsetHeight ;
-		var listItemTemplBoxHeight = listItemTemplBox==undefined? 0 : listItemTemplBox.offsetHeight;
+		var listItemTemplBoxHeight = listItemTemplBox==undefined? 21 : listItemTemplBox.offsetHeight;
+		var tableContainerHeight=tableContainer==undefined? 21 : tableContainer.offsetHeight ;
 
-		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
+		
+		var nit=parseInt((tableContainerHeight-headButtonHeight)/listItemTemplBoxHeight )
+		
+//		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
 		if(firstLoad){
 			$scope.pageCangedFunction({itemsPerPage:$scope.itemsPerPage,newPageNumber:1,searchValue:''});
@@ -369,17 +379,20 @@ function TableControllerFunction($scope,$timeout){
 	}
 	var firstLoad=true;
 	$timeout(function() {
-		$scope.changeWordItemPP();
+		if($scope.noPagination!=true){
+			$scope.changeWordItemPP();
+		}
 	},0)
 
 	$scope.$watch(function() {
 		var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0];
 		return elem==undefined? null:  elem.offsetHeight;
 	}, function(newValue, oldValue) {
-
+	if($scope.noPagination!=true){
 		if (newValue != oldValue) {
 			$scope.changeWordItemPP();
 		}
+	}
 	}, true);
 	
 	$scope.$watchCollection('columns',function(newValue,oldValue){

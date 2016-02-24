@@ -94,7 +94,7 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'	</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content layout-margin flex>'+
+		'<md-content class="kn-list-content" layout-margin flex>'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -126,11 +126,12 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'	<div class="md-toolbar-tools">'+
 		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+
 		'		<h2 flex>{{AWD_detailController.title}}</h2>'+
+		'<span class="extraButtonContainer"></span>'+
 		'		<md-button aria-label="cancel" ng-disabled="ALD_controller.disableCancelButton" ng-if="cancelFuncName!=undefined && ALD_controller.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.general.cancel")}}</md-button>'+
 		'		<md-button aria-label="save" ng-disabled="ALD_controller.disableSaveButton" ng-if="saveFuncName!=undefined && ALD_controller.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
+		'<md-content class="kn-detail-content" layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -150,6 +151,23 @@ angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 					ctrl.title=value;
 				}
 			});	
+		}
+	}
+})
+
+
+.directive('extraButton',
+		function($compile) {
+	return {
+		template:'',
+		replace:true,
+		transclude : true,
+		link: function(scope, element, attrs, ctrl, transclude) {
+			transclude(scope,function(clone,scope) {
+				var contElem=element.parent()[0].querySelector(".kn-detail md-toolbar .md-toolbar-tools .extraButtonContainer ");
+				angular.element(contElem).append(clone);
+//				$compile(contElem)(scope);
+			}); 
 		}
 	}
 })
