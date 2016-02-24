@@ -48,3 +48,41 @@ position: relative
 text-align: center;
 font-size: 14px;
 }
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword{
+	
+	
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before{
+	content: "f(";
+	color:green;
+	
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after{
+	content: ")";
+	color:green;
+	
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before{
+	content: "MAX(";
+	color:green;
+	
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before{
+	content: "min(";
+	color:green;
+	
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before{
+	content: "COUNT(";
+	color:green;
+	
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before{
+	content: "Σ(";
+	color:green;
+	
+}
+
+
