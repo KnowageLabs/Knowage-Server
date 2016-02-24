@@ -1,6 +1,6 @@
 var app = angular.module('hierManager');
 
-app.controller('hierBackupController', ['sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyBackupFunction ]);
+app.controller('hierBackupController', ['$timeout','sbiModule_config','sbiModule_translate','sbiModule_restServices','sbiModule_logger',"$scope",'$mdDialog', hierarchyBackupFunction ]);
 
 var rootStructure = {
 		name:'root',
@@ -10,11 +10,12 @@ var rootStructure = {
 		leaf:false
 		};
 
-function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
+function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,sbiModule_restServices, sbiModule_logger, $scope, $mdDialog){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.restService = sbiModule_restServices;
 	$scope.log = sbiModule_logger;
+	$scope.showLoading = false;
 	
 	/*Initialization backup variable*/
 	$scope.hierarchiesTypeBackup = ['MASTER','TECHNICAL'];
@@ -178,6 +179,7 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 			var title = $scope.translate.load("sbi.generic.update2");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
+			$scope.toogleLoading("save", true);
 			response.then(function(){
 				$scope.restService.post("hierarchiesBackup","modifyHierarchyBkps",item)
 					.success(
@@ -185,14 +187,17 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 							if (data.errors === undefined){
 								$scope.getBackupTable();
 								$scope.oldBackups[backup.HIER_CD+'_'+backup.BACKUP_TIMESTAMP] == undefined;
+								$scope.showAlert($scope.translate.load("sbi.generic.resultMsg"), $scope.translate.load("sbi.generic.resultMsg"));
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
-							}
+							};
+							$scope.toogleLoading("save", false);
 						})	
 					.error(function(data, status){
 						var message = 'POST edit backup error of ' + data + ' with status :' + status;
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
-					})
+						$scope.toogleLoading("save", false);
+					})				
 				,function(){}
 			});
 		}
@@ -337,5 +342,23 @@ function hierarchyBackupFunction(sbiModule_config,sbiModule_translate,sbiModule_
 	
 	$scope.formatDate = function (date){
 		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
+	}
+	
+	$scope.toogleLoading = function(choose, forceValue){
+		var loading;
+		if (forceValue !== undefined){
+			loading = !forceValue;
+		}else{
+			 loading = choose ==  "save" ? $scope.showLoadingMaster : $scope.showLoading;
+		}
+		if (loading){
+			$timeout(function(){
+				choose == "save" ? $scope.showLoadingMaster = false : $scope.showLoading = false;
+			},100,true);
+		}else{
+			$timeout(function(){
+				choose == "save" ? $scope.showLoadingMaster = true : $scope.showLoading = true;
+			},100,true);
+		}
 	}
 };
