@@ -316,8 +316,6 @@
 		domainNm="Data Set Type" valueDs="SbiQueryDataSet" />
 	<DOMAIN valueCd="Java Class" valueNm="SbiJClassDataSet"
 		domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiJClassDataSet" />
-	<DOMAIN valueCd="Web Service" valueNm="SbiWSDataSet" domainCd="DATA_SET_TYPE"
-		domainNm="Data Set Type" valueDs="SbiWSDataSet" />
 	<DOMAIN valueCd="Script" valueNm="SbiScriptDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiScriptDataSet" />
 	<DOMAIN valueCd="Qbe" valueNm="SbiQbeDataSet" domainCd="DATA_SET_TYPE"
