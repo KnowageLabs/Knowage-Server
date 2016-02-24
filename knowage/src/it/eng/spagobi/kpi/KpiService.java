@@ -214,7 +214,7 @@ public class KpiService {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
 			checkMandatory(rule);
-			if (rule.isNewRecord()) {
+			if (rule.getId() == null) {
 				dao.insertRule(rule);
 			} else {
 				dao.updateRule(rule);
