@@ -1,15 +1,5 @@
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,6 +11,16 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
@@ -34,9 +34,11 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		logger.info("IN");
 
 		// GET SERVER POST from sessione and set in hidden cell
-		// String url = "http://localhost:8080/knowage/restful-services/1.0/Mytest/test";
+		// String url =
+		// "http://localhost:8080/knowage/restful-services/1.0/Mytest/test";
 		// http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id=2
-		String contextPath = it.eng.spagobi.commons.utilities.GeneralUtilities.getSpagoBiHost() + getHttpRequest().getContextPath();
+		String contextPath = it.eng.spagobi.commons.utilities.GeneralUtilities.getSpagoBiHost()
+				+ getHttpRequest().getContextPath();
 
 		try {
 			Integer id = this.getAttributeAsInteger(VERSION_ID);
@@ -50,7 +52,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			String url = contextPath + "/restful-services/selfservicedataset/export/" + dataSet.getLabel();
 
 			freezeHttpResponse();
-			getHttpResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + dataSet.getName() + ".xlsm" + "\";");
+			getHttpResponse().setHeader("Content-Disposition",
+					"attachment" + "; filename=\"" + dataSet.getName() + ".xlsm" + "\";");
 			getHttpResponse().setContentType("application/vnd.ms-excel");
 			// create WB
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
@@ -58,20 +61,20 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			String resourcePath = SpagoBIUtilities.readJndiResource(path);
 			XSSFWorkbook wb = null;
 			try {
-				// FileInputStream fileInputStream = new FileInputStream(resourcePath + "\\dataset\\export\\template.xlsm");
-				String serviceClassPath = ExportExcelDatasetAction.class.getProtectionDomain().getCodeSource().getLocation().getPath()
-						.replace(ExportExcelDatasetAction.class.getSimpleName() + ".class", "");
-				FileInputStream fileInputStream = new FileInputStream(serviceClassPath + "export_dataset_template.xlsm");
+				FileInputStream fileInputStream = new FileInputStream(
+						getClass().getResource("export_dataset_template.xlsm").getPath());
 				try {
 					wb = new XSSFWorkbook(fileInputStream);
 				} catch (IOException e) {
 					logger.error("Input Output Exception " + e.getMessage());
-					throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ", e);
+					throw new SpagoBIServiceException(this.getActionName(),
+							"Impossible to get xlsm export template file ", e);
 				}
 
 			} catch (FileNotFoundException e1) {
 				logger.error("Impossible to find xls template file " + e1.getMessage());
-				throw new SpagoBIServiceException(this.getActionName(), "Impossible to find xlsm export template file ", e1);
+				throw new SpagoBIServiceException(this.getActionName(), "Impossible to find xlsm export template file ",
+						e1);
 			}
 			if (wb != null) {
 				XSSFSheet sheet = wb.getSheet("datastore");
@@ -101,7 +104,8 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 					// FILL CELL RECORD
 					if (dataStore.getRecordsCount() > 0) {
 						for (int i = 0; i <= dataStore.getRecordsCount() - 1; i++) {
-							XSSFRow row = sheet.createRow(i + 4);// dalla quinta riga
+							XSSFRow row = sheet.createRow(i + 4);// dalla quinta
+																	// riga
 							if (dataStore.getRecordAt(i) != null && dataStore.getRecordAt(i).getFields() != null
 									&& dataStore.getRecordAt(i).getFields().size() > 0) {
 								for (int k = 0; k <= dataStore.getRecordAt(i).getFields().size() - 1; k++) {
@@ -124,14 +128,16 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 						getHttpResponse().getOutputStream().close();
 					} catch (IOException e) {
 						logger.error("write output file stream error " + e.getMessage());
-						throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
+						throw new SpagoBIServiceException(this.getActionName(),
+								"Impossible to write output file xls error", e);
 					}
 				}
 			}
 
 		} catch (EMFUserError e) {
 			logger.error("write output stream error " + e.getMessage());
-			throw new SpagoBIServiceException(this.getActionName(), "Impossible to write back the responce to the client", e);
+			throw new SpagoBIServiceException(this.getActionName(),
+					"Impossible to write back the responce to the client", e);
 		}
 
 	}
