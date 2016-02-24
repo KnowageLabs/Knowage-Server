@@ -39,6 +39,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -62,6 +63,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listMeasureCategory")
+	// TODO check if this has to be removed
 	public Response listMeasureCategory(@Context HttpServletRequest req) throws EMFUserError {
 		IDomainDAO domain = DAOFactory.getDomainDAO();
 		setProfile(req, domain);
@@ -80,7 +82,8 @@ public class KpiService {
 
 	@GET
 	@Path("/listMeasure")
-	public Response listMeasure(@Context HttpServletRequest req) throws EMFUserError {
+	public Response listMeasure(@Context HttpServletRequest req, @QueryParam("orderProperty") String orderProperty, @QueryParam("orderType") String orderType)
+			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<RuleOutput> measures = dao.listRuleOutputByType(MEASURE);
 		return Response.ok(JsonConverter.objectToJson(measures, measures.getClass())).build();
@@ -265,10 +268,14 @@ public class KpiService {
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
 			checkMandatory(kpi);
-			checkCardinality(kpi.getCardinality());
-			checkPlaceholder(kpi.getPlaceholder());
+			if (kpi.getCardinality() != null && !kpi.getCardinality().isEmpty()) {
+				checkCardinality(kpi.getCardinality());
+			}
+			if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
+				checkPlaceholder(kpi.getPlaceholder());
+			}
 
-			if (kpi.isNewRecord()) {
+			if (kpi.getId() == null) {
 				dao.insertKpi(kpi);
 			} else {
 				dao.updateKpi(kpi);
@@ -282,6 +289,25 @@ public class KpiService {
 			e.printStackTrace();
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
+
+	@POST
+	@Path("/saveThreshold")
+	public Response saveThreshold(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			Threshold threshold = (Threshold) JsonConverter.jsonToObject(requestVal, Threshold.class);
+			checkMandatory(threshold);
+			if (threshold.getId() == null) {
+				dao.insertThreshold(threshold);
+			} else {
+				dao.updateThreshold(threshold);
+			}
+			return Response.ok().build();
+		} catch (IOException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 	}
@@ -337,6 +363,18 @@ public class KpiService {
 		}
 	}
 
+	private void checkMandatory(Threshold threshold) {
+		if (threshold.getName() == null) {
+			throw new SpagoBIDOAException("Threshold Name is mandatory.");
+		}
+		if (threshold.getType() == null && threshold.getTypeId() == null) {
+			throw new SpagoBIDOAException("Threshold Type is mandatory.");
+		}
+		if (threshold.getThresholdValues() == null || threshold.getThresholdValues().size() == 0) {
+			throw new SpagoBIDOAException("Error. There are no threshold values.");
+		}
+	}
+
 	private static IEngUserProfile getProfile(HttpServletRequest req) {
 		return (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
@@ -352,17 +390,22 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(Kpi kpi) {
-		if (kpi.getName() == null || kpi.getCategory() == null || kpi.getDefinition() == null || kpi.getCardinality() == null) {
-			throw new SpagoBIDOAException("all fields are mandatory");
+	private void checkMandatory(Kpi kpi) {// TODO check if cardinality could be null
+		if (kpi.getName() == null) {
+			throw new SpagoBIDOAException("Kpi Name is mandatory.");
+		}
+		if (kpi.getDefinition() == null) {
+			throw new SpagoBIDOAException("Kpi Definition is mandatory.");
 		}
 	}
 
 	private void checkMandatory(Rule rule) {
-		if (rule.getName() == null || rule.getDefinition() == null) {
-			throw new SpagoBIDOAException("all fields are mandatory");
+		if (rule.getName() == null) {
+			throw new SpagoBIDOAException("Rule Name is mandatory");
 		}
-
+		if (rule.getDefinition() == null) {
+			throw new SpagoBIDOAException("Rule Definition is mandatory");
+		}
 	}
 
 }
