@@ -366,37 +366,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			value: (styleFontSize && styleFontSize.trim() != '') ? styleFontSize.trim() : '',
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontsize'),
 		});
-		this.axisFieldSet.add(this.styleFontSizeComboBox);
-		
-		/**
-		 * NOTE: The Opposite option is disabled completely from every chart (also for the SCATTER
-		 * chart) since the behavior of the parameter in combination with other axis parameters was 
-		 * providing more troubles than bringing advantages.
-		 * 
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-//		/**
-//		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type 
-//		 * and for the Y-axis exclusively.
-//		 * 
-//		 * @author: danristo (danilo.ristovski@mht.net)
-//		 */	
-//		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER"
-//			 && this.axisData.axisType.toLowerCase() != "category")
-//		{
-//			this.styleOpposite = Ext.create
-//	    	(
-//				{
-//			        xtype: 'checkboxfield',
-//			        id: 'oppositeAxis',
-//			        value: this.axisData.styleOpposite,
-//			        labelSeparator: '',
-//			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite")+":", 
-//			    }	
-//	    	);
-//			
-//			this.axisFieldSet.add(this.styleOpposite);
-//		}		
+		this.axisFieldSet.add(this.styleFontSizeComboBox);	
 		
 		if(isYAxis) {
 			var majorgridInterval = '' + this.axisData.majorgridInterval;
@@ -530,26 +500,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			});
 			
 			/**
-			 * OFFSET
-			 * 
-			 * 		Description: 	
-			 * 			Distance (in pixels) between the speedometer border and the axes (or �speed� line). 
-			 * 			If positive, the line will be outside the speedometer. If negative the axes will be 
-			 * 			closer to the center
-			 */
-//			this.offsetBorderFromYAxis = Ext.create
-//	    	(
-//				{
-//			        xtype: 'numberfield',
-//			        id: 'offsetBorderFromYAxis',
-//			        value: this.axisData.offset,
-//			        maxValue: 60,
-//			        labelSeparator: '',
-//			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.offset") 
-//			    }	
-//	    	);
-			
-			/**
 			 * LINE WIDTH
 			 * 
 			 * 		Description: 	
@@ -588,7 +538,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisAdditionalParamsFieldSet.add(this.minValueYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.maxValueYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.lineColor);
-			//this.axisAdditionalParamsFieldSet.add(this.offsetBorderFromYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.lineWidthYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.endOnTick);
 			
@@ -961,8 +910,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				"Sbi.chart.designer.ChartColumnsContainer", 
 				
 				{				
-					//minHeight: 300,
-					//height: 300,
 					flex: 1,
 									
 					id: "plotsContainer",
@@ -1248,70 +1195,34 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
     	var isYAxis = this.isYAxis;
     	
 		var styleRotate = this.styleRotateNumberField.getValue();
-//		this.axisData.styleRotate = styleRotate;
-
-		var styleAlign = this.styleAlignComboBox.getValue();
-//		this.axisData.styleAlign = styleAlign;		
-		
+		var styleAlign = this.styleAlignComboBox.getValue();		
 		var axisStyleColor = this.styleColor.getColor();
-//		this.axisData.styleColor = axisStyleColor;
-
 		var styleFont = this.styleFontComboBox.getValue();
-//		this.axisData.styleFont = styleFont;
-
 		var styleFontWeigh = this.styleFontWeighComboBox.getValue();
-//		this.axisData.styleFontWeigh = styleFontWeigh;
-
 		var styleFontSize = this.styleFontSizeComboBox.getValue();
-//		this.axisData.styleFontSize = styleFontSize;
 		
 		if(this.styleOpposite) {
 			var styleOpposite = this.styleOpposite.getValue();
-//			this.axisData.styleOpposite = styleOpposite;
 		}
 
 		if(isYAxis) {
-			var majorgridInterval = this.majorgridIntervalNumberField.getValue();
-//			this.axisData.majorgridInterval = majorgridInterval;
-	
-			var majorgridStyleTypeline = this.majorgridStyleTypelineComboBox.getValue();
-//			this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
-	
-			var majorgridStyleColor = this.majorgridStyleColor.getColor();
-//			this.axisData.majorgridStyleColor = majorgridStyleColor;
-	
-			var minorgridInterval = this.minorgridIntervalNumberField.getValue();
-//			this.axisData.minorgridInterval = minorgridInterval;
-	
-			var minorgridStyleTypeline = this.minorgridStyleTypelineComboBox.getValue();
-//			this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
-	
+			var majorgridInterval = this.majorgridIntervalNumberField.getValue();	
+			var majorgridStyleTypeline = this.majorgridStyleTypelineComboBox.getValue();	
+			var majorgridStyleColor = this.majorgridStyleColor.getColor();	
+			var minorgridInterval = this.minorgridIntervalNumberField.getValue();	
+			var minorgridStyleTypeline = this.minorgridStyleTypelineComboBox.getValue();	
 			var minorgridStyleColor = this.minorgridStyleColor.getColor();
-//			this.axisData.minorgridStyleColor = minorgridStyleColor;
 		}				
-		
-		// var titleText = this.titleTextTextField.getValue();
-		// this.axisData.titleText = titleText;
 
 		var titleStyleAlign = this.titleStyleAlignComboBox.getValue();
-//		this.axisData.titleStyleAlign = titleStyleAlign;
-
-		var titleStyleColor = this.titleStyleColor.getColor();
-//		this.axisData.titleStyleColor = titleStyleColor;
-
+		var titleStyleColor = this.titleStyleColor.getColor();		
 		var titleStyleFont = this.titleStyleFontComboBox.getValue();
-//		this.axisData.titleStyleFont = titleStyleFont;
-
 		var titleStyleFontWeigh = this.titleStyleFontWeighComboBox.getValue();
-//		this.axisData.titleStyleFontWeigh = titleStyleFontWeigh;
-
 		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
-//		this.axisData.titleStyleFontSize = titleStyleFontSize;
 		
 		/**
-		 * TODO: Check if this is ok
-		 * 
-		 * Danilo
+		 * Validation for all color pickers' values inside the popup on closing event.		
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		var errorMessages = "";
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
@@ -1403,7 +1314,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			var minValueYAxis = this.minValueYAxis.getValue();
 			var maxValueYAxis = this.maxValueYAxis.getValue();			
 			var lineColorYAxis = this.lineColor.getColor();			
-			//var offsetBorderFromYAxis = this.offsetBorderFromYAxis.getValue();
 			
 			var lineWidthYAxis = this.lineWidthYAxis.getValue();
 			var endOnTick = this.endOnTick.getValue();
@@ -1498,9 +1408,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 */
 			
 			/**
-			 * TODO: Check if this is ok
-			 * 
-			 * Danilo
+			 * Color validation for color parameters specific for the GAUGE chart.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (lineColorYAxis && lineColorYAxis!=null)
 			{
@@ -1533,9 +1442,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				);
 			
 			/**
-			 * TODO: Check if this is ok
-			 * 
-			 * Danilo
+			 * Color validation for color parameters specific for the GAUGE chart.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (tickColor && tickColor!=null)
 			{
@@ -1592,9 +1500,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				);
 			
 			/**
-			 * TODO: Check if this is ok
-			 * 
-			 * Danilo
+			 * Color validation for color parameters specific for the GAUGE chart.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (minorTickColor && minorTickColor!=null)
 			{

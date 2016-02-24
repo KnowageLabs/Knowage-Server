@@ -110,6 +110,17 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
         this.paletteGrid.store.loadData({});
 		// Load json colors
         this.paletteGrid.store.setData(colorPalette);
+        
+        /**
+         * Set the 'idSeed' to the size of the initial number of items in the store of the 
+         * palette grid (as initialization). This way, the ID of every new color item user
+         * would like to add to the grid will be unique and there will be no problem if all
+         * items were previosuly removed from the palette and then the document have been
+         * saved (issue: https://production.eng.it/jira/browse/KNOWAGE-647).
+         * 
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+         */
+        ChartConfigurationPalette.idSeed = this.paletteGrid.getStore().getCount();
 		
         var grid = this.paletteGrid;
 		var item = [{
@@ -133,23 +144,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 
 	                        	var order = 0;
 	                        	
-	                        	/**
-	                        	 * TODO: Check if this is ok
-	                        	 * 
-	                        	 * Needed for the adding a space to the panel that contains
-	                        	 * the palette when adding new color item. If the user is
-	                        	 * trying to add new color into the pallete that already 
-	                        	 * exists in it, do not provide additional space (this 
-	                        	 * new-old color will just be put at the end of the grid and
-	                        	 * the height of the panel remains). The result will be that
-	                        	 * these two variables contain the same value (same number of
-	                        	 * color items inside the palette).
-	                        	 * 
-	                        	 * Danilo
-	                        	 */
-	                        	var numberOfElementsStart = grid.store.data.length > 0 ? grid.store.data.length : 0;
-	                        	var numberOfElementsEnd = 0;
-	                        	
 	                        	if(grid.store.data && grid.store.data.items) {
 	                        		
 	                        		// Original
@@ -158,12 +152,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 //	                        				: 1;
 	                        				
 	                        		/**
-	                        		 * TODO: Check if its is ok 
-	                        		 * 
 	                        		 * Set the order value of the color inside the palette as the increment of
 	                        		 * the 'order' property value of the last existing color in it (palette).
 	                        		 * 
-	                        		 * Danilo
+	                        		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                        		 */
 	                        		order = grid.store.data.length > 0 ? 
 	                        				(Number(grid.store.getAt(grid.store.data.items.length-1).get('order')) + 1)+""
@@ -172,16 +164,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                        	}
 	                        	
 	                        	grid.getStore().add({
-//	                        		id: ChartConfigurationPalette.idSeed,	// Original
-	                        		id: selColor,	// TODO: Check if its is ok (set the unique ID)
+	                        		id: "addedColor_" + ChartConfigurationPalette.idSeed,
 	                            	gradient:'',
-//	                            	name: ChartConfigurationPalette.idSeed++,	// Original
-	                            	name: selColor,	// TODO: Check if its is ok (set the unique name)
+	                            	name: "addedColor_" + ChartConfigurationPalette.idSeed,
 	                            	order: order,
 	                            	value: selColor
 	                            });	
 	                        	
-	                        	numberOfElementsEnd = grid.store.data.length;
+	                        	/**
+	                        	 * Increment the 'idSeed' for the next color item user potentially enter.
+	                        	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                        	 */
+	                        	ChartConfigurationPalette.idSeed++;
 	                        	
 	                        	/**
 	                    		 * When user click on the plus button, the color he picked will be added
@@ -193,8 +187,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    		 * 
 	                    		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	                    		 */
-	                        	// TODO: my change for handling extension of the height of the palette
-	                        	numberOfElementsEnd>numberOfElementsStart ? globalScope.height = globalScope.height + 20 : null;
+	                        	globalScope.height = globalScope.height + 20;
 	    	                	globalScope.update();
 	    	                	
 	    	                	/**

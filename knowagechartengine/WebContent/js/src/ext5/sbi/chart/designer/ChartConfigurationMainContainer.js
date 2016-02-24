@@ -60,7 +60,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		
         this.callParent(config);
         this.viewModel = config.viewModel;
-       
+        
         var globalThis = this;        
        
         this.height = {
@@ -76,8 +76,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	};
         
         /**
-         * TODO: Insert comments
-         * Danilo
+         * The dimension type for the height of the chart (percentage or pixels). The default value
+         * is taken from the Settings.js ('defaultDimensionType').
+         * 
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
         this.heightDimTypePicker = 
         {
@@ -97,6 +99,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             editable : false,            
             margin: Sbi.settings.chart.configurationStep.marginOfTopFieldsetButtons,          
             width: 40,
+            hidden: ChartUtils.isChartHeightDisabled() 
         };
         
         this.width = {
@@ -112,8 +115,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	};
         
         /**
-         * TODO: Insert comments
-         * Danilo
+         * The dimension type for the width of the chart (percentage or pixels). The default value
+         * is taken from the Settings.js ('defaultDimensionType').
+         * 
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
         this.widthDimTypePicker = 
         {
@@ -133,7 +138,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             editable : false,            
             margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldsetButtons,         
             width: 40,
+            hidden: ChartUtils.isChartWidthDisabled() 
         };
+        
+        var widthFieldsetHidden = ChartUtils.isChartWidthDisabled();
+        var heightFieldsetHidden = ChartUtils.isChartHeightDisabled();
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
@@ -220,7 +229,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				},
 				padding: "0 0 0 0",	// Danilo Ristovski
 	    		border: "hidden",
-				items : [this.height,this.heightDimTypePicker]
+				items : [this.height,this.heightDimTypePicker],
+				hidden: heightFieldsetHidden 
     		}
 		);
         
@@ -250,7 +260,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				},
 	    		padding: "0 0 0 0",	// Danilo Ristovski
 	    		border: "hidden",
-				items : [this.width,this.widthDimTypePicker]
+				items : [this.width,this.widthDimTypePicker],
+				hidden: widthFieldsetHidden 
     		}
 		);
         
@@ -443,14 +454,17 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 			
 			/**
-			 * TODO: add comments
-			 * Danilo
+			 * Fire the event when the checkbox is clicked, so the Legend panel
+			 * can be "informed" with new change and so it can behave as expected
+			 * (expand and collapse when needed).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			listeners:
 			{
-				change: function(a,b)
+				change: function(item,state)
 				{
-					Ext.getCmp("chartLegend").fireEvent("showLegendClicked",b);
+					Ext.getCmp("chartLegend").fireEvent("showLegendClicked",state);
 				}
 			}
 		});

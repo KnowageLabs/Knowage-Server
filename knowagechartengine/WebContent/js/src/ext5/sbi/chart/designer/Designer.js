@@ -312,29 +312,28 @@ Ext.define('Sbi.chart.designer.Designer', {
 			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
 			
 			/**
-			 * TODO: Add comments
-			 * 
 			 * Reconfiguration of the COLOR tag of the COLORPALETTE so when there is a single
 			 * color inside the Color palette element we would have an array with the single 
 			 * object (color element) instead of current object. The problem starts when merging
-			 * the basicTemplate that has an array of colors and the jsonTemplate that comes with
+			 * the 'baseTemplate' that has an array of colors and the 'jsonTemplate' that comes with
 			 * an object (instead of an array).
 			 * 
-			 * Danilo
-			 */
-			/**
-			 * Checking the number of properties inside the COLOR tag of the COLORPALETTE. If there is
-			 * at least one property in it, that is enough to treat it as a object.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var colorPaletteConfig = jsonTemplate.CHART.COLORPALETTE;
 			
 			/**
-			 * Number of properties inside the object
+			 * Number of properties inside the object.
 			 */
 			var numOfObjectsProps = (colorPaletteConfig && colorPaletteConfig.COLOR && colorPaletteConfig.COLOR!=null
 									 && !Array.isArray(colorPaletteConfig.COLOR)) ? 
 										Object.getOwnPropertyNames(colorPaletteConfig.COLOR).length : 0;
 			
+			/**
+			 * Call the static function inside the ChartUtils for conversion from an object to 
+			 * array. The returning value is as an array that contains the object that was sent
+			 * towards it.
+			 */
 			if (colorPaletteConfig && 
 					colorPaletteConfig.COLOR && 
 						numOfObjectsProps>0 &&
@@ -3766,11 +3765,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}			
 
 			/**
-			 * TODO: check if this is ok!
+			 * Calling static function inside the new ColorPicker component for validation 
+			 * of all color pickers' values (also not mandatory ones).
 			 * 
-			 * Calling static function for validation of all color pickers' values from the outside
-			 * 
-			 * Danilo
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var colorPicker = Sbi.chart.designer.components.ColorPicker;
 			
@@ -3888,11 +3886,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			/**
-			 * TODO: check if this is ok
+			 * Validation of other colors, that are part of the JSON template. These colors are set inside
+			 * the configuration of series and axes. We need to deal with the JSON template of the current
+			 * data structure of the document in order to provide validation for all color elements.
 			 * 
-			 * Validation of other colors, that are part of the JSON template
-			 * 
-			 * Danilo
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			/**
 			 * START [1]

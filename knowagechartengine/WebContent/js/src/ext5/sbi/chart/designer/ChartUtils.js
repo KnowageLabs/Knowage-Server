@@ -882,9 +882,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				chartModel.get('width') : '';
 				
 			/**
-			 * TODO: Add comments
-			 * + default cim type is px
-			 * Danilo
+			 * Properties that are bound to the type of the dimension of the chart
+			 * (height and width). Default value for these parameters are set inside
+			 * the 'defaultDimensionType' parameter inside the Settings.js ("px").
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			CHART['heightDimType'] = (chartModel.get('heightDimType') != undefined) ? 
 					chartModel.get('heightDimType') : Sbi.settings.chart.configurationStep.defaultDimensionType;					
@@ -1964,13 +1966,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				height : jsonTemplate.CHART.height,
 				width : jsonTemplate.CHART.width,
 				
-				/**
-				 * TODO: Add comments 
-				 * + default dim type is px
-				 * Danilo
-				 */
 				heightDimType: (jsonTemplate.CHART.heightDimType && jsonTemplate.CHART.heightDimType!="") ? 
 									jsonTemplate.CHART.heightDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
+									
 				widthDimType: (jsonTemplate.CHART.widthDimType && jsonTemplate.CHART.widthDimType!="") ? 
 									jsonTemplate.CHART.widthDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
 									
@@ -2791,9 +2789,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 		
 		/**
-		 * TODO: Added 23.02
+		 * Reconfiguration of the source object (the sub-tag) so when there is a single
+		 * item inside the upper (parent) tag, we would have an array with the single 
+		 * object (element) instead of having the current object. The problem starts 
+		 * when merging the 'baseTemplate' that has an array of colors and the 'jsonTemplate' 
+		 * that comes with an object (instead of an array).
 		 * 
-		 * Danilo
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		convertObjectToArray: function(source)
 		{

@@ -92,16 +92,17 @@
     	},
     },
     
-    #*
-    	TODO: Add comments: when there are no colors set inside the color palette.
+   	#*
+    	Handle the situation in which there are no colors inside the color palette as
+    	the Highcharts library expects.    	
     	
-    	Danilo
+    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     *#
    	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
    		($chart.COLORPALETTE.class.name == 'java.util.LinkedHashMap' && "$!chart.COLORPALETTE.COLOR"!="" && $chart.COLORPALETTE.COLOR.size()>0)))
     colors: [
 		#foreach($color in $chart.COLORPALETTE.COLOR)
-		'$color.value', 
+			'$color.value', 
 		#end
     ],    
     #else

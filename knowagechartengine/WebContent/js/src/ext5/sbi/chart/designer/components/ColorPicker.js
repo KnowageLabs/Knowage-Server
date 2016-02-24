@@ -49,12 +49,12 @@ Ext.define('Sbi.chart.designer.components.ColorPicker', {
 	},
 	
 	/**
-	 * TODO: check if this is ok!
+	 * Static function for validation of all color pickers' values that are all over the 
+	 * Designer (SerieStylePopup, AxisStylePopup, StylePopup, ...). The implementation
+	 * is almost the same as the one inside the non-static 'validateValue' function, 
+	 * except there are no invalid field markings (simplified version).
 	 * 
-	 * Static function for validation of all color pickers' values from the outside
-	 * (Desinger)
-	 * 
-	 * Danilo
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	statics: 
 	{		

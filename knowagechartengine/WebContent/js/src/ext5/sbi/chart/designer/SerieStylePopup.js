@@ -479,51 +479,26 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
     	var errorMessages = "";
     	
 		var dataAtRow = store.getAt(rowIndex);
-		var serieName = this.serieNameTextField.getValue();
-//		dataAtRow.set('axisName', serieName);
 		
-		var serieType = this.serieTypesComboBox.getValue();
-//		dataAtRow.set('serieType', serieType);
-		
-		var serieOrder = this.serieOrderComboBox.getValue();
-//		dataAtRow.set('serieOrderType', serieOrder);
-		
-		var serieColor = this.serieColorPicker.getColor();
-//		dataAtRow.set('serieColor', serieColor);
-		
-		var showValue = this.serieShowValue.getValue();
-//		dataAtRow.set('serieShowValue', showValue);
-				
-		var showAbsValue = this.serieShowAbsValue.getValue();
-//		dataAtRow.set('serieShowAbsValue', showAbsValue);
-		
-		var showPercentage = this.serieShowPercentage.getValue();
-//		dataAtRow.set('serieShowPercentage', showPercentage);
-		
-		var serieTooltipColor = this.tooltipColor.getColor();
-//		dataAtRow.set('serieTooltipColor', serieTooltipColor);
-		
-		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();
-//		dataAtRow.set('serieTooltipBackgroundColor', serieTooltipBackgroundColor);
-		
-		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();
-//		dataAtRow.set('serieTooltipAlign', serieTooltipAlign);
-		
-		var serieTooltipFont = this.tooltipFontComboBox.getValue();
-//		dataAtRow.set('serieTooltipFont', serieTooltipFont);
-		
-		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();
-//		dataAtRow.set('serieTooltipFontWeight', serieTooltipFontWeight);
-		
+		var serieName = this.serieNameTextField.getValue();		
+		var serieType = this.serieTypesComboBox.getValue();		
+		var serieOrder = this.serieOrderComboBox.getValue();		
+		var serieColor = this.serieColorPicker.getColor();		
+		var showValue = this.serieShowValue.getValue();				
+		var showAbsValue = this.serieShowAbsValue.getValue();		
+		var showPercentage = this.serieShowPercentage.getValue();		
+		var serieTooltipColor = this.tooltipColor.getColor();		
+		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();		
+		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();		
+		var serieTooltipFont = this.tooltipFontComboBox.getValue();		
+		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();		
 		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
-//		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
 					
 		var seriePrecision = this.seriePrecisionNumberField.getValue();
 		
 		/**
-		 * TODO: Check if this is OK
-		 * 
-		 * Danilo
+		 * Validation for color elements inside the SerieStylePopup when closing event.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		var colorPicker = Sbi.chart.designer.components.ColorPicker;
 		
@@ -586,7 +561,14 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 */
 		if (seriePrecision < 0)
 		{
-			errorMessages += "The serie precision value cannot be less then <b>0</b>";	// TODO: LN()
+			errorMessages += Sbi.locale.sobstituteParams
+			(
+				LN("sbi.chartengine.structure.axisStylePopup.seriePrecisionLessThanMin"),
+				
+				[
+				 	Ext.getCmp("seriePrecisionNumberField").minValue				
+				]
+			);
 		}
 		else
 		{

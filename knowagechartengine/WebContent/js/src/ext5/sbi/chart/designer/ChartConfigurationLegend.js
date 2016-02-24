@@ -33,13 +33,28 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	listeners : 
 	{
 		/**
-		 * TODO: add comment and correct the one before listeners segment!!!
-		 * Danilo
+		 * This event is fired whenever the checkbox is clicked, so the Legend panel
+		 * can be "informed" with new change and so it can behave as expected
+		 * (expand and collapse when needed).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		showLegendClicked: function(param)
 		{
 			!param ? this.collapse() : this.expand();
-		}	
+		},
+		
+		/**
+		 * When rendering the Configure tab and its Legend panel, take care of the
+		 * value of the 'showLegend' JSON property of the document template, so we
+		 * can restore the Legend's state according to this boolean state.
+		 * 
+		 * @author Danilo Ristovski (danristo,danilo.ristovski@mht.net)
+		 */
+		render: function()
+		{
+			this.collapsed = !Boolean(Ext.getCmp("showLegend").getValue());
+		}
 	},
 
 	constructor : function (config) {
@@ -47,23 +62,16 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 		this.viewModel = config.viewModel;
 
 		/**
-		 * TODO: comment
-		 * Danilo
+		 * Update the property that sets the collapsed/expanded 
+		 * property of the Legend panel.
+		 * @author Danilo Ristovski (danristo,danilo.ristovski@mht.net)
 		 */
 		this.collapsed = config.collapsed;
 		
 		this.stylePanelLegend = Ext.create('Sbi.chart.designer.StylePopup', {
 			title : LN('sbi.chartengine.configuration.legendstyle'),
 			viewModel : this.viewModel,
-			/**
-			 * TODO: Text alignment of Legend
-			 * items is removed since there is
-			 * no simple way to provide this
-			 * feature.
-			 *
-			 * Danilo Ristovski
-			 */
-			// bindFontAlign:'{configModel.legendAlign}',
+			
 			bindFont : '{configModel.legendFont}',
 			bindFontDim : '{configModel.legendDimension}',
 			bindFontStyle : '{configModel.legendStyle}',
@@ -78,7 +86,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 		this.stylePanelLegendTitle = Ext.create('Sbi.chart.designer.StylePopup', {
 			title : LN('sbi.chartengine.configuration.titlestyle'),
 			viewModel : this.viewModel,
-			//bindFontAlign : '{configModel.legendTitleAlign}',
 			bindFont : '{configModel.legendTitleFont}',
 			bindFontDim : '{configModel.legendTitleDimension}',
 			bindFontStyle : '{configModel.legendTitleStyle}',

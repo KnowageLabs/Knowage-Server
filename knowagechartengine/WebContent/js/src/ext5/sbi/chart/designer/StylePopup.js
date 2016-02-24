@@ -35,9 +35,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         Ext.apply(this.config,config);
         
         /**
-         * TODO: Check if this is ok
+         * Provide two properties of this object (StylePopup) that will keep the data
+         * for two colors that it contains (needed for validation of their values). 
          * 
-         * Danilo
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
         this.colorPickerElement = null;
         this.bckgColorPickerElement = null;
@@ -255,35 +256,12 @@ Ext.define('Sbi.chart.designer.StylePopup',{
     						]
     					);
     				}
-    			}
-        		
-//        		if (errorMsg != "") {
-//        			var msg = Ext.Msg.show({						
-//    					title : LN('sbi.chartengine.validation.errormessage'),
-//    					message : errorMsg,
-//    					icon : Ext.Msg.WARNING,
-//    					closable : false,
-//    					buttons : Ext.Msg.OK,
-//    					
-//    					fn : function()
-//    					{
-//    						/**
-//    						 * Show again the initial popup (with the form)
-//    						 * so the user can correct inappropriate value
-//    						 * for the border width.
-//    						 */
-//    	                    globalScope.show();
-//    	                }
-//					});
-//    			}       			
+    			}      			
 			} 
     		
     		/**
-    		 * TODO: Check if this is ok
-    		 * 
-    		 * Validation for StylePopup color pickers.
-    		 * 
-    		 * Danilo
+    		 * Validation for StylePopup color pickers on closing event.    		 
+    		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     		 */    		
     		var colorPicker = Sbi.chart.designer.components.ColorPicker;
     		
