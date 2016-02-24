@@ -35,8 +35,12 @@
 		<md-toolbar class="header">
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
 				<!-- Folders button -->
+<!--  
+				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
+-->
 				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders"
 						style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
+
 					<i class="fa fa-bars" style="color:white"></i>
 				</md-button>
 				
@@ -86,6 +90,7 @@
 		</md-toolbar>
 	
 		<section layout="row">
+
 			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
 				<md-toolbar class="header">
 	       			<h3 class="md-toolbar-tools">Folders</h3>
@@ -128,9 +133,13 @@
 				<div layout="column" ng-hide="!showDocumentGridView || showSearchView" flex>
 					<div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;">
 						<md-whiteframe flex="25" layout layout-align="center center" ng-repeat="document in folderDocuments">
+<!--  
+							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="showMainDetailDocument(document)" ng-class="{'selected-doc':wasSelected(document)}">
+-->
 							<md-card style="width: 150px;" ng-click="selectDocument(document)"
 									ng-dblclick="alert(document.name)"
 									ng-class="{'selected-doc':wasSelected(document)}">
+
 								<!-- <img src="preview-images/{{document.PREVIEW_FILE}}" class="md-card-image" alt="{{document.name}}" style="width: 150px; height: 126px;"></img> -->
 								<md-card-content style="padding:0px; padding-left:2px; text-align:center;">
 									<div>{{document.name | limitEllipses:20}}</div>
@@ -167,6 +176,10 @@
 						</table>
 					</md-data-table-container>
 				</div>
+				
+				
+				
+				
 			</md-content>
 		
 			<md-sidenav class="md-sidenav-right selected-doc" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
