@@ -1,8 +1,7 @@
 package it.eng.spagobi.tools.dataset.service;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
@@ -60,22 +59,16 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath = SpagoBIUtilities.readJndiResource(path);
 			XSSFWorkbook wb = null;
+			InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
 			try {
-				FileInputStream fileInputStream = new FileInputStream(
-						getClass().getResource("export_dataset_template.xlsm").getPath());
-				try {
-					wb = new XSSFWorkbook(fileInputStream);
-				} catch (IOException e) {
-					logger.error("Input Output Exception " + e.getMessage());
-					throw new SpagoBIServiceException(this.getActionName(),
-							"Impossible to get xlsm export template file ", e);
-				}
-
-			} catch (FileNotFoundException e1) {
-				logger.error("Impossible to find xls template file " + e1.getMessage());
-				throw new SpagoBIServiceException(this.getActionName(), "Impossible to find xlsm export template file ",
-						e1);
+				wb = new XSSFWorkbook(fileInputStream);
+			} catch (IOException e) {
+				logger.error("Input Output Exception " + e.getMessage());
+				throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ",
+						e);
 			}
+
 			if (wb != null) {
 				XSSFSheet sheet = wb.getSheet("datastore");
 				// STYLE CELL
