@@ -70,27 +70,19 @@ public class DomainResource extends AbstractSpagoBIResource {
 	public Domain getSingleDomain(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
-		List<Domain> allObjects = null;
+		Domain dom;
 
 		try {
 			domainsDao = DAOFactory.getDomainDAO();
 			domainsDao.setUserProfile(getUserProfile());
-			allObjects = domainsDao.loadListDomains();
-
-			if (allObjects != null && !allObjects.isEmpty()) {
-				for (Domain dm : allObjects) {
-					if (dm.getValueId() == id) {
-						return dm;
-					}
-				}
-			}
+			dom = domainsDao.loadDomainById(id);
 		} catch (Exception e) {
 			logger.error("Error while getting domain " + id, e);
 			throw new SpagoBIRuntimeException("Error while getting domain " + id, e);
 		} finally {
 			logger.debug("OUT");
 		}
-		return null;
+		return dom;
 	}
 
 	@POST
@@ -169,5 +161,27 @@ public class DomainResource extends AbstractSpagoBIResource {
 			logger.error("Error while deleting url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
 		}
+	}
+
+	@GET
+	@Path("/listByCode/{code}")
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<Domain> getDomainsByCode(@PathParam("code") String code) {
+		logger.debug("IN");
+		IDomainDAO domainsDao = null;
+		List<Domain> dom;
+
+		try {
+			domainsDao = DAOFactory.getDomainDAO();
+			domainsDao.setUserProfile(getUserProfile());
+			dom = domainsDao.loadListDomainsByType(code);
+		} catch (Exception e) {
+			logger.error("Error while getting domain " + code, e);
+			throw new SpagoBIRuntimeException("Error while getting domain " + code, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return dom;
 	}
 }

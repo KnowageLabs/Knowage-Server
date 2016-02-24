@@ -10,47 +10,98 @@ measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_trans
 
 function measureRoleMasterControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
-	$scope.newMeasureFunction=function(){
+ 	$scope.newMeasureFunction=function(){
 	} 
+ 	
+ 	$scope.saveMeasureFunction=function(){
+ 		alert("Salvato")
+ 	} 
+ 	$scope.cancelMeasureFunctionMeasureFunction=function(){
+ 		alert("cancelMeasureFunction")
+ 	} 
 	
 	$scope.aliasList=["pippo","pino","pippino"];
 }
  
 function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
+	$scope.detailProperty={
+			dataSourcesIsSelected:false,
+			queryChanged:true,
+			previewData:{rows:[],metaData:{fields:[]}},
+			};
+	
 	$scope.currentMeasure={
-			"query":"SELECT  usr.name as pippo FROM users AS usr WHERE usr.score>100",
-			"metadata":[]
+			selectedDatasource:{},
+			query:"SELECT * FROM employee as cur",
+			metadata:{}
 				};
  	
+	 
+	
 	$scope.loadMetadata=function(){
-		//remove select clausole
-		var tmpText= $scope.currentMeasure.query.replace(/\n/g, " ").toLowerCase();
+		var postData={dataSourceId:$scope.currentMeasure.selectedDatasource,
+				query:$scope.currentMeasure.query,
+				maxItem:1
+				}
 		
-//		if((tmpText.match(/(^|\s)select($|\s)/g) || []).length>1){
-//			alert("too many select clausole");
-//			return;
-//		}
-//		
-//		if((tmpText.match(/(^|\s)from($|\s)/g) || []).length>1){
-//			alert("too many from clausole");
-//			return;
-//		}
-		
-		var selectIndex=tmpText.search(/(^|\s)select($|\s)/);
-		var fromIndex=tmpText.search(/(^|\s)from($|\s)/);
-		if(selectIndex!=-1 && fromIndex!=-1){
-			var aliasSubstring=tmpText.substring(selectIndex+6,fromIndex);
-			var splittedAliasSubStr= aliasSubstring.trim().split(',');
-			angular.copy([],$scope.currentMeasure.metadata);
-			for(var i=0;i<splittedAliasSubStr.length;i++){
-				var tmpSplit= splittedAliasSubStr[i].trim().split(" as ");
-				$scope.currentMeasure.metadata.push(tmpSplit[tmpSplit.length-1]);
+		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
+		.then(function(response){
+//			angular.copy({},$scope.currentMeasure.metadata);
+			
+			var tmpMeas=[];
+			
+			for(var index in response.data.columns){
+				tmpMeas.push(response.data.columns[index].label);
+				if(!$scope.currentMeasure.metadata.hasOwnProperty(response.data.columns[index].label)){
+					$scope.currentMeasure.metadata[response.data.columns[index].label]=response.data.columns[index]
+				}
 			}
-			 
-		}else{
-			alert("query non completa")
-		}
+			
+			for(var index in $scope.currentMeasure.metadata){
+				if(tmpMeas.indexOf($scope.currentMeasure.metadata[index].label)==-1){
+					delete $scope.currentMeasure.metadata[index];
+				}
+			}
+			
+			
+		},function(response){
+			console.log("errore")
+		});
+//		//remove select clausole
+//		var tmpText= $scope.currentMeasure.query.replace(/\n/g, " ").toLowerCase();
+//		var selectIndex=tmpText.search(/(^|\s)select($|\s)/);
+//		var fromIndex=tmpText.search(/(^|\s)from($|\s)/);
+//		if(selectIndex!=-1 && fromIndex!=-1){
+//			var aliasSubstring=tmpText.substring(selectIndex+6,fromIndex);
+//			var splittedAliasSubStr= aliasSubstring.trim().split(',');
+//			angular.copy([],$scope.currentMeasure.metadata);
+//			for(var i=0;i<splittedAliasSubStr.length;i++){
+//				var tmpSplit= splittedAliasSubStr[i].trim().split(" as ");
+//				$scope.currentMeasure.metadata.push(tmpSplit[tmpSplit.length-1]);
+//			}
+//			 
+//		}else{
+//			alert("query non completa")
+//		}
 	}
+	
+	$scope.loadPreview=function(){
+		var postData={dataSourceId:$scope.currentMeasure.selectedDatasource,
+				query:$scope.currentMeasure.query,
+				maxItem:10
+				}
+		
+		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
+		.then(function(response){
+			console.log("resp",response)
+			 $scope.detailProperty.queryChanged=false;
+			angular.copy(response.data,$scope.detailProperty.previewData);
+		},function(response){
+			console.log("errore")
+		});
+	}
+	
+	
 }
 
 function measureListControllerFunction($scope,sbiModule_translate,$mdDialog){

@@ -32,10 +32,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleDefinition.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRoleQueryController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRoleMetadataController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRolePreviewController.js"></script>
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" full-screen="false">
+	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" cancel-function="cancelMeasureFunction" full-screen="true">
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController">
 			<angular-table id='measureListTable' ng-model=measureList
 				columns='measureColumnsList'
@@ -43,8 +44,16 @@
 			 	 speed-menu-option=measureMenuOption
 				highlights-selected-item=true click-function="measureClickFunction(item);" > </angular-table>
 		</list>
-		<detail ng-controller="measureDetailController">
-			<md-tabs layout-fill class="absolute">
+		<extra-button>
+			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
+			  <md-button class="md-flat" ng-click="showPlaceholdersTab=!showPlaceholdersTab">{{translate.load("sbi.kpi.placeholder")}}</md-button>
+		</extra-button>
+		
+		<detail ng-controller="measureDetailController" >
+		
+		<div layout="row" class="absolute" layout-fill>
+		 
+			<md-tabs flex  >
 			
 				<md-tab id="tab1">
        				<md-tab-label>{{translate.load("sbi.ds.query")}}</md-tab-label>
@@ -53,14 +62,14 @@
         			</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab2"  ng-click="loadMetadata()">
+				<md-tab id="tab2"  ng-click="loadMetadata()" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-tab-label>
         			<md-tab-body  >
         			<%@include	file="./measureRoleTemplate/metadataTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab3">
+				<md-tab id="tab3" ng-click="loadPreview()" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.ds.test")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./measureRoleTemplate/previewTemplate.jsp"%>
@@ -68,7 +77,41 @@
 					</md-tab-body>
 				</md-tab>
 				
-			</md-tabs>
+			</md-tabs> 
+		
+		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="aliasTab" md-is-locked-open="showAliasTab">
+	      <md-toolbar class="md-theme-indigo">
+	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.alias")}}</h1>
+	      </md-toolbar>
+	      <md-content layout-padding >
+	        <md-button ng-click="close()" class="md-primary" hide-gt-md>
+	          Close Sidenav Left
+	        </md-button>
+	        <p hide-md show-gt-md>
+	          This sidenav is locked open on your device. To go back to the default behavior,
+	          narrow your display.
+	        </p>
+	      </md-content>
+	    </md-sidenav>
+	    
+	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="placeholderTab" md-is-locked-open="showPlaceholdersTab">
+	      <md-toolbar class="md-theme-indigo">
+	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.placeholder")}}</h1>
+	      </md-toolbar>
+	      <md-content layout-padding >
+	        <md-button ng-click="close()" class="md-primary" hide-gt-md>
+	          Close Sidenav Left
+	        </md-button>
+	        <p hide-md show-gt-md>
+	          This sidenav is locked open on your device. To go back to the default behavior,
+	          narrow your display.
+	        </p>
+	      </md-content>
+	    </md-sidenav>
+		
+		
+		</div>
+		
 		</detail>
 	</angular-list-detail>
 </body>

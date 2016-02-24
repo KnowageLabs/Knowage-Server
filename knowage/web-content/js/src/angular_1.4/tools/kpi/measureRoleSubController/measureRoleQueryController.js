@@ -2,8 +2,6 @@ angular.module('measureRoleManager').controller('measureRoleQueryController', [ 
 
 function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	$scope.dataSourceTable= {};
-	$scope.selectedDatasource={};
-	$scope.dataSourcesIsSelected=false;
 	$scope.datasourcesList=[];
 	
 	
@@ -41,7 +39,11 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
         hintOptions: {tables:$scope.dataSourceTable}
 		};
 	
-	
+	$scope.codemirrorLoaded =function(_editor){
+		 _editor.on("change", function(a,b,c){
+			 $scope.detailProperty.queryChanged=true;
+			 });
+	}
 
 	
 	$scope.keyAssistFunc=function(cm){
@@ -99,7 +101,7 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 	$scope.alterDatasource=function(datasrc){
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/"+datasrc)
 		.then(function(response){
-			$scope.dataSourcesIsSelected=true;
+			$scope.detailProperty.dataSourcesIsSelected=true;
 			angular.copy(response.data,$scope.dataSourceTable);
 		},function(response){
 			console.log("errore")

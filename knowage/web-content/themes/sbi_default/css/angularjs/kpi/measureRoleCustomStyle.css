@@ -11,5 +11,11 @@ position:relative
 }
 
 .metadataTabs{
-    min-width: 250px;
+    width: 250px;
     }
+    
+.alertIconMissingAlias {
+line-height: 24px !important;
+    color: #FFEB38 !important;
+    margin-right: 6px;
+}
