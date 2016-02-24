@@ -176,15 +176,13 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="UserDefinedPropertyRest" roleType="ADMIN" />
+		userFunctionality="UserDefinedPropertyManagement" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="UserDefinedPropertyRest" roleType="USER" />
+		userFunctionality="UserDefinedPropertyManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="UserDefinedPropertyRest" roleType="DEV_ROLE" />
+		userFunctionality="UserDefinedPropertyManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="UserDefinedPropertyRest" roleType="TEST_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="UserDefinedPropertyRest" roleType="MODEL_ADMIN" />
+		userFunctionality="UserDefinedPropertyManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="DomainManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY

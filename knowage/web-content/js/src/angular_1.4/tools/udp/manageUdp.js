@@ -12,7 +12,7 @@ app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$
 
 function manageUdpFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
 	
-	var path = "2.0/userdataproperties";
+	var path = "2.0/udp";
 	
 	$scope.translate=sbiModule_translate;
 	$scope.data=[]

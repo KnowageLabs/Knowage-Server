@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-@Path("/2.0/userdataproperties")
+@Path("/2.0/udp")
 @ManageAuthorization
 public class UdpResource extends AbstractSpagoBIResource {
 

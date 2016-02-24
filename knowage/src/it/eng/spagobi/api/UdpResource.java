@@ -6,7 +6,10 @@
 package it.eng.spagobi.api;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
@@ -30,10 +33,12 @@ import org.json.JSONObject;
  *
  */
 @Path("/1.0/udp")
+@ManageAuthorization
 public class UdpResource {
 
 	@GET
 	@Path("/loadUdp")
+	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public String loadUDPGlossaryLikeLabel(@Context HttpServletRequest req) {
 		try {
