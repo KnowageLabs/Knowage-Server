@@ -17,6 +17,7 @@
 		   </generator>
         </id>
         
+        
         <property name="position" column="POSITION" type="int" length="11"/>
         <property name="label" column="LABEL" type="string" length="40"/>
 
@@ -25,6 +26,10 @@
         <property name="maxValue" column="MAX_VALUE" type="big_decimal" precision="22" scale="0"/>
         <property name="includeMax" column="INCLUDE_MAX" type="boolean" />
         <property name="color" column="COLOR" type="string" length="20" />
+        
+        <many-to-one name="sbiKpiThreshold" class="it.eng.spagobi.kpi.metadata.SbiKpiThreshold" >
+            <column name="THRESHOLD_ID" not-null="true"/>
+        </many-to-one>
         
         <many-to-one name="severity" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false">
             <column name="SEVERITY_ID" not-null="false"/>

@@ -21,6 +21,7 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	private boolean includeMax;
 	private String color;
 	private SbiDomains severity;
+	private SbiKpiThreshold sbiKpiThreshold;
 
 	public SbiKpiThresholdValue() {
 	}
@@ -158,6 +159,21 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	 */
 	public void setSeverity(SbiDomains severity) {
 		this.severity = severity;
+	}
+
+	/**
+	 * @return the sbiKpiThreshold
+	 */
+	public SbiKpiThreshold getSbiKpiThreshold() {
+		return sbiKpiThreshold;
+	}
+
+	/**
+	 * @param sbiKpiThreshold
+	 *            the sbiKpiThreshold to set
+	 */
+	public void setSbiKpiThreshold(SbiKpiThreshold sbiKpiThreshold) {
+		this.sbiKpiThreshold = sbiKpiThreshold;
 	}
 
 }

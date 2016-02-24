@@ -22,10 +22,11 @@
         <property name="cardinality" column="CARDINALITY" type="string" length="1024" not-null="true"/>
         <property name="placeholder" column="PLACEHOLDER" type="string" length="1024" not-null="true"/>
         <property name="thresholdId" column="THRESHOLD_ID" type="int" length="11" not-null="true"/>
-		        
+		<!-- 
         <property name="categoryId" column="CATEGORY_ID" type="int" length="11" not-null="false"/>
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
-            <column name="CATEGORY_ID" not-null="false" />
+		 -->        
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="all">
+            <column name="CATEGORY_ID"  />
         </many-to-one>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

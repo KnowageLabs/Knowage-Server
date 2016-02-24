@@ -15,7 +15,6 @@ public class SbiKpiKpi extends SbiHibernateModel implements java.io.Serializable
 	private String definition;
 	private String cardinality;
 	private String placeholder;
-	private int categoryId;
 	private int thresholdId;
 	private SbiDomains category;
 
@@ -95,21 +94,6 @@ public class SbiKpiKpi extends SbiHibernateModel implements java.io.Serializable
 	 */
 	public void setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
-	}
-
-	/**
-	 * @return the categoryId
-	 */
-	public int getCategoryId() {
-		return categoryId;
-	}
-
-	/**
-	 * @param categoryId
-	 *            the categoryId to set
-	 */
-	public void setCategoryId(int categoryId) {
-		this.categoryId = categoryId;
 	}
 
 	/**

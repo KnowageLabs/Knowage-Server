@@ -17,7 +17,7 @@ public class SbiKpiThreshold extends SbiHibernateModel implements java.io.Serial
 	private String name;
 	private String description;
 	private SbiDomains type;
-	private Set<SbiKpiThreshold> sbiKpiThresholdValues = new HashSet(0);
+	private Set<SbiKpiThresholdValue> sbiKpiThresholdValues = new HashSet(0);
 
 	public SbiKpiThreshold() {
 	}

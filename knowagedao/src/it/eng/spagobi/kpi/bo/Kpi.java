@@ -11,8 +11,8 @@ public class Kpi implements Serializable {
 	private Integer id;
 	private String name;
 	private String definition;
-	private String cardinality; // json
-	private String placeholder; // json
+	private String cardinality; // json object
+	private String placeholder; // json array
 	private String category;
 	private Integer categoryId;
 	private Threshold threshold; // lazy
