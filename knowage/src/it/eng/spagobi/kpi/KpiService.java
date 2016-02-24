@@ -48,7 +48,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -274,6 +274,7 @@ public class KpiService {
 				dao.updateKpi(kpi);
 			}
 
+			return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
@@ -283,17 +284,17 @@ public class KpiService {
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-		return Response.ok().build();
 	}
 
 	/* Private methods */
 
 	/**
 	 * @param placeholder
+	 * @throws JSONException
 	 */
-	private void checkPlaceholder(String placeholder) {
-		// TODO Auto-generated method stub
-
+	private void checkPlaceholder(String placeholder) throws JSONException {
+		// currently we are checking input string for json format only
+		new JSONArray(placeholder);
 	}
 
 	private class Measure {
