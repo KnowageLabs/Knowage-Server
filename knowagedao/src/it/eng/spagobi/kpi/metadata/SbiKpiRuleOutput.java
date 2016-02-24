@@ -11,7 +11,6 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Serializable {
 
 	private Integer id;
-	private int ruleId;
 	private int typeId;
 	private SbiKpiRule sbiKpiRule;
 	private SbiKpiAlias sbiKpiAlias;
@@ -35,21 +34,6 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	 */
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the ruleId
-	 */
-	public int getRuleId() {
-		return ruleId;
-	}
-
-	/**
-	 * @param ruleId
-	 *            the ruleId to set
-	 */
-	public void setRuleId(int ruleId) {
-		this.ruleId = ruleId;
 	}
 
 	/**
