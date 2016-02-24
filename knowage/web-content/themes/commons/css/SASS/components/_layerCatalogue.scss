@@ -114,6 +114,10 @@
 .kn-detail {
   background: $detailBackground;
 
+  .kn-detail-content {
+    background: transparent;
+  }
+
   .containerDiv {
     position: absolute;
   }
