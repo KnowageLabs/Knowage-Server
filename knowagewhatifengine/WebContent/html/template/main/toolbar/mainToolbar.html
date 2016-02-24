@@ -18,7 +18,7 @@
 			</md-tooltip>
 		</md-button>
 		
-		<md-button class="main-toolbar-button sorting-settings" ng-click="openSortingSettingsDialog(e)" >
+		<md-button class="main-toolbar-button sorting-settings" ng-click="showDialog(e,sortSetDial)" >
 			<md-tooltip md-direction="bottom">
 				Sorting settings
 			</md-tooltip>
@@ -31,14 +31,14 @@
 			</md-tooltip>
 		</md-button>
 		<!-- Temporary solution for sorting and stuff -->
-		<md-button class="main-toolbar-button" ng-click="openMdxQueryDialog(e)">
+		<md-button class="main-toolbar-button" ng-click="showDialog(e,sendMdxDial)">
 			Send MDX
 			<md-tooltip md-direction="bottom">
 				Send MDX
 			</md-tooltip>
 		</md-button>
 		
-		<md-button ng-click="openShowMdxDialog(e)" class="main-toolbar-button">
+		<md-button ng-click="showDialog(e,showMdxDial)" class="main-toolbar-button">
 			Show MDX
 			<md-tooltip md-direction="bottom">
 				Show MDX

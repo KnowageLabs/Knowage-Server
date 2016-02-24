@@ -1,12 +1,16 @@
 <li ng-repeat="item in item.children"  >
 	<div>
-			<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf" ng-click=""> 
+		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf" ng-click=""> 
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" ng-click="expandTreeAsync(item)"> 
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
-		</md-icon> 
-		{{item.name}}
+		</md-icon>
+		<span ng-click="selectFilter(item)">
+			{{item.name}}
+			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.name == filterSelected[filterAxisPosition].name"> 
+			</md-icon>
+		</span>			
 		<ul  ng-model="item.children" ng-show="item.collapsed" ng-include="templateListChild">
 		</ul>
 	</div>

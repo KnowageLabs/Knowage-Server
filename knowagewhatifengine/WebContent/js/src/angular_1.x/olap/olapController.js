@@ -46,9 +46,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.olapPanel = templateRoot + '/main/olap/olapPanel.html';
 	$scope.topToolbar = templateRoot + '/main/olap/topToolbar.html';
 	$scope.leftToolbarPlusMain = templateRoot + '/main/olap/leftToolbarPlusMain.html';
-
+	
 	$scope.leftPanel = templateRoot + '/left/leftPanel.html';
 	$scope.rightPanel = templateRoot + '/right/rightPanel.html';
+	
+	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
+	$scope.showMdxDial = "/main/toolbar/showMdx.html";
+	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	
 	$scope.rows;
 	$scope.maxRows = 3;
@@ -62,6 +66,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	$scope.toolbarButtons = [];
 	$scope.filterCardList = [];
+	$scope.filterSelected = [];
+	$scope.isFilterSelected = false;
+	$scope.filterAxisPosition;
 	$scope.showMdxVar = "";
 
 	$scope.draggedFrom = "";
@@ -82,6 +89,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
+	
 	var activeaxis;
 	var filterFather;
 	
@@ -337,6 +345,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.mdxQuery = "";
 			$scope.modelConfig = response.data.modelConfig;
 			
+			initFilterList();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("Error", 'Error');
 			
@@ -367,10 +376,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			  
 			  if(node!=null)
 				  expandAsyncTree($scope.data,response.data, id);
-			  else
+			  else{
 				  $scope.data = response.data;
-			  /*
-			  $scope.loadedData.push(response.data);
+				  $scope.loadedData.push(response.data);
+			  }
+				  
+			  
+			  /*$scope.loadedData.push(response.data);
 			  $scope.dataPointers.push(uniqueName);*/
 			console.log("getHierarchyMembersAsynchronus result");
 			console.log(response.data);
@@ -431,11 +443,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-		console.log("drop");
-		console.log($scope.draggedFrom);
-		console.log("**********data*************")
-		console.log(data);
-		
+
 		if(data!=null){
 			fromAxis = data.axis;
 			
@@ -467,15 +475,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 
 	$scope.dropLeft = function(data, ev) {
-		console.log("drop");
-		console.log($scope.draggedFrom);
-		console.log("**********data*************")
-		console.log(data);
-		
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-		
+		  
 		if(data !=null){
 			fromAxis = data.axis;
 			
@@ -499,17 +502,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.putMemberOnAxis(fromAxis,data);
 				checkShift();
 				fixAxisPosition("top");
-				console.log($scope.rows);
 			}
-
-		}
-		
+		}		
 	}
 
 	$scope.dropFilter = function(data, ev) {
-		console.log("**********data*************")
-		console.log(data);
-		
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
@@ -550,11 +547,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 
 	$scope.dragSuccess = function(df, index) {
-		console.log("drag");
 		$scope.draggedFrom = df;
 		$scope.dragIndex = index;
-		console.log(df);
-		console.log("indeks" + index);
 	}
 	
 	/**
@@ -563,10 +557,30 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
 		$scope.filterDialogToolbarName = filter.name;
+		$scope.filterAxisPosition = filter.positionInAxis;
 		activeaxis = filter.axis;
 		filterFather = filter.uniqueName;
-		$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
-		showFiltersDialog(ev);
+		console.log('filter');
+		console.log(filter);
+		var exist = false;
+		
+		for(var i = 0; i< $scope.dataPointers.length;i++){
+			if($scope.dataPointers[i] == filterFather){
+				exist = true;
+				$scope.data= $scope.loadedData[i];
+			}
+		}
+		if(!exist){
+			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
+			$scope.dataPointers.push(filterFather);
+		}
+			
+		$scope.showDialog(ev,"/main/filter/filterDialog.html");
+		
+		console.log("ld");
+		console.log($scope.loadedData);
+		console.log("dp");
+		console.log($scope.dataPointers);
 	}
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
@@ -590,53 +604,19 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.data = $scope.loadedData[position];
 		}
 		
-		showFiltersDialog(ev);
+		$scope.showDialog(ev,"/main/filter/filterDialog.html");
 		
 	}
-	
-	showFiltersDialog = function(ev){
+	/**
+	 *Function for opening dialogs
+	 **/
+	$scope.showDialog = function(ev,path){
 		$mdDialog
 		.show({
 			scope : $scope,
 			preserveScope : true,
 			controllerAs : 'olapCtrl',
-			templateUrl : '/knowagewhatifengine/html/template/main/filter/filterDialog.html',
-			targetEvent : ev,
-			clickOutsideToClose : true
-		});
-	}
-	
-	$scope.openMdxQueryDialog = function(ev) {
-		$mdDialog
-				.show({
-					scope : $scope,
-					preserveScope : true,
-					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/sendMdx.html',
-					targetEvent : ev,
-					clickOutsideToClose : true
-				});
-	}
-
-	$scope.openShowMdxDialog = function(ev) {
-		$mdDialog
-				.show({
-					scope : $scope,
-					preserveScope : true,
-					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/showMdx.html',
-					targetEvent : ev,
-					clickOutsideToClose : true
-				});
-	}
-	
-	$scope.openSortingSettingsDialog = function(ev){
-		$mdDialog
-		.show({
-			scope : $scope,
-			preserveScope : true,
-			controllerAs : 'olapCtrl',
-			templateUrl : '/knowagewhatifengine/html/template/main/toolbar/sortingSettings.html',
+			templateUrl : templateRoot+path,
 			targetEvent : ev,
 			clickOutsideToClose : true
 		});
@@ -661,9 +641,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			if(d[i].id == id){
 				d[i]["children"] = dput;
 				d[i]["collapsed"]=true;
-				//$scope.data = d;
-				console.log(d);
-				console.log($scope.data);
 				break;
 			}
 			else{
@@ -678,20 +655,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 	
 	$scope.hideAsyncTree = function(item){
-		/*if(d == null)
-			d=$scope.data;
-		
-		for(var i=0; i< d.length;i++){
-			if(d[i].id == id){
-				d[i].collapsed = false;
-				break;
-			}
-			else{
-				$scope.hideAsyncTree(d[i].children,id);
-			}
-		}*/
-		item.collapsed = false;
-		
+		item.collapsed = false;		
 	}
 	
 	$scope.expandTree = function(item) {
@@ -724,7 +688,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 	
 	$scope.switchPosition = function(data){
-		 $scope.moveHierarchies(data.axis, data.uniqueName, data.positionInAxis+1,1,data);
+		 
+		$scope.moveHierarchies(data.axis, data.uniqueName, data.positionInAxis+1,1,data);
 		 if(data.axis == 0){			 
 			 var pom = $scope.columns[data.positionInAxis];
 			 var pia = data.positionInAxis;
@@ -749,5 +714,36 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		 }
 
 
+	};
+	var h;
+	var m;
+	$scope.selectFilter = function(item){
+
+		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
+		m = item.uniqueName;
+		$scope.filterSelected[$scope.filterAxisPosition].name = item.name;
+	};
+	
+	$scope.filterDialogSave = function(){
+		sbiModule_restServices.promiseGet
+		("1.0",'/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		.then(function(response) {
+			  console.log("filter dialog save");
+			  console.log(response.data);
+			  $scope.table = $sce.trustAsHtml(response.data.table);
+			  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+		});	
+		$mdDialog.hide();
 	}
+	
+	initFilterList = function (){
+		for(var i = 0; i < $scope.filterCardList.length;i++){
+			var x ={name:"...",visible:false};
+			$scope.filterSelected[i] = x;
+		}
+		console.log($scope.filterSelected);
+	};
 }
