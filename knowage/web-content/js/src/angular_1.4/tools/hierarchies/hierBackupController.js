@@ -94,6 +94,7 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 			
 			//if the hierarchies[dim][type] is not defined, get the hierarchies and save in the map. Else, get them from the map 
 			if (map[keyMap] === undefined){
+				$scope.toggleLoading(true);
 				$scope.restService.get(service,serviceName,"dimension="+dimName)
 					.success(
 						function(data, status, headers, config) {
@@ -103,9 +104,11 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
+							$scope.toggleLoading(false);
 						})
 					.error(function(data, status){
 						var message='GET hierarchies error of ' + type +'-'+ dimName + ' with status :' + status;
+						$scope.toggleLoading(false);
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
 						
 					});
@@ -140,7 +143,6 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 		var type = $scope.hierTypeBackup;
 		var dim = $scope.dimBackup;
 		var hier = $scope.hierBackup;
-		$scope.toogleLoading("backup", true);
 		if (type && dim && hier){
 			var config = {
 					params : {
@@ -150,21 +152,22 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 						hierarchyType: type
 					}
 			};
+			$scope.toggleLoading(true);
 			$scope.restService.get("hierarchiesBackup","getHierarchyBkps",null,config)
 				.success(
 					function(data, status, headers, config) {
 						if (data.errors === undefined){
 							$scope.createTable(data);
 							$scope.oldBackups= {};
-							$scope.toogleLoading("backup", false);
+							
 						}else{
-							$scope.toogleLoading("backup", false);
 							$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 						}
+						$scope.toggleLoading(false);
 					})	
 				.error(function(data, status){
 					var message = 'GET backup error of ' + data + ' with status :' + status;
-					$scope.toogleLoading("backup", false);
+					$scope.toggleLoading(false);
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),message);					
 				});
 		}
@@ -183,8 +186,8 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 			var title = $scope.translate.load("sbi.generic.update2");
 		    var message =  $scope.translate.load("sbi.hierarchies.backup.modify.message");
 			var response = $scope.showConfirm(title,message);
-			$scope.toogleLoading("backup", true);
 			response.then(function(){
+				$scope.toggleLoading(true);
 				$scope.restService.post("hierarchiesBackup","modifyHierarchyBkps",item)
 					.success(
 						function(data, status, headers, config) {
@@ -195,12 +198,12 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							};
-							$scope.toogleLoading("backup", false);
+							$scope.toggleLoading(false);
 						})	
 					.error(function(data, status){
 						var message = 'POST edit backup error of ' + data + ' with status :' + status;
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),message);
-						$scope.toogleLoading("backup", false);
+						$scope.toggleLoading(false);
 					})				
 				,function(){}
 			});
@@ -348,20 +351,20 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
 	}
 	
-	$scope.toogleLoading = function(choose, forceValue){
+	$scope.toggleLoading = function(forceValue){
 		var loading;
 		if (forceValue !== undefined){
 			loading = !forceValue;
 		}else{
-			 loading = choose ==  "save" ? $scope.showLoadingBackup : $scope.showLoading;
+			 loading = $scope.showLoadingBackup;
 		}
 		if (loading){
 			$timeout(function(){
-				choose == "save" ? $scope.showLoadingBackup = false : $scope.showLoading = false;
+				$scope.showLoadingBackup = false;
 			},100,true);
 		}else{
 			$timeout(function(){
-				choose == "save" ? $scope.showLoadingBackup = true : $scope.showLoading = true;
+				$scope.showLoadingBackup = true;
 			},100,true);
 		}
 	}

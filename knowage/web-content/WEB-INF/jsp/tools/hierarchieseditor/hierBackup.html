@@ -35,7 +35,7 @@
 					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 					<h4>{{translate.load("sbi.generic.wait");}}</h4>
 				</md-content>
-				<md-content layout='row'  ng-if="!showLoadingBackup">
+				<md-content layout='row'  ng-hide="showLoadingBackup">
 					<angular-table 
 						ng-model="backupTable"
 						columns = "columnsTable"
