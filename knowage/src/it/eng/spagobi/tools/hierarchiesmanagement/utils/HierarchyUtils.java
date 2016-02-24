@@ -748,8 +748,9 @@ public class HierarchyUtils {
 
 		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_CD));
 		String leafParentCodeString = (String) leafParentCodeField.getValue();
-		data.setNodeCode(leafParentCodeString + "_" + nodeCode);
-		nodeCode = leafParentCodeString + "_" + nodeCode;
+		// data.setNodeCode(leafParentCodeString + "_" + nodeCode); //anto
+		data.setNodeCode(nodeCode);
+		// nodeCode = leafParentCodeString + "_" + nodeCode; //anto
 		data.setLeafParentCode(leafParentCodeString);
 		// data.setLeafOriginalParentCode(leafParentCodeString); // backup code
 
