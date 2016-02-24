@@ -277,7 +277,7 @@ public class HierarchyMasterService {
 
 			// 3 - Get the dimension leaves already present into the original Hierarchy
 			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
-					optionalFilters, filterDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
+					optionalFilters, validityTreeDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
 
 			// 4 - Iterate on the dimensions' leaves used by the hierarchy datastore and check if the record is present into the dimension datastore:
 			// If it exists do nothing (get the new last)
