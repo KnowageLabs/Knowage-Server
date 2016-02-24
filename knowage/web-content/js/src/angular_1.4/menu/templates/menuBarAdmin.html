@@ -37,8 +37,14 @@
      
       <!-- End Custom Menu -->    
       </div>
-         
-   </aside>
+		<div class="top-bar">
+			<button aria-label="Close Menu" type="button" class="sidebar-toggle"
+				data-ng-click="toggleMenu()">
+				<i aria-hidden="true" class="material-icons">chevron_left</i>
+			</button>
+		</div>
+
+	</aside>
    <div id="contieniLinkAdmin" data-ng-class="{'open' : openAside}">
       <div class="row">
          <div class="col-xs-4 gruppoLinkAdmin" data-ng-repeat="group in groups">
