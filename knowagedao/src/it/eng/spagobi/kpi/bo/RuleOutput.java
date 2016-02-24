@@ -20,8 +20,8 @@ public class RuleOutput implements Serializable {
 	private Integer hierarchyId;
 	private String type;
 	private Integer typeId;
-	private String author;
-	private Date dateCreation;
+	private String author; // Rule author
+	private Date dateCreation; // Rule dateCreation
 
 	/**
 	 * @return the id

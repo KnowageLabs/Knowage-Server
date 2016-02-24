@@ -46,7 +46,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public void insertThreshold(Threshold t);
 
-	public void updateThreshold(Threshold id);
+	public void updateThreshold(Threshold t);
 
 	public void removeThreshold(Integer id);
 }

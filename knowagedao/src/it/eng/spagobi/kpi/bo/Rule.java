@@ -13,7 +13,7 @@ public class Rule implements Serializable {
 	private Integer id;
 	private String name;
 	private String definition;
-	private boolean newRecord;
+	private Integer dataSourceId;
 
 	private List<RuleOutput> ruleOutputs = new ArrayList<>();
 
@@ -85,18 +85,18 @@ public class Rule implements Serializable {
 	}
 
 	/**
-	 * @return the newRecord
+	 * @return the dataSourceId
 	 */
-	public boolean isNewRecord() {
-		return newRecord;
+	public Integer getDataSourceId() {
+		return dataSourceId;
 	}
 
 	/**
-	 * @param newRecord
-	 *            the newRecord to set
+	 * @param dataSourceId
+	 *            the dataSourceId to set
 	 */
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
+	public void setDataSourceId(Integer dataSourceId) {
+		this.dataSourceId = dataSourceId;
 	}
 
 	@Override

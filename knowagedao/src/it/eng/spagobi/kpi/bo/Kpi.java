@@ -15,7 +15,6 @@ public class Kpi implements Serializable {
 	private String placeholder; // json
 	private String category;
 	private Integer categoryId;
-	private boolean newRecord;
 	private Threshold threshold; // lazy
 
 	public Kpi() {
@@ -138,21 +137,6 @@ public class Kpi implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		return o instanceof Kpi && id != null && id.equals(((Kpi) o).getId());
-	}
-
-	/**
-	 * @return the newRecord
-	 */
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	/**
-	 * @param newRecord
-	 *            the newRecord to set
-	 */
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	/**

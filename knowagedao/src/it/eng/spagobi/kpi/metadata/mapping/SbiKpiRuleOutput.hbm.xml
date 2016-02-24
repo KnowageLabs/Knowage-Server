@@ -20,8 +20,8 @@
         <property name="typeId" column="TYPE_ID" type="int" length="11" not-null="true"/>
 		<property name="categoryId" column="CATEGORY_ID" type="int" length="11"/>        
         
-        <many-to-one name="sbiKpiRule" class="it.eng.spagobi.kpi.metadata.SbiKpiRule" lazy="false" insert="true" update="false">
-            <column name="RULE_ID" not-null="true" />
+        <many-to-one name="sbiKpiRule" class="it.eng.spagobi.kpi.metadata.SbiKpiRule" lazy="false" >
+            <column name="RULE_ID" />
         </many-to-one>
         
         <many-to-one name="sbiKpiAlias" class="it.eng.spagobi.kpi.metadata.SbiKpiAlias" lazy="false" cascade="all">
