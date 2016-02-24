@@ -49,6 +49,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				SbiKpiRule sbiRule = new SbiKpiRule();
 				sbiRule.setName(rule.getName());
 				sbiRule.setDefinition(rule.getDefinition());
+				sbiRule.setDataSourceId(rule.getDataSourceId());
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
@@ -83,7 +84,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				sbiRule.setName(rule.getName());
 				sbiRule.setDefinition(rule.getDefinition());
-				// sbiRule.getSbiKpiRuleOutputs().clear();
+				sbiRule.setDataSourceId(rule.getDataSourceId());
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
@@ -463,6 +464,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		rule.setId(sbiRule.getId());
 		rule.setName(sbiRule.getName());
 		rule.setDefinition(sbiRule.getDefinition());
+		rule.setDataSourceId(sbiRule.getDataSourceId());
 		rule.setRuleOutputs(new ArrayList<RuleOutput>());
 		if (sbiRuleOutputs != null) {
 			for (SbiKpiRuleOutput ruleOutput : sbiRuleOutputs) {

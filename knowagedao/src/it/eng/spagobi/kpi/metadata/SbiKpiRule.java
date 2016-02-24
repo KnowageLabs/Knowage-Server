@@ -15,6 +15,8 @@ public class SbiKpiRule extends SbiHibernateModel implements java.io.Serializabl
 	private Integer id;
 	private String name;
 	private String definition;
+	private Integer dataSourceId;
+
 	private Set<SbiKpiRuleOutput> sbiKpiRuleOutputs = new HashSet(0);
 	private Set<SbiKpiPlaceholder> sbiKpiPlaceholders = new HashSet(0);
 
@@ -59,6 +61,21 @@ public class SbiKpiRule extends SbiHibernateModel implements java.io.Serializabl
 
 	public void setSbiKpiPlaceholders(Set sbiKpiPlaceholders) {
 		this.sbiKpiPlaceholders = sbiKpiPlaceholders;
+	}
+
+	/**
+	 * @return the dataSourceId
+	 */
+	public Integer getDataSourceId() {
+		return dataSourceId;
+	}
+
+	/**
+	 * @param dataSourceId
+	 *            the dataSourceId to set
+	 */
+	public void setDataSourceId(Integer dataSourceId) {
+		this.dataSourceId = dataSourceId;
 	}
 
 }
