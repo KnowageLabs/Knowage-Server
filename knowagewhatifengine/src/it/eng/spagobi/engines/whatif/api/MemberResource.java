@@ -11,6 +11,7 @@ package it.eng.spagobi.engines.whatif.api;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -40,6 +41,16 @@ import org.pivot4j.ui.command.DrillDownCommand;
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
 
+	private SpagoBIPivotModel model;
+	private ModelConfig modelConfig;
+
+	private void init() {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		modelConfig = getWhatIfEngineInstance().getModelConfig();
+	}
+
 	@GET
 	@Path("/drilldown/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
 	@Produces("text/html; charset=UTF-8")
@@ -49,16 +60,12 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drilldown start " + format.format(new Date());
 		System.out.println(time);
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		init();
 		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
-		model.removeSubset(model.getCellSet().getAxes().get(1));
-		CellSet cellSet = model.getCellSet();
-		// Axes of the resulting query.
-		List<CellSetAxis> axes = cellSet.getAxes();
+		model.removeSubset(getAxis(1));
 
 		// The ROWS axis
-		CellSetAxis rowsOrColumns = axes.get(axisPos);
+		CellSetAxis rowsOrColumns = getAxis(axisPos);
 
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
@@ -75,7 +82,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
-		String drillType = ei.getModelConfig().getDrillType();
+		String drillType = modelConfig.getDrillType();
 
 		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
@@ -112,22 +119,18 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
 			@PathParam("memberUniqueName") String memberUniqueName) {
+		init();
+
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drillup start " + format.format(new Date());
 		System.out.println(time);
 		List<Member> m = null;
 		Member m2 = null;
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
-		model.removeSubset(model.getCellSet().getAxes().get(1));
-		CellSet cellSet = model.getCellSet();
-
-		// Axes of the resulting query.
-		List<CellSetAxis> axes = cellSet.getAxes();
+		model.removeSubset(getAxis(1));
 
 		// The ROWS axis
-		CellSetAxis rowsOrColumns = axes.get(axisPos);
+		CellSetAxis rowsOrColumns = getAxis(axisPos);
 
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
@@ -153,7 +156,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		Hierarchy hierarchy = m2.getHierarchy();
 
-		String drillType = ei.getModelConfig().getDrillType();
+		String drillType = modelConfig.getDrillType();
 
 		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
@@ -172,7 +175,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+		Integer subsetStart = model.getSubsetStart(getAxis(1));
 		model.setSubset(rowsOrColumns, subsetStart, 10);
 		time = "Drillup end " + format.format(new Date());
 		System.out.println(time);
@@ -185,23 +188,72 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortType}")
 	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
 			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType) {
+		init();
+		if (sortType.equals(SortCriteria.ASC.toString()) || sortType.equals(SortCriteria.BASC.toString()) || sortType.equals(SortCriteria.DESC.toString())
+				|| sortType.equals(SortCriteria.BDESC.toString())) {
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		SwapAxes transform = model.getTransform(SwapAxes.class);
+			model.setSortCriteria(SortCriteria.valueOf(sortType));
+		}
+
+		return sortModel(axisToSortpos, axis, positionUniqueName);
+	}
+
+	@GET
+	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortType}/{topBottomCount}")
+	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
+			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType,
+			@PathParam("topBottomCount") Integer topBottomCount) {
+		SortCriteria sortCriteria = SortCriteria.valueOf(sortType);
+		if (sortCriteria.equals(SortCriteria.BOTTOMCOUNT) || sortCriteria.equals(SortCriteria.TOPCOUNT)) {
+			model.setSortCriteria(SortCriteria.valueOf(sortType));
+			model.setTopBottomCount(topBottomCount);
+		}
+		return sortModel(axisToSortpos, axis, positionUniqueName);
+	}
+
+	@GET
+	@Path("/sort/disable")
+	public String sorten() {
+		init();
 
 		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
 		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		if (model.isSorting()) {
+			model.setSorting(false);
+
+		} else {
+			model.setSorting(true);
+
+		}
+
+		model.setSubset(model.getCellSet().getAxes().get(1), subsetStart, 10);
+
+		return renderModel(model);
+	}
+
+	private CellSetAxis getAxis(int axisPos) {
+
 		CellSet cellSet = model.getCellSet();
-		CellSetAxis axisToSort = cellSet.getAxes().get(axisToSortpos);
-		CellSetAxis axisM = cellSet.getAxes().get(axis);
+
+		return cellSet.getAxes().get(axisPos);
+
+	}
+
+	private String sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName) {
+
+		SwapAxes transform = model.getTransform(SwapAxes.class);
+		Integer subsetStart = model.getSubsetStart(getAxis(1));
+
+		model.removeSubset(getAxis(1));
+
+		CellSetAxis axisToSort = getAxis(axisToSortpos);
+		CellSetAxis axisM = getAxis(axis);
 
 		List<Position> positions = axisM.getPositions();
 
 		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
 
-		model.setSorting(true);
-		model.setSortCriteria(SortCriteria.valueOf(sortType));
 		if (transform.isSwapAxes()) {
 
 			axisToSort = axisM;
@@ -211,43 +263,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		model.setSubset(axisToSort, subsetStart, 10);
 		return renderModel(model);
-	}
 
-	@GET
-	@Path("/sort/disable")
-	public String sorten() {
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		if (model.isSorting()) {
-			model.setSorting(false);
-			Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
-			model.removeSubset(model.getCellSet().getAxes().get(1));
-			model.removeOrder(model.getCellSet().getAxes().get(1));
-			model.setSubset(model.getCellSet().getAxes().get(1), subsetStart, 10);
-		} else {
-			model.setSorting(true);
-
-		}
-
-		model.refresh();
-
-		return renderModel(model);
-	}
-
-	@GET
-	@Path("/previous/{axis}/{step}")
-	public String previous(@PathParam("axis") Integer axis, @PathParam("step") Integer step) {
-
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-
-		CellSet cellSet = model.getCellSet();
-
-		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
-
-		model.previous(axisToSet, step);
-
-		return renderModel(model);
 	}
 
 	@GET
@@ -256,12 +272,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Start from start " + format.format(new Date());
 		System.out.println(time);
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		init();
 
-		CellSet cellSet = model.getCellSet();
-
-		CellSetAxis axisToSet = cellSet.getAxes().get(axis);
+		CellSetAxis axisToSet = getAxis(axis);
 
 		model.startFrom(axisToSet, start);
 		time = "Start from end " + format.format(new Date());
