@@ -16,9 +16,9 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	private int position;
 	private String label;
 	private BigDecimal minValue;
-	private boolean includeMin;
+	private Character includeMin;
 	private BigDecimal maxValue;
-	private boolean includeMax;
+	private Character includeMax;
 	private String color;
 	private SbiDomains severity;
 	private SbiKpiThreshold sbiKpiThreshold;
@@ -87,21 +87,6 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @return the includeMin
-	 */
-	public boolean isIncludeMin() {
-		return includeMin;
-	}
-
-	/**
-	 * @param includeMin
-	 *            the includeMin to set
-	 */
-	public void setIncludeMin(boolean includeMin) {
-		this.includeMin = includeMin;
-	}
-
-	/**
 	 * @return the maxValue
 	 */
 	public BigDecimal getMaxValue() {
@@ -114,21 +99,6 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	 */
 	public void setMaxValue(BigDecimal maxValue) {
 		this.maxValue = maxValue;
-	}
-
-	/**
-	 * @return the includeMax
-	 */
-	public boolean isIncludeMax() {
-		return includeMax;
-	}
-
-	/**
-	 * @param includeMax
-	 *            the includeMax to set
-	 */
-	public void setIncludeMax(boolean includeMax) {
-		this.includeMax = includeMax;
 	}
 
 	/**
@@ -174,6 +144,36 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	 */
 	public void setSbiKpiThreshold(SbiKpiThreshold sbiKpiThreshold) {
 		this.sbiKpiThreshold = sbiKpiThreshold;
+	}
+
+	/**
+	 * @return the includeMin
+	 */
+	public Character getIncludeMin() {
+		return includeMin;
+	}
+
+	/**
+	 * @param includeMin
+	 *            the includeMin to set
+	 */
+	public void setIncludeMin(Character includeMin) {
+		this.includeMin = includeMin;
+	}
+
+	/**
+	 * @return the includeMax
+	 */
+	public Character getIncludeMax() {
+		return includeMax;
+	}
+
+	/**
+	 * @param includeMax
+	 *            the includeMax to set
+	 */
+	public void setIncludeMax(Character includeMax) {
+		this.includeMax = includeMax;
 	}
 
 }

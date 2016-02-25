@@ -38,6 +38,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Alias> listAlias();
 
+	public Alias loadAlias(String name);
+
 	public List<Placeholder> listPlaceholder();
 
 	public List<Threshold> listThreshold();
@@ -49,4 +51,6 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public void updateThreshold(Threshold t);
 
 	public void removeThreshold(Integer id);
+
+	public void cloneRule(Integer id);
 }

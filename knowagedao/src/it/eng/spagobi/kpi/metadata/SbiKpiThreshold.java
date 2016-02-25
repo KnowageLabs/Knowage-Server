@@ -17,7 +17,7 @@ public class SbiKpiThreshold extends SbiHibernateModel implements java.io.Serial
 	private String name;
 	private String description;
 	private SbiDomains type;
-	private Set<SbiKpiThresholdValue> sbiKpiThresholdValues = new HashSet(0);
+	private Set<SbiKpiThresholdValue> sbiKpiThresholdValues = new HashSet<>();
 
 	public SbiKpiThreshold() {
 	}
@@ -54,11 +54,11 @@ public class SbiKpiThreshold extends SbiHibernateModel implements java.io.Serial
 		this.type = type;
 	}
 
-	public Set getSbiKpiThresholdValues() {
+	public Set<SbiKpiThresholdValue> getSbiKpiThresholdValues() {
 		return this.sbiKpiThresholdValues;
 	}
 
-	public void setSbiKpiThresholdValues(Set sbiKpiThresholdValues) {
+	public void setSbiKpiThresholdValues(Set<SbiKpiThresholdValue> sbiKpiThresholdValues) {
 		this.sbiKpiThresholdValues = sbiKpiThresholdValues;
 	}
 
