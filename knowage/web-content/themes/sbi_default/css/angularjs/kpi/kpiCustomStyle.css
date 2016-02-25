@@ -44,6 +44,9 @@ position: relative
   height: auto;
 }
 
+.CodeMirror-gutters {
+	height:100%;
+}
 .headerColumnMeasure{
 text-align: center;
 font-size: 14px;
@@ -85,4 +88,6 @@ font-size: 14px;
 	
 }
 
-
+.error_word{
+	color:red;
+}

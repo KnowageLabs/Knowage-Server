@@ -1,6 +1,6 @@
  <div layout-fill ng-controller = "formulaController" layout="row">
  <md-whiteframe class="md-whiteframe-2dp relative" layout-margin flex  >
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }" class="absolute CodeMirrorMathematica" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model="currentKPI.formula"></div> 
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }" id="code" class="absolute CodeMirrorMathematica" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model="currentKPI.formula"></div> 
  </md-whiteframe>
 
  </div>
@@ -10,12 +10,13 @@
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Select type Function</h1>
+        <h1>Select type Function for {{token}}</h1>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="close()">
           <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
         </md-button>
       </div>
+	
     </md-toolbar>
     <md-dialog-content >
      <div class="md-dialog-content">

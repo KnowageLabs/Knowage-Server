@@ -1,6 +1,6 @@
 var app = angular.module('kpiDefinitionManager').controller('formulaController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q",KPIDefinitionFormulaControllerFunction ]);
 
-function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q){
+function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,items){
 	$scope.translate=sbiModule_translate;
 	$scope.measureFormula="";
 	$scope.currentKPI ={
@@ -9,9 +9,10 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.measures = ['pippo', 'pluto'];
 	$scope.dataSourceTable= {};//{"name":, "icon: }
 	$scope.functionalities = ['SUM','MAX','MIN','COUNT'];
-	$scope.selectedFunctionalities='MAX';
+	$scope.selectedFunctionalities='SUM';
 	$scope.measureFunctionalities={};
-
+	$scope.token = "";
+	
 	CodeMirror.registerHelper(
 			"hint", "measures",
 			function (mirror, options) {
@@ -25,36 +26,57 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 					if(tok.string.trim()=="" || $scope.measures[i].startsWith(tok.string)){
 						hintList.push($scope.measures[i]);
-						
 					}
 
 				}
-
 				return {list:hintList, 
 					from: CodeMirror.Pos(cur.line,start),
 					to: CodeMirror.Pos(cur.line, end)}
 			});
-	
+
 	$scope.codemirrorLoaded = function(_editor){
+
+		_editor.on("keyup", function(cm,event,c){
+			//$scope.checkError(cm);
+			if(event.keyIdentifier!="U+0008"){
+				var cur = cm.getCursor();
+				var token = cm.getTokenAt(cur);
+
+				if(token.type=="operator" || token.type=="bracket"){
+					token.string = " ";
+					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end+1})
+					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start})
+				}
 		
-		_editor.on("dblclick", function(cm,event){
-			console.log(cm.getTokenAt(cm.coordsChar(event.pageX, event.pageY, "page")));
-		
-			if(event.srcElement.className.startsWith("cm-keyword") && cm.getSelection().trim()!="") {
-				$scope.ShowFunction(cm );
 			}
+
 
 		});
 		_editor.on("mousedown", function(cm,event){
-			console.log(cm.getTokenAt(cm.coordsChar(event.pageX, event.pageY, "page")));
+			//console.log(cm.getTokenAt(cm.coordsChar(event.pageX, event.pageY, "page")));
+			
+			for(var i=0;i<event.srcElement.classList.length;i++){
+				$scope.token = event.srcElement.innerHTML;
+				if(event.srcElement.classList[i]=="cm-m-max"){
+					$scope.selectedFunctionalities='MAX';
+					break;
+				}else if(event.srcElement.classList[i]=="cm-m-min"){
+					$scope.selectedFunctionalities='MIN';
+					break;
+				}else if(event.srcElement.classList[i]=="cm-m-count"){
+					$scope.selectedFunctionalities='COUNT';
+					break;
+				}else if(event.srcElement.classList[i]=="cm-m-sum"){
+					$scope.selectedFunctionalities='SUM';
+					break;
+				}
+			}
 			
 			if(event.srcElement.className.startsWith("cm-keyword")) {
-				var height = event.srcElement.offsetHeight;
-				var top = event.srcElement.offsetTop;
-				$scope.ShowFunction(cm,height,top );
+				$scope.ShowFunction(cm);
 			}
 		});
-	
+
 	}
 
 	$scope.codemirrorOptions = {
@@ -74,23 +96,68 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 
 	$scope.keyAssistFunc=function(cm){
-		
+
 		CodeMirror.showHint(cm, CodeMirror.hint.measures);
 	}
 
+	$scope.checkError = function(cm){
+		var widgets = []
+
+		for (var i = 0; i < widgets.length; ++i)
+			cm.removeLineWidget(widgets[i]);
+		widgets.length = 0;
+
+
+		for (var i = 0; i < cm.lineCount(); i++) {
+			var line = cm.getDoc().getLine(i);
+			var lineSplit =line.split(" ");
+			var err={} ;
+			for(var j=0;j<lineSplit.length;j++){
+				if($scope.measures.indexOf(lineSplit[j])==-1){
+					//error word not present
+					err.word = lineSplit[j];
+					err.reason="Word not present";
+					err.line = i;
+				}
+			}
+
+			if (!err) continue;
+			/*	 var msg = document.createElement("div");
+		      var icon = msg.appendChild(document.createElement("span"));
+		      icon.innerHTML = "!!";
+		      icon.className = "lint-error-icon";
+			msg.appendChild(document.createTextNode(err.reason));
+		    msg.className = "lint-error";
+		    widgets.push(cm.addLineWidget(err.line - 1, msg, {coverGutter: false, noHScroll: true}));
+			 */
+			angular.element(document.querySelectorAll(".CodeMirror-gutter-elt")).addClass("error_word fa fa-times-circle")
+
+		}
+
+	}
+	//var mirror = CodeMirror.fromTextArea(document.getElementById("code"));
 
 
 
-	$scope.ShowFunction=function(cm,h,t){
+	$scope.ShowFunction=function(cm){
 		$scope.showAdvanced().then(function(response){
+
 			var cur = cm.getCursor();
 			//var cur = cm.coordsChar(h,t);
-			
+
 			var token = cm.getTokenAt(cur);
+
+			while(token.type == "operator" ){
+				cur.ch = cur.ch+1;
+				token =  cm.getTokenAt(cur);
+			}
+
 			while(token.string.trim() ==""){
 				cur.ch = cur.ch+1;
 				token =  cm.getTokenAt(cur);
 			}
+
+
 			//cm.markTextAt({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end}).clear();
 			if(response!=""){
 				var arr = cm.findMarksAt({line:cm.getCursor().line,ch:token.end});
@@ -113,7 +180,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 		});
 	}
-	
+
 	$scope.getMeasures=function(){
 		sbiModule_restServices.get("1.0/kpi", 'listMeasure').success(
 				function(data, status, headers, config) {
@@ -139,7 +206,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 			templateUrl: 'dialog1.tmpl.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
-			locals: {items: deferred}
+			locals: {items: deferred,token: $scope.token,selected:$scope.selectedFunctionalities }
 		})
 		.then(function(answer) {
 			$scope.status = 'You said the information was "' + answer + '".';
@@ -150,50 +217,21 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		return deferred.promise;
 	};
 
-	$scope.checkError = function(cm){
-		var widgets = []
-
-		for (var i = 0; i < widgets.length; ++i)
-			cm.removeLineWidget(widgets[i]);
-		widgets.length = 0;
-
-		
-		for (var i = 0; i < cm.lineCount(); i++) {
-			var line = cm.getDoc().getLine(i);
-			var lineSplit =line.split(" ");
-			var err={} ;
-			for(var j=0;j<lineSplit.length;j++){
-				if($scope.measures.indexOf(lineSplit[j])==-1){
-					//error word not present
-					err.word = lineSplit[j];
-					err.reason="Word not present";
-					err.line = i;
-				}
-			}
-			
-			if (!err) continue;
-			var msg = document.createElement("div");
-			msg.className = "lint-error";
-			
-			for(var k=0;k<angular.element(document.querySelectorAll(".CodeMirror-linenumber")).length;k++){
-				if(angular.element(document.querySelectorAll(".CodeMirror-linenumber"))[k].innerHTML==i){
-					var string = angular.element(document.querySelectorAll(".CodeMirror-linenumber"))[0].className;
-					var patt = new RegExp(/ errorWord/);
-		            if(!patt.test("errorWord")){
-		            	angular.element(document.querySelectorAll(".CodeMirror-linenumber ")).append(msg)
-		            }
-				}
-			}
-			
-
-		}
-		
+	$scope.close = function(){
+		$mdDialog.cancel();
+		$scope.selectedFunctionalities="";
+		items.resolve($scope.selectedFunctionalities);
+	}
+	$scope.apply = function(){
+		$mdDialog.cancel();
+		items.resolve($scope.selectedFunctionalities);
 	}
 
 
 }
-function DialogController($scope,$mdDialog,items){
-	$scope.selectedFunctionalities='MAX';
+function DialogController($scope,$mdDialog,items,token,selected){
+	$scope.selectedFunctionalities=selected;
+	$scope.token = token;
 	$scope.close = function(){
 		$mdDialog.cancel();
 		$scope.selectedFunctionalities="";
