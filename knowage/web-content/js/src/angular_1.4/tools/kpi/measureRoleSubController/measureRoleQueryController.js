@@ -12,15 +12,13 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 		    	var cur = mirror.getCursor();
 		        var tok = mirror.getTokenAt(cur);
 		        var start= tok.string.trim()==""? tok.start+1 : tok.start;
-	        	var end= tok.end;
-	        	
+	        	var end= tok.end; 
 	        	var hintList=[];
-	        	for(var i=0;i< $scope.aliasList.length;i++){
-	        		 if(tok.string.trim()=="" || $scope.aliasList[i].startsWith(tok.string)){
-	        			 hintList.push($scope.aliasList[i]);
+	        	for(var key in $scope.aliasList){
+	        		 if(tok.string.trim()=="" || key.startsWith(tok.string)){
+	        			 hintList.push(key);
 	        		 }
-	        	}
-		        
+	        	} 
 		        return {list:hintList, 
 		        	from: CodeMirror.Pos(cur.line,start),
 	                to: CodeMirror.Pos(cur.line, end)}

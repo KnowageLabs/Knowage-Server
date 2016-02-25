@@ -1,19 +1,22 @@
-angular.module('measureRoleManager').controller('measureRoleMetadataController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureRoleMetadataControllerFunction ]);
+angular.module('measureRoleManager').controller('measureRoleMetadataController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_messaging',measureRoleMetadataControllerFunction ]);
 
-function measureRoleMetadataControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
+function measureRoleMetadataControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
 	$scope.hierarchicalLevelList=[];
 	$scope.AttributeCategoryList=[];
+	$scope.tipologiesType=[]; 
 	
 	$scope.aliasExtist=function(aliasName){
-	return $scope.aliasList.indexOf(aliasName)!=-1;
+	return $scope.aliasList.hasOwnProperty(aliasName);
 	}
 
-	$scope.tipologiesType=[
-                       {label:sbiModule_translate.load("sbi.ds.attribute"),value:"Attribute"},
-                       {label:sbiModule_translate.load("sbi.ds.measure"),value:"Measure"},
-                       {label:sbiModule_translate.load("sbi.kpi.temporalAttribute"),value:"TemporalAttribute"},
-                       ];
 
+	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_RULEOUTPUT_TYPE")
+	.then(function(response){ 
+		angular.copy(response.data,$scope.tipologiesType); 
+	},function(response){
+		console.log("errore")
+	});
+	
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/TEMPORAL_LEVEL")
 	.then(function(response){ 
 		angular.copy(response.data,$scope.hierarchicalLevelList);

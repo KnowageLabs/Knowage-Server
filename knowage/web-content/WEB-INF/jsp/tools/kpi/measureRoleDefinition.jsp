@@ -36,7 +36,7 @@
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" cancel-function="cancelMeasureFunction" full-screen="true">
+	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" cancel-function="cancelMeasureFunction" full-screen="false">
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController">
 			<angular-table id='measureListTable' ng-model=measureList
 				columns='measureColumnsList'

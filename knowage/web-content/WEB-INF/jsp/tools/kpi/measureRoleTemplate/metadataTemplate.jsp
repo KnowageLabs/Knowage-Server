@@ -1,8 +1,7 @@
 <md-content ng-controller="measureRoleMetadataController"  layout-fill>
 
-<div layout="row" layout-wrap>
-
-<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" (mtd,mtdValue) in currentMeasure.metadata ">
+<div layout="row" layout-wrap> 
+<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" (mtd,mtdValue) in currentRole.metadata ">
   <md-toolbar>
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" > 
          <span ng-if="!aliasExtist(mtd)">
@@ -16,14 +15,13 @@
 		</div>
       
 		 
-</md-toolbar>
-
+</md-toolbar> 
 <md-content layout-margin>
  <md-input-container >
         <label>Tipologia</label>
-        <md-select ng-model="mtdValue.tipology" selected="{{mtdValue.tipology=mtdValue.tipology || 'Attribute'}}"  >
-          <md-option ng-repeat="tipolo in tipologiesType" value={{tipolo.value}}>
-            {{tipolo.label}}
+        <md-select ng-model="mtdValue.tipology" ng-model-options="{trackBy: '$value.valueCd'}" selected="{{mtdValue.tipology=mtdValue.tipology || tipologiesType[1] }}"  >
+          <md-option ng-repeat="tipolo in tipologiesType" ng-value={{tipolo}}>
+            {{translate.load(tipolo.translatedValueName)}}
           </md-option>
         </md-select>
       </md-input-container>
@@ -31,19 +29,21 @@
         <md-input-container ng-if="mtdValue.tipology=='TemporalAttribute'">
         <label>Livello gerarchico</label>
         <md-select ng-model="mtdValue.hierarchicalLevel">
-          <md-option ng-repeat="hlevel in hierarchicalLevelList" value="{{hlevel.valueId}}">
+          <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}">
             {{hlevel.valueName}}
           </md-option>
         </md-select>
       </md-input-container>
       
-	<md-autocomplete ng-if="mtdValue.tipology=='Attribute'"
+	<md-autocomplete ng-if="mtdValue.tipology!='TemporalAttribute'"
           ng-disabled="false" 
           md-selected-item="mtdValue.category" 
           md-search-text="searchText" 
           md-items="item in querySearchCategory(searchText)"
           md-item-text="item.valueCd" 
-          md-floating-label="Categoria">
+          md-floating-label="Categoria"
+          md-autoselect	="true"
+         >
         <md-item-template>
           <span md-highlight-text="searchText">{{item.valueCd}}</span>
         </md-item-template> 

@@ -4,100 +4,148 @@ measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate' ,measureRoleMasterControllerFunction ]);
+measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices' ,measureRoleMasterControllerFunction ]);
 measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog' ,measureListControllerFunction ]);
-measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureDetailControllerFunction ]); 
+measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_messaging',measureDetailControllerFunction ]); 
 
-function measureRoleMasterControllerFunction($scope,sbiModule_translate){
+function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
+	$scope.aliasList=[];
+	$scope.currentRole={
+			dataSourceId:{},
+			definition:"SELECT * FROM employee as cur",
+			metadata:{}
+				};
+	
  	$scope.newMeasureFunction=function(){
 	} 
  	
  	$scope.saveMeasureFunction=function(){
- 		alert("Salvato")
+ 		 $mdDialog.show({
+ 		      controller: DialogSaveController,
+ 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRoleSubController/saveDialogTemplate.jsp',  
+ 		      clickOutsideToClose:true,
+ 		      fullscreen: true,
+ 		      locals:{
+ 		    	 currentRole:$scope.currentRole,
+ 		    	  alias:$scope.aliasList}
+ 		    })
+ 		    .then(function(answer) {
+ 		      $scope.status = 'You said the information was "' + answer + '".';
+ 		    }, function() {
+ 		      $scope.status = 'You cancelled the dialog.';
+ 		    });
  	} 
+ 	
  	$scope.cancelMeasureFunctionMeasureFunction=function(){
  		alert("cancelMeasureFunction")
  	} 
+ 	
+ 	$scope.loadAliasList=function(){
+ 		sbiModule_restServices.promiseGet("1.0/kpi","listAlias")
+		.then(function(response){ 
+			var aliasTmpList={}; 
+			for(var i=0;i<response.data.length;i++){
+				aliasTmpList[response.data[i].name]=response.data[i]
+			} 
+			angular.copy(aliasTmpList,$scope.aliasList);
+			
+		},function(response){
+			console.log("errore")
+		});
+ 	};
+ 	$scope.loadAliasList();
 	
-	$scope.aliasList=["pippo","pino","pippino"];
 }
+
+function DialogSaveController($scope, $mdDialog,currentRole,alias) {
+	 
+	$scope.presentAlias=[];
+	$scope.newAlias=[];
+	$scope.currentRole=currentRole;
+	for(var key in currentRole.metadata){
+		if(alias.hasOwnProperty(currentRole.metadata[key].label)){
+			$scope.presentAlias.push(currentRole.metadata[key].label);
+		}else{
+			$scope.newAlias.push(currentRole.metadata[key].label);
+		}
+	}
+
+	
+	  $scope.hide = function() {
+		    $mdDialog.hide();
+		  };
+		  $scope.cancel = function() {
+		    $mdDialog.cancel();
+		  };
+		  $scope.save = function() {
+			  var tmpRoleObj={};
+			  angular.copy(currentRole,tmpRoleObj);
+			 var ruleOutputs=[]; 
+			 for(var key in tmpRoleObj.metadata){
+				 tmpRoleObj.metadata[key].alias=tmpRoleObj.metadata[key].label;
+				 delete tmpRoleObj.metadata[key].label;
+				 delete tmpRoleObj.metadata[key].name;
+				 ruleOutputs.push(tmpRoleObj.metadata[key]);
+			 };
+			 tmpRoleObj.ruleOutputs=ruleOutputs;
+			 delete tmpRoleObj.metadata;
+			 console.log(tmpRoleObj) 
+			  
+//		    $mdDialog.hide();
+		  };
+		}
  
-function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
+function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
 	$scope.detailProperty={
 			dataSourcesIsSelected:false,
 			queryChanged:true,
 			previewData:{rows:[],metaData:{fields:[]}},
 			};
 	
-	$scope.currentMeasure={
-			selectedDatasource:{},
-			query:"SELECT * FROM employee as cur",
-			metadata:{}
-				};
- 	
+	$scope.columnToMetadata=function(columns){
+		var tmpMeas=[];
+		for(var index in  columns){
+			tmpMeas.push( columns[index].label);
+			if(!$scope.currentRole.metadata.hasOwnProperty( columns[index].label)){
+				$scope.currentRole.metadata[columns[index].label]= columns[index]
+			}
+		} 
+		for(var index in $scope.currentRole.metadata){
+			if(tmpMeas.indexOf($scope.currentRole.metadata[index].label)==-1){
+				delete $scope.currentRole.metadata[index];
+			}
+		} 
+	}
 	 
-	
 	$scope.loadMetadata=function(){
-		var postData={dataSourceId:$scope.currentMeasure.selectedDatasource,
-				query:$scope.currentMeasure.query,
+		var postData={dataSourceId:$scope.currentRole.dataSourceId,
+				query:$scope.currentRole.definition,
 				maxItem:1
-				}
-		
+				} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
-//			angular.copy({},$scope.currentMeasure.metadata);
 			
-			var tmpMeas=[];
-			
-			for(var index in response.data.columns){
-				tmpMeas.push(response.data.columns[index].label);
-				if(!$scope.currentMeasure.metadata.hasOwnProperty(response.data.columns[index].label)){
-					$scope.currentMeasure.metadata[response.data.columns[index].label]=response.data.columns[index]
-				}
-			}
-			
-			for(var index in $scope.currentMeasure.metadata){
-				if(tmpMeas.indexOf($scope.currentMeasure.metadata[index].label)==-1){
-					delete $scope.currentMeasure.metadata[index];
-				}
-			}
-			
-			
+			$scope.columnToMetadata(response.data.columns);
+			 
 		},function(response){
 			console.log("errore")
 		});
-//		//remove select clausole
-//		var tmpText= $scope.currentMeasure.query.replace(/\n/g, " ").toLowerCase();
-//		var selectIndex=tmpText.search(/(^|\s)select($|\s)/);
-//		var fromIndex=tmpText.search(/(^|\s)from($|\s)/);
-//		if(selectIndex!=-1 && fromIndex!=-1){
-//			var aliasSubstring=tmpText.substring(selectIndex+6,fromIndex);
-//			var splittedAliasSubStr= aliasSubstring.trim().split(',');
-//			angular.copy([],$scope.currentMeasure.metadata);
-//			for(var i=0;i<splittedAliasSubStr.length;i++){
-//				var tmpSplit= splittedAliasSubStr[i].trim().split(" as ");
-//				$scope.currentMeasure.metadata.push(tmpSplit[tmpSplit.length-1]);
-//			}
-//			 
-//		}else{
-//			alert("query non completa")
-//		}
 	}
 	
 	$scope.loadPreview=function(){
-		var postData={dataSourceId:$scope.currentMeasure.selectedDatasource,
-				query:$scope.currentMeasure.query,
+		var postData={dataSourceId:$scope.currentRole.dataSourceId,
+				query:$scope.currentRole.definition,
 				maxItem:10
 				}
 		
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
-			console.log("resp",response)
 			 $scope.detailProperty.queryChanged=false;
+			$scope.columnToMetadata(response.data.columns);
 			angular.copy(response.data,$scope.detailProperty.previewData);
 		},function(response){
-			console.log("errore")
+			sbiModule_messaging.showErrorMessage("errore ","jaskdajsl")
 		});
 	}
 	
