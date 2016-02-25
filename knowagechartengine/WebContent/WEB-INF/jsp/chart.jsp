@@ -327,75 +327,75 @@ author:
 		};	
 		
 		function exportD3Chart(protocol, hostName,serverPort,exportType){
-						var body = Ext.select("body");
-						var html = body.elements[0].innerHTML;
-						var encoded = btoa(html);
+			var body = Ext.select("body");
+			var html = body.elements[0].innerHTML;
+			var encoded = btoa(html);
 
-						Ext.DomHelper.useDom = true; 
-						// need to use dom because otherwise an html string is composed as a string concatenation,
-				        // but, if a value contains a " character, then the html produced is not correct!!!
-				        // See source of DomHelper.append and DomHelper.overwrite methods
-				        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-						var dh = Ext.DomHelper;
-						var form = document.getElementById('export-chart-form');
-				        if (form === undefined || form === null) {
-				    		var form = dh.append(Ext.getBody(), { 
-					        	// creating the hidden input in form
-				            	id: 'export-chart-form'
-				          		, tag: 'form'
-				          		, method: 'post'
-				          		, cls: 'export-form'					       
-				          	});
-					       // creating the hidden inputs in form:
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'options'
-								, value: ''
-							});
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'content'
-								, value: '' 
-							});
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'type'
-								, value: '' 
-							});
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'width'
-								, value: ''
-							});
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'constr'
-								, value: '' 
-							});
-				          	dh.append(form, {					
-								tag: 'input'
-								, type: 'hidden'
-								, name: 'async'
-								, value: ''
-							});
-			          	}              				       	
-			         	form.elements[0].value = encoded;
-			         	form.elements[1].value = 'html';
-			         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
-			         	form.elements[3].value = '600';
-			         	form.elements[4].value = 'Chart';
-			         	form.elements[5].value = 'false';
-						form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
-			         	form.target = '_blank'; // result into a new browser tab
-			         	form.submit();
+			Ext.DomHelper.useDom = true;
+			// need to use dom because otherwise an html string is composed as a string concatenation,
+	        // but, if a value contains a " character, then the html produced is not correct!!!
+	        // See source of DomHelper.append and DomHelper.overwrite methods
+	        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+			var dh = Ext.DomHelper;
+			var form = document.getElementById('export-chart-form');
+	        if (form === undefined || form === null) {
+	    		var form = dh.append(Ext.getBody(), {
+		        	// creating the hidden input in form
+	            	id: 'export-chart-form'
+	          		, tag: 'form'
+	          		, method: 'post'
+	          		, cls: 'export-form'
+	          	});
+		       // creating the hidden inputs in form:
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'options'
+					, value: ''
+				});
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'content'
+					, value: ''
+				});
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'type'
+					, value: ''
+				});
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'width'
+					, value: ''
+				});
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'constr'
+					, value: ''
+				});
+	          	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'async'
+					, value: ''
+				});
+          	}
+         	form.elements[0].value = encoded;
+         	form.elements[1].value = 'html';
+         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
+         	form.elements[3].value = '600';
+         	form.elements[4].value = 'Chart';
+         	form.elements[5].value = 'false';
+			form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+         	form.target = '_blank'; // result into a new browser tab
+         	form.submit();
 		};
 	
- 	Ext.onReady(function(){
+ 		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
  			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading'); 			
  			
@@ -484,7 +484,7 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
  				
-				var parameters = {
+				parameters = {
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
 					driverParams: '<%=driverParams%>',
 					jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
@@ -498,14 +498,14 @@ author:
 					Ext.getBody().unmask();
 				});*/
  				
- 			}else { 				
- 				var parameters = {
+ 			}else {
+ 				parameters = {
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
 					driverParams: '<%=driverParams%>'
 				};
  			}
  			
-			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+ 			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 				 			 					
 				var chartConf = Ext.JSON.decode(response.responseText, true);	
 				

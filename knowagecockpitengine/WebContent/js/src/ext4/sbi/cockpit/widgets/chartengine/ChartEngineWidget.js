@@ -171,25 +171,43 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	}
 	
 	, getFieldMetaByValue: function(fieldValue) {
-		var store = this.getStore();
-		var records = store.getRange();
-		var column;
+		var isWidgetUpdateable = this.wgeneric.incomingeventsenabled;
+		var aggregationCategories = (this.wconf.aggregations && this.wconf.aggregations.categories)?
+				this.wconf.aggregations.categories : [];
+//		var aggregations = this.wconf.aggregations;
 		
-		outerloop: for(var i = 0; i < records.length; i++) {
-				
-			var tmpData = records[i].getData();
+		
+		if(!isWidgetUpdateable && aggregationCategories.length > 0) {
+//		if(!isWidgetUpdateable) {
+//			var associationsForThisStore = Sbi.storeManager.getAssociationGroupByStore(this.getStore());
+//			var associations = associationsForThisStore.associations; //array
+//			var datasets = associationsForThisStore.datasets; //array
 			
-			for (var key in tmpData) {
-				if (tmpData[key] == fieldValue) {
-					column = key;
-					break outerloop;
+			var toReturn = {};
+			toReturn['header'] = aggregationCategories[0].columnName;
+			
+			return toReturn;
+		} else {
+			var store = this.getStore();
+			var records = store.getRange();
+			var column;
+			
+			outerloop: for(var i = 0; i < records.length; i++) {
+				
+				var tmpData = records[i].getData();
+				
+				for (var key in tmpData) {
+					if (tmpData[key] == fieldValue) {
+						column = key;
+						break outerloop;
+					}
 				}
 			}
+			
+			var fieldMeta = this.getFieldMetaByName(column);
+			
+			return fieldMeta;
 		}
-		
-		var fieldMeta = this.getFieldMetaByName(column);
-		
-    	return fieldMeta;
 	}
 	
 	, getFieldMetaByName: function(fieldName) {
