@@ -31,8 +31,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -44,6 +46,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,12 +58,20 @@ import org.json.JSONObject;
 @Path("/1.0/kpi")
 @ManageAuthorization
 public class KpiService {
+	private static Logger logger = Logger.getLogger(KpiService.class);
 
 	private static final String MEASURE = "MEASURE";
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
+
+	@GET
+	@Path("/{id}/cloneRule")
+	public Response cloneRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		getKpiDAO(req).cloneRule(id);
+		return Response.ok().build();
+	}
 
 	@GET
 	@Path("/listMeasureCategory")
@@ -127,15 +138,36 @@ public class KpiService {
 	@Path("/queryPreview")
 	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
 
+		// IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
+		// if (dataset.getParameters() != null) {
+		// HashMap<String, String> parametersMap = new HashMap<String, String>();
+		// parametersMap = getDataSetParametersAsMap(false);
+		// Object dataSetJSON = getDatasetTestResultList(dataset, parametersMap, getProfile(req));
+		// }
+
 		Integer dataSourceId = null;
 		String query = null;
 		Integer maxItem = null;
+		String placeholders = null;
+		Map<String, String> parameterMap = new HashMap<String, String>();
 		try {
 			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
 			dataSourceId = obj.getInt("dataSourceId");
 			query = obj.getString("query");
 			maxItem = obj.getInt("maxItem");
+			placeholders = obj.optString("placeholders");
+			if (placeholders != null) {
+				JSONObject placeholderObj = new JSONObject(placeholders);
+				Iterator<String> placeholderNames = placeholderObj.keys();
+				while (placeholderNames.hasNext()) {
+					String name = placeholderNames.next();
+					String value = placeholderObj.getString(name);
+					parameterMap.put(name, value);
+				}
+			}
 		} catch (IOException | JSONException e) {
+			logger.error("dataSourceId[" + dataSourceId + "] query[" + query + "] maxItem[" + maxItem + "] placeholders[" + placeholders + "]");
+			logger.error(req.getPathInfo(), e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 
@@ -153,29 +185,28 @@ public class KpiService {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 
-		if (dataSourceId != null) {
-			IDataSource dataSource;
-			try {
-				// dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-				dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
-				if (dataSource != null) {
-					if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
-						dataSet = new MongoDataSet();
-					} else {
-						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
-					}
-					((ConfigurableDataSet) dataSet).setDataSource(dataSource);
-					((ConfigurableDataSet) dataSet).setQuery(query);
-					((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
-					((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
+		IDataSource dataSource;
+		try {
+			dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
+			if (dataSource != null) {
+				if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
+					dataSet = new MongoDataSet();
 				} else {
-					throw new SpagoBIServiceException(req.getPathInfo(), "A datasource with id " + dataSourceId + " could not be found");
+					dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
 				}
-			} catch (EMFUserError e) {
-				e.printStackTrace();
-				throw new SpagoBIServiceException(req.getPathInfo(), "Error while retrieving Datasource with id=" + dataSourceId, e);
+				dataSet.setParamsMap(parameterMap);
+				((ConfigurableDataSet) dataSet).setDataSource(dataSource);
+				((ConfigurableDataSet) dataSet).setQuery(query);
+				((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
+				((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
+			} else {
+				throw new SpagoBIServiceException(req.getPathInfo(), "A datasource with id " + dataSourceId + " could not be found");
 			}
+		} catch (EMFUserError e) {
+			e.printStackTrace();
+			throw new SpagoBIServiceException(req.getPathInfo(), "Error while retrieving Datasource with id=" + dataSourceId, e);
 		}
+
 		dataSet.setConfiguration(jsonDsConfig.toString());
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(getProfile(req)));
 
