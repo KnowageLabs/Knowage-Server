@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.commons.bo.Domain;
+
 import java.io.Serializable;
 
 public class Kpi implements Serializable {
@@ -11,11 +13,19 @@ public class Kpi implements Serializable {
 	private Integer id;
 	private String name;
 	private String definition;
-	private String cardinality; // json object
-	private String placeholder; // json array
-	private String category;
-	private Integer categoryId;
-	private Threshold threshold; // lazy
+	/**
+	 * A json object
+	 */
+	private String cardinality;
+	/**
+	 * A json array
+	 */
+	private String placeholder;
+	/**
+	 * domainCd = KPI_KPI_CATEGORY
+	 */
+	private Domain category;
+	private Threshold threshold;
 
 	public Kpi() {
 	}
@@ -102,7 +112,7 @@ public class Kpi implements Serializable {
 	/**
 	 * @return the category
 	 */
-	public String getCategory() {
+	public Domain getCategory() {
 		return category;
 	}
 
@@ -110,23 +120,8 @@ public class Kpi implements Serializable {
 	 * @param category
 	 *            the category to set
 	 */
-	public void setCategory(String category) {
+	public void setCategory(Domain category) {
 		this.category = category;
-	}
-
-	/**
-	 * @return the categoryId
-	 */
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	/**
-	 * @param categoryId
-	 *            the categoryId to set
-	 */
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.commons.bo.Domain;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,14 +16,26 @@ public class RuleOutput implements Serializable {
 	private Integer aliasId;
 	private String rule;
 	private Integer ruleId;
-	private String category;
-	private Integer categoryId;
-	private String hierarchy;
-	private Integer hierarchyId;
-	private String type;
-	private Integer typeId;
-	private String author; // Rule author
-	private Date dateCreation; // Rule dateCreation
+	/**
+	 * domainCd="KPI_MEASURE_CATEGORY"
+	 */
+	private Domain category;
+	/**
+	 * domainCd="TEMPORAL_LEVEL"
+	 */
+	private Domain hierarchy;
+	/**
+	 * domainCd="KPI_RULEOUTPUT_TYPE"
+	 */
+	private Domain type;
+	/**
+	 * Rule author
+	 */
+	private String author;
+	/**
+	 * Rule dateCreation
+	 */
+	private Date dateCreation;
 
 	/**
 	 * @return the id
@@ -114,21 +128,6 @@ public class RuleOutput implements Serializable {
 	}
 
 	/**
-	 * @return the category
-	 */
-	public String getCategory() {
-		return category;
-	}
-
-	/**
-	 * @param category
-	 *            the category to set
-	 */
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	/**
 	 * @return the author
 	 */
 	public String getAuthor() {
@@ -144,54 +143,24 @@ public class RuleOutput implements Serializable {
 	}
 
 	/**
-	 * @return the type
+	 * @return the category
 	 */
-	public String getType() {
-		return type;
+	public Domain getCategory() {
+		return category;
 	}
 
 	/**
-	 * @param type
-	 *            the type to set
+	 * @param category
+	 *            the category to set
 	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	/**
-	 * @return the typeId
-	 */
-	public Integer getTypeId() {
-		return typeId;
-	}
-
-	/**
-	 * @param typeId
-	 *            the typeId to set
-	 */
-	public void setTypeId(Integer typeId) {
-		this.typeId = typeId;
-	}
-
-	/**
-	 * @return the categoryId
-	 */
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	/**
-	 * @param categoryId
-	 *            the categoryId to set
-	 */
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
+	public void setCategory(Domain category) {
+		this.category = category;
 	}
 
 	/**
 	 * @return the hierarchy
 	 */
-	public String getHierarchy() {
+	public Domain getHierarchy() {
 		return hierarchy;
 	}
 
@@ -199,23 +168,23 @@ public class RuleOutput implements Serializable {
 	 * @param hierarchy
 	 *            the hierarchy to set
 	 */
-	public void setHierarchy(String hierarchy) {
+	public void setHierarchy(Domain hierarchy) {
 		this.hierarchy = hierarchy;
 	}
 
 	/**
-	 * @return the hierarchyId
+	 * @return the type
 	 */
-	public Integer getHierarchyId() {
-		return hierarchyId;
+	public Domain getType() {
+		return type;
 	}
 
 	/**
-	 * @param hierarchyId
-	 *            the hierarchyId to set
+	 * @param type
+	 *            the type to set
 	 */
-	public void setHierarchyId(Integer hierarchyId) {
-		this.hierarchyId = hierarchyId;
+	public void setType(Domain type) {
+		this.type = type;
 	}
 
 	@Override

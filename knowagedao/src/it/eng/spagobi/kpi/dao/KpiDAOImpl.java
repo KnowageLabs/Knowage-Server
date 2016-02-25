@@ -56,7 +56,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
-					sbiRuleOutput.setTypeId(ruleOutput.getTypeId());
+					if (ruleOutput.getType() != null) {
+						sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					}
 					// handling Alias
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
 					if (sbiAlias == null) {
@@ -64,7 +66,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					}
 					sbiRuleOutput.setSbiKpiAlias(sbiAlias);
 					// handling Category
-					SbiDomains category = manageCategory(session, ruleOutput.getCategoryId(), ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
+					SbiDomains category = manageCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
 					sbiRuleOutput.setCategory(category);
 					updateSbiCommonInfo4Insert(sbiRuleOutput);
 					sbiRule.getSbiKpiRuleOutputs().add(sbiRuleOutput);
@@ -91,7 +93,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
-					sbiRuleOutput.setTypeId(ruleOutput.getTypeId());
+					if (ruleOutput.getType() != null) {
+						sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					}
 					// handling Alias
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
 					if (sbiAlias == null) {
@@ -99,7 +103,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					}
 					sbiRuleOutput.setSbiKpiAlias(sbiAlias);
 					// handling Category
-					SbiDomains category = manageCategory(session, ruleOutput.getCategoryId(), ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
+					SbiDomains category = manageCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
 					sbiRuleOutput.setCategory(category);
 					if (ruleOutput.getId() == null) {
 						updateSbiCommonInfo4Insert(sbiRuleOutput);
@@ -186,7 +190,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setThresholdId(kpi.getThreshold().getId());
 		}
 		// handling Category
-		SbiDomains category = manageCategory(session, kpi.getCategoryId(), kpi.getCategory(), KPI_KPI_CATEGORY);
+		SbiDomains category = manageCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
 		sbiKpi.setCategory(category);
 		return sbiKpi;
 	}
@@ -208,21 +212,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return alias;
 	}
 
-	private SbiDomains manageCategory(Session session, Integer categoryId, String category, String categoryName) {
+	private SbiDomains manageCategory(Session session, Domain category, String categoryName) {
 		SbiDomains cat = null;
-		if (categoryId != null) {
-			cat = new SbiDomains(categoryId);
-		} else if (category != null && !category.isEmpty()) {
-			cat = (SbiDomains) session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", categoryName))
-					.add(Restrictions.eq("valueCd", category)).uniqueResult();
-			if (cat == null) {
-				// return cat.getValueId();
-				// } else {
-				cat = new SbiDomains();
-				cat.setDomainCd(categoryName);
-				cat.setValueCd(category);
-				updateSbiCommonInfo4Insert(cat);
-				// return (Integer) session.save(newCategory);
+		if (category != null) {
+			if (category.getValueId() != null) {
+				cat = new SbiDomains(category.getValueId());
+			} else if (category.getValueCd() != null) {
+				cat = (SbiDomains) session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", categoryName))
+						.add(Restrictions.eq("valueCd", category.getValueCd())).uniqueResult();
+				if (cat == null) {
+					cat = new SbiDomains();
+					cat.setDomainCd(categoryName);
+					cat.setValueCd(category.getValueCd());
+					updateSbiCommonInfo4Insert(cat);
+				}
 			}
 		}
 		return cat;
@@ -435,11 +438,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		ruleOutput.setAlias(sbiKpiRuleOutput.getSbiKpiAlias().getName());
 		ruleOutput.setAliasId(sbiKpiRuleOutput.getSbiKpiAlias().getId());
 		if (sbiKpiRuleOutput.getCategory() != null) {
-			ruleOutput.setCategory(sbiKpiRuleOutput.getCategory().getValueNm());
-			ruleOutput.setCategoryId(sbiKpiRuleOutput.getCategory().getValueId());
+			Domain category = new Domain();
+			category.setValueId(sbiKpiRuleOutput.getCategory().getValueId());
+			category.setValueCd(sbiKpiRuleOutput.getCategory().getValueCd());
+			ruleOutput.setCategory(category);
 		}
-		ruleOutput.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiRuleOutput.getType().getValueNm()));
-		ruleOutput.setTypeId(sbiKpiRuleOutput.getType().getValueId());
+		if (sbiKpiRuleOutput.getType() != null) {
+		}
+		Domain type = new Domain();
+		type.setValueId(sbiKpiRuleOutput.getType().getValueId());
+		// TODO remove this line ruleOutput.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiRuleOutput.getType().getValueNm()));
+		ruleOutput.setType(type);
 		// Fields from Rule: Rule Id, Rule Name, Author, Date Creation
 		ruleOutput.setRuleId(sbiKpiRuleOutput.getSbiKpiRule().getId());
 		ruleOutput.setRule(sbiKpiRuleOutput.getSbiKpiRule().getName());
@@ -452,8 +461,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Kpi kpi = new Kpi();
 		kpi.setId(sbi.getId());
 		kpi.setCardinality(sbi.getCardinality());
-		kpi.setCategory(sbi.getCategory().getValueNm());
-		kpi.setCategoryId(sbi.getCategory().getValueId());
+		if (sbi.getCategory() != null) {
+			Domain category = new Domain();
+			category.setValueId(sbi.getCategory().getValueId());
+			kpi.setCategory(category);
+		}
 		kpi.setDefinition(sbi.getDefinition());
 		kpi.setName(sbi.getName());
 		kpi.setPlaceholder(sbi.getPlaceholder());
