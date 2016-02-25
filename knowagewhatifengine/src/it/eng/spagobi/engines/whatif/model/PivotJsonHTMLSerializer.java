@@ -48,6 +48,7 @@ import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.transform.impl.ChangeSlicerImpl;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
+import org.pivot4j.ui.command.BasicDrillThroughCommand;
 import org.pivot4j.ui.command.DrillCollapseMemberCommand;
 import org.pivot4j.ui.command.DrillCollapsePositionCommand;
 import org.pivot4j.ui.command.DrillDownCommand;
@@ -112,6 +113,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 												// title headers.
 
 		callback.setCellSpacing(0);
+
 		callback.setRowHeaderStyleClass(" x-pivot-header ");
 		callback.setColumnHeaderStyleClass(" x-pivot-header-column");
 		callback.setCornerStyleClass(" x-pivot-header");
@@ -149,11 +151,14 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 													// dimension title headers.
 			/*--------------------------------------------------------*/
 		}
+		renderer.addCommand(new BasicDrillThroughCommand(renderer));
+		renderer.setEnableDrillThrough(true);
 
 		renderer.setDrillDownMode(drillDownModeValue);
 		renderer.setEnableDrillDown(true);
 		// renderer.setEnableColumnDrillDown(true);
 		// renderer.setEnableRowDrillDown(true);
+
 		renderer.setEnableSort(true);
 
 		// /show parent members
@@ -319,11 +324,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * private void serializeFilters(String field, JsonGenerator jgen,
 	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 * 
+	 *
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 * 
+	 *
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 * 
+	 *
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -331,7 +336,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 * 
+	 *
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -340,7 +345,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 * 
+	 *
 	 * } } jgen.writeEndArray(); }
 	 */
 	public String formatQueryString(String queryString) {
