@@ -38,6 +38,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Alias> listAlias();
 
+	public List<Alias> listAliasNotInMeasure();
+
 	public Alias loadAlias(String name);
 
 	public List<Placeholder> listPlaceholder();

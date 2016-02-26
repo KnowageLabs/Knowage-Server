@@ -16,6 +16,7 @@ public class Rule implements Serializable {
 	private Integer dataSourceId;
 
 	private List<RuleOutput> ruleOutputs = new ArrayList<>();
+	private List<Placeholder> placeholders = new ArrayList<>();
 
 	public Rule() {
 	}
@@ -97,6 +98,21 @@ public class Rule implements Serializable {
 	 */
 	public void setDataSourceId(Integer dataSourceId) {
 		this.dataSourceId = dataSourceId;
+	}
+
+	/**
+	 * @return the placeholders
+	 */
+	public List<Placeholder> getPlaceholders() {
+		return placeholders;
+	}
+
+	/**
+	 * @param placeholders
+	 *            the placeholders to set
+	 */
+	public void setPlaceholders(List<Placeholder> placeholders) {
+		this.placeholders = placeholders;
 	}
 
 	@Override
