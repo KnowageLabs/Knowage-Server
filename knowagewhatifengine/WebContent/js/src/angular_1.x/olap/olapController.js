@@ -89,13 +89,21 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
-	
+	$scope.sortingModes = [{'label':'basic','value':'basic'},{'label':'breaking','value':'breaking'},{'label':'count','value':'count'}];
+	$scope.selectedSortingMode = 'basic';
+	$scope.sortingCount = 10;
+	$scope.saveSortingSettings = function(){
+		$mdDialog.hide();
+		$scope.sortDisable();
+	}
 	var activeaxis;
 	var filterFather;
 	
 	$scope.enableDisableSorting = function(){
-		$scope.sortingEnabled = !$scope.sortingEnabled;
+		
+		
 		$scope.sortDisable();
+		
 	}
 	
 	$scope.changeDrillType = function(type){
@@ -222,6 +230,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			.then(function(response) {
 				   $scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.rows = response.data.rows;
+			 		$scope.modelConfig = response.data.modelConfig;
 				   $scope.columns = response.data.columns;
 				   $scope.filterCardList = response.data.filters;
 				   $scope.showMdxVar = response.data.mdxFormatted;
@@ -233,9 +242,17 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	 
 	 /** dragan  sorting */
 	 
-	  $scope.sort = function(axisToSort,axis,positionUniqueName,sortType){
+	  $scope.sort = function(axisToSort,axis,positionUniqueName){
+		  
+		  var path; 
+		  
+		  if($scope.selectedSortingMode==='count'){
+			  var path = '/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+$scope.selectedSortingMode+'/'+$scope.sortingCount+'?SBI_EXECUTION_ID='+JSsbiExecutionID;
+		  }else {
+			  var path = '/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+$scope.selectedSortingMode+'?SBI_EXECUTION_ID='+JSsbiExecutionID;
+		  }
 		 
-		 sbiModule_restServices.promiseGet("1.0",'/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+'B'+sortType+'?SBI_EXECUTION_ID='+JSsbiExecutionID)
+		 sbiModule_restServices.promiseGet("1.0",path)
 			.then(function(response) {
 				   $scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.rows = response.data.rows;
@@ -618,7 +635,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			controllerAs : 'olapCtrl',
 			templateUrl : templateRoot+path,
 			targetEvent : ev,
-			clickOutsideToClose : true
+			clickOutsideToClose : false
 		});
 	}
 	
