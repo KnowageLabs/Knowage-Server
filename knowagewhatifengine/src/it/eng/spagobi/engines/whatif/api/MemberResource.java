@@ -8,14 +8,9 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,20 +20,33 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.json.JSONArray;
+import org.olap4j.Cell;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.MetadataElement;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
+import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.command.DrillDownCommand;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -184,6 +192,37 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		System.out.println();
 		System.out.println();
 		return renderModel(model);
+	}
+
+	@GET
+	@Path("/drilltrough/{ordinal}")
+	@Produces("text/html; charset=UTF-8")
+	public String drillt(@PathParam("ordinal") Integer ordinal) throws OlapException {
+		JSONArray array = null;
+		ResultSet set;
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		CellSet cellSet = model.getCellSet();
+		try {
+			Cell cell = cellSet.getCell(ordinal);
+			List<MetadataElement> selection = new ArrayList<MetadataElement>();
+			Hierarchy h = CubeUtilities.getHierarchy(model.getCube(), "[Region]");
+			for (Level level : h.getLevels()) {
+				selection.add(level);
+			}
+			DrillThrough transform = model.getTransform(DrillThrough.class);
+			if (selection.isEmpty()) {
+				set = transform.drillThrough(cell);
+			} else {
+				set = transform.drillThrough(cell, selection, 30);
+			}
+			array = ResultSetConverter.convertResultSetIntoJSON(set);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return array.toString();
 	}
 
 	@GET

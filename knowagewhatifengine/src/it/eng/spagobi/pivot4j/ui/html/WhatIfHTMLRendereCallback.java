@@ -1,12 +1,5 @@
 package it.eng.spagobi.pivot4j.ui.html;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +21,13 @@ import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.RenderPropertyUtils;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -76,12 +76,17 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		String drillMode = context.getRenderer().getDrillDownMode();
 		if (!isEmptyNonPropertyCell(context)) {
-			if (context.getCellType() == CellTypes.VALUE) {
-				Map<String, String> attributes = new TreeMap<String, String>();
+			if (context.getCellType() == CellTypes.VALUE && !context.getCell().isEmpty()) {
+				int ordinal = context.getCell().getOrdinal();
+				if (context.getRenderer().getEnableDrillThrough()) {
 
-				startElement("img", attributes);
-				endElement("img");
-
+					Map<String, String> attributes = new TreeMap<String, String>();
+					attributes.put("src", "../img/ico_search.gif");
+					attributes.put("id", "drillt");
+					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
+					startElement("img", attributes);
+					endElement("img");
+				}
 			}
 
 			if (context.getMember() != null && context.getMember().getMemberType() != null
@@ -115,16 +120,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ " ')");
+								attributes.put("ng-click",
+										"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + " ')");
 								startElement("img", attributes);
 								endElement("img");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ "' )");
+								attributes.put("ng-click",
+										"drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
 
 								startElement("img", attributes);
 								endElement("img");

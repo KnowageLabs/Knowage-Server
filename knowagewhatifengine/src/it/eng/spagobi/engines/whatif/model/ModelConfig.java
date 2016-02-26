@@ -8,13 +8,6 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +19,13 @@ import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
@@ -34,6 +34,7 @@ public class ModelConfig implements Serializable {
 	private Boolean hideSpans;
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
+	private Boolean enableDrillThrough;
 	private Boolean sortingEnabled;
 
 	public Boolean getSortingEnabled() {
@@ -68,11 +69,20 @@ public class ModelConfig implements Serializable {
 		showParentMembers = false;
 		hideSpans = false;
 		showProperties = false;
+		enableDrillThrough = true;
 		sortingEnabled = false;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
 
 		dimensionHierarchyMap = new HashMap<String, String>();
+	}
+
+	public Boolean getEnableDrillThrough() {
+		return enableDrillThrough;
+	}
+
+	public void setEnableDrillThrough(Boolean enableDrillThrough) {
+		this.enableDrillThrough = enableDrillThrough;
 	}
 
 	public Boolean getSuppressEmpty() {

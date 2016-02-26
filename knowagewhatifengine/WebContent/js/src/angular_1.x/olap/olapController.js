@@ -107,7 +107,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	}
 	
 	$scope.enableDisableDrillThrough = function(){
+		console.log("aaaaaa");
 		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
+		console.log($scope.modelConfig.enableDrillThrough);
 		$scope.sendModelConfig($scope.modelConfig);
 	}
 	

@@ -12,16 +12,6 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
-import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -62,6 +52,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
+import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
@@ -152,7 +152,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			/*--------------------------------------------------------*/
 		}
 		renderer.addCommand(new BasicDrillThroughCommand(renderer));
-		renderer.setEnableDrillThrough(true);
+		renderer.setEnableDrillThrough(modelConfig.getEnableDrillThrough());
 
 		renderer.setDrillDownMode(drillDownModeValue);
 		renderer.setEnableDrillDown(true);
@@ -324,11 +324,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * private void serializeFilters(String field, JsonGenerator jgen,
 	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 * 
+	 *
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 * 
+	 *
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 * 
+	 *
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -336,7 +336,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 * 
+	 *
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -345,7 +345,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 * 
+	 *
 	 * } } jgen.writeEndArray(); }
 	 */
 	public String formatQueryString(String queryString) {
