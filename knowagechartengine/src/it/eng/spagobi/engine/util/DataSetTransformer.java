@@ -615,13 +615,20 @@ public class DataSetTransformer {
 
 	}
 
-	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction) throws JSONException {
+	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction, Object seriePrefix, Object seriePostfix, Object seriePrecision)
+			throws JSONException {
 
 		JSONArray ja = new JSONArray();
 
 		Map<String, String> series = (Map<String, String>) serieNeeded;
 
 		Map<String, String> groupings = (Map<String, String>) groupingFunction;
+
+		Map<String, String> prefix = (Map<String, String>) seriePrefix;
+
+		Map<String, String> postfix = (Map<String, String>) seriePostfix;
+
+		Map<String, String> precision = (Map<String, String>) seriePrecision;
 
 		ArrayList<String> al = new ArrayList<String>();
 
@@ -634,6 +641,9 @@ public class DataSetTransformer {
 				al.add(series.get(i) + "_" + groupings.get(i));
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j).toString()), series.get(i));
+				jo.put("prefix", prefix.get(i));
+				jo.put("postfix", postfix.get(i));
+				jo.put("precision", new Integer(precision.get(i)));
 				ja.put(jo);
 				j++;
 			}

@@ -75,6 +75,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	tooltipFontComboBox: null,
 	tooltipFontWeightStylesComboBox: null,
 	tooltipFontSizeComboBox: null,
+	tooltipBorderWidthNumberfield:null,
+	tooltipBorderRadiusNumberfield:null,
 	/* * * * * * * END Internal components * * * * * * * */
 
 	layout: 'anchor',
@@ -116,7 +118,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		
 		store = config.store,
-		
+	
 		rowIndex = config.rowIndex;
 		var dataAtRow = store.getAt(rowIndex);	
 			
@@ -162,7 +164,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.name.emptyText")
 		});
 		this.serieFieldSet.add(this.serieNameTextField);
-	    if(chartType=="WORDCLOUD"){
+	    if(chartType.toUpperCase()=="WORDCLOUD" || chartType.toUpperCase()=="PARALLEL" || chartType.toUpperCase()=="CHORD" ){
 	    	this.serieNameTextField.hide();
 	    }
 		
@@ -214,7 +216,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				|| chartType == "PIE" 
 					|| chartType == "RADAR" 
 						|| chartType == "SCATTER"
-							|| chartType=="WORDCLOUD")
+							|| chartType=="WORDCLOUD"
+								|| chartType=="PARALLEL")
 				||(chartLibrary == 'chartJs')){
 		
 			this.serieTypesComboBox.hide();
@@ -228,7 +231,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
 				
-		if(chartType=="WORDCLOUD"){
+		if(chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD" ){
 			this.serieOrderComboBox.hide();
 		}
 		
@@ -252,7 +255,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @author: danristo (danilo.ristovski@mht.net)  
 		 */
 		// TODO: I think there are more chart types whose serie popup should be refined !!!		
-		if (chartType == "PIE" || chartType=="WORDCLOUD")
+		if (chartType == "PIE" || chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD")
 		{			
 			this.serieFieldSet.getComponent("serieColorFieldSet").hide();
 		}		
@@ -280,7 +283,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: serieShowValue,
 			labelSeparator: '',
-			hidden: (chartLibrary == 'chartJs' || chartType == 'PIE' || chartType == 'WORDCLOUD'),
+			hidden: (chartLibrary == 'chartJs' || chartType == 'PIE' || chartType == 'WORDCLOUD' ||  chartType == 'PARALLEL' || chartType == 'CHORD'),
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});		
 
@@ -332,7 +335,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowPercentage = Ext.create('Ext.form.field.Checkbox',{
 			checked: serieShowPercentage,
 			labelSeparator: '',
-			hidden: (chartType != 'PIE' || chartType == "WORDCLOUD"),
+			hidden: (chartType != 'PIE' || chartType == "WORDCLOUD" || chartType == 'PARALLEL' || chartType== 'CHORD'),
 			fieldLabel: LN('sbi.chartengine.designer.showPercentage'),
 		});	
 	
@@ -460,6 +463,38 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		});
 		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
+		console.log(dataAtRow);
+		console.log(dataAtRow.get('serieTooltipBorderWidth'));
+		console.log(dataAtRow.get('serieTooltipBorderRadius'));
+		
+		var serieTooltipBorderWidth = dataAtRow.get('serieTooltipBorderWidth');
+		this.tooltipBorderWidthNumberfield = Ext.create('Ext.form.field.Number', {
+			id: "serieTolltipBorderWidth",
+			fieldLabel: LN('sbi.chartengine.configuration.serieStyleConf.tooltip.borderWidth'),
+			hidden: chartType != 'CHORD',
+			selectOnFocus: true,
+			value: serieTooltipBorderWidth,
+			maxValue: 10,
+			minValue: 0,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.tooltip.borderWidth.emptyText")
+		});
+		
+		this.tooltipFieldSet.add(this.tooltipBorderWidthNumberfield);
+		
+		var serieTooltipBorderRadius = dataAtRow.get('serieTooltipBorderRadius');
+		this.tooltipBorderRadiusNumberfield = Ext.create('Ext.form.field.Number', {
+			id: "serieTolltipBorderRadius",
+			fieldLabel: LN('sbi.chartengine.configuration.serieStyleConf.tooltip.borderRadius'),
+			hidden: chartType != 'CHORD',
+			selectOnFocus: true,
+			value: serieTooltipBorderRadius,
+			maxValue: 10,
+			minValue: 0,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.tooltip.borderRadius.emptyText")
+		});
+		
+		this.tooltipFieldSet.add(this.tooltipBorderRadiusNumberfield);
+		
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
 		
@@ -479,21 +514,24 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
     	var errorMessages = "";
     	
 		var dataAtRow = store.getAt(rowIndex);
-		
-		var serieName = this.serieNameTextField.getValue();		
-		var serieType = this.serieTypesComboBox.getValue();		
-		var serieOrder = this.serieOrderComboBox.getValue();		
-		var serieColor = this.serieColorPicker.getColor();		
-		var showValue = this.serieShowValue.getValue();				
-		var showAbsValue = this.serieShowAbsValue.getValue();		
-		var showPercentage = this.serieShowPercentage.getValue();		
-		var serieTooltipColor = this.tooltipColor.getColor();		
-		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();		
-		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();		
-		var serieTooltipFont = this.tooltipFontComboBox.getValue();		
-		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();		
+		var serieName = this.serieNameTextField.getValue();
+		var serieType = this.serieTypesComboBox.getValue();
+		var serieOrder = this.serieOrderComboBox.getValue();
+		var serieColor = this.serieColorPicker.getColor();
+		var showValue = this.serieShowValue.getValue();
+		var showAbsValue = this.serieShowAbsValue.getValue();
+		var showPercentage = this.serieShowPercentage.getValue();
+		var serieTooltipColor = this.tooltipColor.getColor();
+		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();
+		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();
+		var serieTooltipFont = this.tooltipFontComboBox.getValue();
+		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();
 		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
-					
+		
+		var serieTooltipBorderWidth=this.tooltipBorderWidthNumberfield.getValue();
+		
+		var serieTooltipBorderRadius=this.tooltipBorderRadiusNumberfield.getValue();
+		
 		var seriePrecision = this.seriePrecisionNumberField.getValue();
 		
 		/**
@@ -617,7 +655,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			dataAtRow.set('serieTooltipFont', serieTooltipFont);
 			dataAtRow.set('serieTooltipFontWeight', serieTooltipFontWeight);
 			dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
-			
+			dataAtRow.set('serieTooltipBorderWidth', serieTooltipBorderWidth);
+			dataAtRow.set('serieTooltipBorderRadius', serieTooltipBorderRadius);
 			this.destroy();
 		}
 		

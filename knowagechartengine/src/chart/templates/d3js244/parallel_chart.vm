@@ -24,6 +24,12 @@
 
 #set($serieNeeded = {})
 
+#set($seriePrefix = {})
+
+#set($seriePostfix = {})
+
+#set($seriePrecision = {})
+
 #set($serieCounter = 0)
 
 #set($colorsRequired = {})
@@ -41,6 +47,9 @@
 
 #foreach($value in $serie) 
 	 #set($serieNeeded[$serieCounter] = $value.column)
+	 #set($seriePrefix[$serieCounter]= $value.prefixChar)
+	 #set($seriePostfix[$serieCounter]= $value.postfixChar)
+	 #set($seriePrecision[$serieCounter]= $value.precision)
 	 #if($chart.LIMIT.groupByCategory == 'true')
 	 #set($groupingFunction[$serieCounter] = $value.groupingFunction)
 	 #else
@@ -82,7 +91,7 @@
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
 
-#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction))
+#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction, $seriePrefix, $seriePostfix, $seriePrecision))
 
 #if ($colorsPallete.COLOR.value && $colorCounter == 0)
 

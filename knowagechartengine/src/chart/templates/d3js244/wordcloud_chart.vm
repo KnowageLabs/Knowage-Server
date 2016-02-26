@@ -28,13 +28,13 @@
 	#set($columnsNeeded[0] = $category.column)
 #end
 
-#set($serie = $chart.VALUES.SERIE.name)
+#set($serieName = $chart.VALUES.SERIE.name)
 
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 
 #set($sizeCriteria = $chart.sizeCriteria)
 
-#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serie, $sizeCriteria, $groupingFunction))
+#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction))
 
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
@@ -161,9 +161,23 @@
 	
 	tooltip:
 	{
-       precision : '$chart.VALUES.SERIE.precision',
-	   prefix: '$chart.VALUES.SERIE.prefixChar',
-	   postfix: '$chart.VALUES.SERIE.postfixChar',
+       precision : '$chart.WORDCLOUD_TOOLTIP.precision',
+	   prefix: '$chart.WORDCLOUD_TOOLTIP.prefix',
+	   postfix: '$chart.WORDCLOUD_TOOLTIP.postfix',
+	   backgroundColor:'$chart.WORDCLOUD_TOOLTIP.backgroundColor',
+	   fontFamily:'$chart.WORDCLOUD_TOOLTIP.style.fontFamily',
+	   fontSize:'$chart.WORDCLOUD_TOOLTIP.style.fontSize',
+	   align:'$chart.WORDCLOUD_TOOLTIP.style.align',
+	   fontColor:'$chart.WORDCLOUD_TOOLTIP.style.color',
+	   #if($chart.WORDCLOUD_TOOLTIP.style.fontWeight == 'italic' || $chart.WORDCLOUD_TOOLTIP.style.fontWeight == 'normal')
+    			fontStyle: '$chart.WORDCLOUD_TOOLTIP.style.fontWeight',
+			#elseif($chart.WORDCLOUD_TOOLTIP.style.fontWeight == 'underline')
+    			textDecoration: '$chart.WORDCLOUD_TOOLTIP.style.fontWeight',
+			#elseif($chart.WORDCLOUD_TOOLTIP.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.WORDCLOUD_TOOLTIP.style.fontWeight',
+    		#end  
+    	borderWidth:'$chart.WORDCLOUD_TOOLTIP.borderWidth',
+    	borderRadius:'$chart.WORDCLOUD_TOOLTIP.borderRadius'	
 	},
 	
     crossNavigation:

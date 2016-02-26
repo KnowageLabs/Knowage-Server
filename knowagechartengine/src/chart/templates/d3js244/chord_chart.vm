@@ -2,7 +2,9 @@
 #set($dataFields = $data.metaData.fields)
 
 #set($categories = $chart.VALUES.CATEGORY)
-#set($serie = $chart.VALUES.SERIE.name)
+#set($serieName = $chart.VALUES.SERIE.name)
+
+#set($serie = $chart.VALUES.SERIE)
 
 #set($dataColumnsMapper = {})
 
@@ -288,13 +290,26 @@
 		#end
     ],	
     
-    tooltip:
- 	{
-		fontFamily: '$chart.TOOLTIP.style.fontFamily',
-		fontSize: '$chart.TOOLTIP.style.fontSize',
-		border: '$chart.TOOLTIP.style.border',
-	 	borderRadius: '$chart.TOOLTIP.style.borderRadius'
- 	},
+  tooltip:
+ 	{   
+ 	    backgroundColor:'$serie.TOOLTIP.backgroundColor',
+		fontFamily: '$serie.TOOLTIP.style.fontFamily',
+		fontSize: '$serie.TOOLTIP.style.fontSize',
+		fontColor: '$serie.TOOLTIP.style.color',
+		align:'$serie.TOOLTIP.style.align',
+		#if ( $serie.TOOLTIP.style.fontWeight == 'italic' || $serie.TOOLTIP.style.fontWeight == 'normal')
+    			fontStyle: '$serie.TOOLTIP.style.fontWeight',
+			#elseif( $serie.TOOLTIP.style.fontWeight == 'underline')
+    			textDecoration: 'underline',
+			#elseif($serie.TOOLTIP.style.fontWeight == 'bold')		        			
+    			fontWeight: '$serie.TOOLTIP.style.fontWeight',
+    		#end
+		borderWidth: '$serie.TOOLTIP.borderWidth',
+	 	borderRadius: '$serie.TOOLTIP.borderRadius',
+	 	prefix:'$serie.prefixChar',
+	 	precision:'$serie.precision',
+	 	postfix:'$serie.postfixChar',
+ 	}, 
 	crossNavigation:
 	{
 	   #if($crossNavigation != '') 
@@ -317,7 +332,7 @@
 	
 	data:
 	[
-		$datasettransformer.toMatrix($results,$columnsNeeded,$serie,$dataColumnsMapper)
+		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper)
 	]
 
 }

@@ -709,6 +709,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							 : '') + ';';
 						TOOLTIP['style'] = tooltipStyle;
 						
+						TOOLTIP['borderWidth']=serieAsMap.get('serieTooltipBorderWidth') != undefined ? 
+								serieAsMap.get('serieTooltipBorderWidth')
+								 : '';
+						TOOLTIP['borderRadius']=serieAsMap.get('serieTooltipBorderRadius') != undefined ? 
+										serieAsMap.get('serieTooltipBorderRadius')
+										 : '';		
 						serie['TOOLTIP'] = TOOLTIP;
 					}
 
@@ -947,6 +953,30 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				CHART['maxFontSize'] = (Number(chartModel.get('maxFontSize'))) ? Number(chartModel.get('maxFontSize')) : 0;
 				CHART['minFontSize'] = (Number(chartModel.get('minFontSize'))) ? Number(chartModel.get('minFontSize')) : 0;
 				CHART['wordPadding'] = (Number(chartModel.get('wordPadding'))) ? Number(chartModel.get('wordPadding')) : 0;
+				
+				var TOOLTIP={};
+				
+				TOOLTIP['precision']=chartModel.get('wordcloudTooltipPrecision') ? chartModel.get('wordcloudTooltipPrecision') : '';
+				TOOLTIP['prefix']=chartModel.get('wordcloudTooltipPrefix') ? chartModel.get('wordcloudTooltipPrefix') : '';
+				TOOLTIP['postfix']=chartModel.get('wordcloudTooltipPostfix') ? chartModel.get('wordcloudTooltipPostfix') : '';
+				TOOLTIP['backgroundColor']= (chartModel.get('wordcloudTooltipBackgroundColor')!=undefined && chartModel.get('wordcloudTooltipBackgroundColor')!='' )?'#'+chartModel.get('wordcloudTooltipBackgroundColor') : '';
+				var style='';
+				style += 'fontFamily:'
+					 + ((chartModel.get('wordcloudTooltipFontFamily') != undefined) ? chartModel.get('wordcloudTooltipFontFamily') : '') + ';';
+
+					style += 'fontSize:' + ((chartModel.get('wordcloudTooltipFontSize') != undefined) ? 
+						chartModel.get('wordcloudTooltipFontSize') : '') + ';';
+					style += 'fontWeight:' + ((chartModel.get('wordcloudTooltipFontStyle') != undefined) ?
+						chartModel.get('wordcloudTooltipFontStyle') : '') + ';';
+					style+='color:' + ((chartModel.get('wordcloudTooltipFontColor') != undefined && (chartModel.get('wordcloudTooltipFontColor') != '')) ?
+							'#'+chartModel.get('wordcloudTooltipFontColor') : '') + ';';
+					style+='align:' + ((chartModel.get('wordcloudTooltipAlign') != undefined) ?
+							chartModel.get('wordcloudTooltipAlign') : '') + ';';
+				
+			    TOOLTIP['style']=style;
+			    TOOLTIP['borderWidth']=chartModel.get('wordcloudTooltipBorderWidth') ? chartModel.get('wordcloudTooltipBorderWidth') : '';
+			    TOOLTIP['borderRadius']=chartModel.get('wordcloudTooltipBorderRadius') ? chartModel.get('wordcloudTooltipBorderRadius') : '';
+				CHART['WORDCLOUD_TOOLTIP']=TOOLTIP;
 				
 				// TODO: commented since it is not completely tested
 				/*console.log("AAA",chartModel.get('maxAngle')&&!chartModel.get('maxAngle')==="");
@@ -1710,7 +1740,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
 
 			var isSerieTooltipDisabled = ((chartType == "WORDCLOUD") 
-					|| chartLibrary == 'chartJs'); 
+					|| chartLibrary == 'chartJs' || chartType == "PARALLEL" ); 
 				
 			return isSerieTooltipDisabled;
 		},
@@ -1762,8 +1792,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		isTooltipPanelEnabled: function(){
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 			
-			var isTooltipEnabled = Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL' 
-				|| Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'CHORD';
+			var isTooltipEnabled = Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL';
 			
 			return isTooltipEnabled; 
 		},
@@ -1957,6 +1986,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					});
 				});
 			}
+			
+			var wordcloudTooltip=null;
+		    var wordcloudTooltipStyle = null;
+		    
+		    if(Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD'){
+		    	wordcloudTooltip=jsonTemplate.CHART.WORDCLOUD_TOOLTIP;
+		    	 wordcloudTooltipStyle=jsonTemplate.CHART.WORDCLOUD_TOOLTIP ? 
+							Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.WORDCLOUD_TOOLTIP.style) : '';
+		    	
+		    }
 		
 			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
 				/**
@@ -1968,7 +2007,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				
 				heightDimType: (jsonTemplate.CHART.heightDimType && jsonTemplate.CHART.heightDimType!="") ? 
 									jsonTemplate.CHART.heightDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
-									
 				widthDimType: (jsonTemplate.CHART.widthDimType && jsonTemplate.CHART.widthDimType!="") ? 
 									jsonTemplate.CHART.widthDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
 									
@@ -2032,6 +2070,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * Added for the WORDCLOUD chart
 				 * (danilo.ristovski@mht.net)
 				 */
+				
+				
 				maxWords : jsonTemplate.CHART.maxWords,
 				maxAngle : jsonTemplate.CHART.maxAngle,
 				minAngle : jsonTemplate.CHART.minAngle,
@@ -2041,7 +2081,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
                 wordLayout: jsonTemplate.CHART.wordLayout,
                 preventOverlap: jsonTemplate.CHART.preventOverlap,
-				
+                wordcloudTooltipPrecision:(wordcloudTooltip != null)?wordcloudTooltip.precision:null,
+                wordcloudTooltipPrefix:(wordcloudTooltip != null)?wordcloudTooltip.prefix:null,
+                wordcloudTooltipPostfix:(wordcloudTooltip != null)?wordcloudTooltip.postfix:null,
+                wordcloudTooltipBackgroundColor:(wordcloudTooltip != null)?Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltip.backgroundColor):null,
+                wordcloudTooltipFontFamily:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontFamily : null,
+                wordcloudTooltipFontStyle:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontWeight : null,		
+                wordcloudTooltipFontColor:(wordcloudTooltipStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltipStyle.color) : null,
+                wordcloudTooltipFontSize:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontSize : null,
+                wordcloudTooltipAlign:(wordcloudTooltipStyle != null)  ? wordcloudTooltipStyle.align : null,		
+                wordcloudTooltipBorderWidth:(wordcloudTooltip != null)?wordcloudTooltip.borderWidth:null,
+                wordcloudTooltipBorderRadius:(wordcloudTooltip != null)?wordcloudTooltip.borderRadius:null,		
+                		
 				/**
 				 * Added for the SUNBURST chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

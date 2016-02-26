@@ -753,20 +753,33 @@ function renderWordCloud(chartConf,catchSVG){
 		.attr("class","tooltip")
 		.style("opacity","0");
 		
+		
+		var tooltipBackgroundColor=(chartConf.tooltip.backgroundColor)?chartConf.tooltip.backgroundColor:"rgba(255, 255, 255, 0.85)";
+		var tolltipFontStyle=chartConf.tooltip.fontStyle?chartConf.tooltip.fontStyle:'';
+		var tolltipFontWeight=chartConf.tooltip.fontWeight?chartConf.tooltip.fontWeight:'';
+	    var tolltipTextDecoration=chartConf.tooltip.textDecoration?chartConf.tooltip.textDecoration:'';
+	    var tooltipBorderWidth=chartConf.tooltip.borderWidth?chartConf.tooltip.borderWidth:'1';
+	    var tooltipBorderRadius=chartConf.tooltip.borderRadius?chartConf.tooltip.borderRadius:'3';
+	    
 		d3.selectAll(".tooltip")
 		.style("position","absolute")
-		.style("text-align","center")
+		.style("text-align",chartConf.tooltip.align)
 		.style("min-width",10)
 		.style("max-width",1000)
 		.style("min-height",10)
 		.style("max-height",800)
 		.style("padding",3)
-		.style("font-size",chartConf.chart.style.fontSize)
-		.style("font-family",chartConf.chart.style.fontFamily)
-		.style("border","1px solid black")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
-		.style("border-radius","2px")
+		.style("color",chartConf.tooltip.fontColor)
+		.style("font-size",chartConf.tooltip.fontSize)
+		.style("font-family",chartConf.tooltip.fontFamily)
+		.style("border",tooltipBorderWidth+"px solid")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
+		.style("border-color",chartConf.tooltip.fontColor)
+		.style("border-radius",tooltipBorderRadius+"px")
 		.style("pointer-events","none")
-		.style("background-color"," rgba(250,250,250,0.75)");
+		.style("background-color",tooltipBackgroundColor)
+		.style("font-style",tolltipFontStyle)
+		.style("font-weight",tolltipFontWeight)
+		.style("text-decoration",tolltipTextDecoration);
 		
 		    var wordArea=bacground
 			.append("g")
@@ -836,7 +849,7 @@ function renderWordCloud(chartConf,catchSVG){
 				}
 				tooltip.transition().duration(50).style("opacity","1");
     				
-				var ttText = tooltip.text(chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix);
+				var ttText = tooltip.text("  "+chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix+"  ");
 			  				
 				/**
 				 * Call the function that enables positioning of the 
@@ -885,7 +898,7 @@ function renderWordCloud(chartConf,catchSVG){
     
 	function renderSunburst(jsonObject)
 	{
-		console.log(jsonObject);
+		
 		/*The part that we need to place into HTML (JSP) in order to attach 
 		 * given data to them - we are going to create it through D3 notation */
 				
@@ -1903,6 +1916,7 @@ function renderWordCloud(chartConf,catchSVG){
 	function renderParallelChart(data){
    
 	var records = data.data[0];
+	
    
 	if(records.length>0){
 
@@ -1939,6 +1953,10 @@ function renderWordCloud(chartConf,catchSVG){
 		var groups = [];
 
 		var columns = [];
+		
+		var precisions={};
+		var prefixes={};
+		var postfixes={};
 
 		for (var i = 0; i< group.length; i++){
 
@@ -1948,7 +1966,12 @@ function renderWordCloud(chartConf,catchSVG){
 		for (var i = 0; i<column.length;i++){
 
 			columns.push(column[i][i]);
+			precisions[column[i][i]]=column[i]["precision"];
+			prefixes[column[i][i]]=column[i]["prefix"];
+			postfixes[column[i][i]]=column[i]["postfix"];
+			
 		}
+		
 
 		function pickColors(colors, n){ // picks n different colors from colors
 			var selected=[];
@@ -2669,15 +2692,33 @@ function renderWordCloud(chartConf,catchSVG){
 		     .selectAll("td")
 		     .data(function(row){
 		    	 return tableColumns.map(function(column) {
-		                return {column: column, value: row[column]};
+		                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column] };
 		            });
 		     }).enter()
 		       .append("td")
 		.on("click",function(d){return filterTable(d,allTableData);})
-		       .text(function(d){return d.value})
+		       .text(function(d){ return formatTableCell(d) })
 		       .style("text-align","center");
 		       
-	}	
+	}
+	
+	function formatTableCell(d){
+		  var text='';
+   	   if(d.prefix) {
+   		   text+=d.prefix +" ";
+   	   }
+   	   if(d.precision){
+   		   text+=Number(d.value).toFixed(d.precision);
+   		   
+   	   }else{
+   		   text+=d.value;
+   	   }
+   	   if(d.postfix){
+   		   text+=" "+d.postfix;
+   	   }
+   	   return text
+		
+	}
 	
 	function dragstart(d) {
 		i = columns.indexOf(d);
@@ -2805,12 +2846,12 @@ function renderWordCloud(chartConf,catchSVG){
 	     .selectAll("td")
 	     .data(function(row){
 	    	 return tableColumns.map(function(column) {
-	                return {column: column, value: row[column]};
+	                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
 	            });
 	     }).enter()
 	       .append("td")
 		.on("click",function(d){return filterTable(d,filteredRows);})
-	       .text(function(d){return d.value})
+	       .text(function(d){return formatTableCell(d)})
 		   .style("text-align","center");
 		}
 		
@@ -2957,12 +2998,12 @@ function renderWordCloud(chartConf,catchSVG){
 		.selectAll("td")
 		.data(function(row){
 			return tableColumns.map(function(column) {
-				return {column: column, value: row[column]};
+				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
 			});
 		}).enter()
 		.append("td")
 		.on("click",function(d){return filterTable(d,allTableData);})
-		.text(function(d){return d.value})
+		.text(function(d){return formatTableCell(d)})
 		.style("text-align","center");
 
 		foreground.attr("visible",function(d){
@@ -3206,6 +3247,7 @@ function renderChordChart(jsonData)
 				
 				
 				var tool=printTheResultWhenSelecting(i);
+				
 				
 				tooltip.
 			   // attr("hidden","false").
@@ -3574,19 +3616,37 @@ function renderChordChart(jsonData)
 	.attr("class","tooltip")
 	.style("opacity","0");
 	
+	console.log(jsonData.tooltip);
+	/**
+	 * values to be applied instead of undefined if some property is not specified
+	 */
+	var fontStyle=jsonData.tooltip.fontStyle ? jsonData.tooltip.fontStyle:'';
+	var fontWeight=jsonData.tooltip.fontWeight?jsonData.tooltip.fontWeight:'';
+	var textDecoration=jsonData.tooltip.textDecoration?jsonData.tooltip.textDecoration:'';
+	var backgroundColor=jsonData.tooltip.backgroundColor?jsonData.tooltip.backgroundColor:'rgba(255, 255, 255, 0.85)';
+	var borderWidth=jsonData.tooltip.borderWidth?jsonData.tooltip.borderWidth: '1';
+	var borderRadius=jsonData.tooltip.borderRadius?jsonData.tooltip.borderRadius:'3';
+	
 	d3.selectAll(".tooltip")
 	.style("position","absolute")
-	.style("text-align","center")
+	.style("text-align",jsonData.tooltip.align)
 	.style("min-width",20)
-	.style("max-width",400)
+	.style("max-width",1500)
 	.style("min-height",20)
-	.style("max-height",400)
+	.style("max-height",2000)
+	//.style("overflow","scroll")
 	.style("padding",10)
-	.style("background-color"," rgba(250,250,250,0.75)")
+	.style("background-color",backgroundColor)
 	.style("font-size",jsonData.tooltip.fontSize)
 	.style("font-family",jsonData.tooltip.fontFamily)
-	.style("border",jsonData.tooltip.border+"px solid black")
-	.style("border-radius",jsonData.tooltip.borderRadius+"px")
+	.style("border",borderWidth+"px solid")
+	.style("border-color",jsonData.tooltip.fontColor)
+	.style("border-radius",borderRadius+"px")
+	.style()
+	.style("font-style",fontStyle)
+	.style("font-weight",fontWeight)
+	.style("text-decoration",textDecoration)
+	.style("color",jsonData.tooltip.fontColor)
 	.style("pointer-events","none")
 	.style("left","50%")
 	.style("top","50%")

@@ -448,7 +448,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	//												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
 											(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
 													newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
-													
+											
 											var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
 											
 											for (j=0; j<splitSerieTooltipStyle.length; j++)
@@ -1035,7 +1035,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			if (chartType == "SUNBURST" || chartType == "TREEMAP" 
-				|| chartType == "PARALLEL" || chartType == "HEATMAP")
+			     || chartType == "HEATMAP" || chartType == "WORDCLOUD")
 			{
 				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";	
 			}

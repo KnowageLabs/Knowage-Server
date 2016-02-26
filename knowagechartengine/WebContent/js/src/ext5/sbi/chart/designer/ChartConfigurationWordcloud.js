@@ -12,7 +12,7 @@ Ext.define
 		id : "wordcloudConfiguration",
 		
 		columnWidth: 1,
-		height: 295,
+		height:320,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding : 10,

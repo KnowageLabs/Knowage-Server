@@ -399,7 +399,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
-			
+	
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 
 			 * GAUGE type, set the plotband store that keeps the data about the plots
@@ -649,7 +649,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
 					 */
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
-						
+					var wordCloudPanelTooltip = secondConfigurationPanel.getComponent("wordcloudConfigurationTooltip");	
 					/**
 					 * The additional second configuration panel elements to show when the PARALLEL is selected.
 					 */
@@ -786,8 +786,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					if (isChartWordCloud) {
 						wordCloudPanel.show();
+						wordCloudPanelTooltip.show();
 					} else {
 						wordCloudPanel.hide();
+						wordCloudPanelTooltip.hide();
 					}
 					
 					/**
@@ -809,12 +811,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelLegendElementPanel.hide();
 						showTableParallel.hide();
 					}
-					/**
-					 * CHORD chart uses parallel tooltip panel
-					 */
-					if(isChartChord){
-						parallelTooltipPanel.show();
-					}
+					
 					
 					/**
 					 * Show/hide the SCATTER configuration panel on the second 
@@ -3302,7 +3299,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							{
 								tooltipFontFamily = jsonTooltipStyle.font;
 							}
-							
+						
 							if (chartType == "GAUGE") {									
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
@@ -3344,7 +3341,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipColor: jsonTooltipStyle.color,
 									serieTooltipFont: tooltipFontFamily,
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-									serieTooltipFontSize: jsonTooltipStyle.fontSize
+									serieTooltipFontSize: jsonTooltipStyle.fontSize,
+									
 								});								
 							} 
 							else {
@@ -3374,7 +3372,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipColor: jsonTooltipStyle.color,
 									serieTooltipFont: tooltipFontFamily,
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-									serieTooltipFontSize: jsonTooltipStyle.fontSize
+									serieTooltipFontSize: jsonTooltipStyle.fontSize,
+									
+									serieTooltipBorderWidth: tooltip.borderWidth,
+									serieTooltipBorderRadius: tooltip.borderRadius,
 								});
 							}
 							
@@ -4976,108 +4977,108 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			else if(chartType=="CHORD"){
 				
-				var parallelTooltip = Ext.getCmp("chartParallelTooltip");
-				
-				//=====
-				var parallelTooltipBorderGUI = parallelTooltip.tooltipBorder.value;
-				var parallelTooltipBorderRadiusGUI = parallelTooltip.tooltipBorderRadius.value;
-				//==========
-				var parallelTooltipFontFamilyCModel = chartViewModelData.parallelTooltipFontFamily;
-				var parallelTooltipFontSizeCModel = chartViewModelData.parallelTooltipFontSize;
-				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
-				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
-				
-				if (parallelTooltipBorderGUI == null)
-				{
-					if (parallelTooltipBorderCModel == null || parallelTooltipBorderCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipBorderGUI < checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
-								checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipBorderGUI > checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
-								checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				}
-				
-				if (parallelTooltipBorderRadiusGUI == null)
-				{
-					if (parallelTooltipBorderRadiusCModel == null || parallelTooltipBorderRadiusCModel=="")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (parallelTooltipBorderRadiusGUI < checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.minValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
-								checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-					else if (parallelTooltipBorderRadiusGUI > checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.maxValue"),
-							
-							[
-								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
-								checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue,
-								LN("sbi.chartengine.configuration.parallel.tooltip.title")
-							]
-						);
-					}
-				}	
-			
-			
+//				var parallelTooltip = Ext.getCmp("chartParallelTooltip");
+//				
+//				//=====
+//				var parallelTooltipBorderGUI = parallelTooltip.tooltipBorder.value;
+//				var parallelTooltipBorderRadiusGUI = parallelTooltip.tooltipBorderRadius.value;
+//				//==========
+//				var parallelTooltipFontFamilyCModel = chartViewModelData.parallelTooltipFontFamily;
+//				var parallelTooltipFontSizeCModel = chartViewModelData.parallelTooltipFontSize;
+//				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
+//				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
+//				
+//				if (parallelTooltipBorderGUI == null)
+//				{
+//					if (parallelTooltipBorderCModel == null || parallelTooltipBorderCModel=="")
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}						
+//				}
+//				else 
+//				{					
+//					if (parallelTooltipBorderGUI < checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.minValue"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+//								checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue,
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}
+//					else if (parallelTooltipBorderGUI > checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.maxValue"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+//								checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue,
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}
+//				}
+//				
+//				if (parallelTooltipBorderRadiusGUI == null)
+//				{
+//					if (parallelTooltipBorderRadiusCModel == null || parallelTooltipBorderRadiusCModel=="")
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}						
+//				}
+//				else 
+//				{					
+//					if (parallelTooltipBorderRadiusGUI < checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.minValue"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+//								checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue,
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}
+//					else if (parallelTooltipBorderRadiusGUI > checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.maxValue"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+//								checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue,
+//								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+//							]
+//						);
+//					}
+//				}	
+//			
+//			
 			}
 			
 			else if (chartType == "SUNBURST") {

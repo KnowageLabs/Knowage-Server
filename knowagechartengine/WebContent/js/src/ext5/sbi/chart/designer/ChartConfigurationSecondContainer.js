@@ -26,7 +26,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
 		'Sbi.chart.designer.ChartConfigurationSunburstTip',
 		
-		'Sbi.chart.designer.ChartConfigurationWordcloud'
+		'Sbi.chart.designer.ChartConfigurationWordcloud',
+		'Sbi.chart.designer.ChartConfigurationWordcloudTooltip'
+		
+		
    ],
            
     border:false,
@@ -120,7 +123,16 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			{
 				viewModel: this.viewModel
 			}
-		); 		
+		); 	
+		
+		var wordcloudTooltip=Ext.create
+		(
+				"Sbi.chart.designer.ChartConfigurationWordcloudTooltip",
+				
+				{
+					viewModel: this.viewModel
+				}
+			); 	
 		
 		/**
 		 * These three panels are needed for the PARALLEL chart
@@ -241,6 +253,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * WORDCLOUD panel for specific parameters
 		 */
 		this.add(wordCloudParameters);
+		this.add(wordcloudTooltip);
 		
 		/**
 		 * PARALLEL panels for specific parameters
@@ -295,10 +308,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		if (ChartUtils.isWordcloudPanelEnabled())
 		{
 			this.getComponent("wordcloudConfiguration").show();
+			this.getComponent("wordcloudConfigurationTooltip").show();
 		}
 		else 
 		{
 			this.getComponent("wordcloudConfiguration").hide();
+			this.getComponent("wordcloudConfigurationTooltip").hide();
 		}
 		
 		if (ChartUtils.isParallelPanelEnabled())
