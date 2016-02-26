@@ -106,6 +106,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		
 	}
 	
+	$scope.enableDisableDrillThrough = function(){
+		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
+		$scope.sendModelConfig($scope.modelConfig);
+	}
+	
 	$scope.changeDrillType = function(type){
 		$scope.modelConfig.drillType = type;
 		$scope.sendModelConfig($scope.modelConfig);
@@ -599,6 +604,30 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		console.log("dp");
 		console.log($scope.dataPointers);
 	}
+	
+$scope.drillThrough = function(ordinal,ev) {
+		
+		sbiModule_restServices.promiseGet
+		("1.0",'/member/drilltrough/'+ ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response,ev) {
+			$scope.dt = response.data;
+			$mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				controllerAs : 'olapCtrl',
+				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
+				targetEvent : ev,
+				clickOutsideToClose : true
+			});
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});
+		
+		
+		}
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
 		var exist = false;
