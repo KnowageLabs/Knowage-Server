@@ -54,7 +54,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -133,11 +133,19 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
+	@GET
+	@Path("/listAvailableAlias")
+	public Response listAvailableAlias(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Alias> aliases = dao.listAliasNotInMeasure();
+		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
+	}
+
 	/**
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -157,7 +165,7 @@ public class KpiService {
 		String query = null;
 		Integer maxItem = null;
 		String placeholders = null;
-		Map<String, String> parameterMap = new HashMap<String, String>();
+		Map<String, String> parameterMap = new HashMap<>();
 		try {
 			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
 			dataSourceId = obj.getInt("dataSourceId");
@@ -171,6 +179,12 @@ public class KpiService {
 					String name = placeholderNames.next();
 					String value = placeholderObj.getString(name);
 					parameterMap.put(name, value);
+				}
+				// Sorting parameters' map to easy replace @name with $P{name}
+				List<String> paramNameList = new ArrayList<>(parameterMap.keySet());
+				Collections.reverse(paramNameList);
+				for (String paramName : paramNameList) {
+					query = query.replaceFirst("@" + paramName, "$P{" + paramName + "}");
 				}
 			}
 		} catch (IOException | JSONException e) {
