@@ -3593,8 +3593,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (numberOfSerieItems == 0) {
-				
-				if (chartType == "TREEMAP" || chartType == "WORDCLOUD" || chartType == "CHORD")
+				/**
+				 * if occurences is selected as size criteria for wordcloud it can be saved without serie
+				 * @author Ana Tomic (ana.tomic@mht.net)
+				 */
+				if (chartType == "TREEMAP" || (chartType == "WORDCLOUD" && chartViewModelData.sizeCriteria=="serie" ) || chartType == "CHORD")
 				{
 					/**
 					 * TREEMAP, WORDCLOUD and CHORD charts need exactly one serie item.
@@ -3610,7 +3613,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					errorMsg += LN('sbi.chartengine.validation.addserie.atLeastTwo');
 				}
-				else
+				else if(chartType != "WORDCLOUD")
 				{
 					errorMsg += LN('sbi.chartengine.validation.addserie');
 				}

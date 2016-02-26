@@ -45,7 +45,7 @@
 
 				<VALUES>					
 					<SERIE color="" postfixChar="" precision="" prefixChar="" showValue="">
-						<TOOLTIP backgroundColor=""
+						<TOOLTIP backgroundColor="" borderWidth="" borderRadius=""
 						style="color:;fontFamily:;fontWeight:;fontSize:;align:;"/>
 					</SERIE>
 				</VALUES>
@@ -56,7 +56,10 @@
 
 		<wordcloud>
 			<CHART type="WORDCLOUD" maxAngle='' maxFontSize='' minFontSize='' maxWords='' minAngle='' sizeCriteria='' wordPadding='' wordLayout='' preventOverlap=''
-			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;"/>
+			style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;">
+			 <WORDCLOUD_TOOLTIP backgroundColor="" borderRadius=""
+              borderWidth="" postfix="" precision="" prefix="" style="fontFamily:;fontSize:;fontWeight:;color:;align:;"/>
+		    </CHART>
 		</wordcloud>
 
 		<bar>

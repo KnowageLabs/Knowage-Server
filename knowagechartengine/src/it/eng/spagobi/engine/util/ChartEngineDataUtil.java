@@ -168,13 +168,18 @@ public class ChartEngineDataUtil {
 		if (seriesArray != null) {
 			for (int i = 0; i < seriesArray.length(); i++) {
 				JSONObject thisSerie = (JSONObject) seriesArray.get(i);
+
 				seriesList.add(thisSerie);
+
 			}
 		} else {
-			seriesList.add(singleSerie);
+			if (singleSerie != null) {
+				seriesList.add(singleSerie);
+			}
 		}
 
 		for (JSONObject serie : seriesList) {
+
 			String serieColumn = serie.getString("column");
 			String serieName = serie.getString("name");
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
@@ -194,6 +199,7 @@ public class ChartEngineDataUtil {
 
 				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, orderTypeFinal, null);
 			}
+
 		}
 
 		// Category

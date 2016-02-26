@@ -31,9 +31,10 @@ public class DataSetTransformer {
 		Map<String, String> mapper = (Map<String, String>) dataColumnsMapper;
 
 		Map<String, String> columns = (Map<String, String>) columnsNeeded;
-
-		Object serieRawColumn = mapper.get(serie.toString() + "_" + groupingFunction.toString());
-
+		Object serieRawColumn = null;
+		if (serie != null) {
+			serieRawColumn = mapper.get(serie.toString() + "_" + groupingFunction.toString());
+		}
 		ArrayList<String> listColumns = new ArrayList<String>();
 
 		HashMap<Integer, HashMap> result = new HashMap<Integer, HashMap>();
@@ -56,7 +57,9 @@ public class DataSetTransformer {
 				record.put(columns.get(j).toString(), x.toString());
 			}
 
-			record.put(serie.toString(), row.get(serieRawColumn).toString());
+			if (serie != null) {
+				record.put(serie.toString(), row.get(serieRawColumn).toString());
+			}
 
 			result.put(new Integer(i), record);
 		}

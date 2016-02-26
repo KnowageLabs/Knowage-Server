@@ -28,9 +28,13 @@
 	#set($columnsNeeded[0] = $category.column)
 #end
 
+#if($!chart.VALUES.SERIE)
 #set($serieName = $chart.VALUES.SERIE.name)
+#end
 
+#if($!chart.VALUES.SERIE)
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+#end
 
 #set($sizeCriteria = $chart.sizeCriteria)
 

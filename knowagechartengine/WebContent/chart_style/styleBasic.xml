@@ -44,9 +44,9 @@
 				</AXES_LIST>
 				
 				<VALUES>					
-					<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true">
+					<SERIE color="" postfixChar="" precision="2" prefixChar="" showValue="true" >
 						<TOOLTIP backgroundColor=""
-							style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;"/>
+							style="color:#006699;fontFamily:Verdana;fontWeight:;fontSize:10px;align:left;" borderWidth="1" borderRadius="3" />
 					</SERIE>
 				</VALUES>
 				
@@ -54,7 +54,9 @@
 		</generic>
 		
 		<wordcloud>
-			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' wordLayout='horizontal' maxWords='100' preventOverlap='true' minAngle='0' sizeCriteria='serie' wordPadding='5'/>
+			<CHART height="" width="" style="fontFamily:Impact;fontSize:12px;fontWeight:normal;backgroundColor:transparent;" type="WORDCLOUD" maxAngle='120' maxFontSize='60' minFontSize='5' wordLayout='horizontal' maxWords='100' preventOverlap='true' minAngle='0' sizeCriteria='serie' wordPadding='5'>
+		    <WORDCLOUD_TOOLTIP backgroundColor="" borderRadius="" borderWidth="" postfix="" precision="" prefix="" style="fontFamily:Arial;fontSize:10px;fontWeight:normal;color:;align:center;"/>
+		    </CHART>
 		</wordcloud>
 		
 		<bar>
