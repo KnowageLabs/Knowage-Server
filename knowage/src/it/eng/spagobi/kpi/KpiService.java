@@ -8,6 +8,7 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -65,6 +66,13 @@ public class KpiService {
 	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
+
+	@GET
+	@Path("/listPlaceholder")
+	public Response listPlaceholder(@Context HttpServletRequest req) throws EMFUserError {
+		List<Placeholder> placeholders = getKpiDAO(req).listPlaceholder();
+		return Response.ok(JsonConverter.objectToJson(placeholders, placeholders.getClass())).build();
+	}
 
 	@GET
 	@Path("/{id}/cloneRule")
