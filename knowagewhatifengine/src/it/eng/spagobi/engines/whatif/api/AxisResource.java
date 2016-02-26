@@ -63,14 +63,15 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 		if (transform.isSwapAxes()) {
 			transform.setSwapAxes(false);
+
 		} else {
 			transform.setSwapAxes(true);
+
 		}
-		model.setSorting(false);
+		// model.setSorting(false);
 		model.removeSubset(model.getCellSet().getAxes().get(1));
 		model.removeSubset(model.getCellSet().getAxes().get(0));
-		model.removeOrder(model.getCellSet().getAxes().get(1));
-		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.swapAxisSort();
 		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
 		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
 		String table = renderModel(model);
@@ -98,9 +99,16 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos,
 			@PathParam("toAxis") int toAxisPos, @PathParam("hierarchy") String hierarchyName) {
-
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
-
+		model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
 		return renderModel(getPivotModel());
 	}
 

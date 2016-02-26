@@ -5,13 +5,15 @@
 	</md-toolbar>
 	
 	<md-content class="dialog-style">
-		<md-radio-group ng-model="sortingSetting">
-      			<md-radio-button value="true">True</md-radio-button>
-      			<md-radio-button value="false"> False </md-radio-button>
+		<md-radio-group ng-model="selectedSortingMode">
+      			 <md-radio-button ng-repeat="d in sortingModes" ng-value="d.value" aria-label="{{ d.label }}">
+         {{ d.label }}
+  				</md-radio-button>
+  				<input type="number" name="count" ng-model="sortingCount" min="2" required>
     	</md-radio-group>
     	
 		<md-dialog-actions layout="row">
-			<md-button ng-click="">
+			<md-button ng-click="saveSortingSettings()">
 				Save
 			</md-button>
 		</md-dialog-actions>

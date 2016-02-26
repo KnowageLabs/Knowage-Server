@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
@@ -32,6 +33,7 @@ import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.sort.SortCriteria;
+import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
@@ -185,30 +187,31 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortType}")
+	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortMode}")
 	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
-			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType) {
+			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortMode") String sortMode) {
 		init();
-		if (sortType.equals(SortCriteria.ASC.toString()) || sortType.equals(SortCriteria.BASC.toString()) || sortType.equals(SortCriteria.DESC.toString())
-				|| sortType.equals(SortCriteria.BDESC.toString())) {
+		model.setSorting(true);
+		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
+		model.setSortCriteria(nextSortCriteria);
+		sortModel(axisToSortpos, axis, positionUniqueName);
 
-			model.setSortCriteria(SortCriteria.valueOf(sortType));
-		}
-
-		return sortModel(axisToSortpos, axis, positionUniqueName);
+		return renderModel(model);
 	}
 
 	@GET
-	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortType}/{topBottomCount}")
+	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortMode}/{topBottomCount}")
 	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
-			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortType") String sortType,
+			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortMode") String sortMode,
 			@PathParam("topBottomCount") Integer topBottomCount) {
-		SortCriteria sortCriteria = SortCriteria.valueOf(sortType);
-		if (sortCriteria.equals(SortCriteria.BOTTOMCOUNT) || sortCriteria.equals(SortCriteria.TOPCOUNT)) {
-			model.setSortCriteria(SortCriteria.valueOf(sortType));
-			model.setTopBottomCount(topBottomCount);
-		}
-		return sortModel(axisToSortpos, axis, positionUniqueName);
+		init();
+		model.setTopBottomCount(topBottomCount);
+		model.setSorting(true);
+		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
+		model.setSortCriteria(nextSortCriteria);
+		sortModel(axisToSortpos, axis, positionUniqueName);
+
+		return renderModel(model);
 	}
 
 	@GET
@@ -217,15 +220,20 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		init();
 
 		Integer subsetStart = model.getSubsetStart(model.getCellSet().getAxes().get(1));
+
 		model.removeSubset(model.getCellSet().getAxes().get(1));
-		model.removeOrder(model.getCellSet().getAxes().get(1));
-		if (model.isSorting()) {
+
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+		getWhatIfEngineInstance().getModelConfig().setSortingEnabled(!modelConfig.getSortingEnabled());
+		if (!modelConfig.getSortingEnabled()) {
+			model.setSortCriteria(null);
 			model.setSorting(false);
-
-		} else {
-			model.setSorting(true);
-
 		}
+
+		model.removeOrder(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
+		model.removeOrder(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
+		List<Member> a = model.getSortPosMembers1();
+		a.clear();
 
 		model.setSubset(model.getCellSet().getAxes().get(1), subsetStart, 10);
 
@@ -240,15 +248,19 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 	}
 
-	private String sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName) {
+	private void sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName) {
+		Integer subsetStart1 = model.getSubsetStart(getAxis(1));
+		Integer subsetStart0 = model.getSubsetStart(getAxis(0));
+		CellSetAxis axisToSort = null;
+		CellSetAxis axisM = null;
 
 		SwapAxes transform = model.getTransform(SwapAxes.class);
-		Integer subsetStart = model.getSubsetStart(getAxis(1));
 
-		model.removeSubset(getAxis(1));
+		model.removeSubset(getAxis(Axis.ROWS.axisOrdinal()));
+		model.removeSubset(getAxis(Axis.COLUMNS.axisOrdinal()));
 
-		CellSetAxis axisToSort = getAxis(axisToSortpos);
-		CellSetAxis axisM = getAxis(axis);
+		axisToSort = getAxis(axisToSortpos);
+		axisM = getAxis(axis);
 
 		List<Position> positions = axisM.getPositions();
 
@@ -259,10 +271,29 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			axisToSort = axisM;
 
 		}
-		model.sort(axisToSort, position);
+		if (model.getSortCriteria() != null) {
+			model.sort(axisToSort, position);
+			model.getSortPosMembers1();
 
-		model.setSubset(axisToSort, subsetStart, 10);
-		return renderModel(model);
+			if (model.getSortCriteria().equals(SortCriteria.BOTTOMCOUNT) || model.getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
+				model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+				model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+			} else {
+				model.setSubset(axisToSort, subsetStart1, 10);
+
+				model.setSubset(axisM, subsetStart0, 10);
+			}
+
+		} else {
+			model.removeSubset(model.getCellSet().getAxes().get(1));
+			model.removeSubset(model.getCellSet().getAxes().get(0));
+			model.removeOrder(model.getCellSet().getAxes().get(1));
+			model.removeOrder(model.getCellSet().getAxes().get(0));
+			model.setSubset(axisToSort, subsetStart1, 10);
+
+			model.setSubset(axisM, subsetStart0, 10);
+
+		}
 
 	}
 

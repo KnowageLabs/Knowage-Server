@@ -51,6 +51,8 @@ import org.pivot4j.mdx.MdxStatement;
 import org.pivot4j.mdx.QueryAxis;
 import org.pivot4j.mdx.Syntax;
 import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.SwapAxes;
+import org.pivot4j.util.OlapUtils;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 
@@ -61,6 +63,40 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private String queryWithOutCC;
 	private SpagoBICrossNavigationConfig crossNavigation;
 	private List<TargetClickable> targetsClickable;
+	private List<Member> sortPosMembers1;
+
+	public List<Member> getSortPosMembers1() {
+		sortPosMembers1 = new ArrayList<Member>();
+		if (isSorting() && getSortPosMembers() != null) {
+			List<Member> list = getSortPosMembers();
+			for (Member member : list)
+				sortPosMembers1.add(member);
+		}
+
+		return sortPosMembers1;
+	}
+
+	@Override
+	public boolean isSorting(Position position) {
+		if (sortPosMembers1 == null) {
+			return false;
+		}
+		if (sortPosMembers1.size() != position.getMembers().size()) {
+			return false;
+		}
+
+		for (int i = 0; i < sortPosMembers1.size(); i++) {
+			Member member1 = sortPosMembers1.get(i);
+			Member member2 = position.getMembers().get(i);
+			// any null does not compare
+			if (member1 == null) {
+				return false;
+			} else if (!OlapUtils.equals(member1, member2)) {
+				return false;
+			}
+		}
+		return true;
+	};
 
 	@Override
 	public synchronized CellSet getCellSet() {
@@ -329,6 +365,14 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			Exp exp = f.getArgs().get(0);
 			qa.setExp(exp);
 		}
+		if (f.getFunction().equalsIgnoreCase("TopCount")) {
+			Exp exp = f.getArgs().get(0);
+			qa.setExp(exp);
+		}
+		if (f.getFunction().equalsIgnoreCase("BottomCount")) {
+			Exp exp = f.getArgs().get(0);
+			qa.setExp(exp);
+		}
 
 		fireModelChanged();
 
@@ -409,5 +453,43 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		}
 
 		return 0;
+	}
+
+	public void swapAxisSort() {
+		CellSetAxis rows = getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
+		CellSetAxis columns = getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
+
+		SwapAxes transform = getTransform(SwapAxes.class);
+
+		if (isSorting()) {
+			if (transform.isSwapAxes()) {
+				for (Position positionOnRows : rows.getPositions()) {
+					if (isSorting(positionOnRows)) {
+						sort(rows, positionOnRows);
+					}
+
+				}
+				for (Position positionOnColunms : columns.getPositions()) {
+					if (isSorting(positionOnColunms)) {
+						sort(columns, positionOnColunms);
+					}
+				}
+			} else {
+				for (Position positionOnRows : rows.getPositions()) {
+					if (isSorting(positionOnRows)) {
+						sort(columns, positionOnRows);
+					}
+
+				}
+				for (Position positionOnColunms : columns.getPositions()) {
+					if (isSorting(positionOnColunms)) {
+						sort(rows, positionOnColunms);
+					}
+				}
+
+			}
+
+		}
+
 	}
 }

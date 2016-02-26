@@ -34,6 +34,16 @@ public class ModelConfig implements Serializable {
 	private Boolean hideSpans;
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
+	private Boolean sortingEnabled;
+
+	public Boolean getSortingEnabled() {
+		return sortingEnabled;
+	}
+
+	public void setSortingEnabled(Boolean sortingEnabled) {
+		this.sortingEnabled = sortingEnabled;
+	}
+
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
 	private SbiAliases aliases = null;
@@ -58,7 +68,7 @@ public class ModelConfig implements Serializable {
 		showParentMembers = false;
 		hideSpans = false;
 		showProperties = false;
-
+		sortingEnabled = false;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
 
@@ -257,7 +267,7 @@ public class ModelConfig implements Serializable {
 		this.showProperties = source.showProperties;
 		this.suppressEmpty = source.suppressEmpty;
 		this.actualVersion = source.actualVersion = null;
-
+		this.sortingEnabled = source.sortingEnabled;
 		this.status = source.status;
 		this.locker = source.locker;
 
