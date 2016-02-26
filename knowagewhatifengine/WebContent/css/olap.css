@@ -281,6 +281,6 @@ table tr:nth-child(even) {
 }
 
 .sorting-settings{
-	background-image: url(../img/settings.png);
-	background-size:16px 16px;
+	background-image: url(../img/sorting-settings.png);
+	background-size:23px 23px;
 }

@@ -53,6 +53,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
+	$scope.filterDial = "/main/filter/filterDialog.html"
 	
 	$scope.rows;
 	$scope.maxRows = 3;
@@ -96,20 +97,22 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$mdDialog.hide();
 		$scope.sortDisable();
 	}
-	var activeaxis;
+	$scope.activeaxis;
 	var filterFather;
+	
+	var h;
+	var m;
+	var oldSelectedFilter;
+	var visibleSelected = [];
 	
 	$scope.enableDisableSorting = function(){
 		
 		
 		$scope.sortDisable();
-		
 	}
 	
 	$scope.enableDisableDrillThrough = function(){
-		console.log("aaaaaa");
 		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
-		console.log($scope.modelConfig.enableDrillThrough);
 		$scope.sendModelConfig($scope.modelConfig);
 	}
 	
@@ -122,19 +125,15 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		switch(name){
 		case "BUTTON_FATHER_MEMBERS":
 			$scope.modelConfig.showParentMembers = !$scope.modelConfig.showParentMembers;
-			console.log($scope.modelConfig.showParentMembers);
 			break;
 		case "BUTTON_HIDE_SPANS":
 			$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
-			console.log($scope.modelConfig.hideSpans);
 			break;
 		case "BUTTON_SHOW_PROPERTIES":
 			$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
-			console.log($scope.modelConfig.showProperties);
 			break;
 		case "BUTTON_HIDE_EMPTY":
-			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
-			console.log($scope.modelConfig.suppressEmpty);
+			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;;
 			break;	
 		default:
 			console.log("something else clicked");
@@ -151,17 +150,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml(response.data.table);
-				$scope.modelConfig = response.data.modelConfig;
-				console.log($scope.modelConfig);
-				
+				$scope.modelConfig = response.data.modelConfig;				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("Error", 'Error');
 				
 			});	
 	}
-	 
-	 /*dragan**/
-	 
+
 	 /*service for moving hierarchies**/
 	 $scope.moveHierarchies = function(axis,hierarchieUniqeName,newPosition,direction,member){
 		 
@@ -170,16 +165,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;
-				console.log($scope.modelConfig);
-				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("Error", 'Error');
 				
 			});	
 	}
-	
-	/*dragan**/
-	 
 	 /*service for sending modelConfig**/
 	 
 	 $scope.sendModelConfig = function(modelConfig){
@@ -189,14 +179,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;
-				console.log($scope.modelConfig);
-				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("Error", 'Error');
 				
 			});	
 	}
-	/**dragan*/
+
 	 $scope.startFrom = function(start){
 		   if($scope.ready){
 		    $scope.ready = false;
@@ -275,6 +263,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	/**dragan*/
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
+
 	});
 
 	
@@ -294,13 +283,14 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			data = $scope.columns;
 		if(axis == "left")
 			data = $scope.rows;
+		if(axis == "filter")
+			data = $scope.filterCardList;
 		
 		for(var i=0;i<data.length;i++)
 			data[i].positionInAxis = i;
 	}
 	
 	filterXMLResult = function(res) {
-		console.log(res);
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
 		
@@ -359,7 +349,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		sbiModule_restServices.promisePost("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID,"",mdx)
 		.then(function(response) {
 			$scope.table = $sce.trustAsHtml(response.data.table);
-			console.log($http.url);
 			$scope.rows = response.data.rows;
 			$scope.columns = response.data.columns;
 			$scope.filterCardList = response.data.filters;
@@ -368,7 +357,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			$scope.modelConfig = response.data.modelConfig;
-			
+
 			initFilterList();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("Error", 'Error');
@@ -403,13 +392,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			  else{
 				  $scope.data = response.data;
 				  $scope.loadedData.push(response.data);
+				  if($scope.activeaxis >= 0){
+						getVisible($scope.data);
+					}
+				  console.log("-------------");
+				  console.log(visibleSelected);
 			  }
-				  
-			  
-			  /*$scope.loadedData.push(response.data);
-			  $scope.dataPointers.push(uniqueName);*/
-			console.log("getHierarchyMembersAsynchronus result");
-			console.log(response.data);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 			
@@ -467,8 +455,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-
+		var pa;
 		if(data!=null){
+			pa = data.positionInAxis;
+			$scope.filterSelected[data.positionInAxis].name ="...";
+			$scope.filterSelected[data.positionInAxis].visible =false;
+			
 			fromAxis = data.axis;
 			
 			if(fromAxis!=0){
@@ -493,17 +485,30 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.putMemberOnAxis(fromAxis,data);
 				checkShift();
 				fixAxisPosition("left");
-				console.log($scope.columns);
+				fixAxisPosition("filter");
+				fixFilterSelectedList(fromAxis, pa );
 			}
 		}				
+	};
+	
+	function fixFilterSelectedList(fa, pa){
+		var size = $scope.filterSelected.length;
+		for(var i = pa;i<size;i++){
+			$scope.filterSelected[i] = $scope.filterSelected[i+1];
+		}
+		$scope.filterSelected = $scope.filterSelected.slice(0,size-1);
+		
 	}
-
+	
 	$scope.dropLeft = function(data, ev) {
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-		  
+		
 		if(data !=null){
+			$scope.filterSelected[data.positionInAxis].name ="...";
+			$scope.filterSelected[data.positionInAxis].visible =false;
+			
 			fromAxis = data.axis;
 			
 			if(fromAxis != 1){
@@ -526,6 +531,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.putMemberOnAxis(fromAxis,data);
 				checkShift();
 				fixAxisPosition("top");
+				fixAxisPosition("filter");
 			}
 		}		
 	}
@@ -564,6 +570,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 
 				$scope.putMemberOnAxis(fromAxis,data);
 				checkShift();
+				fixAxisPosition("top");
+				fixAxisPosition("left");
+				
+				$scope.filterSelected[$scope.filterSelected.length] = {name:"...",uniqueName:"",visible:false};
 			}
 		}
 		
@@ -575,6 +585,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$scope.dragIndex = index;
 	}
 	
+	
 	/**
 	 * Dialogs  
 	 **/
@@ -582,29 +593,24 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
 		$scope.filterDialogToolbarName = filter.name;
 		$scope.filterAxisPosition = filter.positionInAxis;
-		activeaxis = filter.axis;
+		$scope.activeaxis = filter.axis;
 		filterFather = filter.uniqueName;
-		console.log('filter');
-		console.log(filter);
 		var exist = false;
 		
 		for(var i = 0; i< $scope.dataPointers.length;i++){
 			if($scope.dataPointers[i] == filterFather){
 				exist = true;
 				$scope.data= $scope.loadedData[i];
+				if($scope.activeaxis >= 0){
+					getVisible($scope.data);
+				}
 			}
 		}
 		if(!exist){
 			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
 			$scope.dataPointers.push(filterFather);
 		}
-			
-		$scope.showDialog(ev,"/main/filter/filterDialog.html");
-		
-		console.log("ld");
-		console.log($scope.loadedData);
-		console.log("dp");
-		console.log($scope.dataPointers);
+		$scope.showDialog(ev,$scope.filterDial);
 	}
 	
 $scope.drillThrough = function(ordinal,ev) {
@@ -635,8 +641,7 @@ $scope.drillThrough = function(ordinal,ev) {
 		var exist = false;
 		var position;
 		$scope.data=[];
-		
-		console.log(filter);
+
 		$scope.filterDialogToolbarName = filter.name;
 		
 		for(var i = 0; i< $scope.dataPointers.length;i++){
@@ -652,7 +657,7 @@ $scope.drillThrough = function(ordinal,ev) {
 			$scope.data = $scope.loadedData[position];
 		}
 		
-		$scope.showDialog(ev,"/main/filter/filterDialog.html");
+		$scope.showDialog(ev,$scope.filterDial);
 		
 	}
 	/**
@@ -671,7 +676,14 @@ $scope.drillThrough = function(ordinal,ev) {
 	}
 	
 	$scope.closeFiltersDialog = function() {
+		if(oldSelectedFilter != "...")
+			$scope.filterSelected[$scope.filterAxisPosition].name = oldSelectedFilter;
+		else	
+			$scope.filterSelected[$scope.filterAxisPosition].name = "...";
+		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
+		
 		$mdDialog.hide();
+		
 	}
 	
 	
@@ -680,8 +692,7 @@ $scope.drillThrough = function(ordinal,ev) {
 	 **/
 	
 	$scope.expandTreeAsync = function(item){
-		console.log(item.id);
-		$scope.getHierarchyMembersAsynchronus(filterFather,activeaxis,item.uniqueName,item.id);
+		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
 	}
 	
 	expandAsyncTree = function(d,dput,id){
@@ -706,6 +717,10 @@ $scope.drillThrough = function(ordinal,ev) {
 		item.collapsed = false;		
 	}
 	
+	/**
+	 *This is not in use right now but maybe will be used in the future (synchronus tree)
+	 **/
+	/********************************START*******************************************************/
 	$scope.expandTree = function(item) {
 		var id = item.id;
 
@@ -734,6 +749,7 @@ $scope.drillThrough = function(ordinal,ev) {
 			}
 		}
 	}
+	/********************************End************************************************************/
 	
 	$scope.switchPosition = function(data){
 		 
@@ -763,35 +779,72 @@ $scope.drillThrough = function(ordinal,ev) {
 
 
 	};
-	var h;
-	var m;
-	$scope.selectFilter = function(item){
 
+	$scope.selectFilter = function(item){
+		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition].name;
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
 		$scope.filterSelected[$scope.filterAxisPosition].name = item.name;
+		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
+		
 	};
 	
 	$scope.filterDialogSave = function(){
-		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID)
-		.then(function(response) {
-			  console.log("filter dialog save");
-			  console.log(response.data);
-			  $scope.table = $sce.trustAsHtml(response.data.table);
-			  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-		});	
+		if(h != undefined && m!= undefined){
+			sbiModule_restServices.promiseGet
+			("1.0",'/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			.then(function(response) {
+				  $scope.table = $sce.trustAsHtml(response.data.table);
+				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+			});	
+		}
 		$mdDialog.hide();
 	}
 	
+	//Initializing array filterSelected that is folowing selected dimension in filters 
 	initFilterList = function (){
 		for(var i = 0; i < $scope.filterCardList.length;i++){
-			var x ={name:"...",visible:false};
+			var x ={
+					name:"...",
+					uniqueName:"",
+					visible:false
+					};
 			$scope.filterSelected[i] = x;
 		}
-		console.log($scope.filterSelected);
 	};
+	
+	//Called when checkbox is clicked in row/column on front end
+	$scope.checkboxSelected = function(data){
+		data.visible = !data.visible;
+		if(data.visible){
+			visibleSelected.push(data);
+		}
+		else{
+			removeUnselected(data.name)
+		}
+	}
+	
+	//Called to get visible elements row/column
+	function getVisible(data){
+		for(var i=0;i<data.length;i++){
+			if(data[i].visible){
+				visibleSelected.push(data[i]);
+			}
+			if(data[i].children != undefined){
+				getVisible(data[i].children);
+			}
+		}
+	}
+	
+	//Called if row/column dimension is unselected
+	function removeUnselected(name){
+		for(var i=0;i<visibleSelected.length;i++){
+			if(name == visibleSelected[i].name){
+				visibleSelected.splice(i,1);	
+			}
+		}
+	}
 }
