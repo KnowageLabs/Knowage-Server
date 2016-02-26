@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -9,9 +10,12 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,6 +32,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @Path("/2.0/configs")
 @ManageAuthorization
@@ -93,6 +100,36 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
+	
+	@GET
+	@Path("/label/{label}")
+	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Config getSingleConfigByLabel(@PathParam("label") String label) {
+		logger.debug("IN");
+		IConfigDAO configsDao = null;
+		//List<Config> allObjects = null;
+		Config dm=null;
+		try {
+			configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			dm=configsDao.loadConfigParametersByLabel(label);
+			if (dm.getName().equals(label))
+			{
+				return dm;
+			}
+		} catch (Exception e) {
+			logger.error("Error while getting config " + label, e);
+			throw new SpagoBIRuntimeException("Error while getting config " + label, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return null;
+	}
+	
+	
+	
+	
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
@@ -152,6 +189,61 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
 		}
 	}
+	
+	
+	@PUT
+	@Path("/conf")
+	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateConfig(String body) {	//JSON obj
+
+		JSONObject jsonobject=null;
+		JSONArray jsonArray=null;
+		URI uri=null;
+		
+		try {
+			jsonobject = new JSONObject(body);
+			jsonArray = jsonobject.getJSONArray("configurations");
+
+			for (int i = 0; i < jsonArray.length(); i++)
+			{
+					JSONObject configObject = jsonArray.getJSONObject(i);
+					saveReceivedConfig(configObject);
+			}
+
+			uri = new URI("2.0/conf");
+			return Response.created(uri).build();
+
+		} catch (Exception e) {
+			logger.error("Error updating config", e);
+			return Response.notModified(e.getMessage()).build();
+		}
+
+	
+	}
+	
+	
+	private void saveReceivedConfig(JSONObject configObject)
+	{
+		Config c=null;
+		IConfigDAO configsDao=null;
+		String label=null,value=null;
+		try {
+			label = configObject.getString("label");
+			value = configObject.getString("value");
+			configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(getUserProfile());
+			c = configsDao.loadConfigParametersByLabel(label);
+			c.setValueCheck(value);
+			configsDao.saveConfig(c);
+		} catch (Exception e) {
+			logger.error("Error while saving received configuration", e);
+			throw new SpagoBIRuntimeException("Error while saving received configuration", e);
+		}
+
+	}	
+
+		
 
 	@DELETE
 	@Path("/{id}")

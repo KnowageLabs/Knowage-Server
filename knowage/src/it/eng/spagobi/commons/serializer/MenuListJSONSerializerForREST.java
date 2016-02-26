@@ -86,6 +86,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
+	private static final String HREF_CACHE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp";
+
 
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
@@ -329,6 +331,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(hierarchiesManagement);
 		}
 
+		if (isAbleTo(SpagoBIConstants.CACHE_MANAGEMENT, funcs)) {
+			JSONObject cacheManagement = new JSONObject();
+			cacheManagement.put(ICON_CLS, "device_hub");
+			cacheManagement.put(TOOLTIP, messageBuilder.getMessage("menu.CacheManagement", locale));
+			cacheManagement.put(ICON_ALIGN, "top");
+			cacheManagement.put(SCALE, "large");
+			cacheManagement.put(TARGET, "_self");
+			cacheManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CACHE_MANAGEMENT + "');");
+			cacheManagement.put(LINK_TYPE, "execDirectUrl");
+			cacheManagement.put(FIRST_URL, contextName + HREF_HIERARCHIES_MANAGEMENT);
+			tempMenuList.put(cacheManagement);
+		}
+		
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
 			glossaryManagementTechnical.put(ICON_CLS, "font_download");

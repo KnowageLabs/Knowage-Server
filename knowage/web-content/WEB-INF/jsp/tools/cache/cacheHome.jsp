@@ -1,0 +1,159 @@
+<%@ page language="java" pageEncoding="utf-8" session="true"%>
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app="cacheManager">
+
+<head>
+
+	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+
+	<!-- Styles -->
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angularChart/angular-chart.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/cacheChart/css/cache.css">
+	
+
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cache/cacheRuntimeController.js"></script>	
+	<script src="${pageContext.request.contextPath}/js/lib/Chart.js/Chart.js"></script>
+	<script src="${pageContext.request.contextPath}/js/lib/angularChart/angular-chart.js"></script>
+
+	<title>CacheManager</title>
+
+</head>
+
+<body class="bodyStyle" ng-cloak ng-controller="cacheRuntimeCtrl as ctrl">
+
+<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.cacheInformation")}} </div> </md-toolbar>
+
+<md-tabs md-dynamic-height> 
+	<md-tab label="Overview">
+	  <div layout="row" ng-if="!ctrl.isUndefined(ctrl.data)">
+			<md-card flex="50" layout-padding>
+
+				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.runtimeInformation")}}</div> </md-toolbar>
+				<div layout-align="center center" layout-padding layout-margin flex>	<!-- rimuovibile-->		
+					<div layout="row" layout-wrap layout-margin>
+						<div flex="50">
+					
+							<p>{{ctrl.translate.load("cache.manager.cacheEnabled")}}				{{ ctrl.data.enabled }}</p>
+			 
+							<p>{{ctrl.translate.load("cache.manager.totalMemory")}}					{{ ctrl.formatSizeUnits(ctrl.data.totalMemory) }}</p>
+			
+							<p>{{ctrl.translate.load("cache.manager.availableMemory")}}				{{ ctrl.formatSizeUnits(ctrl.data.availableMemory) }}</p>  
+	
+							<p>{{ctrl.translate.load("cache.manager.numberOfCachedObjects")}}		{{ ctrl.data.cachedObjectsCount }}</p>
+			
+							<p>{{ctrl.translate.load("cache.manager.availableMemoryPercentage")}}	{{ ctrl.data.availableMemoryPercentage }}%</p>
+			
+						</div>
+			
+						<div flex="50">
+							<div class="cacheChartContainer" flex>
+								<canvas id="pie" class="chart chart-pie" chart-data="ctrl.chartData"
+									chart-labels="ctrl.labels" width="auto";> </canvas>
+							</div>
+						</div>
+						
+					</div>
+				</div>	
+			</md-card>
+			
+			<md-card flex="50" layout-padding>
+				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
+						
+				<form layout="row" layout-wrap name=manageForm >
+					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="50" ng-disabled="true"> {{ctrl.translate.load("cache.manager.enabled")}} </md-switch>
+										
+					<div flex="50">
+						
+						<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.prefixForCacheTablesName")}}</label>
+            				<input ng-model="ctrl.variableNamePrefix" >
+          				</md-input-container>
+						
+						<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.maximumPercentOfCacheCleaningQuota")}}</label>
+            				<input ng-model="ctrl.variableLimitForClean" type="number" min="0" max="100">
+          				</md-input-container>
+
+					    <md-input-container>
+					    	<label>{{ctrl.translate.load("cache.manager.frequencyOfCleaningDaemon")}}</label>
+					       		<md-select ng-model="ctrl.variableSchedulingFullClean">
+					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val}}</md-option>
+					       		</md-select>
+					    </md-input-container>
+
+		
+					</div>
+		
+					<div flex="50">
+						<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.totalBytesAvailableForCache")}}</label>
+            				<input ng-model="ctrl.variableSpaceAvailable" type="number" min="0">
+           				
+          				</md-input-container>
+          				
+          				<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.cacheDimensionSingleDataset")}}</label>
+            				<input ng-model="ctrl.variableCacheLimitForStore" type="number" min="0" max="100">
+          				</md-input-container>
+
+          				<md-input-container>
+					    	<label>{{ctrl.translate.load("cache.manager.targetDatasource")}}</label>
+					       		<md-select ng-model="ctrl.variableSelectedDataSource">
+					         		<md-option ng-repeat="dataSource in ctrl.filteredDataSources" ng-value="dataSource">{{dataSource.label}}</md-option>
+					       		</md-select>
+					    </md-input-container>
+						
+					</div>
+					
+				</form>					
+		
+			</md-card>
+			
+		</div>	
+	</md-tab> 
+	
+	<md-tab label="Manage"> 
+		<md-card flex>
+
+			<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools">{{ctrl.translate.load("cache.manager.addRemoveDataset")}}<div flex></div><md-button ng-click="ctrl.deleteFunction()" ng-disabled="ctrl.itemSelected.length<=0">{{ctrl.translate.load("cache.manager.delete")}}</md-button> <md-button ng-click="ctrl.cleanAllFunction()">{{ctrl.translate.load("cache.manager.cleanAll")}}</md-button></div></md-toolbar>
+			<div layout-align="center center" layout-padding layout-margin flex>	<!-- rimuovibile-->				
+					
+				<div ng-if="!ctrl.isUndefined(ctrl.metadata)">  <!--  METADATA TABLE -->
+												
+						
+					<angular-table 	id="manageTable" 	ng-model=ctrl.metadata 
+											columns=ctrl.tableColumns
+											highlights-selected-item = "true"
+											show-search-bar="true"
+											columns-search='["name"]'
+											no-pagination="false"
+											multi-select = "true"
+											selected-item="ctrl.itemSelected"
+					></angular-table>					
+					
+				</div>	
+				<div ng-if="ctrl.isUndefined(ctrl.metadata)">  <!--  METADATA TABLE -->
+					{{ctrl.translate.load("cache.manager.metadataUnavailable")}}
+				</div>	
+	
+			</div>
+				
+		</md-card>
+
+	 </md-tab>
+</md-tabs>
+
+
+
+</body>

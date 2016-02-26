@@ -7,8 +7,11 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -42,6 +45,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	DataSource dataSource;
 	List<DataSource> dataSourceList;
 
+	
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -140,9 +144,18 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			
 			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSourceDAO.modifyDataSource(dataSource);
+			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
+			if(oldDataSource != null && dataSource.getWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId())
+			{
+				// unset the cache
+				//SpagoBICacheManager.removeCache();
+				oldDataSource.setWriteDefault(false);
+				dataSourceDAO.modifyDataSource(oldDataSource);
+			}
+			dataSourceDAO.modifyDataSource(dataSource);
 			return DAOFactory.getDataSourceDAO().loadAllDataSources();
 
 		} catch (Exception e) {

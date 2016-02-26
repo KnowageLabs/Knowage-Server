@@ -76,7 +76,11 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MANAGE_GLOSSARY_TECHNICAL = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp";
 	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
 	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
+	private static final String HREF_CACHE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp";
 
+	
+	
+	
 	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
 	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
@@ -381,6 +385,17 @@ public class MenuListJSONSerializer implements Serializer {
 			lovsManagementTechnical.put(TARGET, "_self");
 			lovsManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_LOVS + "');");
 			tempMenuList.put(lovsManagementTechnical);
+		}
+		
+		if (isAbleTo(SpagoBIConstants.CACHE_MANAGEMENT, funcs)) {
+			JSONObject cacheManagement = new JSONObject();
+			cacheManagement.put(ICON_CLS, "cache_management");
+			cacheManagement.put(TOOLTIP, messageBuilder.getMessage("menu.CacheManagement", locale));
+			cacheManagement.put(ICON_ALIGN, "top");
+			cacheManagement.put(SCALE, "large");
+			cacheManagement.put(TARGET, "_self");
+			cacheManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CACHE_MANAGEMENT + "');");
+			tempMenuList.put(cacheManagement);
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);

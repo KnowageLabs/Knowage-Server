@@ -1,0 +1,31 @@
+@CHARSET "ISO-8859-1";
+
+.cacheChartContainer{
+	/*width:250px !important;*/
+	max-width: 90% !important;
+	
+}
+
+md-card.cardHeightInherit{
+	height: inherit !important;
+	max-height: 100% !important;
+}
+
+
+md-card-title.knowage-card-title{
+	background:  #a9c3db;
+	font: Roboto;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-size: 17px;
+}
+
+
+md-tab.redefinedFontSize{
+	font-size: 10 !important;
+	
+}
+
+#angularTableTemplate{
+	position:relative !important;
+}

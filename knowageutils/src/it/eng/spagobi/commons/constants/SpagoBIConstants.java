@@ -467,4 +467,5 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
 	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
 	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
+	public static final String CACHE_MANAGEMENT = "CacheManagement";
 }

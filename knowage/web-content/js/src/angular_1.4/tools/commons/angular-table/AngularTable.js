@@ -295,15 +295,19 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 		for(var item in items){
 			if(columnsSearch!=undefined && columnsSearch.length!=0){
 				for( var cols in columnsSearch){
-					if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
-						filtered.push(items[item]);
-						break;
-					}
+					if(items[item][columnsSearch[cols]]!=undefined){
+						if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+							filtered.push(items[item]);
+							break;
+						}
+					}	
 				};
 			}else{
-				if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
-					filtered.push(items[item]);
-				}
+				if(JSON.stringify(items[item])!=undefined){
+					if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+						filtered.push(items[item]);
+					}
+				}	
 			}
 		};
 		return filtered;

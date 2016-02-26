@@ -130,6 +130,10 @@
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
 			<ITEM title="#menu.SocialAnalysis" functionality="CreateSocialAnalysis"
 			url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
+			<ITEM title="#menu.CacheManagement" functionality="CacheManagement"
+			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp" />
+			
+			
 			
 			<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.cross.definition" functionality="ManageCrossNavigation"
