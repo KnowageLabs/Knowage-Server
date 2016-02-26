@@ -54,7 +54,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -137,7 +137,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -163,9 +163,9 @@ public class KpiService {
 			dataSourceId = obj.getInt("dataSourceId");
 			query = obj.getString("query");
 			maxItem = obj.getInt("maxItem");
-			placeholders = obj.optString("placeholders");
-			if (placeholders != null) {
-				JSONObject placeholderObj = new JSONObject(placeholders);
+			if (obj.has("placeholders")) {
+				placeholders = obj.optString("placeholders");
+				JSONObject placeholderObj = obj.getJSONObject("placeholders");
 				Iterator<String> placeholderNames = placeholderObj.keys();
 				while (placeholderNames.hasNext()) {
 					String name = placeholderNames.next();
