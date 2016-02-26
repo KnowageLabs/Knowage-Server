@@ -398,6 +398,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 					}
 				  console.log("-------------");
 				  console.log(visibleSelected);
+				  console.log($scope.data);
 			  }
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
@@ -811,6 +812,15 @@ $scope.drillThrough = function(ordinal,ev) {
 	};
 	
 	$scope.filterDialogSave = function(){
+		if($scope.activeaxis == -1)
+			filterSlice();
+		else
+			filterPlaceMemberOnAxis();
+		
+		$mdDialog.hide();
+	}
+	
+	filterSlice = function(){
 		if(h != undefined && m!= undefined){
 			sbiModule_restServices.promiseGet
 			("1.0",'/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID)
@@ -822,10 +832,23 @@ $scope.drillThrough = function(ordinal,ev) {
 				
 			});	
 		}
-		$mdDialog.hide();
-	}
+	};
 	
-	//Initializing array filterSelected that is folowing selected dimension in filters 
+	filterPlaceMemberOnAxis = function(){
+		removeChildren();
+		console.log(visibleSelected);
+		sbiModule_restServices.promisePost
+		("1.0",'/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID,visibleSelected)
+		.then(function(response) {
+			 visibleSelected = [];			
+			 $scope.table = $sce.trustAsHtml(response.data.table);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+		});
+	};
+	
+	//Initializing array filterSelected that is following selected dimension in filters 
 	initFilterList = function (){
 		for(var i = 0; i < $scope.filterCardList.length;i++){
 			var x ={
@@ -849,7 +872,7 @@ $scope.drillThrough = function(ordinal,ev) {
 	}
 	
 	//Called to get visible elements row/column
-	function getVisible(data){
+	getVisible = function(data){
 		for(var i=0;i<data.length;i++){
 			if(data[i].visible){
 				visibleSelected.push(data[i]);
@@ -858,13 +881,24 @@ $scope.drillThrough = function(ordinal,ev) {
 				getVisible(data[i].children);
 			}
 		}
-	}
+	};
 	
 	//Called if row/column dimension is unselected
-	function removeUnselected(name){
+	removeUnselected = function(name){
 		for(var i=0;i<visibleSelected.length;i++){
 			if(name == visibleSelected[i].name){
 				visibleSelected.splice(i,1);	
+			}
+		}
+	};
+	
+	removeChildren = function(){
+		for(var i=0; i<visibleSelected.length;i++){
+			if(visibleSelected[i].children != undefined){
+				delete visibleSelected[i].children;
+			}
+			if(visibleSelected[i].collapsed != undefined){
+				delete visibleSelected[i].collapsed;
 			}
 		}
 	}
