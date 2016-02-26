@@ -21,14 +21,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.json.JSONArray;
-import org.olap4j.Cell;
 import org.olap4j.Axis;
+import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.MetadataElement;
 import org.pivot4j.sort.SortCriteria;
@@ -208,9 +207,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			Cell cell = cellSet.getCell(ordinal);
 			List<MetadataElement> selection = new ArrayList<MetadataElement>();
 			Hierarchy h = CubeUtilities.getHierarchy(model.getCube(), "[Region]");
-			for (Level level : h.getLevels()) {
-				selection.add(level);
-			}
+			// for (Level level : h.getLevels()) {
+			// selection.add(level);
+			// }
 			DrillThrough transform = model.getTransform(DrillThrough.class);
 			if (selection.isEmpty()) {
 				set = transform.drillThrough(cell);
@@ -218,6 +217,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				set = transform.drillThrough(cell, selection, 30);
 			}
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
+			System.out.println(array);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

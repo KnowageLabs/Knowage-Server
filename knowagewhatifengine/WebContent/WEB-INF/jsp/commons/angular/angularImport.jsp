@@ -33,6 +33,9 @@
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
+	<!-- angular table -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
+	
 	<!-- ng-draggable -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/ng-draggable/ngDraggable.js"></script>
 	

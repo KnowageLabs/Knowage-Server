@@ -1,43 +1,25 @@
-<md-dialog>
+<md-dialog style='height:80%; width:80%;'>
 	
-	<md-toolbar class="md-toolbar-tools knowage-blue">
+	<md-toolbar class=" header md-toolbar-tools knowage-blue">
       <div style="margin-left: 10px;">
         <h2>DrillThrough </h2>
       </div>
     </md-toolbar>
 	
-	<md-dialog-content>
-	<div class="md-dialog-content">
-	
-	<md-toolbar class="md-toolbar-tools knowage-blue">
-      <div style="margin-left: 10px;">
-        <h2>Column </h2>
-      </div>
-    </md-toolbar>
-	
-	
-	
-	</div>
-	<div class="md-dialog-content">
-	
-		<table width="100%" class="table">
- 		<thead>
-  			<tr>
-   			<th ng-repeat="(header, value) in dt[0]">{{header}}</th>
-  			</tr>
- 		</thead>
- 		<tbody>
-		  <tr ng-repeat="row in dt">
-		   <td ng-repeat="cell in row">{{cell}}</td>
-		  </tr>
-		</tbody>
-		</table>
+	<md-content layout-padding style="height:90%;">
+			
+					<angular-table 
+					
+						layout-fill
+						id="dtData_id"
+						ng-model="dtData"
+						columns ="formateddtColumns">
+													 					
+					</angular-table>  
 	
 	
 	
-	</div>
-	</md-dialog-content>
-	
+	</md-content>	
 		<md-dialog-actions layout="row">
 		
 			<md-button ng-click="closeFiltersDialog(e)">

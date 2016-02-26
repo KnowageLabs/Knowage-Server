@@ -1,4 +1,4 @@
-var olapMod = angular.module('olapManager', [ 'sbiModule','ngMaterial', 'ngSanitize','ngDraggable'])
+var olapMod = angular.module('olapManager', [ 'sbiModule','ngMaterial','angular_table', 'ngSanitize','ngDraggable'])
 .directive('compileTemplate', function($compile, $parse){
     return {
         link: function(scope, element, attr){
@@ -68,6 +68,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.toolbarButtons = [];
 	$scope.filterCardList = [];
 	$scope.filterSelected = [];
+	$scope.dtData = [];
 	$scope.isFilterSelected = false;
 	$scope.filterAxisPosition;
 	$scope.showMdxVar = "";
@@ -619,6 +620,32 @@ $scope.drillThrough = function(ordinal,ev) {
 		("1.0",'/member/drilltrough/'+ ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response,ev) {
 			$scope.dt = response.data;
+			console.log($scope.dt);
+			$scope.dtData = response.data;
+			$scope.dtColumns = Object.keys(response.data[0]);
+			$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+			$scope.openDtDialog();
+
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});
+		
+		
+		}
+		$scope.formatColumns = function(array){
+			var arr = [];
+			for (var i = 0; i < array.length; i++) {
+				var obj = {};
+				obj.label = array[i].toUpperCase();
+				obj.name = array[i];
+				obj.size = "100px";
+				arr.push(obj);
+			}
+			return arr;
+		}
+		$scope.openDtDialog = function(ev) {
+			 
 			$mdDialog
 			.show({
 				scope : $scope,
@@ -627,15 +654,9 @@ $scope.drillThrough = function(ordinal,ev) {
 				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
 				targetEvent : ev,
 				clickOutsideToClose : true
+				
 			});
-			
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-				});
-		
-		
-		}
+		  };
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
 		var exist = false;
