@@ -7,10 +7,10 @@ app.config(function($mdThemingProvider) {
 	'blue-grey');
 });
 
-app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageUdpFucntion ])
+app.controller('Controller', ['sbiModule_device','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageUdpFucntion ])
 
 
-function manageUdpFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageUdpFucntion(sbiModule_device,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
 	
 	var path = "2.0/udp";
 	
@@ -34,6 +34,10 @@ function manageUdpFucntion(sbiModule_translate, sbiModule_restServices, $scope, 
 		}
 		else{
 			$scope.data = [];
+		}
+		if (sbiModule_device.browser.name == 'firefox'){
+			var table = angular.element(document.querySelector("#angularTableTemplate"))
+			table.css('position','relative');
 		}
 	});
 	
@@ -102,6 +106,7 @@ function manageUdpFucntion(sbiModule_translate, sbiModule_restServices, $scope, 
 		}
 		$scope.resetForm();
 	};
+	
 
 };
 

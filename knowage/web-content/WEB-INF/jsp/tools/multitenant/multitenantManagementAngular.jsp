@@ -15,8 +15,8 @@
 
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/multitenant/tenantManagement.js"></script>
 
-	<link rel="stylesheet" type="text/css"	href="/knowage/themes/multitenant/css/tenantStyle.css">
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/multitenant/tenantStyle.css", currTheme)%>">
+	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/themes/commons/css/generalStyle.css", currTheme)%>">
 </head>
 
 <body>
