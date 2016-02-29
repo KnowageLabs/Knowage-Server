@@ -204,6 +204,81 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
+	@Path("/{hierarchy}/search/{name}")
+	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+			@PathParam("name") String name) {
+		Hierarchy hierarchy = null;
+		int depth = -1;
+		int position = -1;
+		String fatherName = null;
+
+		List<Member> list = new ArrayList<Member>();
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+
+		logger.debug("Getting the hierarchy " + hierarchyUniqueName + "from the cube");
+		try {
+			NamedList<Hierarchy> hierarchies = model.getCube().getHierarchies();
+			for (int i = 0; i < hierarchies.size(); i++) {
+				String hName = hierarchies.get(i).getUniqueName();
+				if (hName.equals(hierarchyUniqueName)) {
+					hierarchy = hierarchies.get(i);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logger.debug("Error getting the hierarchy " + hierarchy, e);
+			throw new SpagoBIEngineRuntimeException("Error getting the hierarchy " + hierarchy, e);
+		}
+
+		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
+		Level l = hierarchy.getLevels().get(0);
+		System.out.println("Hier levels " + hierarchy.getLevels().size());
+		try {
+			boolean stopLoop = false;
+			for (int j = 0; j < hierarchy.getLevels().size() && !stopLoop; j++) {
+				l = hierarchy.getLevels().get(j);
+				list = l.getMembers();
+				for (int i = 0; i < list.size() && !stopLoop; i++) {
+					if (name.equals(list.get(i).getName().toString())) {
+						depth = j;
+						position = i;
+						fatherName = list.get(i).getParentMember().getUniqueName();
+						stopLoop = true;
+					}
+				}
+			}
+			l = hierarchy.getLevels().get(0);
+			list = l.getMembers();
+			for (int i = 0; i < list.size(); i++) {
+				nodes.add(new NodeFilter(list.get(i), depth, position, fatherName));
+			}
+
+		} catch (OlapException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		JSONArray serializedobject = new JSONArray();
+
+		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+			NodeFilter nodeFilter = (NodeFilter) iterator.next();
+			try {
+				serializedobject.put(nodeFilter.serialize());
+			} catch (JSONException e) { // TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			return serializedobject.toString();
+		} catch (Exception e) {
+			logger.error("Error serializing the MemberEntry", e);
+			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
+		}
+	}
+
+	@GET
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
 	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
@@ -286,6 +361,42 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 					}
 				}
 			}
+		}
+
+		public NodeFilter(Member m, int depth, int position, String fatherName) throws OlapException {
+			super();
+			this.id = m.getUniqueName();
+			this.name = m.getCaption();
+			this.collapsed = false;
+			this.children = new ArrayList<HierarchyResource.NodeFilter>();
+
+			if (m.getDepth() <= depth) {
+				List<Member> list = (List<Member>) m.getChildMembers();
+				if (list != null && list.size() > 0) {
+					for (int i = 0; i < list.size(); i++) {
+						if (m.getDepth() == 0) {
+							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
+							children.add(nf);
+
+						}
+						if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
+							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
+							children.add(nf);
+						}
+
+					}
+				}
+			}
+
+			/*
+			 * if (m.getDepth() == depth - 2) { List<Member> list =
+			 * (List<Member>) m.getChildMembers(); if (list != null &&
+			 * list.size() > 0) { for (int i = 0; i < list.size(); i++) { if
+			 * (list.get(i).getParentMember().getName().equals(fatherName)) {
+			 * NodeFilter nf = new NodeFilter(list.get(i), depth, position,
+			 * fatherName); children.add(nf); } } } }
+			 */
+			System.out.println(this.children.toString());
 		}
 
 		public JSONObject serialize() throws JSONException {
