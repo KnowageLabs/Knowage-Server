@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
  <!-- 	<property name="hibernate.jdbc.batch_size">0</property>  -->      
 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenu.hbm.xml" />
