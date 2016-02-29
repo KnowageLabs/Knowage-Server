@@ -518,7 +518,7 @@ public class HierarchyService {
 						mapAttrs.put(HierarchyConstants.LEVEL, i);
 						mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
 						data.setAttributes(mapAttrs);
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes);
+						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true);
 						lastValorizedLevel++;
 						lastLevelCodeFound = nodeCode;
 						lastLevelNameFound = nodeName;
@@ -532,7 +532,7 @@ public class HierarchyService {
 							mapAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 						}
 						data.setAttributes(mapAttrs);
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes);
+						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false);
 					}
 					lastValorizedLevel++;
 					lastLevelCodeFound = nodeCode;
@@ -562,7 +562,7 @@ public class HierarchyService {
 	 *            : codes list for debug
 	 */
 	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, int lastValorizedLevel, HierarchyTreeNodeData data,
-			Set<String> allNodeCodes) {
+			Set<String> allNodeCodes, boolean isLeaf) {
 
 		HierarchyTreeNode treeNode = null;
 		// first search parent node (with all path)
@@ -575,6 +575,10 @@ public class HierarchyService {
 				HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
 				treeNode.add(aNode, nodeCode);
 			}
+		} else if (isLeaf) {
+			// attach the leaf to the last node
+			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+			treeNode.add(aNode, nodeCode);
 		}
 
 		// ONLY FOR DEBUG
