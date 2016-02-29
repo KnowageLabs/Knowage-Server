@@ -43,16 +43,15 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			        	   	//Customize the keys to use different JSON 
 					    	var elementId = scope.keys !== undefined && scope.keys.id !==undefined && scope.keys.id.length > 0 ? scope.keys.id : 'id' ;
 					    	var parentId = scope.keys !== undefined && scope.keys.parentId !==undefined && scope.keys.parentId.length > 0 ? scope.keys.parentId : 'parentId' ;
-					    	var subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
-					    	var label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
+					    	scope.subfoldersId = scope.keys !== undefined && scope.keys.subfolders !==undefined && scope.keys.subfolders.length > 0 ? scope.keys.subfolders : 'subfolders' ;
+					    	scope.label = scope.keys !== undefined && scope.keys.label!==undefined && scope.keys.label.length > 0 ? scope.keys.label: 'name' ;
+					    	scope.iconDocument = scope.keys !== undefined && scope.keys.iconDocument !==undefined && scope.keys.iconDocument.length > 0 ? scope.keys.iconDocument: 'fa fa-file' ;
 					    	
-					    	scope.label = label;
-					    	scope.subfoldersId = subfoldersId;
+					    	var subfoldersId = scope.subfoldersId;
 					    	
 					    	scope.iconFolder = 'fa fa-folder';
 					    	scope.iconFolderOpen = 'fa fa-folder-open';	
-					    	scope.iconLeaf = 'fa fa-leaf';
-					    	scope.iconDocument = 'fa fa-file';
+					    	
 					    	scope.seeTree = false;
 					    	
 					    	scope.createTreeStructure = function (folders){

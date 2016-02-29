@@ -10,7 +10,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.hierarchiesType = [ 'MASTER', 'TECHNICAL' ];
 	$scope.hierTreeCache = {};
 	$scope.keys = {
-		'subfolders' : 'children'
+		'subfolders' : 'children',
+		'iconDocument' : 'fa fa-leaf'
 	};
 	$scope.orderByFields = [ 'name', 'id' ];
 	$scope.doBackup = true;

@@ -44,7 +44,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	$scope.targetIsNew = false; //flag, if is true, the tree create from user, else is get from server
 	$scope.showLoadingTarget = false;
 	
-	$scope.keys = {'subfolders' : 'children'};
+	$scope.keys = {'subfolders' : 'children', 'iconDocument' : 'fa fa-leaf'};
 	$scope.fakeNode = {
 			fake : true,
 			name : $scope.translate.load("sbi.hierarchies.new.empty"),
