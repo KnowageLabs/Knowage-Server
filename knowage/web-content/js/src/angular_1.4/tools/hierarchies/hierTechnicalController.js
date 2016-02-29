@@ -476,7 +476,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	
 	$scope.deleteHier =  function(item,parent,event){
 		//rest service for deleting
-		var response=$scope.showConfirm('Delete ' + item.name.toUpperCase(),'Would you like to delete the item?');
+		var response=$scope.showConfirm($scope.translate.load('sbi.generic.delete') +' '+ item.name.toUpperCase(),$scope.translate.load('sbi.hierarchies.delete.confirm'));
 		response.then(
 			function() {
 				if (parent !== undefined && parent !== null){
@@ -709,6 +709,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 	$scope.cleanTree = function(tree){
 		var treeCleaned =angular.copy(tree);
 		var elements = [treeCleaned];
+		var missimgPlaceholder = false;
 		do{
 			var el = elements.shift();
 			el.checked = el.visible = el.expanded = el.type = undefined;
@@ -729,10 +730,18 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 						elements.push(el.children[i]);
 					}
 				}
+			}else if(el.children !== undefined && el.children.length == 0){
+				missimgPlaceholder = true;
+			}
+			if(el.leaf != true && el.children !== undefined && el.children.length == 0){
+				missimgPlaceholder = true;
 			}
 		}while(elements.length > 0);
 		
-		return treeCleaned;
+		return {
+			treeCleaned : treeCleaned,
+			missimgPlaceholder : missimgPlaceholder
+		};
 	}
 	
 	$scope.saveTree = function(){
@@ -751,40 +760,53 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			root.hierSourceName = $scope.hierSourceName;
 			root.hierSourceType = $scope.hierSourceType;
 			//remove cycle object [E.g. possible cycle -> item.$parent.children[0] = item]
-			root.root = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
+			var cleanResponse = Array.isArray($scope.hierTreeTarget) ? $scope.cleanTree($scope.hierTreeTarget[0]) : $scope.cleanTree($scope.hierTreeTarget);
+			root.root = cleanResponse.treeCleaned;
 			root.root.$parent = undefined;
-			var jsonString = angular.toJson(root);
-			$scope.toogleLoading('target',true);
-			var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
-			promise
-				.success(function (data){
-					if (data.errors === undefined){
-						if ($scope.targetIsNew == true){
-							$scope.getHierarchies("src",true);
-							$scope.getHierarchies("target",true);
-						}
-						$scope.treeTargetDirty = false;
-						$scope.targetIsNew = false;
-						/*clean cache map*/
-						var keyMap = root.type + '_' + root.dimension + '_' + root.name + '_' + root.dateValidity;
-						if ($scope.dateFilterTarget){
-							keyMap = keyMap + '_' + $scope.formatDate($scope.dateFilterTarget);
-						}
-						if ($scope.seeHideLeafTarget){
-							keyMap = keyMap + '_' + $scope.seeHideLeafTarget;
-						}
-						$scope.hierTreeCacheTarget[keyMap]=undefined;
-						$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.save.correct"));
-					}else{
-						$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
-					}
-					$scope.toogleLoading('target',false);
-				})
-				.error(function(data,status){
-					$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Tree');
-					$scope.toogleLoading('target',false);
-				});
+			//In case are present empty node, show confirm message for saving
+			if (cleanResponse.missimgPlaceholder == true){
+				$scope.showConfirm($scope.translate.load('sbi.hierarchies.save.changes'),$scope.translate.load('sbi.hierarchies.save.emptynodes'))
+					.then(function(){
+						$scope.callSaveTree(root);
+					},function(){})
+			}else{
+				$scope.callSaveTree(root);
+			}
 		}
+	}
+	
+	$scope.callSaveTree = function(root){
+		var jsonString = angular.toJson(root);
+		$scope.toogleLoading('target',true);
+		var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
+		promise
+			.success(function (data){
+				if (data.errors === undefined){
+					if ($scope.targetIsNew == true){
+						$scope.getHierarchies("src",true);
+						$scope.getHierarchies("target",true);
+					}
+					$scope.treeTargetDirty = false;
+					$scope.targetIsNew = false;
+					/*clean cache map*/
+					var keyMap = root.type + '_' + root.dimension + '_' + root.name + '_' + root.dateValidity;
+					if ($scope.dateFilterTarget){
+						keyMap = keyMap + '_' + $scope.formatDate($scope.dateFilterTarget);
+					}
+					if ($scope.seeHideLeafTarget){
+						keyMap = keyMap + '_' + $scope.seeHideLeafTarget;
+					}
+					$scope.hierTreeCacheTarget[keyMap]=undefined;
+					$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.save.correct"));
+				}else{
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
+				}
+				$scope.toogleLoading('target',false);
+			})
+			.error(function(data,status){
+				$scope.showAlert($scope.translate.load("sbi.generic.error"),'Impossible to save the Tree');
+				$scope.toogleLoading('target',false);
+			});
 	}
 	
 	$scope.formatDate = function (date){
