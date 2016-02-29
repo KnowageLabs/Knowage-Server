@@ -11,8 +11,10 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -28,6 +30,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -284,11 +287,14 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					if (tmpDatasetAndColumn.length == 2) {
 						String dataset = tmpDatasetAndColumn[0];
 						String column = tmpDatasetAndColumn[1];
+						column = SqlUtils.unQuote(column);
+
 						if (dataset != null && !dataset.isEmpty() && column != null && !column.isEmpty()) {
 							selectedDatasets.add(dataset);
 
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
-							String filter = column + " = ('" + value + "')";
+							String filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
+									+ " = ('" + value + "')";
 							filtersMap.put(dataset, filter);
 
 							if (!selectionsMap.containsKey(dataset)) {
@@ -305,6 +311,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 
 			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap);
+
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
 			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, graph, egdegroupToValuesMap);
 
