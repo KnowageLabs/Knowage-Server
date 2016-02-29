@@ -187,9 +187,9 @@ function renderWordCloud(chartConf,catchSVG){
 				fontWeight = cloudFontNormal,
 				rotate = cloudRotate,
 				padding = cloudPadding,
-				spiral = rectangularSpiral,
+				spiral = archimedeanSpiral,
 				words = [],
-				timeInterval = Infinity,
+		     	timeInterval = Infinity,
 				event = d3.dispatch("word", "end"),
 				timer = null,
 				cloud = {};
@@ -223,11 +223,31 @@ function renderWordCloud(chartConf,catchSVG){
 						var start = +new Date,
 						d;
 						while (+new Date - start < timeInterval && ++i < n && timer) {
+						
 							d = data[i];
-							d.x = (size[0] * (Math.random() + .5)) >> 1;
-							d.y = (size[1] * (Math.random() + .5)) >> 1;
-							cloudSprite(d, data, i);
-							if (d.hasText && place(board, d, bounds)) {
+							
+					  var condition;
+					  
+					  if(chartConf.chart.preventOverlap){
+						    d.x = (size[0]) >> 1;
+					        d.y = (size[1]) >> 1;
+					        
+					  } else{
+						  d.x = (size[0] * (Math.random() + .5)) >> 1;
+		                    d.y = (size[1] * (Math.random() + .5)) >> 1;
+						  
+					  }   
+						
+						
+						cloudSprite(d, data, i);
+							if(chartConf.chart.preventOverlap){
+								condition=d.hasText && place(board, d, bounds);
+								
+							}else{
+								condition=d.hasText;
+							}
+							
+							if (condition) {
 								tags.push(d);
 								event.word(d);
 								if (bounds) cloudBounds(bounds, d);
@@ -239,6 +259,7 @@ function renderWordCloud(chartConf,catchSVG){
 						}
 						if (i >= n) {
 							cloud.stop();
+							
 							event.end(tags, bounds);
 						}
 					}
@@ -259,6 +280,7 @@ function renderWordCloud(chartConf,catchSVG){
 				};
 
 				function place(board, tag, bounds) {
+			
 					var perimeter = [{x: 0, y: 0}, {x: size[0], y: size[1]}],
 					startX = tag.x,
 					startY = tag.y,
@@ -278,9 +300,11 @@ function renderWordCloud(chartConf,catchSVG){
 
 						tag.x = startX + dx;
 						tag.y = startY + dy;
-
+						
+						
 						if (tag.x + tag.x0 < 0 || tag.y + tag.y0 < 0 ||
 								tag.x + tag.x1 > size[0] || tag.y + tag.y1 > size[1]) continue;
+						
 						// TODO only check for collisions within current bounds.
 						if (!bounds || !cloudCollide(tag, board, size[0])) {
 							if (!bounds || collideRects(tag, bounds)) {
@@ -620,7 +644,7 @@ function renderWordCloud(chartConf,catchSVG){
 
 		function draw(words,e) {
 			var randomId= Math.round((Math.random())*10000);
-			
+		
 			d3.select("body")		
 			.append("div").attr("id","main"+randomId)
 			.attr("class","d3-container")
@@ -740,10 +764,12 @@ function renderWordCloud(chartConf,catchSVG){
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
 			
+		
+				
 		var bacground=d3.select("#main"+randomId)
-			.append("div").attr("id","chart"+randomId)
+			.append("div").attr("id","chart"+randomId).attr("class","d3chartclass")
 			.append("svg")
-			.attr("width", widthNormalized)
+            .attr("width", widthNormalized)
 			.attr("height", heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
          
@@ -872,6 +898,8 @@ function renderWordCloud(chartConf,catchSVG){
 				
 			});
 			
+			
+			
 			}	
 		}
 		
@@ -904,8 +932,8 @@ function renderWordCloud(chartConf,catchSVG){
 				
 		/* Check if configurable (from the Designer point of view)
 		 * parameters are defined through the Designer. If not set
-		 * the predefined values, instead. */		
-		
+		 * the predefined values, instead. */			
+
 		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 100 ;
 		
 		/* 'topPadding':	padding (empty space) between the breadcrumb 
@@ -950,6 +978,21 @@ function renderWordCloud(chartConf,catchSVG){
 		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
 		var bcTail = parseInt(jsonObject.toolbar.style.tail);
 		
+		/**
+		 * If the height of the breadcrumb (toolbar) is smaller than the font size user
+		 * specified for its text (content), take the font size value, since that is the 
+		 * height of the font (text) and set it as the height of the breadcrumb (segements
+		 * that contain text). Breadcrumb height should follow this value in the described
+		 * case, when we will add another 5px for padding of the text inside the breadcrumb 
+		 * - from the bottom edge and from the top egde).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (bcHeight < Number(removePixelsFromFontSize(jsonObject.toolbar.style.fontSize)))
+		{
+			bcHeight = Number(removePixelsFromFontSize(jsonObject.toolbar.style.fontSize)) + 5;
+		}
+		
 		/* Dimensions of the Sunburst chart. */
 	    /* Dimensions of the window in which chart is going to be placed.
 	     * Hence, radius of the circular Sunburst chart is going to be half of
@@ -986,7 +1029,7 @@ function renderWordCloud(chartConf,catchSVG){
 	    if (jsonObject.toolbar.style.position=="bottom")
     	{
 	    	height = heightNormalized
-						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
+			- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 							+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize)))*1.4 
 								- bottomPadding - topPadding - bcHeight;
     	}
@@ -1124,7 +1167,7 @@ function renderWordCloud(chartConf,catchSVG){
 	    		d3.select("#main"+randomId).append("div").style("height",topPadding);
 			}
 		    
-		    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId);	        
+		    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");	        
 	    	
 	    	if (jsonObject.toolbar.style.position=="bottom")
 			{   
@@ -1463,7 +1506,7 @@ function renderWordCloud(chartConf,catchSVG){
 		 };
 		
 		 /**
-		  * danristo
+		  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		  */
 		 function getRootParentNodes(nodes)
 		 {				 
@@ -1515,8 +1558,8 @@ function renderWordCloud(chartConf,catchSVG){
 	  		.style("font-size",tipFontSize); 
 		
 		  d3.select("#percentage"+randomId)
-		  	.text(percentageString)		  	
-		      .style("font-family",jsonObject.tip.style.fontFamily)
+		  		.text(percentageString)		  	
+		  		.style("font-family",jsonObject.tip.style.fontFamily)
 	    		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
 	    		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
 	    		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
@@ -1641,19 +1684,102 @@ function renderWordCloud(chartConf,catchSVG){
 				.style("font-size", jsonObject.toolbar.style.fontSize);
 		}
 		
+		/**
+		 * Part of the code that provides dynamic width (and height - implemented in the
+		 * previous part of the 'renderSunburst' function) of the breadcrumb, according 
+		 * to dimensions of the text that is provided within them (breadcrumbs). Their 
+		 * dimensions depend on the toolbar font size, font style and font family that
+		 * user defined when creating the chart.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */		
+		
+		var fontStyle = "";
+		
+		/**
+		 * Take the type of the font style (layout) that is used in this chart for the
+		 * toolbar (normal, italic, underline, bold). This is a string.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (jsonObject.toolbar.style.fontStyle)
+			fontStyle = jsonObject.toolbar.style.fontStyle;
+		else if (jsonObject.toolbar.style.fontWeight)
+			fontStyle = jsonObject.toolbar.style.fontWeight;
+		else if (jsonObject.toolbar.style.textDecoration)
+			fontStyle = jsonObject.toolbar.style.textDecoration;		
+		
+		/**
+		 * Font size of the toolbar of the chart.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var fontSize = jsonObject.toolbar.style.fontSize;
+		
+		/**
+		 * Font family of the toolbar of the chart.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var fontFamily = jsonObject.toolbar.style.fontFamily;
+		
+		/**
+		 * Concatenation of those three elements for the font customization
+		 * of the chart's toolbar. This is needed for function that evaluates
+		 * the width of the text that should be set in the breadcrumb (this
+		 * value depends on those three parameters.
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		var toolbarFontCusomization = fontStyle + " " + fontSize + " " + fontFamily;
+		
 		// Generate a string that describes the points of a breadcrumb polygon.
-		function breadcrumbPoints(d, i) {
-		  var points = [];
-		  points.push("0,0");
-		  points.push(b.w + ",0");
-		  points.push(b.w + b.t + "," + (b.h / 2));
-		  points.push(b.w + "," + b.h);
-		  points.push("0," + b.h);
-		  if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
-		    points.push(b.t + "," + (b.h / 2));
-		  }
-		  return points.join(" ");
+		function breadcrumbPoints(d, i) 
+		{		
+			/**
+			 * Get the width of the text inside the breadcrumb (depends on the font size, 
+			 * font style and font family that user set for the toolbar of the chart). Use
+			 * this value for specifying the coordinates for every single breadcrumb element. 
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			 */
+			var wd = getTextWidth(d.name,toolbarFontCusomization) + b.t;
+			
+			var points = [];
+			
+			points.push("0,0");							// (bottom, left)
+			points.push(wd + ",0");						// (bottom, rigth)
+			points.push(wd + b.t + "," + (b.h / 2));	// (middle,right)
+			points.push(wd + "," + b.h);				// (top, right)
+			points.push("0," + b.h);					// (top, left)
+			  
+			if (i > 0) 
+			{ 
+				// Leftmost breadcrumb; don't include 6th vertex.
+				points.push(b.t + "," + (b.h / 2));	// (middle, left)
+			}
+			  
+			return points.join(" ");
 		}
+		
+		/**
+		 * The function that provides the information about the width of the 
+		 * text element of the breadcrumb (according to its font style, font
+		 * size and font family).
+		 * 
+		 * @source 	stackoverflow.com/questions/118241/calculate-text-width-with-javascript 
+		 * 			(answer #2)
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		function getTextWidth(text, font) 
+		{
+		    // if given, use cached canvas for better performance
+		    // else, create new canvas
+		    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+		    var context = canvas.getContext("2d");
+		    context.font = font;
+		    var metrics = context.measureText(text);
+		    
+		    return metrics.width;
+		};
 		
 		// Update the breadcrumb trail to show the current sequence and percentage.
 		function updateBreadcrumbs(nodeArray, percentageString) {
@@ -1672,33 +1798,119 @@ function renderWordCloud(chartConf,catchSVG){
 		      .attr("points", breadcrumbPoints)
 		      .style("fill", function(d) { return d.color; });
 		  
+		  /**
+		   * Set the text in the appropriate breadcrumb element (toolbar).
+		   * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		   */
 		  entering.append("svg:text")
-		      .attr("x", (b.w + b.t) / 2)
-		      .attr("y", b.h / 2)
-		      .attr("dy", "0.35em")
-		      .attr("text-anchor", "middle")
-		      .style("font-family",jsonObject.toolbar.style.fontFamily)
-		      .style("font-size",jsonObject.toolbar.style.fontSize)
-		      .style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
-		      .style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
-		      .style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
-		      .style("text-shadow", "0px 0px 5px #FFFFFF")
-		      .text(function(d) { return d.name; });
+	  		.attr
+	  		(
+  				"x", 
+		    	
+  				/**
+  				 * Position the X coordinate of the text of the particular breadcrumb 
+  				 * element.
+  				 * 
+  				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  				 */
+  				function(d,i)
+  				{ 		
+  					/**
+  					 * For the very first (zeroth) breadcrumb element do not count the 
+  					 * tail on its left side (the 6th vertex), since it does not have
+  					 * the one.
+  					 * 
+  					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  					 */
+  					if (i==0)
+  					{
+  						return (getTextWidth(d.name,toolbarFontCusomization)+b.t)/2;
+  					}
+  					else
+  					{
+  						return getTextWidth(d.name,toolbarFontCusomization)/2 + b.t;
+  					}
+  				}
+	  		)
+	  		.attr("y", b.h / 2)
+	  		.attr("dy", "0.35em")
+	  		.attr("text-anchor", "middle")
+	  		.style("font-family",jsonObject.toolbar.style.fontFamily)
+	  		.style("font-size",jsonObject.toolbar.style.fontSize)
+	  		.style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
+	  		.style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
+	  		.style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
+	  		.style("text-shadow", "0px 0px 5px #FFFFFF")
+	      	.text(function(d) { return d.name; });
 		
+		  /**
+		   * 'transformTranslate' - The aggregation (increasing) temporary variable 
+		   * that keeps the translation value that tells the code how much we should 
+		   * translate a particular element. 
+		   * 
+		   * 'overallWidth' - The overall width of the breadcrumb that is needed for 
+		   * the percentage value that comes at the end of the breadcrumb.
+		   * 
+		   * 'prevNode' - Keeps the previous breadcrumb element (node) in order to
+		   * count overall width of the breadcrumb.
+		   * 
+		   * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		   */
+		  var transformTranslate = 0;
+		  var prevNode = null;
+		  var overallWidth = 0;		  
+		  
 		  // Set position for entering and updating nodes.
-		  g.attr("transform", function(d, i) {
-		    return "translate(" + i * (b.w + b.s) + ", 0)";
-		  });
+		  g.attr
+		  (
+			  "transform", 
+			  
+			  function(d,i) 
+			  { 	
+				  /**
+				   * Tranform translate the particular breadcrumb element according to its order number
+				   * (position) in the breadcrumb (toolbar). Translation will be performed for all elements
+				   * that follow the initial element of the breadcrumb (zeroth). Those elements will be
+				   * positioned according to the width of the text inside them and the spacing and the tail
+				   * value.
+				   * 
+				   * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				   */
+				  if (i>0) 
+				  {
+					  if(i==1)
+					  {
+						  transformTranslate = getTextWidth(prevNode.name,toolbarFontCusomization) + b.s + b.t;
+					  }
+					  else
+					  {
+						  transformTranslate += getTextWidth(prevNode.name,toolbarFontCusomization) + b.s + b.t;
+					  }
+				  } 
+				  
+				  prevNode = d;
+				  overallWidth += getTextWidth(d.name,toolbarFontCusomization) + b.s + b.t;
+			    
+				  return "translate(" + transformTranslate + ",0)";
+			  }
+		  );
 		
 		  // Remove exiting nodes.
-		  g.exit().remove();
+		  g.exit().remove();		  
 		  
 		  // Now move and update the percentage at the end.
+		  /**
+		   * Count the X coordinate position for the percentage value that comes at
+		   * the end of the breadcrumb. It is equal to the sum of overall width of 
+		   * the breadcrumb and the value of the tail of every breadcrumb element
+		   * (just for separation of the breadcrumb and the percentage value).
+		   * 
+		   * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		   */		  
 		  d3.select("#trail"+randomId).select("#endlabel"+randomId)
-		      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
+		  	  .attr("x", overallWidth + b.t)
 		      .attr("y", b.h / 2)
 		      .attr("dy", "0.35em")
-		      .attr("text-anchor", "middle")
 		      .text(percentageString);
 		
 		  // Make the breadcrumb trail visible, if it's hidden.
@@ -1916,7 +2128,6 @@ function renderWordCloud(chartConf,catchSVG){
 	function renderParallelChart(data){
    
 	var records = data.data[0];
-	
    
 	if(records.length>0){
 
@@ -1926,7 +2137,8 @@ function renderWordCloud(chartConf,catchSVG){
 
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
-			});		
+			});
+		
 		
 		var len = records.length;
 		
@@ -1953,7 +2165,7 @@ function renderWordCloud(chartConf,catchSVG){
 		var groups = [];
 
 		var columns = [];
-		
+
 		var precisions={};
 		var prefixes={};
 		var postfixes={};
@@ -1971,7 +2183,6 @@ function renderWordCloud(chartConf,catchSVG){
 			postfixes[column[i][i]]=column[i]["postfix"];
 			
 		}
-		
 
 		function pickColors(colors, n){ // picks n different colors from colors
 			var selected=[];
@@ -2010,6 +2221,7 @@ function renderWordCloud(chartConf,catchSVG){
 
 		var brushx = -Number(brushWidth)/2;
 
+
 		/**
 		 * Normalize height and/or width of the chart if the dimension type for that dimension is
 		 * "percentage". This way the chart will take the appropriate percentage of the screen's
@@ -2025,7 +2237,7 @@ function renderWordCloud(chartConf,catchSVG){
 		{
 			var heightNormalized = data.chart.height ? Number(data.chart.height) : window.innerHeight;
 		}	
-		
+     
 		if (data.chart.widthDimType == "percentage")
 		{
 			var widthNormalized = data.chart.width ? window.innerWidth*Number(data.chart.width)/100 : window.innerWidth;
@@ -2034,7 +2246,7 @@ function renderWordCloud(chartConf,catchSVG){
 		{
 			var widthNormalized = data.chart.width ? Number(data.chart.width) : window.innerWidth;
 		}
-		
+
 		var m = [40, 40, 40, 100],
 		w = widthNormalized - m[1] - m[3],
 		h = heightNormalized - m[0] - m[2];
@@ -2161,7 +2373,7 @@ function renderWordCloud(chartConf,catchSVG){
 		var axesDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
 		
 		var svg = d3.select("#chart"+randomId)
-			.append("div")
+			.append("div").attr("class","d3chartclass")
 				.style("float","left")
 				.style("width",widthNormalized-legendWidth)
 				// "...-180" for table height plus pagination height (150+30)
@@ -2700,7 +2912,7 @@ function renderWordCloud(chartConf,catchSVG){
 		       .text(function(d){ return formatTableCell(d) })
 		       .style("text-align","center");
 		       
-	}
+	}	
 	
 	function formatTableCell(d){
 		  var text='';
@@ -2958,12 +3170,15 @@ function renderWordCloud(chartConf,catchSVG){
 		.selectAll("td")
 		.data(function(row){
 			return tableColumns.map(function(column) {
-				return {column: column, value: row[column]};
+				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
 			});
 		}).enter()
 		.append("td")
-		.text(function(d){return d.value})
+		.text(function(d){return formatTableCell(d)})
 		.style("text-align","center");
+
+
+
 	}
 
 	function updateTable(){
@@ -3016,21 +3231,25 @@ function renderWordCloud(chartConf,catchSVG){
 	}
 
 	function showNext(){
-		
 		prevButton.attr("disabled",null);
 		firstDisplayed=firstDisplayed+5;
 		lastDisplayed=lastDisplayed+5;
-		
 		if(lastDisplayed>allTableData.length){
 			lastDisplayed=allTableData.length;
 		}
-		
+
+
+
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
+
+
 
 		if(lastDisplayed === allTableData.length){
 			nextButton.attr("disabled","true");
 		}
+
+
 
 		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
 			/**
@@ -3057,6 +3276,8 @@ function renderWordCloud(chartConf,catchSVG){
 			.style("text-decoration",data.legend.element.style.textDecoration);
 		
 		updateTable();	
+
+
 	}
 
 	function showPrev(){
@@ -3072,6 +3293,8 @@ function renderWordCloud(chartConf,catchSVG){
 		else{
 			lastDisplayed=lastDisplayed-5;
 		}
+
+
 
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
@@ -3107,6 +3330,7 @@ function renderWordCloud(chartConf,catchSVG){
 		updateTable();	
 
 	}
+	
 	
 	function clearSelection(){
 		columns.filter(function(p) { return y[p].brush.clear(); });
@@ -3248,7 +3472,6 @@ function renderChordChart(jsonData)
 				
 				var tool=printTheResultWhenSelecting(i);
 				
-				
 				tooltip.
 			   // attr("hidden","false").
 				transition().duration(50).style("opacity","1");
@@ -3287,7 +3510,9 @@ function renderChordChart(jsonData)
 				tooltip.
 				   // attr("hidden","false").
 					transition().duration(50).style("opacity","0");
-					//tooltip.style("background",myColors(d[groupcolumn]));				
+					//tooltip.style("background",myColors(d[groupcolumn]));
+				
+				
 			}			
 		};
 	}
@@ -3466,12 +3691,40 @@ function renderChordChart(jsonData)
 		//console.log(columnsPairedWithRows[i]);
 		// Which columns are paired with this (selected, clicked) row 
 	   //	console.log(rowsPairedWithColumns[i]);
-	   	var ttp=columnsPairedWithRows[i].row + "<br/>";
+	   	var ttp=columnsPairedWithRows[i].row + "<br/>"+"To:<br>" ;
 	   	for(j=0;j<columnsPairedWithRows[i].pairedWith.length;j++){
 	   		ttp+=columnsPairedWithRows[i].pairedWith[j].column;
 	   		ttp+="&nbsp : &nbsp";
-	   		ttp+=columnsPairedWithRows[i].pairedWith[j].value;
+	   		if(jsonData.tooltip.prefix){
+	   			ttp+=jsonData.tooltip.prefix;
+	   			ttp+="&nbsp";
+	   		}
+	   		ttp+=Number(columnsPairedWithRows[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		if(jsonData.tooltip.postfix){
+	   			ttp+="&nbsp";
+	   			ttp+=jsonData.tooltip.postfix;	
+	   			
+	   		}
 	   		ttp+="<br>"
+	   		
+	   	}
+	   	ttp+="<br>"+"From: "+"<br>";
+	   	for(j=0;j<rowsPairedWithColumns[i].pairedWith.length;j++){
+	   		ttp+=rowsPairedWithColumns[i].pairedWith[j].row;
+	   		ttp+="&nbsp : &nbsp";
+	   		if(jsonData.tooltip.prefix){
+	   			ttp+=jsonData.tooltip.prefix;
+	   			ttp+="&nbsp";
+	   		}
+	   		ttp+=Number(rowsPairedWithColumns[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		if(jsonData.tooltip.postfix){
+	   			ttp+="&nbsp";
+	   			ttp+=jsonData.tooltip.postfix;
+	   			
+	   		}
+	   		
+	   		ttp+="<br>"
+	   		
 	   	}
 	   	
 	   	return ttp;
@@ -3490,7 +3743,7 @@ function renderChordChart(jsonData)
 	 * the chart (values on ticks) ??? */
 	
 	var emptySplitDivHeight = 0;
-		
+	
 	/**
 	 * Normalize height and/or width of the chart if the dimension type for that dimension is
 	 * "percentage". This way the chart will take the appropriate percentage of the screen's
@@ -3520,6 +3773,7 @@ function renderChordChart(jsonData)
 	var chartDivHeight=height;
 	var heightForChartSvg = height;
 	
+	
 	if(jsonData.title.text!="" || jsonData.subtitle.text!=""){
 		emptySplitDivHeight=10;
 		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.2;
@@ -3530,6 +3784,9 @@ function renderChordChart(jsonData)
 				 +emptySplitDivHeight)*1.2;
 	
 	}
+	
+	
+	
 	
 	var innerRadius = Math.min(width, height) * .35;
     var outerRadius = innerRadius * 1.1;
@@ -3557,6 +3814,7 @@ function renderChordChart(jsonData)
 	d3.select("body")
 		.append("div").attr("id","main"+randomId)
 		.attr("class","d3-container")
+		.attr("class","d3chartclass")
 		.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 		// Set the real height of the entire chart (the one that user specified)
 		.style("height",height)	

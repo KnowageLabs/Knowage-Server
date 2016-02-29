@@ -6,6 +6,14 @@
 
 #set($serie = $chart.VALUES.SERIE)
 
+#*
+	Get the grouping function (aggregation type) of the serie item user
+	specified for the CHORD chart.
+	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#set($groupingFunction = $serie.groupingFunction)
+
 #set($dataColumnsMapper = {})
 
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
@@ -290,8 +298,8 @@
 		#end
     ],	
     
-  tooltip:
- 	{   
+    tooltip:
+ 	{
  	    backgroundColor:'$serie.TOOLTIP.backgroundColor',
 		fontFamily: '$serie.TOOLTIP.style.fontFamily',
 		fontSize: '$serie.TOOLTIP.style.fontSize',
@@ -309,7 +317,7 @@
 	 	prefix:'$serie.prefixChar',
 	 	precision:'$serie.precision',
 	 	postfix:'$serie.postfixChar',
- 	}, 
+ 	},
 	crossNavigation:
 	{
 	   #if($crossNavigation != '') 
@@ -332,7 +340,7 @@
 	
 	data:
 	[
-		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper)
+		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction)
 	]
 
 }

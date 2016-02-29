@@ -19,7 +19,6 @@ Ext.define
         	bindToolbarTail: null,
         	bindToolbarHeight: null,
         	bindToolbarWidth: null,
-        	bindToolbarOpacMouseOver: null,
         	bindToolbarPercFontColor: null
 		},
 	
