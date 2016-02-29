@@ -776,7 +776,7 @@ public class HierarchyMasterService {
 				leafParentCdValue = lvlValues[HierarchyConstants.CD_VALUE_POSITION];
 				leafParentNmValue = lvlValues[HierarchyConstants.NM_VALUE_POSITION];
 
-				if (leafParentCdValue != null && leafParentNmValue != null) {
+				if (leafParentCdValue != null && leafParentNmValue != null && !leafParentCdValue.equals("") && !leafParentNmValue.equals("")) {
 
 					logger.debug("Found a valorized parent! Break the loop.");
 					break;
