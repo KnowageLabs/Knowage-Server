@@ -40,6 +40,8 @@ app.factory("importExportDocumentModule_importConf", function() {
 		roles : {
 			currentRoles : [],
 			exportedRoles : [],
+			selectedRoles : [],
+			associatedRoles:[],
 			exportedUser:[],
 			exportingUser : [],
 			selectedUser : [],

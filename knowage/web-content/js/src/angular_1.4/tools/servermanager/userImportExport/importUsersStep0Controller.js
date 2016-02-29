@@ -19,13 +19,13 @@ function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scop
 					$scope.flagShowUser=true;
 					$scope.IEDConf.roles.currentRoles=data.currentRoles;
 					$scope.IEDConf.roles.exportedRoles=data.exportedRoles;
-					
-					if($scope.checkRole()){
+					$scope.IEDConf.roles.associatedRoles=data.associatedRoles;
+				//	if($scope.checkRole()){
 						$scope.IEDConf.roles.exportedUser = data.exportedUser;
-					}
+				//	}
 					
 					
-					$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+					$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedUsers','component_impexp_messages')});
 					
 				}
 				

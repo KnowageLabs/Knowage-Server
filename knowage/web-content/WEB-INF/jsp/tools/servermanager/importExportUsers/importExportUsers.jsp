@@ -29,6 +29,10 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep1Controller.js"></script>
 <script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/userImportExport/importUsersStep2Controller.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep1Controller.js">
+	</script><script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep2Controller.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importDocumentsStep3Controller.js"></script>
@@ -130,9 +134,11 @@
 
 						<div class="importSteps" flex ng-controller="importUserControllerStep0" ng-switch-when="0"><%@include	file="./importUsersSteps/importUsersStep0.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importUserControllerStep1" ng-switch-when="1"><%@include	file="./importUsersSteps/importUsersStep1.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep2" ng-switch-when="2"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep2.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep3" ng-switch-when="3"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep3.jsp"%></div>
-						<div class="importSteps" flex ng-controller="importControllerStep4" ng-switch-when="4" ng-init="importType='user'"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep4.jsp"%></div>
+<%-- 						<div class="importSteps" flex ng-controller="importUserControllerStep2" ng-switch-when="2"><%@include	file="./importUsersSteps/importUsersStep2.jsp"%></div> --%>
+						<div class="importSteps" flex ng-controller="importControllerStep1" ng-switch-when="2" ng-init="importType='user'"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep1.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep2" ng-switch-when="3"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep2.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep3" ng-switch-when="4"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep3.jsp"%></div>
+						<div class="importSteps" flex ng-controller="importControllerStep4" ng-switch-when="5" ng-init="importType='user'"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep4.jsp"%></div>
 
 
 					</md-content>
