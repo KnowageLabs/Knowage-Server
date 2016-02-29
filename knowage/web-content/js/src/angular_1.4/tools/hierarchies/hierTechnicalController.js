@@ -227,7 +227,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		}
 	}
 	
-	$scope.getTree = function(choose,dateFilter,seeElement){
+	$scope.getTree = function(choose,dateFilter,seeElement, forceDownload){
 		var type = choose == 'src' ? $scope.hierTypeSrc : 'TECHNICAL' ;
 		//var dim = choose == 'src' ?  $scope.dimSrc : $scope.dimTarget;
 		var dim = $scope.dimSrc ;
@@ -262,7 +262,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			var hierMap = choose == 'src' ? $scope.hierTreeCacheSrc : $scope.hierTreeCacheTarget;
 		
 			//in source tree force the download, because the D&D do a messy with the source tree. Is better to restart from the original
-			if (hierMap[keyMap] === undefined || choose == "src"){ 
+			if (hierMap[keyMap] === undefined || choose == "src" || forceDownload){ 
 				$scope.toogleLoading(choose,true);
 				$scope.restService.get("hierarchies","getHierarchyTree",null,config)
 					.success(
@@ -291,6 +291,17 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 				choose =='src' ? $scope.hierTreeSrc = angular.copy($scope.hierTreeCacheSrc[keyMap]) : $scope.hierTreeTarget = angular.copy($scope.hierTreeCacheTarget[keyMap]);
 			}
 		}	
+	}
+	
+	$scope.resetCache = function(choose,dim,type,hier){
+		var key = type + '_' + dim.DIMENSION_NM + '_' + hier.HIER_NM;
+		var cache = choose == "src" ? $scope.hierTreeCacheSrc  : $scope.hierTreeCacheTarget;
+		for (var k in cache){
+			if (k.indexOf(key)>-1){
+				cache[k] = undefined;
+			}
+		}
+		$scope.getTree(choose,undefined,undefined,true);
 	}
 	
 	 $scope.editNode = function(item,parent,forceEditable){

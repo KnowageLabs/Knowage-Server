@@ -228,6 +228,10 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 							if (data.errors === undefined){
 								$scope.getBackupTable();
 								$scope.showAlert($scope.translate.load("sbi.generic.info"),'Backup restored');
+								//call resetTree to delete the cache of master and technical tab   
+								$timeout(function(){
+										$scope.resetTree(dim,$scope.hierTypeBackup,$scope.hierBackup);
+								},0,true);
 							}else{
 								$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 							}
@@ -308,6 +312,18 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 	
 	$scope.allowEdit = function(item,cell,listId, row, column){
 	    return column.EDITABLE == undefined || column.EDITABLE == true;
+	}
+	
+	$scope.resetTree = function(dim,type,hier){
+		var master=angular.element(document.querySelector('#hierMasterController')).scope();
+		var technical=angular.element(document.querySelector('#hierTechnicalController')).scope();
+		if (master !== undefined){
+			master.resetCache(dim,type,hier);
+		}
+		if (technical !== undefined){
+			technical.resetCache("src",dim,type,hier);
+			technical.resetCache("target",dim,type,hier);
+		}
 	}
 	
 	
