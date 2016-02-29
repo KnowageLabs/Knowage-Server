@@ -2,7 +2,9 @@
 
 <md-content  layout="column" layout-wrap>
 	<div layout="row" layout-align="end center">
-		<md-button ng-click="saveRoleAssociation()" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
+		<md-button ng-click="saveRoleAssociation()" ng-if="IEDConf.importPersonalFolder" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
+		<md-button class="md-raised" ng-if="!IEDConf.importPersonalFolder" ng-click="saveRoleAssociation()" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+		
 	</div>
 	<md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>
