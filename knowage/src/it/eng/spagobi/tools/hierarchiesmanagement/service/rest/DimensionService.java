@@ -1,6 +1,8 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
@@ -74,6 +76,7 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getDimensionFields(@QueryParam("dimension") String dimensionLabel) {
 
 		logger.debug("START");
@@ -117,6 +120,7 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionFilterMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getDimensionFilters(@QueryParam("dimension") String dimensionLabel) {
 		// Get metadata filters of dimension
 		logger.debug("START");
@@ -145,6 +149,7 @@ public class DimensionService {
 	@GET
 	@Path("/dimensionData")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getDimensionData(@QueryParam("dimension") String dimensionLabel, @QueryParam("validityDate") String validityDate,
 			@QueryParam("filterDate") String filterDate, @QueryParam("filterHierarchy") String filterHierarchy,
 			@QueryParam("filterHierType") String filterHierType, @QueryParam("optionalFilters") String optionalFilters) {

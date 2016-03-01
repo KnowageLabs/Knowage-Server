@@ -1,7 +1,9 @@
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -109,6 +111,7 @@ public class HierarchyService {
 	@GET
 	@Path("/hierarchyMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyFields(@QueryParam("dimension") String dimensionName) {
 
 		logger.debug("START");
@@ -131,6 +134,7 @@ public class HierarchyService {
 	@GET
 	@Path("/nodeMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyNodeFields(@QueryParam("dimension") String dimensionName, @QueryParam("excludeLeaf") boolean excludeLeaf) {
 
 		logger.debug("START");
@@ -153,6 +157,7 @@ public class HierarchyService {
 	@POST
 	@Path("/saveHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String saveHierarchy(@Context HttpServletRequest req) {
 		Connection connection = null;
 		try {
@@ -268,6 +273,7 @@ public class HierarchyService {
 	@POST
 	@Path("/deleteHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String deleteHierarchy(@Context HttpServletRequest req) throws SQLException {
 		// delete hierarchy
 		Connection connection = null;
@@ -303,6 +309,7 @@ public class HierarchyService {
 	@GET
 	@Path("/getRelationsMasterTechnical")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getRelationsMasterTechnical(@QueryParam("dimension") String dimension, @QueryParam("hierSourceCode") String hierSourceCode,
 			@QueryParam("hierSourceName") String hierSourceName, @QueryParam("nodeSourceCode") String nodeSourceCode) throws SQLException {
 		// get relations between master and technical nodes

@@ -91,6 +91,7 @@
 		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" />
 		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerInfo" businessProcess="SchedulerManagement" />
 		-->
+		<!-- 
 		<MAP_REST_SERVICE serviceUrl="/dimensions" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/dimensions/getDimensions" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/dimensions/dimensionMetadata" businessProcess="HierarchiesManagement" />
@@ -110,7 +111,13 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/modifyHierarchyBkps" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/restoreHierarchyBkps" businessProcess="HierarchiesManagement" />
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup/getHierarchyBkps" businessProcess="HierarchiesManagement" />
-		 				 						 						
+		 -->
+		<MAP_REST_SERVICE serviceUrl="/dimensions.*" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies.*" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesMaster.*" businessProcess="HierarchiesManagement" />						
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesTechnical.*" businessProcess="HierarchiesManagement" />						 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup.*" businessProcess="HierarchiesManagement" />
+				 						 						
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
 		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
 			
