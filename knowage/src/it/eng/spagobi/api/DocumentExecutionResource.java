@@ -1,5 +1,7 @@
 package it.eng.spagobi.api;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,9 +12,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -71,6 +76,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 *         'role missing' 2 - 'operation not allowed' (ruolo non associato
 	 *         al profilo utente) }
 	 */
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -82,6 +88,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		try {
 			role = getExecutionRole(role);
+
+			// recuperiamo il documento by label
+			BIObject document = documentManager.getDocument(label);
+
+			// recuperiamo i driver analitici
+			List<JSONObject> documentParameters = (List<JSONObject>) documentManager.getDocumentParameters(label);
+			for (JSONObject parameter : documentParameters) {
+				Parameter analyticalDriver = documentManager.getAnalyticalDriver(parameter.get("label"));
+				// analyticalDriver.get
+			}
 
 		} catch (DocumentExecutionException e) {
 			return Response.ok("{errors: '" + e.getMessage() + "', }").build();
