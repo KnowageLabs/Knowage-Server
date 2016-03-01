@@ -56,6 +56,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
+	public Map<String, List<String>> loadCardinality(final List<String> measures) {
+		return executeOnTransaction(new IExecuteOnTransaction<Map<String, List<String>>>() {
+			@Override
+			public Map<String, List<String>> execute(Session session) throws Exception {
+				session.createQuery("select ruleId, measure, attribute from it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput ");
+
+				session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.in("sbiKpiAlias.name", measures));
+
+				return null;
+			}
+		});
+	}
+
 	@Override
 	public void insertRule(final Rule rule) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
@@ -208,6 +221,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				session.save(sbiKpi);
 				return Boolean.TRUE;
 			}
+
 		});
 	}
 
