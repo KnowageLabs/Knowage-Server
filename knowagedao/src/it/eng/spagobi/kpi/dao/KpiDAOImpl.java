@@ -14,6 +14,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
@@ -56,15 +57,43 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
-	public Map<String, List<String>> loadCardinality(final List<String> measures) {
-		return executeOnTransaction(new IExecuteOnTransaction<Map<String, List<String>>>() {
+	public List<Cardinality> loadCardinality(final List<String> measures) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Cardinality>>() {
 			@Override
-			public Map<String, List<String>> execute(Session session) throws Exception {
-				session.createQuery("select ruleId, measure, attribute from it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput ");
+			public List<Cardinality> execute(Session session) throws Exception {
+				DetachedCriteria detachedCriteria = DetachedCriteria.forClass(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
+						.createAlias("sbiKpiAlias", "sbiKpiAlias").setProjection(Property.forName("sbiKpiRule.id"))
+						.add(Restrictions.in("sbiKpiAlias.name", measures));
 
-				session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.in("sbiKpiAlias.name", measures));
+				List<SbiKpiRuleOutput> allRuleOutputs = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
+						.add(Property.forName("sbiKpiRule.id").in(detachedCriteria)).list();
 
-				return null;
+				Map<Integer, Cardinality> cardinalityMap = new HashMap<>();
+
+				for (SbiKpiRuleOutput sbiRuleOutput : allRuleOutputs) {
+					Cardinality cardinality = cardinalityMap.get(sbiRuleOutput.getSbiKpiRule().getId());
+					if (MEASURE.equals(sbiRuleOutput.getType().getValueCd())) {
+						if (cardinality == null) {
+							cardinality = new Cardinality();
+							cardinality.setRuleId(sbiRuleOutput.getSbiKpiRule().getId());
+							cardinality.setRuleName(sbiRuleOutput.getSbiKpiRule().getName());
+							cardinality.setAttributs(new ArrayList<String>());
+						}
+						cardinality.setMeasureName(sbiRuleOutput.getSbiKpiAlias().getName());
+					} else {
+						if (cardinality == null) {
+							cardinality = new Cardinality();
+							cardinality.setRuleId(sbiRuleOutput.getSbiKpiRule().getId());
+							cardinality.setRuleName(sbiRuleOutput.getSbiKpiRule().getName());
+							cardinality.setAttributs(new ArrayList<String>());
+						}
+						cardinality.getAttributs().add(sbiRuleOutput.getSbiKpiAlias().getName());
+					}
+				}
+
+				List<Cardinality> cardinality = new ArrayList<>();
+				cardinality.addAll(cardinalityMap.values());
+				return cardinality;
 			}
 		});
 	}

@@ -194,6 +194,6 @@ public class RuleOutput implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId());
+		return id == null && super.equals(o) || o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId());
 	}
 }
