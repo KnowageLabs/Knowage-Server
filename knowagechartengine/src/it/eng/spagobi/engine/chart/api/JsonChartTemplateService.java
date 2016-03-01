@@ -36,15 +36,19 @@ import org.json.JSONObject;
 public class JsonChartTemplateService extends AbstractChartEngineResource {
 
 	/**
-	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
-	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
-	 * than one category for the Highcharts chart (BAR, LINE).
+	 * We are sending additional information about the web application from
+	 * which we call the VM. This boolean will tell us if we are coming from the
+	 * Highcharts Export web application. The value of "exportWebApp" input
+	 * parameter contains this boolean. This information is useful when we have
+	 * drilldown, i.e. more than one category for the Highcharts chart (BAR,
+	 * LINE).
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 *
 	 * @param jsonTemplate
 	 * @param exportWebApp
-	 *            Needed for the VM, since for Export web application we do not need some properties in it (the VM)
+	 *            Needed for the VM, since for Export web application we do not
+	 *            need some properties in it (the VM)
 	 *
 	 * @param driverParams
 	 * @param jsonData
@@ -64,8 +68,10 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			IDataSet dataSet = engineInstance.getDataSet();
 
 			/*
-			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset is null and we have datasetlabel valorized, probabily we are calling this REST
-			 * service from the cockpit. So, we need to get the dataset from his label
+			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset
+			 * is null and we have datasetlabel valorized, probabily we are
+			 * calling this REST service from the cockpit. So, we need to get
+			 * the dataset from his label
 			 */
 			if (dataSet == null && datasetLabel != null) {
 				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -85,7 +91,9 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp));
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
-			return ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
+			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
+			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
+			return jsonChartTemplate;
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
