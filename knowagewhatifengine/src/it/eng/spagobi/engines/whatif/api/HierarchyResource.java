@@ -237,11 +237,12 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		System.out.println("Hier levels " + hierarchy.getLevels().size());
 		try {
 			boolean stopLoop = false;
+			String nameLower = name.toLowerCase();
 			for (int j = 0; j < hierarchy.getLevels().size() && !stopLoop; j++) {
 				l = hierarchy.getLevels().get(j);
 				list = l.getMembers();
 				for (int i = 0; i < list.size() && !stopLoop; i++) {
-					if (name.equals(list.get(i).getName().toString())) {
+					if (nameLower.equals(list.get(i).getName().toString().toLowerCase())) {
 						depth = j;
 						position = i;
 						fatherName = list.get(i).getParentMember().getUniqueName();
@@ -341,14 +342,18 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	private class NodeFilter {
 		private String id;
 		private String name;
+		private String uniqueName;
 		private boolean collapsed;
+		private boolean visible;
 		private List<NodeFilter> children;
 
 		public NodeFilter(Member m) throws OlapException {
 			super();
 
 			this.id = m.getUniqueName();
+			this.uniqueName = m.getUniqueName();
 			this.name = m.getCaption();
+			this.visible = false;
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
 
@@ -365,8 +370,14 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		public NodeFilter(Member m, int depth, int position, String fatherName) throws OlapException {
 			super();
+			System.out.println("---------------------");
+			System.out.println(m.getName());
+			System.out.println(m.isHidden());
+			Member cc = m;
 			this.id = m.getUniqueName();
+			this.uniqueName = m.getUniqueName();
 			this.name = m.getCaption();
+			this.visible = true;
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
 
@@ -375,12 +386,13 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				if (list != null && list.size() > 0) {
 					for (int i = 0; i < list.size(); i++) {
 						if (m.getDepth() == 0) {
+							this.collapsed = true;
 							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
 							children.add(nf);
 
-						}
-						if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
+						} else if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
 							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
+							this.collapsed = true;
 							children.add(nf);
 						}
 
@@ -388,22 +400,15 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				}
 			}
 
-			/*
-			 * if (m.getDepth() == depth - 2) { List<Member> list =
-			 * (List<Member>) m.getChildMembers(); if (list != null &&
-			 * list.size() > 0) { for (int i = 0; i < list.size(); i++) { if
-			 * (list.get(i).getParentMember().getName().equals(fatherName)) {
-			 * NodeFilter nf = new NodeFilter(list.get(i), depth, position,
-			 * fatherName); children.add(nf); } } } }
-			 */
-			System.out.println(this.children.toString());
 		}
 
 		public JSONObject serialize() throws JSONException {
 			JSONObject obj = new JSONObject();
 			obj.put("id", id);
 			obj.put("name", name);
+			obj.put("uniqueName", uniqueName);
 			obj.put("collapsed", collapsed);
+			obj.put("visible", visible);
 
 			JSONArray children = new JSONArray();
 			// obj.put("children", children);

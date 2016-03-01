@@ -55,6 +55,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
 	
+	$scope.searchText;
+	$scope.showSearchInput=false;
+		
 	$scope.rows;
 	$scope.maxRows = 3;
 	$scope.topSliderNeeded;
@@ -134,7 +137,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
 			break;
 		case "BUTTON_HIDE_EMPTY":
-			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;;
+			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
 			break;	
 		default:
 			console.log("something else clicked");
@@ -153,7 +156,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;				
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 				
 			});	
 	}
@@ -167,7 +170,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while movin hierarchy", 'Error');
 				
 			});	
 	}
@@ -181,7 +184,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.modelConfig = response.data.modelConfig;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("Error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
 				
 			});	
 	}
@@ -215,7 +218,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				   $scope.filterCardList = response.data.filters;
 				   $scope.showMdxVar = response.data.mdxFormatted;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
 			});	
 		  }
@@ -231,7 +234,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				   $scope.filterCardList = response.data.filters;
 				   $scope.showMdxVar = response.data.mdxFormatted;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
 			});	
 		  }
@@ -256,7 +259,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				   $scope.filterCardList = response.data.filters;
 				   $scope.showMdxVar = response.data.mdxFormatted;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
 			});	
 		  }
@@ -361,7 +364,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 
 			initFilterList();
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("Error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
 		});	
 	}
@@ -391,17 +394,18 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			  if(node!=null)
 				  expandAsyncTree($scope.data,response.data, id);
 			  else{
-				  $scope.data = response.data;
+				  /*$scope.data = response.data;
 				  $scope.loadedData.push(response.data);
 				  if($scope.activeaxis >= 0){
 						getVisible($scope.data);
-					}
+					}*/
+				  checkIfExists(response.data);
 				  console.log("-------------");
 				  console.log(visibleSelected);
 				  console.log($scope.data);
 			  }
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured while getting hierarchy members", 'Error');
 			
 		});	
 	}
@@ -413,7 +417,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.table = $sce.trustAsHtml(response.data.table);
 			$scope.showMdxVar = response.data.mdxFormatted;
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
 			
 		});		
 	}
@@ -425,7 +429,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.table = $sce.trustAsHtml(response.data.table);
 			$scope.showMdxVar = response.data.mdxFormatted;
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
 			
 		});		
 	}
@@ -440,7 +444,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.columns = x;
 			
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("Error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured during swap axis functionality", 'Error');
 			
 		});	
 	}
@@ -597,6 +601,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$scope.filterAxisPosition = filter.positionInAxis;
 		$scope.activeaxis = filter.axis;
 		filterFather = filter.uniqueName;
+		h = filter.uniqueName;
 		var exist = false;
 		
 		for(var i = 0; i< $scope.dataPointers.length;i++){
@@ -828,7 +833,7 @@ $scope.drillThrough = function(ordinal,ev) {
 				  $scope.table = $sce.trustAsHtml(response.data.table);
 				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				sbiModule_messaging.showErrorMessage("An error occured", 'Error');
 				
 			});	
 		}
@@ -843,7 +848,7 @@ $scope.drillThrough = function(ordinal,ev) {
 			 visibleSelected = [];			
 			 $scope.table = $sce.trustAsHtml(response.data.table);
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 			
 		});
 	};
@@ -902,4 +907,33 @@ $scope.drillThrough = function(ordinal,ev) {
 			}
 		}
 	}
+	$scope.searchFilter = function(){
+		sbiModule_restServices.promiseGet
+		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.searchText+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		.then(function(response) {
+			//if(response.data[0].children.length != 0)
+				checkIfExists(response.data);
+			//else
+				//sbiModule_messaging.showWarningMessage("Sorry. Match not found for '"+$scope.searchText+"'", 'Warning');
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
+			
+		});
+	};
+	
+	checkIfExists = function(data){
+		var exist = false;
+		for(var i = 0; i< $scope.dataPointers.length;i++){
+			if($scope.dataPointers[i] == filterFather){
+					exist = true;
+					$scope.loadedData[i] = data
+					$scope.data= $scope.loadedData[i];
+					if($scope.activeaxis >= 0){
+						getVisible($scope.data);
+				}
+			}
+		}
+		if(!exist)
+			$scope.dataPointers.push(filterFather);
+	};
 }

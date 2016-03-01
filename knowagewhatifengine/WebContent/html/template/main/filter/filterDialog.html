@@ -1,10 +1,15 @@
 <md-dialog style='height:75%; width:25%;' layout="column">
 	
-	<md-toolbar class="knowage-blue dialog-toolbar" flex=10>
-		<p>{{filterDialogToolbarName}}</p>
+	<md-toolbar class="knowage-blue dialog-toolbar" flex=10 layout="column">
+		<p width="50%">{{filterDialogToolbarName}}</p>		
 	</md-toolbar>
-	
+
 	<md-content class="dialog-style" flex=90 >
+		<div>
+        		<input ng-model="searchText" placeholder="Insert text here" width="70%!important">
+				<md-button ng-click="searchFilter()">Search</md-button>
+    	</div>
+		
 		<div ui-tree >
 			<ul ui-tree-nodes="" ng-model="data" class="tree" >
 				<div ng-include="templateList"></div>
