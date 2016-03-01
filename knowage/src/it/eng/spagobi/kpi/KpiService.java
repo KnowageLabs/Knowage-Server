@@ -30,7 +30,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +40,6 @@ import java.util.Map;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -167,10 +165,11 @@ public class KpiService {
 	@Path("/preSave")
 	public Response queryValidation(@Context HttpServletRequest req) throws EMFUserError {
 		try {
-			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
-			Rule rule = (Rule) JsonConverter.jsonToObject(obj.getString("rule"), Rule.class);
+			String obj = RestUtilities.readBody(req);
+			Rule rule = (Rule) JsonConverter.jsonToObject(obj, Rule.class);
 
-			queryPreview(req);
+			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
+
 			IKpiDAO kpiDao = getKpiDAO(req);
 			Map<String, String> errors = kpiDao.ruleValidation(rule);
 			return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
@@ -237,13 +236,14 @@ public class KpiService {
 
 	@POST
 	@Path("/saveKpi")
-	public Response loadKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
+	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
 		IKpiDAO dao = getKpiDAO(req);
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
-			checkMandatory(kpi);
+			List<String> errors = new ArrayList<>();
+			checkMandatory(errors, kpi);
 			if (kpi.getCardinality() != null && !kpi.getCardinality().isEmpty()) {
 				checkCardinality(kpi.getCardinality());
 			}
@@ -259,10 +259,8 @@ public class KpiService {
 
 		} catch (IOException | JSONException e) {
 			logger.error(req.getPathInfo(), e);
-			throw new EMFInternalError(EMFErrorSeverity.BLOCKING, e);
-		} /*
-		 * catch (SpagoBIException e) { throw new SpagoBIServiceException(req.getPathInfo(), e); }
-		 */
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
 		return Response.ok().build();
 	}
 
@@ -380,12 +378,27 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(Kpi kpi) {
+	private void checkMandatory(List<String> errors, Kpi kpi) {
 		if (kpi.getName() == null) {
-			throw new SpagoBIDOAException("Kpi Name is mandatory.");
+			errors.add("Kpi Name is mandatory");
 		}
 		if (kpi.getDefinition() == null) {
-			throw new SpagoBIDOAException("Kpi Definition is mandatory.");
+			errors.add("Kpi Definition is mandatory.");
+		} else {
+
+			ScriptEngineManager sm = new ScriptEngineManager();
+			ScriptEngine engine = sm.getEngineByExtension("js");
+			String script = kpi.getDefinition();
+			script = script.replace("M", "");
+			if (script.matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
+				try {
+					engine.eval(script);
+				} catch (Throwable e) {
+					errors.add("Syntax error in definition");
+				}
+			} else {
+				errors.add("Definition contains invalid characters");
+			}
 		}
 	}
 
@@ -463,24 +476,11 @@ public class KpiService {
 		return ret;
 	}
 
-	public static void main(String[] args) throws ScriptException {
+	public static void main(String[] args) throws JSONException {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("ssss", "xsxsxsx");
-		errors.put("sddddsss", "qqqqxsxsxsx");
-		System.out.println(MessageFormat.format("errore in {0}", errors.keySet()));
-
-		ScriptEngineManager sm = new ScriptEngineManager();
-		ScriptEngine engine = sm.getEngineByExtension("js");
-		String script = "(M0-M1+10) * M2/M0";
-		script = script.replace("M", "");
-		if (script.matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
-			try {
-				System.out.println(engine.eval(script));
-			} catch (Throwable e) {
-				System.out.println("Syntax error");
-			}
-		} else {
-			System.out.println("ko");
-		}
+		errors.put("sss", "dsfbdsfbgd");
+		errors.put("dxsdsd", "qqqq");
+		System.out.println(new JSONArray(errors.entrySet()).toString());
+		// return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
 	}
 }
