@@ -30,6 +30,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -140,14 +141,16 @@ public class KpiService {
 		Integer dataSourceId = null;
 		String query = null;
 		Integer maxItem = null;
-		String placeholders = null;
+		List<Placeholder> placeholders = null;
 		try {
 			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
+			Rule rule = (Rule) JsonConverter.jsonToObject(obj.getString("rule"), Rule.class);
 
-			dataSourceId = obj.getInt("dataSourceId");
-			query = obj.getString("query");
 			maxItem = obj.optInt("maxItem", 1);
-			placeholders = obj.optString("placeholders");
+
+			dataSourceId = rule.getDataSourceId();
+			query = rule.getDefinition();
+			placeholders = rule.getPlaceholders();
 
 			JSONObject result = executeQuery(dataSourceId, query, maxItem, placeholders, getProfile(req));
 
@@ -161,8 +164,29 @@ public class KpiService {
 	}
 
 	@POST
+	@Path("/preSave")
+	public Response queryValidation(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
+			Rule rule = (Rule) JsonConverter.jsonToObject(obj.getString("rule"), Rule.class);
+
+			queryPreview(req);
+			IKpiDAO kpiDao = getKpiDAO(req);
+			Map<String, String> errors = kpiDao.ruleValidation(rule);
+			return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
+
+	@POST
 	@Path("/saveRule")
 	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
+		Response validationResponse = queryValidation(req);
+		if (validationResponse != null && validationResponse.getEntity() != null) {
+			return validationResponse;
+		}
+
 		IKpiDAO dao = getKpiDAO(req);
 		try {
 			String requestVal = RestUtilities.readBody(req);
@@ -247,6 +271,14 @@ public class KpiService {
 	public Response deleteThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		dao.removeThreshold(id);
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path("/{id}/deleteRule")
+	public Response deleteRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeRule(id);
 		return Response.ok().build();
 	}
 
@@ -357,19 +389,22 @@ public class KpiService {
 		}
 	}
 
-	private JSONObject executeQuery(Integer dataSourceId, String query, Integer maxItem, String placeholder, IEngUserProfile profile) throws JSONException,
-			EMFUserError, EMFInternalError {
+	private JSONObject executeQuery(Integer dataSourceId, String query, Integer maxItem, List<Placeholder> placeholders, IEngUserProfile profile)
+			throws JSONException, EMFUserError, EMFInternalError {
 
 		Map<String, String> parameterMap = new HashMap<>();
 
-		if (placeholder != null && !placeholder.isEmpty()) {
-			JSONObject placeholderObj = new JSONObject(placeholder);
+		if (placeholders != null && !placeholders.isEmpty()) {
+			// JSONObject placeholderObj = new JSONObject(placeholder);
 
-			Iterator<String> placeholderNames = placeholderObj.keys();
-			while (placeholderNames.hasNext()) {
-				String name = placeholderNames.next();
-				String value = placeholderObj.getString(name);
-				parameterMap.put(name, value);
+			// Iterator<String> placeholderNames = placeholderObj.keys();
+			// while (placeholderNames.hasNext()) {
+			// String name = placeholderNames.next();
+			// String value = placeholderObj.getString(name);
+			// parameterMap.put(name, value);
+			// }
+			for (Placeholder placeholder : placeholders) {
+				parameterMap.put(placeholder.getName(), placeholder.getValue());
 			}
 			// Replacing parameters from notation "@name" to "$P{name}"
 			for (String paramName : parameterMap.keySet()) {
@@ -429,12 +464,21 @@ public class KpiService {
 	}
 
 	public static void main(String[] args) throws ScriptException {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("ssss", "xsxsxsx");
+		errors.put("sddddsss", "qqqqxsxsxsx");
+		System.out.println(MessageFormat.format("errore in {0}", errors.keySet()));
+
 		ScriptEngineManager sm = new ScriptEngineManager();
 		ScriptEngine engine = sm.getEngineByExtension("js");
-		String script = "(M0-M1+10) *M2/M0";
-		if (script.replace("M", "").matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
-			script = script.replaceAll("M\\w", "1");
-			System.out.println(engine.eval(script));
+		String script = "(M0-M1+10) * M2/M0";
+		script = script.replace("M", "");
+		if (script.matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
+			try {
+				System.out.println(engine.eval(script));
+			} catch (Throwable e) {
+				System.out.println("Syntax error");
+			}
 		} else {
 			System.out.println("ko");
 		}
