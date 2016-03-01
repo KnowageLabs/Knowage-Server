@@ -22,7 +22,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.json.JSONException;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -40,7 +39,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		final List<SimpleNavigation> lst = new ArrayList<>();
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) throws JSONException {
+			public Boolean execute(Session session) {
 				Criteria c = session.createCriteria(SbiCrossNavigation.class).addOrder(Order.asc("name"));
 
 				for (Object o : c.list()) {
@@ -75,7 +74,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public void insert(final NavigationDetail nd) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) throws JSONException {
+			public Boolean execute(Session session) {
 				if (nd.getSimpleNavigation().getId() != null) {
 					throw new SpagoBIDOAException("Write error: record not valid");
 				}
@@ -106,7 +105,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public void update(final NavigationDetail nd) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) throws JSONException {
+			public Boolean execute(Session session) {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, nd.getSimpleNavigation().getId());
 				if (cn == null) {
 					throw new SpagoBIDOAException("Write error: record not found");
@@ -142,7 +141,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 		return executeOnTransaction(new IExecuteOnTransaction<NavigationDetail>() {
 			@Override
-			public NavigationDetail execute(Session session) throws JSONException {
+			public NavigationDetail execute(Session session) {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, id);
 				if (cn == null) {
 					throw new SpagoBIDOAException("Object of type SbiCrossNavigation with id[" + id + "] not found");

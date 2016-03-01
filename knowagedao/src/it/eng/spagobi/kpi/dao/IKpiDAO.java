@@ -7,6 +7,7 @@ import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public RuleOutput loadMeasureByName(String name);
 
-	public void insertRule(Rule rule);
+	public void insertRule(Rule rule) throws SpagoBIException;
 
-	public void updateRule(Rule rule);
+	public void updateRule(Rule rule) throws SpagoBIException;
 
 	public void removeRule(Integer id);
 
