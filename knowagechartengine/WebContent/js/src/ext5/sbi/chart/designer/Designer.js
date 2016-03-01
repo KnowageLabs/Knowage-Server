@@ -399,7 +399,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
-	
+			
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 
 			 * GAUGE type, set the plotband store that keeps the data about the plots
@@ -499,7 +499,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			        		 * Capitalize only the first letter for displaying the charts type name.
 			        		 */
 			        		var chartTypeDisplay = chartTypesFromService[i].charAt(0).toUpperCase() + chartTypesFromService[i].slice(1);
-			        		
+			        					        		
 			        		chartTypesStore.add
 			        		(
 		        				{
@@ -601,14 +601,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
-			 * (danristo :: danilo.ristovski@mht.net) 
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			 */			
 			this.chartTypeSelector.on
 			(
-				"updateConfigurationTab",
+				"reconfigureConfigurationTab",
 				
 				function() 
-				{	
+				{						
 					/**
 					 * Get the main configuration panel (the one on the top of the Step 2 tab of the Designer page)
 					 * and the second configuration panel (everything under the main panel).
@@ -641,7 +642,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var colorPalette = secondConfigurationPanel.getComponent("chartColorPalette");
 					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
-//					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
 					var sunburstToolbar = secondConfigurationPanel.getComponent("chartToolbar");
 					var sunburstTip = secondConfigurationPanel.getComponent("chartTip");
 						
@@ -650,6 +650,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
 					var wordCloudPanelTooltip = secondConfigurationPanel.getComponent("wordcloudConfigurationTooltip");	
+					
 					/**
 					 * The additional second configuration panel elements to show when the PARALLEL is selected.
 					 */
@@ -667,7 +668,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/**
 					 * The additional second configuration panel element to show when the HEATMAP is selected.
 					 */
-//					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
 					var showHeatmapLegend = secondConfigurationPanel.getComponent("chartHeatmapLegend");
 					var showHeatmapTooltip = secondConfigurationPanel.getComponent("chartHeatmapTooltip");
 						
@@ -811,7 +811,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelLegendElementPanel.hide();
 						showTableParallel.hide();
 					}
-					
 					
 					/**
 					 * Show/hide the SCATTER configuration panel on the second 
@@ -3299,7 +3298,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							{
 								tooltipFontFamily = jsonTooltipStyle.font;
 							}
-						
+							
 							if (chartType == "GAUGE") {									
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
@@ -3341,8 +3340,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipColor: jsonTooltipStyle.color,
 									serieTooltipFont: tooltipFontFamily,
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-									serieTooltipFontSize: jsonTooltipStyle.fontSize,
-									
+									serieTooltipFontSize: jsonTooltipStyle.fontSize
 								});								
 							} 
 							else {

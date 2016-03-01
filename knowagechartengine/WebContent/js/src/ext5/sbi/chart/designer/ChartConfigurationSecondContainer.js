@@ -3,10 +3,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 //    extend: 'Ext.tab.Panel',	// version 2
 	extend: 'Ext.panel.Panel',	// version 1    
 	xtype: 'layout-column',		// version 1	
-    
+	
     requires: 
 	[
-	//               'Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip',
 		'Sbi.chart.designer.ChartConfigurationHeatmapLegend',
 		'Sbi.chart.designer.ChartConfigurationHeatmapTooltip',
 		
@@ -17,19 +16,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		'Sbi.chart.designer.ChartConfigurationParallelLimit',
 		'Sbi.chart.designer.ChartConfigurationParallelTooltip',
 		'Sbi.chart.designer.ChartConfigurationParallelLegendTitle',
-		'Sbi.chart.designer.ChartConfigurationParallelLegendElement',
-		
+		'Sbi.chart.designer.ChartConfigurationParallelLegendElement',		
 		
 		'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
-		
-	//               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',		
+			
 		'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
 		'Sbi.chart.designer.ChartConfigurationSunburstTip',
 		
 		'Sbi.chart.designer.ChartConfigurationWordcloud',
-		'Sbi.chart.designer.ChartConfigurationWordcloudTooltip'
-		
-		
+		'Sbi.chart.designer.ChartConfigurationWordcloudTooltip'	
    ],
            
     border:false,
@@ -78,7 +73,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		});
         this.legend = legend;
         
-		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
+		this.palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
 			margin: config.margin,			
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
@@ -88,7 +83,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var sunburstToolbar = Ext.create
+		this.sunburstToolbar = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationSunburstToolbar",
 			
@@ -102,7 +97,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var sunburstTip = Ext.create
+		this.sunburstTip = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationSunburstTip",
 			
@@ -116,14 +111,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var wordCloudParameters = Ext.create
+		this.wordCloudParameters = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationWordcloud",
 			
 			{
 				viewModel: this.viewModel
 			}
-		); 	
+		); 		
 		
 		var wordcloudTooltip=Ext.create
 		(
@@ -139,7 +134,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var parallelChartLimit = Ext.create
+		this.parallelChartLimit = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelLimit",
 			
@@ -148,7 +143,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}
 		);
 		
-		var parallelChartAxesLines = Ext.create
+		this.parallelChartAxesLines = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelAxesLines",
 			
@@ -157,7 +152,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}
 		);
 		
-		var parallelChartTooltip = Ext.create
+		this.parallelChartTooltip = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelTooltip",
 			
@@ -166,7 +161,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}
 		);
 		
-		var parallelChartLegendTitle = Ext.create
+		this.parallelChartLegendTitle = Ext.create
 		(
 				"Sbi.chart.designer.ChartConfigurationParallelLegendTitle",
 				
@@ -175,7 +170,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 				}
 		);
 		
-		var parallelChartLegendElement = Ext.create
+		this.parallelChartLegendElement = Ext.create
 		(
 				"Sbi.chart.designer.ChartConfigurationParallelLegendElement",
 				
@@ -185,7 +180,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		);
 			
 		// (danilo.ristovski@mht.net)
-		var scatterConfiguration = Ext.create
+		this.scatterConfiguration = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationScatterConfiguration",
 			
@@ -199,7 +194,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * These three panels are needed for the HEATMAP chart
 		 * (danilo.ristovski@mht.net)
 		 */
-		var heatmapChartLegend = Ext.create
+		this.heatmapChartLegend = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationHeatmapLegend",
 			
@@ -212,7 +207,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * These three panels are needed for the HEATMAP chart
 		 * (danilo.ristovski@mht.net)
 		 */
-		var heatmapChartTooltip = Ext.create
+		this.heatmapChartTooltip = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationHeatmapTooltip",
 			
@@ -225,7 +220,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * This panel is needed for the SCATTER chart
 		 * (danilo.ristovski@mht.net)
 		 */
-		var gaugePaneParameters = Ext.create
+		this.gaugePaneParameters = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationGauge",
 			
@@ -235,139 +230,173 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		); 
 		
 		this.add(legend);
-		this.add(palette);
+		this.add(this.palette);
 		
 		/**
 		 * HEATMAP panels for specific parameters
 		 */
-		this.add(heatmapChartLegend);
-		this.add(heatmapChartTooltip);
+		this.add(this.heatmapChartLegend);
+		this.add(this.heatmapChartTooltip);
 		
 		/**
 		 * SUNBURST panels for specific parameters
 		 */
-		this.add(sunburstToolbar);	
-		this.add(sunburstTip);
+		this.add(this.sunburstToolbar);	
+		this.add(this.sunburstTip);
 		
 		/**
 		 * WORDCLOUD panel for specific parameters
 		 */
-		this.add(wordCloudParameters);
+		this.add(this.wordCloudParameters);
 		this.add(wordcloudTooltip);
 		
 		/**
 		 * PARALLEL panels for specific parameters
 		 */
-		this.add(parallelChartLimit);	
-		this.add(parallelChartAxesLines);
-		this.add(parallelChartTooltip);
-		this.add(parallelChartLegendTitle);
-		this.add(parallelChartLegendElement);
+		this.add(this.parallelChartLimit);	
+		this.add(this.parallelChartAxesLines);
+		this.add(this.parallelChartTooltip);
+		this.add(this.parallelChartLegendTitle);
+		this.add(this.parallelChartLegendElement);
 		
 		/**
 		 * SCATTER panel for specific parameters
 		 */
-		this.add(scatterConfiguration);
+		this.add(this.scatterConfiguration);
 		
 		/**
 		 * GAUGE panel for specific parameters
 		 */
-		this.add(gaugePaneParameters);
+		this.add(this.gaugePaneParameters);
 		
 		if (ChartUtils.isLegendEnabled())
 		{
-			this.getComponent("chartLegend").show();
+//			this.getComponent("chartLegend").show();
+//			console.log("SHOW LEGEND");
+//			console.log(this.legend.show());
+			this.legend.show();
 		}
 		else 
 		{
-			this.getComponent("chartLegend").hide();
+//			this.getComponent("chartLegend").hide();
+//			console.log("HIDE LEGEND");
+//			console.log(this.palette);
+			this.legend.hide();
 		}
 		
 		if (ChartUtils.isPaletteEnabled())
 		{
-			this.getComponent("chartColorPalette").show();
+//			this.getComponent("chartColorPalette").show();
+			this.palette.show();
 		}
 		else 
 		{
-			this.getComponent("chartColorPalette").hide();
+//			this.getComponent("chartColorPalette").hide();
+			this.palette.hide();
 		}	
 		
 		if (ChartUtils.isToolbarAndTipEnabled())
 		{
-//			this.getComponent("chartToolbarAndTip").show();
-			this.getComponent("chartToolbar").show();
-			this.getComponent("chartTip").show();
+//			this.getComponent("chartToolbar").show();
+//			this.getComponent("chartTip").show();
+			this.sunburstTip.show();
+			this.sunburstToolbar.show();
 		}
 		else 
 		{
-//			this.getComponent("chartToolbarAndTip").hide();
-			this.getComponent("chartToolbar").hide();
-			this.getComponent("chartTip").hide();
+//			this.getComponent("chartToolbar").hide();
+//			this.getComponent("chartTip").hide();
+			
+			this.sunburstTip.hide();
+			this.sunburstToolbar.hide();
 		}
 		
 		if (ChartUtils.isWordcloudPanelEnabled())
 		{
-			this.getComponent("wordcloudConfiguration").show();
+//			this.getComponent("wordcloudConfiguration").show();
+			this.wordCloudParameters.show();
 			this.getComponent("wordcloudConfigurationTooltip").show();
 		}
 		else 
 		{
-			this.getComponent("wordcloudConfiguration").hide();
+//			this.getComponent("wordcloudConfiguration").hide();
+			this.wordCloudParameters.hide();
 			this.getComponent("wordcloudConfigurationTooltip").hide();
 		}
 		
 		if (ChartUtils.isParallelPanelEnabled())
 		{
-			this.getComponent("chartParallelLimit").show();
-			this.getComponent("chartParallelAxesLines").show();
-			//this.getComponent("chartParallelTooltip").show();
-			this.getComponent("chartParallelLegendTitle").show();	
-			this.getComponent("chartParallelLegendElement").show();	
+//			this.getComponent("chartParallelLimit").show();
+//			this.getComponent("chartParallelAxesLines").show();
+//			//this.getComponent("chartParallelTooltip").show();
+//			this.getComponent("chartParallelLegendTitle").show();	
+//			this.getComponent("chartParallelLegendElement").show();	
+			
+			this.parallelChartAxesLines.show();
+			this.parallelChartLegendElement.show();
+			this.parallelChartLegendTitle.show();
+			this.parallelChartLimit.show();
 		}
 		else 
 		{
-			this.getComponent("chartParallelLimit").hide();
-			this.getComponent("chartParallelAxesLines").hide();
-			//this.getComponent("chartParallelTooltip").hide();
-			this.getComponent("chartParallelLegendTitle").hide();	
-			this.getComponent("chartParallelLegendElement").hide();	
+//			this.getComponent("chartParallelLimit").hide();
+//			this.getComponent("chartParallelAxesLines").hide();
+//			//this.getComponent("chartParallelTooltip").hide();
+//			this.getComponent("chartParallelLegendTitle").hide();	
+//			this.getComponent("chartParallelLegendElement").hide();	
+			
+			this.parallelChartAxesLines.hide();
+			this.parallelChartLegendElement.hide();
+			this.parallelChartLegendTitle.hide();
+			this.parallelChartLimit.hide();
 		}
 		
 		if(ChartUtils.isTooltipPanelEnabled()){
-			this.getComponent("chartParallelTooltip").show();
+//			this.getComponent("chartParallelTooltip").show();
+			this.parallelChartTooltip.show();
 		}else{
-			this.getComponent("chartParallelTooltip").hide();
+//			this.getComponent("chartParallelTooltip").hide();
+			this.parallelChartTooltip.hide();
 		}
 		
 		if (ChartUtils.isHeatmapLegendAndTooltipEnabled())
 		{
 //			this.getComponent("chartHeatmapLegendAndTooltip").show();
-			this.getComponent("chartHeatmapLegend").show();
-			this.getComponent("chartHeatmapTooltip").show();
+//			this.getComponent("chartHeatmapLegend").show();
+//			this.getComponent("chartHeatmapTooltip").show();
+			this.heatmapChartLegend.show();
+			this.heatmapChartTooltip.show();
 		}
 		else
 		{
 //			this.getComponent("chartHeatmapLegendAndTooltip").hide();
-			this.getComponent("chartHeatmapLegend").hide();
-			this.getComponent("chartHeatmapTooltip").hide();
+//			this.getComponent("chartHeatmapLegend").hide();
+//			this.getComponent("chartHeatmapTooltip").hide();
+			
+			this.heatmapChartLegend.hide();
+			this.heatmapChartTooltip.hide();
 		}
 		
 		if (ChartUtils.isScatterElementsEnabled())
 		{
-			this.getComponent("chartScatterConfiguration").show();
+//			this.getComponent("chartScatterConfiguration").show();
+			this.scatterConfiguration.show();
 		}
 		else
 		{
-			this.getComponent("chartScatterConfiguration").hide();
+//			this.getComponent("chartScatterConfiguration").hide();
+			this.scatterConfiguration.hide();
 		}
 		
 		if (ChartUtils.isGaugePaneEnabled())
 		{
-			this.getComponent("gaugePaneConfiguration").show();
+//			this.getComponent("gaugePaneConfiguration").show();
+			this.gaugePaneParameters.show();
 		}
 		else
 		{
-			this.getComponent("gaugePaneConfiguration").hide();
+//			this.getComponent("gaugePaneConfiguration").hide();
+			this.gaugePaneParameters.hide();
 		}
     }
     
