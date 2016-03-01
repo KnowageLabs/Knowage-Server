@@ -300,6 +300,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		if (category != null) {
 			if (category.getValueId() != null) {
 				cat = new SbiDomains(category.getValueId());
+				cat = (SbiDomains) session.load(SbiDomains.class, category.getValueId());
 			} else if (category.getValueCd() != null) {
 				cat = (SbiDomains) session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", categoryName))
 						.add(Restrictions.eq("valueCd", category.getValueCd())).uniqueResult();
