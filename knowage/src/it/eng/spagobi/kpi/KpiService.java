@@ -1,9 +1,10 @@
 package it.eng.spagobi.kpi;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.kpi.bo.Alias;
@@ -37,6 +38,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,8 +66,6 @@ public class KpiService {
 	private static Logger logger = Logger.getLogger(KpiService.class);
 
 	private static final String MEASURE = "MEASURE";
-	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
-	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
 
@@ -79,25 +81,6 @@ public class KpiService {
 	public Response cloneRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		getKpiDAO(req).cloneRule(id);
 		return Response.ok().build();
-	}
-
-	@GET
-	@Path("/listMeasureCategory")
-	// TODO check if this has to be removed
-	public Response listMeasureCategory(@Context HttpServletRequest req) throws EMFUserError {
-		IDomainDAO domain = DAOFactory.getDomainDAO();
-		setProfile(req, domain);
-		List categories = domain.loadListDomainsByTypeAndTenant(KPI_MEASURE_CATEGORY);
-		return Response.ok(JsonConverter.objectToJson(categories, categories.getClass())).build();
-	}
-
-	@GET
-	@Path("/listKpiCategory")
-	public Response listKpiCategory(@Context HttpServletRequest req) throws EMFUserError {
-		IDomainDAO domain = DAOFactory.getDomainDAO();
-		setProfile(req, domain);
-		List categories = domain.loadListDomainsByTypeAndTenant(KPI_KPI_CATEGORY);
-		return Response.ok(JsonConverter.objectToJson(categories, categories.getClass())).build();
 	}
 
 	@GET
@@ -154,113 +137,27 @@ public class KpiService {
 	@Path("/queryPreview")
 	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
 
-		// IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
-		// if (dataset.getParameters() != null) {
-		// HashMap<String, String> parametersMap = new HashMap<String, String>();
-		// parametersMap = getDataSetParametersAsMap(false);
-		// Object dataSetJSON = getDatasetTestResultList(dataset, parametersMap, getProfile(req));
-		// }
-
 		Integer dataSourceId = null;
 		String query = null;
 		Integer maxItem = null;
 		String placeholders = null;
-		Map<String, String> parameterMap = new HashMap<>();
 		try {
 			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
+
 			dataSourceId = obj.getInt("dataSourceId");
 			query = obj.getString("query");
-			maxItem = obj.getInt("maxItem");
-			if (obj.has("placeholders")) {
-				placeholders = obj.optString("placeholders");
-				JSONObject placeholderObj = obj.getJSONObject("placeholders");
-				Iterator<String> placeholderNames = placeholderObj.keys();
-				while (placeholderNames.hasNext()) {
-					String name = placeholderNames.next();
-					String value = placeholderObj.getString(name);
-					parameterMap.put(name, value);
-				}
-				// Sorting parameters' map to easy replace @name with $P{name}
-				List<String> paramNameList = new ArrayList<>(parameterMap.keySet());
-				Collections.reverse(paramNameList);
-				for (String paramName : paramNameList) {
-					query = query.replaceFirst("@" + paramName, "$P{" + paramName + "}");
-				}
-			}
-		} catch (IOException | JSONException e) {
+			maxItem = obj.optInt("maxItem", 1);
+			placeholders = obj.optString("placeholders");
+
+			JSONObject result = executeQuery(dataSourceId, query, maxItem, placeholders, getProfile(req));
+
+			return Response.ok(result.toString()).build();
+
+		} catch (IOException | JSONException | EMFInternalError e) {
 			logger.error("dataSourceId[" + dataSourceId + "] query[" + query + "] maxItem[" + maxItem + "] placeholders[" + placeholders + "]");
 			logger.error(req.getPathInfo(), e);
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-
-		IDataSet dataSet = null;
-		String queryScript = "";
-		String queryScriptLanguage = "";
-
-		JSONObject jsonDsConfig = new JSONObject();
-		try {
-			jsonDsConfig.put(DataSetConstants.QUERY, query);
-			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, "");
-			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, "");
-			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceId);
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		}
-
-		IDataSource dataSource;
-		try {
-			dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
-			if (dataSource != null) {
-				if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
-					dataSet = new MongoDataSet();
-				} else {
-					dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
-				}
-				dataSet.setParamsMap(parameterMap);
-				((ConfigurableDataSet) dataSet).setDataSource(dataSource);
-				((ConfigurableDataSet) dataSet).setQuery(query);
-				((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
-				((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
-			} else {
-				throw new SpagoBIServiceException(req.getPathInfo(), "A datasource with id " + dataSourceId + " could not be found");
-			}
-		} catch (EMFUserError e) {
-			e.printStackTrace();
-			throw new SpagoBIServiceException(req.getPathInfo(), "Error while retrieving Datasource with id=" + dataSourceId, e);
-		}
-
-		dataSet.setConfiguration(jsonDsConfig.toString());
-		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(getProfile(req)));
-
-		IDataStore dataStore = null;
-		try {
-			dataStore = dataSet.test(0, maxItem, maxItem);
-			if (dataStore == null) {
-				throw new SpagoBIServiceException(req.getPathInfo(), "Impossible to read resultset");
-			}
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing dataset ", t);
-		}
-		JSONDataWriter dataSetWriter = new JSONDataWriter();
-		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
-		JSONObject ret = new JSONObject();
-		try {
-			JSONArray fields = dataSetJSON.getJSONObject(JSONDataWriter.METADATA).getJSONArray("fields");
-			JSONArray columns = new JSONArray();
-			ret.put("columns", columns);
-			// skipping i=0 that is "recNo" value
-			for (int i = 1; i < fields.length(); i++) {
-				JSONObject column = fields.getJSONObject(i);
-				JSONObject col = new JSONObject();
-				col.put("name", column.getString("name"));
-				col.put("label", column.getString("header"));
-				columns.put(col);
-			}
-			ret.put("rows", dataSetJSON.get(JSONDataWriter.ROOT));
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		}
-		return Response.ok(ret.toString()).build();
+		return Response.ok().build();
 	}
 
 	@POST
@@ -270,7 +167,6 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
-			checkMandatory(rule);
 			if (rule.getId() == null) {
 				dao.insertRule(rule);
 			} else {
@@ -279,6 +175,8 @@ public class KpiService {
 
 		} catch (IOException e) {
 			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 		return Response.ok().build();
 	}
@@ -315,7 +213,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveKpi")
-	public Response loadKpi(@Context HttpServletRequest req) throws EMFUserError {
+	public Response loadKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
 		IKpiDAO dao = getKpiDAO(req);
 		try {
 			String requestVal = RestUtilities.readBody(req);
@@ -335,16 +233,13 @@ public class KpiService {
 				dao.updateKpi(kpi);
 			}
 
-			return Response.ok().build();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		} catch (SpagoBIException e) {
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		}
+		} catch (IOException | JSONException e) {
+			logger.error(req.getPathInfo(), e);
+			throw new EMFInternalError(EMFErrorSeverity.BLOCKING, e);
+		} /*
+		 * catch (SpagoBIException e) { throw new SpagoBIServiceException(req.getPathInfo(), e); }
+		 */
+		return Response.ok().build();
 	}
 
 	@DELETE
@@ -392,7 +287,7 @@ public class KpiService {
 		List<String> selectedAttrs = new ArrayList<>();
 	}
 
-	private void checkCardinality(String cardinality) throws JSONException, SpagoBIException {
+	private void checkCardinality(String cardinality) throws JSONException, EMFUserError {
 		JSONArray measureArray = new JSONArray(cardinality);
 		List<Measure> measureLst = new ArrayList<>();
 		for (int i = 0; i < measureArray.length(); i++) {
@@ -420,9 +315,8 @@ public class KpiService {
 		for (int i = 1; i < measureLst.size(); i++) {
 			Measure prevMeasure = measureLst.get(i - 1);
 			Measure currMeasure = measureLst.get(i);
-			System.out.println("check " + prevMeasure.name + " with " + currMeasure.name);
 			if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
-				throw new SpagoBIException("Check on measure [" + prevMeasure.name + "] failed");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "kpi.cardinality.error");
 			}
 		}
 	}
@@ -454,7 +348,7 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(Kpi kpi) {// TODO check if cardinality could be null
+	private void checkMandatory(Kpi kpi) {
 		if (kpi.getName() == null) {
 			throw new SpagoBIDOAException("Kpi Name is mandatory.");
 		}
@@ -463,16 +357,86 @@ public class KpiService {
 		}
 	}
 
-	private void checkMandatory(Rule rule) {
-		if (rule.getName() == null) {
-			throw new SpagoBIDOAException("Rule Name is mandatory");
+	private JSONObject executeQuery(Integer dataSourceId, String query, Integer maxItem, String placeholder, IEngUserProfile profile) throws JSONException,
+			EMFUserError, EMFInternalError {
+
+		Map<String, String> parameterMap = new HashMap<>();
+
+		if (placeholder != null && !placeholder.isEmpty()) {
+			JSONObject placeholderObj = new JSONObject(placeholder);
+
+			Iterator<String> placeholderNames = placeholderObj.keys();
+			while (placeholderNames.hasNext()) {
+				String name = placeholderNames.next();
+				String value = placeholderObj.getString(name);
+				parameterMap.put(name, value);
+			}
+			// Replacing parameters from notation "@name" to "$P{name}"
+			for (String paramName : parameterMap.keySet()) {
+				query = query.replaceFirst("\\@\\b" + paramName + "\\b", "$P{" + paramName + "}");
+			}
 		}
-		if (rule.getDefinition() == null) {
-			throw new SpagoBIDOAException("Rule Definition is mandatory");
+
+		IDataSet dataSet = null;
+		String queryScript = "";
+		String queryScriptLanguage = "";
+
+		JSONObject jsonDsConfig = new JSONObject();
+		jsonDsConfig.put(DataSetConstants.QUERY, query);
+		jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, "");
+		jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, "");
+		jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceId);
+
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
+		if (dataSource != null) {
+			if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
+				dataSet = new MongoDataSet();
+			} else {
+				dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+			}
+			dataSet.setParamsMap(parameterMap);
+			((ConfigurableDataSet) dataSet).setDataSource(dataSource);
+			((ConfigurableDataSet) dataSet).setQuery(query);
+			((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
+			((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
+		} else {
+			throw new EMFInternalError(EMFErrorSeverity.BLOCKING, "A datasource with id " + dataSourceId + " could not be found");
 		}
-		if (rule.getDataSourceId() == null) {
-			throw new SpagoBIDOAException("Rule Datasource is mandatory");
+
+		dataSet.setConfiguration(jsonDsConfig.toString());
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
+
+		IDataStore dataStore = dataSet.test(0, maxItem, maxItem);
+
+		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
+		JSONObject ret = new JSONObject();
+
+		JSONArray fields = dataSetJSON.getJSONObject(JSONDataWriter.METADATA).getJSONArray("fields");
+		JSONArray columns = new JSONArray();
+		ret.put("columns", columns);
+		// skipping i=0 that is "recNo" value
+		for (int i = 1; i < fields.length(); i++) {
+			JSONObject column = fields.getJSONObject(i);
+			JSONObject col = new JSONObject();
+			col.put("name", column.getString("name"));
+			col.put("label", column.getString("header"));
+			columns.put(col);
 		}
+		ret.put("rows", dataSetJSON.get(JSONDataWriter.ROOT));
+
+		return ret;
 	}
 
+	public static void main(String[] args) throws ScriptException {
+		ScriptEngineManager sm = new ScriptEngineManager();
+		ScriptEngine engine = sm.getEngineByExtension("js");
+		String script = "(M0-M1+10) *M2/M0";
+		if (script.replace("M", "").matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
+			script = script.replaceAll("M\\w", "1");
+			System.out.println(engine.eval(script));
+		} else {
+			System.out.println("ko");
+		}
+	}
 }
