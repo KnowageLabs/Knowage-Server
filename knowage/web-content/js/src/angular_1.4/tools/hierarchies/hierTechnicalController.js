@@ -767,7 +767,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 			if (cleanResponse.missimgPlaceholder == true){
 				$scope.showConfirm($scope.translate.load('sbi.hierarchies.save.changes'),$scope.translate.load('sbi.hierarchies.save.emptynodes'))
 					.then(function(){
-						$scope.callSaveTree(root);
+						$scope.callSaveTree(root,true);
 					},function(){})
 			}else{
 				$scope.callSaveTree(root);
@@ -775,7 +775,7 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 		}
 	}
 	
-	$scope.callSaveTree = function(root){
+	$scope.callSaveTree = function(root,forceDownload){
 		var jsonString = angular.toJson(root);
 		$scope.toogleLoading('target',true);
 		var promise = $scope.restService.post('hierarchies','saveHierarchy',jsonString);
@@ -798,6 +798,9 @@ function hierarchyTechFunction($timeout,sbiModule_config,sbiModule_translate,sbi
 					}
 					$scope.hierTreeCacheTarget[keyMap]=undefined;
 					$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.save.correct"));
+					if (forceDownload == true){
+						$scope.getTree('target',$scope.dateFilterTarget,$scope.seeHideLeafTarget,true);
+					}
 				}else{
 					$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 				}

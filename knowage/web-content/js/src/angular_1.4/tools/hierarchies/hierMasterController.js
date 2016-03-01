@@ -285,7 +285,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 	}
-	/* Initialize the variables of the table [table, columns, columns-search] */
+	/* Initialize the variables of th	e table [table, columns, columns-search] */
 	$scope.createTable = function(data) {
 		$scope.dimensionsTable = data.root;
 		$scope.columnsTable.splice(0, $scope.columnsTable.length);
@@ -295,13 +295,6 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			}
 		}
 		$scope.columnSearchTable = data.columns_search;
-		// calculate the width dynamically
-		$timeout(function() {
-			// var table = angular.element(document).find('table');
-			// var width = ($scope.columnsTable.length + 2) * 150; // + 2
-			// because the drag column and speedMenu column
-			// table.css('width',width + 'px');
-		}, 200, true);
 
 	}
 	/* Get hierarchies for combo-box */
@@ -789,7 +782,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			if (cleanResponse.missimgPlaceholder == true){
 				$scope.showConfirm($scope.translate.load('sbi.hierarchies.save.changes'),$scope.translate.load('sbi.hierarchies.save.emptynodes'))
 					.then(function(){
-						$scope.callSaveTree(root);
+						$scope.callSaveTree(root,true);
 					},function(){})
 			}else{
 				$scope.callSaveTree(root);
@@ -797,7 +790,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		}	
 	}
 	
-	$scope.callSaveTree = function(root){
+	$scope.callSaveTree = function(root,forceDownload){
 		var jsonString = angular.toJson(root);
 		$scope.toggleLoading('tree',true);
 		var promise = $scope.restService.post('hierarchies','saveHierarchy', jsonString);
@@ -817,6 +810,9 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 						$scope.hierTreeCache[keyMap] = undefined;
 						$scope.relationsMT = [];
 						$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.save.correct"));
+						if (forceDownload == true){
+							$scope.getTree($scope.dateFilterTree,$scope.seeHideLeafTree,true);
+						}
 					} else {
 						$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
 					}
