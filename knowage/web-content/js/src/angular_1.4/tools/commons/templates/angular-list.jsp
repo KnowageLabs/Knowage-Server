@@ -1,4 +1,4 @@
-<div  layout="column" layout-wrap layout-fill class="angularListTemplate"> 
+<div  layout="column"  layout-fill class="angularListTemplate"> 
 		<md-input-container ng-show="showSearchBar==true" md-no-float class="searchBarList">
 			<md-icon md-font-icon="fa fa-search"></md-icon> 
 			<input ng-if="!localSearch" ng-model="searchVal"
@@ -18,7 +18,7 @@
 				data-clone-enabled={{enableClone==true}}
 				data-empty-placeholder-enabled={{showEmptyPlaceholder==true}}>
 	
-			<ol ui-tree-nodes ng-model="ngModel">
+			<ol ui-tree-nodes ng-model="ngModel" class="angularListRowItem">
 				<li ng-if='SyncPagination && paginate' id="listItemTemplate"
 						dir-paginate="item in ngModel | filterBySpecificColumnAngularList:searchFastVal:itemName:localSearch |  itemsPerPage:	itemsPerPage "
 						pagination-id='id+"Pagination"' total-items='totalItemCount'

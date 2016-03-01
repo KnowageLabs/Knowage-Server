@@ -111,12 +111,12 @@ i.dragged-item-icon {
 }
 
 /* pagination */
-.angularListTemplate .box_pagination_list {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	margin-bottom: 3px;
-}
+/* .angularListTemplate .box_pagination_list { */
+/* 	position: absolute; */
+/* 	bottom: 0; */
+/* 	width: 100%; */
+/* 	margin-bottom: 3px; */
+/* } */
 
 .angularListTemplate [layout-padding] .box_pagination_list {
 	margin-left: -8px !important;
