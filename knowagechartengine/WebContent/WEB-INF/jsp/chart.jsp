@@ -414,7 +414,7 @@ author:
  			/* 
  				Listen for the resizing of the window (panel) in order to re-render
  				the chart.
- 				@author: danristo (danilo.ristovski@mht.net)
+ 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
  			Ext.on("resize", function(newWidth, newHeight) { 	  					
 				/*
@@ -518,7 +518,8 @@ author:
 					Set the initial size of the chart if the height and width are not 
 					defined by the user (through the Designer). This is mandatory for
 					rendering the chart. If not specified at all - error will appear.
-					@author: danristo (danilo.ristovski@mht.net)
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*/
 				var heightChart = chartConf.chart.height;
 				var heightDimType = chartConf.chart.heightDimType;
@@ -587,23 +588,24 @@ author:
 					indicator for empty dimensions for the previous code (on.resize)
 					will be chartConfiguration=null, since we will not enter this 
 					if-statement.
-					@author: danristo (danilo.ristovski@mht.net)
+					
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*/
 				if (isD3Chart) {	
 					
 					isChartHeightEmpty = false;
 					isChartWidthEmpty = false;
 					
-					if ((heightDimType=="pixels" && heightChart=="") ||
-							(widthDimType=="pixels" && widthChart == "")) 
+					if ((heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) ||
+							(widthDimType=="pixels" && (widthChart==undefined || widthChart == ""))) 
 					{
-						if (heightDimType=="pixels" && heightChart == "") 
+						if (heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) 
 						{
 							chartConf.chart.height = window.innerHeight-2;		 							
 							isChartHeightEmpty = true;		 							
 						} 
 						
-						if (widthDimType=="pixels" && widthChart == "") 
+						if (widthDimType=="pixels" && (widthChart==undefined || widthChart == "")) 
 						{
 							chartConf.chart.width = window.innerWidth;		 							
 							isChartWidthEmpty = true;

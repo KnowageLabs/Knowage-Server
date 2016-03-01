@@ -196,7 +196,6 @@ Ext.define
 	    				id: 'GroupByCategoryParallel',
 	    				bind : '{configModel.groupByCategory}',
 	    					
-	    					
 	    				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
 	    				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
 	    				

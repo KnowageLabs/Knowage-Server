@@ -105,9 +105,9 @@ Sbi.settings.chart =
 	
 		/**
 		 * Set the default dimension type for dimensions of the chart (height and 
-		 * width) to be pixels ("px"). 
+		 * width) to be pixels. 
 		 */
-		defaultDimensionType: "px"
+		defaultDimensionType: "pixels"
 	},
 	
 	/**
