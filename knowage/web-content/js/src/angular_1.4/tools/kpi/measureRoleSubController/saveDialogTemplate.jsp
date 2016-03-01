@@ -16,7 +16,7 @@
     
         <md-input-container class="md-block">
             <label>Nome</label>
-            <input ng-model="currentRole.name">
+            <input ng-model="currentRule.name">
           </md-input-container>
       
       <div layout="row" flex layout-wrap >

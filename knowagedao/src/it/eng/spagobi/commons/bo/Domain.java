@@ -163,6 +163,14 @@ public class Domain implements Serializable {
 		return toReturn;
 	}
 
+	public void setTranslatedValueName(String vn) {
+		// Do nothing
+	}
+
+	public void setTranslatedValueDescription(String vn) {
+		// Do nothing
+	}
+
 	public String getTranslatedValueName() {
 		String toReturn = new String(valueName);
 		MessageBuilder msgBuild = new MessageBuilder();

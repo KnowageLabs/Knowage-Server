@@ -1,41 +1,110 @@
-var measureRoleApp = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror']);
+var measureRoleApp = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'angular_list','sbiModule', 'angular-list-detail','ui.codemirror','angularUtils.directives.dirPagination']);
 measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices' ,measureRoleMasterControllerFunction ]);
-measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog' ,measureListControllerFunction ]);
-measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_messaging',measureDetailControllerFunction ]); 
+measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q' ,measureRoleMasterControllerFunction ]);
+measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices' ,measureListControllerFunction ]);
+measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureDetailControllerFunction ]); 
 
-function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices){
+function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q){
 	$scope.translate=sbiModule_translate;
 	$scope.aliasList=[];
-	$scope.currentRole={
+	$scope.placeholderList=[];
+	$scope.tipologiesType=[]; 
+	$scope.currentRule={
 			dataSourceId:{},
 			definition:"SELECT * FROM employee as cur",
-			metadata:{}
+			metadata:{},
+			placeholder:{}
 				};
+	$scope.detailProperty={
+			dataSourcesIsSelected:false,
+			queryChanged:true,
+			previewData:{rows:[],metaData:{fields:[]}},
+			};
+	
+	$scope.clearPreviewAndMetadata=function(){
+		$scope.detailProperty.previewData={rows:[],metaData:{fields:[]}};
+		$scope.currentRule.metadata={};
+	}
+	
+	$scope.errorHandler=function(text,title){
+		var titleFin=title || "";
+		 var confirm = $mdDialog.confirm()
+		.title(titleFin)
+		.content(text)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(confirm);
+	}
+	
 	
  	$scope.newMeasureFunction=function(){
 	} 
  	
- 	$scope.saveMeasureFunction=function(){
- 		 $mdDialog.show({
- 		      controller: DialogSaveController,
- 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRoleSubController/saveDialogTemplate.jsp',  
- 		      clickOutsideToClose:true,
- 		      fullscreen: true,
- 		      locals:{
- 		    	 currentRole:$scope.currentRole,
- 		    	  alias:$scope.aliasList}
- 		    })
- 		    .then(function(answer) {
- 		      $scope.status = 'You said the information was "' + answer + '".';
- 		    }, function() {
- 		      $scope.status = 'You cancelled the dialog.';
- 		    });
+ 	$scope.saveMeasureFunction=function(){ 
+ 		$scope.checkValidityMeasureRole().then(function(){
+ 			 $mdDialog.show({
+ 	 		      controller: DialogSaveController,
+ 	 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRoleSubController/saveDialogTemplate.jsp',  
+ 	 		      clickOutsideToClose:true,
+ 	 		      fullscreen: true,
+ 	 		      locals:{
+ 	 		    	 currentRule:$scope.currentRule,
+ 	 		    	 aliasExsist:$scope.aliasExtist}
+ 	 		    })
+ 	 		    .then(function(answer) {
+ 	 		      }, function() {
+ 	 		       });
+ 		},function(message){
+ 			$scope.errorHandler(message.text,message.title); 
+ 			return;
+ 		})
+ 		
+ 		
+ 		
+ 		
+ 		
  	} 
+ 	
+ 	$scope.checkValidityMeasureRole=function(){
+ 		var deferred = $q.defer();
+ 		
+ 		//test query and set metadata if not setted
+ 		var postData={dataSourceId:$scope.currentRule.dataSourceId,
+				query:$scope.currentRule.definition,
+				maxItem:1
+				} 
+		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
+		.then(function(response){
+			$scope.columnToMetadata(response.data.columns);
+			
+			//check if metadata are presents
+	 		if(Object.keys($scope.currentRule.metadata).length==0){
+	 			 deferred.reject({text:'',title:'Metadati non settati'})
+	 		}
+	 		
+	 		//check if there is 1 measure
+	 		var measurePresent=false;
+	 		for(var key in $scope.currentRule.metadata){
+	 			if($scope.currentRule.metadata[key].type.valueCd=="MEASURE"){
+	 				measurePresent=true;
+	 				break;
+	 			}
+	 		}
+	 		if(!measurePresent){
+	 			deferred.reject({text:'gestisci le misure dal tab METADATA',title:'Nessuna misura settata'})
+	 		}
+	 		
+	 		deferred.resolve();
+		},function(response){
+			deferred.reject({text:response.data.errors[0].message,title:'errore nella query'})
+		});
+ 		 
+ 		return deferred.promise; 
+ 	}
  	
  	$scope.cancelMeasureFunctionMeasureFunction=function(){
  		alert("cancelMeasureFunction")
@@ -44,30 +113,68 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
  	$scope.loadAliasList=function(){
  		sbiModule_restServices.promiseGet("1.0/kpi","listAlias")
 		.then(function(response){ 
-			var aliasTmpList={}; 
-			for(var i=0;i<response.data.length;i++){
-				aliasTmpList[response.data[i].name]=response.data[i]
-			} 
-			angular.copy(aliasTmpList,$scope.aliasList);
-			
+			angular.copy(response.data,$scope.aliasList);
 		},function(response){
-			console.log("errore")
+			$scope.errorHandler(response.data.errors[0].message,'Errore nello scaricamento degli alias');
+		});
+ 	};
+	$scope.loadPlaceholderList=function(){
+ 		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholder")
+		.then(function(response){ 
+			angular.copy(response.data,$scope.placeholderList);
+		},function(response){
+			$scope.errorHandler(response.data.errors[0].message,'Errore nello scaricamento dei placeholder');
 		});
  	};
  	$scope.loadAliasList();
+ 	$scope.loadPlaceholderList();
 	
+ 	
+ 	$scope.columnToMetadata=function(columns){
+		var tmpMeas=[];
+		for(var index in  columns){
+			tmpMeas.push( columns[index].label);
+			if(!$scope.currentRule.metadata.hasOwnProperty( columns[index].label)){
+				$scope.currentRule.metadata[columns[index].label]= columns[index]
+				$scope.currentRule.metadata[columns[index].label].type= $scope.tipologiesType[1];
+			}
+		} 
+		for(var index in $scope.currentRule.metadata){
+			if(tmpMeas.indexOf($scope.currentRule.metadata[index].label)==-1){
+				delete $scope.currentRule.metadata[index];
+			}
+		} 
+	}
+ 	
+ 	$scope.aliasExtist=function(aliasName){
+		 for(var i=0;i<$scope.aliasList.length;i++){
+			if( $scope.aliasList[i].name==aliasName){
+				return true;
+			}
+		}
+		return false; 
+	}
+ 	
+ 	$scope.loadPlaceholder=function(){
+ 		var placeh=$scope.currentRule.definition.match(/@\w*/g);
+ 		for(var i=0;i<placeh.length;i++){
+ 			var plcName=placeh[i].substring(1,placeh[i].length);
+ 			if(!$scope.currentRule.placeholder.hasOwnProperty(plcName))
+ 			$scope.currentRule.placeholder[plcName]="";
+ 		}
+ 	}
 }
 
-function DialogSaveController($scope, $mdDialog,currentRole,alias) {
+function DialogSaveController($scope, $mdDialog,currentRule,sbiModule_restServices,aliasExsist) {
 	 
 	$scope.presentAlias=[];
 	$scope.newAlias=[];
-	$scope.currentRole=currentRole;
-	for(var key in currentRole.metadata){
-		if(alias.hasOwnProperty(currentRole.metadata[key].label)){
-			$scope.presentAlias.push(currentRole.metadata[key].label);
+	$scope.currentRule=currentRule;
+	for(var key in currentRule.metadata){
+		if(aliasExsist(currentRule.metadata[key].label)){
+			$scope.presentAlias.push(currentRule.metadata[key].label);
 		}else{
-			$scope.newAlias.push(currentRole.metadata[key].label);
+			$scope.newAlias.push(currentRule.metadata[key].label);
 		}
 	}
 
@@ -80,7 +187,7 @@ function DialogSaveController($scope, $mdDialog,currentRole,alias) {
 		  };
 		  $scope.save = function() {
 			  var tmpRoleObj={};
-			  angular.copy(currentRole,tmpRoleObj);
+			  angular.copy(currentRule,tmpRoleObj);
 			 var ruleOutputs=[]; 
 			 for(var key in tmpRoleObj.metadata){
 				 tmpRoleObj.metadata[key].alias=tmpRoleObj.metadata[key].label;
@@ -91,36 +198,29 @@ function DialogSaveController($scope, $mdDialog,currentRole,alias) {
 			 tmpRoleObj.ruleOutputs=ruleOutputs;
 			 delete tmpRoleObj.metadata;
 			 console.log(tmpRoleObj) 
+			 
+			 
+			 sbiModule_restServices.promisePost("1.0/kpi","saveRule",tmpRoleObj)
+				.then(function(response){ 
+					alert("salvataggio riuscito")
+					 $mdDialog.hide();
+				},function(response){
+					alert("errore salvataggio ruolo")
+				});
 			  
 //		    $mdDialog.hide();
 		  };
 		}
  
-function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
-	$scope.detailProperty={
-			dataSourcesIsSelected:false,
-			queryChanged:true,
-			previewData:{rows:[],metaData:{fields:[]}},
-			};
+function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	
-	$scope.columnToMetadata=function(columns){
-		var tmpMeas=[];
-		for(var index in  columns){
-			tmpMeas.push( columns[index].label);
-			if(!$scope.currentRole.metadata.hasOwnProperty( columns[index].label)){
-				$scope.currentRole.metadata[columns[index].label]= columns[index]
-			}
-		} 
-		for(var index in $scope.currentRole.metadata){
-			if(tmpMeas.indexOf($scope.currentRole.metadata[index].label)==-1){
-				delete $scope.currentRole.metadata[index];
-			}
-		} 
-	}
+	
+	
 	 
 	$scope.loadMetadata=function(){
-		var postData={dataSourceId:$scope.currentRole.dataSourceId,
-				query:$scope.currentRole.definition,
+		$scope.loadPlaceholder();
+		var postData={dataSourceId:$scope.currentRule.dataSourceId,
+				query:$scope.currentRule.definition,
 				maxItem:1
 				} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
@@ -129,13 +229,14 @@ function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_re
 			$scope.columnToMetadata(response.data.columns);
 			 
 		},function(response){
-			console.log("errore")
+			$scope.errorHandler(response.data.errors[0].message,'Errore nella query');
+			$scope.clearPreviewAndMetadata();
 		});
 	}
 	
 	$scope.loadPreview=function(){
-		var postData={dataSourceId:$scope.currentRole.dataSourceId,
-				query:$scope.currentRole.definition,
+		var postData={dataSourceId:$scope.currentRule.dataSourceId,
+				query:$scope.currentRule.definition,
 				maxItem:10
 				}
 		
@@ -145,37 +246,33 @@ function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_re
 			$scope.columnToMetadata(response.data.columns);
 			angular.copy(response.data,$scope.detailProperty.previewData);
 		},function(response){
-			sbiModule_messaging.showErrorMessage("errore ","jaskdajsl")
+			$scope.errorHandler(response.data.errors[0].message,'Errore nella query');
+			$scope.clearPreviewAndMetadata();
+			
 		});
 	}
 	
 	
 }
 
-function measureListControllerFunction($scope,sbiModule_translate,$mdDialog){
+function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
-	$scope.measureList=[
-	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
-	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
-	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
-	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},
-	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},
-	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
-	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
-	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
-	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},
-	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},
-	                    {"measureName":"measure1","rulesName":"regola1","dateCreation":"20/1/2016","category":"Cat1","author":"pino"},
-	                    {"measureName":"measure2","rulesName":"regola1","dateCreation":"23/1/2016","category":"Cat1","author":"gino"},
-	                    {"measureName":"measure3","rulesName":"regola2","dateCreation":"21/1/2016","category":"Cat2","author":"lino"},
-	                    {"measureName":"measure4","rulesName":"regola3","dateCreation":"22/1/2016","category":"Cat3","author":"mario"},
-	                    {"measureName":"measure5","rulesName":"regola3","dateCreation":"24/1/2016","category":"Cat3","author":"Acilly"},
-	                    ];
-	$scope.measureColumnsList=[
-	                           {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"measureName"},
-	                           {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rulesName"},
+	$scope.measureRoleList=[];
+	$scope.measureRoleColumnsList=[
+	                           {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"alias"},
+	                           {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rule"},
 	                          {"label":$scope.translate.load("sbi.generic.author"),"name":"author"},
 	                           ];
+	
+	$scope.loadMeasureRoleList=function(){
+ 		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
+		.then(function(response){
+			$scope.measureRoleList=response.data;
+			},function(response){
+				$scope.errorHandler(response.data.errors[0].message,'Errore nel recuperare la lista delle misure');
+		});
+ 	};
+ 	$scope.loadMeasureRoleList();
 	
 	$scope.measureClickFunction=function(item){
 		console.log("click",item);

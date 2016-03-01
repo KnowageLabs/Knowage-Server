@@ -36,10 +36,11 @@
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" cancel-function="cancelMeasureFunction" full-screen="false">
+	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction" full-screen="false">
+		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController">
-			<angular-table id='measureListTable' ng-model=measureList
-				columns='measureColumnsList'
+	 	<angular-table id='measureListTable' ng-model=measureRoleList
+				columns='measureRoleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
 				highlights-selected-item=true click-function="measureClickFunction(item);" > </angular-table>
@@ -80,32 +81,30 @@
 			</md-tabs> 
 		
 		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="aliasTab" md-is-locked-open="showAliasTab">
-	      <md-toolbar class="md-theme-indigo">
+	      <md-toolbar>
 	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.alias")}}</h1>
 	      </md-toolbar>
-	      <md-content layout-padding >
-	        <md-button ng-click="close()" class="md-primary" hide-gt-md>
-	          Close Sidenav Left
-	        </md-button>
-	        <p hide-md show-gt-md>
-	          This sidenav is locked open on your device. To go back to the default behavior,
-	          narrow your display.
-	        </p>
+	      <md-content layout-margin flex class="relative" >
+	        <angular-list layout-fill class="absolute" id="aliasListANGL"
+                		ng-model=aliasList
+                		item-name='name' 
+                		show-search-bar=true 
+                		>
+                		</angular-list> 
 	      </md-content>
 	    </md-sidenav>
 	    
 	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="placeholderTab" md-is-locked-open="showPlaceholdersTab">
-	      <md-toolbar class="md-theme-indigo">
+	      <md-toolbar>
 	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.placeholder")}}</h1>
 	      </md-toolbar>
-	      <md-content layout-padding >
-	        <md-button ng-click="close()" class="md-primary" hide-gt-md>
-	          Close Sidenav Left
-	        </md-button>
-	        <p hide-md show-gt-md>
-	          This sidenav is locked open on your device. To go back to the default behavior,
-	          narrow your display.
-	        </p>
+	      <md-content layout-margin flex class="relative"> 
+	        <angular-list layout-fill class="absolute" id="placeholderListANGL"
+                		ng-model=placeholderList
+                		item-name='name' 
+                		show-search-bar=true
+                		>
+                		</angular-list>
 	      </md-content>
 	    </md-sidenav>
 		

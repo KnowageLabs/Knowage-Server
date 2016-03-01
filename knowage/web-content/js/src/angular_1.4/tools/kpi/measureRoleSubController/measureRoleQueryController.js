@@ -15,8 +15,28 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 	        	var end= tok.end; 
 	        	var hintList=[];
 	        	for(var key in $scope.aliasList){
-	        		 if(tok.string.trim()=="" || key.startsWith(tok.string)){
-	        			 hintList.push(key);
+	        		 if(tok.string.trim()=="" || $scope.aliasList[key].name.startsWith(tok.string)){
+	        			 hintList.push($scope.aliasList[key].name);
+	        		 }
+	        	} 
+		        return {list:hintList, 
+		        	from: CodeMirror.Pos(cur.line,start),
+	                to: CodeMirror.Pos(cur.line, end)}
+		    });
+	
+	CodeMirror.registerHelper(
+		    "hint", "placeholder",
+		    function (mirror, options) {
+		    	var cur = mirror.getCursor();
+		        var tok = mirror.getTokenAt(cur);
+//		        var start= tok.string.trim()=="@"? tok.start+1 : tok.start;
+		        var start= tok.start+1;
+	        	var end= tok.end
+	        	var str=tok.string.substring(1,tok.string.length); 
+	        	var hintList=[];
+	        	for(var key in $scope.placeholderList){
+	        		 if(str=="" || $scope.placeholderList[key].name.startsWith(str)){
+	        			 hintList.push($scope.placeholderList[key].name);
 	        		 }
 	        	} 
 		        return {list:hintList, 
@@ -31,13 +51,25 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
         lineWrapping : true,
         matchBrackets : true,
         autofocus: true,
-        theme:"eclipse",
+        theme:"eclipse", 
         lineNumbers: true, 
-        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) }},
-        hintOptions: {tables:$scope.dataSourceTable}
-		};
+        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) },
+//        	"'@'":   function(cm){  $scope.keyAssistFunc(cm) }
+        },
+        hintOptions: {tables:$scope.dataSourceTable},
+       };
 	
 	$scope.codemirrorLoaded =function(_editor){
+		 _editor.on("keyup", function(cm,keyEv,c){
+			 
+			 	var cur = cm.getCursor();
+		        var tok = cm.getTokenAt(cur);
+		        if(tok.string=="@"){
+		        	CodeMirror.showHint(cm, CodeMirror.hint.placeholder);
+		        }
+			 
+			 });
+		  
 		 _editor.on("change", function(a,b,c){
 			 $scope.detailProperty.queryChanged=true;
 			 });
@@ -45,9 +77,11 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 
 	
 	$scope.keyAssistFunc=function(cm){
-		var isAlias=$scope.isAliasCM(cm);
-        if(isAlias){
+		
+        if($scope.isAliasCM(cm)){
         	CodeMirror.showHint(cm, CodeMirror.hint.alias);
+        }else if($scope.isPlaceholderCM(cm)){
+        	CodeMirror.showHint(cm, CodeMirror.hint.placeholder);
         }else{
         	CodeMirror.showHint(cm, CodeMirror.hint.autocomplete);
         }
@@ -84,6 +118,14 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 		}
      return false;
 	}
+	
+$scope.isPlaceholderCM=function(cm){
+		var cursor = cm.getCursor();
+		var token= cm.getTokenAt(cursor);
+		if(token.string.startsWith("@")){
+			return true;
+		}
+}
 	
 	
 	$scope.loadDatasources=function(){

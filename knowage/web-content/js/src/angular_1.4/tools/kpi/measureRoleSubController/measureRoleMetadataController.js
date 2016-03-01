@@ -3,11 +3,9 @@ angular.module('measureRoleManager').controller('measureRoleMetadataController',
 function measureRoleMetadataControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
 	$scope.hierarchicalLevelList=[];
 	$scope.AttributeCategoryList=[];
-	$scope.tipologiesType=[]; 
+ 
 	
-	$scope.aliasExtist=function(aliasName){
-	return $scope.aliasList.hasOwnProperty(aliasName);
-	}
+	
 
 
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_RULEOUTPUT_TYPE")
