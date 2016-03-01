@@ -39,34 +39,33 @@
 
 </head>
 <body>
-	<angular-list-detail ng-controller="kpiDefinitionMasterController">
+	<angular-list-detail ng-controller="kpiDefinitionMasterController" save-function="parseFormula">
 		<list label="translate.load('sbi.kpi.list')">lista</list>
 		<detail>
-		
-		<md-tabs layout-fill class="absolute">
-				<md-tab id="tab1">
+ 	
+		<md-tabs layout-fill class="absolute" >
+				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.kpi.formula")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./kpiTemplate/formulaTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				
-				<md-tab id="tab2">
-       				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
-        			<md-tab-body>
-        			TODO
-					</md-tab-body>
-				</md-tab>
-				
-				<md-tab id="tab3">
+				<md-tab id="tab2" >
        				<md-tab-label>{{translate.load("sbi.kpi.cardinality")}}</md-tab-label>
         			<md-tab-body >
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab4">
+				<md-tab id="tab3" >
        				<md-tab-label>{{translate.load("sbi.kpi.filters")}}</md-tab-label>
+        			<md-tab-body>
+        			TODO
+					</md-tab-body>
+				</md-tab>
+				
+				<md-tab id="tab4" >
+       				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
         			TODO
 					</md-tab-body>

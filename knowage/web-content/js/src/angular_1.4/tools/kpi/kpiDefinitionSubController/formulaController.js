@@ -1,18 +1,25 @@
-var app = angular.module('kpiDefinitionManager').controller('formulaController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q",KPIDefinitionFormulaControllerFunction ]);
+var app = angular.module('kpiDefinitionManager').controller('formulaController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",KPIDefinitionFormulaControllerFunction ]);
 
-function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,items){
+function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,items){
 	$scope.translate=sbiModule_translate;
 	$scope.measureFormula="";
 	$scope.currentKPI ={
 			"formula": ""
 	}
-	$scope.measures = ['pippo', 'pluto'];
+	$scope.measures = ['pippo', 'pluto','paperino'];
 	$scope.dataSourceTable= {};//{"name":, "icon: }
 	$scope.functionalities = ['SUM','MAX','MIN','COUNT'];
 	$scope.selectedFunctionalities='SUM';
 	$scope.measureFunctionalities={};
 	$scope.token = "";
+	$scope.measuresToJSON=[];
+	$scope.functionsTOJSON=[];
+	$scope.formula="";
+	$scope.formulaDecoded="";
+	$scope.formulaForDB = {};
 	
+	
+	 
 	CodeMirror.registerHelper(
 			"hint", "measures",
 			function (mirror, options) {
@@ -37,19 +44,33 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.codemirrorLoaded = function(_editor){
 
 		_editor.on("keyup", function(cm,event,c){
-			//$scope.checkError(cm);
-			if(event.keyIdentifier!="U+0008"){
+
+			angular.copy(cm,$scope.cm);
+			if(event.keyIdentifier!="U+0008" && event.keyIdentifier!="Left" && event.keyIdentifier!="Right"){
 				var cur = cm.getCursor();
 				var token = cm.getTokenAt(cur);
+				if(token.string=="{" || token.string=="}" || token.string=="[" || token.string=="]"){
 
-				if(token.type=="operator" || token.type=="bracket"){
+					cm.replaceRange("", {line:cm.getCursor().line, ch : token.start}, {line:cm.getCursor().line, ch : token.end+1})
+
+				}else	if(token.type=="operator" || token.type=="bracket"){
 					token.string = " ";
-					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end+1})
+					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end})
 					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start})
 				}
-		
+
 			}
 
+
+		});
+
+
+
+	 _editor.on("blur", function(cm,event,c){
+
+			//$scope.parseFormula(cm);
+		
+			
 
 		});
 		_editor.on("mousedown", function(cm,event){
@@ -71,10 +92,12 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					break;
 				}
 			}
-			
+
 			if(event.srcElement.className.startsWith("cm-keyword")) {
 				$scope.ShowFunction(cm);
 			}
+
+
 		});
 
 	}
@@ -100,42 +123,20 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		CodeMirror.showHint(cm, CodeMirror.hint.measures);
 	}
 
-	$scope.checkError = function(cm){
-		var widgets = []
+	$scope.checkError = function(cm,token){
+		var flag=false;
 
-		for (var i = 0; i < widgets.length; ++i)
-			cm.removeLineWidget(widgets[i]);
-		widgets.length = 0;
-
-
-		for (var i = 0; i < cm.lineCount(); i++) {
-			var line = cm.getDoc().getLine(i);
-			var lineSplit =line.split(" ");
-			var err={} ;
-			for(var j=0;j<lineSplit.length;j++){
-				if($scope.measures.indexOf(lineSplit[j])==-1){
-					//error word not present
-					err.word = lineSplit[j];
-					err.reason="Word not present";
-					err.line = i;
-				}
-			}
-
-			if (!err) continue;
-			/*	 var msg = document.createElement("div");
-		      var icon = msg.appendChild(document.createElement("span"));
-		      icon.innerHTML = "!!";
-		      icon.className = "lint-error-icon";
-			msg.appendChild(document.createTextNode(err.reason));
-		    msg.className = "lint-error";
-		    widgets.push(cm.addLineWidget(err.line - 1, msg, {coverGutter: false, noHScroll: true}));
-			 */
-			angular.element(document.querySelectorAll(".CodeMirror-gutter-elt")).addClass("error_word fa fa-times-circle")
-
+		if($scope.measures.indexOf(token.string)==-1){
+			//error word not present
+			flag=true;
 		}
+		if (flag) 
+			cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"error_word"})
+
+			//angular.element(document.querySelectorAll(".CodeMirror-gutter-elt")).addClass("error_word fa fa-times-circle")
+			angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).attr("target","Measure Missing")
 
 	}
-	//var mirror = CodeMirror.fromTextArea(document.getElementById("code"));
 
 
 
@@ -147,7 +148,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 			var token = cm.getTokenAt(cur);
 
-			while(token.type == "operator" ){
+			while(token.type == "operator" || token.type == "bracket" ){
 				cur.ch = cur.ch+1;
 				token =  cm.getTokenAt(cur);
 			}
@@ -177,7 +178,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-sum"})
 			}
 
-
+			$scope.checkError(cm,token);
 		});
 	}
 
@@ -228,6 +229,202 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	}
 
 
+	$scope.parseFormula=function(){
+		$scope.reset();
+		var countOpenBracket =0;
+		var countCloseBracket =0;
+		var cm =angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror;
+		var flag = true;
+		
+		FORFirst: for(var i=0;i<cm.lineCount();i++){
+			var array = $scope.removeSpace(cm.getLineTokens(i));
+			for(var j=0;j<array.length;j++){
+				var token = array[j];
+				var arr = cm.findMarksAt({line:i,ch:token.end});
+				if(token.string.trim()!=""){
+					if(arr.length==0){
+						if(j-1>=0){
+							var token_before = array[j-1];
+							if(token_before.type=="keyword"){
+								if(token.type=="keyword" || token.type=="number"  || token.string=="("){
+									var line = i+1;
+									flag=false;
+									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
+									$scope.reset();
+									break FORFirst;
+								}
+							}
+							if(token_before.type=="operator" ){
+								if(token.type=="operator" || token.string==")"){
+									var line = i+1;
+									flag=false;
+									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+									$scope.reset();
+									break FORFirst;
+								}
+							}
+							if(token_before.type=="bracket" ){
+								var line = i+1;
+								if(token.string==")" && token_before.string=="(" ){
+									flag=false;
+									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+									break FORFirst;
+								} if(token_before.string==")"){
+									
+									if(token.type=="keyword" || token.type=="number"){
+										$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
+										$scope.reset();
+										flag=false;
+										break FORFirst;
+									}
+								} 
+							} if(token_before.string=="("){
+								if(token.type=="operator"){
+									flag=false;
+									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+									$scope.reset();
+									break FORFirst;
+								}
+
+							}
+						}
+						if(j==array.length-1){
+							//last token
+							if(token.type=="operator"){
+								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+								$scope.reset();
+								break FORFirst;
+							}
+						}
+						if(token.type=="operator"){
+							//operator
+							if(j==0){
+								var line = i+1;
+								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+								$scope.reset();
+								break FORFirst;
+							}else{
+								$scope.formula = $scope.formula+token.string;
+								$scope.formulaDecoded =$scope.formulaDecoded+token.string;
+							}
+
+						}else if(token.type=="bracket"){
+							//bracket
+							if(token.string=="("){
+								countOpenBracket++;
+							}else{
+								countCloseBracket++;
+							}
+							$scope.formula = $scope.formula+token.string;
+							$scope.formulaDecoded =$scope.formulaDecoded+token.string;
+						}else if(token.type=="number"){
+							$scope.formula = $scope.formula+token.string;
+							$scope.formulaDecoded =$scope.formulaDecoded+token.string;
+						}else{
+							//error no function associated
+							$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingfunctions"));
+							$scope.reset();
+							break FORFirst;
+						}
+
+					}else{
+						//parse classes token
+						for(var k=0;k<arr.length;k++){
+							var className = arr[k]["className"];
+							if(className=="cm-m-max"){
+								$scope.measuresToJSON.push(token.string);
+								$scope.functionsTOJSON.push("MAX")
+								var index =$scope.measuresToJSON.length-1;
+								var string = "M"+index;
+								$scope.formula=$scope.formula+string;
+								$scope.formulaDecoded =$scope.formulaDecoded+"MAX("+token.string+")";
+							}else if(className=="cm-m-min"){
+								$scope.measuresToJSON.push(token.string);
+								$scope.functionsTOJSON.push("MIN");
+								var index =$scope.measuresToJSON.length-1;
+								var string = "M"+index;
+								$scope.formula=$scope.formula+string;
+								$scope.formulaDecoded =$scope.formulaDecoded+"MIN("+token.string+")";
+							}else if(className=="cm-m-count"){
+								$scope.measuresToJSON.push(token.string);
+								$scope.functionsTOJSON.push("COUNT");
+								var index =$scope.measuresToJSON.length-1;
+								var string = "M"+index;
+								$scope.formula=$scope.formula+string;
+								$scope.formulaDecoded =$scope.formulaDecoded+"COUNT("+token.string+")";
+							}else if(className=="cm-m-sum"){
+								$scope.measuresToJSON.push(token.string);
+								$scope.functionsTOJSON.push("SUM");
+								var index =$scope.measuresToJSON.length-1;
+								var string = "M"+index;
+								$scope.formula=$scope.formula+string;
+								$scope.formulaDecoded =$scope.formulaDecoded+"SUM("+token.string+")";
+							}else if(className=="error_word"){
+								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula"));
+
+								$scope.reset();
+								break FORFirst;
+							}
+						}
+					}
+				}
+
+
+			}
+		}
+		if(countOpenBracket!=countCloseBracket && flag){
+			$scope.reset();
+			$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingbracket"));
+		}else{
+			if($scope.formula!="" && flag){
+				$scope.showAction($scope.formulaDecoded);
+				$scope.formulaForDB["formula"] =$scope.formula ;
+				$scope.formulaForDB["measures"]=$scope.measuresToJSON;
+				$scope.formulaForDB["functions"]=$scope.functionsTOJSON;
+				$scope.formulaForDB["formulaDecoded"]=$scope.formulaDecoded;
+				return $scope.formulaForDB;
+			}
+
+		}
+		return null;
+	}
+
+	$scope.removeSpace=function(tokenList){
+		for(var i=0;i<tokenList.length;i++){
+			if(tokenList[i].type==null){
+				tokenList.splice(i,1);
+			}
+		}
+		return tokenList;
+	}
+
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
+	};
+
+	$scope.reset = function(){
+		$scope.measuresToJSON=[];
+		$scope.functionsTOJSON=[];
+		$scope.formula="";
+		$scope.formulaDecoded="";
+	}
+	
+	$scope.$on('parseEvent', function(e) {  
+		 $scope.$parent.kpi = $scope.parseFormula();         
+	    });
 }
 function DialogController($scope,$mdDialog,items,token,selected){
 	$scope.selectedFunctionalities=selected;

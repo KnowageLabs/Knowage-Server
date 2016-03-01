@@ -1,93 +1,119 @@
-.cardinalityTable .measureCell{
-text-align: center;
-height: 30px;
- 
+.cardinalityTable .measureCell {
+	text-align: center;
+	height: 30px;
 }
 
-.cardinalityTable .invalidCell{
- color: lightgray;
-line-height: 30px;
+.cardinalityTable .invalidCell {
+	color: lightgray;
+	line-height: 30px;
 }
 
-
-.cardinalityTable .selectedCell{
-color: green;
- line-height: 30px;
-}
-.cardinalityTable .selectableCell{
-color: lightgray;
- line-height: 30px;
+.cardinalityTable .selectedCell {
+	color: green;
+	line-height: 30px;
 }
 
-.cardinalityTable{
-width:100% ;
- table-layout: fixed;
- border-collapse: collapse;
+.cardinalityTable .selectableCell {
+	color: lightgray;
+	line-height: 30px;
 }
 
-.cardinalityTable .attributeRow{
- border-bottom: 1px solid #ECEFF1; 
+.cardinalityTable {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
 }
 
-.disabledCell{
-background-color: gray;}
-
-.absolute{
-position:absolute
+.cardinalityTable .attributeRow {
+	border-bottom: 1px solid #ECEFF1;
 }
 
-.relative{
-position: relative
+.disabledCell {
+	background-color: gray;
 }
 
-.CodeMirror { 
-  height: auto;
+.absolute {
+	position: absolute
+}
+
+.relative {
+	position: relative
+}
+
+.CodeMirror {
+	height: auto;
 }
 
 .CodeMirror-gutters {
-	height:100%;
-}
-.headerColumnMeasure{
-text-align: center;
-font-size: 14px;
+	height: 100% !important;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword{
-	
+.headerColumnMeasure {
+	text-align: center;
+	font-size: 14px;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword {
 	
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before{
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before {
 	content: "f(";
-	color:green;
-	
-}
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after{
-	content: ")";
-	color:green;
-	
-}
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before{
-	content: "MAX(";
-	color:green;
-	
-}
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before{
-	content: "min(";
-	color:green;
-	
-}
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before{
-	content: "COUNT(";
-	color:green;
-	
-}
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before{
-	content: "Σ(";
-	color:green;
-	
+	color: green;
 }
 
-.error_word{
-	color:red;
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after {
+	content: ")";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before {
+	content: "MAX(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before {
+	content: "min(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before {
+	content: "COUNT(";
+	color: green;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before {
+	content: "Σ(";
+	color: green;
+}
+
+.error_word {
+	background-image:
+		url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==");
+	background-position: left bottom;
+	background-repeat: repeat-x;
+}
+
+span[target].error_word:hover:after {
+	padding: 4px 8px;
+	color: #333;
+	position: relative;
+	 bottom: -20px;
+	white-space: nowrap;
+	z-index: 20px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: 0px 0px 4px #222;
+	-webkit-box-shadow: 0px 0px 4px #222;
+	box-shadow: 0px 0px 4px #222;
+	background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeee),
+		color-stop(1, #cccccc));
+	background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+	background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+	background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+	background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+	content: attr(target);
+}
 }

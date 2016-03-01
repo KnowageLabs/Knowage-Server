@@ -1,9 +1,9 @@
  <div layout-fill ng-controller = "formulaController" layout="row">
- <md-whiteframe class="md-whiteframe-2dp relative" layout-margin flex  >
+ <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 		<div ui-codemirror="{ onLoad : codemirrorLoaded }" id="code" class="absolute CodeMirrorMathematica" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model="currentKPI.formula"></div> 
  </md-whiteframe>
-
- </div>
+</div>
+ 
  
  <script type="text/ng-template" id="dialog1.tmpl.html">
 <md-dialog aria-label="Select Function"  ng-cloak>
