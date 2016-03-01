@@ -12,6 +12,9 @@ public class Kpi implements Serializable {
 	 */
 	private Integer id;
 	private String name;
+	/**
+	 * A json object
+	 */
 	private String definition;
 	/**
 	 * A json object
