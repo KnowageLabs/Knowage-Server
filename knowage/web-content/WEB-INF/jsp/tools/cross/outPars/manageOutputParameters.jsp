@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/crossnavigation/css/cross-definition.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/cross-definition.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cross/outpars/ManageOutputParameters.js"></script>
 <script>
 var objectId = <%=objectId%>;
