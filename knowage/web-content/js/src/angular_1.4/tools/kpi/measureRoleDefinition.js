@@ -5,7 +5,7 @@ measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRoleMasterControllerFunction ]);
-measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout' ,measureListControllerFunction ]);
+measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,measureListControllerFunction ]);
 measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]); 
 
 function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
@@ -353,7 +353,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 	
 }
 
-function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices,$angularListDetail,$timeout ){
+function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices,$angularListDetail,$timeout,$mdToast ){
 	$scope.translate=sbiModule_translate;
 	
 	$scope.newMeasureFunction=function(){
@@ -415,7 +415,9 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 			   
 			   sbiModule_restServices.promiseDelete("1.0/kpi",item.ruleId+"/deleteRule").then(
 					   function(response){
-						   alert("cancellato")
+						   $mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
+							'OK').highlightAction(false).hideDelay(2000))
+						   $scope.loadMeasureRoleList();
 					   },
 					   function(response){
 						   $scope.errorHandler(response.data,""); 
@@ -427,14 +429,51 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		   }, function() {
 		    console.log("annulla")
 		   });
-	}
+	};
+	
+	$scope.cloneMeasure=function(item,event){
+		 var confirm = $mdDialog.confirm()
+        .title($scope.translate.load("sbi.generic.confirmClone"))
+        .ariaLabel('clone measure') 
+        .ok($scope.translate.load("sbi.general.yes"))
+        .cancel($scope.translate.load("sbi.general.No"));
+		   $mdDialog.show(confirm).then(function() {
+		     
+			   
+			   sbiModule_restServices.promiseGet("1.0/kpi",item.ruleId+"/cloneRule").then(
+					   function(response){
+						   $mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kpi.clone.success")).position('top').action(
+							'OK').highlightAction(false).hideDelay(2000))
+						   $scope.loadMeasureRoleList();
+					   },
+					   function(response){
+						   $scope.errorHandler(response.data,""); 
+					   });
+			   
+			   
+			   
+			   
+		   }, function() {
+		    console.log("annulla")
+		   });
+	};
 	
 	$scope.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
-		icon:'fa fa-trash' ,	 
+		icon:'fa fa-trash' ,
+		backgroundColor:'green',
 		action : function(item,event) {
 			$scope.deleteMeasure(item,event);
 			}
 	
-		}];
+		},
+		{
+			label : sbiModule_translate.load('sbi.generic.clone'),
+			icon:'fa fa-copy' ,	 
+			backgroundColor:'transparent',
+			action : function(item,event) {
+				$scope.cloneMeasure(item,event);
+				}
+		
+			}];
 }
