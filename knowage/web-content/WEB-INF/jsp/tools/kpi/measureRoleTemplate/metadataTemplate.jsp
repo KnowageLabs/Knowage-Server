@@ -1,17 +1,17 @@
 <md-content ng-controller="measureRoleMetadataController"  layout-fill>
 
 <div layout="row" layout-wrap> 
-<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" (mtd,mtdValue) in currentRule.metadata ">
+<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" mtdValue in currentRule.ruleOutputs ">
   <md-toolbar>
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" > 
-         <span ng-if="::!aliasExtist(mtd)">
+         <span ng-if="::!aliasExtist(mtdValue.alias)">
 	  		 <md-tooltip md-direction="top">
 		          L'alias non esiste e verrà aggiunto
 		 	</md-tooltip>  
         	<md-icon  class="alertIconMissingAlias"  md-font-icon="fa fa-exclamation-triangle" > 
        		</md-icon> 
          </span>
-		<span flex>{{mtd}}</span>
+		<span flex>{{mtdValue.alias}}</span>
 		</div>
       
 		 

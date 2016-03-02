@@ -4,30 +4,40 @@ measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q' ,measureRoleMasterControllerFunction ]);
+measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRoleMasterControllerFunction ]);
 measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices' ,measureListControllerFunction ]);
 measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices',measureDetailControllerFunction ]); 
 
-function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q){
+function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.aliasList=[];
 	$scope.placeholderList=[];
 	$scope.tipologiesType=[]; 
-	$scope.currentRule={
+	$scope.currentRule={};
+	$scope.originalRule={};
+	$scope.detailProperty={};
+	
+	$scope.emptyRule={
 			dataSourceId:{},
-			definition:"SELECT * FROM employee as cur",
-			metadata:{},
-			placeholder:{}
+			definition:"SELECT FROM WHERE",
+			ruleOutputs:[],
+			placeholders:[]
 				};
-	$scope.detailProperty={
+	
+	$scope.emptyProperty={
 			dataSourcesIsSelected:false,
 			queryChanged:true,
 			previewData:{rows:[],metaData:{fields:[]}},
 			};
 	
-	$scope.clearPreviewAndMetadata=function(){
-		$scope.detailProperty.previewData={rows:[],metaData:{fields:[]}};
-		$scope.currentRule.metadata={};
+	$scope.clearPreviewAndMetadata=function(prev,metdt){
+		if(prev==true){
+			$scope.detailProperty.previewData={rows:[],metaData:{fields:[]}};
+		}
+		if(metdt==true){
+			$scope.currentRule.ruleOutputs=[];
+			
+		}
 	}
 	
 	$scope.errorHandler=function(text,title){
@@ -42,7 +52,52 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 	
 	
  	$scope.newMeasureFunction=function(){
-	} 
+	 	angular.copy($scope.emptyRule,$scope.currentRule);
+	 	angular.copy($scope.emptyRule,$scope.originalRule);
+	 	angular.copy($scope.emptyProperty,$scope.detailProperty);
+	 	$angularListDetail.goToDetail();
+	};
+ 	
+ 	$scope.cancelMeasureFunction=function(){
+ 		if(!angular.equals($scope.originalRule,$scope.currentRule)){
+	 		var confirm = $mdDialog.confirm()
+	        .title('Modifica in corso?')
+	        .content('sei sicuro di voler annullare l\'operazione?.')
+	        .ariaLabel('cancel metadata') 
+	        .ok('OK')
+	        .cancel('CANCEL');
+			  $mdDialog.show(confirm).then(function() {
+				  $angularListDetail.goToList();
+			  }, function() {
+			   return;
+			  });
+ 		}else{
+ 			  $angularListDetail.goToList();
+ 		}
+ 		
+ 		
+ 	};
+ 	
+ 	$scope.measureClickFunction=function(item){
+		console.log("click",item);
+		
+		sbiModule_restServices.promiseGet("1.0/kpi",item.ruleId+"/loadRule")
+		.then(function(response){ 
+			angular.copy(response.data,$scope.currentRule);
+			angular.copy(response.data,$scope.originalRule);
+			angular.copy($scope.emptyProperty,$scope.detailProperty);
+			$scope.detailProperty.dataSourcesIsSelected=true;
+			$scope.detailProperty.queryChanged=false;
+			$angularListDetail.goToDetail();
+			$timeout(function(){
+			 angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror.refresh();
+			},0)
+		},function(response){
+			console.log("errore")
+		});
+		
+		 
+	}
  	
  	$scope.saveMeasureFunction=function(){ 
  		$scope.checkValidityMeasureRole().then(function(){
@@ -53,7 +108,8 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
  	 		      fullscreen: true,
  	 		      locals:{
  	 		    	 currentRule:$scope.currentRule,
- 	 		    	 aliasExsist:$scope.aliasExtist}
+ 	 		    	 aliasExsist:$scope.aliasExtist
+ 	 		    	 }
  	 		    })
  	 		    .then(function(answer) {
  	 		      }, function() {
@@ -62,34 +118,28 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
  			$scope.errorHandler(message.text,message.title); 
  			return;
  		})
- 		
- 		
- 		
- 		
- 		
  	} 
  	
  	$scope.checkValidityMeasureRole=function(){
  		var deferred = $q.defer();
  		
  		//test query and set metadata if not setted
- 		var postData={dataSourceId:$scope.currentRule.dataSourceId,
-				query:$scope.currentRule.definition,
-				maxItem:1
+ 		var postData={
+ 				rule:$scope.currentRule
 				} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
-			$scope.columnToMetadata(response.data.columns);
+			$scope.columnToRuleOutputs(response.data.columns);
 			
 			//check if metadata are presents
-	 		if(Object.keys($scope.currentRule.metadata).length==0){
+	 			if($scope.currentRule.ruleOutputs.length==0){
 	 			 deferred.reject({text:'',title:'Metadati non settati'})
 	 		}
 	 		
 	 		//check if there is 1 measure
 	 		var measurePresent=false;
-	 		for(var key in $scope.currentRule.metadata){
-	 			if($scope.currentRule.metadata[key].type.valueCd=="MEASURE"){
+	 		for(var key in $scope.currentRule.ruleOutputs){
+	 			if($scope.currentRule.ruleOutputs[key].type.valueCd=="MEASURE"){
 	 				measurePresent=true;
 	 				break;
 	 			}
@@ -106,9 +156,7 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
  		return deferred.promise; 
  	}
  	
- 	$scope.cancelMeasureFunctionMeasureFunction=function(){
- 		alert("cancelMeasureFunction")
- 	} 
+ 	
  	
  	$scope.loadAliasList=function(){
  		sbiModule_restServices.promiseGet("1.0/kpi","listAlias")
@@ -129,23 +177,47 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
  	$scope.loadAliasList();
  	$scope.loadPlaceholderList();
 	
+ 	$scope.ruleOutputsIndexOfColumName=function(cname){
+ 		for(var i=0;i<$scope.currentRule.ruleOutputs.length;i++){
+ 			if($scope.currentRule.ruleOutputs[i].alias==cname){
+ 				return i;
+ 			}
+ 		}
+ 		return -1;
+ 	};
  	
- 	$scope.columnToMetadata=function(columns){
-		var tmpMeas=[];
-		for(var index in  columns){
-			tmpMeas.push( columns[index].label);
-			if(!$scope.currentRule.metadata.hasOwnProperty( columns[index].label)){
-				$scope.currentRule.metadata[columns[index].label]= columns[index]
-				$scope.currentRule.metadata[columns[index].label].type= $scope.tipologiesType[1];
+ 	$scope.placeholderIndexOfValue=function(cname){
+ 		for(var i=0;i<$scope.currentRule.placeholders.length;i++){
+ 			if($scope.currentRule.placeholders[i].name==cname){
+ 				return i;
+ 			}
+ 		}
+ 		return -1;
+ 	}
+ 	
+ 	$scope.columnToRuleOutputs=function(columns){
+ 		var tmpMeas=[];
+ 		
+ 		//add new Metadata
+ 		for(var index in  columns){
+ 			tmpMeas.push( columns[index].label);
+ 			if($scope.ruleOutputsIndexOfColumName(columns[index].label)==-1){
+ 				$scope.currentRule.ruleOutputs.push({
+ 					alias:columns[index].label,
+ 					type:$scope.tipologiesType[1]});
+ 			}
+ 		}
+ 		
+ 		//remove unused metadata
+ 		 
+ 		for(var index=0; index<$scope.currentRule.ruleOutputs.length;index++){ 
+			if(tmpMeas.indexOf($scope.currentRule.ruleOutputs[index].alias)==-1){
+				$scope.currentRule.ruleOutputs.splice(index,1);
+				index--;
 			}
 		} 
-		for(var index in $scope.currentRule.metadata){
-			if(tmpMeas.indexOf($scope.currentRule.metadata[index].label)==-1){
-				delete $scope.currentRule.metadata[index];
-			}
-		} 
-	}
- 	
+ 	};
+ 	 	
  	$scope.aliasExtist=function(aliasName){
 		 for(var i=0;i<$scope.aliasList.length;i++){
 			if( $scope.aliasList[i].name==aliasName){
@@ -155,14 +227,49 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 		return false; 
 	}
  	
+ 	$scope.getPlaceholder=function(plcName){
+ 		for(var i=0;i<$scope.placeholderList.length;i++){
+ 			if($scope.placeholderList[i].name==plcName){
+ 				return $scope.placeholderList[i];
+ 			}
+ 		}
+ 		return undefined;
+ 	};
+ 	
  	$scope.loadPlaceholder=function(){
  		var placeh=$scope.currentRule.definition.match(/@\w*/g);
- 		for(var i=0;i<placeh.length;i++){
- 			var plcName=placeh[i].substring(1,placeh[i].length);
- 			if(!$scope.currentRule.placeholder.hasOwnProperty(plcName))
- 			$scope.currentRule.placeholder[plcName]="";
+ 		if(placeh!=null){
+ 			//add new placeholder
+ 			for(var i=0;i<placeh.length;i++){
+ 				var plcName=placeh[i].substring(1,placeh[i].length);
+ 					if($scope.placeholderIndexOfValue(plcName)==-1){
+ 						
+ 						var plcObject=$scope.getPlaceholder(plcName);
+ 						if(plcObject==undefined){
+ 							var tmpPlcNew={
+ 									name:plcName,
+ 			 	 					value:""
+ 							};
+ 							$scope.currentRule.placeholders.push(tmpPlcNew)
+ 						}else{
+ 							$scope.currentRule.placeholders.push(plcObject)
+ 						} 
+ 					}
+ 			}
+ 			
+ 			//remove unused placeholder
+ 			for(var index=0;index<$scope.currentRule.placeholders.length;index++){
+ 				if(placeh.indexOf("@"+$scope.currentRule.placeholders[index].name)==-1){
+ 					$scope.currentRule.placeholders.splice(index,1);
+ 					index--;
+ 				}
+ 			}
+ 		}else{
+ 			angular.copy([], $scope.currentRule.placeholders);
  		}
+ 		
  	}
+ 	
 }
 
 function DialogSaveController($scope, $mdDialog,currentRule,sbiModule_restServices,aliasExsist) {
@@ -170,11 +277,11 @@ function DialogSaveController($scope, $mdDialog,currentRule,sbiModule_restServic
 	$scope.presentAlias=[];
 	$scope.newAlias=[];
 	$scope.currentRule=currentRule;
-	for(var key in currentRule.metadata){
-		if(aliasExsist(currentRule.metadata[key].label)){
-			$scope.presentAlias.push(currentRule.metadata[key].label);
+	for(var key in currentRule.ruleOutputs){
+		if(aliasExsist(currentRule.ruleOutputs[key].alias)){
+			$scope.presentAlias.push(currentRule.ruleOutputs[key].alias);
 		}else{
-			$scope.newAlias.push(currentRule.metadata[key].label);
+			$scope.newAlias.push(currentRule.ruleOutputs[key].alias);
 		}
 	}
 
@@ -186,21 +293,7 @@ function DialogSaveController($scope, $mdDialog,currentRule,sbiModule_restServic
 		    $mdDialog.cancel();
 		  };
 		  $scope.save = function() {
-			  var tmpRoleObj={};
-			  angular.copy(currentRule,tmpRoleObj);
-			 var ruleOutputs=[]; 
-			 for(var key in tmpRoleObj.metadata){
-				 tmpRoleObj.metadata[key].alias=tmpRoleObj.metadata[key].label;
-				 delete tmpRoleObj.metadata[key].label;
-				 delete tmpRoleObj.metadata[key].name;
-				 ruleOutputs.push(tmpRoleObj.metadata[key]);
-			 };
-			 tmpRoleObj.ruleOutputs=ruleOutputs;
-			 delete tmpRoleObj.metadata;
-			 console.log(tmpRoleObj) 
-			 
-			 
-			 sbiModule_restServices.promisePost("1.0/kpi","saveRule",tmpRoleObj)
+			  sbiModule_restServices.promisePost("1.0/kpi","saveRule",currentRule)
 				.then(function(response){ 
 					alert("salvataggio riuscito")
 					 $mdDialog.hide();
@@ -214,45 +307,51 @@ function DialogSaveController($scope, $mdDialog,currentRule,sbiModule_restServic
  
 function measureDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	
+	$scope.havePlaceholder=function(){
+ 		return !angular.equals($scope.currentRule.placeholders, {});
+ 	}
 	
-	
-	 
 	$scope.loadMetadata=function(){
 		$scope.loadPlaceholder();
-		var postData={dataSourceId:$scope.currentRule.dataSourceId,
-				query:$scope.currentRule.definition,
-				maxItem:1
+		var postData={
+				rule:$scope.currentRule
 				} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
 			
-			$scope.columnToMetadata(response.data.columns);
+			$scope.columnToRuleOutputs(response.data.columns);
 			 
 		},function(response){
 			$scope.errorHandler(response.data.errors[0].message,'Errore nella query');
-			$scope.clearPreviewAndMetadata();
+			$scope.clearPreviewAndMetadata(true,true);
 		});
 	}
 	
-	$scope.loadPreview=function(){
-		var postData={dataSourceId:$scope.currentRule.dataSourceId,
-				query:$scope.currentRule.definition,
-				maxItem:10
-				}
+	$scope.loadPreview=function(checkPlaceholder){
+		$scope.loadPlaceholder();
 		
-		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
-		.then(function(response){
-			 $scope.detailProperty.queryChanged=false;
-			$scope.columnToMetadata(response.data.columns);
-			angular.copy(response.data,$scope.detailProperty.previewData);
-		},function(response){
-			$scope.errorHandler(response.data.errors[0].message,'Errore nella query');
-			$scope.clearPreviewAndMetadata();
+		if(checkPlaceholder!=true ||  (checkPlaceholder==true && !$scope.havePlaceholder())){
+				
+			var postData={
+					rule:$scope.currentRule,
+					maxItem:10
+					}
 			
-		});
+			sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
+			.then(function(response){
+				 $scope.detailProperty.queryChanged=false;
+				$scope.columnToRuleOutputs(response.data.columns);
+				angular.copy(response.data,$scope.detailProperty.previewData);
+			},function(response){
+				$scope.errorHandler(response.data.errors[0].message,'Errore nella query');
+				$scope.clearPreviewAndMetadata(true,false);
+				
+			});
+		}else{
+			$scope.clearPreviewAndMetadata(true,false);
+			}
+	
 	}
-	
-	
 }
 
 function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices){
@@ -265,7 +364,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	                           ];
 	
 	$scope.loadMeasureRoleList=function(){
- 		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
+		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
 		.then(function(response){
 			$scope.measureRoleList=response.data;
 			},function(response){
@@ -274,9 +373,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
  	};
  	$scope.loadMeasureRoleList();
 	
-	$scope.measureClickFunction=function(item){
-		console.log("click",item);
-	}
+	
 	
 	$scope.deleteMeasure=function(item,event){
 		 var confirm = $mdDialog.confirm()
@@ -286,7 +383,19 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
          .ok($scope.translate.load("sbi.general.yes"))
          .cancel($scope.translate.load("sbi.general.No"));
 		   $mdDialog.show(confirm).then(function() {
-		     console.log( 'You decided to get rid of your debt.');
+		     
+			   
+			   sbiModule_restServices.promiseDelete("1.0/kpi",item.ruleId+"/deleteRule").then(
+					   function(response){
+						   alert("cancellato")
+					   },
+					   function(response){
+						   $scope.errorHandler(response.data.errors[0].message,""); 
+					   });
+			   
+			   
+			   
+			   
 		   }, function() {
 		    console.log("annulla")
 		   });

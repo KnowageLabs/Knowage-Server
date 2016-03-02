@@ -57,7 +57,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -127,7 +127,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -163,7 +163,7 @@ public class KpiService {
 
 	@POST
 	@Path("/preSave")
-	public Response queryValidation(@Context HttpServletRequest req) throws EMFUserError {
+	public Response preSave(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String obj = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(obj, Rule.class);
@@ -172,7 +172,10 @@ public class KpiService {
 
 			IKpiDAO kpiDao = getKpiDAO(req);
 			Map<String, String> errors = kpiDao.ruleValidation(rule);
-			return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
+			if (!errors.isEmpty()) {
+				return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
+			}
+			return Response.ok().build();
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
@@ -181,11 +184,6 @@ public class KpiService {
 	@POST
 	@Path("/saveRule")
 	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
-		Response validationResponse = queryValidation(req);
-		if (validationResponse != null && validationResponse.getEntity() != null) {
-			return validationResponse;
-		}
-
 		IKpiDAO dao = getKpiDAO(req);
 		try {
 			String requestVal = RestUtilities.readBody(req);
@@ -421,7 +419,7 @@ public class KpiService {
 			}
 			// Replacing parameters from notation "@name" to "$P{name}"
 			for (String paramName : parameterMap.keySet()) {
-				query = query.replaceFirst("\\@\\b" + paramName + "\\b", "$P{" + paramName + "}");
+				query = query.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
 		}
 

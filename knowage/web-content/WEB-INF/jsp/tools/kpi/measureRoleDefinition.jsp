@@ -36,14 +36,15 @@
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction" full-screen="false">
+	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction" full-screen="true">
 		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController">
 	 	<angular-table id='measureListTable' ng-model=measureRoleList
 				columns='measureRoleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
-				highlights-selected-item=true click-function="measureClickFunction(item);" > </angular-table>
+				highlights-selected-item=true
+				 click-function="measureClickFunction(item);" > </angular-table>
 		</list>
 		<extra-button>
 			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
@@ -70,11 +71,10 @@
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab3" ng-click="loadPreview()" ng-disabled="!detailProperty.dataSourcesIsSelected">
+				<md-tab id="tab3" ng-click="loadPreview(true)" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.ds.test")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./measureRoleTemplate/previewTemplate.jsp"%>
-        			
 					</md-tab-body>
 				</md-tab>
 				

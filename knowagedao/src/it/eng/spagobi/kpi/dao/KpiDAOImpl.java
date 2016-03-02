@@ -153,6 +153,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				// handling RuleOutputs
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
+					if (ruleOutput.getId() != null) {
+						sbiRuleOutput = (SbiKpiRuleOutput) session.load(SbiKpiRuleOutput.class, ruleOutput.getId());
+					}
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
 					if (ruleOutput.getType() != null) {
 						sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
@@ -731,13 +734,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				throw new SpagoBIDOAException("RuleOutput Type is mandatory");
 			}
 			if (MEASURE.equals(ruleOutput.getType().getValueCd())) {
+				hasMeasure = true;
 				validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), true, rule.getId(), errorsMap);
 			} else {
 				validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), false, rule.getId(), errorsMap);
 			}
-			if (!hasMeasure) {
-				throw new SpagoBIDOAException("Rule must contain at least one measure");
-			}
+		}
+		if (!hasMeasure) {
+			throw new SpagoBIDOAException("Rule must contain at least one measure");
 		}
 		if (!errorsMap.isEmpty()) {
 			throw new SpagoBIDOAException(MessageFormat.format(message.getMessage(NEW_KPI_RULEOUTPUT_ALIAS_ERROR), errorsMap.keySet()));
@@ -763,14 +767,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			} else {
 				c.add(Restrictions.eq("sbiKpiAlias.id", ruleOutput.getAliasId()));
 			}
-			if (MEASURE.equals(ruleOutput.getType().getValueCd()) && c.uniqueResult() != null) {
-				validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), true, rule.getId(), errorsMap);
+			if (MEASURE.equals(ruleOutput.getType().getValueCd())) {
+				hasMeasure = true;
+				if (c.uniqueResult() != null) {
+					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), true, rule.getId(), errorsMap);
+				}
 			} else {
 				validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), false, rule.getId(), errorsMap);
 			}
-			if (!hasMeasure) {
-				throw new SpagoBIDOAException("Rule must contain at least one measure");
-			}
+		}
+		if (!hasMeasure) {
+			throw new SpagoBIDOAException("Rule must contain at least one measure");
 		}
 	}
 
