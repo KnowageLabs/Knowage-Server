@@ -1,4 +1,4 @@
-﻿-- -----------------------------------
+-- -----------------------------------
 -- knowage Database script
 -- Important: Execute this script after creating the main tables
 -- ------------------------------------
