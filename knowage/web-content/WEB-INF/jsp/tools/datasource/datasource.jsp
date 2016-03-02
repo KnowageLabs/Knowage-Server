@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/catalogue/catalogue.css", currTheme)%>">
 
 <!-- JavaScript -->	
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>

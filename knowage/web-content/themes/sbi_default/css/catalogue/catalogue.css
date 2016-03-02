@@ -1,0 +1,26 @@
+@CHARSET "ISO-8859-1";
+
+.header {
+	min-height:0px; 
+  	height: 40px !important ;
+  	background-color: #3b678c !important;
+  	color: #ffffff !important;
+  	font-family: Roboto, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 18pt !important;
+	padding: 10px;
+}
+
+.rightHeaderButtonBackground {
+	background-color: #ffffff !important;
+	color:#000000 !important;
+}
+.addButtonCatalogue{
+	position: absolute ;
+  	right: 20px;
+  	top:30px;
+  	background-color: #c70751 !important;
+}
+.addButtonIcon{
+	color: white;
+	display: block !important;
+}
