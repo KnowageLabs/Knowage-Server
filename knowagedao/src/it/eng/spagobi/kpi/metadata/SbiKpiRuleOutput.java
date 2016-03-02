@@ -16,7 +16,6 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	private SbiKpiAlias sbiKpiAlias;
 	private SbiDomains type;
 	private SbiDomains category;
-	private Integer categoryId;
 
 	public SbiKpiRuleOutput() {
 	}
@@ -79,21 +78,6 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	 */
 	public void setType(SbiDomains type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return the categoryId
-	 */
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	/**
-	 * @param categoryId
-	 *            the categoryId to set
-	 */
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
 	}
 
 	/**

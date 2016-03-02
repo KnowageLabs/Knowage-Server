@@ -10,13 +10,12 @@ import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
 	// public List<RuleOutput> listRuleOutput();
 
-	public Map<String, String> ruleValidation(Rule rule);
+	public List<String> ruleValidation(Rule rule);
 
 	public List<RuleOutput> listRuleOutputByType(String type);
 

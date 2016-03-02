@@ -3,6 +3,7 @@ package it.eng.spagobi.kpi.bo;
 import it.eng.spagobi.commons.bo.Domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Kpi implements Serializable {
 
@@ -12,6 +13,9 @@ public class Kpi implements Serializable {
 	 */
 	private Integer id;
 	private String name;
+	private String author;
+	private Date dateCreation;
+
 	/**
 	 * A json object
 	 */
@@ -150,6 +154,36 @@ public class Kpi implements Serializable {
 	 */
 	public void setThreshold(Threshold threshold) {
 		this.threshold = threshold;
+	}
+
+	/**
+	 * @return the author
+	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author
+	 *            the author to set
+	 */
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	/**
+	 * @return the dateCreation
+	 */
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	/**
+	 * @param dateCreation
+	 *            the dateCreation to set
+	 */
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
 	}
 
 }
