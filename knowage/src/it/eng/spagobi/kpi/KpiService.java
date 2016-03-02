@@ -188,9 +188,17 @@ public class KpiService {
 			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
 
 			IKpiDAO kpiDao = getKpiDAO(req);
-			Map<String, String> errors = kpiDao.ruleValidation(rule);
-			if (!errors.isEmpty()) {
-				return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
+			List<String> errors = kpiDao.ruleValidation(rule);
+			if (errors != null && !errors.isEmpty()) {
+				JSONObject jsonError = new JSONObject();
+				JSONArray messages = new JSONArray();
+				for (String text : errors) {
+					JSONObject message = new JSONObject();
+					message.put("message", text);
+					messages.put(message);
+				}
+				jsonError.put("errors", messages);
+				return Response.ok(jsonError.toString()).build();
 			}
 			return Response.ok().build();
 		} catch (Exception e) {
@@ -491,11 +499,5 @@ public class KpiService {
 		return ret;
 	}
 
-	public static void main(String[] args) throws JSONException {
-		Map<String, String> errors = new HashMap<>();
-		errors.put("sss", "dsfbdsfbgd");
-		errors.put("dxsdsd", "qqqq");
-		System.out.println(new JSONArray(errors.entrySet()).toString());
-		// return Response.ok(JsonConverter.objectToJson(errors, errors.getClass())).build();
-	}
+	
 }
