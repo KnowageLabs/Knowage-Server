@@ -21,7 +21,7 @@
         <property name="definition" column="DEFINITION" type="string" not-null="true" length="1024"/>
         <property name="dataSourceId" column="DATASOURCE_ID" type="int" not-null="true"/>
         
-        <set name="sbiKpiRuleOutputs" cascade="all,delete-orphan" lazy="true">
+        <set name="sbiKpiRuleOutputs" cascade="all,delete-orphan" lazy="true" inverse="true">
             <key column="RULE_ID" />
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput" />
         </set>
