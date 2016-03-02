@@ -1,8 +1,20 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.engines.birt;
 
 import it.eng.spago.security.IEngUserProfile;
@@ -31,17 +43,18 @@ import org.apache.log4j.Logger;
 public class BirtImageServlet extends HttpServlet {
 
 	private transient Logger logger = Logger.getLogger(this.getClass());
-	private static final String CHART_LABEL="chart_label"; 
+	private static final String CHART_LABEL="chart_label";
 	private HttpSession session = null;
 	String userId = null;
-	
+
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public void service(HttpServletRequest request, HttpServletResponse response) {	
+	@Override
+	public void service(HttpServletRequest request, HttpServletResponse response) {
 
 		String chartLabel = request.getParameter(CHART_LABEL);
-	
+
 		ServletOutputStream ouputStream = null;
 		InputStream fis = null;
 		File imageTmpDir = null;
@@ -49,38 +62,38 @@ public class BirtImageServlet extends HttpServlet {
 		String completeImageFileName = null;
 		String mimeType = null;
 
-		
+
 		if ( chartLabel == null ) {
 			String tmpDir = System.getProperty("java.io.tmpdir");
 			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
 			imageTmpDir = new File(imageDirectory);
-	
+
 			String imageFileName = request.getParameter("imageID");
 			if (imageFileName == null) {
 				logger.error("Image directory or image file name missing.");
 				throw new RuntimeException("Image file name missing.");
 			}
-			
+
 			//gets complete image file name:
 			completeImageFileName = imageDirectory +  File.separator + imageFileName;
-	
+
 			imageFile = new File(completeImageFileName);
-			
+
 			File parent = imageFile.getParentFile();
 			// Prevent directory traversal (path traversal) attacks
 			if (!imageTmpDir.equals(parent)) {
 				logger.error("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
 				throw new SecurityException("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
 			}
-			
-			try {		
+
+			try {
 				fis = new FileInputStream(imageFile);
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException("Image file [" + completeImageFileName + "] not found.", e);
 			}
-			
+
 			mimeType = MimeUtils.getMimeType(imageFileName);
-			
+
 		} else {
 			// USER PROFILE
 			session = request.getSession();
@@ -92,20 +105,20 @@ public class BirtImageServlet extends HttpServlet {
 			// chart is a PNG fine
 			mimeType = MimeUtils.getMimeType("chart.png");
 		}
-		
+
 		try {
-			
+
 			ouputStream = response.getOutputStream();
-			
+
 			logger.debug("Mime type is = " + mimeType);
 			response.setContentType(mimeType);
 			response.setHeader("Content-Type", mimeType);
-			
+
 			byte[] buffer = new byte[1024];
-			int len; 
-			while ((len = fis.read(buffer)) >= 0) 
+			int len;
+			while ((len = fis.read(buffer)) >= 0)
 				ouputStream.write(buffer, 0, len);
-			
+
 		} catch (Exception e) {
 			logger.error("Error writing image into servlet output stream", e);
 		} finally {
@@ -126,13 +139,13 @@ public class BirtImageServlet extends HttpServlet {
 			if (imageFile != null && imageFile.exists() && imageFile.isFile()) {
 				imageFile.delete();
 			}
-		} 
+		}
 
 	}
 
 	/**
 	 * This method execute the engine chart and returns its image in byte[]
-	 * @param request the httpRequest 
+	 * @param request the httpRequest
 	 * @return the chart in inputstream form
 	 */
 	private InputStream executeEngineChart(Map parametersMap) {
@@ -144,7 +157,7 @@ public class BirtImageServlet extends HttpServlet {
 			String[] arLabelValue=(String[])parametersMap.get(CHART_LABEL);
 			String labelValue=arLabelValue[0];
 			logger.debug("execute chart with lable "+labelValue);
-			
+
 			HashMap chartParameters=new HashMap();
 			for (Iterator iterator = parametersMap.keySet().iterator(); iterator.hasNext();) {
 				String namePar = (String) iterator.next();
@@ -152,28 +165,28 @@ public class BirtImageServlet extends HttpServlet {
 					String[] value=(String[])parametersMap.get(namePar);
 					chartParameters.put(namePar, value[0]);
 				}
-			}		
-	
+			}
+
 			DocumentExecuteServiceProxy proxy=new DocumentExecuteServiceProxy(userId,session);
 			logger.debug("Calling Service");
 		    byte[] image=proxy.executeChart(labelValue, chartParameters);
 			logger.debug("Back from Service");
-			
+
 			is=new ByteArrayInputStream(image);
-			
+
 		} catch (Exception e) {
 			logger.error("Error in chart execution", e);
 			throw new RuntimeException("Error in chart execution", e);
 		}
 		return is;
 	}
-	
+
 	/*
 	private Map getMapParameters(Map allParams){
 		Map toReturn = new HashMap();
 		String[] strArParams = (String[])allParams.get("params");
 		String strParams = strArParams[0];
-		
+
 		try{
 			strParams = strParams.replace("{", "");
 			strParams = strParams.replace("}", "");
@@ -189,5 +202,5 @@ public class BirtImageServlet extends HttpServlet {
 		return toReturn;
 	}
 	*/
-	
+
 }
