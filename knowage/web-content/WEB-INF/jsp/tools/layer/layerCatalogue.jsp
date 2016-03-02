@@ -78,11 +78,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 	<angular-list-detail ng-controller="Controller"
-		new-function="loadLayerList" save-function="saveLayer"
-		cancel-function="cancel"
-		disable-save-button="!forms.contactForm.$valid"
-		show-save-button="showme" show-cancel-button="showme" show-detail="showme">
-	<list label='translate.load("sbi.layercatalogue")'> 
+		 show-detail="showme">
+	<list label='translate.load("sbi.layercatalogue")' new-function="loadLayerList"> 
 	<angular-table
 		id='layerlist' ng-model=layerList
 		columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
@@ -91,7 +88,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		speed-menu-option=menuLayer scope-functions=tableFunction> </angular-table>
 
 	</list> 
-	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'>
+	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'  save-function="saveLayer"
+		cancel-function="cancel"
+		disable-save-button="!forms.contactForm.$valid"
+		show-save-button="showme" show-cancel-button="showme">
 
 	<div layout-fill class="containerDiv">
 		<!-- 				ng-submit="forms.contactForm.$valid && saveLayer()" -->

@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/crossnavigation/css/cross-definition.css">
@@ -119,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-dialog>
 </script>
 
-	<angular-list-detail ng-controller="navigationController as ctrl" new-function="ctrl.newNavigation" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc" >
-       <list label="translate.load('sbi.crossnavigation.lst')"  > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
+	<angular-list-detail ng-controller="navigationController as ctrl"   >
+       <list label="translate.load('sbi.crossnavigation.lst')" new-function="ctrl.newNavigation" > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
 			<!-- navigations list -->
 			<angular-table 
 					layout-fill
@@ -139,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</list>
 		
-        <detail label="ctrl.detail.simpleNavigation?ctrl.detail.simpleNavigation.name:''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+        <detail label="ctrl.detail.simpleNavigation?ctrl.detail.simpleNavigation.name:''" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc"> <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">

@@ -254,7 +254,6 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-
   		deferred.reject(data, status, headers, config);
 	};
 	

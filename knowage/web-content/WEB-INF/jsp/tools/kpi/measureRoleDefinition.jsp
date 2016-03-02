@@ -55,14 +55,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController" new-function="newMeasureFunction" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction" full-screen="true">
+	<angular-list-detail ng-controller="measureRoleMasterController"  full-screen="true">
 		
-		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController">
+		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction">
 	 	<angular-table id='measureListTable' ng-model=measureRoleList
 				columns='measureRoleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
-				highlights-selected-item=true
 				 click-function="measureClickFunction(item);" > </angular-table>
 		</list>
 		<extra-button>
@@ -70,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  <md-button class="md-flat" ng-click="showPlaceholdersTab=!showPlaceholdersTab">{{translate.load("sbi.kpi.placeholder")}}</md-button>
 		</extra-button>
 		
-		<detail ng-controller="measureDetailController" >
+		<detail ng-controller="measureDetailController" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction"  >
 		
 		<div layout="row" class="absolute" layout-fill>
 		 

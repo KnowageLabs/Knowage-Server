@@ -2,6 +2,10 @@
 
 
 angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial','sbiModule','angular-list-detail','angular_list'])
+.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}])
 .controller('navigationController'
 		,['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast',function($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast){
 			var ctr = this;
