@@ -1,26 +1,37 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
-* © 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
-* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this file,
-* You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spago.dbaccess;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spagobi.commons.SingletonConfig;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
  /**
 * DATE            CONTRIBUTOR/DEVELOPER    NOTE
 * 13-12-2004		  Butano           Eliminato il parser creato appositamente per il DB
 *                                          Ora Configurator si appoggia al ConfigSingleton
-* 										    
+*
 **/
 /**
  * Questa Classe ha la responsabilità di effettuare il parser del file indicato dal Tag <DATA_ACCESS_CONFIGURATION_FILE_PATH> nel file xml principale dell'applicazione e di mettere
@@ -28,17 +39,17 @@ import it.eng.spagobi.commons.SingletonConfig;
  * <li> Recuperare l'oggetto <B>ConnectionPoolDescriptor</B> dato un nome simbolico
  * <li> Recuperare la lista dei nomi dei pool registrati dall'applicativo
  *
- * @author Andrea Zoppello 
+ * @author Andrea Zoppello
  * @version 1.0
  */
- 
+
 public class Configurator {
     private Configurator() {
     	ConfigSingleton config = ConfigSingleton.getInstance();
     	_parameterConnectionPoolDescriptors = new HashMap();
     	_parameterRegisteredConnectionPoolNames = new ArrayList();
     	SourceBean dataAccess = (SourceBean)config.getAttribute(DATA_ACCESS);
-    	
+
     	List connectionPools = dataAccess.getAttributeAsList("CONNECTION-POOL");
     	ConnectionPoolDescriptor connectionPoolDescriptor = null;
     	SourceBean connectionPool = null;
@@ -47,7 +58,7 @@ public class Configurator {
     	if (connectionPools != null) {
 	    	for (int i = 0; i < connectionPools.size(); i++) {
 	    		connectionPoolDescriptor = new ConnectionPoolDescriptor();
-	    		connectionPool = (SourceBean)connectionPools.get(i);  
+	    		connectionPool = (SourceBean)connectionPools.get(i);
 	    		poolName = (String)connectionPool.getAttribute("connectionPoolName");
 				connectionPoolDescriptor.setConnectionPoolName(poolName);
 				connectionPoolDescriptor.setConnectionPoolFactory((String)connectionPool.getAttribute("connectionPoolFactoryClass"));
@@ -55,30 +66,30 @@ public class Configurator {
 				String parameterName = null;
 				String parameterValue = null;
 				if (poolParameters != null) {
-					for (int j = 0; j < poolParameters.size(); j++) {				
+					for (int j = 0; j < poolParameters.size(); j++) {
 						parameterName = (String)(((SourceBean)poolParameters.get(j)).getAttribute("parameterName"));
-						parameterValue = (String)(((SourceBean)poolParameters.get(j)).getAttribute("parameterValue"));				
+						parameterValue = (String)(((SourceBean)poolParameters.get(j)).getAttribute("parameterValue"));
 						ConnectionPoolParameter parameter = new ConnectionPoolParameter(parameterName, parameterValue);
 						connectionPoolDescriptor.addConnectionPoolParameter(parameter);
-					}	
+					}
 				}
 				_parameterConnectionPoolDescriptors.put(poolName, connectionPoolDescriptor);
 	    	}
-    	} 
+    	}
     	else
     		TracerSingleton.log(
     	            Constants.NOME_MODULO,
     	            TracerSingleton.INFORMATION,
     	            "Configurator::Configurator: nessuna definizione di CONNECTION-POOL");
-    	
+
 		List registerPools= dataAccess.getAttributeAsList("CONNECTION-MANAGER.REGISTER-POOL");
     	SourceBean poolRegister = null;
     	if (registerPools != null) {
 	    	for (int i = 0; i < registerPools.size(); i++) {
-	    		poolRegister = (SourceBean)registerPools.get(i); 
-	    		_parameterRegisteredConnectionPoolNames.add((String)poolRegister.getAttribute("registeredPoolName"));
+	    		poolRegister = (SourceBean)registerPools.get(i);
+	    		_parameterRegisteredConnectionPoolNames.add(poolRegister.getAttribute("registeredPoolName"));
 	    	}
-    	} 
+    	}
     	else
     		TracerSingleton.log(
     	            Constants.NOME_MODULO,
@@ -89,9 +100,9 @@ public class Configurator {
     	// date format and timestamp format is read from spagobi.xml instead of data_access.xml
 //    	_dateFormat = (String)dataAccess.getAttribute("DATE-FORMAT.format");
 //      _timeStampFormat = (String)dataAccess.getAttribute("TIMESTAMP-FORMAT.format");
-    	
+
     	_dateFormat = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
-        _timeStampFormat = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format"); 
+        _timeStampFormat = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
         // end modifications by Zerbetto on March 9th 2009
     } // private Configurator()
 
@@ -143,8 +154,8 @@ public class Configurator {
     private static Configurator _instance = null;
     private static String DATA_ACCESS = "DATA-ACCESS";
     private Map _parameterConnectionPoolDescriptors;
-    private List _parameterRegisteredConnectionPoolNames;   
+    private List _parameterRegisteredConnectionPoolNames;
     private String _timeStampFormat = null;
-    private String _dateFormat = null;    
+    private String _dateFormat = null;
     //private ConfiguratorContentHandler _contentHandler = null;
 } // public class Configurator

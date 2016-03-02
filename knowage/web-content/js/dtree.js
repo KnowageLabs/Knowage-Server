@@ -1,9 +1,3 @@
-/** SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
   
 /*--------------------------------------------------|
 | dTree 2.05 | www.destroydrop.com/javascript/tree/ |
@@ -16,6 +10,8 @@
 |--------------------------------------------------*/
 
 // Node object
+
+
 function Node(id, pid, name, url, title, target, icon, iconOpen, open, onclick, checkName, checkValue, checked) {
 	this.id = id;
 	this.pid = pid;

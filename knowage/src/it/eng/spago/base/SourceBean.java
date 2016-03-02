@@ -1,24 +1,20 @@
-/**
-
-    Copyright 2004, 2007 Engineering Ingegneria Informatica S.p.A.
-
-    This file is part of Spago.
-
-    Spago is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    any later version.
-
-    Spago is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with Spago; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
- **/
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spago.base;
 
 import it.eng.spago.configuration.ConfigSingleton;
@@ -55,7 +51,7 @@ import org.xml.sax.XMLReader;
  * Un esempio d'uso &egrave; il seguente:
  * <p>
  * <blockquote>
- * 
+ *
  * <pre>
  * SourceBean inner = new SourceBean(&quot;inner&quot;);
  * inner.setAttribute(&quot;param1&quot;, 1);
@@ -64,38 +60,38 @@ import org.xml.sax.XMLReader;
  * outer.setAttribute(&quot;param3&quot;, &quot;value3&quot;);
  * outer.setAttribute(inner);
  * </pre>
- * 
+ *
  * </blockquote>
  * <p>
  * e la relativa rappresentazione XML &egrave;:
  * <p>
  * <blockquote>
- * 
+ *
  * <pre>
  * &lt;OUTER param3="value3"&gt;
  *     &lt;INNER param1="1" param2="value2"&gt;
  *     &lt;/INNER&gt;
  * &lt;/OUTER&gt;
  * </pre>
- * 
+ *
  * </blockquote>
  * <p>
  * Per recuperare il/i valori di un attributo il servizio da invocare &egrave; del tipo: <blockquote>
- * 
+ *
  * <pre>
  * String value2 = (String) outer.getAttribute(&quot;inner.param2&quot;);
  * </pre>
- * 
+ *
  * </blockquote>
  * <p>
  * La chiave di un attributo pu&ograve; sempre essere espressa con una dot-notation: <blockquote>
- * 
+ *
  * <pre>
  * String key = &quot;key1.key2.key3&quot;;
  * </pre>
- * 
+ *
  * </blockquote>
- * 
+ *
  * @version 1.0, 06/03/2002
  * @author Luigi Bellio
  * @see SourceBeanAttribute
@@ -139,7 +135,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Costruisce un <code>SourceBean</code> vuoto con nome <em>name</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param name
 	 *            nome del <code>SourceBean</code>
 	 * @param trim
@@ -161,7 +157,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Costruisce un <code>SourceBean</code> vuoto con nome <em>name</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param name
 	 *            nome del <code>SourceBean</code>
 	 * @exception SourceBeanException
@@ -182,7 +178,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Costruisce un <code>SourceBean</code> copia di <em>sourceBean</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param sourceBean
 	 *            <code>SourceBean</code> da copiare
 	 * @exception SourceBeanException
@@ -210,7 +206,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna un <code>CloneableObject</code> copia <em>non profonda</em> dell'oggetto stesso.
 	 * <p>
-	 * 
+	 *
 	 * @return una copia <em>non profonda</em> del <code>SourceBean</code> stesso
 	 */
 	@Override
@@ -228,7 +224,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina tutto il conenuto del <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @see SourceBean#clearBean(String)
 	 */
 	public void clearBean() {
@@ -239,7 +235,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina tutto il contenuto del <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @see SourceBean#clearBean()
@@ -252,7 +248,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Copia tutto il contenuto del parametro <code>SourceBean</code> nel proprio stato.
 	 * <p>
-	 * 
+	 *
 	 * @param sourceBean
 	 *            <code>SourceBean</code> di riferimento.
 	 */
@@ -267,7 +263,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Copia il contenuto del parametro <code>SourceBean</code> nel proprio stato a partire dall'attributo con chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            <code>String</code> key che identifica un elemento del sourceBean.
 	 * @param sourceBean
@@ -287,7 +283,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il nome del <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @return il nome del <code>SourceBean</code>
 	 * @see SourceBean#SourceBean(String)
 	 */
@@ -305,7 +301,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna tutti gli oggetti di tipo <code>SourceBeanAttribute</code> il cui campo chiave vale <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return <ul>
@@ -363,7 +359,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna true se l'oggetto sourceBean contiene almento un elemento con chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return esito della ricerca dell'elemento.
@@ -376,7 +372,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return <ul>
@@ -417,7 +413,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return <em>List</em> arraylist degli oggetti corrispondenti alla chiave, di dimensione nulla se nessun attributo viene trovato
@@ -440,15 +436,15 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Aggiunge al <code>SourceBean</code> un nuovo attributo con chiave <em>key</em> e valore <em>value</em>. Se il valore dell'attributo &egrave; un
 	 * <code>SourceBean</code> il servizio &egrave; equivalente a: <blockquote>
-	 * 
+	 *
 	 * <pre>
 	 * SourceBean keySourceBean = new SourceBean(key);
 	 * keySourceBean.setAttribute(value);
 	 * this.setAttribute(keySourceBean);
 	 * </pre>
-	 * 
+	 *
 	 * </blockquote>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @param value
@@ -515,7 +511,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Aggiunge al <code>SourceBean</code> un nuovo attributo il cui valore &egrave; un <code>SourceBean</code>. La chiave con cui il secondo
 	 * <code>SourceBean</code> viene aggiunto &egrave; pari al nome del contenitore stesso.
 	 * <p>
-	 * 
+	 *
 	 * @param value
 	 *            <code>SourceBean</code> da aggiungere
 	 * @exception SourceBeanException
@@ -540,7 +536,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce il valore dell'attributo con chiave <em>key</em> con il nuovo valore <em>value</em>. Se l'attributo non esiste viene aggiunto. Nel caso in
 	 * cui alla chiave corrisponda un attributo multi-value viene lanciata l'eccezione <code>SourceBeanException</code>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @param value
@@ -621,7 +617,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @exception SourceBeanException
@@ -678,7 +674,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il testo contenuto nel <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @return il testo contenuto
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#setCharacters(String)
@@ -693,7 +689,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il testo contenuto nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return il testo contenuto
@@ -715,7 +711,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Sostituisce il testo contenuto con quello del parametro <em>characters</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param characters
 	 *            il nuovo testo
 	 * @see SourceBean#getCharacters(String)
@@ -732,7 +728,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Sostituisce il testo contenuto con quello del parametro <em>characters</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param characters
 	 *            il nuovo testo
 	 * @param trim
@@ -754,7 +750,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce il testo contenuto nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em> con quello del parametro
 	 * <em>characters</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @param characters
@@ -777,7 +773,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina il testo contenuto nel <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @see SourceBean#getCharacters()
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#setCharacters(String)
@@ -791,7 +787,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina il testo contenuto nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @see SourceBean#getCharacters()
@@ -813,7 +809,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna un List contenente tutti i valori dell'attributo con chiave <em>key</em> che sono di tipo <code>SourceBean</code> e contengono un attributo
 	 * single-value con chiave <em>paramName</em> e valore <em>paramValue</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @param paramName
@@ -867,7 +863,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna tutti i valori dell'attributo con chiave <em>key</em> che sono di tipo <code>SourceBean</code> e contengono un attributo single-value con chiave
 	 * <em>paramName</em> e valore <em>paramValue</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @param paramName
@@ -893,7 +889,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna tutti gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti.
 	 * <p>
-	 * 
+	 *
 	 * @return <code>List</code> arraylist di <code>SourceBeanAttribute</code> contenuti
 	 * @see SourceBean#getContainedAttributes(String)
 	 * @see SourceBean#setContainedAttributes(List)
@@ -909,7 +905,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna tutti gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti nel <code>SourceBean</code> corrispondente all'attributo di chiave
 	 * <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return <code>List</code> list di <code>SourceBeanAttribute</code> contenuti
@@ -931,7 +927,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Sostituisce tutti gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti con quelli del vettore <em>attributes</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param attributes
 	 *            <code>List</code> list <code>SourceBeanAttribute</code> dei nuovi attributi
 	 * @see SourceBean#getContainedAttributes()
@@ -949,7 +945,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce tutti gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti nel <code>SourceBean</code> corrispondente all'attributo di chiave
 	 * <em>key</em> con quelli del vettore <em>attributes</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param attributes
 	 *            <code>List</code> list di <code>SourceBeanAttribute</code> dei nuovi attributi
 	 * @see SourceBean#getContainedAttributes()
@@ -993,7 +989,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina tutti gli attributi contenuti nel <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @see SourceBean#getContainedAttributes()
 	 * @see SourceBean#getContainedAttributes(String)
 	 * @see SourceBean#setContainedAttributes(List)
@@ -1007,7 +1003,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Elimina tutti gli attributi contenuti nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @see SourceBean#getContainedAttributes()
@@ -1028,7 +1024,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti il cui valore associato &egrave; di tipo <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @return <code>List</code> arrayList di <code>SourceBeanAttribute</code>
 	 * @see SourceBean#getContainedSourceBeanAttributes(String)
 	 * @see SourceBean#getContainedAttributes()
@@ -1048,7 +1044,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em> ed
 	 * il cui valore associato &egrave; di tipo <code>SourceBean</code>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo in dot-notation
 	 * @return <code>List</code> il vettore di <code>SourceBeanAttribute</code>
@@ -1066,7 +1062,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti il cui valore associato &egrave; di tipo <code>XMLObject</code>.
 	 * <p>
-	 * 
+	 *
 	 * @return <code>List</code> arraylist di <code>SourceBeanAttribute</code>
 	 * @see SourceBean#getContainedNotXMLObjectAttributes()
 	 * @see SourceBean#getContainedAttributes()
@@ -1085,7 +1081,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti il cui valore associato non &egrave; di tipo <code>XMLObject</code>.
 	 * <p>
-	 * 
+	 *
 	 * @return <code>List</code> arraylist di <code>SourceBeanAttribute</code>
 	 * @see SourceBean#getContainedXMLObjectAttributes()
 	 * @see SourceBean#getContainedAttributes()
@@ -1104,7 +1100,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il vettore di chiavi in dot-notation degli attributi a cui &egrave; associata la chiave <em>key</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param key
 	 *            chiave dell'attributo <em>non</em> in dot-notation
 	 * @return <code>List</code> il vettore di chiavi in dot-notation
@@ -1165,7 +1161,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing dell'<code>InputSource</code> <em>stream</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param stream
 	 *            rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
@@ -1179,7 +1175,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing della stringa <em>xmlSourceBean</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param xmlSourceBean
 	 *            rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
@@ -1232,7 +1228,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing della stringa <em>xmlSourceBean</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param xmlSourceBean
 	 *            rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
@@ -1246,7 +1242,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing del file <em>xmlSourceBean</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param xmlSourceBean
 	 *            nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
@@ -1283,7 +1279,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing del file <em>xmlSourceBean</em>.
 	 * <p>
-	 * 
+	 *
 	 * @param xmlSourceBean
 	 *            nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
@@ -1296,7 +1292,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/**
 	 * Ritorna un oggetto di tipo Element che verrࡵtilizzato nella rappresentazione in XML dell'oggetto.
-	 * 
+	 *
 	 * @return <code>Document<code> un oggetto di tipo Document.
 	 */
 	@Override
@@ -1328,7 +1324,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/**
 	 * Ritorna un oggetto di tipo Element che verrࡵtilizzato nella rappresentazione in XML dell'oggetto.
-	 * 
+	 *
 	 * @return <code>Document<code> un oggetto di tipo Document.
 	 */
 	@Override
@@ -1375,7 +1371,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString() Return the XML representation of this object.
 	 */
 	@Override
@@ -1393,7 +1389,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/**
 	 * Return the list of the mappings alias<->namespace uri contained in this element.
-	 * 
+	 *
 	 * @return List of NamespaceMapping objects
 	 */
 	public List getNamespaceMappings() {
@@ -1402,7 +1398,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/**
 	 * Allow to set the list of the mappings alias<->namespace uri contained in this element.
-	 * 
+	 *
 	 * @param mappings
 	 *            List of NamespaceMapping objects
 	 */
@@ -1419,7 +1415,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 
 	/**
 	 * Allow to set the alias name of the root element.
-	 * 
+	 *
 	 * @param prefix
 	 *            The alias name of this element's namespace.
 	 */
