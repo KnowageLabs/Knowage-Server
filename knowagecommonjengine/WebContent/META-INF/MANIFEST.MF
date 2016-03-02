@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: SpagoBICommonJEngine.war
-Implementation-Title: SpagoBICommonJEngine
+Name: KnowageCommonJEngine.war
+Implementation-Title: KnowageCommonJEngine
 Implementation-Version: 5.1.0
 

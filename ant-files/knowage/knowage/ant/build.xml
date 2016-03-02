@@ -284,11 +284,11 @@
 		</replace>
 		<unzip src="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" dest="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}" />
 		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
-			token="java://comp/env/spagobi_resource_path" value="java:/urls/spagobi_resource_path" />
+			token="java://comp/env/resource_path" value="java:/urls/resource_path" />
 		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
-				token="java://comp/env/spagobi_host_url" value="java:/urls/spagobi_host_url" />
+				token="java://comp/env/host_url" value="java:/urls/host_url" />
 		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
-				token="java://comp/env/spagobi_sso_class" value="java:/urls/spagobi_sso_class" />
+				token="java://comp/env/sso_class" value="java:/urls/sso_class" />
 		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 				token="java:/comp/env/wm/SpagoWorkManager" value="java:global/SpagoBIWorkManager" />
 		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 

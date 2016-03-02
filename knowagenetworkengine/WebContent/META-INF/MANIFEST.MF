@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: SpagoBIXxxSpagoEngine.war
-Implementation-Title: SpagoBIXxxSpagoEngine
+Name: KnowageXxxSpagoEngine.war
+Implementation-Title: KnowageXxxSpagoEngine
 Implementation-Version: 5.1.0
 

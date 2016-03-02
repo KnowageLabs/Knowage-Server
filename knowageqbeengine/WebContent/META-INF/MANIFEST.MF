@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: SpagoBIQbeEngine.war
-Implementation-Title: SpagoBIQbeEngine
+Name: KnowageQbeEngine.war
+Implementation-Title: KnowageQbeEngine
 Implementation-Version: 5.1.0
 

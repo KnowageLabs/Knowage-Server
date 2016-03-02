@@ -36,9 +36,11 @@ Version: 1.0
 <div style="margin-top: 5px">
 Logged User: <%= userName %>
 </div>
-
+<div style="margin-top: 5px">
+Source code available at <a href="http://www.knowage-suite.com">www.knowage-suite.com</a>
+</div>
 <div style="position: absolute; bottom:0px; text-align: center"> 
-<i>Copyright (C) 2014 Engineering Ingegneria Informatica S.p.A.</i>
+<i>Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.</i>
 </div>
 
 </body>

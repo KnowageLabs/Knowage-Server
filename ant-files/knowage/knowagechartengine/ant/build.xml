@@ -138,9 +138,9 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxrs-api-2.3.5.Final.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-jaxrs-2.3.5.Final.jar" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_resource_path" value="java:/urls/spagobi_resource_path" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_service_url" value="java:/urls/spagobi_service_url" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_sso_class" value="java:/urls/spagobi_sso_class" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/resource_path" value="java:/urls/resource_path" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/service_url" value="java:/urls/service_url" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/sso_class" value="java:/urls/sso_class" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java:/comp/env/wm/SpagoWorkManager" value="java:global/SpagoBIWorkManager" />
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
 			<replacetoken><![CDATA[<!-- START TOMCAT RES -->]]></replacetoken>

@@ -34,9 +34,9 @@ public class UtilitiesForTest {
 
 	/**
 	 * <pre>
-	 *  <Environment name="spagobi_service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>
-	 *     <Environment name="spagobi_host_url" type="java.lang.String" value="http://localhost:8080"/>
-	 *     <Environment name="spagobi_sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
+	 *  <Environment name="service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>
+	 *     <Environment name="host_url" type="java.lang.String" value="http://localhost:8080"/>
+	 *     <Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
 	 * </pre>
 	 *
 	 * @throws Exception
@@ -48,16 +48,16 @@ public class UtilitiesForTest {
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
-		ic.bind("java:/comp/env/spagobi_service_url", "http://localhost:8080/knowage");
-		ic.bind("java:/comp/env/spagobi_host_url", "http://localhost:8080");
-		ic.bind("java:/comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
+		ic.bind("java:/comp/env/service_url", "http://localhost:8080/knowage");
+		ic.bind("java:/comp/env/host_url", "http://localhost:8080");
+		ic.bind("java:/comp/env/sso_class", "it.eng.spagobi.services.common.FakeSsoService");
 
-		ic.bind("java://comp/env/spagobi_service_url", "http://localhost:8080/knowage");
-		ic.bind("java://comp/env/spagobi_host_url", "http://localhost:8080");
-		ic.bind("java://comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
+		ic.bind("java://comp/env/service_url", "http://localhost:8080/knowage");
+		ic.bind("java://comp/env/host_url", "http://localhost:8080");
+		ic.bind("java://comp/env/sso_class", "it.eng.spagobi.services.common.FakeSsoService");
 
 		SimpleSingletonConfigCache cache = new SimpleSingletonConfigCache();
-		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/spagobi_sso_class");
+		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/sso_class");
 		SingletonConfig.getInstance().setCache(cache);
 	}
 

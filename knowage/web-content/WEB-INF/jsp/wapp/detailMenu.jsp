@@ -622,7 +622,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div class='div_detail_form'> 
 			<select name="functionality" size="1" class='portlet-form-input-field' onchange="changeInitialPathVisibility(this);">
-				<option value=""> </option>
 				<option value="<%= SpagoBIConstants.DOCUMENT_BROWSER_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) ? "selected='selected'" : ""%>>
 					<spagobi:message key="menu.Browser" />
 				</option>

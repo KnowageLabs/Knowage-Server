@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: SpagoBIBirtReportEngine.war
-Implementation-Title: SpagoBIBirtReportEngine
+Name: KnowageBirtReportEngine.war
+Implementation-Title: KnowageBirtReportEngine
 Implementation-Version: 5.1.0
 Included: Birt 4.2.2

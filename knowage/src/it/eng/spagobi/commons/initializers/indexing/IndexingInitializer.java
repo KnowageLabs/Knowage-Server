@@ -51,26 +51,24 @@ public class IndexingInitializer implements InitializerIFace {
 		logger.debug("IN");
 		_config = config;
 
-		    String jndiResourcePath = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.jndiResourcePath");
-		    String location = SpagoBIUtilities.readJndiResource(jndiResourcePath);
-		    String name = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.name");
-		    //first checks if iindex exists
-		    File idxFile = new File(location+name);
-		    if(!idxFile.exists()){
-		    	logger.debug("Creating index");
-			    LuceneIndexer indexer = new LuceneIndexer();
-			    try {
-					indexer.createIndex(idxFile);
-				} catch (CorruptIndexException e) {
-					logger.error("Index corrupted "+e.getMessage(), e);
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-		    }else{
-		    	logger.debug("Index already exists");
-		    }
-
-		    
+		String jndiResourcePath = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.jndiResourcePath");
+		String location = SpagoBIUtilities.readJndiResource(jndiResourcePath);
+		String name = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.name");
+		// first checks if index exists
+		File idxFile = new File(location + name);
+		if (!idxFile.exists()) {
+			logger.debug("Creating index");
+			LuceneIndexer indexer = new LuceneIndexer();
+			try {
+				indexer.createIndex(idxFile);
+			} catch (CorruptIndexException e) {
+				logger.error("Index corrupted " + e.getMessage(), e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		} else {
+			logger.debug("Index already exists");
+		}
 
 		logger.debug("OUT");
 	}

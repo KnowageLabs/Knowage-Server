@@ -243,17 +243,17 @@ END-CAS -->
 	  </error-page>
 <!--
 	  <env-entry>
-	  	<env-entry-name>spagobi_resource_path</env-entry-name>
+	  	<env-entry-name>resource_path</env-entry-name>
 	  	<env-entry-type>java.lang.String</env-entry-type>
 	  	<env-entry-value>c:/SpagoBI/resources</env-entry-value>
 	  </env-entry>
 	  <env-entry>
-	  	<env-entry-name>spagobi_service_url</env-entry-name>
+	  	<env-entry-name>service_url</env-entry-name>
 	  	<env-entry-type>java.lang.String</env-entry-type>
 	  	<env-entry-value>http://localhost:9084/SpagoBI</env-entry-value>
 	  </env-entry>
 	  <env-entry>
-	  	<env-entry-name>spagobi_sso_class</env-entry-name>
+	  	<env-entry-name>sso_class</env-entry-name>
 	  	<env-entry-type>java.lang.String</env-entry-type>
 	  	<env-entry-value>it.eng.spagobi.services.common.TamSsoService</env-entry-value> 
 	  </env-entry>

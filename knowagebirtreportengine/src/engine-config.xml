@@ -4,14 +4,14 @@
 	<!-- ====================================================================================== -->
 	<!--  SSO settings 																	--> 
 	<!-- ====================================================================================== -->
-	<INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
+	<INTEGRATION_CLASS_JNDI>java://comp/env/sso_class</INTEGRATION_CLASS_JNDI>
 	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>
 	<PASS>PASS</PASS>
 	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
 	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
-	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/spagobi_service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
+	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
 	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
-	<RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
+	<RESOURCE_PATH_JNDI_NAME>java://comp/env/resource_path</RESOURCE_PATH_JNDI_NAME>
 	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->
 	<!-- SPAGOBI_DOMAIN_JNDI_NAME>java://comp/env/spagobi_domain</SPAGOBI_DOMAIN_JNDI_NAME-->	
 	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>

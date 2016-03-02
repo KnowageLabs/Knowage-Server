@@ -53,11 +53,11 @@
 
 	<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME"
 		description="The name of the JNDI variable that contains the RESOURCE PATH"
-		isActive="true" valueCheck="java://comp/env/spagobi_resource_path"
+		isActive="true" valueCheck="java://comp/env/resource_path"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI"
-		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url"
+		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/host_url"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL"
 		description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP"
@@ -232,7 +232,7 @@
 		valueType="STRING" category="SECURITY" />
 	<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI"
 		description="SSO INTEGRATION CLASS JNDI" isActive="true"
-		valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING"
+		valueCheck="java://comp/env/sso_class" valueType="STRING"
 		category="SECURITY" />
 
 	<!-- TimeStamp Format of SpagoBI DB -->
@@ -279,7 +279,7 @@
 		valueType="STRING" category="LANGUAGE_SUPPORTED" />
 
 	<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath"
-		description="" isActive="true" valueCheck="java://comp/env/spagobi_resource_path"
+		description="" isActive="true" valueCheck="java://comp/env/resource_path"
 		valueType="STRING" category="SEARCH_ENGINE" />
 	<CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath"
 		description="" isActive="true" valueCheck="//idx" valueType="STRING"
