@@ -2,7 +2,7 @@
 	reloadable="false">
 	<Manager className="org.apache.catalina.session.PersistentManager"
 		saveOnRestart="false" />
-	<ResourceLink global="jdbc/spagobi" name="jdbc/spagobi"
+	<ResourceLink global="jdbc/knowage" name="jdbc/knowage"
 		type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart"
 		type="javax.sql.DataSource" />
@@ -10,11 +10,11 @@
 		type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache"
 		type="javax.sql.DataSource" />
-	<ResourceLink global="spagobi_resource_path" name="spagobi_resource_path"
+	<ResourceLink global="resource_path" name="resource_path"
 		type="java.lang.String" />
-	<ResourceLink global="spagobi_sso_class" name="spagobi_sso_class"
+	<ResourceLink global="sso_class" name="sso_class"
 		type="java.lang.String" />
-	<ResourceLink global="spagobi_service_url" name="spagobi_service_url"
+	<ResourceLink global="service_url" name="service_url"
 		type="java.lang.String" />
 	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager"
 		type="jcommonj.work.WorkManager" />

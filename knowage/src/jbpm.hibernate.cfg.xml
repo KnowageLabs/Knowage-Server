@@ -15,7 +15,7 @@
 		<!-- property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property -->
 		<!-- property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property -->
 
-		<property name="hibernate.connection.datasource">java:comp/env/jdbc/spagobi</property>
+		<property name="hibernate.connection.datasource">java:comp/env/jdbc/knowage</property>
 
 		<property name="hibernate.cache.use_second_level_cache">false</property>
 		<property name="hibernate.cache.use_query_cache">false</property>

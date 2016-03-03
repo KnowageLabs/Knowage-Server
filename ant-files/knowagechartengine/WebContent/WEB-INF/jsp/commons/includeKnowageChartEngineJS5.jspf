@@ -1,0 +1,112 @@
+<!-- 
+Ignore this note for the moment (mimification script hasn't been implemented yet)
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+ 
+<!-- TODO : Make path relative to webapp name -->
+
+<!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="${pageContext.request.contextPath}/css/chart.css" type="text/css" />
+
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js' ></script>
+
+<!-- START-DEBUG -->
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Settings.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/overrides/overrides.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Sbi.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Log.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/exceptions/ExceptionHandler.js' ></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/configuration/propertiesCatalogue.js" ></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebService.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebServiceManager.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/ChartTemplateContainer.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/CrossNavigationHelper.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js" ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/components/ColorPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartUtils.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/DocumentModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/DocumentParamModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/CrossNavigationPanel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AdvancedEditor.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainerManager.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SerieColorPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SerieStylePopup.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisStylePopup.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationRoot.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartOrientationCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontAlignCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontVerticalAlignCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontDimCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontStyleCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SeriesOrderCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ColorPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ColorPickerContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopup.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelAxesLines.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendHeatmap.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapLegendAndTooltip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapLegend.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapTooltip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLimit.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelTooltip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterZoomType.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterConfiguration.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupToolbar.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupTip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationSunburstToolbarAndTip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationSunburstToolbar.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationSunburstTip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationWordcloud.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationWordcloudTooltip.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLegendTitle.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLegendElement.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/Designer.js' ></script>
+
+<!-- @addedBy: danristo (danilo.ristovski@mht.net) -->
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector_2.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLegend.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendTitle.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendElement.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/VerticalAlignmentCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationGauge.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/PlotbandsModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/PlotbandsStore.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/TypeLineCombo.js' ></script>
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION 
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/spagobi/chart-all-5.1.0.js'></script>
+-->
+
+<!-- END-PRODUCTION -->

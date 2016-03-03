@@ -321,7 +321,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 				new URL(tmp);
 			} catch (MalformedURLException e) {
 				SpagoBIRuntimeException sre = new SpagoBIRuntimeException("SpagoBI host URL is malformed!!", e);
-				sre.addHint("Check configuration for spagobi_host_url environment variable");
+				sre.addHint("Check configuration for host_url environment variable");
 				throw sre;
 			}
 			SPAGOBI_HOST = tmp;
