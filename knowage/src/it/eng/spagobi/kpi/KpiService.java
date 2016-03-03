@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
@@ -89,6 +90,20 @@ public class KpiService {
 	private static final String MEASURE_ATTRIBUTES = "attributes";
 	private static final String NEW_KPI_RULEOUTPUT_ALIAS_ERROR = "newKpi.ruleoutput.alias.error";
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
+
+	@GET
+	@Path("/buildCardinalityMatrix")
+	public Response buildCardinalityMatrix(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String arrayOfMeasures = RestUtilities.readBody(req);
+			List measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			IKpiDAO dao = getKpiDAO(req);
+			List<Cardinality> lst = dao.buildCardinality(measureList);
+			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
+		} catch (IOException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
 
 	@GET
 	@Path("/listPlaceholder")
@@ -438,14 +453,6 @@ public class KpiService {
 		Map<String, String> parameterMap = new HashMap<>();
 
 		if (placeholders != null && !placeholders.isEmpty()) {
-			// JSONObject placeholderObj = new JSONObject(placeholder);
-
-			// Iterator<String> placeholderNames = placeholderObj.keys();
-			// while (placeholderNames.hasNext()) {
-			// String name = placeholderNames.next();
-			// String value = placeholderObj.getString(name);
-			// parameterMap.put(name, value);
-			// }
 			for (Placeholder placeholder : placeholders) {
 				parameterMap.put(placeholder.getName(), placeholder.getValue());
 			}
