@@ -105,6 +105,20 @@ public class KpiService {
 		}
 	}
 
+	@POST
+	@Path("/listPlaceholderByMeasures")
+	public Response listPlaceholderByMeasures(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String arrayOfMeasures = RestUtilities.readBody(req);
+			List measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			IKpiDAO dao = getKpiDAO(req);
+			List<String> lst = dao.listPlaceholderByMeasures(measureList);
+			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
+		} catch (IOException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
+
 	@GET
 	@Path("/listPlaceholder")
 	public Response listPlaceholder(@Context HttpServletRequest req) throws EMFUserError {
