@@ -91,7 +91,7 @@ public class KpiService {
 	private static final String NEW_KPI_RULEOUTPUT_ALIAS_ERROR = "newKpi.ruleoutput.alias.error";
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
-	@GET
+	@POST
 	@Path("/buildCardinalityMatrix")
 	public Response buildCardinalityMatrix(@Context HttpServletRequest req) throws EMFUserError {
 		try {
