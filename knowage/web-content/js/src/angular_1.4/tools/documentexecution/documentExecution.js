@@ -92,7 +92,7 @@ function documentExecutionControllerFn(
 	 */
 	$scope.executeParameter = function(){
 		var jsonData =  {};
-		console.log("$scope.documentParameters -> ", $scope.documentParameters);
+		console.log("$scope.documentParameters !! -> ", $scope.documentParameters);
 		if($scope.documentParameters.length > 0){
 			for(var i = 0; i < $scope.documentParameters.length; i++ ){
 				jsonData[$scope.documentParameters[i].id] = $scope.documentParameters[i].parameterValue;
