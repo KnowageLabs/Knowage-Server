@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -22,6 +39,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.json.JSONException;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -39,7 +57,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		final List<SimpleNavigation> lst = new ArrayList<>();
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) {
+			public Boolean execute(Session session) throws JSONException {
 				Criteria c = session.createCriteria(SbiCrossNavigation.class).addOrder(Order.asc("name"));
 
 				for (Object o : c.list()) {
@@ -74,7 +92,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public void insert(final NavigationDetail nd) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) {
+			public Boolean execute(Session session) throws JSONException {
 				if (nd.getSimpleNavigation().getId() != null) {
 					throw new SpagoBIDOAException("Write error: record not valid");
 				}
@@ -105,7 +123,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public void update(final NavigationDetail nd) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
-			public Boolean execute(Session session) {
+			public Boolean execute(Session session) throws JSONException {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, nd.getSimpleNavigation().getId());
 				if (cn == null) {
 					throw new SpagoBIDOAException("Write error: record not found");
@@ -141,7 +159,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 		return executeOnTransaction(new IExecuteOnTransaction<NavigationDetail>() {
 			@Override
-			public NavigationDetail execute(Session session) {
+			public NavigationDetail execute(Session session) throws JSONException {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, id);
 				if (cn == null) {
 					throw new SpagoBIDOAException("Object of type SbiCrossNavigation with id[" + id + "] not found");
