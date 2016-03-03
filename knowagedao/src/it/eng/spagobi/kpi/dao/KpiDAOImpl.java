@@ -47,8 +47,6 @@ import org.hibernate.criterion.Restrictions;
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static final String NEW_KPI_RULEOUTPUT_ALIAS_ERROR = "newKpi.ruleoutput.alias.error";
-	private static final String NEW_KPI_ALIAS_ERROR = "newKpi.alias.error";
-	private static final String NEW_KPI_COPY_OF = "newKpi.copyOf";
 	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	private static final String KPI_RULEOUTPUT_TYPE = "KPI_RULEOUTPUT_TYPE";
@@ -56,7 +54,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
-	public List<Cardinality> loadCardinality(final List<String> measures) {
+	@Override
+	public List<Cardinality> buildCardinality(final List<String> measures) {
 		return executeOnTransaction(new IExecuteOnTransaction<List<Cardinality>>() {
 			@Override
 			public List<Cardinality> execute(Session session) throws Exception {
@@ -594,7 +593,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		if (sbiKpiRuleOutput.getType() != null) {
 		}
-		// TODO remove this line ruleOutput.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiRuleOutput.getType().getValueNm()));
 		ruleOutput.setType(from(sbiKpiRuleOutput.getType()));
 		// Fields from Rule: Rule Id, Rule Name, Author, Date Creation
 		ruleOutput.setRuleId(sbiKpiRuleOutput.getSbiKpiRule().getId());
@@ -690,13 +688,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				return invalidAlias;
 			}
-
 		});
 	}
 
 	private void validateRuleOutput(Session session, Integer aliasId, String aliasName, boolean isMeasure, Integer ruleId, List<String> invalidAlias) {
 		// Looking for a RuleOutput with same alias name or alias id
-		Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias");
+		Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").setMaxResults(1);
 		if (ruleId != null) {
 			c.add(Restrictions.ne("id", ruleId));
 		}
@@ -750,7 +747,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 			// Looking for other RuleOutput (ie different id) with same alias name or alias id
 			Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias")
-					.add(Restrictions.ne("id", ruleOutput.getId()));
+					.add(Restrictions.ne("id", ruleOutput.getId())).setMaxResults(1);
 			if (ruleOutput.getAlias() != null) {
 				c.add(Restrictions.eq("sbiKpiAlias.name", ruleOutput.getAlias()));
 			} else {

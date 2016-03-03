@@ -2,6 +2,7 @@ package it.eng.spagobi.kpi.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
@@ -12,6 +13,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import java.util.List;
 
 public interface IKpiDAO extends ISpagoBIDao {
+
+	/**
+	 * Given a list of measures it builds a cardinality matrix (measures/attributes)
+	 * 
+	 * @param measures
+	 * @return a list of Cardinality
+	 */
+	public List<Cardinality> buildCardinality(final List<String> measures);
 
 	public List<String> aliasValidation(Rule rule);
 
