@@ -1,26 +1,8 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
@@ -31,21 +13,18 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- */
-public class ParameterForExecutionJSONSerializer implements Serializer {
+public class DocumentParameterForExecutionJSONSerializer implements Serializer {
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof ParameterForExecution)) {
-			throw new SerializationException("ParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+		if (!(o instanceof DocumentParameters)) {
+			throw new SerializationException("DocumentParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			ParameterForExecution parameter = (ParameterForExecution) o;
+			DocumentParameters parameter = (DocumentParameters) o;
 			result = new JSONObject();
 			result.put("id", parameter.getId());
 			MessageBuilder msgBuild = new MessageBuilder();
@@ -95,15 +74,15 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				JSONArray visualDependencyConditions = new JSONArray();
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
-				List<ParameterForExecution.ParameterDependency> parameterDependencies;
+				List<DocumentParameters.ParameterDependency> parameterDependencies;
 				parameterDependencies = parameter.getDependencies().get(paramUrlName);
 
 				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if (pd instanceof ParameterForExecution.DataDependency) {
+					if (pd instanceof DocumentParameters.DataDependency) {
 						dependency.put("hasDataDependency", true);
-					} else if (pd instanceof ParameterForExecution.VisualDependency) {
-						ObjParview visualCondition = ((ParameterForExecution.VisualDependency) pd).condition;
+					} else if (pd instanceof DocumentParameters.VisualDependency) {
+						ObjParview visualCondition = ((DocumentParameters.VisualDependency) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
 						visualDependencyCondition.put("operation", visualCondition.getOperation());

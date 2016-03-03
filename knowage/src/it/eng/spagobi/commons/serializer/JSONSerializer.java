@@ -24,7 +24,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -131,7 +132,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(FileDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FederatedDataSet.class, new DataSetJSONSerializer());
-		
+
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
 		mappings.put(Resource.class, new ResourceJSONSerializer());
@@ -144,7 +145,9 @@ public class JSONSerializer implements Serializer {
 		mappings.put(ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
 		mappings.put(ModelExtended.class, new ModelExtendedJSONSerializer());
 
-		mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		// mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		mappings.put(DocumentParameters.class, new DocumentParameterForExecutionJSONSerializer());
 		mappings.put(SbiUdp.class, new UdpJSONSerializer());
 		mappings.put(SbiUdpValue.class, new UdpValueJSONSerializer());
 
@@ -171,6 +174,7 @@ public class JSONSerializer implements Serializer {
 
 	}
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		Object result = null;
 
@@ -185,6 +189,7 @@ public class JSONSerializer implements Serializer {
 
 				while (it.hasNext()) {
 					// For LOV objects (ModalitiesValue) this will put JSONObjects into JSONArray
+
 					r.put(serialize(it.next(), locale));
 				}
 				result = r;
@@ -198,6 +203,7 @@ public class JSONSerializer implements Serializer {
 			}
 
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
 

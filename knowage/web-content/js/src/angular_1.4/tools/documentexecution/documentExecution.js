@@ -36,7 +36,9 @@ function documentExecutionControllerFn(
 			}
 			
 			$scope.selectedRole = execProperties.roles[0];
-			$scope.startExecutionProcess($scope.selectedRole);
+			//$scope.startExecutionProcess($scope.selectedRole);
+			//$scope.startExecutionProcessRest($scope.selectedRole);
+			$scope.executionProcesRestV1($scope.selectedRole);
 		}
 		console.log("initSelectedRole OUT ");
 	};
@@ -47,12 +49,90 @@ function documentExecutionControllerFn(
 		$scope.showParametersPanel = $mdSidenav('right').isOpen();
 	};
 	
+	
+	
+	/*
+	 * START EXECUTION PROCESS REST
+	 * Return the SBI_EXECUTION_ID code 
+	 */
+	$scope.executionProcesRestV1 = function(role, paramsStr) {
+		
+		//var paramTest = '{"valoreDriver":"12","valoreDriver_field_visible_description":"12","valore_9_url":"21","valore_9_url_field_visible_description":"21"}';
+		if(typeof paramsStr === 'undefined'){
+			paramsStr='{}';
+		}
+		var params = 
+			"label=" + execProperties.executionInstance.OBJECT_LABEL
+			+ "&role=" + role
+			+ "&parameters=" + paramsStr;				
+		sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
+		sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
+				function(data, status, headers, config) {					
+					console.log(data);
+//					if ('errorDocument' in data){
+//						alert(data.error);
+//					}else{
+						if(data['errors'].length > 0 ){
+							var strErros='';
+							for(var i=0; i<=data['errors'].length-1;i++){
+								strErros=strErros + data['errors'][i] + ' \n';
+							}
+							alert(strErros);
+						}
+						$scope.documentParameters = data.parameters;
+						$scope.documentUrl=data.url;
+					//}						
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+	};
+	
+	
+	/*
+	 * EXECUTE PARAMS
+	 * Submit param form
+	 */
+	$scope.executeParameter = function(){
+		var jsonData =  {};
+		console.log("$scope.documentParameters -> ", $scope.documentParameters);
+		if($scope.documentParameters.length > 0){
+			for(var i = 0; i < $scope.documentParameters.length; i++ ){
+				jsonData[$scope.documentParameters[i].id] = $scope.documentParameters[i].parameterValue;
+				jsonData[$scope.documentParameters[i].id + "_field_visible_description"] = 
+					$scope.documentParameters[i].parameterValue;
+			}
+		}
+		$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonData));
+		//$scope.getURLForExecution($scope.selectedRole, $scope.execContextId, jsonData);
+		if($mdSidenav('right').isOpen()) {
+			$mdSidenav('right').close();
+			$scope.showParametersPanel = $mdSidenav('right').isOpen();
+		}
+//		$mdSidenav('right').toggle();
+	}
+	
+	
+	$scope.isExecuteParameterHidden = function(){
+		if($scope.documentParameters.length > 0){
+			for(var i = 0; i < $scope.documentParameters.length; i++ ){
+				if($scope.documentParameters[i].mandatory 
+						&& (typeof $scope.documentParameters[i].parameterValue === 'undefined') ){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	
 	/*
 	 * START EXECUTION PROCESS
 	 * Return the SBI_EXECUTION_ID code 
 	 */
 	$scope.startExecutionProcess = function(role) {
 		var params = 
+			//Servlet case put a "&"
 			"&OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID
 			+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL
 			+ "&isFromCross=" + execProperties.executionInstance.isFromCross
@@ -66,8 +146,10 @@ function documentExecutionControllerFn(
 		})
 		.error(function(data, status, headers, config) {
 			console.log("Error " + status + ": ", data);
-		});
+		});		
 	};
+	
+
 	
 	/*
 	 * GET PARAMETERS 
@@ -99,10 +181,10 @@ function documentExecutionControllerFn(
 				}
 				$scope.documentParameters = data;
 				$scope.getViewPoints(role, execContextId); 
-//			}else{
-//				$scope.getURLForExecution(role ,execContextId,data);
+			}else{
+				$scope.getURLForExecution(role ,execContextId,data);
 			}
-			$scope.getURLForExecution(role, execContextId, data);
+			
 		});
 	};
 	
@@ -179,46 +261,7 @@ function documentExecutionControllerFn(
 		});
 	};
 	
-	/*
-	 * EXECUTE PARAMS
-	 * Submit param form
-	 */
-	$scope.executeParameter = function(){
-		var jsonData =  {};
-		console.log("$scope.documentParameters -> ", $scope.documentParameters);
-		if($scope.documentParameters.length > 0){
-			for(var i = 0; i < $scope.documentParameters.length; i++ ){
-				jsonData[$scope.documentParameters[i].id] = $scope.documentParameters[i].parameterValue;
-				
-				jsonData[$scope.documentParameters[i].id + "_field_visible_description"] = 
-					$scope.documentParameters[i].parameterValue;
-			}
-		}
-		
-		$scope.getURLForExecution($scope.selectedRole, $scope.execContextId, jsonData);
-		if($mdSidenav('right').isOpen()) {
-			$mdSidenav('right').close();
-		}
-//		$mdSidenav('right').toggle();
-	}
 	
-	//chiedere a Benedetto
-	$scope.isExecuteParameterHidden = function(){
-//		var disabled = false;
-		if($scope.documentParameters.length > 0){
-			for(var i = 0; i < $scope.documentParameters.length; i++ ){
-				if($scope.documentParameters[i].mandatory 
-						&& (typeof $scope.documentParameters[i].parameterValue === 'undefined') ){
-					
-//					disabled = true;
-					return true;
-				}
-			}
-		}
-		
-		return false;
-//		return disabled;
-	}
 	
 	/*
 	 * GET URL DOCUMENT 
@@ -306,4 +349,85 @@ function documentExecutionControllerFn(
 	};
 	
 	console.log("documentExecutionControllerFn OUT ");
+	
+	
+	
+	
+	
+	
+	/*
+	 * OLD TEST
+	 */
+	
+	/*
+	 * START EXECUTION PROCESS REST
+	 * Return the SBI_EXECUTION_ID code 
+	 */
+	$scope.startExecutionProcessRest = function(role) {
+		var params = 
+			//Servlet case put a "&"
+			"OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID
+			+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL
+			+ "&isFromCross=" + execProperties.executionInstance.isFromCross
+			+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
+			+ "&ROLE=" + role;				
+		sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
+		sbiModule_restServices.get("executeDocumentV2", 'documentParams',params).success(
+				function(data, status, headers, config) {					
+					console.log(data);
+					//$scope.getParametersForExecutionRest(role, data.execContextId);
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+	};
+	
+	
+	
+	/*
+	 * GET PARAMETERS 
+	 * Check if parameters exist.
+	 * exist - open parameters panel
+	 * no exist - get iframe url  
+	 */
+	$scope.getParametersForExecutionRest = function(role, execContextId) {
+		var params = 
+			"OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID 
+			+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL 
+			+ "&isFromCross=" + execProperties.executionInstance.isFromCross
+			+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
+			+ "&ROLE=" + role + 
+			"&SBI_EXECUTION_ID=" + execContextId;		
+		sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
+		sbiModule_restServices.get("executeDocumentGetParameters", 'getParameters',params).success(
+				function(data, status, headers, config) {
+					console.log(data);
+					//check if document has paramiters 
+					if(data.length>0){
+						//check default param control TODO
+						$scope.showParametersPanel=true;
+						if(!($mdSidenav('right').isOpen())) {
+							$mdSidenav('right').open();
+						}
+						$scope.documentParameters = data;
+						$scope.getViewPointsRest(role, execContextId); 
+					}else{
+						$scope.getURLForExecutionRest(role ,execContextId,data);
+					}					
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+		
+		
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 };

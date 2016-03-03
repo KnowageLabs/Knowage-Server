@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.ParameterForExecution.ParameterDependency;
+import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -51,12 +51,12 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 	private static Logger logger = Logger.getLogger(GetAnalyticalDriversFromDocsInFolderAction.class);
 
 	// type of document to search: all if null
-	private final String TYPE = "type";   // for example WORKSHEET
+	private final String TYPE = "type"; // for example WORKSHEET
 
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String ROLE = "selectedRole";
 
-	Map<Integer, ExecutionInstance> instances; 
+	Map<Integer, ExecutionInstance> instances;
 
 	ExecutionInstance executionInstance;
 
@@ -66,7 +66,6 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 
 		IBIObjectDAO biObjDao;
 		ILowFunctionalityDAO funcDao;
-
 
 		try {
 			biObjDao = DAOFactory.getBIObjectDAO();
@@ -79,93 +78,82 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
 		String documentType = this.getAttributeAsString(TYPE);
 		String execRole = this.getAttributeAsString(ROLE);
-		logger.debug("Search folder "+folderId+ " for documents of type "+TYPE);
-		logger.debug(ROLE+":"+execRole);
+		logger.debug("Search folder " + folderId + " for documents of type " + TYPE);
+		logger.debug(ROLE + ":" + execRole);
 
-		if(folderId == null){
+		if (folderId == null) {
 			logger.error("Functionality id cannot be null");
-			throw new SpagoBIServiceException(SERVICE_NAME,"Functionality id cannot be null");
+			throw new SpagoBIServiceException(SERVICE_NAME, "Functionality id cannot be null");
 		}
 
 		try {
 			LowFunctionality funct = funcDao.loadLowFunctionalityByID(folderId, true);
-			Assert.assertNotNull(funct, "functionality with id "+folderId);
+			Assert.assertNotNull(funct, "functionality with id " + folderId);
 
-			List selObjects = getContainedObjFilteredbyType(funct, documentType );
+			List selObjects = getContainedObjFilteredbyType(funct, documentType);
 
-			Assert.assertNotNull(getContext().getExecutionInstancesAsMap( ExecutionInstance.class.getName() ), "Execution instance cannot be null");
+			Assert.assertNotNull(getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
 			// for each object I want to execute I must create an executionInstance
 
-			instances = getContext().getExecutionInstancesAsMap( ExecutionInstance.class.getName() );
+			instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
 
 			// retrieve all parameters
 			List<ParameterForExecution> parsToInsert = getParametersInformation(selObjects);
 
-			logger.debug("there are "+parsToInsert.size()+" pars to pass to panel");
+			logger.debug("there are " + parsToInsert.size() + " pars to pass to panel");
 
 			// eliminate dependencies
 			Map<String, Boolean> usedIds = new HashMap<String, Boolean>();
-			logger.debug("eliminate dependencies for "+parsToInsert+" analytical drivers");
+			logger.debug("eliminate dependencies for " + parsToInsert + " analytical drivers");
 			for (Iterator iterator = parsToInsert.iterator(); iterator.hasNext();) {
-				ParameterForExecution parameterForExecution = (ParameterForExecution) iterator
-						.next();
-				parameterForExecution.setDependencies(new HashMap<String, List<ParameterDependency>>());
+				ParameterForExecution parameterForExecution = (ParameterForExecution) iterator.next();
+				parameterForExecution.setDependencies(new HashMap<String, List<ParameterForExecution.ParameterDependency>>());
 				parameterForExecution.setDataDependencies(new ArrayList());
 				parameterForExecution.setVisualDependencies(new ArrayList());
 				parameterForExecution.setVisible(true);
-				
-				//mandatory if one of represented pars is mandatory: parameterForExecution.setMandatory(false);
-				
-				if(usedIds.get(parameterForExecution.getId())== null){
-						usedIds.put(parameterForExecution.getId(), true);
+
+				// mandatory if one of represented pars is mandatory: parameterForExecution.setMandatory(false);
+
+				if (usedIds.get(parameterForExecution.getId()) == null) {
+					usedIds.put(parameterForExecution.getId(), true);
+				} else {
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Error while retrieving parameters; two analytical driver with different label and different driver are referring to the same url name '"
+									+ parameterForExecution.getId() + "'; plese change url name or contact system administrator");
 				}
-				else{
-					throw new SpagoBIServiceException(SERVICE_NAME, "Error while retrieving parameters; two analytical driver with different label and different driver are referring to the same url name '"+parameterForExecution.getId()+"'; plese change url name or contact system administrator");
-				}
-				
+
 			}
-			
-			
-			
+
 			JSONArray parametersJSON = null;
 			try {
-				parametersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( parsToInsert, getLocale() );
+				parametersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parsToInsert, getLocale());
 			} catch (SerializationException e) {
 				logger.error("error in serializing in JSOn the parameters for execution");
 				throw e;
 			}
 			writeBackToClient(new JSONSuccess(parametersJSON));
 
-
-		}
-		catch (SpagoBIServiceException e) {
+		} catch (SpagoBIServiceException e) {
 			throw e;
-		}
-		catch (Throwable e) {
-			logger.error("Exception while retrieving analytical drivers in folder with id "+folderId, e);
+		} catch (Throwable e) {
+			logger.error("Exception while retrieving analytical drivers in folder with id " + folderId, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Exception while retrieving analytical drivers", e);
 		}
 
 		logger.debug("OUT");
 	}
 
-
-
-
-
-
-	public List getContainedObjFilteredbyType(LowFunctionality funct, String docType){
+	public List getContainedObjFilteredbyType(LowFunctionality funct, String docType) {
 		logger.debug("IN");
 		List objList = funct.getBiObjects();
 		// filteronly selected type
 		List<BIObject> selectedObjects = new ArrayList<BIObject>();
-		if(docType == null){
+		if (docType == null) {
 			selectedObjects = objList;
-		}
-		else {
+		} else {
 			for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 				BIObject biObject = (BIObject) iterator.next();
-				if(biObject.getBiObjectTypeCode().equals(docType)){
+				if (biObject.getBiObjectTypeCode().equals(docType)) {
 					selectedObjects.add(biObject);
 				}
 
@@ -175,25 +163,23 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 		return selectedObjects;
 	}
 
-
-
-
-	/** retrieve allparameters contained in objectsList, two are considered queals if labels and adriver are equals
-	 *  
+	/**
+	 * retrieve allparameters contained in objectsList, two are considered queals if labels and adriver are equals
+	 *
 	 * @param objList
 	 * @param docType
 	 * @return
 	 */
 
-	//public List<DriverInfos> getParametersInformation(List<BIObject> objList){
-	public List<ParameterForExecution> getParametersInformation(List<BIObject> objList){
+	// public List<DriverInfos> getParametersInformation(List<BIObject> objList){
+	public List<ParameterForExecution> getParametersInformation(List<BIObject> objList) {
 		logger.debug("IN");
 
 		List<ParameterForExecution> parsToReturn = new ArrayList<ParameterForExecution>();
 		// cycle on objects
 		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 			BIObject biObject = (BIObject) iterator.next();
-			logger.debug("analyze document "+biObject.getLabel());
+			logger.debug("analyze document " + biObject.getLabel());
 
 			BIObject objFromExec = instances.get(biObject.getId()).getBIObject();
 			// cycle on pars
@@ -202,25 +188,26 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 			for (Iterator iterator2 = objPars.iterator(); iterator2.hasNext();) {
 				BIObjectParameter par = (BIObjectParameter) iterator2.next();
 
-				if(par.getParameter()==null) continue;
+				if (par.getParameter() == null)
+					continue;
 
-				logger.debug("analyze parameter with label "+par.getLabel()+" and referring to driver "+par.getParameter().getLabel());			
+				logger.debug("analyze parameter with label " + par.getLabel() + " and referring to driver " + par.getParameter().getLabel());
 
 				// check if already inserted
 				ParameterForExecution found = contains(parsToReturn, par);
-				if(found != null){
+				if (found != null) {
 					// already found, add the anchor to the object par
-					logger.debug("to object parameter with id "+found.getId()+" is associated also object parameter with id "+par.getId());	
+					logger.debug("to object parameter with id " + found.getId() + " is associated also object parameter with id " + par.getId());
 					found.getObjParameterIds().add(par.getId());
 					// if new parameter found is amndatory also the general becomes mandatory
-					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par);
-					if(checkmandatoryPar.isMandatory()){
+
+					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par, executionInstance);
+					if (checkmandatoryPar.isMandatory()) {
 						found.setMandatory(true);
 					}
-				}
-				else{
+				} else {
 					// not found, add a new one
-					ParameterForExecution toAdd = new ParameterForExecution(par);
+					ParameterForExecution toAdd = new ParameterForExecution(par, executionInstance);
 					toAdd.getObjParameterIds().add(par.getId());
 					parsToReturn.add(toAdd);
 				}
@@ -232,23 +219,17 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 		return parsToReturn;
 	}
 
-	private ParameterForExecution contains(List<ParameterForExecution> parsToReturn, BIObjectParameter par){
+	private ParameterForExecution contains(List<ParameterForExecution> parsToReturn, BIObjectParameter par) {
 		logger.debug("IN");
 		ParameterForExecution toReturn = null;
 		for (Iterator iterator = parsToReturn.iterator(); iterator.hasNext() && toReturn == null;) {
 			ParameterForExecution parameterForExecution = (ParameterForExecution) iterator.next();
-			if(parameterForExecution.getLabel().equals(par.getLabel())
-					&&
-					parameterForExecution.getPar().getId().equals(par.getParID())
-			){
+			if (parameterForExecution.getLabel().equals(par.getLabel()) && parameterForExecution.getPar().getId().equals(par.getParID())) {
 				toReturn = parameterForExecution;
 			}
 		}
 		logger.debug("OUT");
 		return toReturn;
 	}
-
-
-
 
 }
