@@ -1,3 +1,4 @@
+
 <md-dialog style='height:80%; width:80%;'>
 	
 	<md-toolbar class=" header md-toolbar-tools knowage-blue">
@@ -5,7 +6,23 @@
         <h2>DrillThrough </h2>
       </div>
     </md-toolbar>
-	
+	<div>	
+		<md-input-container >
+	<label>Maximum rows</label>
+	 <md-select name="maxRows" ng-model="dtMaxRows" required>
+        <md-option value="0">0</md-option>
+        <md-option value="10">10</md-option>
+        <md-option value="25">25</md-option>
+        <md-option value="50">50</md-option>
+        <md-option value="100">100</md-option>
+      </md-select>
+      </md-input-container>	
+		</div>
+		
+		<treecontrol class="tree-light" tree-model="dtTree" selected-nodes="dtAssociatedLevels" options="treeOptions">
+     	{{node.name}} 
+ 		</treecontrol>
+		
 	<md-content layout-padding style="height:90%;">
 			
 					<angular-table 
@@ -21,14 +38,14 @@
 	
 	</md-content>	
 		<md-dialog-actions layout="row">
-		
-			<md-button ng-click="closeFiltersDialog(e)">
+	
+			<md-button ng-click="closeDtDialog(e)">
 				Cancel
 			</md-button>
-			<md-button ng-click="closeFiltersDialog(e)">
+			<md-button ng-click="exportDtTable(e)">
 				Export
 			</md-button>
-			<md-button ng-click="drillThrough(mdxQuery)" md-autofocus>
+			<md-button ng-click="drillThrough()" md-autofocus>
 				Apply 
 			</md-button>		
 		</md-dialog-actions>

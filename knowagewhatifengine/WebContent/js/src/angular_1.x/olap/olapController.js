@@ -1,4 +1,4 @@
-var olapMod = angular.module('olapManager', [ 'sbiModule','ngMaterial','angular_table', 'ngSanitize','ngDraggable'])
+var olapMod = angular.module('olapManager', [ 'sbiModule','ngMaterial','angular_table', 'ngSanitize','ngDraggable','treeControl'])
 .directive('compileTemplate', function($compile, $parse){
     return {
         link: function(scope, element, attr){
@@ -72,6 +72,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.filterCardList = [];
 	$scope.filterSelected = [];
 	$scope.dtData = [];
+	$scope.dtTree = [];
+	$scope.dtMaxRows= 0;
+	$scope.ord = null;
+	$scope.dtAssociatedLevels= [];
 	$scope.isFilterSelected = false;
 	$scope.filterAxisPosition;
 	$scope.showMdxVar = "";
@@ -620,25 +624,71 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		$scope.showDialog(ev,$scope.filterDial);
 	}
 	
-$scope.drillThrough = function(ordinal,ev) {
+	$scope.getCollections = function() {
 		
 		sbiModule_restServices.promiseGet
-		("1.0",'/member/drilltrough/'+ ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
-		.then(function(response,ev) {
-			$scope.dt = response.data;
-			console.log($scope.dt);
-			$scope.dtData = response.data;
-			$scope.dtColumns = Object.keys(response.data[0]);
-			$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
-			$scope.openDtDialog();
-
+		("1.0",'/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
+			console.log(response);
+			$scope.dtTree = response.data;
 		    }, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 			
 				});
-		
-		
 		}
+	$scope.treeOptions = {
+			
+			multiSelection: true,
+			dirSelectable: false
+			
+	
+	};
+	$scope.drillThrough = function(ordinal) {
+
+		var c = JSON.stringify($scope.dtAssociatedLevels);
+		console.log(c);
+		 switch (arguments.length) {
+		    case 0:
+		    	console.log("FROM DIALOG");
+		    	sbiModule_restServices.promiseGet
+				("1.0",'/member/drilltrough/'+ $scope.ord+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+				.then(function(response,ev) {
+					$scope.dt = response.data;
+					$scope.dtData = response.data;
+					$scope.dtColumns = Object.keys(response.data[0]);
+					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+				    }, function(response) {
+					sbiModule_messaging.showErrorMessage("error", 'Error');
+					
+						});
+		        break;
+		    case 1:
+		    	console.log("FROM CELL");
+		    	$scope.ord = ordinal;
+		    	sbiModule_restServices.promiseGet
+				("1.0",'/member/drilltrough/'+ ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+				.then(function(response,ev) {
+					$scope.dt = response.data;
+					console.log($scope.dt);
+					$scope.dtData = response.data;
+					$scope.dtColumns = Object.keys(response.data[0]);
+					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+					console.log($scope.formateddtColumns);
+					$scope.getCollections();
+					$scope.openDtDialog();
+
+				    }, function(response) {
+					sbiModule_messaging.showErrorMessage("error", 'Error');
+					
+						});
+		        break;
+		    default:
+		        break;
+		    }
+			
+			
+			
+			}
 		$scope.formatColumns = function(array){
 			var arr = [];
 			for (var i = 0; i < array.length; i++) {
@@ -651,7 +701,7 @@ $scope.drillThrough = function(ordinal,ev) {
 			return arr;
 		}
 		$scope.openDtDialog = function(ev) {
-			 
+			$scope.dtAssociatedLevels= []; 
 			$mdDialog
 			.show({
 				scope : $scope,
@@ -663,6 +713,9 @@ $scope.drillThrough = function(ordinal,ev) {
 				
 			});
 		  };
+		  $scope.closeDtDialog = function(ev) {
+			  $mdDialog.cancel();
+	      };  
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
 		var exist = false;

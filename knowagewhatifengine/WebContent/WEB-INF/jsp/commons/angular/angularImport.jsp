@@ -43,4 +43,7 @@
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.tpls.js"></script>
 	
+	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/at-control/tree-control.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/at-control/angular-tree-control.js"></script>
+	
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

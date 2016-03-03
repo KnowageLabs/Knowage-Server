@@ -9,6 +9,7 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -28,6 +30,7 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.MetadataElement;
 import org.pivot4j.sort.SortCriteria;
@@ -194,30 +197,83 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
+	@Path("/drilltrough/levels")
+	@Produces("text/html; charset=UTF-8")
+	public String getallLevels() throws OlapException {
+
+		JSONArray array = new JSONArray();
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		try {
+			List<Hierarchy> hs = model.getCube().getHierarchies();
+			for (Hierarchy h : hs) {
+				JSONObject hierarchy = new JSONObject();
+				JSONArray levelsArray = new JSONArray();
+
+				hierarchy.put("name", h.getName());
+				List<Level> levels = h.getLevels();
+				for (Level level : levels) {
+					JSONObject levelsObject = new JSONObject();
+					levelsObject.put("name", level.getName());
+					levelsObject.put("depth", level.getDepth());
+					levelsObject.put("visible", level.isVisible());
+
+					levelsArray.put(levelsObject);
+
+				}
+				hierarchy.put("children", levelsArray);
+				array.put(hierarchy);
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(array);
+		return array.toString();
+	}
+
+	@GET
 	@Path("/drilltrough/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillt(@PathParam("ordinal") Integer ordinal) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
-
+		ResultSetMetaData metadata;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
 		try {
 			Cell cell = cellSet.getCell(ordinal);
-			List<MetadataElement> selection = new ArrayList<MetadataElement>();
-			Hierarchy h = CubeUtilities.getHierarchy(model.getCube(), "[Region]");
-			// for (Level level : h.getLevels()) {
-			// selection.add(level);
-			// }
 			DrillThrough transform = model.getTransform(DrillThrough.class);
-			if (selection.isEmpty()) {
-				set = transform.drillThrough(cell);
-			} else {
-				set = transform.drillThrough(cell, selection, 30);
-			}
+			set = transform.drillThrough(cell);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
-			System.out.println(array);
+			// System.out.println(array);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return array.toString();
+	}
+
+	@GET
+	@Path("/drilltrough/{ordinal}/{collection}/{max}")
+	@Produces("text/html; charset=UTF-8")
+	public String drillfull(@PathParam("ordinal") Integer ordinal, @PathParam("collection") String col, @PathParam("max") Integer max) throws OlapException {
+		JSONArray array = null;
+		ResultSet set;
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		CellSet cellSet = model.getCellSet();
+		System.out.println(col);
+		try {
+
+			Cell cell = cellSet.getCell(ordinal);
+			List<MetadataElement> selection = new ArrayList<MetadataElement>();
+			DrillThrough transform = model.getTransform(DrillThrough.class);
+			set = transform.drillThrough(cell, selection, max);
+			array = ResultSetConverter.convertResultSetIntoJSON(set);
+			// System.out.println(array);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
