@@ -23,7 +23,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
-import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.ParameterForExecution.ParameterDependency;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -107,7 +107,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 			logger.debug("eliminate dependencies for " + parsToInsert + " analytical drivers");
 			for (Iterator iterator = parsToInsert.iterator(); iterator.hasNext();) {
 				ParameterForExecution parameterForExecution = (ParameterForExecution) iterator.next();
-				parameterForExecution.setDependencies(new HashMap<String, List<ParameterForExecution.ParameterDependency>>());
+				parameterForExecution.setDependencies(new HashMap<String, List<ParameterDependency>>());
 				parameterForExecution.setDataDependencies(new ArrayList());
 				parameterForExecution.setVisualDependencies(new ArrayList());
 				parameterForExecution.setVisible(true);
@@ -165,7 +165,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 
 	/**
 	 * retrieve allparameters contained in objectsList, two are considered queals if labels and adriver are equals
-	 *
+	 * 
 	 * @param objList
 	 * @param docType
 	 * @return
@@ -200,14 +200,13 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 					logger.debug("to object parameter with id " + found.getId() + " is associated also object parameter with id " + par.getId());
 					found.getObjParameterIds().add(par.getId());
 					// if new parameter found is amndatory also the general becomes mandatory
-
-					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par, executionInstance);
+					ParameterForExecution checkmandatoryPar = new ParameterForExecution(par);
 					if (checkmandatoryPar.isMandatory()) {
 						found.setMandatory(true);
 					}
 				} else {
 					// not found, add a new one
-					ParameterForExecution toAdd = new ParameterForExecution(par, executionInstance);
+					ParameterForExecution toAdd = new ParameterForExecution(par);
 					toAdd.getObjParameterIds().add(par.getId());
 					parsToReturn.add(toAdd);
 				}

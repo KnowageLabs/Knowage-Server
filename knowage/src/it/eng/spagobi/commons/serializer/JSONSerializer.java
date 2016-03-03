@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,7 +25,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -145,8 +145,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put(ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
 		mappings.put(ModelExtended.class, new ModelExtendedJSONSerializer());
 
-		// mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
-		mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
+		// mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
 		mappings.put(DocumentParameters.class, new DocumentParameterForExecutionJSONSerializer());
 		mappings.put(SbiUdp.class, new UdpJSONSerializer());
 		mappings.put(SbiUdpValue.class, new UdpValueJSONSerializer());

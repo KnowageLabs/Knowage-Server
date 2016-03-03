@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.analiticalmodel.execution.service.ParameterForExecution;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
@@ -40,12 +39,12 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof ParameterForExecution)) {
+		if (!(o instanceof GetParametersForExecutionAction.ParameterForExecution)) {
 			throw new SerializationException("ParameterForExecutionJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			ParameterForExecution parameter = (ParameterForExecution) o;
+			GetParametersForExecutionAction.ParameterForExecution parameter = (GetParametersForExecutionAction.ParameterForExecution) o;
 			result = new JSONObject();
 			result.put("id", parameter.getId());
 			MessageBuilder msgBuild = new MessageBuilder();
@@ -95,15 +94,15 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				JSONArray visualDependencyConditions = new JSONArray();
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
-				List<ParameterForExecution.ParameterDependency> parameterDependencies;
+				List<GetParametersForExecutionAction.ParameterForExecution.ParameterDependency> parameterDependencies;
 				parameterDependencies = parameter.getDependencies().get(paramUrlName);
 
 				for (int i = 0; i < parameterDependencies.size(); i++) {
 					Object pd = parameterDependencies.get(i);
-					if (pd instanceof ParameterForExecution.DataDependency) {
+					if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.DataDependency) {
 						dependency.put("hasDataDependency", true);
-					} else if (pd instanceof ParameterForExecution.VisualDependency) {
-						ObjParview visualCondition = ((ParameterForExecution.VisualDependency) pd).condition;
+					} else if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.VisualDependency) {
+						ObjParview visualCondition = ((GetParametersForExecutionAction.ParameterForExecution.VisualDependency) pd).condition;
 						dependency.put("hasVisualDependency", true);
 						JSONObject visualDependencyCondition = new JSONObject();
 						visualDependencyCondition.put("operation", visualCondition.getOperation());
