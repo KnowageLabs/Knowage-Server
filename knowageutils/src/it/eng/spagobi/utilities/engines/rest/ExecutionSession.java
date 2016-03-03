@@ -1,36 +1,19 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-/**
- * @class
- * Container of the ContextManager
- * You should use this Object in the abstractengineservices.. For example:
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
- * 
- * public class XXXEngineService {
- *	public ExecutionSession es;
- *	
- *	@Context
- *	protected HttpServletRequest servletRequest;
- *    
- *    public ExecutionSession getExecutionSession(){
- *    	if(es==null){
- *    		es = new ExecutionSession(servletRequest, servletRequest.getSession());
- *    	}
- *   	return es;
- *   }
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *	public WhatIfEngineInstance getXXXEngineInstance() {
- *		ExecutionSession es = getExecutionSession();
- *   	return (EngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
- *	}
- * }
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.utilities.engines.rest;

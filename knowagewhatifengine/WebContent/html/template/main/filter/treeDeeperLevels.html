@@ -1,22 +1,11 @@
-<li ng-repeat="item in item.children"  >
+<li ng-repeat="item in item.nodes"  >
 	<div>
-		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
+		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed" ng-click="expandTree(item)"> 
 		</md-icon>
-		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" ng-click="expandTreeAsync(item)"> 
-		</md-icon>
-		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
-		</md-icon>
-		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
-			{{item.name}}
-			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.name == filterSelected[filterAxisPosition].name"> 
-			</md-icon>
-		</span>
-		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
-			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
-			{{item.name}}
-			</md-checkbox>
-		</span>	
-		<ul  ng-model="item.children" ng-show="item.collapsed" ng-include="templateListChild">
+		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed" ng-click="expandTree(item)"> 
+		</md-icon> 
+		{{item.title}}
+		<ul  ng-model="item.nodes" ng-show="item.collapsed" ng-include="templateListChild">
 		</ul>
 	</div>
 </li>

@@ -1,4 +1,28 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.pivot4j.ui.html;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.Writer;
 import java.util.HashMap;
@@ -13,7 +37,6 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
-import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.ui.CellTypes;
 import org.pivot4j.ui.command.DrillDownCommand;
@@ -21,13 +44,6 @@ import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.RenderPropertyUtils;
-
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -40,7 +56,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		super(writer);
 		memberPositions = new HashMap<Member, Integer>();
 		showProperties = true;
-		setRowHeaderLevelPadding(20);
+
 	}
 
 	@Override
@@ -76,18 +92,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		String drillMode = context.getRenderer().getDrillDownMode();
 		if (!isEmptyNonPropertyCell(context)) {
-			if (context.getCellType() == CellTypes.VALUE && !context.getCell().isEmpty()) {
-				int ordinal = context.getCell().getOrdinal();
-				if (context.getRenderer().getEnableDrillThrough()) {
-
-					Map<String, String> attributes = new TreeMap<String, String>();
-					attributes.put("src", "../img/ico_search.gif");
-					attributes.put("id", "drillt");
-					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
-					startElement("img", attributes);
-					endElement("img");
-				}
-			}
 
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
@@ -120,16 +124,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("ng-click",
-										"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + " ')");
+								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ " ')");
 								startElement("img", attributes);
 								endElement("img");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("ng-click",
-										"drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
+								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ "' )");
 
 								startElement("img", attributes);
 								endElement("img");
@@ -143,10 +147,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 								}
 
 							}
-							if (cmd.equalsIgnoreCase("sort")) {
-								setSortingCommand(context);
-
-							}
 
 						}
 					}
@@ -158,17 +158,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						startElement("img", attributes);
 						endElement("img");
 					}
-				}
-			} else if (context.getMember() != null && context.getMember().getMemberType() != null
-					&& context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
-
-				for (UICommand<?> command : commands) {
-					String cmd = command.getName();
-					if (cmd.equalsIgnoreCase("sort")) {
-						setSortingCommand(context);
-
-					}
-
 				}
 			}
 		}
@@ -392,66 +381,5 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				throw new SpagoBIEngineRuntimeException("Erro getting the measure of a rendered cell ", e);
 			}
 		}
-	}
-
-	private void setSortingCommand(TableRenderContext context) {
-		int axis = 0;
-		if (context.getAxis() != null) {
-			axis = context.getAxis().axisOrdinal();
-		}
-
-		int axisToSort = 0;
-		if (axis == Axis.ROWS.axisOrdinal()) {
-			axisToSort = Axis.COLUMNS.axisOrdinal();
-		} else {
-			axisToSort = Axis.ROWS.axisOrdinal();
-		}
-
-		Map<String, String> attributes = new TreeMap<String, String>();
-
-		if (context.getRenderer().getEnableSort()) {
-			if (context.getModel().isSorting(context.getPosition()) && context.getModel().getSortCriteria() != null) {
-				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
-						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
-					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/ASC-rows.png");
-					} else {
-						attributes.put("src", "../img/ASC-columns.png");
-					}
-
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
-					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
-					startElement("img", attributes);
-					endElement("img");
-				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC) || context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
-						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
-
-					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/DESC-rows.png");
-					} else {
-						attributes.put("src", "../img/DESC-columns.png");
-					}
-
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
-					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
-					startElement("img", attributes);
-					endElement("img");
-				}
-			} else {
-				context.getModel().setSorting(false);
-				if (axisToSort == Axis.ROWS.axisOrdinal()) {
-					attributes.put("src", "../img/noSortRows.png");
-				} else {
-					attributes.put("src", "../img/noSortColumns.png");
-				}
-
-				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
-
-				startElement("img", attributes);
-				endElement("img");
-			}
-
-		}
-
 	}
 }

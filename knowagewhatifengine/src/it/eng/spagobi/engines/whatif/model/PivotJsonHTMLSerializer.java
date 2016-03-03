@@ -1,16 +1,31 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-/**
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Renderer of the model...
- * It uses the WhatIfHTMLRenderer to render the table in a HTML format
- *
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.model;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
+import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -38,7 +53,6 @@ import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.transform.impl.ChangeSlicerImpl;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
-import org.pivot4j.ui.command.BasicDrillThroughCommand;
 import org.pivot4j.ui.command.DrillCollapseMemberCommand;
 import org.pivot4j.ui.command.DrillCollapsePositionCommand;
 import org.pivot4j.ui.command.DrillDownCommand;
@@ -52,16 +66,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
-import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
@@ -96,6 +100,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("IN");
 
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+		String time = "Serilize start " + format.format(new Date());
+		System.out.println(time);
 		String table = "";
 
 		logger.debug("Creating the renderer");
@@ -104,7 +111,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRendereCallback callback = new WhatIfHTMLRendereCallback(writer);
-
 		logger.debug("Setting the properties of the renderer");
 
 		renderer.setShowParentMembers(false); // Optionally make the parent
@@ -113,16 +119,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 												// title headers.
 
 		callback.setCellSpacing(0);
+		// callback.setRowHeaderStyleClass(" x-pivot-header ");
+		// callback.setColumnHeaderStyleClass(" x-pivot-header-column");
+		// callback.setCornerStyleClass(" x-pivot-header");
+		// callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
+		// callback.setTableStyleClass("x-pivot-table");
+		// callback.setRowStyleClass(" generic-row-style ");
 
-		callback.setRowHeaderStyleClass(" x-pivot-header ");
-		callback.setColumnHeaderStyleClass(" x-pivot-header-column");
-		callback.setCornerStyleClass(" x-pivot-header");
-		callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
-		callback.setTableStyleClass("x-pivot-table");
-		callback.setRowStyleClass(" generic-row-style ");
-
-		callback.setEvenRowStyleClass(" even-row ");
-		callback.setOddRowStyleClass(" odd-row ");
+		// callback.setEvenRowStyleClass(" even-row ");
+		// callback.setOddRowStyleClass(" odd-row ");
 
 		// callback.setEvenColumnStyleClass(" even-column ");
 		// callback.setOddColumnStyleClass(" odd-column ");
@@ -151,15 +156,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 													// dimension title headers.
 			/*--------------------------------------------------------*/
 		}
-		renderer.addCommand(new BasicDrillThroughCommand(renderer));
-		renderer.setEnableDrillThrough(modelConfig.getEnableDrillThrough());
 
 		renderer.setDrillDownMode(drillDownModeValue);
 		renderer.setEnableDrillDown(true);
 		// renderer.setEnableColumnDrillDown(true);
 		// renderer.setEnableRowDrillDown(true);
-
-		renderer.setEnableSort(modelConfig.getSortingEnabled());
+		renderer.setEnableSort(true);
 
 		// /show parent members
 		Boolean showParentMembers = modelConfig.getShowParentMembers();
@@ -189,14 +191,14 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
 			modelConfig.setActualVersion(actualVersion);
 		}
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
-		String time = "Serilize start " + format.format(new Date());
+
+		logger.debug("Rendering the model");
+		time = "Serilize render start " + format.format(new Date());
 		System.out.println(time);
 		renderer.render(value, callback);
-		time = "Serilize end " + format.format(new Date());
+		time = "Serilize render end " + format.format(new Date());
 		System.out.println(time);
-		System.out.println();
-		System.out.println();
+
 		try {
 			writer.flush();
 			writer.close();
@@ -207,18 +209,16 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 
 		CellSet cellSet = value.getCellSet();
-
 		List<CellSetAxis> axis = cellSet.getAxes();
 
 		try {
 
 			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
 			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
-			// List<Dimension> axisDimensions =
-			// CubeUtilities.getDimensions(axisHierarchies);
+			List<Dimension> axisDimensions = CubeUtilities.getDimensions(axisHierarchies);
 			List<Dimension> otherHDimensions = CubeUtilities.getDimensions(value.getCube().getHierarchies());
 
-			// otherHDimensions.removeAll(axisDimensions);
+			otherHDimensions.removeAll(axisDimensions);
 
 			jgen.writeStartObject();
 			jgen.writeStringField(TABLE, table);
@@ -243,7 +243,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			logger.error("Error serializing the pivot table", e);
 			throw new SpagoBIRuntimeException("Error serializing the pivot table", e);
 		}
-
+		time = "Serilize end " + format.format(new Date());
+		System.out.println(time);
+		System.out.println();
+		System.out.println();
 		logger.debug("OUT");
 
 	}
@@ -256,10 +259,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		if (hierarchies != null) {
-			List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
-			serializeDimensions(jgen, dimensions, axisPos, field, false, null);
-		}
+		List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
+		serializeDimensions(jgen, dimensions, axisPos, field, false, null);
+
 	}
 
 	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model)
@@ -324,11 +326,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * private void serializeFilters(String field, JsonGenerator jgen,
 	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 *
+	 * 
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 *
+	 * 
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 *
+	 * 
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -336,7 +338,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 *
+	 * 
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -345,7 +347,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 *
+	 * 
 	 * } } jgen.writeEndArray(); }
 	 */
 	public String formatQueryString(String queryString) {

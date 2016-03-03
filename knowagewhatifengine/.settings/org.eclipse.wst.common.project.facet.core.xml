@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <runtime name="KNOWAGE Server"/>
+  <runtime name="Apache Tomcat v7.0"/>
   <fixed facet="jst.java"/>
   <fixed facet="jst.web"/>
   <installed facet="jst.java" version="5.0"/>
