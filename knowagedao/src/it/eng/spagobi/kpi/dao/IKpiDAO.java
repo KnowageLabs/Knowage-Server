@@ -28,7 +28,14 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public RuleOutput loadMeasureByName(String name);
 
-	public void insertRule(Rule rule) throws SpagoBIException;
+	/**
+	 * Saves a new Rule and returns its id
+	 * 
+	 * @param rule
+	 * @return rule id
+	 * @throws SpagoBIException
+	 */
+	public Integer insertRule(Rule rule) throws SpagoBIException;
 
 	public void updateRule(Rule rule) throws SpagoBIException;
 

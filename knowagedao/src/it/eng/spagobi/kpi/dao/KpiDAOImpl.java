@@ -123,10 +123,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public void insertRule(final Rule rule) {
-		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+	public Integer insertRule(final Rule rule) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
-			public Boolean execute(Session session) throws SpagoBIException {
+			public Integer execute(Session session) throws SpagoBIException {
 				ruleValidationForInsert(session, rule);
 
 				SbiKpiRule sbiRule = new SbiKpiRule();
@@ -157,10 +157,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				updateSbiCommonInfo4Insert(sbiRule);
 
-				session.save(sbiRule);
-				return Boolean.TRUE;
+				return (Integer) session.save(sbiRule);
 			}
-
 		});
 	}
 
