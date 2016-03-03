@@ -723,13 +723,13 @@
   	<PUBLISHER name="UserDocumentBrowserPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/documentbrowser/documentBrowserManagement.jsp"/>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/analiticalmodel/documentbrowser/userDocumentBrowser.jsp"/>
         		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
       		</RESOURCES>
     	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/documentbrowser/documentBrowserManagement.jsp"/>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/analiticalmodel/documentbrowser/userDocumentBrowser.jsp"/>
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
