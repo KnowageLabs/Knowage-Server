@@ -145,34 +145,6 @@
     <!-- END ERROR TAGS  -->
     
     
-    <!-- START ParametersGeneratorTag TAGS  -->
-    
-    <tag>
-        <name>ParametersGenerator</name>
-        <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.ParametersGeneratorTag</tag-class>
-        <body-content>empty</body-content>
-        <description>Rendering of the parameters form</description>
-        <attribute>
-            <name>modality</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>moduleName</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>requestIdentity</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-    
-     <!-- END ParametersGeneratorTag TAGS  -->
-    
-    
-    
     <!-- START MESSAGE TAGS  -->
     
 	<tag>

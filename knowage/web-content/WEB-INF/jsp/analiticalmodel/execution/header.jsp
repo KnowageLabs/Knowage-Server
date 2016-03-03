@@ -304,8 +304,8 @@ if (toolbarIsVisible) {
 <%-- Parameters --%>
 <div style="display: none">
 	<div id="parametersContentEl<%= uuid %>">
-		<spagobi:ParametersGenerator modality="EXECUTION_MODALITY"
-			requestIdentity="<%=uuid%>" />
+<%-- 		<spagobi:ParametersGenerator modality="EXECUTION_MODALITY"
+			requestIdentity="<%=uuid%>" /> --%>
 	</div>
 </div>
 <div id="popout_Parameters<%= uuid %>" class="popout"></div>
