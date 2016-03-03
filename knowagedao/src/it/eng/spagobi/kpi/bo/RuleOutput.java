@@ -16,6 +16,14 @@ public class RuleOutput implements Serializable {
 	private Integer aliasId;
 	private String rule;
 	private Integer ruleId;
+
+	public RuleOutput() {
+	}
+
+	public RuleOutput(Integer id) {
+		this.id = id;
+	}
+
 	/**
 	 * domainCd="KPI_MEASURE_CATEGORY"
 	 */
@@ -194,6 +202,6 @@ public class RuleOutput implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		return id == null && super.equals(o) || o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId());
+		return o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId()) || super.equals(o);
 	}
 }

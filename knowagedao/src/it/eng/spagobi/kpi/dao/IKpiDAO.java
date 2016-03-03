@@ -62,4 +62,12 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Threshold> listThreshold();
 
+	/**
+	 * Given a list of measures it retrieves a list of placeholder related to that measures
+	 * 
+	 * @param measureList
+	 * @return a list of placeholder name
+	 */
+	public List<String> listPlaceholderByMeasures(List<String> measureList);
+
 }
