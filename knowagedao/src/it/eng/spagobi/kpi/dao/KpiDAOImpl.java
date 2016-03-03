@@ -746,9 +746,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (ruleOutput.getType().getValueId() == null) {
 				throw new SpagoBIDOAException("RuleOutput Type is mandatory");
 			}
-			// Looking for other RuleOutput (ie different id) with same alias name or alias id
-			Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias")
-					.add(Restrictions.ne("id", ruleOutput.getId())).setMaxResults(1);
+			// Looking for other RuleOutput (ie different id) with same "alias name" or "alias id"
+			Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").createAlias("sbiKpiRule", "sbiKpiRule")
+					.add(Restrictions.ne("sbiKpiRule.id", ruleOutput.getId())).setMaxResults(1);
 			if (ruleOutput.getAlias() != null) {
 				c.add(Restrictions.eq("sbiKpiAlias.name", ruleOutput.getAlias()));
 			} else {
