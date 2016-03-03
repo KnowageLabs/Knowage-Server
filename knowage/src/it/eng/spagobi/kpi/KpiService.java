@@ -24,6 +24,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
@@ -47,6 +49,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -74,7 +77,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -84,19 +87,14 @@ public class KpiService {
 	private static final String MEASURE = "MEASURE";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
+	private static final String NEW_KPI_RULEOUTPUT_ALIAS_ERROR = "newKpi.ruleoutput.alias.error";
+	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
 	@GET
 	@Path("/listPlaceholder")
 	public Response listPlaceholder(@Context HttpServletRequest req) throws EMFUserError {
 		List<Placeholder> placeholders = getKpiDAO(req).listPlaceholder();
 		return Response.ok(JsonConverter.objectToJson(placeholders, placeholders.getClass())).build();
-	}
-
-	@GET
-	@Path("/{id}/cloneRule")
-	public Response cloneRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		getKpiDAO(req).cloneRule(id);
-		return Response.ok().build();
 	}
 
 	@GET
@@ -136,7 +134,15 @@ public class KpiService {
 	@Path("/listAvailableAlias")
 	public Response listAvailableAlias(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<Alias> aliases = dao.listAliasNotInMeasure();
+		List<Alias> aliases = dao.listAliasNotInMeasure(null);
+		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
+	}
+
+	@GET
+	@Path("/listAvailableAlias/{ruleId}")
+	public Response listAvailableAliasIncludingId(@PathParam("ruleId") Integer ruleId, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Alias> aliases = dao.listAliasNotInMeasure(ruleId);
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
@@ -144,7 +150,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -188,16 +194,14 @@ public class KpiService {
 			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
 
 			IKpiDAO kpiDao = getKpiDAO(req);
-			List<String> errors = kpiDao.ruleValidation(rule);
-			if (errors != null && !errors.isEmpty()) {
+			List<String> aliases = kpiDao.aliasValidation(rule);
+			if (aliases != null && !aliases.isEmpty()) {
 				JSONObject jsonError = new JSONObject();
-				JSONArray messages = new JSONArray();
-				for (String text : errors) {
-					JSONObject message = new JSONObject();
-					message.put("message", text);
-					messages.put(message);
-				}
-				jsonError.put("errors", messages);
+				JSONArray errors = new JSONArray();
+				JSONObject msg = new JSONObject();
+				msg.put("message", MessageFormat.format(message.getMessage(NEW_KPI_RULEOUTPUT_ALIAS_ERROR), aliases));
+				errors.put(msg);
+				jsonError.put("errors", errors);
 				return Response.ok(jsonError.toString()).build();
 			}
 			return Response.ok().build();
@@ -250,12 +254,13 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(tt, tt.getClass())).build();
 	}
 
-	@GET
-	@Path("/{id}/loadThreshold")
-	public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		Threshold t = getKpiDAO(req).loadThreshold(id);
-		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
-	}
+	// TODO remove this
+	// @GET
+	// @Path("/{id}/loadThreshold")
+	// public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	// Threshold t = getKpiDAO(req).loadThreshold(id);
+	// return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
+	// }
 
 	@POST
 	@Path("/saveKpi")
@@ -287,13 +292,14 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	@DELETE
-	@Path("/{id}/deleteThreshold")
-	public Response deleteThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		IKpiDAO dao = getKpiDAO(req);
-		dao.removeThreshold(id);
-		return Response.ok().build();
-	}
+	// TODO remove this
+	// @DELETE
+	// @Path("/{id}/deleteThreshold")
+	// public Response deleteThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	// IKpiDAO dao = getKpiDAO(req);
+	// dao.removeThreshold(id);
+	// return Response.ok().build();
+	// }
 
 	@DELETE
 	@Path("/{id}/deleteRule")
@@ -303,24 +309,25 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	@POST
-	@Path("/saveThreshold")
-	public Response saveThreshold(@Context HttpServletRequest req) throws EMFUserError {
-		IKpiDAO dao = getKpiDAO(req);
-		try {
-			String requestVal = RestUtilities.readBody(req);
-			Threshold threshold = (Threshold) JsonConverter.jsonToObject(requestVal, Threshold.class);
-			checkMandatory(threshold);
-			if (threshold.getId() == null) {
-				dao.insertThreshold(threshold);
-			} else {
-				dao.updateThreshold(threshold);
-			}
-			return Response.ok().build();
-		} catch (IOException e) {
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		}
-	}
+	// TODO remove this
+	// @POST
+	// @Path("/saveThreshold")
+	// public Response saveThreshold(@Context HttpServletRequest req) throws EMFUserError {
+	// IKpiDAO dao = getKpiDAO(req);
+	// try {
+	// String requestVal = RestUtilities.readBody(req);
+	// Threshold threshold = (Threshold) JsonConverter.jsonToObject(requestVal, Threshold.class);
+	// checkMandatory(threshold);
+	// if (threshold.getId() == null) {
+	// dao.insertThreshold(threshold);
+	// } else {
+	// dao.updateThreshold(threshold);
+	// }
+	// return Response.ok().build();
+	// } catch (IOException e) {
+	// throw new SpagoBIServiceException(req.getPathInfo(), e);
+	// }
+	// }
 
 	/* ***
 	 * Private methods ***
@@ -498,6 +505,4 @@ public class KpiService {
 
 		return ret;
 	}
-
-	
 }
