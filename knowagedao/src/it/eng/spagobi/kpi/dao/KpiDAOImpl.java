@@ -28,7 +28,6 @@ import it.eng.spagobi.kpi.metadata.SbiKpiRule;
 import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
 import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
-import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.text.MessageFormat;
@@ -187,33 +186,34 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 	}
 
-	@Override
-	public void cloneRule(Integer id) {
-		Rule rule = loadRule(id);
-		rule.setId(null);
-		rule.setName(getCopyMsg(rule.getName()));
-		for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-			ruleOutput.setId(null);
-			ruleOutput.setRuleId(null);
-			if (ruleOutput.getType().getValueCd().equals("MEASURE")) {
-				String newAlias = getCopyMsg(ruleOutput.getAlias());
-				Alias alias = loadAlias(newAlias);
-				int i = 0;
-				while (alias != null) {
-					i++;
-					newAlias = getCopyMsg(ruleOutput.getAlias(), i);
-					alias = loadAlias(newAlias);
-				}
-				ruleOutput.setAliasId(null);
-				ruleOutput.setAlias(newAlias);
-			}
-		}
-		insertRule(rule);
-	}
+	// TODO remove this
+	// @Override
+	// public void cloneRule(Integer id) {
+	// Rule rule = loadRule(id);
+	// rule.setId(null);
+	// rule.setName(getCopyMsg(rule.getName()));
+	// for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
+	// ruleOutput.setId(null);
+	// ruleOutput.setRuleId(null);
+	// if (ruleOutput.getType().getValueCd().equals("MEASURE")) {
+	// String newAlias = getCopyMsg(ruleOutput.getAlias());
+	// Alias alias = loadAlias(newAlias);
+	// int i = 0;
+	// while (alias != null) {
+	// i++;
+	// newAlias = getCopyMsg(ruleOutput.getAlias(), i);
+	// alias = loadAlias(newAlias);
+	// }
+	// ruleOutput.setAliasId(null);
+	// ruleOutput.setAlias(newAlias);
+	// }
+	// }
+	// insertRule(rule);
+	// }
 
-	private String getCopyMsg(String entityName, Object... o) {
-		return MessageFormat.format(message.getMessage(NEW_KPI_COPY_OF), o.length == 0 ? "" : o, entityName) + " ";
-	}
+	// private String getCopyMsg(String entityName, Object... o) {
+	// return MessageFormat.format(message.getMessage(NEW_KPI_COPY_OF), o.length == 0 ? "" : o, entityName) + " ";
+	// }
 
 	@Override
 	public void removeRule(Integer id) {
@@ -283,8 +283,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpi.setDefinition(kpi.getDefinition());
 		sbiKpi.setName(kpi.getName());
 		sbiKpi.setPlaceholder(kpi.getPlaceholder());
-		if (kpi.getThreshold() != null) {
+		if (kpi.getThreshold() == null) {
+			throw new SpagoBIDOAException("Threshold is mandatory");
+		}
+		if (kpi.getThreshold().getId() == null) {
+			SbiKpiThreshold sbiKpiThreshold = from(session, null, kpi.getThreshold());
+			updateSbiCommonInfo4Insert(sbiKpiThreshold);
+			sbiKpi.setThresholdId((Integer) session.save(sbiKpiThreshold));
+		} else {
 			sbiKpi.setThresholdId(kpi.getThreshold().getId());
+			/*
+			 * Threshold update is not permitted! SbiKpiThreshold sbiKpiThreshold = from(session, (SbiKpiThreshold) session.load(SbiKpiThreshold.class,
+			 * kpi.getThreshold().getId()), kpi.getThreshold()); updateSbiCommonInfo4Update(sbiKpiThreshold); sbiKpi.setThresholdId(sbiKpiThreshold.getId());
+			 */
 		}
 		// handling Category
 		SbiDomains category = manageCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
@@ -360,10 +371,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Kpi>() {
 			@Override
 			public Kpi execute(Session session) {
-				SbiKpiKpi sbiKpi = (SbiKpiKpi) session.get(SbiKpiKpi.class, id);
-				if (sbiKpi == null) {
-					throw new SpagoBIDAOObjectNotExistingException("Kpi with id [" + id + "] not found");
-				}
+				SbiKpiKpi sbiKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, id);
 				SbiKpiThreshold sbiKpiThreshold = (SbiKpiThreshold) session.load(SbiKpiThreshold.class, sbiKpi.getThresholdId());
 				return from(sbiKpi, sbiKpiThreshold, true);
 			}
@@ -381,20 +389,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<Alias> listAliasNotInMeasure() {
+	public List<Alias> listAliasNotInMeasure(final Integer ruleId) {
 		List<SbiKpiAlias> sbiAlias = list(new ICriterion<SbiKpiAlias>() {
 			@Override
 			public Criteria evaluate(Session session) {
-				/*
-				 * return session.createCriteria(SbiKpiRuleOutput.class).createAlias("type", "type").createAlias("sbiKpiAlias", "sbiKpiAlias")
-				 * .createAlias("sbiKpiRule", "sbiKpiRule").add(Restrictions.eq("type.valueCd", type)).addOrder(Order.asc("sbiKpiRule.name"))
-				 * .addOrder(Order.asc("sbiKpiAlias.name"));
-				 */
-				Criteria c = session.createCriteria(SbiKpiAlias.class);
-				DetachedCriteria detachedcriteria = DetachedCriteria.forClass(SbiKpiRuleOutput.class);
-				detachedcriteria.createAlias("sbiKpiAlias", "sbiKpiAlias").setProjection(Property.forName("sbiKpiAlias.name")).createAlias("type", "type")
+				DetachedCriteria detachedcriteria = DetachedCriteria.forClass(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias")
+						.createAlias("sbiKpiRule", "sbiKpiRule").setProjection(Property.forName("sbiKpiAlias.name")).createAlias("type", "type")
 						.add(Restrictions.eq("type.valueCd", MEASURE));
-				c.add(Property.forName("name").notIn(detachedcriteria));
+				if (ruleId != null) {
+					detachedcriteria.add(Restrictions.ne("sbiKpiRule.id", ruleId));
+				}
+				Criteria c = session.createCriteria(SbiKpiAlias.class).add(Property.forName("name").notIn(detachedcriteria));
 				return c;
 			}
 		});
@@ -450,24 +455,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return ruleOutputs;
 	}
 
-	@Override
-	public Threshold loadThreshold(Integer id) {
-		SbiKpiThreshold sbiKpiThreshold = load(SbiKpiThreshold.class, id);
-		return from(sbiKpiThreshold, true);
-	}
-
-	private Threshold from_(SbiKpiThreshold sbiKpiThreshold) {
-		Threshold threshold = new Threshold();
-		threshold.setId(sbiKpiThreshold.getId());
-		threshold.setName(sbiKpiThreshold.getName());
-		threshold.setTypeId(sbiKpiThreshold.getType().getValueId());
-		threshold.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiThreshold.getType().getValueNm()));// sbiKpiThreshold.getType().getValueNm());
-		for (Object obj : sbiKpiThreshold.getSbiKpiThresholdValues()) {
-			SbiKpiThresholdValue sbiValue = (SbiKpiThresholdValue) obj;
-			threshold.getThresholdValues().add(from(sbiValue));
-		}
-		return threshold;
-	}
+	// TODO remove this
+	// @Override
+	// public Threshold loadThreshold(Integer id) {
+	// SbiKpiThreshold sbiKpiThreshold = load(SbiKpiThreshold.class, id);
+	// return from(sbiKpiThreshold, true);
+	// }
 
 	private ThresholdValue from(SbiKpiThresholdValue sbiValue) {
 		ThresholdValue tv = new ThresholdValue();
@@ -478,13 +471,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		tv.setSeverity(MessageBuilderFactory.getMessageBuilder().getMessage(sbiValue.getSeverity().getValueNm()));// sbiValue.getSeverity().getValueNm());
 		tv.setSeverityId(sbiValue.getSeverity().getValueId());
 		return tv;
-	}
-
-	@Override
-	public void insertThreshold(Threshold t) {
-		// TODO
-		SbiKpiThreshold sbiTh = from(null, null, t);
-		insert(sbiTh);
 	}
 
 	private SbiKpiThreshold from(Session session, SbiKpiThreshold sbiKpiThreshold, Threshold t) {
@@ -542,24 +528,26 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return sbiValue;
 	}
 
-	@Override
-	public void updateThreshold(final Threshold t) {
-		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
-			@Override
-			public Boolean execute(Session session) {
-				SbiKpiThreshold sbiTh = (SbiKpiThreshold) session.load(SbiKpiThreshold.class, t.getId());
-				sbiTh = from(session, sbiTh, t);
-				session.merge(sbiTh);
-				session.flush();
-				return Boolean.TRUE;
-			}
-		});
-	}
+	// TODO remove this
+	// @Override
+	// public void updateThreshold(final Threshold t) {
+	// executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+	// @Override
+	// public Boolean execute(Session session) {
+	// SbiKpiThreshold sbiTh = (SbiKpiThreshold) session.load(SbiKpiThreshold.class, t.getId());
+	// sbiTh = from(session, sbiTh, t);
+	// session.merge(sbiTh);
+	// session.flush();
+	// return Boolean.TRUE;
+	// }
+	// });
+	// }
 
-	@Override
-	public void removeThreshold(Integer id) {
-		delete(SbiThreshold.class, id);
-	}
+	// TODO remove this
+	// @Override
+	// public void removeThreshold(Integer id) {
+	// delete(SbiThreshold.class, id);
+	// }
 
 	@Override
 	public List<Threshold> listThreshold() {
@@ -691,7 +679,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<String> ruleValidation(final Rule rule) {
+	public List<String> aliasValidation(final Rule rule) {
 		return executeOnTransaction(new IExecuteOnTransaction<List<String>>() {
 			@Override
 			public List<String> execute(Session session) throws Exception {

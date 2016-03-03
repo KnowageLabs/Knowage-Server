@@ -13,9 +13,7 @@ import java.util.List;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
-	// public List<RuleOutput> listRuleOutput();
-
-	public List<String> ruleValidation(Rule rule);
+	public List<String> aliasValidation(Rule rule);
 
 	public List<RuleOutput> listRuleOutputByType(String type);
 
@@ -41,7 +39,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Alias> listAlias();
 
-	public List<Alias> listAliasNotInMeasure();
+	/**
+	 * Retrieve all aliases not currently used as measure in all rules excluding the one with id=ruleId (optional)
+	 * 
+	 * @param ruleId
+	 * @return a list of Alias
+	 */
+	public List<Alias> listAliasNotInMeasure(Integer ruleId);
 
 	public Alias loadAlias(String name);
 
@@ -49,13 +53,4 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Threshold> listThreshold();
 
-	public Threshold loadThreshold(Integer id);
-
-	public void insertThreshold(Threshold t);
-
-	public void updateThreshold(Threshold t);
-
-	public void removeThreshold(Integer id);
-
-	public void cloneRule(Integer id);
 }

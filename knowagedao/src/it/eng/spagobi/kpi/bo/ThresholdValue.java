@@ -8,6 +8,9 @@ public class ThresholdValue {
 	private int position;
 	private String label;
 	private String color;
+	/*
+	 * domainCd="SEVERITY"
+	 */
 	private Integer severityId;
 	private String severity;
 

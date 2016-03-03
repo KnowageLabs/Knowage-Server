@@ -13,6 +13,9 @@ public class Threshold implements Serializable {
 	private Integer id;
 	private String description;
 	private String name;
+	/*
+	 * domainCd="THRESHOLD_TYPE"
+	 */
 	private Integer typeId;
 	private String type;
 
