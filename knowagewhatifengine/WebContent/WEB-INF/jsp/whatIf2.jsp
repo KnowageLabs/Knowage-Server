@@ -8,7 +8,7 @@
 <html ng-app="olapManager">
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/olap/olapController.js"></script>
+<%@include file="/WEB-INF/jsp/commons/olap/olapImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/olap.css">
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/whatIf.css">
 <title>OLAP</title>
@@ -16,8 +16,6 @@
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
 	var drillType = '<%= whatIfEngineInstance.getModelConfig().getDrillType() %>'
-	
-	
 </script>
 </head>
 <body ng-controller="olapController" >

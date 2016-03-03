@@ -1,0 +1,1 @@
+var olapMod = angular.module('olapManager', ['olap.controllers']);
