@@ -206,7 +206,7 @@ public class KpiService {
 			String obj = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(obj, Rule.class);
 
-			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
+			JSONObject result = executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
 
 			IKpiDAO kpiDao = getKpiDAO(req);
 			List<String> aliases = kpiDao.aliasValidation(rule);
@@ -219,7 +219,7 @@ public class KpiService {
 				jsonError.put("errors", errors);
 				return Response.ok(jsonError.toString()).build();
 			}
-			return Response.ok().build();
+			return Response.ok(result.toString()).build();
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
