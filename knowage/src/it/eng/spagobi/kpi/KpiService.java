@@ -246,18 +246,18 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
-			if (rule.getId() == null) {
-				dao.insertRule(rule);
+			Integer id = rule.getId();
+			if (id == null) {
+				id = dao.insertRule(rule);
 			} else {
 				dao.updateRule(rule);
 			}
-
+			return Response.ok("{\"id\":" + id + "}").build();
 		} catch (IOException e) {
 			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-		return Response.ok().build();
 	}
 
 	@GET
