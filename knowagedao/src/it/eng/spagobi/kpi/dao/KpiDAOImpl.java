@@ -692,9 +692,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private void validateRuleOutput(Session session, Integer aliasId, String aliasName, boolean isMeasure, Integer ruleId, List<String> invalidAlias) {
 		// Looking for a RuleOutput with same alias name or alias id
-		Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").setMaxResults(1);
+		Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").createAlias("sbiKpiRule", "sbiKpiRule")
+				.setMaxResults(1);
 		if (ruleId != null) {
-			c.add(Restrictions.ne("id", ruleId));
+			c.add(Restrictions.ne("sbiKpiRule.id", ruleId));
 		}
 		if (aliasName != null) {
 			c.add(Restrictions.eq("sbiKpiAlias.name", aliasName));
