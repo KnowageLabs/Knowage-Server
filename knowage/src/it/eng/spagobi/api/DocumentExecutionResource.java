@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,16 +42,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/1.0/documentexecution")
+@ManageAuthorization
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private class DocumentExecutionException extends Exception {
@@ -51,8 +57,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DocumentExecutionResource.class);
 
-	protected AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
-			getUserProfile());
+	protected AnalyticalModelDocumentManagementAPI documentManager = 
+			new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 	/**
 	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2
@@ -86,12 +92,27 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * @return { filterStatus: [ { title: 'Provincia', urlName: 'provincia',
-	 *         type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune',
-	 *         urlName: 'comune', type: 'list' lista:[], dependsOn: 'provincia'
-	 *         }, { title: 'Free Search', urlName: 'freesearch' } ], errors: 1 -
-	 *         'role missing' 2 - 'operation not allowed' (ruolo non associato
-	 *         al profilo utente) }
+	 * @return { 
+	 * 		filterStatus: [{
+	 * 			title: 'Provincia', 
+	 * 			urlName: 'provincia',
+	 *         	type: 'list',
+	 *         	lista:[[k,v],[k,v], [k,v]] 
+	 *      }, { 
+	 *      	title: 'Comune',
+	 *         	urlName: 'comune', 
+	 *         	type: 'list',
+	 *         	lista:[],
+	 *         	dependsOn: 'provincia'
+	 *      }, { 
+	 *      	title: 'Free Search', 
+	 *         	type: 'manual',
+	 *      	urlName: 'freesearch'
+	 *      }], 
+	 *      errors: 
+	 *      1 - 'role missing' 
+	 *      2 - 'operation not allowed' (ruolo non associato al profilo utente)
+	 * }
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
@@ -102,29 +123,55 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		String toBeReturned = "{}";
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		try {
-			role = getExecutionRole(role);
+//			role = getExecutionRole(role);
 
 			// recuperiamo il documento by label
-			BIObject document = documentManager.getDocument(label);
-
-			// recuperiamo i driver analitici
-			List<JSONObject> documentParameters = (List<JSONObject>) documentManager.getDocumentParameters(label);
-			for (JSONObject parameter : documentParameters) {
-				Parameter analyticalDriver = documentManager.getAnalyticalDriver(parameter.get("label"));
-				// analyticalDriver.get
+			IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+			BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
+			
+			List<BIObjectParameter> parametersList = biObject.getBiObjectParameters();
+			
+			ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
+					
+			for (BIObjectParameter objParameter : parametersList) {
+				Parameter parameter = objParameter.getParameter();
+				
+				HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+				
+				parameterAsMap.put("id", objParameter.getLabel());
+				parameterAsMap.put("label", objParameter.getLabel());
+				parameterAsMap.put("urlName", objParameter.getParameterUrlName());
+				parameterAsMap.put("type", parameter.getType());
+				parameterAsMap.put("typeCode", parameter.getModalityValue().getITypeCd());
+				parameterAsMap.put("selectionType", parameter.getModalityValue().getSelectionType());
+				parameterAsMap.put("valueSelection", parameter.getValueSelection());
+				parameterAsMap.put("selectedLayer", parameter.getSelectedLayer());
+				parameterAsMap.put("selectedLayerProp", parameter.getSelectedLayerProp());
+				parameterAsMap.put("visible", ((objParameter.getVisible() == 1)));
+				parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
+				parameterAsMap.put("multivalue", objParameter.isMultivalue());
+				parameterAsMap.put("dependsOn", new ArrayList<>());
+				
+				parametersArrayList.add(parameterAsMap);
+			}
+			
+			if(parametersList.size() > 0) {
+				resultAsMap.put("filterStatus", parametersArrayList);
+				resultAsMap.put("errors", new ArrayList<>());
 			}
 
-		} catch (DocumentExecutionException e) {
-			return Response.ok("{errors: '" + e.getMessage() + "', }").build();
+//		} catch (DocumentExecutionException e) {
+//			return Response.ok("{errors: '" + e.getMessage() + "' }").build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution filters", e);
 			throw new SpagoBIRuntimeException("Error while getting the document execution filters", e);
 		}
 
 		logger.debug("OUT");
-		return Response.ok(toBeReturned).build();
+		return Response.ok(resultAsMap).build();
 	}
 
 	/**
