@@ -7,7 +7,7 @@
       
      <session-factory name="HibernateSessionFactory"> 
 	<!--  
-    	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
+    	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/knowage</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     -->    
      <!--      

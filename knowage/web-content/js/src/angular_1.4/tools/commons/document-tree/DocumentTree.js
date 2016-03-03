@@ -72,7 +72,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 											}
 											else{
 												//search parent folder with hasmap and attach the son
-												mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+												if(mapFolder[folders[i][parentId]]){
+													mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+												}
 											}
 											//update linear structure with tree structure
 										}

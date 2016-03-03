@@ -47,7 +47,7 @@
     <Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
     <Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/> 
      
-   <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/spagobi" password="root" type="javax.sql.DataSource" url="jdbc:mysql://localhost/installer-knowage" username="root"/>   
+   <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/knowage" password="root" type="javax.sql.DataSource" url="jdbc:mysql://localhost/installer-knowage" username="root"/>   
  
    <!-- FOODMART -->
    <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/foodmart" password="root" type="javax.sql.DataSource" url="jdbc:mysql://localhost/foodmart" username="root"/> 

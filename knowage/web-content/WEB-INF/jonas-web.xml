@@ -4,8 +4,8 @@
 	       xsi:schemaLocation="http://www.objectweb.org/jonas/ns
 	       http://www.objectweb.org/jonas/ns/jonas-web-app_4_0.xsd" >
 	<jonas-resource>
-		<res-ref-name>jdbc/spagobi</res-ref-name>
-		<jndi-name>jdbc/spagobi</jndi-name>
+		<res-ref-name>jdbc/knowage</res-ref-name>
+		<jndi-name>jdbc/knowage</jndi-name>
 	</jonas-resource>
 <!--
 	<jonas-resource>

@@ -26,6 +26,6 @@ public class UtilitiesDAOForTest {
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
-		ic.bind("java:/comp/env/jdbc/spagobi", ds);
+		ic.bind("java:/comp/env/jdbc/knowage", ds);
 	}
 }

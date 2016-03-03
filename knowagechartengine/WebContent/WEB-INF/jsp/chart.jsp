@@ -174,7 +174,7 @@ author:
 		<jsp:param name="template" value="<%=template%>" />
 	</jsp:include>
 	
-	<%@include file="commons/includeAthenaChartEngineJS5.jspf"%>
+	<%@include file="commons/includeKnowageChartEngineJS5.jspf"%>
 <% } %>
 
 </head>

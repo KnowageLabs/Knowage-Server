@@ -19,7 +19,7 @@
     		</fileset>
     		<!-- LIBRERIE DIPENDENZA SBI.UTILS necessarie per la compilazione      -->
     		<!-- che non devono essere comprese nel war                            -->
-    		<fileset dir="${sbi.utils.lib}">
+    		<fileset dir="${knowage.utils.lib}">
           		<include name="**/*.jar"/>
     		</fileset>  		
  	</path>
@@ -43,16 +43,16 @@
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+  <!--   AGGIORNAMENTO JAR KNOWAGE.UTILS							                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <target name="sbi.utils.update" 
-      description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
-    <!-- deletes any previuos sbi.utils -->
+  <target name="knowage.utils.update" 
+      description="Updates knowage.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+    <!-- deletes any previuos knowage.utils -->
     <delete>
-      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar"/>
+      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.utils*.jar"/>
     </delete>
     <!-- copies the newly created jar file -->
-    <copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" 
+    <copy file="${knowageutils.dir}/dist/knowage.utils-${project.version}.jar" 
         todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   </target>
 
@@ -61,7 +61,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   COMPILAZIONE							                                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <target name="compile" depends="sbi.utils.update" description="compile the source" >
+  <target name="compile" depends="knowage.utils.update" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
     <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
       <classpath refid="web.classpath"/>

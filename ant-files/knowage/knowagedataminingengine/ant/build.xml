@@ -38,37 +38,37 @@
 
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+	<!--   AGGIORNAMENTO JAR KNOWAGE.UTILS							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="sbi.utils.update" description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
-		<!-- deletes any previuos sbi.utils -->
+	<target name="knowage.utils.update" description="Updates knowage.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos knowage.utils -->
 		<delete>
-			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar" />
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.utils*.jar" />
 		</delete>
 		<!-- copies the newly created jar file -->
-		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowageutils.json.dir}/dist/knowage.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowageutils.dir}/dist/knowage.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<!--   AGGIORNAMENTO JAR SBI.DAO							                                  -->
+	<!--   AGGIORNAMENTO JAR KNOWAGE.DAO							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="sbi.dao.update" description="Updates sbi.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
+	<target name="knowage.dao.update" description="Updates knowage.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
 		<!-- deletes any previuos qbe.core -->
 		<delete>
-			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.dao*.jar" />
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.dao*.jar" />
 		</delete>
 
 		<!-- copies the newly created jar file -->
-		<copy file="${sbi.dao.dir}/dist/sbi.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowage.dao.dir}/dist/knowage.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="sbi.utils.update,sbi.dao.update" description="compile the source">
+	<target name="compile" depends="knowage.utils.update,knowage.dao.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
 			<classpath refid="web.classpath" />
@@ -126,7 +126,7 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxrs-api-2.3.5.Final.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-jaxrs-2.3.5.Final.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-multipart-provider-2.3.5.final.jar" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/resource_path" value="java:/urls/resource_path" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/service_url" value="java:/urls/service_url" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/sso_class" value="java:/urls/sso_class" />

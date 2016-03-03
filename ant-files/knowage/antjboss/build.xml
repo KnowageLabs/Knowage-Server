@@ -28,10 +28,10 @@
 	<target name="clean.sdk">
 		<ant dir="../knowagesdk/ant" target="clean"/>
 	</target>
-	<target name="create.knowagesdk.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagesdk.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagesdk/ant" />
 	</target>
-	<target name="deploy.knowagesdk.war" depends="create.sbi.utils.jar,create.knowagesdk.war">
+	<target name="deploy.knowagesdk.war" depends="create.knowage.utils.jar,create.knowagesdk.war">
 		<delete dir="${tomcat.home}/webapps/knowagesdk" />
 		<mkdir dir="${tomcat.home}/webapps/knowagesdk" />
 		<unzip src="../../../knowagesdk/dist/knowagesdk.war" dest="${tomcat.home}/webapps/knowagesdk" />
@@ -63,28 +63,28 @@
 		<ant dir="../knowage/ant" target="create-bin.war" />
 	</target>
 	
-	<target name="jboss.deploy.knowage.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.knowage.war">
+	<target name="jboss.deploy.knowage.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.knowage.war">
 			<delete dir="${jboss.home}/standalone/deployments/knowage.war" />
 			<mkdir dir="${jboss.home}/standalone/deployments/knowage.war" />
 			<unzip src="../../../knowage/dist/knowage.war" dest="${jboss.home}/standalone/deployments/knowage.war" />
 			<touch file="${jboss.home}/standalone/deployments/knowage.war.dodeploy"/>
 	</target>
 
-	<target name="create.sbi.utils.jar" >
+	<target name="create.knowage.utils.jar" >
 		<ant dir="../knowageutilsjson/ant" />
 		<ant dir="../knowageutils/ant" />
 	</target>
 
-	<target name="create.qbe.core.jar" depends="create.sbi.utils.jar">
+	<target name="create.qbe.core.jar" depends="create.knowage.utils.jar">
 		<ant dir="../qbecore/ant" />
 	</target>
 
-	<target name="create.sbi.dao.jar" depends="create.sbi.utils.jar,create.qbe.core.jar">
+	<target name="create.knowage.dao.jar" depends="create.knowage.utils.jar,create.qbe.core.jar">
 		<ant dir="../knowagedao/ant" />
 	</target>
 	
 	<!--
-	<target name="create.sbi.oauth.security.jar" depends="create.sbi.utils.jar,create.sbi.dao.jar">
+	<target name="create.knowage.oauth.security.jar" depends="create.knowage.utils.jar,create.knowage.dao.jar">
 		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
 	</target>
 	
@@ -101,11 +101,11 @@
 		<ant dir="../SpagoBILdapSecurityProvider/ant" />
 	</target>
 	-->
-	<target name="create.knowagebirtreportengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagebirtreportengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagebirtreportengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagebirtreportengine.war" depends="create.sbi.utils.jar,create.knowagebirtreportengine.war">
+	<target name="jboss.deploy.knowagebirtreportengine.war" depends="create.knowage.utils.jar,create.knowagebirtreportengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagebirtreportengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagebirtreportengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagebirtreportengine.war" />
@@ -114,10 +114,10 @@
 	</target>
 
 	<!--
-	<target name="create.SpagoBIGeoEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIGeoEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIGeoEngine.war" depends="create.sbi.utils.jar,create.SpagoBIGeoEngine.war">
+	<target name="deploy.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar,create.SpagoBIGeoEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
@@ -125,11 +125,11 @@
 	</target>
 	 -->
 
-	<target name="create.knowagegeoreportengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagegeoreportengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagegeoreportengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagegeoreportengine.war" depends="create.sbi.utils.jar,create.knowagegeoreportengine.war">
+	<target name="jboss.deploy.knowagegeoreportengine.war" depends="create.knowage.utils.jar,create.knowagegeoreportengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagegeoreportengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagegeoreportengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagegeoreportengine.war" />
@@ -138,11 +138,11 @@
 	</target>
 
 
-	<target name="create.knowagecockpitengine.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.qbe.core.jar">
+	<target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar">
 		<ant dir="../knowagecockpitengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagecockpitengine.war" depends="create.sbi.utils.jar,create.knowagecockpitengine.war">
+	<target name="jboss.deploy.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowagecockpitengine.war">
 			<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagecockpitengine" />
 			<delete dir="${jboss.home}/standalone/deployments/knowagecockpitengine.war" />
 			<mkdir dir="${jboss.home}/standalone/deployments/knowagecockpitengine.war" />
@@ -152,20 +152,20 @@
 
 <!--
 
-	<target name="create.SpagoBIJasperReportEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIJasperReportEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIJasperReportEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJasperReportEngine.war">
+	<target name="deploy.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJasperReportEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJasperReportEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
 		<unzip src="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
 	</target>
 
-	<target name="create.SpagoBIJPivotEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIJPivotEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIJPivotEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJPivotEngine.war">
+	<target name="deploy.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJPivotEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPivotEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
@@ -175,17 +175,17 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	<target name="create.knowageqbeengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowageqbeengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowageqbeengine/ant" />
 	</target>
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	<target name="create-bin.knowageqbeengine.war" depends="create.sbi.utils.jar">
+	<target name="create-bin.knowageqbeengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowageqbeengine/ant" target="create-bin.war"/>
 	</target>
 	
-	<target name="jboss.deploy.knowageqbeengine.war" depends="create.sbi.utils.jar,create.qbe.core.jar,create.knowageqbeengine.war">
+	<target name="jboss.deploy.knowageqbeengine.war" depends="create.knowage.utils.jar,create.qbe.core.jar,create.knowageqbeengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowageqbeengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowageqbeengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowageqbeengine.war" />
@@ -193,11 +193,11 @@
 		<touch file="${jboss.home}/standalone/deployments/knowageqbeengine.war.dodeploy"/>
 	</target>
 
-	<target name="create.knowagetalendengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagetalendengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagetalendengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagetalendengine.war" depends="create.sbi.utils.jar,create.knowagetalendengine.war">
+	<target name="jboss.deploy.knowagetalendengine.war" depends="create.knowage.utils.jar,create.knowagetalendengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagetalendengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagetalendengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagetalendengine.war" />
@@ -205,11 +205,11 @@
 		<touch file="${jboss.home}/standalone/deployments/knowagetalendengine.war.dodeploy"/>
 	</target>
 
-	<target name="create.knowagedataminingengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagedataminingengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagedataminingengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagedataminingengine.war" depends="create.sbi.utils.jar,create.knowagedataminingengine.war">
+	<target name="jboss.deploy.knowagedataminingengine.war" depends="create.knowage.utils.jar,create.knowagedataminingengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagedataminingengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagedataminingengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagedataminingengine.war" />
@@ -218,21 +218,21 @@
 	</target>
 	
 <!--
-	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIAccessibilityEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar,create.SpagoBIAccessibilityEngine.war">
+	<target name="deploy.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar,create.SpagoBIAccessibilityEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIAccessibilityEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
 		<unzip src="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" dest="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
 	</target>
 -->
-	<target name="create.knowagecommonjengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagecommonjengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagecommonjengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagecommonjengine.war" depends="create.sbi.utils.jar,create.knowagecommonjengine.war">
+	<target name="jboss.deploy.knowagecommonjengine.war" depends="create.knowage.utils.jar,create.knowagecommonjengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagecommonjengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagecommonjengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagecommonjengine.war" />
@@ -241,22 +241,22 @@
 	</target>
 	
 <!--
-	<target name="create.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIConsoleEngine/ant" />
 	</target>
 	
-	<target name="deploy.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar,create.SpagoBIConsoleEngine.war">
+	<target name="deploy.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar,create.SpagoBIConsoleEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIConsoleEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 		<unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 	</target>
 -->
-	<target name="create.knowagechartengine.war" depends="create.sbi.utils.jar">
+	<target name="create.knowagechartengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagechartengine/ant" />
 	</target>
 	
-	<target name="jboss.deploy.knowagechartengine.war" depends="create.sbi.utils.jar,create.knowagechartengine.war">
+	<target name="jboss.deploy.knowagechartengine.war" depends="create.knowage.utils.jar,create.knowagechartengine.war">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagechartengine" />
 		<delete dir="${jboss.home}/standalone/deployments/knowagechartengine.war" />
 		<mkdir dir="${jboss.home}/standalone/deployments/knowagechartengine.war" />
@@ -279,7 +279,7 @@
 
 	<!-- MOBILE ENGINE -->
 <!--
-	<target name="create.SpagoBIMobileEngine.war" depends="create.sbi.utils.jar,create.sbi.oauth.security.jar,create.knowage.war">
+	<target name="create.SpagoBIMobileEngine.war" depends="create.knowage.utils.jar,create.knowage.oauth.security.jar,create.knowage.war">
 		<ant dir="../SpagoBIMobileEngine/ant" />
 	</target>
 	<target name="deploy.SpagoBIMobileEngine.war" depends="create.SpagoBIMobileEngine.war">
@@ -289,7 +289,7 @@
 	</target>
 -->
 	<!-- NETWORK ENGINE -->
-	<target name="create.knowagenetworkengine.war" depends="create.sbi.utils.jar,create.knowage.war">
+	<target name="create.knowagenetworkengine.war" depends="create.knowage.utils.jar,create.knowage.war">
 		<ant dir="../knowagenetworkengine/ant" />
 	</target>
 	
@@ -302,10 +302,10 @@
 	
 	<!-- WHATIF ENGINE -->
 <!--
-	<target name="create.SpagoBIWhatIfEngine.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBIWhatIfEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIWhatIfEngine/ant" />
 	</target>
-	<target name="deploy.SpagoBIWhatIfEngine.war" depends="create.sbi.utils.jar,create.SpagoBIWhatIfEngine.war">
+	<target name="deploy.SpagoBIWhatIfEngine.war" depends="create.knowage.utils.jar,create.SpagoBIWhatIfEngine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIWhatIfEngine" />
 		<delete dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
@@ -316,10 +316,10 @@
 	
 	<!-- SOCIAL ENGINE -->
 <!--
-	<target name="create.SpagoBISocialAnalysis.war" depends="create.sbi.utils.jar">
+	<target name="create.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBISocialAnalysis/ant" />
 	</target>
-	<target name="deploy.SpagoBISocialAnalysis.war" depends="create.sbi.utils.jar,create.SpagoBISocialAnalysis.war">
+	<target name="deploy.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar,create.SpagoBISocialAnalysis.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBISocialAnalysis" />
 		<delete dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
@@ -330,11 +330,11 @@
 	<!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
 	<target name="create.all" depends="clean.all">
 
-		<antcall target="create.sbi.utils.jar" />
+		<antcall target="create.knowage.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
-		<antcall target="create.sbi.dao.jar" />
+		<antcall target="create.knowage.dao.jar" />
 		<!--
-		<antcall target="create.sbi.oauth.security.jar" />
+		<antcall target="create.knowage.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
@@ -419,11 +419,11 @@
 	<!--   TO BE EXECUTED IN A SECOND STEP FOR SINGLE PACKAGES CREATION -->
 	<target name="create-bin.all" depends="clean-bin.all">
 
-		<antcall target="create.sbi.utils.jar" />
+		<antcall target="create.knowage.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
-		<antcall target="create.sbi.dao.jar" />
+		<antcall target="create.knowage.dao.jar" />
 		<!--
-		<antcall target="create.sbi.oauth.security.jar" />
+		<antcall target="create.knowage.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />

@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -568,9 +569,13 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			objects = new ArrayList<BIObject>();
 
 			for (BIObject obj : allObjects) {
-				if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
-						&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
-					objects.add(obj);
+				try {
+					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
+							&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+						objects.add(obj);
+				} catch (EMFInternalError e) {
+				}
+
 			}
 
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());

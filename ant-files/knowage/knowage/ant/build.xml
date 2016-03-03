@@ -65,31 +65,31 @@
 
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+	<!--   AGGIORNAMENTO JAR KNOWAGE.UTILS							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="sbi.utils.update" description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
-		<!-- deletes any previuos sbi.utils -->
+	<target name="knowage.utils.update" description="Updates knowage.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos knowage.utils -->
 		<delete>
-			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar" />
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.utils*.jar" />
 		</delete>
 		<delete>
-			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.security.*.jar" />
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.security.*.jar" />
 		</delete>
 		<!-- copies the newly created jar file -->
-		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowageutils.json.dir}/dist/knowage.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowageutils.dir}/dist/knowage.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	<!--
-		<antcall target="copy.sbi.security.liferay" />
-		<antcall target="copy.sbi.security.OAuth2" />
-		<antcall target="copy.sbi.security.exo" />
-		<antcall target="copy.sbi.security.xml" />
-		<antcall target="copy.sbi.security.ldap" />
+		<antcall target="copy.knowage.security.liferay" />
+		<antcall target="copy.knowage.security.OAuth2" />
+		<antcall target="copy.knowage.security.exo" />
+		<antcall target="copy.knowage.security.xml" />
+		<antcall target="copy.knowage.security.ldap" />
 
-  	<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-	<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-  	<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-  	<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-  	<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${liferay.security.dir}/dist/knowage.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<copy file="${OAuth2.security.dir}/dist/knowage.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${exo.security.dir}/dist/knowage.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${xml.security.dir}/dist/knowage.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${ldap.security.dir}/dist/knowage.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	
   	-->
 
@@ -97,60 +97,60 @@
 	
 	<!-- liferay -->
 	<!--
-	<target name="check.sbi.security.liferay" unless="sbi.security.liferay.file.exists">
-		<available property="sbi.security.liferay.file.exists" file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" />
+	<target name="check.knowage.security.liferay" unless="knowage.security.liferay.file.exists">
+		<available property="knowage.security.liferay.file.exists" file="${liferay.security.dir}/dist/knowage.security.liferay-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.liferay" depends="check.sbi.security.liferay" if="${sbi.security.liferay.file.exists}">
-		<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<target name="copy.knowage.security.liferay" depends="check.knowage.security.liferay" if="${knowage.security.liferay.file.exists}">
+		<copy file="${liferay.security.dir}/dist/knowage.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 	-->	
 	<!-- OAuth2 -->
 	<!--
-	<target name="check.sbi.security.OAuth2" unless="sbi.security.OAuth2.file.exists">
-		<available property="sbi.security.OAuth2.file.exists" file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" />
+	<target name="check.knowage.security.OAuth2" unless="knowage.security.OAuth2.file.exists">
+		<available property="knowage.security.OAuth2.file.exists" file="${OAuth2.security.dir}/dist/knowage.security.OAuth2-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.OAuth2" depends="check.sbi.security.OAuth2" if="${sbi.security.OAuth2.file.exists}">
-		<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<target name="copy.knowage.security.OAuth2" depends="check.knowage.security.OAuth2" if="${knowage.security.OAuth2.file.exists}">
+		<copy file="${OAuth2.security.dir}/dist/knowage.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 	-->	
 	<!-- exo -->
 	<!--
-	<target name="check.sbi.security.exo" unless="sbi.security.exo.file.exists">
-		<available property="sbi.security.exo.file.exists" file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" />
+	<target name="check.knowage.security.exo" unless="knowage.security.exo.file.exists">
+		<available property="knowage.security.exo.file.exists" file="${exo.security.dir}/dist/knowage.security.exo-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.exo" depends="check.sbi.security.exo" if="${sbi.security.exo.file.exists}">
-		<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<target name="copy.knowage.security.exo" depends="check.knowage.security.exo" if="${knowage.security.exo.file.exists}">
+		<copy file="${exo.security.dir}/dist/knowage.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 	-->	
 	<!-- xml -->
 	<!--
-	<target name="check.sbi.security.xml" unless="sbi.security.xml.file.exists">
-		<available property="sbi.security.xml.file.exists" file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" />
+	<target name="check.knowage.security.xml" unless="knowage.security.xml.file.exists">
+		<available property="knowage.security.xml.file.exists" file="${xml.security.dir}/dist/knowage.security.xml-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.xml" depends="check.sbi.security.xml" if="${sbi.security.xml.file.exists}">
-		<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<target name="copy.knowage.security.xml" depends="check.knowage.security.xml" if="${knowage.security.xml.file.exists}">
+		<copy file="${xml.security.dir}/dist/knowage.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 	-->	
 	<!-- ldap -->
 	<!--
-	<target name="check.sbi.security.ldap" unless="sbi.security.ldap.file.exists">
-		<available property="sbi.security.ldap.file.exists" file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" />
+	<target name="check.knowage.security.ldap" unless="knowage.security.ldap.file.exists">
+		<available property="knowage.security.ldap.file.exists" file="${ldap.security.dir}/dist/knowage.security.ldap-${project.version}.jar" />
 	</target>
-	<target name="copy.sbi.security.ldap" depends="check.sbi.security.ldap" if="${sbi.security.ldap.file.exists}">
-		<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<target name="copy.knowage.security.ldap" depends="check.knowage.security.ldap" if="${knowage.security.ldap.file.exists}">
+		<copy file="${ldap.security.dir}/dist/knowage.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 	-->	
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<!--   AGGIORNAMENTO JAR SBI.DAO							                                  -->
+	<!--   AGGIORNAMENTO JAR KNOWAGE.DAO							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="sbi.dao.update" description="Updates sbi.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
+	<target name="knowage.dao.update" description="Updates knowage.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
 		<!-- deletes any previuos qbe.core -->
 		<delete>
-			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.dao*.jar" />
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.dao*.jar" />
 		</delete>
 
 		<!-- copies the newly created jar file -->
-		<copy file="${sbi.dao.dir}/dist/sbi.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${knowage.dao.dir}/dist/knowage.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 
 	</target>
 
@@ -158,7 +158,7 @@
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="sbi.utils.update,qbe.core.update,sbi.dao.update" description="compile the source">
+	<target name="compile" depends="knowage.utils.update,qbe.core.update,knowage.dao.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
@@ -271,9 +271,9 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/tlds/liferay-portlet.tld" />
 		<delete file="${build}/${webapp_name}/WEB-INF/tlds/portlet.tld" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/log4j.properties" token="${catalina.base}/logs" value="${jboss.server.log.dir}" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/jbpm.hibernate.cfg.xml" token="java:comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/quartz.properties" token="java:comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/jbpm.hibernate.cfg.xml" token="java:comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/quartz.properties" token="java:comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
 			<replacetoken><![CDATA[<!-- START TOMCAT RES -->]]></replacetoken>
 			<replacevalue><![CDATA[<!-- START TOMCAT RES]]></replacevalue>
@@ -882,7 +882,7 @@
 	</target>
 
 	<target name="package">
-		<zip destfile="../../../../dist/Athena-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
+		<zip destfile="../../../../dist/knowage-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
 	</target>
 
 	<target name="makeDist">

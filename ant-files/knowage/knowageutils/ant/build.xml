@@ -16,8 +16,8 @@
     		<fileset dir="${runtime.lib}">
           		<include name="**/*.jar"/>
     		</fileset>
-    		<!-- LIBRERIA SBI.UTILS DI ATHENA necessaria per la compilazione -->
-    		<fileset dir="${sbiutils.json.dir}/dist">
+    		<!-- LIBRERIA KNOWAGE.UTILS necessaria per la compilazione -->
+    		<fileset dir="${knowageutils.json.dir}/dist">
           		<include name="**/*.jar"/>
     		</fileset>
  	</path>

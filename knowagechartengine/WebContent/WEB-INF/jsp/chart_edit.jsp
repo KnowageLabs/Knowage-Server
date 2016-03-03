@@ -138,7 +138,7 @@ author:
        
         <%@include file="commons/includeExtJS5.jspf" %>        
 		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeAthenaChartEngineJS5.jspf" %>
+		<%@include file="commons/includeKnowageChartEngineJS5.jspf" %>
 		
 		<!-- 
 			The 'treemap.js' file is needed for the Designer page, so it can call particular
