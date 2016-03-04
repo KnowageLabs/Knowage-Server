@@ -147,7 +147,8 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 							}
 							//add speed menu column at the end of the table
 							if(attrs.speedMenuOption ){
-								scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
+								var speedSize=scope.speedMenuOption.length>3 ? 30 : (scope.speedMenuOption.length*30 || 30);
+								scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:speedSize+"px"});
 								thead.attr('speed-menu-option',true);
 								tbody.attr('speed-menu-option',true);
 							}
@@ -339,6 +340,7 @@ function TableControllerFunction($scope,$timeout){
 				$scope.searchFunction({
 					searchValue : searchVal,
 					itemsPerPage : $scope.itemsPerPage,
+					currentPageNumber:$scope.currentPageNumber,
 					columnsSearch : $scope.columnsSearch,
 					columnOrdering : $scope.column_ordering,
 					reverseOrdering : $scope.reverse_col_ord
@@ -374,9 +376,16 @@ function TableControllerFunction($scope,$timeout){
 		var nit=parseInt((tableContainerHeight-headButtonHeight)/listItemTemplBoxHeight )
 		
 //		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
-		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
+		$scope.itemsPerPage = (nit <= 0 ||isNaN(nit)) ? 1 : nit;
 		if(firstLoad){
-			$scope.pageCangedFunction({itemsPerPage:$scope.itemsPerPage,newPageNumber:1,searchValue:''});
+			$scope.pageCangedFunction({
+				searchValue : "",
+				itemsPerPage : $scope.itemsPerPage,
+                currentPageNumber:$scope.currentPageNumber,
+				columnsSearch : $scope.columnsSearch,
+				columnOrdering : $scope.column_ordering,
+				reverseOrdering : $scope.reverse_col_ord
+			});
 			firstLoad=false;
 		}
 
@@ -392,7 +401,7 @@ function TableControllerFunction($scope,$timeout){
 		var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0];
 		return elem==undefined? null:  elem.offsetHeight;
 	}, function(newValue, oldValue) {
-	if($scope.noPagination!=true){
+	if($scope.noPagination!=true && newValue!=0){
 		if (newValue != oldValue) {
 			$scope.changeWordItemPP();
 		}
