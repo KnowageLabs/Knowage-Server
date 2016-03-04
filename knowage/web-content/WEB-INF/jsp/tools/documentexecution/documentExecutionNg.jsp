@@ -81,9 +81,8 @@ try{
  		<section layout="row" layout-fill> 
  			<md-content layout="column" layout-fill>
 				<iframe ng-src="{{documentUrl}}"
+					iframe-set-dimensions-onload style="overflow:hidden;height:100%;width:100%" height="100%"
 				<%--
-					iframe-set-dimensions-onload 
-					style="overflow:hidden;height:100%;width:100%" height="100%"
 				--%>
 					> </iframe>
 			</md-content>
@@ -97,6 +96,23 @@ try{
 						<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">{{role|uppercase}}</md-option>
 					</md-select>
 				</md-input-container>
+				<md-content ng-hide="isParameterPanelDisabled()">
+				<md-toolbar class="header">
+					<div layout="row" layout-align="center center">						
+						<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
+								ng-click="alert('Reset ...')">
+							<i class="fa fa-eraser" style="color:white"></i>
+						</md-button>						
+						<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
+								ng-click="alert('Open saved ...')">
+							<i class="fa fa-pencil" style="color:white"></i>
+						</md-button>						
+						<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
+								ng-click="alert('Save ...')">
+							<i class="fa fa-floppy-o" style="color:white"></i>
+						</md-button>
+					</div>
+				</md-toolbar>
 				
 				<!-- execute button -->
 				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
@@ -107,21 +123,29 @@ try{
 				
 				<md-list>
 					<md-list-item layout="row" ng-repeat="param in documentParameters">
-						<md-input-container class="small counter" ng-show="param.visible">
-							<md-content ng-if="param.type=='STRING' && param.selectionType=='LIST'">
-								param : {{param | json}}
-							</md-content>
+						<md-input-container class="small counter">
+						
 							<label>{{param.label}}</label>
 							<input class="input_class" ng-model="param.parameterValue" 
-									ng-required="param.mandatory" ng-if="param.type=='STRING' && param.selectionType==''">
+									ng-required="param.mandatory" type="number"
+									ng-if="param.type=='NUM' && param.selectionType==''"
+									>
+							<input class="input_class" ng-model="param.parameterValue" 
+									ng-required="param.mandatory"
+									ng-if="param.type=='STRING' && param.selectionType==''"
+									>
 							
 							<md-select class="input_class" ng-model="param.parameterValue" ng-required="param.mandatory"
-									ng-if="param.type=='STRING' && param.selectionType=='LIST'" multiple="param.multivalue">
+									ng-if="param.type=='STRING' && param.selectionType=='LIST'" multiple="param.multivalue"
+									>
 								<md-option></md-option>
 							</md-select>
 						</md-input-container>
 					</md-list-item>
 				</md-list>
+				
+				</md-content>
+				
 			</md-sidenav>
 		</section>
 	</div>
