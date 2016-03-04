@@ -281,18 +281,31 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Boolean execute(Session session) throws Exception {
 				SbiKpiRule rule = (SbiKpiRule) session.load(SbiKpiRule.class, id);
 
-				DetachedCriteria detachedCriteria = DetachedCriteria.forClass(SbiKpiRuleOutput.class).add(Restrictions.ne("sbiKpiRule", rule))
-						.createAlias("category", "category").add(Restrictions.isNotEmpty("category")).setProjection(Property.forName("category.valueId"));
+				// Deleting placeholders
+				for (SbiKpiPlaceholder sbiKpiPlaceholder : rule.getSbiKpiPlaceholders()) {
+					session.delete(sbiKpiPlaceholder);
+				}
 
-				List<SbiDomains> categoriesToDelete = session.createCriteria(SbiKpiRuleOutput.class).add(Restrictions.eq("sbiKpiRule", rule))
-						.createAlias("category", "category").add(Restrictions.isNotEmpty("category")).setProjection(Property.forName("category"))
-						.add(Property.forName("category.valueId").notIn(detachedCriteria)).setResultTransformer(Transformers.aliasToBean(SbiDomains.class))
-						.list();
+				// Deleting Rule
+				session.delete(rule);
+				session.flush();
 
+				// Deleting unused categories
+				DetachedCriteria usedCategories = DetachedCriteria.forClass(SbiKpiRuleOutput.class)// .add(Restrictions.ne("sbiKpiRule", rule))
+						.createAlias("category", "category").add(Restrictions.isNotNull("category")).setProjection(Property.forName("category.valueId"));
+				List<SbiDomains> categoriesToDelete = session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", KPI_MEASURE_CATEGORY))
+						.add(Property.forName("valueId").notIn(usedCategories)).list();
 				for (SbiDomains cat : categoriesToDelete) {
 					session.delete(cat);
 				}
-				session.delete(rule);
+
+				// Deleting unused aliases
+				DetachedCriteria usedAliases = DetachedCriteria.forClass(SbiKpiRuleOutput.class)// .add(Restrictions.ne("sbiKpiRule", rule))
+						.createAlias("sbiKpiAlias", "sbiKpiAlias").setProjection(Property.forName("sbiKpiAlias.id"));
+				List<SbiKpiAlias> aliasesToDelete = session.createCriteria(SbiKpiAlias.class).add(Property.forName("id").notIn(usedAliases)).list();
+				for (SbiKpiAlias alias : aliasesToDelete) {
+					session.delete(alias);
+				}
 
 				return Boolean.TRUE;
 			}
