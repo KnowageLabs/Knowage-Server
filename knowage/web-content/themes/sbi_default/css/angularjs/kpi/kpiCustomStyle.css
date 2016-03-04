@@ -80,27 +80,30 @@
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after {
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after,.MAX::after,.MIN::after,.COUNT::after,.SUM::after {
 	content: ")";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before, .MAX::before {
 	content: "MAX(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before {
+.MAX,.MIN,.COUNT,.SUM {
+	color: #80004c;
+}
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before ,.MIN::before{
 	content: "min(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before,.COUNT::before {
 	content: "COUNT(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before,.SUM::before {
 	content: "Σ(";
 	color: green;
 }
@@ -112,6 +115,8 @@
 	background-position: left bottom;
 	background-repeat: repeat-x;
 }
+
+
 
 
 }

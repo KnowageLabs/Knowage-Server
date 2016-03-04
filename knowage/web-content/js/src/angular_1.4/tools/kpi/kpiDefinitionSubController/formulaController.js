@@ -6,7 +6,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.currentKPI ={
 			"formula": ""
 	}
-	$scope.measures = ['pippo', 'pluto','paperino'];
+//	$scope.measures = ['pippo', 'pluto','paperino'];
 	$scope.dataSourceTable= {};
 	$scope.functionalities = ['SUM','MAX','MIN','COUNT'];
 	$scope.selectedFunctionalities='SUM';
@@ -33,8 +33,8 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				var hintList=[];
 				for(var i=0;i< $scope.measures.length;i++){
 
-					if(tok.string.trim()=="" || $scope.measures[i].startsWith(tok.string)){
-						hintList.push($scope.measures[i]);
+					if(tok.string.trim()=="" || $scope.measures[i].rule.startsWith(tok.string)){
+						hintList.push($scope.measures[i].rule);
 					}
 
 				}
@@ -124,7 +124,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.checkError = function(cm,token){
 		var flag=false;
 
-		if($scope.measures.indexOf(token.string)==-1){
+		if($scope.measureInList(token.string,$scope.measures)==-1){
 			//error word not present
 			flag=true;
 		}
@@ -143,17 +143,22 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 			var cur = cm.getCursor();
 			var token = cm.getTokenAt(cur);
-
-			while(token.type == "operator" || token.type == "bracket" ){
-				cur.ch = cur.ch+1;
-				token =  cm.getTokenAt(cur);
-			}
-
+			
 			while(token.string.trim() ==""){
 				cur.ch = cur.ch+1;
 				token =  cm.getTokenAt(cur);
 			}
 
+			while(token.type == "operator" || token.type == "bracket" || token.type == "number"){
+				cur.ch = cur.ch+1;
+				token =  cm.getTokenAt(cur);
+			}
+
+			
+			while(token.string.trim() ==""){
+				cur.ch = cur.ch+1;
+				token =  cm.getTokenAt(cur);
+			}
 
 			if(response!=""){
 				var arr = cm.findMarksAt({line:cm.getCursor().line,ch:token.end});
@@ -183,6 +188,8 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
+						
+						$scope.measures=data;
 						console.log($scope.measures);
 					}
 
@@ -196,13 +203,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	
 	$scope.loadKPI=function(item){
 		var cm =angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror;
-		/*var index =$scope.indexInList(item, $scope.kpiListOriginal);
-
-		if(index!=-1){
-			angular.copy($scope.kpiListOriginal[index],$scope.kpi); 
-			
-
-		}*/
+		
 		$scope.flagLoaded = true;
 		$timeout(function(){
 			cm.refresh();
@@ -308,6 +309,15 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 									break FORFirst;
 								}
 							}
+							if(token_before.type=="number" ){
+								if(token.type=="number" || token.string=="(" || token.type=="keyword"){
+									var line = i+1;
+									flag=false;
+									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+									$scope.reset();
+									break FORFirst;
+								}
+							}
 							if(token_before.type=="bracket" ){
 								var line = i+1;
 								if((token.string==")" && token_before.string=="(")||(token.string=="(" && token_before.string==")") ){
@@ -379,6 +389,16 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 						}
 
 					}else{
+						if(j-1>=0){
+							var token_before = array[j-1];
+							if(token_before.type=="number"){
+								var line = i+1;
+								flag=false;
+								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
+								$scope.reset();
+								break FORFirst;
+							}
+						}
 						//parse classes token
 						for(var k=0;k<arr.length;k++){
 							var className = arr[k]["className"];
@@ -530,6 +550,17 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
+				return i;
+			}
+		}
+
+		return -1;
+	};
+	$scope.measureInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.rule==item){
 				return i;
 			}
 		}

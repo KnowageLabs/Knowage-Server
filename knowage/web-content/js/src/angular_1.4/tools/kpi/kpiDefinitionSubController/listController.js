@@ -21,10 +21,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 		if(index!=-1){
 			angular.copy($scope.kpiListOriginal[index],$scope.kpi); 
-			$scope.kpi.name=item.name;
-			$scope.kpi.definition=item.definition;
-			$scope.kpi.id = item.id;
-			$scope.kpi.category.valueCd=item.valueCd;
+
 		}
 
 	$scope.flagActivateBrother('loadedEvent');
@@ -40,8 +37,13 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 		$angularListDetail.goToList();
 	});
-
-
+	
+	$scope.$on('deleteKpiEvent', function(e) { 
+		$scope.kpiList=[];
+		$scope.kpiListOriginal=[];
+		$scope.getListKPI();
+		$angularListDetail.goToList();
+	});
 	$scope.getListKPI = function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
 		.then(function(response){ 
@@ -49,8 +51,9 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 			for(var i=0;i<response.data.length;i++){
 				var obj = {};
 				obj["name"]=response.data[i].name;
-				obj["valueCd"] = response.data[i].category.valueCd;
-				obj["definition"]=response.data[i].definition;
+				if(response.data[i].category!=undefined){
+					obj["valueCd"] = response.data[i].category.valueCd;
+				}
 				obj["author"]=response.data[i].author;
 				obj["datacreation"]=new Date(response.data[i].dateCreation);
 				obj["id"]=response.data[i].id;

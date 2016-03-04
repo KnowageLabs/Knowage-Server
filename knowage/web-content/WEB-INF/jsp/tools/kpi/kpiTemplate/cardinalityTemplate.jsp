@@ -18,18 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content layout-fill ng-controller="kpiDefinitionCardinalityController">
+<div class="formula" id="formulaId"></div>
+<br><br><br>
 	<table flex class="cardinalityTable" >
 		<tr>
 			<th></th>
-		    <th ng-repeat="measure in measureList" >{{measure.measureName}}</th>
+		    <th ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
 	    </tr>
 	  
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
 		<td>{{attr}}</td>
-			<td ng-repeat="measure in measureList">
-			<div class="measureCell" ng-if="!measureHaveAttribute(attr,measure)">
-<!-- 			<i class="fa fa-times invalidCell "></i> -->
-			</div>
+			<td ng-repeat="measure in cardinality.measureList">
 			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
 			 ng-click="toggleCell(attr,measure)"  ">
 			<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
@@ -40,6 +39,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</td>
 		</tr>
 	</table>
-
 
 </md-content>

@@ -7,6 +7,7 @@ app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate',
 
 function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast){
 	$scope.translate=sbiModule_translate;
+	//variables formula
 	$scope.checkFormula = false;
 	$scope.kpi = {"name":"","definition":"",'id':undefined};
 	$scope.activeSave = "";
@@ -16,6 +17,11 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
 	
+	//variables cardinality
+	$scope.cardinality={};
+	$scope.cardinality.measureList=[];
+	$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
+	//methods formula
 	
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_KPI_CATEGORY")
 	.then(function(response){ 
@@ -128,7 +134,9 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}
 	
 	$scope.saveKPI = function(){
-		$scope.kpi.definition = JSON.stringify($scope.kpi.definition); 
+		$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
+		//after i'm setting this with a method getthreshold()
+		$scope.kpi.threshold=1;
 		sbiModule_restServices.post("1.0/kpi", 'saveKpi',$scope.kpi).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -168,7 +176,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			   
 			   sbiModule_restServices.promiseDelete("1.0/kpi",item.id+"/deleteKpi").then(
 					   function(response){
-						   alert("cancellato")
+						   $scope.$broadcast("deleteKpiEvent");
 					   },
 					   function(response){
 						   $scope.errorHandler(response.data,""); 
@@ -181,6 +189,60 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		    console.log("annulla")
 		   });
 	}
+	
+	
+	//methods cardinality
+	
+	$scope.setCardinality = function(){
+		$scope.$broadcast ('parseEvent');
+		$scope.cardinality.measureList=[];
+		var definition = $scope.kpi.definition;
+	/*	for(var i=0;i<definition.measures.length;i++){
+			if($scope.indexInList(definition.measures[i],$scope.cardinality.measureList)==-1){
+				var obj = {};
+				obj ["measureName"]=definition.measures[i];
+				$scope.cardinality.measureList.push(obj);
+			}
+			
+		}
+		*/
+		$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
+		$scope.cardinality.measureList=[
+		                	{	"ruleName": "regola1",
+		                		"measureName": "numScuole1",
+		                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
+		                		}
+		                	},
+		                		{	"ruleName": "regola2",
+		                		"measureName": "numAbitanti",
+		                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"FasciaEta":false,"CatLavoratore":false}
+		                	},
+		                		{	"ruleName": "regola3",
+		                		"measureName": "pilProCapite",
+		                		"attributs": {"Regione":false,"FasciaEta":false,"CatLavoratore":false}
+		                	},
+		                		{	"ruleName": "regola4",
+		                			"measureName": "densPopolazione",
+		                			"attributs": {"AreaGeografice":false}
+		                	}
+		                ];
+		
+		$scope.$broadcast ('activateCardinalityEvent');
+		
+	}
+	
+	
+	$scope.indexInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.measureName==item){
+				return i;
+			}
+		}
+
+		return -1;
+	};
 	
 };
 	function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
@@ -210,4 +272,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				return (angular.lowercase(state.valueCd).indexOf(lowercaseQuery) === 0);
 			};
 		}
+		
+
+		
 	}

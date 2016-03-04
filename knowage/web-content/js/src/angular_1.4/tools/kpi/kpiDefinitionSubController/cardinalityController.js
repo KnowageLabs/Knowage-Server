@@ -3,32 +3,44 @@ app.controller('kpiDefinitionCardinalityController', ['$scope','sbiModule_transl
 function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.attributesList=[];
-	$scope.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
-	$scope.measureList=[
-	                	{	"ruleName": "regola1",
-	                		"measureName": "numScuole",
-	                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
-	                		}
-	                	},
-	                		{	"ruleName": "regola2",
-	                		"measureName": "numAbitanti",
-	                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"FasciaEta":false,"CatLavoratore":false}
-	                	},
-	                		{	"ruleName": "regola3",
-	                		"measureName": "pilProCapite",
-	                		"attributs": {"Regione":false,"FasciaEta":false,"CatLavoratore":false}
-	                	},
-	                		{	"ruleName": "regola4",
-	                			"measureName": "densPopolazione",
-	                			"attributs": {"AreaGeografice":false}
-	                	}
-	                ];
-	
+//	$scope.cardinality={};
+//	$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
+//	$scope.cardinality.measureList=[
+//	                	{	"ruleName": "regola1",
+//	                		"measureName": "numScuole",
+//	                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
+//	                		}
+//	                	},
+//	                		{	"ruleName": "regola2",
+//	                		"measureName": "numAbitanti",
+//	                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"FasciaEta":false,"CatLavoratore":false}
+//	                	},
+//	                		{	"ruleName": "regola3",
+//	                		"measureName": "pilProCapite",
+//	                		"attributs": {"Regione":false,"FasciaEta":false,"CatLavoratore":false}
+//	                	},
+//	                		{	"ruleName": "regola4",
+//	                			"measureName": "densPopolazione",
+//	                			"attributs": {"AreaGeografice":false}
+//	                	}
+//	                ];
+//	
 
+	$scope.$on('activateCardinalityEvent',function(e){
+		$scope.getAllMeasure();
+		$scope.clearFormulaToShow();
+		$scope.createFormulaToShow();
+	})
 	
+	$scope.clearFormulaToShow = function(){
+		for (i = 0; i < document.getElementById('formulaId').getElementsByTagName('span').length; i++) {
+		    document.getElementById('formulaId').getElementsByTagName('span')[i].innerHTML = '';
+		    document.getElementById('formulaId').getElementsByTagName('span')[i].className='';
+		}
+	}
 	$scope.getAllMeasure=function(){
-		for(var i=0; i<$scope.measureList.length;i++){
-			for(var tmpAttr in $scope.measureList[i].attributs){
+		for(var i=0; i<$scope.cardinality.measureList.length;i++){
+			for(var tmpAttr in $scope.cardinality.measureList[i].attributs){
 				
 				if($scope.attributesList.indexOf(tmpAttr)==-1){
 					$scope.attributesList.push(tmpAttr);
@@ -53,26 +65,26 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		
 		if(measure.attributs[attr]){
 			//update union 
-			if($scope.checkedAttribute.attributeUnion[attr]){
-				$scope.checkedAttribute.attributeUnion[attr]++; 
+			if($scope.cardinality.checkedAttribute.attributeUnion[attr]){
+				$scope.cardinality.checkedAttribute.attributeUnion[attr]++; 
 			}else{
-				$scope.checkedAttribute.attributeUnion[attr]=1;
+				$scope.cardinality.checkedAttribute.attributeUnion[attr]=1;
 			}
 		}else{ 
-			if($scope.checkedAttribute.attributeUnion[attr]==1){
-				delete $scope.checkedAttribute.attributeUnion[attr]; 
+			if($scope.cardinality.checkedAttribute.attributeUnion[attr]==1){
+				delete $scope.cardinality.checkedAttribute.attributeUnion[attr]; 
 			}else{
-				$scope.checkedAttribute.attributeUnion[attr]--;
+				$scope.cardinality.checkedAttribute.attributeUnion[attr]--;
 			}
 		}
 		
 		
 		//update intersection
-		angular.copy({},$scope.checkedAttribute.attributeIntersection); // reset intersection
-		var maxAttrNum=$scope.getMaxAttributeNumber($scope.checkedAttribute.attributeUnion);
-		for(var key in $scope.checkedAttribute.attributeUnion){
-			if($scope.checkedAttribute.attributeUnion[key]==maxAttrNum){
-				$scope.checkedAttribute.attributeIntersection[key]=true;
+		angular.copy({},$scope.cardinality.checkedAttribute.attributeIntersection); // reset intersection
+		var maxAttrNum=$scope.getMaxAttributeNumber($scope.cardinality.checkedAttribute.attributeUnion);
+		for(var key in $scope.cardinality.checkedAttribute.attributeUnion){
+			if($scope.cardinality.checkedAttribute.attributeUnion[key]==maxAttrNum){
+				$scope.cardinality.checkedAttribute.attributeIntersection[key]=true;
 			}
 		}
 		
@@ -112,7 +124,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 			}
 		}
 		var resp={
-				status:( Object.keys($scope.checkedAttribute.attributeUnion).length==tot),
+				status:( Object.keys($scope.cardinality.checkedAttribute.attributeUnion).length==tot),
 				itemNumber:tot
 				};
 		
@@ -123,8 +135,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.isContainedByUpperSet=function(attr,measure,measureItemNumber){
 		var upperSetAttributeNumber=99999999;
 		var upperSet;
-		for(var i=0;i<$scope.measureList.length;i++){
-			var tmpMeas=$scope.measureList[i];
+		for(var i=0;i<$scope.cardinality.measureList.length;i++){
+			var tmpMeas=$scope.cardinality.measureList[i];
 			if(tmpMeas==measure){
 				continue
 			}
@@ -161,8 +173,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		
 		var underSetAttributeNumber=0;
 		var underSet;
-		for(var i=0;i<$scope.measureList.length;i++){
-			var tmpMeas=$scope.measureList[i];
+		for(var i=0;i<$scope.cardinality.measureList.length;i++){
+			var tmpMeas=$scope.cardinality.measureList[i];
 			if(tmpMeas==measure){
 				continue
 			}
@@ -187,6 +199,25 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		}else{
 			return true;
 		}
+	}
+	
+	$scope.createFormulaToShow = function(){
+		var string = $scope.kpi.definition.formulaSimple.split(" ");
+		var count =0;
+		for(var i=0;i<string.length;i++){
+			if(string[i].trim()=="+" ||string[i].trim()=="-" || string[i].trim()=="/" || string[i].trim()=="*" || string[i].trim()=="(" ||
+					string[i].trim()==")" || string[i].trim()=="" || !isNaN(string[i])){
+				var span = "<span>"+string[i]+"</span>"
+				angular.element(document.getElementsByClassName("formula")).append(span);
+			}else{
+				
+				var span = "<span class="+$scope.kpi.definition.functions[count]+">"+string[i]+"</span>"
+				angular.element(document.getElementsByClassName("formula")).append(span);
+				count++;
+			}
+			
+		}
+		
 	}
 	
 	
