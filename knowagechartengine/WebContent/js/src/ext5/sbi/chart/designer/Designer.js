@@ -1517,6 +1517,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   			 */
   			this.previewPanel = Ext.create('Ext.panel.Panel', {
+  				
   				id: 'previewPanel',
   				
   				/**
@@ -1534,12 +1535,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   				titleAlign: 'left',
   				
   				tools:[],
+  				
   				layout : {
   				    type  : 'hbox',
   				    pack  : 'center'
   				}
-  				
-  			});
+  			
+  			});  			
   			
   			/**
   			 * The 'srcImg' will be the global variable that will serve as a the container
@@ -1550,7 +1552,35 @@ Ext.define('Sbi.chart.designer.Designer', {
   			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
   			 */			
 			var srcImg = null;
-  			
+			
+			/**
+			 * Listen for the event that provides us a data about the Preview panel's dimension
+			 * so we can set an "stand by" (default) picture in it (when the user just opens the
+			 * document in the Designer or the panel is cleaned (user clicked on the "remove all"
+			 * icon in the Preview panel's header - next to the 'refresh' tool).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			this.previewPanel.on
+			(
+				"afterlayout",
+				
+				function()
+				{
+					/**
+					 * Set the default ("stand by") picture only if the one is not already set 
+					 * in the panel.
+					 */
+					if (srcImg == null)
+					{
+						Sbi.info("Setting the default (stand by) picture inside the Preview panel");
+						
+						srcImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/def_prev_pict_no_chart_rendered.png';
+						setPreviewImage(srcImg,globalThis.previewPanel.getHeight(),globalThis.previewPanel.getWidth());
+					}					
+				}
+			);
+			
 			/**
 			 * Handles the resizing of the Preview panel that lies within the Designer page.
 			 * 
@@ -1884,238 +1914,264 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var heightDimType = null;
 			var widthDimType = null;
 			
-			var previewTools = [{ xtype: 'tbfill' }, {
-				
-				/**
-				 * Old value for xtype was "image".
+			var previewTools = 
+			[
+			 	{ xtype: 'tbfill' },
+			
+		        /**
+				 * Provide a button that will let user remove the preview in the Preview panel.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */ 
-				xtype: 'tool',	
-	            type: 'refresh',	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	            padding: "3 0 0 0", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	            height: 22,
-	            
-	            /**
-				 * These two parameters were not commented.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */ 
-	            // src: Sbi.chart.designer.Designer.relativePathReturn + '/img/refresh.png',
-	            //cls: 'tool-icon',
-	            listeners: {
-	            	click: {
-	            		element: 'el',
-	            		fn: function(){			
-	            			
-  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
-							  							
-  							/**
-  				  			 * Code that serves for the calculation of the size of the image that is going to
-  				  			 * be rendered and displayed inside the Preview panel of the Designer. Calculation
-  				  			 * is based on the current dimensions of the Preview panel and on the dimensions of
-  				  			 * the chart (document, template) that is set by the user (even if the dimensions
-  				  			 * (chart's height and width) are not set by the user - their values will be taken
-  				  			 * from respective dimensions of the entire window). 
-  				  			 * 
-  				  			 * @author Daniele Davì
-							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-							 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  				  			 */
-  							heightChartJson = sbiJson.CHART.height;
-  							widthChartJson = sbiJson.CHART.width;
-  							
-  							heightDimType = sbiJson.CHART.heightDimType;
-  							widthDimType = sbiJson.CHART.widthDimType;
-  							  							
-  							if (heightDimType == "percentage")
-							{  								
-  								if (!heightChartJson || heightChartJson == "")
-  								{
-  									sbiJson.CHART.height = window.innerHeight;
-  								}
-  								else
-								{
-  									sbiJson.CHART.height = window.innerHeight*(Number(heightChartJson)/100);
+				 */
+				Ext.create
+				(
+					"Ext.panel.Tool",
+					
+					{
+						type: 'deleteAllItemsFromAxisPanel',
+						
+						padding: "3 0 0 0",
+						height: 22,
+						
+						handler: function()
+						{
+							var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/def_prev_pict_no_chart_rendered.png';
+							setPreviewImage(src,globalThis.previewPanel.getHeight(),globalThis.previewPanel.getWidth());
+						}
+					}
+				),
+	        
+	            {					
+					/**
+					 * Old value for xtype was "image".
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */ 
+					xtype: 'tool',	
+		            type: 'refresh',	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		            padding: "3 0 0 0", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		            height: 22,
+		            
+		            /**
+					 * These two parameters were not commented.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */ 
+		            // src: Sbi.chart.designer.Designer.relativePathReturn + '/img/refresh.png',
+		            //cls: 'tool-icon',
+		            listeners: {
+		            	click: {
+		            		element: 'el',
+		            		fn: function(){			
+		            			
+	  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
+								  							
+	  							/**
+	  				  			 * Code that serves for the calculation of the size of the image that is going to
+	  				  			 * be rendered and displayed inside the Preview panel of the Designer. Calculation
+	  				  			 * is based on the current dimensions of the Preview panel and on the dimensions of
+	  				  			 * the chart (document, template) that is set by the user (even if the dimensions
+	  				  			 * (chart's height and width) are not set by the user - their values will be taken
+	  				  			 * from respective dimensions of the entire window). 
+	  				  			 * 
+	  				  			 * @author Daniele Davì
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  				  			 */
+	  							heightChartJson = sbiJson.CHART.height;
+	  							widthChartJson = sbiJson.CHART.width;
+	  							
+	  							heightDimType = sbiJson.CHART.heightDimType;
+	  							widthDimType = sbiJson.CHART.widthDimType;
+	  							  							
+	  							if (heightDimType == "percentage")
+								{  								
+	  								if (!heightChartJson || heightChartJson == "")
+	  								{
+	  									sbiJson.CHART.height = window.innerHeight;
+	  								}
+	  								else
+									{
+	  									sbiJson.CHART.height = window.innerHeight*(Number(heightChartJson)/100);
+									}
 								}
-							}
-  							else
-							{
-  								sbiJson.CHART.height = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
-							}
-  							
-  							if (widthDimType == "percentage")
-							{
-  								if (!widthChartJson || widthChartJson == "")
-  								{
-  									sbiJson.CHART.width = window.innerWidth;
-  								}
-  								else
+	  							else
 								{
-  									sbiJson.CHART.width = window.innerWidth*(Number(widthChartJson)/100);
+	  								sbiJson.CHART.height = (!heightChartJson || heightChartJson=="") ? window.innerHeight : heightChartJson;
 								}
-							}
-  							else
-							{
-  								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-							}  							
-  							
-  							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
-  							
-  							var heightPrevPan = globalThis.previewPanel.getHeight();
-  							var widthPrevPan = globalThis.previewPanel.getWidth();
-  							
-  							/**
-	            			 * Set the "Loading preview..." image at the beginning of export,
-	            			 * so the user can know that the request for the image is sent.
-	            			 * 
-	            			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	            			 */
-	            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png',heightPrevPan,widthPrevPan);
-  							
-  							var widthImg = 0;
-  							var heightImg = 0;
-  							
-  							widthImg = (sbiJson.CHART.width <= widthPrevPan) ? sbiJson.CHART.width : widthPrevPan;
-  							heightImg = widthImg/ratioChartJson;
-  							
-  							var ratioImg = widthImg/heightImg;
-  							  							
-  							heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
-  							widthImg = heightImg*ratioImg;
-  							
-  							/**
-  							 * We added new property to the 'parameters', the 'exportWebApp'.
-  							 * This property is boolean value that will tell the VM that we
-  							 * are coming from the Highcharts Export web application and that
-  							 * it (the VM) should reconfigure its code according to that fact.
-  							 * E.g. some properties that VM initialy has should not be provided
-  							 * when previewing the chart in the Designer (in the Preview panel).
-  							 * 
-  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-  							 */
-  							var parameters = 
-  							{
-								jsonTemplate: Ext.JSON.encode(sbiJson),
-								exportWebApp: true
-							};
-  							
-  							/**
-  							 * https://production.eng.it/jira/browse/KNOWAGE-581 
-  							 * in CockpitEngine, the dataset for the preview could be null,
-  							 * so we need to add the label as a parameter. So, server side
-  							 * we can get the dataset from the label
-  							 * 
-  							 * @author Giorgio Federici (giorgio.federici@eng.it)
-  							 */
-  							if(isCockpit){
-  								parameters.datasetLabel = datasetLabel;
-  							}
-  							
-							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-								var chartConf = response.responseText;
-								
-								/**
-								 * If chart types of documents (charts) that user wants to render in the
-								 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
-								 * HEATMAP we need to prepare data that we receive from the VM of that
-								 * chart type by sending them to the 'treemap.js'.
-								 * 
-								 * @author Daniele Davì
-								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-								 */
-								
-								/**
-								 * Conversion of JSON text (string) into the JSON object that we need for
-								 * the function that prepares all the data needed for the TREEMAP or
-								 * HEATMAP rendering-exporting engine.
-								 * 
-								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-								 */
-								var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
-								
-								if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
+	  							
+	  							if (widthDimType == "percentage")
 								{
-									var jsonChartConf = Ext.JSON.decode(chartConf);
+	  								if (!widthChartJson || widthChartJson == "")
+	  								{
+	  									sbiJson.CHART.width = window.innerWidth;
+	  								}
+	  								else
+									{
+	  									sbiJson.CHART.width = window.innerWidth*(Number(widthChartJson)/100);
+									}
+								}
+	  							else
+								{
+	  								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
+								}  							
+	  							
+	  							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
+	  							
+	  							var heightPrevPan = globalThis.previewPanel.getHeight();
+	  							var widthPrevPan = globalThis.previewPanel.getWidth();
+	  							
+	  							/**
+		            			 * Set the "Loading preview..." image at the beginning of export,
+		            			 * so the user can know that the request for the image is sent.
+		            			 * 
+		            			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		            			 */
+		            			setPreviewImage(Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png',heightPrevPan,widthPrevPan);
+	  							
+	  							var widthImg = 0;
+	  							var heightImg = 0;
+	  							
+	  							widthImg = (sbiJson.CHART.width <= widthPrevPan) ? sbiJson.CHART.width : widthPrevPan;
+	  							heightImg = widthImg/ratioChartJson;
+	  							
+	  							var ratioImg = widthImg/heightImg;
+	  							  							
+	  							heightImg = (heightImg <= heightPrevPan) ? heightImg : heightPrevPan;
+	  							widthImg = heightImg*ratioImg;
+	  							
+	  							/**
+	  							 * We added new property to the 'parameters', the 'exportWebApp'.
+	  							 * This property is boolean value that will tell the VM that we
+	  							 * are coming from the Highcharts Export web application and that
+	  							 * it (the VM) should reconfigure its code according to that fact.
+	  							 * E.g. some properties that VM initialy has should not be provided
+	  							 * when previewing the chart in the Designer (in the Preview panel).
+	  							 * 
+	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  							 */
+	  							var parameters = 
+	  							{
+									jsonTemplate: Ext.JSON.encode(sbiJson),
+									exportWebApp: true
+								};
+	  							
+	  							/**
+	  							 * https://production.eng.it/jira/browse/KNOWAGE-581 
+	  							 * in CockpitEngine, the dataset for the preview could be null,
+	  							 * so we need to add the label as a parameter. So, server side
+	  							 * we can get the dataset from the label
+	  							 * 
+	  							 * @author Giorgio Federici (giorgio.federici@eng.it)
+	  							 */
+	  							if(isCockpit){
+	  								parameters.datasetLabel = datasetLabel;
+	  							}
+	  							
+								chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+									var chartConf = response.responseText;
 									
-									if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
-										chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
-									}
-									else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
-										chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
-									}
-								}						
-								
-								/**
-					  			 * The height and width of the chart are set inside the 'chartConf'
-					  			 * parameter.
-					  			 * 
-					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					  			 */
-								var parameters = {
-      									options: chartConf,
-      									content:'options',
-      									type:'image/png',
-      									//height: 298,
-      									//width: previewPanel.getWidth(),
-      									scale: undefined,
-      									constr:'Chart',
-      									callback: undefined,
-      									async: 'true'
-      							};
-								
-      							chartExportWebServiceManager.run('exportPng', parameters, [], 
-  									function (response) {
-	      								var src = '/highcharts-export-web/'+response.responseText;
-	      								
-	      								/**
-	      					  			 * 
-	      					  			 * 
-	      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	      					  			 */
-	      								srcImg = src;
-	      								setPreviewImage(src,heightImg,widthImg);	      								
-	      							},
-	      							function (response) {
-	      									      								
-	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-	      								setPreviewImage(src,previewPanel.getHeight(),widthImg.getWidth());		      								
-	      								srcImg = src;
-	      								
-	      								if (response.status == 0)
-      									{
-	      									Sbi.exception.ExceptionHandler.showErrorMessage
-		    								(
-		    									LN("sbi.chartengine.preview.error.wrongData.bodyText"),
-		    									LN("sbi.chartengine.preview.error.title")
-		    								);
-      									}
-	      								
-	      							}
-      							);
-							}
-							,
-  							function (response) {
-								
-  								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-  								setPreviewImage(src,previewPanel.getHeight(),previewPanel.getWidth());
-  								srcImg = src;
-  								
-  								Sbi.exception.ExceptionHandler.showErrorMessage
-								(
-									LN("sbi.chartengine.preview.error.missingData.bodyText"),
-									LN("sbi.chartengine.preview.error.title")
-								);
-  								
-  							});
-	            		}
+									/**
+									 * If chart types of documents (charts) that user wants to render in the
+									 * Preview panel (using the Highcharts export engine) is TREEMAP or the 
+									 * HEATMAP we need to prepare data that we receive from the VM of that
+									 * chart type by sending them to the 'treemap.js'.
+									 * 
+									 * @author Daniele Davì
+									 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+									 */
+									
+									/**
+									 * Conversion of JSON text (string) into the JSON object that we need for
+									 * the function that prepares all the data needed for the TREEMAP or
+									 * HEATMAP rendering-exporting engine.
+									 * 
+									 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+									 */
+									var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+									
+									if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
+									{
+										var jsonChartConf = Ext.JSON.decode(chartConf);
+										
+										if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
+											chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
+										}
+										else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
+											chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
+										}
+									}						
+									
+									/**
+						  			 * The height and width of the chart are set inside the 'chartConf'
+						  			 * parameter.
+						  			 * 
+						  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						  			 */
+									var parameters = {
+	      									options: chartConf,
+	      									content:'options',
+	      									type:'image/png',
+	      									//height: 298,
+	      									//width: previewPanel.getWidth(),
+	      									scale: undefined,
+	      									constr:'Chart',
+	      									callback: undefined,
+	      									async: 'true'
+	      							};
+									
+	      							chartExportWebServiceManager.run('exportPng', parameters, [], 
+	  									function (response) {
+		      								var src = '/highcharts-export-web/'+response.responseText;
+		      								
+		      								/**
+		      					  			 * 
+		      					  			 * 
+		      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		      					  			 */
+		      								srcImg = src;
+		      								setPreviewImage(src,heightImg,widthImg);	      								
+		      							},
+		      							function (response) {
+		      									      								
+		      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
+		      								setPreviewImage(src,previewPanel.getHeight(),widthImg.getWidth());		      								
+		      								srcImg = src;
+		      								
+		      								if (response.status == 0)
+	      									{
+		      									Sbi.exception.ExceptionHandler.showErrorMessage
+			    								(
+			    									LN("sbi.chartengine.preview.error.wrongData.bodyText"),
+			    									LN("sbi.chartengine.preview.error.title")
+			    								);
+	      									}
+		      								
+		      							}
+	      							);
+								}
+								,
+	  							function (response) {
+									
+	  								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
+	  								setPreviewImage(src,previewPanel.getHeight(),previewPanel.getWidth());
+	  								srcImg = src;
+	  								
+	  								Sbi.exception.ExceptionHandler.showErrorMessage
+									(
+										LN("sbi.chartengine.preview.error.missingData.bodyText"),
+										LN("sbi.chartengine.preview.error.title")
+									);
+	  								
+	  							});
+		            		}
+		            	}
+		            },
+	            	afterrender: function(c) {
+	            		Ext.create('Ext.tip.ToolTip', {
+	            			target: c.getEl(),
+	            			html: LN('sbi.chartengine.refreshpreview')
+	            		});
 	            	}
-	            },
-            	afterrender: function(c) {
-            		Ext.create('Ext.tip.ToolTip', {
-            			target: c.getEl(),
-            			html: LN('sbi.chartengine.refreshpreview')
-            		});
-            	}
-			}];
+				}
+			];
   			
   			this.previewPanel.tools = previewTools;
   			
@@ -2254,11 +2310,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				                	
 				                    beforeshow: function updateTipBody(tip) {
 				                    	
-//						                        if (!Ext.isEmpty(grid.cellIndex) && grid.cellIndex !== -1) {
 			                            	var header = grid.headerCt.getGridColumns()[0];
 				                            var val = grid.getStore().getAt(grid.recordIndex).get(header.dataIndex);
-//						                            var isDateColumn = header.xtype == 'datecolumn';
-//						                            tip.update(isDateColumn ? Ext.util.Format.date(val, header.format) : val);
 				                            var stringTip = '<b>Category:</b></br>' + val;
 				                            tip.update(stringTip);
 //						                        }
@@ -2596,7 +2649,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						selectOnFocus: true,
 					}
 					
-				}, {
+				}, 
+				
+				{
 					menuDisabled: true,
 					sortable: false,
 					xtype: 'actioncolumn',
@@ -2740,7 +2795,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				sbiExecutionId: sbiExecutionId,
 			       
 				title: LN('sbi.chartengine.designer.stepCrossNavigation'),
-			});
+			});			
+			
 			// crossNavigation should be disabled when in Cockpit 
 			if(isCockpit){
 				this.crossNavigationPanel.hide();
