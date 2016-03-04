@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,38 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.kpi;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -76,9 +49,37 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -88,7 +89,7 @@ public class KpiService {
 	private static final String MEASURE = "MEASURE";
 	private static final String MEASURE_NAME = "measureName";
 	private static final String MEASURE_ATTRIBUTES = "attributes";
-	private static final String NEW_KPI_RULEOUTPUT_ALIAS_ERROR = "newKpi.ruleoutput.alias.error";
+
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
 	@POST
@@ -96,7 +97,7 @@ public class KpiService {
 	public Response buildCardinalityMatrix(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String arrayOfMeasures = RestUtilities.readBody(req);
-			List measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			List<String> measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
 			IKpiDAO dao = getKpiDAO(req);
 			List<Cardinality> lst = dao.buildCardinality(measureList);
 			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
@@ -179,7 +180,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -223,14 +224,16 @@ public class KpiService {
 			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
 
 			IKpiDAO kpiDao = getKpiDAO(req);
-			List<String> aliases = kpiDao.aliasValidation(rule);
-			if (aliases != null && !aliases.isEmpty()) {
+			Map<String, List<String>> aliasErrorMap = kpiDao.aliasValidation(rule);
+			if (!aliasErrorMap.isEmpty()) {
 				JSONObject jsonError = new JSONObject();
 				JSONArray errors = new JSONArray();
 				JSONObject msg = new JSONObject();
-				msg.put("message", MessageFormat.format(message.getMessage(NEW_KPI_RULEOUTPUT_ALIAS_ERROR), aliases));
 				errors.put(msg);
 				jsonError.put("errors", errors);
+				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
+					msg.put("message", MessageFormat.format(message.getMessage(error.getKey()), error.getValue()));
+				}
 				return Response.ok(jsonError.toString()).build();
 			}
 			return Response.ok().build();
@@ -283,14 +286,6 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(tt, tt.getClass())).build();
 	}
 
-	// TODO remove this
-	// @GET
-	// @Path("/{id}/loadThreshold")
-	// public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-	// Threshold t = getKpiDAO(req).loadThreshold(id);
-	// return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
-	// }
-
 	@POST
 	@Path("/saveKpi")
 	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
@@ -329,15 +324,6 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	// TODO remove this
-	// @DELETE
-	// @Path("/{id}/deleteThreshold")
-	// public Response deleteThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-	// IKpiDAO dao = getKpiDAO(req);
-	// dao.removeThreshold(id);
-	// return Response.ok().build();
-	// }
-
 	@DELETE
 	@Path("/{id}/deleteRule")
 	public Response deleteRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
@@ -346,28 +332,8 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	// TODO remove this
-	// @POST
-	// @Path("/saveThreshold")
-	// public Response saveThreshold(@Context HttpServletRequest req) throws EMFUserError {
-	// IKpiDAO dao = getKpiDAO(req);
-	// try {
-	// String requestVal = RestUtilities.readBody(req);
-	// Threshold threshold = (Threshold) JsonConverter.jsonToObject(requestVal, Threshold.class);
-	// checkMandatory(threshold);
-	// if (threshold.getId() == null) {
-	// dao.insertThreshold(threshold);
-	// } else {
-	// dao.updateThreshold(threshold);
-	// }
-	// return Response.ok().build();
-	// } catch (IOException e) {
-	// throw new SpagoBIServiceException(req.getPathInfo(), e);
-	// }
-	// }
-
-	/*
-	 * *** Private methods ***
+	/* ***
+	 * Private methods ***
 	 */
 
 	/**
