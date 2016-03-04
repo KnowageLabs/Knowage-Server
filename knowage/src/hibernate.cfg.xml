@@ -136,14 +136,6 @@
 		<mapping
 			resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoLayersRoles.hbm.xml" />
 
-		<!-- dossier -->
-		<mapping
-			resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierBinaryContentsTemp.hbm.xml" />
-		<mapping
-			resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierPartsTemp.hbm.xml" />
-		<mapping
-			resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierPresentations.hbm.xml" />
-
 		<!-- rememberMe -->
 		<mapping
 			resource="it/eng/spagobi/hotlink/rememberme/metadata/mapping/SbiRememberMe.hbm.xml" />

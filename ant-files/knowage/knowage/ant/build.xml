@@ -272,7 +272,6 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/tlds/portlet.tld" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/log4j.properties" token="${catalina.base}/logs" value="${jboss.server.log.dir}" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
-		<replace file="${build}/${webapp_name}/WEB-INF/classes/jbpm.hibernate.cfg.xml" token="java:comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
 		<replace file="${build}/${webapp_name}/WEB-INF/classes/quartz.properties" token="java:comp/env/jdbc/knowage" value="java:/jdbc/knowage" />
 		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
 			<replacetoken><![CDATA[<!-- START TOMCAT RES -->]]></replacetoken>

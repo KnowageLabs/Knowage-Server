@@ -75,28 +75,25 @@ function checkSourceVisibility(engineId) {
 	var engine = DocumentDetails.getEngine( engineId );
 	
 	
-	// hide template dynamic creation button for dossier and olap document 
+	// hide template dynamic creation button for olap document 
 	var datasourcecontainer = document.getElementById("datasourcecontainer");
 
 	var datasetcontainer = document.getElementById("datasetcontainer");
 
-
 	if(engine.useDatasource == '1') {
 		datasourcecontainer.style.display="inline";
-	document.getElementById("doc_datasource").disabled=false;
+		document.getElementById("doc_datasource").disabled=false;
 	} else {
 		datasourcecontainer.style.display="none";
-	document.getElementById("doc_datasource").disabled=true;
+		document.getElementById("doc_datasource").disabled=true;
 	}
 
 	if(engine.useDataset == '1') {
 		datasetcontainer.style.display="inline";
 		document.getElementById("dataset").disabled=false;
-
 	} else {
 		datasetcontainer.style.display="none";
 		document.getElementById("dataset").disabled=true;
-		
 	}	
 };
 
@@ -104,9 +101,9 @@ function checkFormVisibility( docType ) {
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
 	
-	// hide template dynamic creation button for dossier and olap document 
+	// hide template dynamic creation button for olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if(type=="OLAP" || type=="DOSSIER") {
+	if(type=="OLAP") {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";

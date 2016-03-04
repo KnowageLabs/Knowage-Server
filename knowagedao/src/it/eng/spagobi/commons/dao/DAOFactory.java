@@ -38,9 +38,6 @@ import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
-import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
-import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderWFSDAO;
@@ -452,44 +449,8 @@ public class DAOFactory {
 	}
 
 	/**
-	 * Gets the dossier dao.
-	 * 
-	 * @return the dossier dao
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 */
-	public static IDossierDAO getDossierDAO() throws EMFUserError {
-		return (IDossierDAO) createDAOInstance("DossierDAO");
-	}
-
-	/**
-	 * Gets the dossier presentation dao.
-	 * 
-	 * @return the dossier presentation dao
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 */
-	public static IDossierPresentationsDAO getDossierPresentationDAO() throws EMFUserError {
-		return (IDossierPresentationsDAO) createDAOInstance("DossierPresentationDAO");
-	}
-
-	/**
-	 * Gets the dossier parts temp dao.
-	 * 
-	 * @return the dossier parts temp dao
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 */
-	public static IDossierPartsTempDAO getDossierPartsTempDAO() throws EMFUserError {
-		return (IDossierPartsTempDAO) createDAOInstance("DossierPartsTempDAO");
-	}
-
-	/**
 	 * Gets the remember me dao.
-	 * 
+	 *
 	 * @return the remember me dao
 	 * 
 	 * @throws EMFUserError
@@ -966,7 +927,7 @@ public class DAOFactory {
 
 	/**
 	 * Gets the CrossNavigationDAO dao.
-	 * 
+	 *
 	 * @return the CrossNavigationDAO dao
 	 * 
 	 * @throws EMFUserError

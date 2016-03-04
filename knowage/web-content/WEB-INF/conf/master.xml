@@ -45,21 +45,8 @@
 	<CONFIGURATOR path="/WEB-INF/conf/engines/config/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/config/presentation.xml" /> 
 	<CONFIGURATOR path="/WEB-INF/conf/engines/config/publishers.xml" /> 
-    <CONFIGURATOR path="/WEB-INF/conf/engines/config/business_map.xml" />  
-      
-  
-<!-- engines.dossier -->
-	 
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/dossier.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/messages.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/pages.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/modules.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/presentation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/publishers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/actions.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/validation.xml" /> 
-	<CONFIGURATOR path="/WEB-INF/conf/engines/dossier/business_map.xml" />   
-  
+    <CONFIGURATOR path="/WEB-INF/conf/engines/config/business_map.xml" />
+
 <!-- engines.dashboard -->
 	<CONFIGURATOR path="/WEB-INF/conf/engines/dashboard/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/dashboard/actions.xml" />

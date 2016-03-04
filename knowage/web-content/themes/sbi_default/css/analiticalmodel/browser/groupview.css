@@ -131,14 +131,6 @@
 		!important;
 }
 
-.group-view .document-item-icon .DOSSIER-icon {
-	width: 178px;
-	height: 150px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_dossier.png')
-		!important;
-}
-
 .group-view .document-item-icon .KPI-icon {
 	width: 178px;
 	height: 150px;

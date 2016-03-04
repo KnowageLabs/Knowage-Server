@@ -551,15 +551,6 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	background-repeat: no-repeat;
 }
 
-.box .box-figure .DOSSIER-icon {background-image:url('../../../img/analiticalmodel/browser/document_dossier.png')!important;
-	display:block;
-	width:100%;
-	height:150px;
-	background-size: contain;
-	background-position: center center;
-	background-repeat: no-repeat;
-}
-
 .box .box-figure .KPI-icon {background-image:url('../../../img/analiticalmodel/browser/document_kpi.png')!important;
 	display:block;
 	width:100%;

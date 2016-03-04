@@ -148,11 +148,10 @@ function showEngField(docType) {
 function checkSourceVisibility(engineName) {
 	var datasource = engineSource[engineName];
 	var dataset = engineSet[engineName];;
-	// hide template dynamic creation button for dossier and olap document 
+	// hide template dynamic creation button for olap document 
 	var datasourcecontainer = document.getElementById("datasourcecontainer");
 
 	var datasetcontainer = document.getElementById("datasetcontainer");
-
 
 	if(datasource=="1") {
 		datasourcecontainer.style.display="inline";
@@ -165,11 +164,9 @@ function checkSourceVisibility(engineName) {
 	if(dataset=="1") {
 		datasetcontainer.style.display="inline";
 		document.getElementById("dataset").disabled=false;
-
 	} else {
 		datasetcontainer.style.display="none";
-		document.getElementById("dataset").disabled=true;
-		
+		document.getElementById("dataset").disabled=true;	
 	}
 	
  }
@@ -184,9 +181,9 @@ function checkFormVisibility(docType, engineValue) {
 		
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
-	// hide template dynamic creation button for dossier and olap document 
+	// hide template dynamic creation button for olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1))|| type=="DOSSIER" || type=="SMART_FILTER" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1) {
+	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1)) || type=="SMART_FILTER" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1) {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";
@@ -938,7 +935,7 @@ function saveDocument(goBack) {
 				
 				
 				
-			    <!-- TEMPLATE LABEL AND BUTTONS FOR DOSSIER AND OLAP -->
+			    <!-- TEMPLATE LABEL AND BUTTONS FOR OLAP -->
 				 <%
 			     String styleDivLinkConf = " ";
 			     String BIobjTypecode = obj.getBiObjectTypeCode();
@@ -947,8 +944,7 @@ function saveDocument(goBack) {
 			     	EngineDriverClass = obj.getEngine().getDriverName();
 			     }
 			     
-			     if (BIobjTypecode.equalsIgnoreCase("DOSSIER")
-			       || (BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
+			     if ((BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 			       || BIobjTypecode.equalsIgnoreCase("SMART_FILTER")
 			       || BIobjTypecode.equalsIgnoreCase("CHART"))
 			     	styleDivLinkConf = " style='display:inline' ";

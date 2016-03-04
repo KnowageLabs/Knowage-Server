@@ -22,8 +22,6 @@
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.datamart" />
 	<DOMAIN valueCd="MAP" valueNm="sbidomains.nm.map" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="sbidomains.ds.map" />
-	<DOMAIN valueCd="DOSSIER" valueNm="sbidomains.nm.dossier"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dossier" />
 	<DOMAIN valueCd="OFFICE_DOC" valueNm="sbidomains.nm.office_doc"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.office_doc" />
 	<DOMAIN valueCd="ETL" valueNm="sbidomains.nm.etl" domainCd="BIOBJ_TYPE"

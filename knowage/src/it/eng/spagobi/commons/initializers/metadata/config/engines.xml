@@ -6,10 +6,6 @@
 	<!-- ENGINE label="SpagoBIJFreeChartEng" name="JFreeChart Engine" descr="JFree 
 		Chart Engine" mainUrl="" driverNm="" engineTypeCd="INT" classNm="it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine" 
 		biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" / -->
-	<!-- ENGINE label="SpagoBIDossierEngine" name="Dossier Engine" descr="Dossier 
-		Engine" mainUrl="" driverNm="" engineTypeCd="INT" classNm="it.eng.spagobi.engines.dossier.SpagoBIDossierInternalEngine" 
-		biobjTypeCd="DOSSIER" useDataSet="false" useDataSource="false" encrypt="0" 
-		/ -->
 	<ENGINE label="knowageofficeengine" name="Office Document Engine"
 		descr="Office Document Engine" mainUrl="" driverNm="" engineTypeCd="INT"
 		classNm="it.eng.spagobi.engines.officedocument.SpagoBIOfficeDocumentInternalEngine"

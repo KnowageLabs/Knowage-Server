@@ -31,9 +31,6 @@
 		<DAO name="GeoMapFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapFeaturesDAOHibImpl"/>
 		<DAO name="UserFunctionalityDAO" implementation="it.eng.spagobi.commons.dao.UserFunctionalityDAO"/>
 		<DAO name="DistributionListDAO" implementation="it.eng.spagobi.tools.distributionlist.dao.DistributionListDaoImpl"/>
-		<DAO name="DossierDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierDAOHibImpl"/>
-		<DAO name="DossierPresentationDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierPresentationsDAOHibImpl"/>
-		<DAO name="DossierPartsTempDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierPartsTempDAOHibImpl"/>
 		<DAO name="RememberMeDAO" implementation="it.eng.spagobi.hotlink.rememberme.dao.RememberMeDAOHibImpl"/>
 		<DAO name="MenuDAO" implementation="it.eng.spagobi.wapp.dao.MenuDAOImpl"/>
 		<DAO name="MenuRolesDAO" implementation="it.eng.spagobi.wapp.dao.MenuRolesDAOImpl"/>

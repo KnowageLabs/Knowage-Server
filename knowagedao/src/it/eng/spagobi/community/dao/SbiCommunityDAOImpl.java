@@ -34,9 +34,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -47,8 +45,6 @@ import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
-import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
-import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
@@ -67,29 +63,34 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCommunityDAO {
-	
+
 	static private Logger logger = Logger.getLogger(SbiCommunityDAOImpl.class);
-	
+
+	@Override
 	public void setUserProfile(IEngUserProfile profile) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setUserID(String user) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public IEngUserProfile getUserProfile() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void setTenant(String tenant) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -102,20 +103,19 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			community.setCreationDate(new Date());
 			community.setLastChangeDate(new Date());
 			updateSbiCommonInfo4Insert(community, true);
-			id = (Integer)aSession.save(community);
+			id = (Integer) aSession.save(community);
 
 			tx.commit();
 
 			logger.debug("OUT");
 			return id;
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} 
-		catch (RuntimeException re) {
-			logger.error(re.getMessage(),re);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage(), re);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -127,8 +127,8 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
-	public List<SbiCommunity> loadSbiCommunityByUser(String userId)
-			throws EMFUserError {
+	@Override
+	public List<SbiCommunity> loadSbiCommunityByUser(String userId) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
@@ -151,14 +151,15 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
-	public List<SbiCommunity> loadSbiCommunityByOwner(String owner)
-			throws EMFUserError {
+	@Override
+	public List<SbiCommunity> loadSbiCommunityByOwner(String owner) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
@@ -182,12 +183,14 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
+	@Override
 	public SbiCommunity loadSbiCommunityByName(String name) throws EMFUserError {
 		logger.debug("IN");
 
@@ -203,7 +206,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 			result = (SbiCommunity) query.uniqueResult();
 
-			return  result;
+			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
 			if (tx != null)
@@ -211,49 +214,50 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
-	public Integer saveSbiComunityUsers(SbiCommunity community, String userID)
-			throws EMFUserError {
+	@Override
+	public Integer saveSbiComunityUsers(SbiCommunity community, String userID) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		Integer res = null;
 		SbiCommunityUsers commUsers = new SbiCommunityUsers();
 		try {
-			
+
 			res = saveSbiComunity(community);
-			if(res != null){
-			
+			if (res != null) {
+
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				
+
 				commUsers.setCreationDate(new Date());
 				commUsers.setLastChangeDate(new Date());
 				SbiCommunityUsersId id = new SbiCommunityUsersId();
 				id.setCommunityId(community.getCommunityId());
 				id.setUserId(userID);
-				
+
 				commUsers.setId(id);
-				
+
 				updateSbiCommonInfo4Insert(commUsers, true);
 				aSession.save(commUsers);
-	
+
 				tx.commit();
 			}
 			logger.debug("OUT");
 
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		}catch (RuntimeException re) {
-			logger.error(re.getMessage(),re);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage(), re);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -266,33 +270,33 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		return res;
 	}
 
-	public void addCommunityMember(SbiCommunity community, String userID)
-			throws EMFUserError {
+	@Override
+	public void addCommunityMember(SbiCommunity community, String userID) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		SbiCommunityUsers commUsers = new SbiCommunityUsers();
 		try {
-			
+
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			commUsers.setCreationDate(new Date());
 			commUsers.setLastChangeDate(new Date());
 			SbiCommunityUsersId id = new SbiCommunityUsersId();
 			id.setCommunityId(community.getCommunityId());
 			id.setUserId(userID);
-			
+
 			commUsers.setId(id);
-			
-			updateSbiCommonInfo4Insert(commUsers,true);
+
+			updateSbiCommonInfo4Insert(commUsers, true);
 			aSession.save(commUsers);
 
 			tx.commit();
 			logger.debug("OUT");
 
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
+			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -304,6 +308,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
+	@Override
 	public List<SbiCommunity> loadAllSbiCommunities() throws EMFUserError {
 		logger.debug("IN");
 		List<SbiCommunity> result = null;
@@ -317,7 +322,6 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 			result = query.list();
 
-
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -326,12 +330,14 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
+	@Override
 	public void deleteCommunityById(Integer id) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -339,194 +345,183 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiCommunity hibComm = (SbiCommunity) aSession.load(SbiCommunity.class,id);
-			//get community users
+			SbiCommunity hibComm = (SbiCommunity) aSession.load(SbiCommunity.class, id);
+			// get community users
 			String q = "from SbiCommunityUsers cu where cu.id.communityId = :id";
 			Query query = aSession.createQuery(q);
 			query.setInteger("id", id);
 			List hibList = query.list();
 			Iterator it = hibList.iterator();
-			//delete all users for community
-			while(it.hasNext()){
-				SbiCommunityUsers scu = (SbiCommunityUsers)it.next();
+			// delete all users for community
+			while (it.hasNext()) {
+				SbiCommunityUsers scu = (SbiCommunityUsers) it.next();
 				aSession.delete(scu);
 			}
 			aSession.flush();
 			aSession.refresh(hibComm);
-			//get functionalities
+			// get functionalities
 			String fq = "from SbiFunctions f where f.code = :code and f.functTypeCd = 'COMMUNITY_FUNCT'";
 			Query queryF = aSession.createQuery(fq);
-			queryF.setString("code", hibComm.getFunctCode());		
-			
+			queryF.setString("code", hibComm.getFunctCode());
+
 			List functs = queryF.list();
-			if(functs != null && !functs.isEmpty()){
-			Iterator itF = functs.iterator();
-			//delete all functions for community
-			ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
-			IBIObjectDAO objDao = DAOFactory.getBIObjectDAO();
-			while(itF.hasNext()){
-				SbiFunctions function = (SbiFunctions)itF.next();
-				
-				//find relation with documents associated to community folder
-				String hql1 = "from SbiObjFunc a " +
-						"where a.id.sbiFunctions in (:functions)";
+			if (functs != null && !functs.isEmpty()) {
+				Iterator itF = functs.iterator();
+				// delete all functions for community
+				ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
+				IBIObjectDAO objDao = DAOFactory.getBIObjectDAO();
+				while (itF.hasNext()) {
+					SbiFunctions function = (SbiFunctions) itF.next();
 
-				Query queryDoc = aSession.createQuery(hql1);
-				queryDoc.setParameterList("functions", functs);
-				List<SbiObjFunc> objsF = queryDoc.list();
-				Iterator itdF = objsF.iterator();
+					// find relation with documents associated to community folder
+					String hql1 = "from SbiObjFunc a " + "where a.id.sbiFunctions in (:functions)";
 
-				while(itdF.hasNext()){
-					SbiObjFunc rel = (SbiObjFunc)itdF.next();
-					if(rel.getId().getSbiFunctions().getCode().equals(function.getCode())){
-						aSession.delete(rel);
-						aSession.flush();
-						
-						aSession.refresh(function);
-						
-						//delete the object only if there are no other relations:						
-						BIObject objBI = objDao.loadBIObjectById(rel.getId().getSbiObjects().getBiobjId());
-						SbiObjects hibBIObject = rel.getId().getSbiObjects();
-						ArrayList otherFuncts = (ArrayList)objBI.getFunctionalities();
-						
-						otherFuncts.remove(rel.getId().getSbiFunctions().getFunctId());
-						if(otherFuncts.size() == 0){
-							// delete templates
-							String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId="+hibBIObject.getBiobjId();
-							Query query5 = aSession.createQuery(hql);
-							List templs = query5.list();
-							Iterator iterTempls = templs.iterator();
-							while(iterTempls.hasNext()) {
-								SbiObjTemplates hibObjTemp = (SbiObjTemplates)iterTempls.next();
-								SbiBinContents hibBinCont = hibObjTemp.getSbiBinContents();
-								aSession.delete(hibObjTemp);
-								aSession.delete(hibBinCont);
+					Query queryDoc = aSession.createQuery(hql1);
+					queryDoc.setParameterList("functions", functs);
+					List<SbiObjFunc> objsF = queryDoc.list();
+					Iterator itdF = objsF.iterator();
 
-							}
+					while (itdF.hasNext()) {
+						SbiObjFunc rel = (SbiObjFunc) itdF.next();
+						if (rel.getId().getSbiFunctions().getCode().equals(function.getCode())) {
+							aSession.delete(rel);
+							aSession.flush();
 
-							//delete subobjects eventually associated
-							ISubObjectDAO subobjDAO = DAOFactory.getSubObjectDAO();
-							List subobjects =  subobjDAO.getSubObjects(hibBIObject.getBiobjId());
-							for (int i=0; i < subobjects.size(); i++){
-								SubObject s = (SubObject) subobjects.get(i);
-								//subobjDAO.deleteSubObject(s.getId());
-								subobjDAO.deleteSubObjectSameConnection(s.getId(), aSession);
-							}
+							aSession.refresh(function);
 
-							//delete viewpoints eventually associated
-							List viewpoints = new ArrayList();
-							IViewpointDAO biVPDAO = DAOFactory.getViewpointDAO();
-							viewpoints =  biVPDAO.loadAllViewpointsByObjID(hibBIObject.getBiobjId());
-							for (int i=0; i<viewpoints.size(); i++){
-								Viewpoint vp =(Viewpoint)viewpoints.get(i);
-								biVPDAO.eraseViewpoint(vp.getVpId());
-							}
+							// delete the object only if there are no other relations:
+							BIObject objBI = objDao.loadBIObjectById(rel.getId().getSbiObjects().getBiobjId());
+							SbiObjects hibBIObject = rel.getId().getSbiObjects();
+							ArrayList otherFuncts = (ArrayList) objBI.getFunctionalities();
 
-							//delete snapshots eventually associated
-							ISnapshotDAO snapshotsDAO = DAOFactory.getSnapshotDAO();
-							List snapshots = snapshotsDAO.getSnapshots(hibBIObject.getBiobjId());
-							for (int i=0; i < snapshots.size(); i++){
-								Snapshot aSnapshots = (Snapshot) snapshots.get(i);
-								snapshotsDAO.deleteSnapshot(aSnapshots.getId());
-							}
+							otherFuncts.remove(rel.getId().getSbiFunctions().getFunctId());
+							if (otherFuncts.size() == 0) {
+								// delete templates
+								String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=" + hibBIObject.getBiobjId();
+								Query query5 = aSession.createQuery(hql);
+								List templs = query5.list();
+								Iterator iterTempls = templs.iterator();
+								while (iterTempls.hasNext()) {
+									SbiObjTemplates hibObjTemp = (SbiObjTemplates) iterTempls.next();
+									SbiBinContents hibBinCont = hibObjTemp.getSbiBinContents();
+									aSession.delete(hibObjTemp);
+									aSession.delete(hibBinCont);
 
-							//delete notes eventually associated
-							IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
-							objNoteDAO.eraseNotes(hibBIObject.getBiobjId());
+								}
 
-							//delete metadata eventually associated
-							List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
-							IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
-							if (metadata != null && !metadata.isEmpty()) {
-								Iterator itM = metadata.iterator();
-								while (itM.hasNext()) {
-									ObjMetadata objMetadata = (ObjMetadata) itM.next();
-									ObjMetacontent objMetacontent = (ObjMetacontent) DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), hibBIObject.getBiobjId(), null);
-									if(objMetacontent!=null){
-										objMetaContentDAO.eraseObjMetadata(objMetacontent);
+								// delete subobjects eventually associated
+								ISubObjectDAO subobjDAO = DAOFactory.getSubObjectDAO();
+								List subobjects = subobjDAO.getSubObjects(hibBIObject.getBiobjId());
+								for (int i = 0; i < subobjects.size(); i++) {
+									SubObject s = (SubObject) subobjects.get(i);
+									// subobjDAO.deleteSubObject(s.getId());
+									subobjDAO.deleteSubObjectSameConnection(s.getId(), aSession);
+								}
+
+								// delete viewpoints eventually associated
+								List viewpoints = new ArrayList();
+								IViewpointDAO biVPDAO = DAOFactory.getViewpointDAO();
+								viewpoints = biVPDAO.loadAllViewpointsByObjID(hibBIObject.getBiobjId());
+								for (int i = 0; i < viewpoints.size(); i++) {
+									Viewpoint vp = (Viewpoint) viewpoints.get(i);
+									biVPDAO.eraseViewpoint(vp.getVpId());
+								}
+
+								// delete snapshots eventually associated
+								ISnapshotDAO snapshotsDAO = DAOFactory.getSnapshotDAO();
+								List snapshots = snapshotsDAO.getSnapshots(hibBIObject.getBiobjId());
+								for (int i = 0; i < snapshots.size(); i++) {
+									Snapshot aSnapshots = (Snapshot) snapshots.get(i);
+									snapshotsDAO.deleteSnapshot(aSnapshots.getId());
+								}
+
+								// delete notes eventually associated
+								IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
+								objNoteDAO.eraseNotes(hibBIObject.getBiobjId());
+
+								// delete metadata eventually associated
+								List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
+								IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
+								if (metadata != null && !metadata.isEmpty()) {
+									Iterator itM = metadata.iterator();
+									while (itM.hasNext()) {
+										ObjMetadata objMetadata = (ObjMetadata) itM.next();
+										ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(),
+												hibBIObject.getBiobjId(), null);
+										if (objMetacontent != null) {
+											objMetaContentDAO.eraseObjMetadata(objMetacontent);
+										}
 									}
 								}
-							}			
 
+								// delete parameters associated
+								// before deleting parameters associated is needed to delete all dependencies,
+								// otherwise in case there could be error if is firstly deleted a parameter from wich some else is dependant
+								// (thought priority parameter is not costraining dependencies definition)
 
-							// delete parameters associated
-							// before deleting parameters associated is needed to delete all dependencies,
-							// otherwise in case there could be error if is firstly deleted a parameter from wich some else is dependant
-							// (thought priority parameter is not costraining dependencies definition)
-							
-							Set objPars = hibBIObject.getSbiObjPars();
-							
-							Iterator itObjParDep = objPars.iterator();
-							BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
-							while (itObjParDep.hasNext()) {
-								SbiObjPar aSbiObjPar = (SbiObjPar) itObjParDep.next();
-								BIObjectParameter aBIObjectParameter = new BIObjectParameter();
-								aBIObjectParameter.setId(aSbiObjPar.getObjParId());			
-								objParDAO.eraseBIObjectParameterDependencies(aBIObjectParameter, aSession);
+								Set objPars = hibBIObject.getSbiObjPars();
+
+								Iterator itObjParDep = objPars.iterator();
+								BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
+								while (itObjParDep.hasNext()) {
+									SbiObjPar aSbiObjPar = (SbiObjPar) itObjParDep.next();
+									BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+									aBIObjectParameter.setId(aSbiObjPar.getObjParId());
+									objParDAO.eraseBIObjectParameterDependencies(aBIObjectParameter, aSession);
+								}
+
+								Iterator itObjPar = objPars.iterator();
+								while (itObjPar.hasNext()) {
+									SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
+									BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+									aBIObjectParameter.setId(aSbiObjPar.getObjParId());
+
+									objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession, false);
+								}
+
+								// update subreports table
+								ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
+								subrptdao.eraseSubreportByMasterRptId(hibBIObject.getBiobjId());
+								subrptdao.eraseSubreportBySubRptId(hibBIObject.getBiobjId());
+
+								// delete object
+								aSession.delete(hibBIObject);
+								logger.debug("OUT");
+								aSession.flush();
+								aSession.refresh(function);
 							}
-								
-							Iterator itObjPar = objPars.iterator();
-							while (itObjPar.hasNext()) {
-								SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
-								BIObjectParameter aBIObjectParameter = new BIObjectParameter();
-								aBIObjectParameter.setId(aSbiObjPar.getObjParId());
-								
-								objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession, false);
-							}
-
-							// delete dossier temp parts eventually associated
-							IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();
-							dptDAO.eraseDossierParts(hibBIObject.getBiobjId());
-							// delete dossier presentations eventually associated
-							IDossierPresentationsDAO dpDAO = DAOFactory.getDossierPresentationDAO();
-							dpDAO.deletePresentations(hibBIObject.getBiobjId());
-
-							// update subreports table 
-							ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
-							subrptdao.eraseSubreportByMasterRptId(hibBIObject.getBiobjId());
-							subrptdao.eraseSubreportBySubRptId(hibBIObject.getBiobjId());
-
-							// delete object
-							aSession.delete(hibBIObject);
-							logger.debug("OUT");
-							aSession.flush();
-							aSession.refresh(function);
 						}
 					}
-				}
 
+					try {
 
-				try{								
+						Set oldRoles = function.getSbiFuncRoles();
+						Iterator iterOldRoles = oldRoles.iterator();
+						while (iterOldRoles.hasNext()) {
+							SbiFuncRole role = (SbiFuncRole) iterOldRoles.next();
+							aSession.delete(role);
+						}
 
-					Set oldRoles = function.getSbiFuncRoles();
-					Iterator iterOldRoles = oldRoles.iterator();
-					while (iterOldRoles.hasNext()) {
-						SbiFuncRole role = (SbiFuncRole) iterOldRoles.next();
-						aSession.delete(role);
+						// update prog column in other functions
+
+						if (function.getParentFunct() != null) {
+							String hqlUpdateProg = "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > ? " + " and s.parentFunct.functId = ?";
+							Query query4 = aSession.createQuery(hqlUpdateProg);
+							query4.setInteger(0, function.getProg().intValue());
+							query4.setInteger(1, function.getParentFunct().getFunctId().intValue());
+							query4.executeUpdate();
+						}
+
+						aSession.delete(function);
+
+					} catch (Exception e) {
+						logger.debug("No such functionality element ");
 					}
-
-					// update prog column in other functions
-
-					if(function.getParentFunct()!=null){
-						String hqlUpdateProg = "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > ? " 
-							+ " and s.parentFunct.functId = ?" ;
-						Query query4 = aSession.createQuery(hqlUpdateProg);
-						query4.setInteger(0, function.getProg().intValue());
-						query4.setInteger(1, function.getParentFunct().getFunctId().intValue());
-						query4.executeUpdate();
-					}
-
-					aSession.delete(function);
-					
-				}catch(Exception e){
-					logger.debug("No such functionality element ");
-				}
 				}
 				aSession.delete(hibComm);
 				tx.commit();
 			}
-			
-			
+
 		} catch (HibernateException he) {
 			logger.error("Error while erasing the community with id " + id, he);
 
@@ -543,16 +538,17 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 				logger.debug("OUT");
 			}
 		}
-		
+
 	}
 
-	public Integer updateSbiComunity(SbiCommunity community)
-			throws EMFUserError {
+	@Override
+	public Integer updateSbiComunity(SbiCommunity community) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -571,8 +567,8 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			logger.debug("OUT");
 			return id;
 		} catch (HibernateException he) {
-			logger.error(he.getMessage(),he);
-			
+			logger.error(he.getMessage(), he);
+
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -584,8 +580,8 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
-	public List<SbiCommunityUsers> loadCommunitieMembersByName(SbiCommunity community, SbiUser owner)
-			throws EMFUserError {
+	@Override
+	public List<SbiCommunityUsers> loadCommunitieMembersByName(SbiCommunity community, SbiUser owner) throws EMFUserError {
 		logger.debug("IN");
 		List<SbiCommunityUsers> result = null;
 		Session aSession = null;
@@ -608,14 +604,15 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
 
-	public void deleteCommunityMembership(String userID)
-			throws EMFUserError {
+	@Override
+	public void deleteCommunityMembership(String userID) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -625,9 +622,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			String q = "from SbiCommunityUsers cu where cu.id.userId = ?";
 			Query query = aSession.createQuery(q);
 			query.setString(0, userID);
-			List <SbiCommunityUsers> result = query.list();
-			if(result != null && !result.isEmpty()){
-				for(int i=0; i<result.size(); i++){
+			List<SbiCommunityUsers> result = query.list();
+			if (result != null && !result.isEmpty()) {
+				for (int i = 0; i < result.size(); i++) {
 					aSession.delete(result.get(i));
 				}
 			}
@@ -639,15 +636,16 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 	}
-	
-	public void deleteMemberFromCommunity(String userID, Integer communityId)
-			throws EMFUserError {
+
+	@Override
+	public void deleteMemberFromCommunity(String userID, Integer communityId) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -658,9 +656,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString(0, userID);
 			query.setInteger(1, communityId);
-			List <SbiCommunityUsers> result = query.list();
-			if(result != null && !result.isEmpty()){
-				for(int i=0; i<result.size(); i++){
+			List<SbiCommunityUsers> result = query.list();
+			if (result != null && !result.isEmpty()) {
+				for (int i = 0; i < result.size(); i++) {
 					aSession.delete(result.get(i));
 				}
 			}
@@ -672,11 +670,12 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			logger.debug("OUT");
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 	}
 
 }

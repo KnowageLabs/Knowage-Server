@@ -100,12 +100,6 @@
         background-image:url('../../../img/analiticalmodel/browser/document_qbe.png')!important;
     }
     
-    .list-view .document-item-icon .DOSSIER-icon {
-    	width:96px;
-        height:96px;
-        background-image:url('../../../img/analiticalmodel/browser/document_dossier.png')!important;
-    }
-    
     .group-view .document-item-icon .ETL-icon {
     	width:96px;
         height:96px;
