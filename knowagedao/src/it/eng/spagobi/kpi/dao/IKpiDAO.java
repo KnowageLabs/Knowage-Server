@@ -28,6 +28,7 @@ import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
@@ -39,7 +40,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public List<Cardinality> buildCardinality(final List<String> measures);
 
-	public List<String> aliasValidation(Rule rule);
+	/**
+	 * Validate a Rule returning errors if any
+	 * 
+	 * @param rule
+	 * @return a map of {error key: list of alias}
+	 */
+	public Map<String, List<String>> aliasValidation(Rule rule);
 
 	public List<RuleOutput> listRuleOutputByType(String type);
 

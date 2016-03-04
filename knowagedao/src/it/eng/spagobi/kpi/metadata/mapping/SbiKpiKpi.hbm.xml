@@ -25,7 +25,7 @@
 		<!-- 
         <property name="categoryId" column="CATEGORY_ID" type="int" length="11" not-null="false"/>
 		 -->        
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="all">
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="save-update">
             <column name="CATEGORY_ID"  />
         </many-to-one>
         

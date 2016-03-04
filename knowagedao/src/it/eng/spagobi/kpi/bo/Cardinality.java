@@ -1,13 +1,14 @@
 package it.eng.spagobi.kpi.bo;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Cardinality {
 
 	private Integer ruleId;
 	private String ruleName;
 	private String measureName;
-	private List<String> attributs;
+	private Map<String, Boolean> attributes = new HashMap<String, Boolean>();
 
 	/**
 	 * @return the ruleId
@@ -55,18 +56,18 @@ public class Cardinality {
 	}
 
 	/**
-	 * @return the attributs
+	 * @return the attributes
 	 */
-	public List<String> getAttributs() {
-		return attributs;
+	public Map<String, Boolean> getAttributes() {
+		return attributes;
 	}
 
 	/**
-	 * @param attributs
-	 *            the attributs to set
+	 * @param attributes
+	 *            the attributes to set
 	 */
-	public void setAttributs(List<String> attributs) {
-		this.attributs = attributs;
+	public void setAttributes(Map<String, Boolean> attributes) {
+		this.attributes = attributes;
 	}
 
 }
