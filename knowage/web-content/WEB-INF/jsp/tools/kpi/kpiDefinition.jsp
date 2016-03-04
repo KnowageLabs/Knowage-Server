@@ -39,6 +39,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/cardinalityController.js"></script>
+<script type="text/ng-template" id="templatesaveKPI.html">
+<md-dialog aria-label="Select Function"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Save new KPI</h1>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="close()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content >
+     <div class="md-dialog-content">
+		<md-input-container class="small counter" class="small counter">
+			<label>Name</label>
+			<input class="input_class" ng-model="kpi.name" required maxlength="100" ng-maxlength="100" md-maxlength="100">
+		 </md-input-container>
+	<md-autocomplete 
+          ng-disabled="false" 
+          md-selected-item="kpi.category" 
+          md-search-text="searchText" 
+          md-items="item in querySearchCategory(searchText)"
+          md-item-text="item.valueCd" 
+          md-floating-label="Categoria"
+          md-autoselect	="true"
+         >
+		<md-item-template>
+          <span md-highlight-text="searchText">{{item.valueCd}}</span>
+        </md-item-template> 
+      </md-autocomplete>    
+     </div>
+    
+	<div class="footer">
+	<md-button class="dialogButton" ng-click="apply()" ng-disable="kpi.name.length==0" md-autofocus>Apply <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
+	</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>
+</script>
 
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
@@ -53,18 +94,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/formulaController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/listController.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/kpiCustomStyle.css", currTheme)%>">
 
 
 </head>
 <body>
-	<angular-list-detail ng-controller="kpiDefinitionMasterController" save-function="parseFormula">
-		<list label="translate.load('sbi.kpi.list')">lista</list>
-		<detail>
+	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true >
+		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
+		<angular-table
+		id='kpiListTable' ng-model=kpiList
+		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
+		columnsSearch='["name"]' show-search-bar=true
+		highlights-selected-item=true 
+		speed-menu-option=measureMenuOption scope-functions=tableFunction click-function="loadKPI(item);"> </angular-table>
+		</list>
+		<detail save-function="parseFormula" cancel-function="cancel">
  	
 		<md-tabs layout-fill class="absolute" >
 				<md-tab id="tab1" >
-       				<md-tab-label>{{translate.load("sbi.kpi.formula")}}</md-tab-label>
+       				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-show="formulaModified.value">*</span></md-tab-label>
         			<md-tab-body>
         			<%@include	file="./kpiTemplate/formulaTemplate.jsp"%>
 					</md-tab-body>
