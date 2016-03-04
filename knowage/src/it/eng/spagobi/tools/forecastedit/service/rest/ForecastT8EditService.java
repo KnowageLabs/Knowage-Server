@@ -72,6 +72,9 @@ public class ForecastT8EditService {
 				String businessAreaCode = req.getParameter("par_ba");
 				String businessUnitCode = req.getParameter("par_bu");
 				String cdc = req.getParameter("par_cdc");
+				String company = req.getParameter("par_company");
+				String currency = req.getParameter("par_currency");
+				String organization = req.getParameter("par_cdc_class");
 
 				String ricavi = req.getParameter("Ricavi_resValue");
 				String ricaviVarPer = req.getParameter("Ricavi_variationPerc");
@@ -107,7 +110,8 @@ public class ForecastT8EditService {
 
 				// 2- Insert values on database
 				persistValues(businessUnitCode, businessAreaCode, cdc, year, closureCode, userId, ricavi, primoMargine, margineContribuzione, ricaviVarPer,
-						ricaviVarAbs, primoMargineVarPer, primoMargineVarAbs, margineContribuzioneVarPer, margineContribuzioneVarAbs);
+						ricaviVarAbs, primoMargineVarPer, primoMargineVarAbs, margineContribuzioneVarPer, margineContribuzioneVarAbs, company, currency,
+						organization);
 
 				return "<b>Values Updated</b>";
 
@@ -128,7 +132,7 @@ public class ForecastT8EditService {
 
 	private void persistValues(String businessUnitCode, String businessAreaCode, String cdc, String year, String closureCode, String userId, String ricavi,
 			String primoMargine, String margineContribuzione, String ricaviVarPer, String ricaviVarAbs, String primoMargineVarPer, String primoMargineVarAbs,
-			String margineContribuzioneVarPer, String margineContribuzioneVarAbs) {
+			String margineContribuzioneVarPer, String margineContribuzioneVarAbs, String company, String currency, String organization) {
 
 		try {
 
@@ -136,7 +140,8 @@ public class ForecastT8EditService {
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel("DWH BIENG");
 			Connection connection = dataSource.getConnection();
 			String insertQuery = "INSERT INTO SUPP_REP02_T8 (BUSINESS_UNIT, BUSINESS_AREA, CDC, YEAR, CLOSURE, INSERT_USER, FC_RICAVI, FC_PM, FC_MDC, "
-					+ "VAR_PERC_RICAVI,VAR_ABS_RICAVI,VAR_PERC_PM,VAR_ABS_PM,VAR_PERC_MDC,VAR_ABS_MDC ) " + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "VAR_PERC_RICAVI,VAR_ABS_RICAVI,VAR_PERC_PM,VAR_ABS_PM,VAR_PERC_MDC,VAR_ABS_MDC,COMPANY,CURRENCY,ORGANIZATION ) "
+					+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
 
 			preparedStatement.setString(1, businessUnitCode);
@@ -155,6 +160,9 @@ public class ForecastT8EditService {
 			preparedStatement.setDouble(13, Double.valueOf(primoMargineVarAbs));
 			preparedStatement.setDouble(14, Double.valueOf(margineContribuzioneVarPer));
 			preparedStatement.setDouble(15, Double.valueOf(margineContribuzioneVarAbs));
+			preparedStatement.setString(16, company);
+			preparedStatement.setString(17, currency);
+			preparedStatement.setString(18, organization);
 
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
