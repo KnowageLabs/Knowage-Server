@@ -4,8 +4,6 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 	$scope.dataSourceTable= {};
 	$scope.datasourcesList=[];
 	
-	
-	
 	CodeMirror.registerHelper(
 		    "hint", "alias",
 		    function (mirror, options) {
@@ -104,11 +102,7 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 		
 		if(beforeToken.string.toLowerCase()=="as"){
 			var text= cm.getDoc().getRange(CodeMirror.Pos(0,0),beforeCursor);
-			//^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$
-			//^select ((?!FROM).)* AS$
-			//^((.*[\)]\s*select)|(\s*select)) ((?!FROM).)* AS$
-			  
-			  
+
 			var patt = new RegExp(/^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$/ig);
 			if(!patt.test(text.replace(/\n/g, " "))){
 				return false;
@@ -133,7 +127,7 @@ $scope.isPlaceholderCM=function(cm){
 		.then(function(response){
 			angular.copy(response.data.root,$scope.datasourcesList);
 		},function(response){
-			console.log("errore")
+			 $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasources.list.error")); 
 		});
 	}
 	$scope.loadDatasources();
@@ -144,7 +138,7 @@ $scope.isPlaceholderCM=function(cm){
 			$scope.detailProperty.dataSourcesIsSelected=true;
 			angular.copy(response.data,$scope.dataSourceTable);
 		},function(response){
-			console.log("errore")
+			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error")); 
 		});
 	}
 	

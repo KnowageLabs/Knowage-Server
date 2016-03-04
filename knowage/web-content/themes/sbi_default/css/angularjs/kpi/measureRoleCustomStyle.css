@@ -20,3 +20,15 @@ line-height: 24px !important;
     color: #FFEB38 !important;
     margin-right: 6px;
 }
+
+.saveDialogMeasureKpi .md-subheader{
+	text-align: center;
+}
+
+.newChips .md-chip{
+	background: rgba(158, 207, 158, 0.25)!important;
+}
+
+.reusedChips .md-chip{
+	background: rgba(255, 0, 0, 0.25)!important;
+}

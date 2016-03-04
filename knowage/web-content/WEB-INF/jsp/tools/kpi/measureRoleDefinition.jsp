@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Measure Role definition</title>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
@@ -82,14 +81,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         			</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab2"  ng-click="loadMetadata()" ng-disabled="!detailProperty.dataSourcesIsSelected">
+				<md-tab id="tab2"  md-on-select="loadMetadata()" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-tab-label>
         			<md-tab-body  >
         			<%@include	file="./measureRoleTemplate/metadataTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab3" ng-click="loadPreview(true)" ng-disabled="!detailProperty.dataSourcesIsSelected">
+				<md-tab id="tab3" md-on-select="loadPreview(true)" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.ds.test")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./measureRoleTemplate/previewTemplate.jsp"%>

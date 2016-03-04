@@ -2,7 +2,4 @@ angular.module('measureRoleManager').controller('measureRolePreviewController', 
 
 function measureRolePreviewControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	
-	
-
-	
 }

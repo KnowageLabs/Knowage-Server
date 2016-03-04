@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" > 
          <span ng-if="::!aliasExtist(mtdValue.alias)">
 	  		 <md-tooltip md-direction="top">
-		          L'alias non esiste e verrà aggiunto
+	  		 {{translate.load("sbi.kpi.rule.alias.missing")}}
 		 	</md-tooltip>  
         	<md-icon  class="alertIconMissingAlias"  md-font-icon="fa fa-exclamation-triangle" > 
        		</md-icon> 
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar> 
 <md-content layout-margin>
  <md-input-container >
-        <label>Tipologia</label>
+        <label> {{translate.load("sbi.generic.tipology")}}</label>
         <md-select ng-model="mtdValue.type" ng-model-options="{trackBy: '$value.valueCd'}"  >
           <md-option ng-repeat="tipolo in tipologiesType" ng-value={{tipolo}}>
             {{translate.load(tipolo.translatedValueName)}}
@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </md-select>
       </md-input-container> 
         <md-input-container ng-if="mtdValue.type.valueCd=='TEMPORAL_ATTRIBUTE'">
-        <label>Livello gerarchico</label>
+        <label>{{translate.load("sbi.ds.metadata.dataset.hierarchy.level")}}</label>
         <md-select ng-model="mtdValue.hierarchicalLevel">
           <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}">
             {{hlevel.valueName}}
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md-search-text="searchText" 
           md-items="item in querySearchCategory(searchText)"
           md-item-text="item.valueCd" 
-          md-floating-label="Categoria"
+          md-floating-label="{{translate.load('sbi.generic.category')}}"
           md-autoselect	="true"
          >
         <md-item-template>

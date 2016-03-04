@@ -40,4 +40,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    </md-sidenav>
 
 </md-content>
-<!-- SELECT * FROM employee as cur where cur.full_name=@firstPlaceh -->
