@@ -341,4 +341,18 @@
 		
 		console.log("documentExecutionControllerFn OUT ");
 	};
+	
+	/*
+	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs){
+				element.on('load', function(){
+					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
+					element.css('height', iFrameHeight);
+				})
+			}
+		}}]
+	);
+	 */
 })();	

@@ -153,7 +153,7 @@ app.controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', '
 		var params = {};
 		
 		var url = sbiModule_config.contextName 
-			+ '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&SBI_ENVIRONMENT=DOCBROWSER'
+			+ '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER'
 			+ '&OBJECT_ID=' + document.id
 			+ '&OBJECT_LABEL=' + document.label
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'

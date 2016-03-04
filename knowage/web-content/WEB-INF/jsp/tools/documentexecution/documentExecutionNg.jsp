@@ -78,7 +78,7 @@ try{
 			</div>
         </md-toolbar>
 
- 		<section layout="row"> 
+ 		<section layout="row" layout-fill> 
  			<md-content layout="column" layout-fill>
 				<iframe ng-src="{{documentUrl}}"
 				<%--

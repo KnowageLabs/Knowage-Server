@@ -20,12 +20,14 @@ package it.eng.spagobi.api;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -60,8 +62,8 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
-	public static final String PARAMETERS = "PARAMETERS";
-	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
+//	public static final String PARAMETERS = "PARAMETERS";
+//	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -96,7 +98,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// modality
 			// BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
-			List parameters = getParameters(obj, executingRole, locale, modality);
+			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
 			JSONArray parametersJSON = null;
 			try {
 				parametersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parameters, locale);
@@ -104,7 +106,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				e.printStackTrace();
 			}
 			// URL
-			response = handleNormalExecution(obj, req, executingRole, modality, jsonParameters, locale);
+//			response = handleNormalExecution(obj, req, executingRole, modality, jsonParameters, locale);
+			response = DocumentExecutionUtils.handleNormalExecution(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, 
+					modality, jsonParameters, locale);
 			// PARAMETERS
 			response.put("parameters", parametersJSON);
 			toBeReturned = response.toString();
@@ -119,121 +123,30 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(toBeReturned).build();
 	}
 
-	public List<DocumentParameters> getParameters(BIObject obj, String executionRole, Locale locale, String modality) {
-		List parametersForExecution;
-		parametersForExecution = new ArrayList();
-		BIObject document = new BIObject();
-		try {
-			document = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj.getId(), executionRole);
-		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List parameters = document.getBiObjectParameters();
-		if (parameters != null && parameters.size() > 0) {
-			Iterator it = parameters.iterator();
-			while (it.hasNext()) {
-				BIObjectParameter parameter = (BIObjectParameter) it.next();
-				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
-			}
-		}
-		return parametersForExecution;
-	}
-
-	protected JSONObject handleNormalExecution(BIObject obj, HttpServletRequest req, String role, String modality, String parametersJson, Locale locale) { // isFromCross,
-		logger.debug("IN");
-		UserProfile profile = this.getUserProfile();
-		JSONObject response = new JSONObject();
-		HashMap<String, String> logParam = new HashMap();
-		logParam.put("NAME", obj.getName());
-		logParam.put("ENGINE", obj.getEngine().getName());
-		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
-		try {
-			List errors = null;
-			JSONObject executionInstanceJSON = null;
-			try {
-				executionInstanceJSON = new JSONObject(parametersJson);
-			} catch (JSONException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			documentUrlManager.refreshParametersValues(executionInstanceJSON, false, obj);
-			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
-			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
-			}
-			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
-			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
-			}
-			// ERRORS
-			// if (errors != null && errors.size() > 0) {
-			// there are errors on parameters validation, send errors' descriptions to the client
-			JSONArray errorsArray = new JSONArray();
-			Iterator errorsIt = errors.iterator();
-			while (errorsIt.hasNext()) {
-				EMFUserError error = (EMFUserError) errorsIt.next();
-				errorsArray.put(error.getDescription());
-			}
-			try {
-				response.put("errors", errorsArray);
-			} catch (JSONException e) {
-				try {
-					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
-			}
-			// }else {
-			// URL
-			// there are no errors, we can proceed, so calculate the execution url and send it back to the client
-			String url = documentUrlManager.getExecutionUrl(obj, modality, role);
-			// url += "&isFromCross=" + (isFromCross == true ? "true" : "false");
-			// adds information about the environment
-			String env = this.getAttributeAsString("SBI_ENVIRONMENT");
-			if (env == null) {
-				env = "DOCBROWSER";
-			}
-			url += "&SBI_ENVIRONMENT=" + env;
-			try {
-				response.put("url", url);
-			} catch (JSONException e) {
-				try {
-					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "KO");
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
-					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
-			}
-			// }
-		} finally {
-			logger.debug("OUT");
-		}
-		try {
-			AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "OK");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return response;
-	}
-
 	/**
-	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
-	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], errors: 1 - 'role missing' 2
-	 *         - 'operation not allowed' (ruolo non associato al profilo utente) }
+	 * @return { 
+	 * 		filterStatus: [{ 
+	 * 			title: 'Provincia', 
+	 * 			urlName: 'provincia', 
+	 * 			type: 'list', 
+	 * 			lista:[[k,v],[k,v], [k,v]]
+	 * 		}, { 
+	 * 			title: 'Comune', 
+	 * 			urlName: 'comune',
+	 *         	type: 'list', 
+	 *         	lista:[], 
+	 *         	dependsOn: 'provincia' 
+	 *      }, { 
+	 *      	title: 'Free Search',
+	 *      	type: 'manual', 
+	 *      	urlName: 'freesearch' 
+	 *     	}], 
+	 *     	
+	 *     	errors: [
+	 *     		'role missing',
+	 *     		'operation not allowed'
+	 *   	]
+	 *   }
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
@@ -247,8 +160,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		try {
-			// role = getExecutionRole(role);
-			// recuperiamo il documento by label
 			IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 			BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
@@ -274,14 +185,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
 				parameterAsMap.put("multivalue", objParameter.isMultivalue());
 				parameterAsMap.put("dependsOn", new ArrayList<>());
+				
+				if(parameter.getValueSelection().equalsIgnoreCase("lov")) {
+					ILovDetail lovProvDet = DocumentExecutionUtils.getLovDetail(objParameter);
+				}
 
 				parametersArrayList.add(parameterAsMap);
 			}
 
 			if (parametersList.size() > 0) {
 				resultAsMap.put("filterStatus", parametersArrayList);
-				resultAsMap.put("errors", new ArrayList<>());
+			} else {
+				resultAsMap.put("filterStatus", new ArrayList<>());
 			}
+			resultAsMap.put("errors", new ArrayList<>());
 
 			// } catch (DocumentExecutionException e) {
 			// return Response.ok("{errors: '" + e.getMessage() + "' }").build();
@@ -332,12 +249,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				throw new DocumentExecutionException("role.missing");
 			}
 		}
-		// if ((role == null || "".equals(role)) && userProfile.getRoles().size() == 1) {
-		// role = userProfile.getRoles().iterator().next().toString();
-		// } else {
-		// throw new DocumentExecutionException("role.missing");
-		// }
+		
 		return role;
 	}
-
 }
