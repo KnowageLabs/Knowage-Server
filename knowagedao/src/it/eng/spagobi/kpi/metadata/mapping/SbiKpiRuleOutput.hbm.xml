@@ -26,7 +26,7 @@
             <column name="RULE_ID" />
         </many-to-one>
         
-        <many-to-one name="sbiKpiAlias" class="it.eng.spagobi.kpi.metadata.SbiKpiAlias" lazy="false" cascade="all">
+        <many-to-one name="sbiKpiAlias" class="it.eng.spagobi.kpi.metadata.SbiKpiAlias" lazy="false" cascade="save-update">
             <column name="ALIAS_ID"  />
         </many-to-one>
         
@@ -34,7 +34,7 @@
             <column name="TYPE_ID" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="all">
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="save-update">
             <column name="CATEGORY_ID"  />
         </many-to-one>
         
