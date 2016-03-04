@@ -1,14 +1,21 @@
 package it.eng.spagobi.analiticalmodel.document;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -42,6 +49,49 @@ public class DocumentExecutionUtils {
 			throw new SpagoBIRuntimeException("Impossible to get lov detail associated to input BIObjectParameter", e);
 		}
 		return lovProvDet;
+	}
+	
+	public static List<ObjParuse> getDependencies(String executionRole, BIObjectParameter parameter) {
+		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
+		try {
+			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
+			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(parameter.getParID(), executionRole);
+			IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
+			biParameterExecDependencies.addAll(objParuseDAO.loadObjParuse(parameter.getId(), biParameterExecModality.getUseID()));
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get dependencies", e);
+		}
+		return biParameterExecDependencies;
+	}
+	
+
+	/**
+	 * This method finds out the cache to be used for lov's result cache. This key is composed mainly by the user identifier and the lov definition. Note that,
+	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
+	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
+	 *
+	 * @param profile
+	 *            The user profile
+	 * @param lovDefinition
+	 *            The lov original definition
+	 * @param dependencies
+	 *            The dependencies to be considered (if any)
+	 * @param executionInstance
+	 *            The execution instance (it may be null, since a lov can be executed outside an execution instance context)
+	 * @return The key to be used in cache
+	 */
+	private String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, ExecutionInstance executionInstance) {
+		String toReturn = null;
+		String userID = (String) ((UserProfile) profile).getUserId();
+		if (lovDefinition instanceof QueryDetail) {
+			QueryDetail queryDetail = (QueryDetail) lovDefinition;
+			QueryDetail clone = queryDetail.clone();
+			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
+			toReturn = userID + ";" + clone.toXML();
+		} else {
+			toReturn = userID + ";" + lovDefinition.toXML();
+		}
+		return toReturn;
 	}
 
 	public static List<DocumentParameters> getParameters(BIObject obj, String executionRole, Locale locale, String modality) {
