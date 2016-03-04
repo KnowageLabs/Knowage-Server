@@ -84,3 +84,7 @@ update hibernate_sequences set NEXT_VAL = NEXT_VAL
         + (select count(distinct BIOBJ_DS_ID)+1 from SBI_OBJ_DATA_SET)
 where SEQUENCE_NAME = 'SBI_OBJ_DATA_SET';
 commit; 
+
+DROP TABLE SBI_DOSSIER_BIN_TEMP;
+DROP TABLE SBI_DOSSIER_PRES;
+DROP TABLE SBI_DOSSIER_TEMP;

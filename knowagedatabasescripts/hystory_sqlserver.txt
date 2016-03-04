@@ -1,13 +1,9 @@
-Insert in this file the history of DB Schema, only for Oracle Database
+Insert in this file the history of DB Schema, only for SQL Server
 Every items must have:
 - The Developer who has made the change
 - The SQL script that updates the schema ( schema, index and FK )
 - The Date
 
 -- ##################################################################################################
-
--- 23.02.2015 Francesco Lucchi ORA_drop.sql: added DROP statement for SBI_OBJ_DATA_SET table.
-
--- 23.02.2015 Francesco Lucchi Athena_ORA_create.sql: fixed constraint definition for SBI_DATA_SET, SBI_PARUSE, SBI_PARAMETERS tables.
 
 -- 23.02.2015 Francesco Lucchi: removed SBI_DOSSIER_* tables.

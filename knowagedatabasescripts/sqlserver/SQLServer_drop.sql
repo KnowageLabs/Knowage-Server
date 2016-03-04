@@ -24,9 +24,6 @@ INSERT INTO @tbldroplist (TblName) VALUES ('SBI_ORG_UNIT');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DATA_SET');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_OBJECTS_RATING');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_REMEMBER_ME');
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_PRES');
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_BIN_TEMP');
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_TEMP');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_AUDIT');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_EVENTS_ROLES');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_EVENTS_LOG');
@@ -120,9 +117,6 @@ INSERT INTO @tbldroplist (TblName) VALUES ('SBI_ORG_UNIT')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DATA_SET')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_OBJECTS_RATING')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_REMEMBER_ME')
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_PRES')
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_BIN_TEMP')
-INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOSSIER_TEMP')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_AUDIT')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_EVENTS_ROLES')
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_EVENTS_LOG')

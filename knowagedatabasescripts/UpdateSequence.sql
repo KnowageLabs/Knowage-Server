@@ -16,9 +16,6 @@ update hibernate_sequences set next_val=(select ifnull(max(VALUE_ID),0)+1 from S
 update hibernate_sequences set next_val=(select ifnull(max(EXT_ROLE_ID),0)+1 from SBI_EXT_ROLES) where sequence_name='SBI_EXT_ROLES';
 update hibernate_sequences set next_val=(select ifnull(max(USER_FUNCT_ID),0)+1 from SBI_USER_FUNC) where sequence_name='SBI_USER_FUNC';
 update hibernate_sequences set next_val=(select ifnull(max(ENGINE_ID),0)+1 from SBI_ENGINES) where sequence_name='SBI_ENGINES';
-update hibernate_sequences set next_val=(select ifnull(max(BIN_ID),0)+1 from SBI_DOSSIER_BIN_TEMP) where sequence_name='SBI_DOSSIER_BIN_TEMP';
-update hibernate_sequences set next_val=(select ifnull(max(PART_ID),0)+1 from SBI_DOSSIER_TEMP) where sequence_name='SBI_DOSSIER_TEMP';
-update hibernate_sequences set next_val=(select ifnull(max(PRESENTATION_ID),0)+1 from SBI_DOSSIER_PRES) where sequence_name='SBI_DOSSIER_PRES';
 update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_EVENTS) where sequence_name='SBI_EVENTS';
 update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_EVENTS_LOG) where sequence_name='SBI_EVENTS_LOG';
 update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_REMEMBER_ME) where sequence_name='SBI_REMEMBER_ME';

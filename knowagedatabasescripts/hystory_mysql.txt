@@ -3046,3 +3046,5 @@ ALTER TABLE `SBI_PARAMETERS`
 											   4) added some DROPs.
 
 -- 23.02.2015 Francesco Lucchi Athena_mysql_drop.sql: added some DROPs.
+
+-- 23.02.2015 Francesco Lucchi: removed SBI_DOSSIER_* tables.

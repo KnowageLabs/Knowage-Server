@@ -16,9 +16,6 @@ insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select m
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(EXT_ROLE_ID)+1 from SBI_EXT_ROLES),1) ,'SBI_EXT_ROLES');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(USER_FUNCT_ID)+1 from SBI_USER_FUNC),1) ,'SBI_USER_FUNC');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ENGINE_ID)+1 from SBI_ENGINES),1) ,'SBI_ENGINES');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(BIN_ID)+1 from SBI_DOSSIER_BIN_TEMP),1) ,'SBI_DOSSIER_BIN_TEMP');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(PART_ID)+1 from SBI_DOSSIER_TEMP),1) ,'SBI_DOSSIER_TEMP');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(PRESENTATION_ID)+1 from SBI_DOSSIER_PRES),1) ,'SBI_DOSSIER_PRES');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_EVENTS),1) ,'SBI_EVENTS');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_EVENTS_LOG),1) ,'SBI_EVENTS_LOG');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_REMEMBER_ME),1) ,'SBI_REMEMBER_ME');
