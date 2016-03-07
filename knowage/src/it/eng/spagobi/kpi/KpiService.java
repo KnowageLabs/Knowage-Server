@@ -17,6 +17,37 @@
  */
 package it.eng.spagobi.kpi;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.Placeholder;
+import it.eng.spagobi.kpi.bo.Rule;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -45,45 +76,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.bo.Alias;
-import it.eng.spagobi.kpi.bo.Cardinality;
-import it.eng.spagobi.kpi.bo.Kpi;
-import it.eng.spagobi.kpi.bo.Placeholder;
-import it.eng.spagobi.kpi.bo.Rule;
-import it.eng.spagobi.kpi.bo.RuleOutput;
-import it.eng.spagobi.kpi.bo.Threshold;
-import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
 public class KpiService {
+	private static final String NEW_KPI_THRESHOLD_MANDATORY = "newKpi.threshold.mandatory";
+	private static final String NEW_KPI_THRESHOLD_VALUES_MANDATORY = "newKpi.threshold.values.mandatory";
+	private static final String NEW_KPI_THRESHOLD_TYPE_MANDATORY = "newKpi.threshold.type.mandatory";
+	private static final String NEW_KPI_THRESHOLD_NAME_MANDATORY = "newKpi.threshold.name.mandatory";
+	private static final String NEW_KPI_DEFINITION_INVALIDCHARACTERS = "newKpi.definition.invalidcharacters";
+	private static final String NEW_KPI_DEFINITION_SYNTAXERROR = "newKpi.definition.syntaxerror";
+	private static final String NEW_KPI_DEFINITION_MANDATORY = "newKpi.definition.mandatory";
+	private static final String NEW_KPI_NAME_MANDATORY = "newKpi.name.mandatory";
+	private static final String NEW_KPI_CARDINALITY_ERROR = "newKpi.cardinality.error";
+	private static final String NEW_KPI_KPI_NAME_NOT_AVAILABLE = "newKpi.kpiNameNotAvailable";
+
 	private static Logger logger = Logger.getLogger(KpiService.class);
 
 	private static final String MEASURE = "MEASURE";
@@ -180,7 +190,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -226,15 +236,11 @@ public class KpiService {
 			IKpiDAO kpiDao = getKpiDAO(req);
 			Map<String, List<String>> aliasErrorMap = kpiDao.aliasValidation(rule);
 			if (!aliasErrorMap.isEmpty()) {
-				JSONObject jsonError = new JSONObject();
 				JSONArray errors = new JSONArray();
-				JSONObject msg = new JSONObject();
-				errors.put(msg);
-				jsonError.put("errors", errors);
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					msg.put("message", MessageFormat.format(message.getMessage(error.getKey()), error.getValue()));
+					errors.put(new JSONObject().put("message", MessageFormat.format(message.getMessage(error.getKey()), error.getValue())));
 				}
-				return Response.ok(jsonError.toString()).build();
+				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
 			}
 			return Response.ok().build();
 		} catch (Exception e) {
@@ -293,14 +299,39 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
+			// TODO fake data
+			// kpi.setThreshold(dao.loadThreshold(1));
 
 			List<String> errors = new ArrayList<>();
 			checkMandatory(errors, kpi);
+
+			if (kpi.getThreshold() == null) {
+				errors.add(message.getMessage(NEW_KPI_THRESHOLD_MANDATORY));
+			} else {
+				checkMandatory(errors, kpi.getThreshold());
+			}
+
+			if (errors.isEmpty()) {
+				// kpi name must be unique
+				if (kpi.getId() == null && dao.getKpiIdByName(kpi.getName()) != null || kpi.getId() != null
+						&& !kpi.getId().equals(dao.getKpiIdByName(kpi.getName()))) {
+					errors.add(MessageFormat.format(message.getMessage(NEW_KPI_KPI_NAME_NOT_AVAILABLE), kpi.getName()));
+				}
+			}
+
 			if (kpi.getCardinality() != null && !kpi.getCardinality().isEmpty()) {
-				checkCardinality(kpi.getCardinality());
+				checkCardinality(errors, kpi.getCardinality());
 			}
 			if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
-				checkPlaceholder(kpi.getPlaceholder());
+				checkPlaceholder(errors, kpi.getPlaceholder());
+			}
+
+			if (!errors.isEmpty()) {
+				JSONArray errorArray = new JSONArray();
+				for (String error : errors) {
+					errorArray.put(new JSONObject().put("message", error));
+				}
+				return Response.ok(new JSONObject().put("errors", errorArray).toString()).build();
 			}
 
 			if (kpi.getId() == null) {
@@ -309,11 +340,11 @@ public class KpiService {
 				dao.updateKpi(kpi);
 			}
 
+			return Response.ok().build();
 		} catch (IOException | JSONException e) {
 			logger.error(req.getPathInfo(), e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-		return Response.ok().build();
 	}
 
 	@DELETE
@@ -340,8 +371,8 @@ public class KpiService {
 	 * @param placeholder
 	 * @throws JSONException
 	 */
-	private void checkPlaceholder(String placeholder) throws JSONException {
-		// currently we are checking input string for json format only
+	private void checkPlaceholder(List<String> errors, String placeholder) throws JSONException {
+		// currently we are only checking input string for valid json format
 		new JSONArray(placeholder);
 	}
 
@@ -350,7 +381,7 @@ public class KpiService {
 		List<String> selectedAttrs = new ArrayList<>();
 	}
 
-	private void checkCardinality(String cardinality) throws JSONException, EMFUserError {
+	private void checkCardinality(List<String> errors, String cardinality) throws JSONException, EMFUserError {
 		JSONArray measureArray = new JSONObject(cardinality).getJSONArray("measureList");
 		List<Measure> measureLst = new ArrayList<>();
 		for (int i = 0; i < measureArray.length(); i++) {
@@ -379,20 +410,20 @@ public class KpiService {
 			Measure prevMeasure = measureLst.get(i - 1);
 			Measure currMeasure = measureLst.get(i);
 			if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "kpi.cardinality.error");
+				errors.add(message.getMessage(NEW_KPI_CARDINALITY_ERROR));
 			}
 		}
 	}
 
-	private void checkMandatory(Threshold threshold) {
+	private void checkMandatory(List<String> errors, Threshold threshold) {
 		if (threshold.getName() == null) {
-			throw new SpagoBIDOAException("Threshold Name is mandatory.");
+			errors.add(message.getMessage(NEW_KPI_THRESHOLD_NAME_MANDATORY));
 		}
 		if (threshold.getType() == null && threshold.getTypeId() == null) {
-			throw new SpagoBIDOAException("Threshold Type is mandatory.");
+			errors.add(message.getMessage(NEW_KPI_THRESHOLD_TYPE_MANDATORY));
 		}
 		if (threshold.getThresholdValues() == null || threshold.getThresholdValues().size() == 0) {
-			throw new SpagoBIDOAException("Error. There are no threshold values.");
+			errors.add(message.getMessage(NEW_KPI_THRESHOLD_VALUES_MANDATORY));
 		}
 	}
 
@@ -411,26 +442,26 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(List<String> errors, Kpi kpi) {
+	private void checkMandatory(List<String> errors, Kpi kpi) throws JSONException {
 		if (kpi.getName() == null) {
-			errors.add("Kpi Name is mandatory");
+			errors.add(message.getMessage(NEW_KPI_NAME_MANDATORY));
 		}
 		if (kpi.getDefinition() == null) {
-			errors.add("Kpi Definition is mandatory.");
+			errors.add(message.getMessage(NEW_KPI_DEFINITION_MANDATORY));
 		} else {
 
 			ScriptEngineManager sm = new ScriptEngineManager();
 			ScriptEngine engine = sm.getEngineByExtension("js");
-			String script = kpi.getDefinition();
+			String script = new JSONObject(kpi.getDefinition()).getString("formula");
 			script = script.replace("M", "");
 			if (script.matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
 				try {
 					engine.eval(script);
 				} catch (Throwable e) {
-					errors.add("Syntax error in definition");
+					errors.add(message.getMessage(NEW_KPI_DEFINITION_SYNTAXERROR));
 				}
 			} else {
-				errors.add("Definition contains invalid characters");
+				errors.add(message.getMessage(NEW_KPI_DEFINITION_INVALIDCHARACTERS));
 			}
 		}
 	}
