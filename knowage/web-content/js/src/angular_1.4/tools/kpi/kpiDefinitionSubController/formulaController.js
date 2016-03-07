@@ -133,7 +133,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 			//angular.element(document.querySelectorAll(".CodeMirror-gutter-elt")).addClass("error_word fa fa-times-circle")
 			angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).attr("target","Measure Missing")
-//angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).append("<span class='fake' target='Measure Missing'></span>")
+//			angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).append("<span class='fake' target='Measure Missing'></span>")
 	}
 
 
@@ -143,7 +143,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 			var cur = cm.getCursor();
 			var token = cm.getTokenAt(cur);
-			
+
 			while(token.string.trim() ==""){
 				cur.ch = cur.ch+1;
 				token =  cm.getTokenAt(cur);
@@ -154,7 +154,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				token =  cm.getTokenAt(cur);
 			}
 
-			
+
 			while(token.string.trim() ==""){
 				cur.ch = cur.ch+1;
 				token =  cm.getTokenAt(cur);
@@ -188,7 +188,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
-						
+
 						$scope.measures=data;
 						console.log($scope.measures);
 					}
@@ -200,10 +200,10 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	}
 
 	$scope.getMeasures();
-	
+
 	$scope.loadKPI=function(item){
 		var cm =angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror;
-		
+
 		$scope.flagLoaded = true;
 		$timeout(function(){
 			cm.refresh();
@@ -280,7 +280,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		var cm =angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror;
 		var flag = true;
 		var numMeasures=0;
-		
+
 		FORFirst: for(var i=0;i<cm.lineCount();i++){
 			var array = $scope.removeSpace(cm.getLineTokens(i));
 			for(var j=0;j<array.length;j++){
@@ -398,7 +398,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 								$scope.reset();
 								break FORFirst;
 							}
-							
+
 						}
 						//parse classes token
 						for(var k=0;k<arr.length;k++){
@@ -545,7 +545,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		cm.setValue("");
 		cm.clearHistory();
 	});
-	
+
 	$scope.indexInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {

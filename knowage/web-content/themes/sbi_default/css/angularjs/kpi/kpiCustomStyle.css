@@ -14,8 +14,7 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
-
+ */
 .cardinalityTable .measureCell {
 	text-align: center;
 	height: 30px;
@@ -71,44 +70,58 @@
 	font-size: 14px;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword, span.cm-variable-2{
+.toolbarFormula {
+	/*background: #a9c3db !important;
+	background-color: rgba(199, 237, 249, 0.39) !important;*/
+	background-color:#eceff1 !important;
+	text-align: center;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword, span.cm-variable-2
+	{
 	color: #7F0055 !important;
 	font-weight: bold !important;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before, span.cm-variable-2::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before, span.cm-variable-2::before
+	{
 	content: "f(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after, span.cm-variable-2::after,.MAX::after,.MIN::after,.COUNT::after,.SUM::after {
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after, span.cm-variable-2::after,
+	.MAX::after, .MIN::after, .COUNT::after, .SUM::after {
 	content: ")";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before, .MAX::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before, .MAX::before
+	{
 	content: "MAX(";
 	color: green;
 }
 
-.MAX,.MIN,.COUNT,.SUM {
+.MAX, .MIN, .COUNT, .SUM {
 	color: #80004c;
 }
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before ,.MIN::before{
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before, .MIN::before
+	{
 	content: "min(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before,.COUNT::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before, .COUNT::before
+	{
 	content: "COUNT(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before,.SUM::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before, .SUM::before
+	{
 	content: "Σ(";
 	color: green;
 }
-
 
 .error_word {
 	background-image:
@@ -118,10 +131,12 @@
 }
 
 .formula {
-	width: 600px;
-    margin: 0 auto;
-    heihgt:70px;
+	/*width: 1000px;
+    margin: 0 auto;*/
+	height: 5%;
 }
 
-
+.overflow {
+	overflow: auto;
+}
 }

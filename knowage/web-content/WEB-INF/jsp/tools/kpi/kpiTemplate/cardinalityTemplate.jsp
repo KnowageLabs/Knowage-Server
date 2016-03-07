@@ -17,20 +17,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
-<md-content layout-fill ng-controller="kpiDefinitionCardinalityController">
-<div class="formula" id="formulaId"></div>
-<br><br><br>
-	<table flex class="cardinalityTable" >
+<md-content layout-fill layout="column" ng-controller="kpiDefinitionCardinalityController">
+<md-card>
+<div class="toolbarFormula">
+	<div class="formula " id="formulaId"></div>
+</div>
+</md-card>
+<div flex class="overflow">	
+	<table class="cardinalityTable" >
 		<tr>
 			<th></th>
-		    <th ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
+		    <th ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
 	    </tr>
 	  
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
 		<td ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()">{{attr}}</td>
-			<td ng-repeat="measure in cardinality.measureList">
+			<td ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList">
 			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
-			 ng-click="toggleCell(attr,measure)" ng-mouseover="blinkMeasure($event,measure,attr)" ng-mouseleave="removeblinkMeasure()" ">
+			 ng-click="toggleCell(attr,measure)"  ">
 			<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
 			<i ng-if="measure.attributes[attr]" class="fa fa-check selectedCell"></i>
 			<i ng-if="(measure.attributes[attr] && !canDisable(attr,measure))" class="fa fa-lock selectedCell"></i>
@@ -39,5 +43,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</td>
 		</tr>
 	</table>
-
+</div>
 </md-content>

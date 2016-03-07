@@ -16,13 +16,13 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.formulaModified={"value":false};
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
-	
+
 	//variables cardinality
 	$scope.cardinality={};
 	$scope.cardinality.measureList=[];
 	$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
 	//methods formula
-	
+
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_KPI_CATEGORY")
 	.then(function(response){ 
 		angular.copy(response.data,$scope.AttributeCategoryList);
@@ -33,68 +33,68 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 	$scope.parseFormula = function(){
 		$scope.$broadcast ('parseEvent');
-		
+
 		if($scope.showGUI){
 			$scope.showSaveGUI().then(function(response){{}
-				if($scope.activeSave=="add"){
-					//int his moment i set manually threshold
-					$scope.kpi.threshold= 1;
-					$scope.saveKPI();
-				}else{
-					$scope.saveKPI();
-				}
-				
+			if($scope.activeSave=="add"){
+				//int his moment i set manually threshold
+				$scope.kpi.threshold= 1;
+				$scope.saveKPI();
+			}else{
+				$scope.saveKPI();
+			}
+
 			});
 
 		}
-			
-		
+
+
 	}
 	$scope.flagActivateBrother= function(event){
 		$scope.$broadcast (event);
 	}
 
-	
-	
- 	$scope.cancelMeasureFunction=function(){
- 		if(!angular.equals($scope.originalRule,$scope.currentRule)){
-	 		var confirm = $mdDialog.confirm()
-	        .title('Modifica in corso?')
-	        .content('sei sicuro di voler annullare l\'operazione?.')
-	        .ariaLabel('cancel metadata') 
-	        .ok('OK')
-	        .cancel('CANCEL');
-			  $mdDialog.show(confirm).then(function() {
-				  $angularListDetail.goToList();
-			  }, function() {
-			   return;
-			  });
- 		}else{
- 			  $angularListDetail.goToList();
- 		} 
- 	};
+
+
+	$scope.cancelMeasureFunction=function(){
+		if(!angular.equals($scope.originalRule,$scope.currentRule)){
+			var confirm = $mdDialog.confirm()
+			.title('Modifica in corso?')
+			.content('sei sicuro di voler annullare l\'operazione?.')
+			.ariaLabel('cancel metadata') 
+			.ok('OK')
+			.cancel('CANCEL');
+			$mdDialog.show(confirm).then(function() {
+				$angularListDetail.goToList();
+			}, function() {
+				return;
+			});
+		}else{
+			$angularListDetail.goToList();
+		} 
+	};
 	$scope.cancel = function(){
 		if($scope.formulaModified.value){
 			var confirm = $mdDialog.confirm()
-	        .title('Modifica in corso?')
-	        .content('sei sicuro di voler annullare l\'operazione?.')
-	        .ariaLabel('cancel metadata') 
-	        .ok('OK')
-	        .cancel('CANCEL');
-			  $mdDialog.show(confirm).then(function() {
-				  $scope.formulaModified.value=false;
-				  $scope.$broadcast ('cancelEvent');
-			  }, function() {
-			   return;
-			  });
+			.title('Modifica in corso?')
+			.content('sei sicuro di voler annullare l\'operazione?.')
+			.ariaLabel('cancel metadata') 
+			.ok('OK')
+			.cancel('CANCEL');
+			$mdDialog.show(confirm).then(function() {
+				$scope.formulaModified.value=false;
+				$scope.$broadcast ('cancelEvent');
+			}, function() {
+				return;
+			});
 		}else{
 			$scope.formulaModified.value=false;
 			$scope.$broadcast ('cancelEvent');
 		}
-		
-		
-		
-		
+
+
+
+
 	}
 	$scope.showSaveGUI= function(){
 		var deferred = $q.defer();
@@ -131,7 +131,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}
 		});
 	}
-	
+
 	$scope.saveKPI = function(){
 		$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
 		$scope.kpi.cardinality=JSON.stringify($scope.cardinality);
@@ -159,39 +159,39 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		icon:'fa fa-trash' ,	 
 		action : function(item,event) {
 			$scope.deleteMeasure(item,event);
-			}
-	
-		}];
-	
+		}
+
+	}];
+
 	$scope.deleteMeasure=function(item,event){
-		 var confirm = $mdDialog.confirm()
-        .title($scope.translate.load("sbi.kpi.measure.delete.title"))
-        .content($scope.translate.load("sbi.kpi.measure.delete.content"))
-        .ariaLabel('delete measure') 
-        .ok($scope.translate.load("sbi.general.yes"))
-        .cancel($scope.translate.load("sbi.general.No"));
-		   $mdDialog.show(confirm).then(function() {
-		     
-			   
-			   sbiModule_restServices.promiseDelete("1.0/kpi",item.id+"/deleteKpi").then(
-					   function(response){
-						   $scope.$broadcast("deleteKpiEvent");
-					   },
-					   function(response){
-						   $scope.errorHandler(response.data,""); 
-					   });
-			   
-			   
-			   
-			   
-		   }, function() {
-		    console.log("annulla")
-		   });
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
+		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
+		.ariaLabel('delete measure') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm).then(function() {
+
+
+			sbiModule_restServices.promiseDelete("1.0/kpi",item.id+"/deleteKpi").then(
+					function(response){
+						$scope.$broadcast("deleteKpiEvent");
+					},
+					function(response){
+						$scope.errorHandler(response.data,""); 
+					});
+
+
+
+
+		}, function() {
+			console.log("annulla")
+		});
 	}
-	
-	
+
+
 	//methods cardinality
-	
+
 	$scope.setCardinality = function(){
 		$scope.$broadcast ('parseEvent');
 		$scope.cardinality.measureList=[];
@@ -213,8 +213,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					console.log("layer non Ottenuti " + status);
 					$scope.showAction(data);
 				})
-	
-	/*	$scope.cardinality.measureList=[
+
+				/*	$scope.cardinality.measureList=[
 		                	{	"ruleName": "regola1",
 		                		"measureName": "numScuole1",
 		                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
@@ -233,12 +233,12 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		                			"attributs": {"AreaGeografice":false}
 		                	}
 		                ];
-		*/
-	
-		
+				 */
+
+
 	}
-	
-	
+
+
 	$scope.indexInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
@@ -250,36 +250,36 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		return -1;
 	};
-	
+
 };
-	function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
+function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
 
-		$scope.AttributeCategoryList=AttributeCategoryList;
-		$scope.kpi=kpi;
-		$scope.close = function(){
-			$mdDialog.cancel();
+	$scope.AttributeCategoryList=AttributeCategoryList;
+	$scope.kpi=kpi;
+	$scope.close = function(){
+		$mdDialog.cancel();
 
-		}
-		$scope.apply = function(){
-			$mdDialog.cancel();
-			items.resolve($scope.kpi);
-			//in this moment i set this variable manually
-
-
-		}
-
-		$scope.querySearchCategory=function(query){
-			var results = query ? $scope.AttributeCategoryList.filter( createFilterFor(query) ) : [];
-			results.push({valueCd:angular.uppercase(query)})
-			return results;
-		}
-		function createFilterFor(query) {
-			var lowercaseQuery = angular.lowercase(query);
-			return function filterFn(state) {
-				return (angular.lowercase(state.valueCd).indexOf(lowercaseQuery) === 0);
-			};
-		}
-		
-
-		
 	}
+	$scope.apply = function(){
+		$mdDialog.cancel();
+		items.resolve($scope.kpi);
+		//in this moment i set this variable manually
+
+
+	}
+
+	$scope.querySearchCategory=function(query){
+		var results = query ? $scope.AttributeCategoryList.filter( createFilterFor(query) ) : [];
+		results.push({valueCd:angular.uppercase(query)})
+		return results;
+	}
+	function createFilterFor(query) {
+		var lowercaseQuery = angular.lowercase(query);
+		return function filterFn(state) {
+			return (angular.lowercase(state.valueCd).indexOf(lowercaseQuery) === 0);
+		};
+	}
+
+
+
+}

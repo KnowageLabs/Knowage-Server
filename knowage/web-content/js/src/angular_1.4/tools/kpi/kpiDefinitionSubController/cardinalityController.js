@@ -4,45 +4,25 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.attributesList=[];
 	$scope.indexOfMeasure=-1;
-//	$scope.cardinality={};
-//	$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
-//	$scope.cardinality.measureList=[
-//	                	{	"ruleName": "regola1",
-//	                		"measureName": "numScuole",
-//	                		"attributes": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
-//	                		}
-//	                	},
-//	                		{	"ruleName": "regola2",
-//	                		"measureName": "numAbitanti",
-//	                		"attributes": {"Regione":false,"Provincia":false,"Comune":false,"FasciaEta":false,"CatLavoratore":false}
-//	                	},
-//	                		{	"ruleName": "regola3",
-//	                		"measureName": "pilProCapite",
-//	                		"attributes": {"Regione":false,"FasciaEta":false,"CatLavoratore":false}
-//	                	},
-//	                		{	"ruleName": "regola4",
-//	                			"measureName": "densPopolazione",
-//	                			"attributes": {"AreaGeografice":false}
-//	                	}
-//	                ];
-//	
+
+
 
 	$scope.$on('activateCardinalityEvent',function(e){
 		$scope.getAllMeasure();
 		$scope.clearFormulaToShow();
 		$scope.createFormulaToShow();
 	})
-	
+
 	$scope.clearFormulaToShow = function(){
 		for (i = 0; i < document.getElementById('formulaId').getElementsByTagName('span').length; i++) {
-		    document.getElementById('formulaId').getElementsByTagName('span')[i].innerHTML = '';
-		    document.getElementById('formulaId').getElementsByTagName('span')[i].className='';
+			document.getElementById('formulaId').getElementsByTagName('span')[i].innerHTML = '';
+			document.getElementById('formulaId').getElementsByTagName('span')[i].className='';
 		}
 	}
 	$scope.getAllMeasure=function(){
 		for(var i=0; i<$scope.cardinality.measureList.length;i++){
 			for(var tmpAttr in $scope.cardinality.measureList[i].attributes){
-				
+
 				if($scope.attributesList.indexOf(tmpAttr)==-1){
 					$scope.attributesList.push(tmpAttr);
 				}
@@ -50,20 +30,20 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		}
 	};
 	$scope.getAllMeasure();
-	
+
 	$scope.toggleCell=function(attr,measure){
-		
+
 		if(!measure.attributes[attr] && !$scope.isEnabled(attr,measure)){
 			return;
 		}
-		
+
 		if(measure.attributes[attr] && !$scope.canDisable(attr,measure) ){
 			return;
 		}
-		
+
 		//toggle the value
 		measure.attributes[attr]=!measure.attributes[attr];
-		
+
 		if(measure.attributes[attr]){
 			//update union 
 			if($scope.cardinality.checkedAttribute.attributeUnion[attr]){
@@ -78,8 +58,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 				$scope.cardinality.checkedAttribute.attributeUnion[attr]--;
 			}
 		}
-		
-		
+
+
 		//update intersection
 		angular.copy({},$scope.cardinality.checkedAttribute.attributeIntersection); // reset intersection
 		var maxAttrNum=$scope.getMaxAttributeNumber($scope.cardinality.checkedAttribute.attributeUnion);
@@ -88,7 +68,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 				$scope.cardinality.checkedAttribute.attributeIntersection[key]=true;
 			}
 		}
-		
+
 	}
 	$scope.getMaxAttributeNumber=function(data){
 		var max=0;
@@ -99,22 +79,22 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		}
 		return max;
 	}
-	
-	
+
+
 	//hide box if measure not have attribute
 	$scope.measureHaveAttribute=function(attr,measure){
 		return measure.attributes.hasOwnProperty(attr);
 	}
-	
+
 	$scope.isEnabled=function(attr,measure){
 		var checkMs=$scope.checkMeasure(measure);
 		return (checkMs.status || $scope.isContainedByUpperSet(attr,measure,checkMs.itemNumber) );
 	}
-	
+
 	$scope.canDisable=function(attr,measure){
 		return !$scope.isContainedByUnderSet(attr,measure);
 	}
-	
+
 	//la mia misura contiene (selezionati) tutti gli attributes della cardinalità  (gli attributes del campo union)
 	//IL MUMERO DI attributes SELEZIONATI DELLA MISURA è UGUALE AL NUMERO DI ELEMENTI  DELL' UNIONE
 	$scope.checkMeasure=function(measure){
@@ -127,12 +107,12 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		var resp={
 				status:( Object.keys($scope.cardinality.checkedAttribute.attributeUnion).length==tot),
 				itemNumber:tot
-				};
-		
+		};
+
 		return resp;
-		
+
 	}
-	
+
 	$scope.isContainedByUpperSet=function(attr,measure,measureItemNumber){
 		var upperSetAttributeNumber=99999999;
 		var upperSet;
@@ -161,9 +141,9 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		}else{
 			return false;
 		}
-		
+
 	}
-	
+
 	$scope.isContainedByUnderSet=function(attr,measure){
 		var measureItemNumber=0;
 		for( var tmpattr in measure.attributes){
@@ -171,7 +151,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 				measureItemNumber++;
 			}
 		}
-		
+
 		var underSetAttributeNumber=0;
 		var underSet;
 		for(var i=0;i<$scope.cardinality.measureList.length;i++){
@@ -194,50 +174,65 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 				underSet=tmpMeas;
 			}
 		}
-		
+
 		if(underSet==undefined || !underSet.attributes[attr]){
 			return false;
 		}else{
 			return true;
 		}
 	}
-	
+
 	$scope.createFormulaToShow = function(){
 		var string = $scope.kpi.definition.formulaSimple.split(" ");
 		var count =0;
 		for(var i=0;i<string.length;i++){
 			if(string[i].trim()=="+" ||string[i].trim()=="-" || string[i].trim()=="/" || string[i].trim()=="*" || string[i].trim()=="(" ||
 					string[i].trim()==")" || string[i].trim()=="" || !isNaN(string[i])){
-				var span = "<span>"+string[i]+"</span>"
+				var span = "<span>"+" "+string[i]+" "+"</span>"
 				angular.element(document.getElementsByClassName("formula")).append(span);
 			}else{
-				
-				var span = "<span class="+$scope.kpi.definition.functions[count]+" id=M"+count+">"+string[i]+"</span>"
+
+				var span = "<span class="+$scope.kpi.definition.functions[count]+" id=M"+count+">"+" "+string[i]+" "+"</span>"
 				angular.element(document.getElementsByClassName("formula")).append(span);
 				count++;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	$scope.blinkMeasure=function(event){
-		//blink measure in formula 
+		//blink measure in formula  event.target.cellIndex
 		if(event.fromElement.cellIndex!=null){
 			if($scope.indexOfMeasure!= event.fromElement.cellIndex-1){
 				$scope.removeblinkMeasure();
 			}
 			$scope.indexOfMeasure  = event.fromElement.cellIndex-1;
 			string="M"+$scope.indexOfMeasure ;
-			angular.element(document.getElementById(string)).css('font-weight','bold')
+			angular.element(document.getElementById(string)).css('font-weight','bold');
+			angular.element(document.getElementById(string)).css('background','#b3ccff');
+			//	angular.element(document.getElementById(string)).css('font-size','20px')#d3d3d3
+
+		}else if( event.target.cellIndex!=null){
+			if($scope.indexOfMeasure!= event.target.cellIndex-1){
+				$scope.removeblinkMeasure();
+			}
+			$scope.indexOfMeasure  = event.target.cellIndex-1;
+			string="M"+$scope.indexOfMeasure ;
+			angular.element(document.getElementById(string)).css('font-weight','bold');
+			angular.element(document.getElementById(string)).css('background','#b3ccff');
+			//	angular.element(document.getElementById(string)).css('font-size','20px')
 		}
-		
+
 	}
-	
+
 	$scope.removeblinkMeasure=function(){
-		
+
 		string="M"+$scope.indexOfMeasure;
-		angular.element(document.getElementById(string)).css('font-weight','normal')
+		angular.element(document.getElementById(string)).css('font-weight','normal');
+		angular.element(document.getElementById(string)).css('background','transparent');
+		//	angular.element(document.getElementById(string)).css('font-size','16px')
+
 		//angular.element(document.getElementById(string)).css('font-size', 'medium')
 	}
 }
