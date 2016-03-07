@@ -227,7 +227,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 **/
 	@GET
 	@Path("{bmId}/versions/{vId}/file")
-	@Produces("application/octet-stream")
+	// @Produces("application/octet-stream")
 	public Response downloadFile(@PathParam("vId") Integer vId) {
 		Content c = null;
 		byte[] b = null;
@@ -241,7 +241,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 			ResponseBuilder response = Response.ok(b);
 			response.header("Content-Disposition", "attachment; filename=" + c.getFileName());
-
+			response.header("Content-type", "application/octet-stream");
 			return response.build();
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to download version with id:" + vId, e);

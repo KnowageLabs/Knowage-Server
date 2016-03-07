@@ -210,18 +210,26 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/{hierarchy}/search/{name}")
+	@Path("/{hierarchy}/search/{axis}/{name}/{equals}/{showS}")
 	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("name") String name) {
+			@PathParam("axis") int axis, @PathParam("name") String name, @PathParam("equals") boolean equals, @PathParam("showS") boolean showS) {
 		Hierarchy hierarchy = null;
-		int depth = -1;
-		int position = -1;
-		String fatherName = null;
+		List<SearchResult> seearchResList = new ArrayList<HierarchyResource.SearchResult>();
 
+		List<Integer> depthList = new ArrayList<Integer>();
+		List<Integer> positionList = new ArrayList<Integer>();
+		List<String> fatherNameList = new ArrayList<String>();
 		List<Member> list = new ArrayList<Member>();
+		List<Member> visibleMembers = null;
 
+		int lastDepth = -1;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
+
+		if (axis >= 0) {
+			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
+			visibleMembers = pm.findVisibleMembers(CubeUtilities.getAxis(axis));
+		}
 
 		logger.debug("Getting the hierarchy " + hierarchyUniqueName + "from the cube");
 		try {
@@ -240,26 +248,40 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
 		Level l = hierarchy.getLevels().get(0);
-		System.out.println("Hier levels " + hierarchy.getLevels().size());
 		try {
 			boolean stopLoop = false;
 			String nameLower = name.toLowerCase();
-			for (int j = 0; j < hierarchy.getLevels().size() && !stopLoop; j++) {
+			/*
+			 * for (int j = 0; j < hierarchy.getLevels().size() && !stopLoop;
+			 * j++) { l = hierarchy.getLevels().get(j); list = l.getMembers();
+			 * for (int i = 0; i < list.size() && !stopLoop; i++) { if
+			 * (nameLower.equals(list.get(i).getName().toString().toLowerCase())
+			 * ) { depth = j; position = i; fatherName =
+			 * list.get(i).getParentMember().getUniqueName(); stopLoop = true; }
+			 * } }
+			 */
+			for (int j = 0; j < hierarchy.getLevels().size(); j++) {
 				l = hierarchy.getLevels().get(j);
 				list = l.getMembers();
+				String fatnam = "";
+				boolean loopend = false;
+				positionList = new ArrayList<Integer>();
 				for (int i = 0; i < list.size() && !stopLoop; i++) {
-					if (nameLower.equals(list.get(i).getName().toString().toLowerCase())) {
-						depth = j;
-						position = i;
-						fatherName = list.get(i).getParentMember().getUniqueName();
-						stopLoop = true;
+					String currentNameLower = list.get(i).getName().toString().toLowerCase();
+					if (currentNameLower.contains(nameLower)) {
+						positionList.add(i);
+						fatherNameList.add(list.get(i).getParentMember().getUniqueName());
+						lastDepth = j;
 					}
 				}
 			}
+
 			l = hierarchy.getLevels().get(0);
 			list = l.getMembers();
 			for (int i = 0; i < list.size(); i++) {
-				nodes.add(new NodeFilter(list.get(i), depth, position, fatherName));
+				// nodes.add(new NodeFilter(list.get(i), depth, position,
+				// fatherName, visibleMembers, showS));
+				nodes.add(new NodeFilter(list.get(i), lastDepth, fatherNameList, name, visibleMembers, showS));
 			}
 
 		} catch (OlapException e1) {
@@ -314,7 +336,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
 		Level l = hierarchy.getLevels().get(0);
-		System.out.println(hierarchy.getLevels().size());
 		try {
 			list = l.getMembers();
 			for (int i = 0; i < list.size(); i++) {
@@ -341,6 +362,43 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		} catch (Exception e) {
 			logger.error("Error serializing the MemberEntry", e);
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
+		}
+
+	}
+
+	private class SearchResult {
+		private int depth;
+		private List<Integer> positions;
+		private String fatherName;
+
+		public SearchResult(int d, List<Integer> pos, String fn) {
+			this.depth = d;
+			this.positions = pos;
+			this.fatherName = fn;
+		}
+
+		public int getDepth() {
+			return depth;
+		}
+
+		public void setDepth(int depth) {
+			this.depth = depth;
+		}
+
+		public List<Integer> getPositions() {
+			return positions;
+		}
+
+		public void setPositions(List<Integer> positions) {
+			this.positions = positions;
+		}
+
+		public String getFatherName() {
+			return fatherName;
+		}
+
+		public void setFatherName(String fatherName) {
+			this.fatherName = fatherName;
 		}
 
 	}
@@ -374,39 +432,78 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		public NodeFilter(Member m, int depth, int position, String fatherName) throws OlapException {
+		@SuppressWarnings("unused")
+		public NodeFilter(Member m, int depth, int position, String fatherName, List<Member> visibleMembers, boolean showS) throws OlapException {
 			super();
-			System.out.println("---------------------");
-			System.out.println(m.getName());
-			System.out.println(m.isHidden());
-			Member cc = m;
+			if (visibleMembers != null) {
+				this.visible = visibleMembers.contains(m);
+			} else {
+				this.visible = false;
+			}
+
 			this.id = m.getUniqueName();
 			this.uniqueName = m.getUniqueName();
 			this.name = m.getCaption();
-			this.visible = true;
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
 
 			if (m.getDepth() <= depth) {
 				List<Member> list = (List<Member>) m.getChildMembers();
 				if (list != null && list.size() > 0) {
-					for (int i = 0; i < list.size(); i++) {
-						if (m.getDepth() == 0) {
-							this.collapsed = true;
-							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
-							children.add(nf);
+					this.collapsed = true;
 
-						} else if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
-							NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName);
-							this.collapsed = true;
-							children.add(nf);
+					if (m.getDepth() == depth - 1 && !showS) {
+						NodeFilter nf = new NodeFilter(list.get(position), depth, position, fatherName, visibleMembers, showS);
+						children.add(nf);
+					} else {
+						for (int i = 0; i < list.size(); i++) {
+							if (m.getDepth() == 0) {
+								NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName, visibleMembers, showS);
+								children.add(nf);
+
+							} else if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
+								NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName, visibleMembers, showS);
+								children.add(nf);
+							}
 						}
-
 					}
 				}
 			}
-
 		}
+
+		@SuppressWarnings("unused")
+		public NodeFilter(Member m, int depth, List<String> fatherNameList, String name, List<Member> visibleMembers, boolean showS) throws OlapException {
+
+			super();
+			if (visibleMembers != null) {
+				this.visible = visibleMembers.contains(m);
+			} else {
+				this.visible = false;
+			}
+
+			this.id = m.getUniqueName();
+			this.uniqueName = m.getUniqueName();
+			this.name = m.getCaption();
+			this.collapsed = false;
+			this.children = new ArrayList<HierarchyResource.NodeFilter>();
+
+			int curDepth = m.getDepth();
+			if (curDepth <= depth) {
+				List<Member> list = (List<Member>) m.getChildMembers();
+
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getName().toLowerCase().contains(name.toLowerCase())) {
+						this.collapsed = true;
+						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
+					} else if (fatherNameList.contains(list.get(i).getUniqueName())) {
+						this.collapsed = true;
+						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
+					}
+				}
+
+			}
+
+		};
 
 		public JSONObject serialize() throws JSONException {
 			JSONObject obj = new JSONObject();

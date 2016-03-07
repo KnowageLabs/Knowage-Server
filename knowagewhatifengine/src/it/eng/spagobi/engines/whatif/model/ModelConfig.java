@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/**
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ */
 package it.eng.spagobi.engines.whatif.model;
-
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -35,6 +31,13 @@ import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
@@ -43,6 +46,17 @@ public class ModelConfig implements Serializable {
 	private Boolean hideSpans;
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
+	private Boolean enableDrillThrough;
+	private Boolean sortingEnabled;
+
+	public Boolean getSortingEnabled() {
+		return sortingEnabled;
+	}
+
+	public void setSortingEnabled(Boolean sortingEnabled) {
+		this.sortingEnabled = sortingEnabled;
+	}
+
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
 	private SbiAliases aliases = null;
@@ -67,11 +81,20 @@ public class ModelConfig implements Serializable {
 		showParentMembers = false;
 		hideSpans = false;
 		showProperties = false;
-
+		enableDrillThrough = true;
+		sortingEnabled = false;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
 
 		dimensionHierarchyMap = new HashMap<String, String>();
+	}
+
+	public Boolean getEnableDrillThrough() {
+		return enableDrillThrough;
+	}
+
+	public void setEnableDrillThrough(Boolean enableDrillThrough) {
+		this.enableDrillThrough = enableDrillThrough;
 	}
 
 	public Boolean getSuppressEmpty() {
@@ -266,7 +289,7 @@ public class ModelConfig implements Serializable {
 		this.showProperties = source.showProperties;
 		this.suppressEmpty = source.suppressEmpty;
 		this.actualVersion = source.actualVersion = null;
-
+		this.sortingEnabled = source.sortingEnabled;
 		this.status = source.status;
 		this.locker = source.locker;
 
