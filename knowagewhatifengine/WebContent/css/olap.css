@@ -284,3 +284,29 @@ table tr:nth-child(even) {
 	background-image: url(../img/sorting-settings.png);
 	background-size:23px 23px;
 }
+
+.element-found{
+	background-color:#ff5991;
+	border-radius:10%;
+	padding-bottom: 5px;
+	padding-right: 10px; 
+}
+
+.right-panel-buttons{
+  padding: 0px;
+  margin: 10% ;
+  width:80%;
+  height:70%;
+  background-color:none;
+  min-width: 0px;
+}
+
+.selected-right-panel-buttons{
+  padding: 0px;
+  margin: 10% ;
+  width:80%;
+  height:70%;
+  background-color:none;
+  min-width: 0px;
+  border: 1px solid red;
+}
