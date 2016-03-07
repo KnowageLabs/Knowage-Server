@@ -119,6 +119,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 							cardinality = new Cardinality();
 							cardinality.setRuleId(sbiRuleOutput.getSbiKpiRule().getId());
 							cardinality.setRuleName(sbiRuleOutput.getSbiKpiRule().getName());
+							cardinalityMap.put(sbiRuleOutput.getSbiKpiRule().getId(), cardinality);
 						}
 						cardinality.setMeasureName(sbiRuleOutput.getSbiKpiAlias().getName());
 					} else {
@@ -126,6 +127,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 							cardinality = new Cardinality();
 							cardinality.setRuleId(sbiRuleOutput.getSbiKpiRule().getId());
 							cardinality.setRuleName(sbiRuleOutput.getSbiKpiRule().getName());
+							cardinalityMap.put(sbiRuleOutput.getSbiKpiRule().getId(), cardinality);
 						}
 						cardinality.getAttributes().put(sbiRuleOutput.getSbiKpiAlias().getName(), Boolean.FALSE);
 					}
@@ -137,7 +139,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (String measure : measures) {
 					for (Cardinality c : cardinality) {
 						if (measure.equals(c.getMeasureName())) {
-							cardinality.add(c);
+							cardinalityOrdered.add(c);
 						}
 					}
 				}
