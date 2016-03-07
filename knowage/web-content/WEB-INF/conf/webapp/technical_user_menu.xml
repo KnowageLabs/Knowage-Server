@@ -17,7 +17,7 @@
 		     -->
 		   
 		    <ITEM	title="#menu.EngMan"
-					functionality="TenantManagement"
+					functionality="EnginesManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/engines16.png" />	
 			<ITEM	title="#menu.DataSourceMan"
