@@ -71,16 +71,17 @@
 	font-size: 14px;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword {
-	
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword, span.cm-variable-2{
+	color: #7F0055 !important;
+	font-weight: bold !important;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before {
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before, span.cm-variable-2::before {
 	content: "f(";
 	color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after,.MAX::after,.MIN::after,.COUNT::after,.SUM::after {
+.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after, span.cm-variable-2::after,.MAX::after,.MIN::after,.COUNT::after,.SUM::after {
 	content: ")";
 	color: green;
 }
@@ -116,7 +117,11 @@
 	background-repeat: repeat-x;
 }
 
-
+.formula {
+	width: 600px;
+    margin: 0 auto;
+    heihgt:70px;
+}
 
 
 }

@@ -33,8 +33,8 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				var hintList=[];
 				for(var i=0;i< $scope.measures.length;i++){
 
-					if(tok.string.trim()=="" || $scope.measures[i].rule.startsWith(tok.string)){
-						hintList.push($scope.measures[i].rule);
+					if(tok.string.trim()=="" || $scope.measures[i].alias.startsWith(tok.string)){
+						hintList.push($scope.measures[i].alias);
 					}
 
 				}
@@ -90,7 +90,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				}
 			}
 
-			if(event.srcElement.className.startsWith("cm-keyword")) {
+			if(event.srcElement.className.startsWith("cm-keyword") ||  event.srcElement.className.startsWith("cm-variable-2")) {
 				$scope.ShowFunction(cm);
 			}
 
@@ -226,7 +226,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 			var array = $scope.removeSpace(cm.getLineTokens(i));
 			for(var j=0;j<array.length;j++){
 				var token = array[j];
-				if(token.type=="keyword" ){
+				if(token.type=="keyword" || token.type=="variable-2"){
 					var className = func[count];
 					count++;
 					if(className=="MAX"){
@@ -290,8 +290,8 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					if(arr.length==0){
 						if(j-1>=0){
 							var token_before = array[j-1];
-							if(token_before.type=="keyword"){
-								if(token.type=="keyword" || token.type=="number"  || token.string=="("){
+							if(token_before.type=="keyword" || token_before.type=="variable-2"){
+								if(token.type=="keyword" || token.type=="number" || token.type=="variable-2" || token.string=="("){
 									var line = i+1;
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
@@ -310,7 +310,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 								}
 							}
 							if(token_before.type=="number" ){
-								if(token.type=="number" || token.string=="(" || token.type=="keyword"){
+								if(token.type=="number" || token.string=="(" || token.type=="keyword" || token.type=="variable-2"){
 									var line = i+1;
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
@@ -326,7 +326,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 									break FORFirst;
 								} if(token_before.string==")"){
 
-									if(token.type=="keyword" || token.type=="number"){
+									if(token.type=="keyword" || token.type=="number" || token.type=="variable-2"){
 										$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
 										$scope.reset();
 										flag=false;
@@ -391,13 +391,14 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					}else{
 						if(j-1>=0){
 							var token_before = array[j-1];
-							if(token_before.type=="number"){
+							if(token_before.type=="number" || token_before.type=="keyword" || token_before.type=="variable-2"){
 								var line = i+1;
 								flag=false;
 								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
 								$scope.reset();
 								break FORFirst;
 							}
+							
 						}
 						//parse classes token
 						for(var k=0;k<arr.length;k++){
@@ -560,7 +561,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
-			if(object.rule==item){
+			if(object.alias==item){
 				return i;
 			}
 		}
