@@ -17,45 +17,25 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
-import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
-import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.CacheSingleton;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,21 +49,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
-//	public static final String PARAMETERS = "PARAMETERS";
-//	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
+	// public static final String PARAMETERS = "PARAMETERS";
+	// public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
 	public static String MODE_SIMPLE = "simple";
-//	public static String MODE_COMPLETE = "complete";
-//	public static String START = "start";
-//	public static String LIMIT = "limit";
-	
+	// public static String MODE_COMPLETE = "complete";
+	// public static String START = "start";
+	// public static String LIMIT = "limit";
+
+	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -108,74 +86,53 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			@QueryParam("displayToolbar") String displayToolbar, @QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) {
 
 		logger.debug("IN");
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		List errorList = new ArrayList<>();
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
-		String toBeReturned = "{}";
-		JSONObject response = new JSONObject();
 		try {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
 			// modality
-			// BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
 			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
-			JSONArray parametersJSON = null;
-			try {
-				parametersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(parameters, locale);
-			} catch (SerializationException e) {
-				e.printStackTrace();
-			}
-			// URL
-//			response = handleNormalExecution(obj, req, executingRole, modality, jsonParameters, locale);
-			response = DocumentExecutionUtils.handleNormalExecution(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, 
-					modality, jsonParameters, locale);
-			// PARAMETERS
-			response.put("parameters", parametersJSON);
-			toBeReturned = response.toString();
+			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+					executingRole, modality, jsonParameters, locale);
+			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+					executingRole, modality, jsonParameters, locale);
+			resultAsMap.put("parameters", parameters);
+			resultAsMap.put("url", url);
+			resultAsMap.put("errors", errorList);
+
 		} catch (DocumentExecutionException e) {
-			return Response.ok("{\"errors\": [\"" + e.getMessage() + "\"], \"url\":\"\", \"parameters\":\"\"}").build();
+			errorList.add(e);
+			resultAsMap.put("documentError", errorList);
+			resultAsMap.put("url", "");
+			resultAsMap.put("parameters", "");
+			return Response.ok(resultAsMap).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution url", e);
 			throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
 		}
 
 		logger.debug("OUT");
-		return Response.ok(toBeReturned).build();
+		return Response.ok(resultAsMap).build();
+		// return Response.ok(toBeReturned).build();
 	}
 
 	/**
-	 * @return { 
-	 * 		filterStatus: [{ 
-	 * 			title: 'Provincia', 
-	 * 			urlName: 'provincia', 
-	 * 			type: 'list', 
-	 * 			lista:[[k,v],[k,v], [k,v]]
-	 * 		}, { 
-	 * 			title: 'Comune', 
-	 * 			urlName: 'comune',
-	 *         	type: 'list', 
-	 *         	lista:[], 
-	 *         	dependsOn: 'provincia' 
-	 *      }, { 
-	 *      	title: 'Free Search',
-	 *      	type: 'manual', 
-	 *      	urlName: 'freesearch' 
-	 *     	}], 
-	 *     	
-	 *     	errors: [
-	 *     		'role missing',
-	 *     		'operation not allowed'
-	 *   	]
-	 *   }
-	 * @throws EMFUserError 
+	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
+	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }],
+	 *
+	 *         errors: [ 'role missing', 'operation not allowed' ] }
+	 * @throws EMFUserError
 	 */
 	@GET
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilters(@QueryParam("label") String label, @QueryParam("role") String role,
-			@QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) 
-					throws DocumentExecutionException, EMFUserError {
-		
+			@QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError {
+
 		logger.debug("IN");
 
 		String toBeReturned = "{}";
@@ -193,7 +150,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
 
-			parameterAsMap.put("id", objParameter.getLabel());
+			parameterAsMap.put("id", objParameter.getId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getParameterUrlName());
 			parameterAsMap.put("type", parameter.getType());
@@ -206,10 +163,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 			parameterAsMap.put("dependsOn", new ArrayList<>());
-			
-			if(parameter.getValueSelection().equalsIgnoreCase("lov")) {
-				ArrayList<HashMap<String, Object>> defaultValues = 
-						DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter, req);
+
+			if (parameter.getValueSelection().equalsIgnoreCase("lov")) {
+				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter, req);
 
 				parameterAsMap.put("defaultValues", defaultValues);
 			}
@@ -226,8 +182,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
-
-	
 
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another
@@ -265,10 +219,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				logger.debug("profile role for document execution: " + role);
 			} else {
 				logger.debug("missing role for document execution, role:" + role);
-				throw new DocumentExecutionException("role.missing");
+				throw new DocumentExecutionException(message.getMessage("SBIDev.docConf.execBIObject.selRoles.Title"));
 			}
 		}
-		
+
 		return role;
 	}
 }

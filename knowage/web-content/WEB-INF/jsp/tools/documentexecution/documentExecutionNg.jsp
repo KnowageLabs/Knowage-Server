@@ -143,6 +143,11 @@ try{
 										{{defaultParameter.label}}
 									</md-option>
 								</md-select>
+								
+								<div ng-messages="param.parameterValue" ng-if="param.mandatory && !param.parameterValue">
+								 	<div ng-message="required">Param is required.</div>
+								  </div>
+								
 							</md-input-container>
 						</md-list-item>
 					</md-list>

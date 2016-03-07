@@ -25,13 +25,13 @@
 	}]);
 	
 	documentExecutionApp.controller( 'documentExecutionController', 
-			['$scope', '$http', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 
+			['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties',
 			 documentExecutionControllerFn]);
 
 
 	function documentExecutionControllerFn(
-			$scope, $http, $mdSidenav, sbiModule_translate, sbiModule_restServices, sbiModule_config, sbiModule_messaging, execProperties) {
+			$scope, $http, $mdSidenav,$mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, sbiModule_messaging, execProperties) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = {};
@@ -63,13 +63,46 @@
 			$mdSidenav('parametersPanelSideNav').toggle();
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
-						
+			
+		
+		$scope.getParametersForExecutionFake = function(role) {			
+			if(typeof paramsStr === 'undefined'){
+				paramsStr='{}';
+			}
+			var params = 
+				"label=" + execProperties.executionInstance.OBJECT_LABEL
+				+ "&role=" + role
+				+ "&parameters=" + paramsStr;				
+			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
+			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
+				function(data, status, headers, config) {					
+					console.log("param fake .... " , data.parameters);
+					$scope.documentParameters = data.parameters;
+					
+					
+					if(data.parameters && data.parameters.length>0){									
+						$scope.showParametersPanel=true;
+						if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
+							$mdSidenav('parametersPanelSideNav').open();
+						}
+					}else{
+						$scope.showParametersPanel = false;
+						if($mdSidenav('parametersPanelSideNav').isOpen()) {
+							$mdSidenav('parametersPanelSideNav').close();
+						}
+					}
+											
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+		};
+		
+		
 		/*
 		 * START EXECUTION PROCESS REST
 		 * Return the SBI_EXECUTION_ID code 
 		 */
 		$scope.executionProcesRestV1 = function(role, paramsStr) {			
-			//var paramTest = '{"valoreDriver":"12","valoreDriver_field_visible_description":"12","valore_9_url":"21","valore_9_url_field_visible_description":"21"}';
 			if(typeof paramsStr === 'undefined'){
 				paramsStr='{}';
 			}
@@ -81,21 +114,28 @@
 			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
 				function(data, status, headers, config) {					
 					console.log(data);
-		//			if ('errorDocument' in data){
-		//				alert(data.error);
-		//			}else{
-					if(data['errors'].length > 0 ){
-						var strErros='';
-						for(var i=0; i<=data['errors'].length-1;i++){
-							strErros=strErros + data['errors'][i] + ' \n';
-						}
-						alert(strErros);
-						//sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error'); todo
+					if(data['documentError'] && data['documentError'].length > 0 ){
+						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
+						var alert = $mdDialog.alert()
+						.title(sbiModule_translate.load("sbi.generic.warning"))
+						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));
+						$mdDialog.show( alert );
 					}else{
-						$scope.documentUrl=data.url;
-					}
-					//$scope.documentParameters = data.parameters; 
-				//}						
+						if(data['errors'].length > 0 ){
+							var strErros='';
+							for(var i=0; i<=data['errors'].length-1;i++){
+								strErros=strErros + data['errors'][i].description + '. \n';
+							}
+							//sbiModule_messaging.showErrorMessage(strErros, 'Error');
+							var alert = $mdDialog.alert()
+							.title(sbiModule_translate.load("sbi.generic.warning"))
+							.content(strErros).ok(sbiModule_translate.load("sbi.general.ok"));
+							$mdDialog.show( alert );
+						}else{
+							$scope.documentUrl=data.url;
+						}	
+					}	
+					
 				}).error(function(data, status, headers, config) {
 					console.log("TargetLayer non Ottenuto " + status);
 				});
@@ -114,8 +154,8 @@
 				for(var i = 0; i < $scope.documentParameters.length; i++ ){
 					var parameter = $scope.documentParameters[i];
 					
-					var valueKey = parameter.id;
-					var descriptionKey = parameter.id + "_field_visible_description";
+					var valueKey = parameter.urlName;
+					var descriptionKey = parameter.urlName + "_field_visible_description";
 					
 					var jsonDatumValue = null;
 					if(parameter.valueSelection.toLowerCase() == 'lov') {
