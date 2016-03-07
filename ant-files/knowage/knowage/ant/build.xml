@@ -774,8 +774,6 @@
 				<file name="./src/ext4/sbi/tools/layer/LayerListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/layer/LayerDetailPanel.js" />
 				
-				<!-- file name="./src/ext4/sbi/execution/toolbar/MetadataWindow.js" / -->
-				
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerModel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerDetailPanel.js" />
