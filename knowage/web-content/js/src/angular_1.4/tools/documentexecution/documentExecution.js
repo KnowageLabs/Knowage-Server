@@ -101,30 +101,52 @@
 				});
 		};
 		
-
-
-
 		/*
 		 * EXECUTE PARAMS
 		 * Submit param form
 		 */
 		$scope.executeParameter = function() {
-			var jsonData =  {};
+			console.log("executeParameter IN ");
+			var jsonDatum =  {};
+			
 			console.log("$scope.documentParameters -> ", $scope.documentParameters);
 			if($scope.documentParameters.length > 0){
 				for(var i = 0; i < $scope.documentParameters.length; i++ ){
-					jsonData[$scope.documentParameters[i].id] = $scope.documentParameters[i].parameterValue;
+					var parameter = $scope.documentParameters[i];
+					
+					var valueKey = parameter.id;
+					var descriptionKey = parameter.id + "_field_visible_description";
+					
+					var jsonDatumValue = null;
+					if(parameter.valueSelection.toLowerCase() == 'lov') {
+						if(Array.isArray(parameter.parameterValue)) {
+							var arrayAsString = '';
+							
+							for(var j = 0; j < parameter.parameterValue.length; j++) {
+								if(j > 0) {
+									arrayAsString += ',';
+								}
+								arrayAsString += "'" + parameter.parameterValue[j] + "'";
+							}
 
-					jsonData[$scope.documentParameters[i].id + "_field_visible_description"] = 
-						$scope.documentParameters[i].parameterValue;
+							jsonDatumValue = arrayAsString;
+						} else {
+							jsonDatumValue = parameter.parameterValue;
+						}
+					} else {
+						jsonDatumValue = parameter.parameterValue;
+					}
+					
+					jsonDatum[valueKey] = jsonDatumValue;
+					jsonDatum[descriptionKey] = jsonDatumValue;
 				}
 			}			
-			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonData));			
+			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonDatum));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 			}
-			console.log("initSelectedRole OUT ");
+			console.log("executeParameter OUT ");
 		};
 		
 		$scope.changeRole = function(role) {

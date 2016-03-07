@@ -17,24 +17,39 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.CacheSingleton;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -64,6 +79,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 //	public static final String PARAMETERS = "PARAMETERS";
 //	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
+	public static String MODE_SIMPLE = "simple";
+//	public static String MODE_COMPLETE = "complete";
+//	public static String START = "start";
+//	public static String LIMIT = "limit";
+	
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -147,68 +167,67 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 *     		'operation not allowed'
 	 *   	]
 	 *   }
+	 * @throws EMFUserError 
 	 */
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilters(@QueryParam("label") String label, @QueryParam("role") String role,
-			@QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) {
+			@QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) 
+					throws DocumentExecutionException, EMFUserError {
+		
 		logger.debug("IN");
 
 		String toBeReturned = "{}";
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
-		try {
-			IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
-			BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
+		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
-			List<BIObjectParameter> parametersList = biObject.getBiObjectParameters();
+		List<BIObjectParameter> parametersList = biObject.getBiObjectParameters();
 
-			ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
+		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
-			for (BIObjectParameter objParameter : parametersList) {
-				Parameter parameter = objParameter.getParameter();
+		for (BIObjectParameter objParameter : parametersList) {
+			Parameter parameter = objParameter.getParameter();
 
-				HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
 
-				parameterAsMap.put("id", objParameter.getLabel());
-				parameterAsMap.put("label", objParameter.getLabel());
-				parameterAsMap.put("urlName", objParameter.getParameterUrlName());
-				parameterAsMap.put("type", parameter.getType());
-				parameterAsMap.put("typeCode", parameter.getModalityValue().getITypeCd());
-				parameterAsMap.put("selectionType", parameter.getModalityValue().getSelectionType());
-				parameterAsMap.put("valueSelection", parameter.getValueSelection());
-				parameterAsMap.put("selectedLayer", parameter.getSelectedLayer());
-				parameterAsMap.put("selectedLayerProp", parameter.getSelectedLayerProp());
-				parameterAsMap.put("visible", ((objParameter.getVisible() == 1)));
-				parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
-				parameterAsMap.put("multivalue", objParameter.isMultivalue());
-				parameterAsMap.put("dependsOn", new ArrayList<>());
-				
-				if(parameter.getValueSelection().equalsIgnoreCase("lov")) {
-					ILovDetail lovProvDet = DocumentExecutionUtils.getLovDetail(objParameter);
-				}
+			parameterAsMap.put("id", objParameter.getLabel());
+			parameterAsMap.put("label", objParameter.getLabel());
+			parameterAsMap.put("urlName", objParameter.getParameterUrlName());
+			parameterAsMap.put("type", parameter.getType());
+			parameterAsMap.put("typeCode", parameter.getModalityValue().getITypeCd());
+			parameterAsMap.put("selectionType", parameter.getModalityValue().getSelectionType());
+			parameterAsMap.put("valueSelection", parameter.getValueSelection());
+			parameterAsMap.put("selectedLayer", parameter.getSelectedLayer());
+			parameterAsMap.put("selectedLayerProp", parameter.getSelectedLayerProp());
+			parameterAsMap.put("visible", ((objParameter.getVisible() == 1)));
+			parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
+			parameterAsMap.put("multivalue", objParameter.isMultivalue());
+			parameterAsMap.put("dependsOn", new ArrayList<>());
+			
+			if(parameter.getValueSelection().equalsIgnoreCase("lov")) {
+				ArrayList<HashMap<String, Object>> defaultValues = 
+						DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter, req);
 
-				parametersArrayList.add(parameterAsMap);
+				parameterAsMap.put("defaultValues", defaultValues);
 			}
 
-			if (parametersList.size() > 0) {
-				resultAsMap.put("filterStatus", parametersArrayList);
-			} else {
-				resultAsMap.put("filterStatus", new ArrayList<>());
-			}
-			resultAsMap.put("errors", new ArrayList<>());
-
-			// } catch (DocumentExecutionException e) {
-			// return Response.ok("{errors: '" + e.getMessage() + "' }").build();
-		} catch (Exception e) {
-			logger.error("Error while getting the document execution filters", e);
-			throw new SpagoBIRuntimeException("Error while getting the document execution filters", e);
+			parametersArrayList.add(parameterAsMap);
 		}
+
+		if (parametersList.size() > 0) {
+			resultAsMap.put("filterStatus", parametersArrayList);
+		} else {
+			resultAsMap.put("filterStatus", new ArrayList<>());
+		}
+		resultAsMap.put("errors", new ArrayList<>());
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
+
+	
 
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another

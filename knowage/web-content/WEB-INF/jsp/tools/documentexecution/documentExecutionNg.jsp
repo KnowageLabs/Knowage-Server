@@ -98,25 +98,49 @@ try{
 							</md-button>
 						</div>
 					</md-toolbar>
+					
 					<md-content ng-show="showSelectRoles">
-						<label>{{translate.load("sbi.users.roles")}}</label>
-						<md-select aria-label="aria-label" ng-model="selectedRole" >
-						<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">{{role|uppercase}}</md-option>
-						</md-select>
-					</md-content>	
+						<md-input-container class="small counter" flex>
+							<label>{{translate.load("sbi.users.roles")}}</label>
+							<md-select aria-label="aria-label" ng-model="selectedRole" >
+							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">{{role|uppercase}}</md-option>
+							</md-select>
+						</md-input-container>
+					</md-content>
+					
 					<md-list ng-hide="isParameterPanelDisabled()">
 						<md-list-item layout="row" ng-repeat="param in documentParameters" layout="column">
 							<md-input-container class="small counter" flex>
 								<label>{{param.label}}</label>
+								
+								<%--
+								<md-content ng-if="param.type=='STRING' && param.selectionType=='LIST'">{{param|json}}</md-content>
+								--%>
+								
+								<!-- manual number input -->
 								<input class="input_class" ng-model="param.parameterValue" 
 										ng-required="param.mandatory" type="number"
 										ng-if="param.type=='NUM' && param.selectionType==''" >	
+								
+								<!-- manual text input -->
 								<input class="input_class" ng-model="param.parameterValue" 
 										ng-required="param.mandatory"
 										ng-if="param.type=='STRING' && param.selectionType==''">
+								
+								<!-- lov single input -->
 								<md-select class="input_class" ng-model="param.parameterValue" ng-required="param.mandatory"
-										ng-if="param.type=='STRING' && param.selectionType=='LIST'" multiple="param.multivalue">
-									<md-option></md-option>
+										ng-if="param.type=='STRING' && param.selectionType=='LIST' && !param.multivalue">
+									<md-option ng-repeat="defaultParameter in param.defaultValues" value="'{{defaultParameter.value}}'">
+										{{defaultParameter.label}}
+									</md-option>
+								</md-select>
+								
+								<!-- lov multiple input -->
+								<md-select class="input_class" ng-model="param.parameterValue" ng-required="param.mandatory"
+										ng-if="param.type=='STRING' && param.selectionType=='LIST' && param.multivalue" multiple>
+									<md-option ng-repeat="defaultParameter in param.defaultValues" value="'{{defaultParameter.value}}'">
+										{{defaultParameter.label}}
+									</md-option>
 								</md-select>
 							</md-input-container>
 						</md-list-item>
