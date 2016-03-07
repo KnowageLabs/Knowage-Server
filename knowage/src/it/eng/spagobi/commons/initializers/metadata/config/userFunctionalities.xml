@@ -115,7 +115,6 @@
 	<USER_FUNCTIONALITY productType="KnowageFake" name="Glossary" description="Glossary" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
-	<USER_FUNCTIONALITY productType="KnowageFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="FederationDefinition" description="FederationDefinition" />
