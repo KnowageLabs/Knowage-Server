@@ -69,13 +69,34 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Kpi> listKpi();
 
-	public void insertKpi(Kpi kpi);
+	/**
+	 * Insert a new kpi
+	 * 
+	 * @param kpi
+	 * @return new generated kpi id
+	 */
+	public Integer insertKpi(Kpi kpi);
 
+	/**
+	 * Update an existing kpi
+	 * 
+	 * @param kpi
+	 * @return
+	 */
 	public void updateKpi(Kpi kpi);
 
 	public void removeKpi(Integer id);
 
 	public Kpi loadKpi(Integer id);
+
+	/**
+	 * Retrieves a kpi id by searching for its name
+	 * 
+	 * @param kpi
+	 *            name
+	 * @return kpi id
+	 */
+	public Integer getKpiIdByName(String name);
 
 	public List<Alias> listAlias();
 
@@ -92,6 +113,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Placeholder> listPlaceholder();
 
 	public List<Threshold> listThreshold();
+
+	public Threshold loadThreshold(Integer id);
 
 	/**
 	 * Given a list of measures it retrieves a list of placeholder related to that measures

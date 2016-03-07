@@ -24,7 +24,7 @@
             <column name="TYPE_ID" />
         </many-to-one>
         
-        <set name="sbiKpiThresholdValues" cascade="all,delete-orphan" lazy="false" inverse="true">
+        <set name="sbiKpiThresholdValues" cascade="all,delete-orphan" lazy="false" inverse="true" order-by="position">
             <key column="THRESHOLD_ID" />
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue" />
         </set>

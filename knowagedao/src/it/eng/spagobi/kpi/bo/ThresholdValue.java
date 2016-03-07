@@ -17,10 +17,15 @@
  */
 package it.eng.spagobi.kpi.bo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ThresholdValue {
+public class ThresholdValue implements Serializable {
 
+	private static final long serialVersionUID = 427614913244316316L;
+	/**
+	 * 
+	 */
 	private Integer id;
 	private int position;
 	private String label;
@@ -35,6 +40,13 @@ public class ThresholdValue {
 	private boolean includeMin;
 	private BigDecimal maxValue;
 	private boolean includeMax;
+
+	public ThresholdValue() {
+	}
+
+	public ThresholdValue(Integer id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the id
@@ -186,4 +198,13 @@ public class ThresholdValue {
 		this.includeMax = includeMax;
 	}
 
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return id != null && obj instanceof ThresholdValue ? id.equals(((ThresholdValue) obj).getId()) : super.equals(obj);
+	}
 }
