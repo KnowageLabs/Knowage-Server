@@ -54,7 +54,7 @@ try{
 </head>
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
-	<div layout="column" ng-controller="documentExecutionController as ctrl" ng-init="initSelectedRole()" ng-cloak>
+	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
 		<md-toolbar class="miniheadimportexport">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
@@ -72,12 +72,13 @@ try{
 				</md-button>
 			</div>
         </md-toolbar>
- 		<section layout="row" layout-fill> 
- 			<md-content layout="column" layout-fill>
-				<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()";
-					iframe-set-dimensions-onload style="overflow:hidden;height:100%;width:100%" height="100%"
-					> </iframe>
-			</md-content>		
+ 		<md-content layout="row" flex> 
+			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()" layout-fill
+				<%--
+				iframe-set-dimensions-onload 
+				--%>
+				> </iframe>
+				
 			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav"
 					ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
 							
@@ -153,7 +154,7 @@ try{
 					</md-button>				
 				</section>				
 			</md-sidenav>
-		</section>
+		</md-content>
 	</div>
 		
 	<script type="text/javascript">
