@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.jobs.CleanCacheJob;
+import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.List;
@@ -34,12 +35,6 @@ import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
 
 public class CleanCacheQuartzInitializer implements InitializerIFace {
-
-	public final String CRON_HOURLY = "0 0 0/1 1/1 * ? *";
-	public final String CRON_DAILY = "0 0 0 1/1 * ? *";
-	public final String CRON_WEEKLY = "0 0 0 ? * SUN *";
-	public final String CRON_MONTHLY = "0 0 0 1 1/1 ? *";
-	public final String CRON_YEARLY = "0 0 0 1 1 ? *";
 
 	public final String DEFAULT_JOB_NAME = "CleanCacheJob";
 	public final String DEFAULT_TRIGGER_NAME = "schedule_full_cache_cleaning";
@@ -52,6 +47,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	 *
 	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		try {
@@ -124,29 +120,25 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	 *
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
+	@Override
 	public SourceBean getConfig() {
 		return _config;
 	}
 
 	private String getCronExpression(String valueCheck) {
 		if (valueCheck == null) {
+			logger.debug("This value is [" + valueCheck + "]");
 			return null;
 		}
-		if (valueCheck.equals("HOURLY")) {
-			return CRON_HOURLY;
+
+		for (PredefinedCronExpression value : PredefinedCronExpression.values()) {
+			if (valueCheck.equalsIgnoreCase(value.getLabel())) {
+				logger.debug("Found a predefined cron expression with label equals to [" + valueCheck + "]");
+				logger.debug("The cron expression is equals to [" + value.getExpression() + "]");
+				return value.getExpression();
+			}
 		}
-		if (valueCheck.equals("DAILY")) {
-			return CRON_DAILY;
-		}
-		if (valueCheck.equals("WEEKLY")) {
-			return CRON_WEEKLY;
-		}
-		if (valueCheck.equals("MONTHLY")) {
-			return CRON_MONTHLY;
-		}
-		if (valueCheck.equals("YEARLY")) {
-			return CRON_YEARLY;
-		}
+		logger.debug("No predefined cron expression found with label equals to [" + valueCheck + "]. Returning null.");
 		return null;
 	}
 }
