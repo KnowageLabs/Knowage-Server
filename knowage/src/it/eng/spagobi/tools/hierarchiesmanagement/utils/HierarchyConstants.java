@@ -37,6 +37,7 @@ public class HierarchyConstants {
 	public final static String CONFIG = "CONFIG";
 	public final static String NUM_LEVELS = "NUM_LEVELS";
 	public final static String ALLOW_DUPLICATE = "ALLOW_DUPLICATE";
+	public final static String UNIQUE_NODE = "UNIQUE_NODE";
 	public final static String NODE = "NODE";
 	public final static String LEAF = "LEAF";
 	public final static String ORIG_NODE = "ORIG_NODE";
@@ -65,6 +66,7 @@ public class HierarchyConstants {
 	public final static String FIELD_SINGLE_VALUE = "SINGLE_VALUE";
 	public final static String FIELD_REQUIRED = "REQUIRED";
 	public final static String FIELD_FIX_VALUE = "FIX_VALUE";
+	public final static String FIELD_UNIQUE_CODE = "UNIQUE_CODE";
 
 	// FILTERS
 	public final static String FILTER = "FILTER";

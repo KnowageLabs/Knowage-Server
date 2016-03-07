@@ -214,9 +214,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
+					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent);
+							fieldIsParent, fieldIsUnique);
 					metadataDimension.add(field);
 				}
 				toReturn.setMetadataFields(metadataDimension);
@@ -301,9 +303,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
+					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent);
+							fieldIsParent, fieldIsUnique);
 					metadataGeneralHierarchy.add(field);
 				}
 				toReturn.setMetadataGeneralFields(metadataGeneralHierarchy);
@@ -331,9 +335,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 					boolean fieldIsParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
+					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent);
+							fieldIsParent, fieldIsUnique);
 					metadataNodeHierarchy.add(field);
 				}
 				toReturn.setMetadataNodeFields(metadataNodeHierarchy);
@@ -361,9 +367,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_SINGLE_VALUE)) : true;
 					boolean fieldParent = sbField.getAttribute(HierarchyConstants.FIELD_PARENT) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
+					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldParent);
+							fieldParent, fieldIsUnique);
 					metadataLeafHierarchy.add(field);
 				}
 				toReturn.setMetadataLeafFields(metadataLeafHierarchy);
@@ -454,6 +462,8 @@ public class Hierarchies {
 						toReturn.put(HierarchyConstants.FILL_EMPTY, sbConfig.getAttribute(HierarchyConstants.FILL_EMPTY));
 					if (null != sbConfig.getAttribute(HierarchyConstants.FILL_VALUE))
 						toReturn.put(HierarchyConstants.FILL_VALUE, sbConfig.getAttribute(HierarchyConstants.FILL_VALUE));
+					if (null != sbConfig.getAttribute(HierarchyConstants.UNIQUE_NODE))
+						toReturn.put(HierarchyConstants.UNIQUE_NODE, sbConfig.getAttribute(HierarchyConstants.UNIQUE_NODE));
 				}
 			}
 		}

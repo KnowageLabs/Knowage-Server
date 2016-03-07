@@ -663,14 +663,14 @@ public class HierarchyUtils {
 		List<Field> result = new ArrayList<Field>();
 
 		// Create fixed fields (code, name, description and timestamp where only name and description are editable)
-		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false);
+		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false, false);
 		result.add(bkpField);
-		bkpField = new Field(HierarchyConstants.HIER_NM, "Name", "String", null, true, true, false, true, false);
+		bkpField = new Field(HierarchyConstants.HIER_NM, "Name", "String", null, true, true, false, true, false, false);
 		result.add(bkpField);
-		bkpField = new Field(HierarchyConstants.HIER_DS, "Description", "String", null, true, true, false, true, false);
+		bkpField = new Field(HierarchyConstants.HIER_DS, "Description", "String", null, true, true, false, true, false, false);
 		result.add(bkpField);
 		// ...then we build a field for the others backup info
-		bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false);
+		bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false, false);
 		result.add(bkpField);
 
 		logger.debug("END");
@@ -911,7 +911,8 @@ public class HierarchyUtils {
 		// order clause
 		for (int o = 1, l2 = totalLevels; o <= l2; o++) {
 			String sep = (o == totalLevels) ? "" : ",";
-			String column = AbstractJDBCDataset.encapsulateColumnName(prefix + HierarchyConstants.SUFFIX_CD_LEV + o, dataSource);
+			// String column = AbstractJDBCDataset.encapsulateColumnName(prefix + HierarchyConstants.SUFFIX_CD_LEV + o, dataSource);
+			String column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
 			orderClauseBuffer.append(column + sep);
 		}
 

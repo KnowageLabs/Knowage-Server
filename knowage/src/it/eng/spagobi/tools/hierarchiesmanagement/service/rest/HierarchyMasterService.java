@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.FillConfiguration;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -187,6 +188,7 @@ public class HierarchyMasterService {
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+			List<Field> nodeFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
 			boolean exludeHierLeaf = (filterHierarchy != null) ? true : false;
 			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters, filterDate,
 					filterHierarchy, filterHierType, hierTableName, prefix, exludeHierLeaf);
@@ -196,8 +198,8 @@ public class HierarchyMasterService {
 			while (iterator.hasNext()) {
 				// dataStore.
 				IRecord record = (IRecord) iterator.next();
-				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
-						dimensionName, validityDate, hierConfig);
+				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, nodeFields, metatadaFieldsMap, requestVal,
+						prefix, dimensionName, validityDate, hierConfig);
 
 			}
 
@@ -276,6 +278,7 @@ public class HierarchyMasterService {
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+			List<Field> nodeFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
 
 			// read original configuration of MASTER table from DB
 			String masterConfig = getHierMasterConfig(dataSource, dbConnection, filterHierarchy);
@@ -345,8 +348,8 @@ public class HierarchyMasterService {
 			while (iterFromDim.hasNext()) {
 				// iterate on dimension records
 				IRecord record = (IRecord) iterFromDim.next();
-				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, metatadaFieldsMap, requestVal, prefix,
-						dimensionName, validityDate, hierConfig);
+				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, nodeFields, metatadaFieldsMap,
+						requestVal, prefix, dimensionName, validityDate, hierConfig);
 			}
 
 			dbConnection.commit();
@@ -394,8 +397,8 @@ public class HierarchyMasterService {
 	}
 
 	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
-			List<Field> generalFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix, String dimensionName, String validityDate,
-			HashMap hierConfig) {
+			List<Field> generalFields, List<Field> nodeFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix,
+			String dimensionName, String validityDate, HashMap hierConfig) {
 
 		logger.debug("START");
 
@@ -436,15 +439,15 @@ public class HierarchyMasterService {
 			 * in this section we add columns and values related to levels specified in request JSON*
 			 ****************************************************************************************/
 
-			manageLevelsSection(dataSource, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause, valuesClause, sep, prefix,
-					fillConfiguration);
+			manageLevelsSection(dataSource, nodeFields, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause, valuesClause, sep, prefix,
+					fillConfiguration, hierConfig);
 
 			/***********************************************************************
 			 * in this section we add a recursive logic to calculate parents levels*
 			 ***********************************************************************/
 
-			manageRecursiveSection(dbConnection, dataSource, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause, valuesClause, sep,
-					prefix, dimensionName, validityDate, fillConfiguration);
+			manageRecursiveSection(dbConnection, dataSource, nodeFields, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause,
+					valuesClause, sep, prefix, dimensionName, validityDate, fillConfiguration, hierConfig);
 
 			checkMaxLevel(levelsMap, hierConfig);
 
@@ -576,9 +579,9 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageLevelsSection(IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap,
-			Map<Integer, Object[]> levelsMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix,
-			FillConfiguration fillConfiguration) throws JSONException {
+	private void manageLevelsSection(IDataSource dataSource, List<Field> nodeFields, IRecord record, Map<String, Integer> metatadaFieldsMap,
+			Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
+			String sep, String prefix, FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException {
 
 		// retrieve levels from request json
 		if (requestVal.isNull("levels")) {
@@ -594,6 +597,7 @@ public class HierarchyMasterService {
 		int lvlsLength = lvls.length();
 		logger.debug("The user has specified [" + lvlsLength + "] levels");
 
+		String concatNmValues = requestVal.getString(HierarchyConstants.HIER_NM);
 		for (int k = 0; k < lvlsLength; k++) {
 			// a level found, increment the index level counter
 			lvlIndex++;
@@ -601,8 +605,10 @@ public class HierarchyMasterService {
 			JSONObject lvl = lvls.getJSONObject(k);
 
 			// columns for code and name level
-			String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + lvlIndex, dataSource);
-			String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + lvlIndex, dataSource);
+			// String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + lvlIndex, dataSource);
+			// String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + lvlIndex, dataSource);
+			String cdColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
+			String nmColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
 
 			// retrieve values to look for in dimension columns
 			String cdLvl = lvl.getString("CD");
@@ -614,9 +620,6 @@ public class HierarchyMasterService {
 			IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
 			IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
 
-			// String cdValue = (String) cdTmpField.getValue();
-			// String nmValue = (String) nmTmpField.getValue();
-
 			// Filling logic: if the user has enabled the filling option, null values in a level are replaced by values from the previous level
 
 			Object cdValue = ((cdTmpField.getValue()) != null) ? cdTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
@@ -624,6 +627,8 @@ public class HierarchyMasterService {
 
 			Object nmValue = ((nmTmpField.getValue()) != null) ? nmTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
 					HierarchyConstants.NM_VALUE_POSITION);
+
+			concatNmValues += (nmValue == null) ? "" : nmValue;
 
 			logger.debug("For the level [" + lvlIndex + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
 
@@ -641,13 +646,33 @@ public class HierarchyMasterService {
 
 			index = index + 2;
 
-		}
+			// After the single level if the node must be unique search for the unique column (only one) and sets it
+			String cdUniqueColumn = null;
+			Object cdUniqueValue = null;
+			boolean uniqueNodeMng = Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE));
+			if (uniqueNodeMng) {
+				for (int n = 0; n < nodeFields.size(); n++) {
+					Field f = nodeFields.get(n);
+					if (f.isUniqueCode()) {
+						cdUniqueColumn = AbstractJDBCDataset.encapsulateColumnName(f.getId() + lvlIndex, dataSource);
+						// cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(String.valueOf(Math.random()) + concatNmValues);
+						cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(concatNmValues);
+						break;
+					}
+				}
+				columnsClause.append(cdUniqueColumn + sep);
+				valuesClause.append("?" + sep);
+				fieldsMap.put(index, cdUniqueValue);
+				index = index + 1;
+			}
 
+		}
 	}
 
-	private void manageRecursiveSection(Connection dbConnection, IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap,
-			Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
-			String sep, String prefix, String dimensionName, String validityDate, FillConfiguration fillConfiguration) throws JSONException, SQLException {
+	private void manageRecursiveSection(Connection dbConnection, IDataSource dataSource, List<Field> nodeFields, IRecord record,
+			Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, JSONObject requestVal,
+			StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix, String dimensionName, String validityDate,
+			FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException, SQLException {
 
 		int index = fieldsMap.size();
 		int lvlIndex = levelsMap.size();
@@ -706,6 +731,7 @@ public class HierarchyMasterService {
 			}
 
 			int recursiveValuesSize = recursiveValuesList.size();
+			String concatNmValues = requestVal.getString(HierarchyConstants.HIER_NM);
 
 			// we use i+2 because we need CD and NM
 			for (int i = 0; i < recursiveValuesSize; i = i + 2) {
@@ -713,8 +739,10 @@ public class HierarchyMasterService {
 				lvlIndex++;
 
 				// columns for code and name level
-				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex), dataSource);
-				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex), dataSource);
+				// String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex), dataSource);
+				// String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex), dataSource);
+				String cdColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
+				String nmColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
 
 				Object cdValue = ((recursiveValuesList.get(i)) != null) ? recursiveValuesList.get(i) : fillConfiguration.fillHandler(levelsMap,
 						HierarchyConstants.CD_VALUE_POSITION);
@@ -722,6 +750,7 @@ public class HierarchyMasterService {
 						HierarchyConstants.NM_VALUE_POSITION);
 
 				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue + "] and the name [" + nmValue + "]");
+				concatNmValues += (nmValue == null) ? "" : nmValue;
 
 				// updating sql clauses for columns and values
 				columnsClause.append(cdColumn + "," + nmColumn + sep);
@@ -736,6 +765,26 @@ public class HierarchyMasterService {
 				levelsMap.put(lvlIndex, tmpLvl);
 
 				index = index + 2;
+
+				// After the single level if the node must be unique search for the unique column (only one) and sets it
+				String cdUniqueColumn = null;
+				Object cdUniqueValue = null;
+				boolean uniqueNodeMng = Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE));
+				if (uniqueNodeMng) {
+					for (int n = 0; n < nodeFields.size(); n++) {
+						Field f = nodeFields.get(n);
+						if (f.isUniqueCode()) {
+							cdUniqueColumn = AbstractJDBCDataset.encapsulateColumnName(f.getId() + lvlIndex, dataSource);
+							// cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(String.valueOf(Math.random()) + concatNmValues);
+							cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(concatNmValues);
+							break;
+						}
+					}
+					columnsClause.append(cdUniqueColumn + sep);
+					valuesClause.append("?" + sep);
+					fieldsMap.put(index, cdUniqueValue);
+					index = index + 1;
+				}
 
 			}
 

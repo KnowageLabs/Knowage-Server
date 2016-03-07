@@ -37,6 +37,7 @@ import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -218,6 +219,9 @@ public class HierarchyService {
 			Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
 			HashMap<String, Object> hierConfig = hierarchies.getConfig(dimension);
 			paramsMap.put(HierarchyConstants.NUM_LEVELS, hierConfig.get(HierarchyConstants.NUM_LEVELS));
+			paramsMap.put(HierarchyConstants.TREE_NODE_CD, hierConfig.get(HierarchyConstants.TREE_NODE_CD));
+			paramsMap.put(HierarchyConstants.TREE_NODE_NM, hierConfig.get(HierarchyConstants.TREE_NODE_NM));
+			paramsMap.put(HierarchyConstants.TREE_LEAF_CD, hierConfig.get(HierarchyConstants.TREE_LEAF_CD));
 
 			// 2 - Definition of the context (ex. manage propagations ONLY when the sourceHierType is MASTER and the targtHierType is TECHNICAL)
 			boolean doPropagation = false;
@@ -228,7 +232,7 @@ public class HierarchyService {
 			}
 
 			// 3 - get all paths from the input json tree
-			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension);
+			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName);
 
 			// 4 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -432,8 +436,6 @@ public class HierarchyService {
 		String hierNodeCdMColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource);
 		String hierBackupColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
-		// select distinct HIER_CD_T, HIER_NM_T, DIMENSION, NODE_CD_T, NODE_NM_T, NODE_LEV_T, HIER_CD_M, HIER_NM_M, NODE_CD_M, NODE_NM_M, NODE_LEV_M
-		// from HIER_MASTER_TECHNICAL where HIER_NM_M = 'BPC_PATR' and NODE_CD_M = 'PAS_TP_PC_AP_PRE' and BACKUP = 0
 		StringBuffer query = new StringBuffer("SELECT DISTINCT " + selectClause + " FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE "
 				+ hierDimensionColumn + " = \"" + paramsMap.get(HierarchyConstants.DIMENSION) + "\" AND " + hierNameMColumn + " = \""
 				+ paramsMap.get(HierarchyConstants.HIER_NM_M) + "\" AND " + hierNodeCdMColumn + " = \"" + paramsMap.get(HierarchyConstants.NODE_CD_M)
@@ -490,9 +492,9 @@ public class HierarchyService {
 			int lastValorizedLevel = 0;
 
 			for (int i = 1, l = numLevels; i <= l; i++) {
-				IField codeField = record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + i)); // NODE CODE
-				IField nameField = record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_NM_LEV + i)); // NAME CODE
-				IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEAF)); // LEAF CODE
+				IField codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + i)); // NODE CODE
+				IField nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
+				IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_LEAF_CD))); // LEAF CODE
 				String leafCode = (String) codeLeafField.getValue();
 
 				if (currentLevel == maxDepth) {
@@ -975,7 +977,14 @@ public class HierarchyService {
 			boolean isRoot = ((Boolean) node.getAttributes().get("isRoot")).booleanValue();
 			boolean isLeaf = ((Boolean) node.getAttributes().get("isLeaf")).booleanValue();
 			String hierarchyPrefix = (String) paramsMap.get("hierarchyPrefix");
-
+			int level = 0;
+			String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
+			level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+			if (level == 0 && !isRoot) {
+				logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+				throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode() + " and name "
+						+ node.getNodeName());
+			}
 			if (isLeaf) {
 				// it's a leaf
 				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF), node.getNodeCode());
@@ -983,14 +992,12 @@ public class HierarchyService {
 				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF), node.getNodeName());
 				values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF, node.getNodeName());
 				if (node.getDepth() != null) {
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV + node.getDepth()),
+					toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + node.getDepth()),
 							node.getNodeCode());
-					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeCode());
-				}
-				if (node.getDepth() != null) {
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + node.getDepth()),
+					values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), node.getNodeCode());
+					toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + node.getDepth()),
 							node.getNodeName());
-					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeName());
+					values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), node.getNodeName());
 				} else if (!isRoot) {
 					logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
 					throw new SpagoBIServiceException("persistService", "Property LEVEL non found for leaf element with code " + node.getNodeCode()
@@ -1018,6 +1025,8 @@ public class HierarchyService {
 					Object value = node.getAttributes().get(key);
 					if (key != null && value != null) {
 						int attrPos = HierarchyUtils.getPosField(lstFields, key);
+						if (attrPos == -1)
+							attrPos = HierarchyUtils.getPosField(lstFields, key + level);
 						if (attrPos != -1) {
 							preparedStatement.setObject(attrPos, value);
 							values.put(key, value);
@@ -1026,16 +1035,16 @@ public class HierarchyService {
 				}
 			} else {
 				// not-leaf node
-				int level = 0;
+				// int level = 0;
 				// get other node's attributes (not mandatory ie sign)
 				Iterator iter = node.getAttributes().keySet().iterator();
-				String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
-				level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
-				if (level == 0 && !isRoot) {
-					logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
-					throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
-							+ " and name " + node.getNodeName());
-				}
+				// String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
+				// level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+				// if (level == 0 && !isRoot) {
+				// logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+				// throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
+				// + " and name " + node.getNodeName());
+				// }
 				while (iter.hasNext()) {
 					String key = (String) iter.next();
 					Object value = node.getAttributes().get(key);
@@ -1050,10 +1059,21 @@ public class HierarchyService {
 					}
 				}
 				if (level > 0) {
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV + level), node.getNodeCode());
-					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeCode());
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + level), node.getNodeName());
-					values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV, node.getNodeName());
+					// toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV + level),
+					// node.getNodeCode());
+					// values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeCode());
+					// toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + level),
+					// node.getNodeName());
+					// values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV, node.getNodeName());
+					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD + level),
+					// node.getNodeCode(), node.getNodeCode());
+
+					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + level),
+					// node.getNodeCode());
+					// values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), node.getNodeCode());
+					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + level),
+					// node.getNodeName());
+					// values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), node.getNodeName());
 				}
 			}
 		} catch (Throwable t) {
@@ -1135,10 +1155,10 @@ public class HierarchyService {
 				if (pathCd[i].equals(""))
 					continue; // skip the first empty element
 				level++;
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_CD_LEV + level), pathCd[i]);
-				values.put(prefix + HierarchyConstants.SUFFIX_CD_LEV, pathCd[i]);
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_NM_LEV + level), pathNm[i]);
-				values.put(prefix + HierarchyConstants.SUFFIX_NM_LEV, pathNm[i]);
+				toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + level), pathCd[i]);
+				values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), pathCd[i]);
+				toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + level), pathNm[i]);
+				values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), pathNm[i]);
 				// if it's the last level before the leaf set parent references
 				if (i == pathCd.length - 1) {
 					toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_CD), pathCd[i]);
@@ -1148,10 +1168,12 @@ public class HierarchyService {
 				}
 			}
 			// add the leaf as the last level
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_CD_LEV + maxDepth), leafData.getString(prefix + "_CD"));
-			values.put(prefix + HierarchyConstants.SUFFIX_CD_LEV + maxDepth, leafData.getString(prefix + "_CD"));
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_NM_LEV + maxDepth), leafData.getString(prefix + "_NM"));
-			values.put(prefix + HierarchyConstants.SUFFIX_NM_LEV + maxDepth, leafData.getString(prefix + "_NM"));
+			toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth),
+					leafData.getString(prefix + "_CD"));
+			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth, leafData.getString(prefix + "_CD"));
+			toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth),
+					leafData.getString(prefix + "_NM"));
+			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth, leafData.getString(prefix + "_NM"));
 		} catch (Throwable t) {
 			String errMsg = "Error while insert for propagation of element with code: [" + values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
 					+ values.get(HierarchyConstants.NODE_NM_T) + "]";
@@ -1228,11 +1250,13 @@ public class HierarchyService {
 	 * @param dimension
 	 * @return collection with all tree paths
 	 */
-	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension) {
+	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension, String uniqueCode, String hierName) {
 		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<List<HierarchyTreeNodeData>>();
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyPrefix = hierarchies.getPrefix(dimension);
+			HashMap<String, Object> hierConfig = hierarchies.getConfig(dimension);
+			String uniqueCodeLocal = uniqueCode;
 
 			String nodeName = node.getString(HierarchyConstants.TREE_NAME);
 			String nodeCode = node.getString(HierarchyConstants.ID);
@@ -1241,6 +1265,10 @@ public class HierarchyService {
 			if (!node.isNull(HierarchyConstants.LEVEL)) {
 				mapAttrs.put(HierarchyConstants.LEVEL, node.getString(HierarchyConstants.LEVEL));
 			}
+			if (!node.isNull(HierarchyConstants.ID) && node.getString(HierarchyConstants.ID).equals(HierarchyConstants.ROOT)) {
+				hierName = uniqueCode;
+			}
+
 			// add other general attributes if they are valorized
 			JSONObject generalInfoJSON = new JSONObject();
 			JSONObject infoJSON = new JSONObject();
@@ -1258,14 +1286,20 @@ public class HierarchyService {
 			for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
 				Field fld = nodeFields.get(f);
 				String idFld = fld.getId();
-				if (!node.isNull(idFld)) {
+				// if the column must be unique, get the MD5 value otherwise set value if it isn't null
+				if (Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE)) && fld.isUniqueCode()) {
+					// generate hashcode
+					// uniqueCode += String.valueOf(Math.random());
+					String hashCode = Helper.sha256(uniqueCode);
+					mapAttrs.put(idFld, hashCode);
+				} else if (!node.isNull(idFld)) {
 					mapAttrs.put(idFld, node.getString(idFld));
 				}
 			}
 			// add other leaf attributes if they are valorized
 			ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
-			for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
-				Field fld = nodeFields.get(f);
+			for (int f = 0, lf = leafFields.size(); f < lf; f++) {
+				Field fld = leafFields.get(f);
 				String idFld = fld.getId();
 				if (!node.isNull(idFld)) {
 					mapAttrs.put(idFld, node.getString(idFld));
@@ -1305,6 +1339,9 @@ public class HierarchyService {
 			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "", mapAttrs);
 
 			if (isLeaf) {
+				// reset unique key
+				uniqueCodeLocal = hierName;
+
 				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF))
 					nodeData.setNodeCode(node.getString(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF));
@@ -1331,11 +1368,14 @@ public class HierarchyService {
 				JSONArray childs = node.getJSONArray("children");
 				for (int i = 0; i < childs.length(); i++) {
 					JSONObject child = childs.getJSONObject(i);
-					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension);
+					if (!isRoot)
+						uniqueCodeLocal = uniqueCodeLocal + nodeName;
+					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName);
 					for (List<HierarchyTreeNodeData> path : childPaths) {
 						// add this node to start of the path
 						path.add(0, nodeData);
 						collectionOfPaths.add(path);
+						uniqueCodeLocal = hierName;
 					}
 				}
 			}
