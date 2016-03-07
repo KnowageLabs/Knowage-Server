@@ -6,6 +6,19 @@
 
 	var documentExecutionApp = angular.module('documentExecutionModule');
 
+	documentExecutionApp.directive('iframeOnload', [function(){
+		return {
+		    scope: {
+		        callBack: '&iframeOnload'
+		    },
+		    link: function(scope, element, attrs){
+		        element.on('load', function(){
+		            return scope.callBack();
+		        })
+		    }
+		}}])
+	
+	
 	documentExecutionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('knowage')
 		$mdThemingProvider.setDefaultTheme('knowage');
@@ -35,14 +48,12 @@
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				if(execProperties.roles.length==1) {
+					$scope.selectedRole = execProperties.roles[0];
 					$scope.showSelectRoles=false;
+					//load parameters if role is selected
+					$scope.getParametersForExecution($scope.selectedRole);
 				}
-
-				//$scope.selectedRole = execProperties.roles[0];
-				//$scope.startExecutionProcess($scope.selectedRole);
 				$scope.executionProcesRestV1($scope.selectedRole);
-				$scope.getParametersForExecution($scope.selectedRole);
-
 			}
 			console.log("initSelectedRole OUT ");
 		};
@@ -52,7 +63,7 @@
 			$mdSidenav('parametersPanelSideNav').toggle();
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
-
+						
 		/*
 		 * START EXECUTION PROCESS REST
 		 * Return the SBI_EXECUTION_ID code 
@@ -79,11 +90,12 @@
 							strErros=strErros + data['errors'][i] + ' \n';
 						}
 						alert(strErros);
+						//sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error'); todo
 					}else{
 						$scope.documentUrl=data.url;
 					}
-					$scope.documentParameters = data.parameters;
-					//}						
+					//$scope.documentParameters = data.parameters; 
+				//}						
 				}).error(function(data, status, headers, config) {
 					console.log("TargetLayer non Ottenuto " + status);
 				});
@@ -106,15 +118,28 @@
 					jsonData[$scope.documentParameters[i].id + "_field_visible_description"] = 
 						$scope.documentParameters[i].parameterValue;
 				}
-			}
-			
-			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonData));
-			
+			}			
+			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonData));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 			}
 			console.log("initSelectedRole OUT ");
+		};
+		
+		$scope.changeRole = function(role) {
+			// $scope.selectedRole is overwritten by the ng-model attribute
+			console.log("changeRole IN ");
+			//If new selected role is different from the previous one
+			if(role != $scope.selectedRole) { 
+				$scope.executionProcesRestV1(role);
+				$scope.getParametersForExecution(role);
+//				if($mdSidenav('parametersPanelSideNav').isOpen()) {
+//					$mdSidenav('parametersPanelSideNav').close();
+//					$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
+//				}
+			}
+			console.log("changeRole OUT ");
 		};
 	
 		$scope.isExecuteParameterDisabled = function() {
@@ -130,6 +155,15 @@
 			return false
 		};
 
+		$scope.iframeOnload = function(){
+			//alert('loaded');
+//			if($mdSidenav('parametersPanelSideNav').isOpen()) {
+//				$mdSidenav('parametersPanelSideNav').close();
+//				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
+//			}
+		}
+		
+		
 		/*
 		 * START EXECUTION PROCESS
 		 * Return the SBI_EXECUTION_ID code 
@@ -168,21 +202,19 @@
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
 				if(response && response.filterStatus && response.filterStatus.length>0){
-					//check default parameter control TODO
+					//check default parameter control TODO										
 					$scope.showParametersPanel=true;
 					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
 						$mdSidenav('parametersPanelSideNav').open();
 					}
 					$scope.documentParameters = response.filterStatus;
 					//$scope.getViewPoints(role, execContextId); 
-//					$scope.getParameterValues();
-					
+					//$scope.getParameterValues();
 				}else{
-//					$scope.showParametersPanel = false;
-//					if($mdSidenav('parametersPanelSideNav').isOpen()) {
-//						$mdSidenav('parametersPanelSideNav').close();
-//					}
-					
+					$scope.showParametersPanel = false;
+					if($mdSidenav('parametersPanelSideNav').isOpen()) {
+						$mdSidenav('parametersPanelSideNav').close();
+					}
 					//$scope.getURLForExecution(role, execContextId, data);
 				}
 			})
@@ -318,17 +350,7 @@
 //			});
 //		};
 
-		$scope.changeRole = function(role) {
-			// $scope.selectedRole is overwritten by the ng-model attribute
-			console.log("changeRole IN ");
-			//If new selected role is different from the previous one
-			if(role != $scope.selectedRole) { 
-				//$scope.startExecutionProcess(role);
-				$scope.executionProcesRestV1(role);
-				$scope.getParametersForExecution(role);
-			}
-			console.log("changeRole OUT ");
-		};
+		
 
 		$scope.isParameterPanelDisabled = function(){
 			return (!$scope.documentParameters || $scope.documentParameters.length == 0);
