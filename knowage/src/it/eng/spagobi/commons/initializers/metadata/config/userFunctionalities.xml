@@ -27,7 +27,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDetailManagement" description="DocumentDetailManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsView"description="LovsView" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ConstraintView" description="ConstraintView" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterView" description="ParameterView" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DatasetManagement" description="DatasetManagement" />
