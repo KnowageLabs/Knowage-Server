@@ -226,7 +226,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				while (iterator.hasNext()) {
 					SbiKpiRuleOutput sbiKpiRuleOutput = iterator.next();
 					if (rule.getRuleOutputs().size() > 0 && rule.getRuleOutputs().indexOf(new RuleOutput(sbiKpiRuleOutput.getId())) == -1) {
-						sbiRule.getSbiKpiRuleOutputs().remove(sbiKpiRuleOutput);
+						iterator.remove();
 					}
 				}
 				// handling RuleOutputs
