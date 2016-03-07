@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </md-input-container> 
         <md-input-container ng-if="mtdValue.type.valueCd=='TEMPORAL_ATTRIBUTE'">
         <label>{{translate.load("sbi.ds.metadata.dataset.hierarchy.level")}}</label>
-        <md-select ng-model="mtdValue.hierarchicalLevel">
+        <md-select ng-model="mtdValue.hierarchy">
           <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}">
             {{hlevel.valueName}}
           </md-option>

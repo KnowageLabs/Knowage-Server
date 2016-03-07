@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <md-content ng-controller="measureRolePreviewController" layout-fill  layout="row">
 
-	<angular-table class="relative fullWidth" flex id='previewtable' ng-model="detailProperty.previewData.rows"
-				columns="detailProperty.previewData.columns" no-pagination="true">
+	<angular-table class="relative"  flex id='previewtable' ng-model="detailProperty.previewData.rows"
+				columns="detailProperty.previewData.columns" no-pagination="true" fullWidth>
 	</angular-table>
 				 
 	<md-sidenav class="md-sidenav-rigth md-whiteframe-z2" md-component-id="placeholderFormTab" md-is-locked-open="::havePlaceholder()">
