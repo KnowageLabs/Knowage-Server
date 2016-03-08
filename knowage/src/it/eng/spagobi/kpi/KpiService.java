@@ -240,7 +240,8 @@ public class KpiService {
 			if (!aliasErrorMap.isEmpty()) {
 				JSONArray errors = new JSONArray();
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					errors.put(new JSONObject().put("message", MessageFormat.format(message.getMessage(error.getKey()), error.getValue())));
+					errors.put(new JSONObject().put("message",
+							MessageFormat.format(message.getMessage(error.getKey()), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
 				}
 				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
 			}
