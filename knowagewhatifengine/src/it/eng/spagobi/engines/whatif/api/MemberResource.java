@@ -1,10 +1,20 @@
-/* SpagoBI, the Open Source Business Intelligence suite
 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-/**
- * @author Monica Franceschini (monica.franceschini@eng.it)
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -59,7 +69,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	private void init() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		model = (SpagoBIPivotModel) ei.getPivotModel();
-
 		modelConfig = getWhatIfEngineInstance().getModelConfig();
 	}
 
@@ -215,9 +224,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				for (Level level : levels) {
 					JSONObject levelsObject = new JSONObject();
 					levelsObject.put("name", level.getName());
+					levelsObject.put("hierarchy", level.getHierarchy().getUniqueName());
 					levelsObject.put("depth", level.getDepth());
-					levelsObject.put("visible", level.isVisible());
-
 					levelsArray.put(levelsObject);
 
 				}
@@ -261,15 +269,26 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String drillfull(@PathParam("ordinal") Integer ordinal, @PathParam("collection") String col, @PathParam("max") Integer max) throws OlapException {
 		JSONArray array = null;
+
 		ResultSet set;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		List<MetadataElement> selection = new ArrayList<MetadataElement>();
 		CellSet cellSet = model.getCellSet();
-		System.out.println(col);
+
 		try {
 
+			JSONArray collections = new JSONArray(col);
+			for (int i = 0; i < collections.length(); i++) {
+				JSONObject jsonObj = collections.getJSONObject(i);
+				String hierarchy = jsonObj.getString("hierarchy");
+				Integer depth = jsonObj.getInt("depth");
+				Level l = CubeUtilities.getHierarchy(model.getCube(), hierarchy).getLevels().get(depth);
+				selection.add(l);
+			}
+
 			Cell cell = cellSet.getCell(ordinal);
-			List<MetadataElement> selection = new ArrayList<MetadataElement>();
+
 			DrillThrough transform = model.getTransform(DrillThrough.class);
 			set = transform.drillThrough(cell, selection, max);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
@@ -279,6 +298,17 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			e.printStackTrace();
 		}
 		return array.toString();
+	}
+
+	@GET
+	@Path("/export/{table}")
+	public byte[] export(@PathParam("table") String json) {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		System.out.println(json);
+
+		return null;
 	}
 
 	@GET

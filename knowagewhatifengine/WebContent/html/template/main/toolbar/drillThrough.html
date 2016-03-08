@@ -1,12 +1,27 @@
 
-<md-dialog style='height:80%; width:80%;'>
+<md-dialog class="fullscreen-dialog">
 	
-	<md-toolbar class=" header md-toolbar-tools knowage-blue">
-      <div style="margin-left: 10px;">
-        <h2>DrillThrough </h2>
-      </div>
-    </md-toolbar>
-	<div>	
+	<md-toolbar style="background-color: #3b678c !important;">
+        <div class="md-toolbar-tools" >
+          <h2 flex="flex">Drillthrough</h2>
+           <md-button ng-click="closeDtDialog()" class="md-icon-button" style="float:right;">
+            <md-icon class="fa fa-times fa-2x"></md-icon>
+          </md-button>
+        </div>
+      </md-toolbar>
+      
+      <div id="dtLeftMenu">
+<md-button id="showMenu" class="md-fab zoomAnimation"
+			ng-click="toggleMenu($event)"
+			aria-label="toggle menu"> 
+		<i ng-if="!openLeftMenu" class="material-icons">chevron_right</i>
+		<i ng-if="openLeftMenu" class="material-icons">chevron_left</i>
+	</md-button>
+
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openLeftMenu" layout-fill>
+		<md-content class="contentStyle no-padding"   > 
+		
+		<div>	
 		<md-input-container >
 	<label>Maximum rows</label>
 	 <md-select name="maxRows" ng-model="dtMaxRows" required>
@@ -22,6 +37,12 @@
 		<treecontrol class="tree-light" tree-model="dtTree" selected-nodes="dtAssociatedLevels" options="treeOptions">
      	{{node.name}} 
  		</treecontrol>
+
+		
+		</md-content>
+	</md-sidenav>
+</div>
+	
 		
 	<md-content layout-padding style="height:90%;">
 			
@@ -39,10 +60,10 @@
 	</md-content>	
 		<md-dialog-actions layout="row">
 	
-			<md-button ng-click="closeDtDialog(e)">
+			<md-button ng-click="closeDtDialog()">
 				Cancel
 			</md-button>
-			<md-button ng-click="exportDtTable(e)">
+			<md-button ng-click="exportDrill()">
 				Export
 			</md-button>
 			<md-button ng-click="drillThrough()" md-autofocus>

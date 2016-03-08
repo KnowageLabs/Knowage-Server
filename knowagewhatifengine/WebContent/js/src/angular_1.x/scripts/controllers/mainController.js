@@ -36,6 +36,7 @@ function olapFunction(
 	$scope.searchText="";
 	$scope.searchSucessText;
 	$scope.showSearchInput=false;
+	$scope.openLeftMenu=false;
 		
 	$scope.rows;
 	$scope.maxRows = 3;
@@ -101,6 +102,11 @@ function olapFunction(
 		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
+	
+	$scope.toggleMenu=function(){
+		
+		$scope.openLeftMenu=!$scope.openLeftMenu;
+	};
 	
 	$scope.changeDrillType = function(type){
 		$scope.modelConfig.drillType = type;
@@ -663,7 +669,20 @@ function olapFunction(
 		    default:
 		        break;
 		    }
-			
+		 $scope.exportDrill = function() {
+				
+				var json = JSON.stringify($scope.dtData);
+				delete $scope.dtData.$$hashKey;
+				console.log(json);
+					sbiModule_restServices.promiseGet
+					("1.0",'/member/drilltrough/export/'+ json+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+					.then(function(response) {
+						$scope.dtData = [];
+					    }, function(response) {
+						sbiModule_messaging.showErrorMessage("error", 'Error');
+						
+							});
+					}
 			
 			
 			}
