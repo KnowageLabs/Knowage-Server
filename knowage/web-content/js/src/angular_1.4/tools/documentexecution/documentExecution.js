@@ -42,6 +42,7 @@
 		$scope.showSelectRoles=true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = [];
+		
 		$scope.showParametersPanel = true;
 
 		$scope.initSelectedRole = function(){
@@ -59,8 +60,11 @@
 		};
 
 		$scope.toggleParametersPanel = function(){
-			console.log('toggle ');
-			$mdSidenav('parametersPanelSideNav').toggle();
+			if($scope.showParametersPanel) {
+				$mdSidenav('parametersPanelSideNav').close();
+			} else {
+				$mdSidenav('parametersPanelSideNav').open();
+			}
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
 			
@@ -286,6 +290,27 @@
 			});
 		};
 
+		$scope.toggleCheckboxParameter = function(parameter, defaultParameter) {
+			if(!defaultParameter.isSelected || defaultParameter.isSelected === false) {
+				defaultParameter.isSelected = true;
+			} else {
+				defaultParameter.isSelected = false;
+			}
+			
+			var tempNewParameterValue = '';
+			for(var i = 0; i < parameter.defaultValues.length; i++) {
+				
+				var defaultValue = parameter.defaultValues[i];
+				if(defaultValue.isSelected) {
+					if(tempNewParameterValue != '') {
+						tempNewParameterValue += ',';
+					}
+					tempNewParameterValue += "'" + defaultValue.value + "'"
+				}
+			}
+			
+			parameter.parameterValue = tempNewParameterValue;
+		};
 		/*
 		 * GET VIEWPOINTS
 		 * return saved params
@@ -435,7 +460,6 @@
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	
-	/*
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
 			restrict: 'A',
@@ -443,9 +467,11 @@
 				element.on('load', function(){
 					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
 					element.css('height', iFrameHeight);
+					
+					alert('load iframe');
 				})
 			}
-		}}]
+		};
+		}]
 	);
-	 */
 })();	

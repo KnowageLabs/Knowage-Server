@@ -66,7 +66,9 @@ try{
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						<%-- ng-disabled="isParameterPanelDisabled()" --%>
+						<%--
+						ng-disabled="isParameterPanelDisabled()"
+						--%>
 				>
 					<i class="fa fa-cog header"></i> 
 				</md-button>
@@ -77,87 +79,97 @@ try{
 				<%--
 				iframe-set-dimensions-onload 
 				--%>
-				> </iframe>
+				></iframe>
 				
-			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav"
+			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
 					ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
 							
-				<section  layout="column">
-					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
-						<div layout="row" layout-align="center center">						
-							<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
-									ng-click="alert('Reset ...')">
-								<i class="fa fa-eraser" style="color:white"></i>
-							</md-button>						
-							<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
-									ng-click="alert('Open saved ...')">
-								<i class="fa fa-pencil" style="color:white"></i>
-							</md-button>						
-							<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-									ng-click="alert('Save ...')">
-								<i class="fa fa-floppy-o" style="color:white"></i>
-							</md-button>
-						</div>
-					</md-toolbar>
-					
-					<md-content ng-show="showSelectRoles">
-						<md-input-container class="small counter" flex>
-							<label>{{translate.load("sbi.users.roles")}}</label>
-							<md-select aria-label="aria-label" ng-model="selectedRole" >
-							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">{{role|uppercase}}</md-option>
-							</md-select>
+				<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
+					<div layout="row" layout-align="center center">						
+						<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
+								ng-click="alert('Reset ...')">
+							<i class="fa fa-eraser" style="color:white"></i>
+						</md-button>						
+						<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
+								ng-click="alert('Open saved ...')">
+							<i class="fa fa-pencil" style="color:white"></i>
+						</md-button>						
+						<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
+								ng-click="alert('Save ...')">
+							<i class="fa fa-floppy-o" style="color:white"></i>
+						</md-button>
+					</div>
+				</md-toolbar>
+				
+				<md-content ng-show="showSelectRoles">
+					<md-input-container class="small counter" flex>
+						<label>{{translate.load("sbi.users.roles")}}</label>
+						<md-select aria-label="aria-label" ng-model="selectedRole" >
+							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
+								{{role|uppercase}}
+							</md-option>
+						</md-select>
+					</md-input-container>
+				</md-content>
+				
+				<md-list ng-hide="isParameterPanelDisabled()">
+					<md-list-item ng-repeat="parameter in documentParameters">
+						<md-input-container flex>
+							<%--
+							<md-content 
+									ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && parameter.multivalue"
+									>{{parameter|json}}</md-content>
+							--%>
+							
+							<!-- manual number input -->
+							<label ng-if="parameter.type=='NUM' && parameter.selectionType==''" >
+								{{parameter.label}}</label>
+							<input class="input_class" ng-model="parameter.parameterValue" 
+									ng-required="parameter.mandatory" type="number"
+									ng-if="parameter.type=='NUM' && parameter.selectionType==''" >	
+							
+							<!-- manual text input -->
+							<label ng-if="parameter.type=='STRING' && parameter.selectionType==''" >
+								{{parameter.label}}</label>
+							<input class="input_class" ng-model="parameter.parameterValue" 
+									ng-required="parameter.mandatory"
+									ng-if="parameter.type=='STRING' && parameter.selectionType==''">
+							
+							<!-- lov list single input -->
+							<section ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && !parameter.multivalue">
+	      						<label>{{parameter.label}}</label>
+								<md-radio-group ng-model="parameter.parameterValue" ng-required="parameter.mandatory">
+									<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" value="{{defaultParameter.value}}">
+										{{defaultParameter.label}}
+									</md-radio-button>
+								</md-radio-group>
+							</section>
+							
+							<!-- lov list multiple input -->
+							<section ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && parameter.multivalue">
+	      						<label>{{parameter.label}}</label>
+								<div ng-repeat="defaultParameter in parameter.defaultValues">
+									<md-checkbox class="md-primary" value="{{defaultParameter.value}}" 
+											ng-click="toggleCheckboxParameter(parameter, defaultParameter)">
+										{{defaultParameter.label}}
+									</md-checkbox>
+								</div>
+							</section>
+							
+							<!-- "required" message -->
+							<div ng-messages="parameter.parameterValue" ng-if="parameter.mandatory && !parameter.parameterValue">
+							 	<div ng-message="required">Parameter is required.</div>
+							</div>
+							
 						</md-input-container>
-					</md-content>
-					
-					<md-list ng-hide="isParameterPanelDisabled()">
-						<md-list-item layout="row" ng-repeat="param in documentParameters" layout="column">
-							<md-input-container class="small counter" flex>
-								<label>{{param.label}}</label>
-								
-								<%--
-								<md-content ng-if="param.type=='STRING' && param.selectionType=='LIST'">{{param|json}}</md-content>
-								--%>
-								
-								<!-- manual number input -->
-								<input class="input_class" ng-model="param.parameterValue" 
-										ng-required="param.mandatory" type="number"
-										ng-if="param.type=='NUM' && param.selectionType==''" >	
-								
-								<!-- manual text input -->
-								<input class="input_class" ng-model="param.parameterValue" 
-										ng-required="param.mandatory"
-										ng-if="param.type=='STRING' && param.selectionType==''">
-								
-								<!-- lov single input -->
-								<md-select class="input_class" ng-model="param.parameterValue" ng-required="param.mandatory"
-										ng-if="param.type=='STRING' && param.selectionType=='LIST' && !param.multivalue">
-									<md-option ng-repeat="defaultParameter in param.defaultValues" value="'{{defaultParameter.value}}'">
-										{{defaultParameter.label}}
-									</md-option>
-								</md-select>
-								
-								<!-- lov multiple input -->
-								<md-select class="input_class" ng-model="param.parameterValue" ng-required="param.mandatory"
-										ng-if="param.type=='STRING' && param.selectionType=='LIST' && param.multivalue" multiple>
-									<md-option ng-repeat="defaultParameter in param.defaultValues" value="'{{defaultParameter.value}}'">
-										{{defaultParameter.label}}
-									</md-option>
-								</md-select>
-								
-								<div ng-messages="param.parameterValue" ng-if="param.mandatory && !param.parameterValue">
-								 	<div ng-message="required">Param is required.</div>
-								  </div>
-								
-							</md-input-container>
-						</md-list-item>
-					</md-list>
-				<!-- execute button -->
-					<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
-							title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
-							ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
-						{{translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-					</md-button>				
-				</section>				
+					</md-list-item>
+				</md-list>
+			<!-- execute button -->
+				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
+						title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
+						ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
+					{{translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+				</md-button>				
 			</md-sidenav>
 		</md-content>
 	</div>
