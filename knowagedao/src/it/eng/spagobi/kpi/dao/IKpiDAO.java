@@ -67,6 +67,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Rule loadRule(Integer id);
 
+	public Integer getRuleIdByName(String name);
+
 	public List<Kpi> listKpi();
 
 	/**

@@ -149,18 +149,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Integer insertRule(final Rule rule) {
-		if (rule.getName() != null && !rule.getName().isEmpty()) {
-			boolean isNameAvailable = list(new ICriterion<SbiKpiRule>() {
-				@Override
-				public Criteria evaluate(Session session) {
-					return session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", rule.getName())).setMaxResults(1);
-				}
-			}).isEmpty();
-			if (!isNameAvailable) {
-				throw new SpagoBIDOAException("Rule name not available [" + rule.getName() + "]");
-			}
-		}
-
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws SpagoBIException {
@@ -201,18 +189,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public void updateRule(final Rule rule) {
-		if (rule.getName() != null && !rule.getName().isEmpty()) {
-			boolean isNameAvailable = list(new ICriterion<SbiKpiRule>() {
-				@Override
-				public Criteria evaluate(Session session) {
-					return session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", rule.getName())).add(Restrictions.ne("id", rule.getId()))
-							.setMaxResults(1);
-				}
-			}).isEmpty();
-			if (!isNameAvailable) {
-				throw new SpagoBIDOAException("Rule name not available [" + rule.getName() + "]");
-			}
-		}
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
 			public Boolean execute(Session session) throws EMFInternalError, SpagoBIException {
@@ -923,6 +899,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	@Override
 	public Threshold loadThreshold(Integer id) {
 		return from(load(SbiKpiThreshold.class, id), true);
+	}
+
+	@Override
+	public Integer getRuleIdByName(final String name) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				return (Integer) session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", name)).setProjection(Property.forName("id"))
+						.setMaxResults(1).uniqueResult();
+			}
+		});
 	}
 
 }
