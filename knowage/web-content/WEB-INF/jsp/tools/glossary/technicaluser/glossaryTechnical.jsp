@@ -55,10 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/gestione_glossario_tec.css">
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/glossaryTecCustomStyle.css", currTheme)%>">
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/generalStyle.css", currTheme)%>">
+	
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
 

@@ -4,8 +4,8 @@
 	</md-chip-template> 
 </md-chips>
 
-<p ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)">
-	{{translate.load("scheduler.jobhasnodocument", "component_scheduler_messages")}}</p>
+<span ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)">
+	{{translate.load("scheduler.jobhasnodocument", "component_scheduler_messages")}}</span>
 
 <div class="selected_document" ng-if="activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0">
 

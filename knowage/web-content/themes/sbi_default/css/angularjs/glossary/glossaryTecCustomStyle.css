@@ -1,0 +1,90 @@
+.documentListBox{
+	height:100%;
+}
+.documentListBox .box_pagination {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 3px;
+}
+
+.documentListBox md-content{
+  padding-bottom: 20px;
+}
+
+.boxItemGlo{
+border-right: 1px solid rgb(210, 210, 210);
+  position: relative;
+  height: 100%;
+}
+
+md-list.deleteButton button.md-secondary-container{
+	  height: 20px;
+  width: 20px;
+  border: none;
+}
+
+*:focus {
+	outline: none;
+}
+
+#wordTree .angular-ui-tree-handle ,#wordTree .angular-ui-tree-handle:hover{
+  cursor: pointer !important;
+}
+
+.preloaderTree{
+  height: calc(100% - 30px);
+  background-color: rgba(139, 139, 139, 0);
+  position: absolute;
+  width: 100%;
+  z-index: 999;}
+  
+  .preloaderTree md-progress-circular {
+    top: 50%;
+  left: 50%;
+  margin-top: -25px;
+  margin-left: -25px;}
+  
+
+    
+    
+
+   
+
+   
+
+     
+.selected_item button,.selected_item button:hover {
+/* 	  background-color: rgb(176, 190, 197); */
+ background-color:red!important;
+}
+li.selected_item{
+	color:red;
+}
+
+.navig-tab-content .boxItemGlo md-list md-list-item button.md-secondary-container{
+     min-width: 0;
+    min-height: 0!important;
+    width: 13px;
+    right: -3px;
+    background-color: transparent !important;
+    border: none;
+    top: 15px;
+      }
+
+.delete_select {
+	position: absolute;
+	right: 10px;
+	height: 15px;
+	min-height: 10px;
+	margin: 0;
+	line-height: 10px;
+	color: black!important;
+	font-size: 10px;
+}
+
+.navig-tab-content .searchBar input{
+	    margin: 0;
+    height: 22px;
+    padding-left: 16px;
+}

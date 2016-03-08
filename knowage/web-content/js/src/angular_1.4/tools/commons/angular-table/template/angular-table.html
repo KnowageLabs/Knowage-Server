@@ -18,7 +18,7 @@
 
 <angular-table-footer>
 <div  class="box_pagination_list" layout="row" layout-align="end end">
-	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageCangedFunction({currentPageNumber:newPageNumber,itemsPerPage:itemsPerPage,searchValue:prevSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls>
+	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedFunction({searchValue:prevSearch,itemsPerPage:itemsPerPage,currentPageNumber:newPageNumber,columnsSearch:columnsSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls>
 </div>
 </angular-table-footer>
 

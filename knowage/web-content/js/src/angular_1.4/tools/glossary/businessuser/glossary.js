@@ -1,11 +1,11 @@
 var app = angular.module('glossaryWordManager', [ 'ngMaterial', 'ui.tree',
                                                   'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                                  'sbiModule', 'glossary_tree', 'angular_list' ]);
+                                                  'sbiModule', 'glossary_tree', 'angular_list','angular-list-detail' ]);
 
-app.config(function($mdThemingProvider) {
-	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
-	'blue-grey');
-});
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}]);
 
 var EmptyWord = {
 		LINK : [],
@@ -149,6 +149,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		return (JSON.stringify(EmptyWord) != JSON.stringify(nw));
 	};
 
+	ctr.newWordFunction=function(){
+		ctr.createNewWord(false);
+	}
+	ctr.cancelAlterWordFunction=function(){
+		ctr.createNewWord(true)
+	}
 	ctr.createNewWord = function(reset, parent) {
 		console.log(window.parent);
 		var text;
@@ -420,7 +426,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		}
 	};
 
-	ctr.addWord = function(product) {
+	ctr.addWord = function() {
 		if (ctr.newWord.NEWWORD != undefined) {
 			ctr.newWord.SaveOrUpdate = "Save";
 		} else {
@@ -451,7 +457,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				if (ctr.newWord.SaveOrUpdate == "Save") {
 					ctr.newWord.WORD_ID = data.id;
 					delete ctr.newWord.NEWWORD;
-					product.push(ctr.newWord);
+					ctr.words.push(ctr.newWord);
 				} else {
 					ctr.modyfyWordInSelectedGloss(
 							ctr.selectedGloss.SBI_GL_CONTENTS,

@@ -1,5 +1,15 @@
 
+.absolute{
+	position: absolute;
+}
 
+.wordListBox .angularListTemplate  md-list-item button, .glossaryListBox  .angularListTemplate  md-list-item button{
+	background-color: transparent;
+}
+
+.noPadding{
+	  padding: 0px;
+}
 .textareaInputBox {
 	margin-top: -14px !important;
 }
@@ -276,7 +286,7 @@ table tr:nth-child(even) {
 }
 
 .glossaryListBox  {
-	height: 40%;
+/* 	height: 40%; */
 	overflow-y: auto;
 	background-color: rgb(236, 236, 236);
 /* 	-webkit-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
@@ -327,14 +337,15 @@ md-tabs.hideTabs md-tabs-wrapper {
 /* } */
 
 .default_tree .dropdown{
-	margin-left:calc(-25% - 20px);
+/* 	margin-left:calc(-25% - 20px); */
 }
 
 .safeModeCheckBox{
-	  left: calc( 100% - 20%); 
+/* 	  left: calc( 100% - 20%);  */
 	     position: absolute;    
 	     width: 200px;   
 	      z-index: 1;
+	      right: 0px;
 }
 
 .wordForm  .linkChips md-chips-wrap{
@@ -349,5 +360,13 @@ md-tabs.hideTabs md-tabs-wrapper {
 	    -webkit-transform: translate3d(0,-25px,0) scale(.55);
     transform: translate3d(0,-25px,0) scale(0.55);
     color: #7F7F7F;
+}
+
+.chipsNewWordDiv{
+	margin-top: 7px;
+	}
+	
+.chipsNewWordDiv md-chips.md-knowage-theme .md-chips {
+    box-shadow: 0 1px rgb(59, 103, 140);
 }
 

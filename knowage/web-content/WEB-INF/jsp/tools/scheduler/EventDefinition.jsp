@@ -40,12 +40,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/scheduler/css/scheduler_style.css">
+
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/scheduler/schedulerCustomStyle.css", currTheme)%>">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+	
 
 </head>
 
 <body ng-app="EventDefinitionApp">
-	<div  flex layout-fill class="h100 " 
+	<div   layout-fill 
 		ng-controller="ActivityEventController as activityEventCtrl"
 		ng-init="activityEventCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=triggerName%>', '<%=triggerGroup%>');">
 

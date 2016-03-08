@@ -1,8 +1,9 @@
 var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','sbiModule',  'angular_list', 'angular_time_picker','ngMessages']);
 
-eventDefinitionApp.config(function($mdThemingProvider) {
-	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
-});
+eventDefinitionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}]);
 	
 //this variable are global because i need to access at variable of one controller from another controller
 var activityEventCtrl;

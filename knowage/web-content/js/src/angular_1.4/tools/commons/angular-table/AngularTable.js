@@ -20,10 +20,10 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			columnsSearch : "=?", // columns where search
 			showSearchBar : '=', //default false
 			searchFunction : '&',
-			pageCangedFunction : "&",
+			pageChangedFunction : "&",
 			totalItemCount : "=?", //if not present, create a non sync pagination and page change function is not necessary
 			currentPageNumber : "=?",
-			noPagination : "=?", //not create pagination and  totalItemCount and pageCangedFunction are not necessary
+			noPagination : "=?", //not create pagination and  totalItemCount and pageChangedFunction are not necessary
 			clickFunction : "&", //function to call when click into element list
 			menuOption : "=?", //menu to open with right click
 			speedMenuOption : "=?", //speed menu to open with  button at the end of item
@@ -378,7 +378,7 @@ function TableControllerFunction($scope,$timeout){
 //		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = (nit <= 0 ||isNaN(nit)) ? 1 : nit;
 		if(firstLoad){
-			$scope.pageCangedFunction({
+			$scope.pageChangedFunction({
 				searchValue : "",
 				itemsPerPage : $scope.itemsPerPage,
                 currentPageNumber:$scope.currentPageNumber,

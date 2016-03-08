@@ -46,27 +46,27 @@ angular-time-picker span.dividerTime {
  
 <div layout="row">
 	<div layout="column">
-		<md-button ng-click="alterHours(true)" type="button" aria-label="menu" class="md-fab spinButton " >
+		<md-button ng-click="alterHours(true)" type="button" aria-label="menu" class="md-icon-button spinButton " >
 			<md-icon  md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
 <!-- 		<input ng-keyup="checkValue(true)"   type="number"  ng-model="hours" > -->
 <input id="hoursInput-{{id}}"   ng-init="hours = getHours();"  type="number"  ng-model="hours" ng-blur="checkHoursValid()">
 		
-		<md-button ng-click="alterHours(false)" type="button" aria-label="menu" class="md-fab spinButton " >
+		<md-button ng-click="alterHours(false)" type="button" aria-label="menu" class="md-icon-button spinButton " >
 			<md-icon   md-font-icon="fa fa-caret-down" ></md-icon>
 		</md-button>
 	</div>
  <span class="dividerTime">:</span>
   
 <div layout="column">
-		<md-button ng-click="alterMinutes(true)" type="button" aria-label="menu" class="md-fab spinButton " >
+		<md-button ng-click="alterMinutes(true)" type="button" aria-label="menu" class="md-icon-button spinButton " >
 			<md-icon   md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
 		<input id="minInput-{{id}}" ng-init="minutes = getMinutes();"  type="number"  ng-model="minutes"  ng-blur="checkMinuitesValid()">
 		
-		<md-button ng-click="alterMinutes(false)" type="button" aria-label="menu" class="md-fab spinButton ">
+		<md-button ng-click="alterMinutes(false)" type="button" aria-label="menu" class="md-icon-button spinButton ">
 			<md-icon   md-font-icon="fa fa-caret-down" ></md-icon>
 		</md-button>
 	</div>
