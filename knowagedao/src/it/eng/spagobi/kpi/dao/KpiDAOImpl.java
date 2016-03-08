@@ -168,8 +168,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
-					if (ruleOutput.getType() != null) {
-						sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					if (ruleOutput.getHierarchy() != null) {
+						sbiRuleOutput.setHierarchyId(ruleOutput.getHierarchy().getValueId());
 					}
 					// handling Alias
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
@@ -216,10 +217,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				// handling RuleOutputs
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = manageRuleOutput(session, sbiRule, ruleOutput);
-
-					if (ruleOutput.getType() != null) {
-						sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					if (ruleOutput.getHierarchy() != null) {
+						sbiRuleOutput.setHierarchyId(ruleOutput.getHierarchy().getValueId());
 					}
+					sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
 					// handling Alias
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
 
@@ -594,7 +595,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		if (sbiValue == null) {
 			sbiValue = new SbiKpiThresholdValue();
 		}
-		sbiValue.setId(tv.getId());
 		sbiValue.setColor(tv.getColor());
 		char isIncludeMax = tv.isIncludeMax() ? 'T' : 'F';
 		sbiValue.setIncludeMax(isIncludeMax);
@@ -644,7 +644,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			category.setValueCd(sbiKpiRuleOutput.getCategory().getValueCd());
 			ruleOutput.setCategory(category);
 		}
-		if (sbiKpiRuleOutput.getType() != null) {
+		if (sbiKpiRuleOutput.getHierarchy() != null) {
+			ruleOutput.setHierarchy(from(sbiKpiRuleOutput.getHierarchy()));
 		}
 		ruleOutput.setType(from(sbiKpiRuleOutput.getType()));
 		// Fields from Rule: Rule Id, Rule Name, Author, Date Creation

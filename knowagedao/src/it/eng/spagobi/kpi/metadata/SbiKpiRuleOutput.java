@@ -29,10 +29,12 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 
 	private Integer id;
 	private int typeId;
+	private Integer hierarchyId;
 	private SbiKpiRule sbiKpiRule;
 	private SbiKpiAlias sbiKpiAlias;
 	private SbiDomains type;
 	private SbiDomains category;
+	private SbiDomains hierarchy;
 
 	public SbiKpiRuleOutput() {
 	}
@@ -125,6 +127,36 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 	 */
 	public void setSbiKpiRule(SbiKpiRule sbiKpiRule) {
 		this.sbiKpiRule = sbiKpiRule;
+	}
+
+	/**
+	 * @return the hierarchy
+	 */
+	public SbiDomains getHierarchy() {
+		return hierarchy;
+	}
+
+	/**
+	 * @param hierarchy
+	 *            the hierarchy to set
+	 */
+	public void setHierarchy(SbiDomains hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	/**
+	 * @return the hierarchyId
+	 */
+	public Integer getHierarchyId() {
+		return hierarchyId;
+	}
+
+	/**
+	 * @param hierarchyId
+	 *            the hierarchyId to set
+	 */
+	public void setHierarchyId(Integer hierarchyId) {
+		this.hierarchyId = hierarchyId;
 	}
 
 }

@@ -18,9 +18,7 @@
         </id>
         
         <property name="typeId" column="TYPE_ID" type="int" length="11" not-null="true"/>
-        <!-- 
-		<property name="categoryId" column="CATEGORY_ID" type="int" length="11"/>        
-         -->
+		<property name="hierarchyId" column="HIERARCHY_ID" type="int" length="11"/>        
         
         <many-to-one name="sbiKpiRule" class="it.eng.spagobi.kpi.metadata.SbiKpiRule" lazy="false" >
             <column name="RULE_ID" />
@@ -38,6 +36,9 @@
             <column name="CATEGORY_ID"  />
         </many-to-one>
         
+        <many-to-one name="hierarchy" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false" >
+            <column name="HIERARCHY_ID"  />
+        </many-to-one>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
