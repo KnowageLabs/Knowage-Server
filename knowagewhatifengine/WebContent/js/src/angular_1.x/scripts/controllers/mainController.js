@@ -452,10 +452,12 @@ function olapFunction(
 		var pa;
 		if(data!=null){
 			pa = data.positionInAxis;
-			$scope.filterSelected[data.positionInAxis].name ="...";
-			$scope.filterSelected[data.positionInAxis].visible =false;
-			
 			fromAxis = data.axis;
+			
+			if(fromAxis == -1){
+				$scope.filterSelected[data.positionInAxis].name ="...";
+				$scope.filterSelected[data.positionInAxis].visible =false;
+			}				
 			
 			if(fromAxis!=0){
 				data.positionInAxis = topLength;
@@ -481,9 +483,23 @@ function olapFunction(
 				fixAxisPosition("left");
 				fixAxisPosition("filter");
 				fixFilterSelectedList(fromAxis, pa );
+				
+				consoleLogHelper();
 			}
 		}				
 	};
+	
+	function consoleLogHelper(){
+		console.log("filters:");
+		console.log($scope.filterCardList);
+		console.log("rows:");
+		console.log($scope.rows);
+		console.log("columns:");
+		console.log($scope.columns);
+		console.log("filter selected:");
+		console.log($scope.filterSelected);
+		
+	}
 	
 	function fixFilterSelectedList(fa, pa){
 		var size = $scope.filterSelected.length;
@@ -500,10 +516,12 @@ function olapFunction(
 		var fromAxis;
 		
 		if(data !=null){
-			$scope.filterSelected[data.positionInAxis].name ="...";
-			$scope.filterSelected[data.positionInAxis].visible =false;
-			
 			fromAxis = data.axis;
+			
+			if(fromAxis == -1){
+				$scope.filterSelected[data.positionInAxis].name ="...";
+				$scope.filterSelected[data.positionInAxis].visible =false;
+			}	
 			
 			if(fromAxis != 1){
 				data.positionInAxis = leftLength;
@@ -526,6 +544,8 @@ function olapFunction(
 				checkShift();
 				fixAxisPosition("top");
 				fixAxisPosition("filter");
+				
+				consoleLogHelper();
 			}
 		}		
 	}
@@ -568,6 +588,7 @@ function olapFunction(
 				fixAxisPosition("left");
 				
 				$scope.filterSelected[$scope.filterSelected.length] = {name:"...",uniqueName:"",visible:false};
+				consoleLogHelper();
 			}
 		}
 		
@@ -711,7 +732,7 @@ function olapFunction(
 			});
 		  };
 		  $scope.closeDtDialog = function(ev) {
-			  $mdDialog.cancel();
+			  $mdDialog.hide();
 	      };  
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
