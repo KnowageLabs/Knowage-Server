@@ -4,7 +4,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.attributesList=[];
 	$scope.indexOfMeasure=-1;
-
+	$scope.currentCell={};
 
 
 	$scope.$on('activateCardinalityEvent',function(e){
@@ -14,10 +14,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	})
 
 	$scope.clearFormulaToShow = function(){
-		for (i = 0; i < document.getElementById('formulaId').getElementsByTagName('span').length; i++) {
-			document.getElementById('formulaId').getElementsByTagName('span')[i].innerHTML = '';
-			document.getElementById('formulaId').getElementsByTagName('span')[i].className='';
-		}
+		angular.element(document.getElementsByClassName("showFormula")).remove();
+	
 	}
 	$scope.getAllMeasure=function(){
 		for(var i=0; i<$scope.cardinality.measureList.length;i++){
@@ -188,11 +186,11 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		for(var i=0;i<string.length;i++){
 			if(string[i].trim()=="+" ||string[i].trim()=="-" || string[i].trim()=="/" || string[i].trim()=="*" || string[i].trim()=="(" ||
 					string[i].trim()==")" || string[i].trim()=="" || !isNaN(string[i])){
-				var span = "<span>"+" "+string[i]+" "+"</span>"
+				var span = "<span class='showFormula'>"+" "+string[i]+" "+"</span>"
 				angular.element(document.getElementsByClassName("formula")).append(span);
 			}else{
 
-				var span = "<span class="+$scope.kpi.definition.functions[count]+" id=M"+count+">"+" "+string[i]+" "+"</span>"
+				var span = "<span ng-class='{classBold:currentCell.row=="+i+"}' class='showFormula "+$scope.kpi.definition.functions[count]+"' id=M"+count+">"+" "+string[i]+" "+"</span>"
 				angular.element(document.getElementsByClassName("formula")).append(span);
 				count++;
 			}
@@ -201,35 +199,45 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 	}
 
-	$scope.blinkMeasure=function(event){
+	$scope.blinkMeasure=function(event,attr,index){
 		//blink measure in formula  event.target.cellIndex
-		if(event.fromElement.cellIndex!=null){
-			if($scope.indexOfMeasure!= event.fromElement.cellIndex-1){
-				$scope.removeblinkMeasure();
-			}
-			$scope.indexOfMeasure  = event.fromElement.cellIndex-1;
-			string="M"+$scope.indexOfMeasure ;
-			angular.element(document.getElementById(string)).css('font-weight','bold');
-			angular.element(document.getElementById(string)).css('background','#b3ccff');
-			//	angular.element(document.getElementById(string)).css('font-size','20px')#d3d3d3
+		
+		$scope.currentCell.row = attr;
+		$scope.currentCell.column = index;
+		$scope.indexOfMeasure  = index;
+		string="M"+$scope.indexOfMeasure ;
+	//	angular.element(document.getElementById(string)).css('font-weight','bold');
+		angular.element(document.getElementById(string)).css('background','#eceff1 ');
+	/*	if(event.fromElement!=null){
+			if(event.fromElement.cellIndex!=null){
+				if($scope.indexOfMeasure!= event.fromElement.cellIndex-1){
+					$scope.removeblinkMeasure();
+				}
+				$scope.indexOfMeasure  = event.fromElement.cellIndex-1;
+				string="M"+$scope.indexOfMeasure ;
+				angular.element(document.getElementById(string)).css('font-weight','bold');
+				angular.element(document.getElementById(string)).css('background','#eceff1 ');
+			//		angular.element(document.getElementById(string)).css('font-size','20px') #b3ccff
 
-		}else if( event.target.cellIndex!=null){
-			if($scope.indexOfMeasure!= event.target.cellIndex-1){
-				$scope.removeblinkMeasure();
+			}else if( event.target.cellIndex!=null){
+				if($scope.indexOfMeasure!= event.target.cellIndex-1){
+					$scope.removeblinkMeasure();
+				}
+				$scope.indexOfMeasure  = event.target.cellIndex-1;
+				string="M"+$scope.indexOfMeasure ;
+				angular.element(document.getElementById(string)).css('font-weight','bold');
+				angular.element(document.getElementById(string)).css('background','#eceff1 ');
+				//	angular.element(document.getElementById(string)).css('font-size','20px')
 			}
-			$scope.indexOfMeasure  = event.target.cellIndex-1;
-			string="M"+$scope.indexOfMeasure ;
-			angular.element(document.getElementById(string)).css('font-weight','bold');
-			angular.element(document.getElementById(string)).css('background','#b3ccff');
-			//	angular.element(document.getElementById(string)).css('font-size','20px')
-		}
 
+		}*/
+		
 	}
 
 	$scope.removeblinkMeasure=function(){
-
+		//angular.copy({},$scope.currentCell);
 		string="M"+$scope.indexOfMeasure;
-		angular.element(document.getElementById(string)).css('font-weight','normal');
+	//	angular.element(document.getElementById(string)).css('font-weight','normal');
 		angular.element(document.getElementById(string)).css('background','transparent');
 		//	angular.element(document.getElementById(string)).css('font-size','16px')
 

@@ -37,9 +37,14 @@
 
 .cardinalityTable {
 	width: 100%;
-	table-layout: fixed;
+	/*table-layout: fixed;*/
 	border-collapse: collapse;
 }
+
+.cardinalityTable th{
+	padding:0 10px;
+
+	}
 
 .cardinalityTable .attributeRow {
 	border-bottom: 1px solid #ECEFF1;
@@ -72,8 +77,8 @@
 
 .toolbarFormula {
 	/*background: #a9c3db !important;
-	background-color: rgba(199, 237, 249, 0.39) !important;*/
-	background-color:#eceff1 !important;
+	background-color: rgba(199, 237, 249, 0.39) !important;
+	background-color:#eceff1 !important;*/
 	text-align: center;
 }
 
@@ -132,11 +137,20 @@
 
 .formula {
 	/*width: 1000px;
-    margin: 0 auto;*/
-	height: 5%;
+    margin: 0 auto;
+	height: 5%;*/
 }
 
 .overflow {
 	overflow: auto;
 }
+
+.classBold{
+	font-weight:bold;
 }
+
+
+
+
+
+

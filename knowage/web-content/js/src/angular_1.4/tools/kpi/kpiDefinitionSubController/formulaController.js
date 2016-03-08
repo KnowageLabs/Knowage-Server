@@ -50,9 +50,11 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				$scope.formulaModified.value=true;
 			}
 			angular.copy(cm,$scope.cm);
+
 			if(event.keyIdentifier!="U+0008" && event.keyIdentifier!="Left" && event.keyIdentifier!="Right"){
 				var cur = cm.getCursor();
 				var token = cm.getTokenAt(cur);
+
 				if(token.string=="{" || token.string=="}" || token.string=="[" || token.string=="]"){
 
 					cm.replaceRange("", {line:cm.getCursor().line, ch : token.start}, {line:cm.getCursor().line, ch : token.end+1})
@@ -63,6 +65,21 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start})
 				}
 
+			}
+			if(event.keyIdentifier!="Left"){
+				var cur = cm.getCursor();
+				var token = cm.getTokenAt(cur);
+				if(token.type=="keyword" || token.type=="variable-2"){
+					cm.setCursor({line: cm.getCursor().line, ch:token.end});
+				}
+				
+			}
+			if(event.keyIdentifier!="Right"){
+				var cur = cm.getCursor();
+				var token = cm.getTokenAt(cur);
+				if(token.type=="keyword" || token.type=="variable-2"){
+					cm.setCursor({line: cm.getCursor().line, ch:token.start});
+				}
 			}
 
 
@@ -169,13 +186,13 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 			if(response=="MAX"){
 				//if add atomic:true it is not modificable
 				//angular.element(document.querySelectorAll(".CodeMirror-code span.cm-keyword")).addClass("cm-m-max")
-				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-max"});
+				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-max",atomic:true});
 			}else if(response=="MIN"){
-				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-min"})
+				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-min",atomic:true})
 			}else if(response=="COUNT"){
-				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-count"})
+				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-count",atomic:true})
 			}else if(response=="SUM"){
-				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-sum"})
+				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-sum",atomic:true})
 			}
 
 			$scope.checkError(cm,token);

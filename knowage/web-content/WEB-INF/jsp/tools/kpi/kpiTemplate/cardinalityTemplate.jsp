@@ -24,15 +24,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </div>
 </md-card>
 <div flex class="overflow">	
-	<table class="cardinalityTable" >
+	<table class="cardinalityTable MyClass" >
+	<thead>
 		<tr>
 			<th></th>
-		    <th ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
+		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
 	    </tr>
-	  
+	  </thead>
+	  <tbody>
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
-		<td ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()">{{attr}}</td>
-			<td ng-mouseover="blinkMeasure($event)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList">
+		<td ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
+			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 
+			ng-repeat="measure in cardinality.measureList" >
 			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
 			 ng-click="toggleCell(attr,measure)"  ">
 			<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
@@ -42,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			</td>
 		</tr>
+		</tbody>
 	</table>
 </div>
 </md-content>

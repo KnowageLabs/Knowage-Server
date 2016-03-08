@@ -195,45 +195,29 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.setCardinality = function(){
 		$scope.$broadcast ('parseEvent');
 		$scope.cardinality.measureList=[];
-		var definition = $scope.kpi.definition;
+		if(Object.keys($scope.kpi.definition).length!=0){
+			var definition = $scope.kpi.definition;
 
-		sbiModule_restServices.post("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
+			sbiModule_restServices.post("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).success(
+					function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							console.log("layer non Ottenuti");
+							$scope.showAction(data);
+						} else {
+							angular.copy(data,$scope.cardinality.measureList);
+							$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
+							$scope.$broadcast ('activateCardinalityEvent');
+							//$scope.cardinality.measureList=data;
+						}
+
+					}).error(function(data, status, headers, config) {
+						console.log("layer non Ottenuti " + status);
 						$scope.showAction(data);
-					} else {
-						angular.copy(data,$scope.cardinality.measureList);
-						$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
-						$scope.$broadcast ('activateCardinalityEvent');
-						//$scope.cardinality.measureList=data;
-					}
+					})
 
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
-					$scope.showAction(data);
-				})
+		}
+		
 
-				/*	$scope.cardinality.measureList=[
-		                	{	"ruleName": "regola1",
-		                		"measureName": "numScuole1",
-		                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"Tipologia":false
-		                		}
-		                	},
-		                		{	"ruleName": "regola2",
-		                		"measureName": "numAbitanti",
-		                		"attributs": {"Regione":false,"Provincia":false,"Comune":false,"FasciaEta":false,"CatLavoratore":false}
-		                	},
-		                		{	"ruleName": "regola3",
-		                		"measureName": "pilProCapite",
-		                		"attributs": {"Regione":false,"FasciaEta":false,"CatLavoratore":false}
-		                	},
-		                		{	"ruleName": "regola4",
-		                			"measureName": "densPopolazione",
-		                			"attributs": {"AreaGeografice":false}
-		                	}
-		                ];
-				 */
 
 
 	}
