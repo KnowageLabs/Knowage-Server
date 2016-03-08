@@ -335,23 +335,7 @@
 		        layout: 'vertical',
 		    
 	    #end
-	    		
-	    		#if ($chart.LEGEND.floating != '')
-		        	floating: $chart.LEGEND.floating,
-		        #end
-		        
-		    	#if($chart.LEGEND.floating == 'true')
-		    	
-			        #if($chart.LEGEND.x != '')
-			        	x: $chart.LEGEND.x,
-				    #end
-			        
-			        #if($chart.LEGEND.y != '')
-			        	y: $chart.LEGEND.y,
-			    	#end
-		    	
-		    	#end
-	    		
+
 			    #if($chart.LEGEND.style.backgroundColor != '')
 		        	backgroundColor: '$chart.LEGEND.style.backgroundColor',
 			    #end
