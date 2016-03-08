@@ -17,19 +17,10 @@
  */
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
-import it.eng.qbe.datasource.configuration.dao.DAOException;
-import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
-import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
-import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,14 +31,20 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
+import it.eng.qbe.datasource.configuration.dao.DAOException;
+import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 /**
- * Implementation of IInLineFunctionsDAO that read functions code (ie. data functions)
+ * Implementation of IInLineFunctionsDAO that read functions code (ie. data
+ * functions)
  * 
  * @author Antonella Giachino
  */
 public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	HashMap<String, InLineFunction> mapInLineFunctions = new HashMap<String, InLineFunction>();
-	
+
 	public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 
 	public static final String FUNCTIONS_FILE_NAME = "functions.xml";
@@ -68,9 +65,9 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	// =============================================================================
 	// LOAD
 	// =============================================================================
-	
-	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect){
-		
+
+	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect) {
+
 		FileInputStream in;
 		InputStream is;
 		Document document;
@@ -85,26 +82,26 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		Node dialectNode;
 
 		logger.debug("IN");
-		
-		in = null;		
-		try {	
+
+		in = null;
+		try {
 			if (getInLineFunctions() != null && getInLineFunctions().size() > 0) {
-				logger.info("Functions for dialect " + dialect + " yet loaded." );
+				logger.info("Functions for dialect " + dialect + " yet loaded.");
 				return getInLineFunctions();
 			}
-			
+
 			is = getClass().getClassLoader().getResourceAsStream(FUNCTIONS_FILE_NAME);
 			Assert.assertNotNull(is, "Input stream cannot be null");
-			
+
 			logger.debug("Functions will be loaded from file [" + FUNCTIONS_FILE_NAME + "]");
-							
+
 			document = readFile(is);
 			Assert.assertNotNull(document, "Document cannot be null");
-			
+
 			functionsNodes = document.selectNodes("//" + ROOT_TAG + "/" + FIELD_TAG + "");
 			logger.debug("Found [" + functionsNodes.size() + "] functions");
-			
-			it = functionsNodes.iterator();				
+
+			it = functionsNodes.iterator();
 			while (it.hasNext()) {
 				functionNode = (Node) it.next();
 				group = functionNode.valueOf("@" + FIELD_TAG_GROUP_ATTR);
@@ -112,24 +109,31 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				desc = functionNode.valueOf("@" + FIELD_TAG_DESC_ATTR);
 				nParams = functionNode.valueOf("@" + FIELD_TAG_NPARAMS_ATTR);
 				dialectNode = null;
-				//get the code function only for the dialect managed
-				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){					
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_MYSQL_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){		
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_HQL_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE) ||
-						  dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){		
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_ORACLE_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){	
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_INGRES_DIALECT + "");
-				}else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){		
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_POSTGRES_DIALECT + "");
-				}else{
-					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath()+ "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
+				// get the code function only for the dialect managed
+				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_MYSQL_DIALECT + "");
+				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_HQL_DIALECT + "");
+				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE_SPATIAL)) {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_ORACLE_DIALECT + "");
+				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_INGRES_DIALECT + "");
+				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_POSTGRES_DIALECT + "");
+				} else {
+					dialectNode = functionNode
+							.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_SQLSERVER_DIALECT + "");
 				}
 				code = "";
-				if (dialectNode != null){
-					code = dialectNode.valueOf( "@" + FIELD_TAG_CODE_ATTR );
+				if (dialectNode != null) {
+					code = dialectNode.valueOf("@" + FIELD_TAG_CODE_ATTR);
 				}
 				InLineFunction func = new InLineFunction();
 				func.setDialect(dialect);
@@ -140,33 +144,36 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				func.setCode(code);
 				addInLineFunction(func);
 				logger.debug("Function [" + mapInLineFunctions.get(func.name) + "] loaded succesfully");
-			}	
-			
-		} catch(Throwable t){
-			if(t instanceof DAOException) throw (DAOException)t;
-			throw new DAOException("An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", t);
-		}finally {
-			if(in != null) {
+			}
+
+		} catch (Throwable t) {
+			if (t instanceof DAOException)
+				throw (DAOException) t;
+			throw new DAOException(
+					"An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", t);
+		} finally {
+			if (in != null) {
 				try {
 					in.close();
-				} catch(IOException e) {
-					throw new DAOException("Impossible to properly close stream to file file [" + FUNCTIONS_FILE_NAME + "]", e);
+				} catch (IOException e) {
+					throw new DAOException(
+							"Impossible to properly close stream to file file [" + FUNCTIONS_FILE_NAME + "]", e);
 				}
 			}
 			logger.debug("OUT");
 		}
-		
+
 		return getInLineFunctions();
 	}
-	
+
 	private Document readFile(InputStream in) {
 		SAXReader reader;
 		Document document;
-		
+
 		logger.debug("IN");
 
 		reader = null;
-		
+
 		try {
 			reader = new SAXReader();
 			try {
@@ -177,49 +184,49 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				throw e;
 			}
 			Assert.assertNotNull(document, "Document cannot be null");
-		} catch(Throwable t) {
-			if(t instanceof DAOException) throw (DAOException)t;
-			throw new DAOException("An unpredicetd error occurred while reading from inputStream: " , t);
+		} catch (Throwable t) {
+			if (t instanceof DAOException)
+				throw (DAOException) t;
+			throw new DAOException("An unpredicetd error occurred while reading from inputStream: ", t);
 		} finally {
-			if(in != null) {
+			if (in != null) {
 				try {
 					in.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					throw new DAOException("Impossible to properly close stream", e);
 				}
 			}
-			
+
 			logger.debug("OUT");
-		}	
-		
+		}
+
 		return document;
 	}
-	
-	
-	//PUBLIC FUNCTIONS
-	
+
+	// PUBLIC FUNCTIONS
+
 	public void addInLineFunction(InLineFunction func) {
 		mapInLineFunctions.put(func.name, func);
 	}
-	
+
 	public HashMap<String, InLineFunction> getInLineFunctions() {
 		return mapInLineFunctions;
 	}
-	
+
 	public InLineFunction getInLineFunctionByName(String name) {
-		return (InLineFunction)mapInLineFunctions.get(name);
+		return (InLineFunction) mapInLineFunctions.get(name);
 	}
-	
+
 	public List<InLineFunction> getInLineFunctionsByDialect(String dialect) {
 		List toReturn = new ArrayList();
-		for (int i=0; i<mapInLineFunctions.size(); i++){
-			InLineFunction func =(InLineFunction) mapInLineFunctions.get(i);
+		for (int i = 0; i < mapInLineFunctions.size(); i++) {
+			InLineFunction func = (InLineFunction) mapInLineFunctions.get(i);
 			if (func.dialect.contains(dialect))
 				toReturn.add(func);
 		}
 		return toReturn;
 	}
-	
+
 	public static class InLineFunction {
 		String group;
 		String name;
@@ -227,76 +234,92 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		String code;
 		String dialect;
 		Integer nParams;
-		
-		
+
 		/**
 		 * @return the name
 		 */
 		public String getName() {
 			return name;
 		}
+
 		/**
-		 * @param name the name to set
+		 * @param name
+		 *            the name to set
 		 */
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		/**
 		 * @return the code
 		 */
 		public String getCode() {
 			return code;
 		}
+
 		/**
-		 * @param code the code to set
+		 * @param code
+		 *            the code to set
 		 */
 		public void setCode(String code) {
 			this.code = code;
 		}
+
 		/**
 		 * @return the group
 		 */
 		public String getGroup() {
 			return group;
 		}
+
 		/**
-		 * @param group the group to set
+		 * @param group
+		 *            the group to set
 		 */
 		public void setGroup(String group) {
 			this.group = group;
 		}
+
 		/**
 		 * @return the desc
 		 */
 		public String getDesc() {
 			return desc;
 		}
+
 		/**
-		 * @param desc the desc to set
+		 * @param desc
+		 *            the desc to set
 		 */
 		public void setDesc(String desc) {
 			this.desc = desc;
 		}
+
 		/**
 		 * @return the nParams
 		 */
 		public Integer getnParams() {
 			return nParams;
 		}
+
 		/**
-		 * @param nParams the nParams to set
+		 * @param nParams
+		 *            the nParams to set
 		 */
 		public void setnParams(Integer nParams) {
 			this.nParams = nParams;
 		}
+
 		/**
 		 * @return the dialect
 		 */
 		public String getDialect() {
 			return dialect;
 		}
+
 		/**
-		 * @param dialect the dialect to set
+		 * @param dialect
+		 *            the dialect to set
 		 */
 		public void setDialect(String dialect) {
 			this.dialect = dialect;
