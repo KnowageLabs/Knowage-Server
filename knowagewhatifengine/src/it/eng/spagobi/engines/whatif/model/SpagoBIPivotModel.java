@@ -1,22 +1,27 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/**
+ * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
 
 package it.eng.spagobi.engines.whatif.model;
+
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -48,19 +53,6 @@ import org.pivot4j.mdx.Syntax;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.util.OlapUtils;
-
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 

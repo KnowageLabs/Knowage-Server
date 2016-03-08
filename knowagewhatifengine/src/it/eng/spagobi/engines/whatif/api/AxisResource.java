@@ -1,25 +1,22 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @class AxisResource
+ *
+ * Provides services to manage the axis resource
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 import java.util.List;
 
@@ -32,7 +29,6 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-import org.pivot4j.PivotModel;
 import org.pivot4j.transform.SwapAxes;
 
 @Path("/1.0/axis")
@@ -62,15 +58,22 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	public String swapAxis() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 		if (transform.isSwapAxes()) {
 			transform.setSwapAxes(false);
+
 		} else {
 			transform.setSwapAxes(true);
-		}
 
+		}
+		// model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.swapAxisSort();
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
@@ -96,9 +99,16 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos,
 			@PathParam("toAxis") int toAxisPos, @PathParam("hierarchy") String hierarchyName) {
-
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
-
+		model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
 		return renderModel(getPivotModel());
 	}
 
@@ -123,10 +133,20 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
 			@PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
-		return renderModel(getPivotModel());
+		model.setSorting(false);
+		model.removeSubset(model.getCellSet().getAxes().get(1));
+		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
+		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+		String table = renderModel(model);
+		return table;
 	}
 
 	/**

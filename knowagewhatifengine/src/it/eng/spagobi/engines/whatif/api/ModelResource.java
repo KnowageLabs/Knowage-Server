@@ -1,19 +1,18 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @class ModelTransformer
+ *
+ * Services that manage the model:
+ * <ul>
+ * <li>/model/mdx/{mdx}: executes the mdx query</li>
+ * </ul>
+ *
  */
 package it.eng.spagobi.engines.whatif.api;
 
@@ -47,6 +46,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -62,10 +62,11 @@ import javax.ws.rs.core.Response;
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
-import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
@@ -109,16 +110,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public String setMdx() throws OlapException {
 		logger.debug("IN");
 		String table = "";
-		String uniqueName = "[Product].[All Products]";
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
-		/*
-		 *
-		 *
-		 *
-		 */
+		CellSet cellSet = model.getCellSet();
+
+		// Axes of the resulting query.
+		List<CellSetAxis> axes = cellSet.getAxes();
+
+		// The ROWS axis
+		CellSetAxis rowsOrColumns = axes.get(1);
 		String requestBody = "";
 
 		try {
@@ -135,11 +137,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("No query found");
 		}
 
-		model.setSortCriteria(SortCriteria.BDESC);
-		model.setSorting(true);
-
+		// model.setSubset(rowsOrColumns, 0, 15);
+		renderModel(model);
+		model.setSubset(rowsOrColumns, 0, 15);
 		table = renderModel(model);
-
 		logger.debug("OUT");
 		return table;
 

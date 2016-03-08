@@ -1,19 +1,13 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
  *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Utilities class that provides some usefull method to access the informations of the cube
+ *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 package it.eng.spagobi.engines.whatif.cube;
 
@@ -172,10 +166,13 @@ public class CubeUtilities {
 		if (hierarchies != null) {
 			for (int i = 0; i < hierarchies.size(); i++) {
 				Hierarchy aHierarchy = hierarchies.get(i);
-				Dimension aDimension = aHierarchy.getDimension();
-				if (!dimensions.contains(aDimension)) {
-					dimensions.add(aDimension);
+				if (aHierarchy != null) {
+					Dimension aDimension = aHierarchy.getDimension();
+					if (!dimensions.contains(aDimension)) {
+						dimensions.add(aDimension);
+					}
 				}
+
 			}
 		}
 

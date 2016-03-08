@@ -6,12 +6,12 @@
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
 		</md-icon>
-		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1" ng-class="highlight(item.name)?'element-found':''">
+		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
 			{{item.name}}
 			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.name == filterSelected[filterAxisPosition].name"> 
 			</md-icon>
 		</span>
-		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;" ng-class="highlight(item.name)?'element-found':''">
+		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
 			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
 			{{item.name}}
 			</md-checkbox>

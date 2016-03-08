@@ -24,7 +24,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.filterDial = "/main/filter/filterDialog.html"
 	
 	$scope.searchText;
-	$scope.searchSucessText;
 	$scope.showSearchInput=false;
 		
 	$scope.rows;
@@ -63,7 +62,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.modelConfig;
 	$scope.filterDialogToolbarName;
 	
-	$scope.showSiblings = true;
 	
 	$scope.sortingSetting;
 	$scope.ready = true;
@@ -80,7 +78,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	
 	var h;
 	var m;
-	var oldSelectedFilter="";
+	var oldSelectedFilter;
 	var visibleSelected = [];
 	
 	$scope.enableDisableSorting = function(){
@@ -732,8 +730,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 			$scope.filterSelected[$scope.filterAxisPosition].name = "...";
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
 		
-		$scope.searchText = "";
-		$mdDialog.hide();		
+		$mdDialog.hide();
+		
 	}
 	
 	
@@ -761,7 +759,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				
 			} 
 		}
-	};
+	}
 	
 	$scope.hideAsyncTree = function(item){
 		item.collapsed = false;		
@@ -929,15 +927,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 				delete visibleSelected[i].collapsed;
 			}
 		}
-	};	
-	
+	}
 	$scope.searchFilter = function(){
 		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.activeaxis+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.searchText+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 		.then(function(response) {
 			//if(response.data[0].children.length != 0)
 				checkIfExists(response.data);
-				$scope.searchSucessText = $scope.searchText.toLowerCase();
 			//else
 				//sbiModule_messaging.showWarningMessage("Sorry. Match not found for '"+$scope.searchText+"'", 'Warning');
 		}, function(response) {
@@ -960,20 +956,5 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 		}
 		if(!exist)
 			$scope.dataPointers.push(filterFather);
-	};
-	
-	$scope.highlight = function(name){		
-		if(name.toLowerCase() == $scope.searchText.toLowerCase())		
-			return true;		
-		else		
-			return false		
-	};		
-			
-	$scope.showHideSearchOnFilters = function(){		
-		$scope.showSearchInput = !$scope.showSearchInput;		
-	};
-	
-	$scope.closeDialog = function(e){
-		$mdDialog.hide();
 	};
 }

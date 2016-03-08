@@ -1,16 +1,44 @@
 <div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+	<div style="min-width:32px; min-height:32px; margin-bottom: 2%;">
+		<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
+			<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
+		</md-button>
+	</div>	
+	
+	<div style="height:calc(100% - 64px);">
+	<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
+	<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
+		<div class="name">
+			<div class="rotate-text">{{row.name}}</div>
+		</div>	
+		<div class="action">
+			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, row, null)">
+				<md-icon md-font-icon="fa fa-filter"></md-icon>
+			</md-button>
+		</div>
+	</div>
+	<div ng-hide="row.positionInAxis == rows.length-1">
+		<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
+			<md-icon md-font-icon="fa fa-arrows-v" style="color:white;"></md-icon>	
+		</md-button>
+	</div>
+	</div>
+	</div>
 
-			<div class="filter-toolbar-element-left" ng-repeat="column in columns" ng-drag="true" ng-drag-data="column">
-				<div class="name">
-					<div class="rotate-text">{{column.name}}</div>
-				</div>	
-				<div class="action">
-					<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialog(e)">
-						<md-icon md-font-icon="fa fa-filter"></md-icon>
-					</md-button>
-				</div>
-			</div>
+	<div style="min-width:32px;min-height:32px;margin-top: 2%">
+		<md-button style="right:10px;"class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
+		<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
+	</md-button>
 	</div>
-	<div ng-bind-html="table" compile-template>
-		
-	</div>
+</div>
+
+<md-content scrolly>
+ <div style="height: 216000px;" scrolly><!-- background-color: #3b678c; -->
+ 	&nbsp;
+ 	&nbsp;
+ 	&nbsp;
+ </div>
+ </md-content>
+
+<div ng-bind-html="table" compile-template>		
+</div>

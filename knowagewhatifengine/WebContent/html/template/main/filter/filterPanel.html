@@ -2,14 +2,17 @@
 	<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
 </md-button>
 
-<md-card ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" flex=15  ng-drag="true" ng-drag-data="filter">
+<md-card ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" flex=15  ng-drag="true" ng-drag-data="filter" ng-drag-success="dragSuccess('filter',$index)" style="overflow:hidden">
 	<md-card-title class="knowage-blue filter-toolbar">
 		<md-card-title-text >
 			<span>{{filter.name}}</span>
 		</md-card-title-text>
 	</md-card-title>
 	<md-card-actions layout="row" layout-align="end">
-		<md-button class="md-icon-button" style="bottom:0;" aria-label="Favorite" ng-click="openFiltersDialog(e)">
+		<div style="width:80%;text-align: center;">
+			{{filterSelected[$index].visible ? filterSelected[$index].name : '...'}}
+		</div>
+		<md-button class="md-icon-button" style="bottom:0;" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)">
 			<md-icon md-font-icon="fa fa-filter"></md-icon>
 		</md-button>
 	</md-card-actions>   
