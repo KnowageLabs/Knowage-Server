@@ -2321,16 +2321,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 				            });
 				        },
   						
-  	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
+  	  					beforeDrop: function(node, data, dropRec, dropPosition) {   
+  	  				        /**
+  	  				         * display category alias field only for bar and line, that will be used for 
+  	  				         * default axis title when there is no custom title
+  	  				         * @author Ana Tomic (ana.tomic@mht.net)
+  	  				         * @author Danilo Ristovski (danilo.ristovski@mht.net)
+  	  				         */
+  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase(); 
   	  						
+		  	  				if (chartType.toUpperCase()!="BAR" && chartType.toUpperCase()!="LINE")
+		  					{
+		  	  					for (i=0; i<this.grid.columns.length; i++)
+								{
+									if (this.grid.columns[i].dataIndex == "axisName")
+									{
+										this.grid.columns[i].hidden = true;
+										break;
+									}
+								}
+		  					}  	  						
+  	  				
   	  						/**
 							 * Prevent drag&drop more than one attribute (category) per time.
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (data.records.length == 1)
-							{  	  						
-	  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase(); 
-	  	  							  						
+							{  	  	  						
 	  	  						/**
 	  	  						 * Taking care of the order of the categories (based on their type) for the 
 	  	  						 * HEATMAP chart type.
@@ -2641,7 +2658,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					text: LN('sbi.chartengine.designer.columnalias'), 
 					dataIndex: 'axisName',
-					hidden: true,	// Not used, so hidden (Danilo Ristovski)
+					hidden: (chartType.toUpperCase() != 'BAR' && chartType.toUpperCase() != 'LINE'),	// used only for bar and line Ana Tomic
 					sortable: false,
 					flex: 10,
 					editor: {

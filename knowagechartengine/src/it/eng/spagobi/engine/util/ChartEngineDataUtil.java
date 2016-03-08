@@ -105,16 +105,17 @@ public class ChartEngineDataUtil {
 		JSONObject jo = new JSONObject(jsonTemplate);
 		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
 		String groupBys = category.optString("groupby");
-		String groupByNames = category.optString("groupby");
+		String groupByNames = category.optString("groupbyNames");
 
 		JSONArray jaBreadcrumb = new JSONArray(breadcrumb);
 		if (groupBys != null) {
 			String drilldownSerie = "";
 			Map<String, Object> drilldownParams = new LinkedHashMap<>();
 			String drilldownCategory = category.getString("column");
+			String drilldownCategoryName = category.getString("name");
 			String selectedCategory = "";
 			String[] gbys = groupBys.split(",");
-			String[] gbyNames = groupByNames != null ? groupBys.split(",") : gbys;
+			String[] gbyNames = (groupByNames != null && !groupByNames.isEmpty()) ? groupByNames.split(",") : gbys;
 			int i;
 			for (i = 0; i < jaBreadcrumb.length(); i++) {
 				JSONObject drilldown = (JSONObject) jaBreadcrumb.get(i);
@@ -122,7 +123,7 @@ public class ChartEngineDataUtil {
 				String selectedName = drilldown.getString("selectedName");
 				String selectedSerie = drilldown.getString("selectedSerie");
 				String gby = gbys[i];
-				String gbyName = gbyNames[i];
+				String gbyName = (gbyNames.length > i) ? gbyNames[i] : gbys[i];
 
 				drilldownParams.put(drilldownCategory, selectedName);
 
@@ -130,6 +131,7 @@ public class ChartEngineDataUtil {
 				if (i == 0)
 					drilldownSerie = selectedSerie;
 				drilldownCategory = gby;
+				drilldownCategoryName = gbyName;
 				selectedCategory = selectedName;
 			}
 
@@ -153,6 +155,7 @@ public class ChartEngineDataUtil {
 			velocityContext.put("selectedCategory", selectedCategory);
 			velocityContext.put("drilldownSerie", drilldownSerie);
 			velocityContext.put("drilldownCategory", drilldownCategory);
+			velocityContext.put("drilldownCategoryName", drilldownCategoryName);
 			velocityContext.put("enableNextDrilldown", enableNextDrilldown);
 
 			Template velocityTemplate = ve.getTemplate("/chart/templates/highcharts414/drilldowndata.vm");

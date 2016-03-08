@@ -9,8 +9,15 @@
 #set($categorieColumnsMapped=$dataColumnsMapper.get($drilldownCategory.toLowerCase()))
 #set($serieColumnsMapped=$dataColumnsMapper.get($drilldownSerie.toLowerCase()))
 
+
 {
 	name:	'$selectedCategory',
+	#if($drilldownCategoryName != '')
+	category: '$drilldownCategoryName',
+	#else
+	category: '$drilldownCategory',
+	#end
+	serieName:'$drilldownSerie',
 	data: [
 #foreach($row in $rows)
 #set ($serieValue=$row.get($serieColumnsMapped))

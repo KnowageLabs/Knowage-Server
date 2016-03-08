@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
 
 <script>
+  
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
 		Highcharts.setOptions({
 			chart : {
@@ -63,7 +64,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				drillUpText : drillUpText,
 				decimalPoint : decimalPoint,
 				thousandsSep : thousandsSep
-			}
+			},
+			drilldown:{
+				drillUpButton:{
+					 position: 
+		                {
+		                   align: "center"
+		                },
+		              
+				}
+			},
+			drilledCategories:[] //array used to save category names when drilling
+			
 		});
 	};
 
@@ -87,17 +99,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				certain serie. This way we will keep record of the current 
 				drill down level.
 				
+				not used, drillUpText is set dinamicly
+				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
-			Highcharts.setOptions
+			
+		
+		/*Highcharts.setOptions
 			(
 				{
 			        lang:
 			    	{
-			        	drillUpText: "Back to: <b>{series.name}</b>"
+			        	drillUpText:"Back to: <b>{series.name}</b>"
 			    	}
 		    	}
-			);
+			); */
 		    
 			new Highcharts.Chart(chartConf);
 		}
@@ -118,8 +134,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
+			
 			if (isNaN(e.category))
 			{
+				
 				var chart = this;
 				chart.showLoading('Loading...');
 				Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
@@ -131,7 +149,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				};
 				chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
 					var series = Ext.JSON.decode(response.responseText, true);
+					
+		           
+		           if(chart.options.drilledCategories.length==0){
+		        	   chart.options.drilledCategories.push(chart.xAxis[0].axisTitle.textStr);
+		        	   
+		           }
+		           
+		           chart.options.drilledCategories.push(series.category);
+		            var xAxisTitle={
+		            	text:series.category	
+		            };
+		            var yAxisTitle={
+		            		text:series.serieName
+		            };
+		            if(chart.xAxis[0].userOptions.title.customTitle==false){
+		            chart.xAxis[0].setTitle(xAxisTitle);
+		            }
+		            if(chart.yAxis[0].userOptions.title.custom==false){
+		            chart.yAxis[0].setTitle(yAxisTitle);
+		            }
+		           
 		            chart.addSeriesAsDrilldown(e.point, series);
+		            
+		            var backText="Back to: <b>"+chart.options.drilledCategories[chart.options.drilledCategories.length-2]+"</b>";
+		        
+		            chart.drillUpButton.textSetter(backText);
+		          
 					chart.hideLoading();
 				});
 			}
@@ -139,7 +183,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	};
 
 	function handleDrillup() {
+		var chart=this;
+		
+		// sets the title on x axis 
+		
+		chart.options.drilledCategories.pop();
+		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-1];
+		var backText=chart.options.drilledCategories[chart.options.drilledCategories.length-2];
+	
+	chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
+    chart.reflow();
+		var xAxisTitle={
+            	text:titleText	
+            };
+		    if(chart.xAxis[0].userOptions.title.customTitle==false){
+            chart.xAxis[0].setTitle(xAxisTitle);
+		    }
+		    
+		var yAxisTitle={
+				text: ' '
+		};
+	
+		
+       if(chart.drilldownLevels.length==0 && chart.yAxis[0].userOptions.title.custom==false){
+    	   chart.yAxis[0].setTitle(yAxisTitle);
+       }
+   
 		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
+
 	}
 
 	function handleCockpitSelection(e) {
@@ -170,7 +241,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	};
 
 	function handleCrossNavigationTo(e) {
-		console.log(e.point);
+		
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');

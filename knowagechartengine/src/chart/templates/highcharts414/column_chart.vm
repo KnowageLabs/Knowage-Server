@@ -10,6 +10,7 @@
 #set($rows = $data.rows) ## data in table rows
 
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 	
 #set($enableDrilldown = false)
@@ -21,6 +22,7 @@
 #set($crossNavigation = $chart.DRILL)
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
+
 
 #set($seriesMap = {}) ## conversion series metadata to map object
 
@@ -50,7 +52,7 @@
     	#if($chartType == 'line' || $chartType == 'radar')
     		#set($chartTypeToPrint = 'line')
     	#end
-    	
+    	##marginRight:40,
     	#*
     		Commented on 19.12: KNOWAGE-327 ISSUE
     	
@@ -596,10 +598,19 @@
     xAxis:
 	 #foreach($xAxisKey in $xAxisList.keySet())
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
-	 
+	
 	{
 	 	title: {
+	 	    #if($xAxis.TITLE.text != '')
 			text: '$xAxis.TITLE.text',
+			customTitle: true,
+			#elseif($categorieColumns.name != '')
+			text: '$categorieColumns.name',
+			customTitle: false,
+			#else
+			text: '$categorieColumns.column',
+			customTitle: false,
+			#end
 			##y:-150,
 			 
 			#set ($xTitleAlign = $xAxis.TITLE.style.align)
@@ -628,6 +639,7 @@
 	        	#end
 		    },
 		},
+		
 		 
 		labels:{
 		#if( $xAxis.style != '' )
@@ -680,12 +692,18 @@
         ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
-        
+          
         {
         	min: 0,
         	
         	title: {
+        	    #if($yAxis.TITLE.text != '')
         		text: '$yAxis.TITLE.text',
+        		custom: true,
+        		#else
+                text: '',
+                custom: false,
+                #end
         		##x:50,
         		#*
         		#if( $yAxis.style.rotate != '' ) 
@@ -1231,7 +1249,7 @@
     #end
     
     lang: {
-        noData: '$chart.EMPTYMESSAGE.text'
+        noData: '$chart.EMPTYMESSAGE.text',
     },
     noData: {
     	style:{
