@@ -127,8 +127,9 @@ public class KpiService {
 			List<String> lst = dao.listPlaceholderByMeasures(measureList);
 			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
 		} catch (IOException e) {
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
+			logger.error(req.getPathInfo(), e);
 		}
+		return Response.ok().build();
 	}
 
 	@GET
