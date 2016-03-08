@@ -259,6 +259,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					ds.setId(Integer.valueOf(id));
+					modifyPersistenceAndScheduling(ds, logParam);
 					dsDao.modifyDataSet(ds);
 					logger.debug("Resource " + id + " updated");
 					attributesResponseSuccessJSON.put("success", true);
@@ -388,6 +389,91 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 	}
 
+	public void modifyPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
+		logger.debug("IN");
+		try {
+			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
+			iDatasetDao.setUserProfile(profile);
+			IDataSet previousDataset = iDatasetDao.loadDataSetById(ds.getId());
+			if (previousDataset.isPersisted() && !ds.isPersisted()) {
+				logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unpersisted");
+				PersistedTableManager ptm = new PersistedTableManager(profile);
+				ptm.dropTableIfExists(previousDataset.getDataSourceForWriting(), previousDataset.getTableNameForReading());
+
+				ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+				List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, previousDataset.getLabel());
+
+				if (triggers != null && !triggers.isEmpty() && !ds.isScheduled()) {
+					logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unscheduled");
+
+					ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+					String servoutStr = schedulerService.deleteJob(previousDataset.getLabel(), JOB_GROUP);
+					SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+					if (execOutSB != null) {
+						String outcome = (String) execOutSB.getAttribute("outcome");
+						if (outcome.equalsIgnoreCase("fault")) {
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+							} catch (Exception e) {
+								logger.error(e);
+							}
+							throw new SpagoBIServiceException(SERVICE_NAME, "Job " + previousDataset.getLabel() + " not deleted by the web service");
+						}
+					}
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		logger.debug("OUT");
+	}
+
+	public void deletePersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
+		logger.debug("IN");
+		try {
+			if (ds.isPersisted()) {
+				logger.error("The dataset [" + ds.getLabel() + "] has to be unpersisted");
+				PersistedTableManager ptm = new PersistedTableManager(profile);
+				ptm.dropTableIfExists(ds.getDataSourceForWriting(), ds.getTableNameForReading());
+
+				ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+				List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, ds.getLabel());
+
+				if (triggers != null && !triggers.isEmpty()) {
+					logger.error("The dataset [" + ds.getLabel() + "] has to be unscheduled");
+
+					ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+					String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
+					SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+					if (execOutSB != null) {
+						String outcome = (String) execOutSB.getAttribute("outcome");
+						if (outcome.equalsIgnoreCase("fault")) {
+							try {
+								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+							} catch (Exception e) {
+								logger.error(e);
+							}
+							throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+						}
+					}
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		logger.debug("OUT");
+	}
+
 	private void datatsetTest(IDataSetDAO dsDao, Locale locale) {
 		try {
 			JSONObject dataSetJSON = getDataSetResultsAsJSON();
@@ -418,6 +504,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		try {
 			dsDao.deleteDataSet(dsID);
 			deleteDatasetFile(ds); // for FileDatase
+			deletePersistenceAndScheduling(ds, logParam);
 			logger.debug("Dataset deleted");
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
