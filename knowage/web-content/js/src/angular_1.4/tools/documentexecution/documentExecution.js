@@ -311,6 +311,17 @@
 			
 			parameter.parameterValue = tempNewParameterValue;
 		};
+		
+		$scope.showRequiredFieldMessage = function(parameter) {
+			return (
+				parameter.mandatory 
+				&& (
+						!parameter.parameterValue
+						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0) 
+						|| parameter.parameterValue == '')
+			) == true;
+		};
+		
 		/*
 		 * GET VIEWPOINTS
 		 * return saved params

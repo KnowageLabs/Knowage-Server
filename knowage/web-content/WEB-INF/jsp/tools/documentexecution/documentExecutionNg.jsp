@@ -116,10 +116,8 @@ try{
 					<md-list-item ng-repeat="parameter in documentParameters">
 						<md-input-container flex>
 							<%--
-							<md-content 
-									ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && parameter.multivalue"
-									>{{parameter|json}}</md-content>
 							--%>
+							<md-content ng-if="parameter.type=='STRING' && parameter.selectionType=='COMBOBOX'">{{parameter|json}}</md-content>
 							
 							<!-- manual number input -->
 							<label ng-if="parameter.type=='NUM' && parameter.selectionType==''" >
@@ -134,6 +132,8 @@ try{
 							<input class="input_class" ng-model="parameter.parameterValue" 
 									ng-required="parameter.mandatory"
 									ng-if="parameter.type=='STRING' && parameter.selectionType==''">
+							
+							
 							
 							<!-- lov list single input -->
 							<section ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && !parameter.multivalue">
@@ -156,11 +156,31 @@ try{
 								</div>
 							</section>
 							
+							<!-- lov combobox single and multiple input -->
+							<label ng-if="parameter.type=='STRING' && parameter.selectionType=='COMBOBOX'">
+								{{parameter.label}}</label>
+							<!-- multiple -->
+							<md-select ng-model="parameter.parameterValue" multiple
+								 	ng-if="parameter.type=='STRING' && parameter.selectionType=='COMBOBOX' && parameter.multivalue"> 
+								<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{defaultParameter.value}}">
+									{{defaultParameter.label}}
+								</md-option>
+							</md-select>
+							<!-- single -->
+							<md-select ng-model="parameter.parameterValue"
+								 	ng-if="parameter.type=='STRING' && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
+								<md-option></md-option>
+								<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{defaultParameter.value}}">
+									{{defaultParameter.label}}
+								</md-option>
+							</md-select>
+
+							
+							
 							<!-- "required" message -->
-							<div ng-messages="parameter.parameterValue" ng-if="parameter.mandatory && !parameter.parameterValue">
+							<div ng-messages="parameter.parameterValue" ng-if="showRequiredFieldMessage(parameter)">
 							 	<div ng-message="required">Parameter is required.</div>
 							</div>
-							
 						</md-input-container>
 					</md-list-item>
 				</md-list>
