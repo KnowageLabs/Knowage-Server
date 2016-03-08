@@ -212,7 +212,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							$scope.showActionError();
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
-
 							$scope.closeForm();
 						})
 
@@ -221,7 +220,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				sbiModule_restServices.post("layers", 'addData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
 
 						function(data, status, headers, config) {
-
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
@@ -232,7 +230,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 								$scope.closeForm();
 								$scope.flag=false;
 								$scope.showActionOK();
-
 							}
 
 						}).error(function(data, status, headers, config) {
@@ -248,8 +245,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 
 	$scope.loadLayerList = function(item){
-
-
 		//function calls when you clic on the list of layers
 		$scope.showme=true;
 		$scope.setTab('Layer');

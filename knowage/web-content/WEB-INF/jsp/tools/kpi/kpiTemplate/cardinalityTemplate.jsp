@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div class="formula " id="formulaId"></div>
 </div>
 </md-card>
-<div flex class="overflow">	
+<div flex >	
 	<table class="cardinalityTable MyClass" >
 	<thead>
 		<tr>
@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
 	    </tr>
 	  </thead>
-	  <tbody>
+	  <tbody class="overflow">
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
 		<td ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
 			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 

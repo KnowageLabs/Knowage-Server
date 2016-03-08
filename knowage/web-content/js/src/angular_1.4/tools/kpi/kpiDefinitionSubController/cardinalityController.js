@@ -10,22 +10,38 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.$on('activateCardinalityEvent',function(e){
 		$scope.getAllMeasure();
 		$scope.clearFormulaToShow();
-		$scope.createFormulaToShow();
+		if($scope.cardinality.measureList.length>0){
+			$scope.createFormulaToShow();
+		}
+		
 	})
 
+	
+	$scope.$on('nullCardinalityEvent',function(e){
+		$scope.clearFormulaToShow();
+		$scope.attributesList=[];
+		$scope.indexOfMeasure=-1;
+		$scope.currentCell={};
+	})
 	$scope.clearFormulaToShow = function(){
 		angular.element(document.getElementsByClassName("showFormula")).remove();
+
 	
 	}
-	$scope.getAllMeasure=function(){
-		for(var i=0; i<$scope.cardinality.measureList.length;i++){
-			for(var tmpAttr in $scope.cardinality.measureList[i].attributes){
+	
 
-				if($scope.attributesList.indexOf(tmpAttr)==-1){
-					$scope.attributesList.push(tmpAttr);
+	$scope.getAllMeasure=function(){
+		if(Object.keys($scope.cardinality).length!=0){
+			for(var i=0; i<$scope.cardinality.measureList.length;i++){
+				for(var tmpAttr in $scope.cardinality.measureList[i].attributes){
+
+					if($scope.attributesList.indexOf(tmpAttr)==-1){
+						$scope.attributesList.push(tmpAttr);
+					}
 				}
 			}
 		}
+		
 	};
 	$scope.getAllMeasure();
 
@@ -206,41 +222,14 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		$scope.currentCell.column = index;
 		$scope.indexOfMeasure  = index;
 		string="M"+$scope.indexOfMeasure ;
-	//	angular.element(document.getElementById(string)).css('font-weight','bold');
 		angular.element(document.getElementById(string)).css('background','#eceff1 ');
-	/*	if(event.fromElement!=null){
-			if(event.fromElement.cellIndex!=null){
-				if($scope.indexOfMeasure!= event.fromElement.cellIndex-1){
-					$scope.removeblinkMeasure();
-				}
-				$scope.indexOfMeasure  = event.fromElement.cellIndex-1;
-				string="M"+$scope.indexOfMeasure ;
-				angular.element(document.getElementById(string)).css('font-weight','bold');
-				angular.element(document.getElementById(string)).css('background','#eceff1 ');
-			//		angular.element(document.getElementById(string)).css('font-size','20px') #b3ccff
 
-			}else if( event.target.cellIndex!=null){
-				if($scope.indexOfMeasure!= event.target.cellIndex-1){
-					$scope.removeblinkMeasure();
-				}
-				$scope.indexOfMeasure  = event.target.cellIndex-1;
-				string="M"+$scope.indexOfMeasure ;
-				angular.element(document.getElementById(string)).css('font-weight','bold');
-				angular.element(document.getElementById(string)).css('background','#eceff1 ');
-				//	angular.element(document.getElementById(string)).css('font-size','20px')
-			}
-
-		}*/
 		
 	}
 
 	$scope.removeblinkMeasure=function(){
-		//angular.copy({},$scope.currentCell);
 		string="M"+$scope.indexOfMeasure;
-	//	angular.element(document.getElementById(string)).css('font-weight','normal');
 		angular.element(document.getElementById(string)).css('background','transparent');
-		//	angular.element(document.getElementById(string)).css('font-size','16px')
 
-		//angular.element(document.getElementById(string)).css('font-size', 'medium')
 	}
 }

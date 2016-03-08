@@ -11,22 +11,28 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.kpi.id=undefined;
 		$scope.kpi.name='';
 		$scope.kpi.definition='';
+		$scope.kpi.cardinality={};
+		angular.copy({},$scope.cardinality);
+		
+		$timeout(function(){
+			$scope.selectedTab.tab=0;
+		},0)
+		
 		$angularListDetail.goToDetail();
 		$scope.flagActivateBrother('addEvent');
 
 	}
 	$scope.loadKPI=function(item){
-
+		angular.copy({},$scope.cardinality);
+		$timeout(function(){
+			$scope.selectedTab.tab=0;
+		},0)
 		var index =$scope.indexInList(item, $scope.kpiListOriginal);
-
 		if(index!=-1){
 			angular.copy($scope.kpiListOriginal[index],$scope.kpi); 
-
 		}
-
 		$scope.flagActivateBrother('loadedEvent');
 	}
-
 	$scope.$on('savedEvent',function(e){
 		$scope.kpiList=[];
 		$scope.kpiListOriginal=[];
@@ -34,10 +40,8 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.getListKPI();
 	});
 	$scope.$on('cancelEvent', function(e) {  
-
 		$angularListDetail.goToList();
 	});
-
 	$scope.$on('deleteKpiEvent', function(e) { 
 		$scope.kpiList=[];
 		$scope.kpiListOriginal=[];

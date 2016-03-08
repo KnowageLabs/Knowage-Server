@@ -113,14 +113,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		<detail save-function="parseFormula" cancel-function="cancel">
  	
-		<md-tabs layout-fill class="absolute">
+		<md-tabs layout-fill class="absolute" md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-show="formulaModified.value">*</span></md-tab-label>
         			<md-tab-body>
         			<%@include	file="./kpiTemplate/formulaTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="tab2" md-on-select="setCardinality()" >
+				<md-tab id="tab2" md-on-select="setCardinality()">
        				<md-tab-label >{{translate.load("sbi.kpi.cardinality")}}</md-tab-label>
         			<md-tab-body >
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab4" >
+				<md-tab  id="tab4">
        				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
         			TODO
