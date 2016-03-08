@@ -38,7 +38,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$scope.showSaveGUI().then(function(response){{}
 			if($scope.activeSave=="add"){
 				//int his moment i set manually threshold
-				$scope.kpi.threshold= 1;
+				$scope.kpi.threshold= {"id":1,"description":"test soglia 1","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":3,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
+
 				$scope.saveKPI();
 			}else{
 				$scope.saveKPI();
@@ -136,7 +137,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
 		$scope.kpi.cardinality=JSON.stringify($scope.cardinality);
 		//after i'm setting this with a method getthreshold()
-		$scope.kpi.threshold=1;
+		$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":3,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
+		//$scope.kpi.threshold = JSON.stringify($scope.kpi.threshold);
 		sbiModule_restServices.post("1.0/kpi", 'saveKpi',$scope.kpi).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
