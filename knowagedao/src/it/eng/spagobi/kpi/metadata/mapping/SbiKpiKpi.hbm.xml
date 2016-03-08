@@ -19,7 +19,7 @@
         
         <property name="name" column="NAME" type="string" length="40" not-null="true"/>
         <property name="definition" column="DEFINITION" type="string" length="1000" not-null="true"/>
-        <property name="cardinality" column="CARDINALITY" type="string" length="1024" not-null="true"/>
+        <property name="cardinality" column="CARDINALITY" type="string" length="4000" not-null="true"/>
         <property name="placeholder" column="PLACEHOLDER" type="string" length="1024" not-null="true"/>
         <property name="thresholdId" column="THRESHOLD_ID" type="int" length="11" not-null="true"/>
 		<!-- 
