@@ -18,8 +18,7 @@
 			{{item.name}}
 			</md-checkbox>
 		</span>	
-		<ul  ng-model="item.children" ng-show="item.collapsed" ng-include="templateListChild">
-		</ul>
+		<filter-tree-deeper-levels></filter-tree-deeper-levels>	
 	</div>
 </li>
 
