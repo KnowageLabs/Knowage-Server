@@ -83,6 +83,7 @@ import org.json.JSONObject;
 @Path("/1.0/kpi")
 @ManageAuthorization
 public class KpiService {
+	private static final String NEW_KPI_RULE_NAME_NOT_AVAILABLE = "newKpi.ruleNameNotAvailable";
 	private static final String NEW_KPI_THRESHOLD_MANDATORY = "newKpi.threshold.mandatory";
 	private static final String NEW_KPI_THRESHOLD_VALUES_MANDATORY = "newKpi.threshold.values.mandatory";
 	private static final String NEW_KPI_THRESHOLD_TYPE_MANDATORY = "newKpi.threshold.type.mandatory";
@@ -256,6 +257,11 @@ public class KpiService {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
 			Integer id = rule.getId();
+			// Rule name must be unique
+			if (id == null && dao.getRuleIdByName(rule.getName()) != null || id != null && !id.equals(dao.getRuleIdByName(rule.getName()))) {
+				String errorMsg = MessageFormat.format(message.getMessage(NEW_KPI_RULE_NAME_NOT_AVAILABLE), rule.getName());
+				return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", errorMsg)))).build();
+			}
 			if (id == null) {
 				id = dao.insertRule(rule);
 			} else {
@@ -266,7 +272,10 @@ public class KpiService {
 			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (JSONException e) {
+			logger.error("Error while composing error message", e);
 		}
+		return Response.ok().build();
 	}
 
 	@GET
@@ -299,8 +308,6 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
-			// TODO fake data
-			// kpi.setThreshold(dao.loadThreshold(1));
 
 			List<String> errors = new ArrayList<>();
 			checkMandatory(errors, kpi);
