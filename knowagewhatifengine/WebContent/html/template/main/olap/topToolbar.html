@@ -1,34 +1,40 @@
-<md-toolbar class='md-toolbar-tools knowage-blue swapaxes' style='background-color:white!important;width:33px; cursor:pointer;' ng-click="swapAxis()">
-		&nbsp;
-</md-toolbar>
+<div layout="row">
 
-<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" width="90%" layout="column">
+	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes' style='background-color:white!important;width:33px; cursor:pointer;' ng-click="swapAxis()">
+		&nbsp;
+	</md-toolbar>
 	
-	<div style="min-width:32px;min-height:32px; margin-right:1%;">
-		<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded">
-			<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
-		</md-button>
-	</div >
-	<div ng-repeat="column in columns | limitTo:maxCols:topStart" layout="row" style="height:80%;margin-right: 10px;">
-	<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
-		<div class="name">{{column.name}}</div>
-		<div class="action">
-			<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
-				<md-icon md-font-icon="fa fa-filter"></md-icon>
+	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" width="90%" layout="column">
+
+		<div style="min-width:32px;min-height:32px; margin-right:1%;">
+			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded">
+				<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
+			</md-button>
+		</div >
+		<div ng-repeat="column in columns | limitTo:maxCols:topStart" layout="row" style="height:80%;margin-right: 10px;">
+		<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
+			<div class="name">{{column.name}}</div>
+			<div class="action">
+				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
+					<md-icon md-font-icon="fa fa-filter"></md-icon>
+				</md-button>
+			</div>
+		</div>
+		<div ng-hide="column.positionInAxis == columns.length-1">
+			<md-button class="md-icon-button" style="margin-left:0px!important;margin-right:0px!important;" ng-click="switchPosition(column)">
+				<md-icon md-font-icon="fa fa-arrows-h" style="color:white;"></md-icon>	
 			</md-button>
 		</div>
-	</div>
-	<div ng-hide="column.positionInAxis == columns.length-1">
-		<md-button class="md-icon-button" style="margin-left:0px!important;margin-right:0px!important;" ng-click="switchPosition(column)">
-			<md-icon md-font-icon="fa fa-arrows-h" style="color:white;"></md-icon>	
-		</md-button>
-	</div>
-	</div>
-	
-	<div style="min-width:32px;min-height:32px;margin-left:1%">
-		<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('right')" ng-show="topSliderNeeded">
-			<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x" ></md-icon>
-		</md-button>
-	</div>
+		</div>
 		
-</md-toolbar>
+		<div style="min-width:32px;min-height:32px;margin-left:1%">
+			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('right')" ng-show="topSliderNeeded">
+				<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x" ></md-icon>
+			</md-button>
+		</div>
+			
+	</md-toolbar>
+	
+</div>
+
+

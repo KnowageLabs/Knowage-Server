@@ -22,20 +22,18 @@
 	<div layout="row">
 		
 		<div layout="column" flex=80>
-			<div  ng-include="mainToolbar">
-			</div>
 		
-			<div layout="row" ng-include="filterPanel" class="top-alignment" ng-drop="true" ng-drop-success="dropFilter($data,$event)">
-			</div>
+			<main-toolbar></main-toolbar>
+		
+			<filter-panel></filter-panel>
 
-			<div layout="column" ng-include="olapPanel">
-			</div>
+			<olap-panel></olap-panel>
+			
 		</div>
 
 		<div style="width:2px"></div>
 		
-		<div flex=20 ng-include="rightPanel">						
-		</div>
+		<right-panel></right-panel>
 	</div>
 </body>
 </html>

@@ -1,23 +1,33 @@
-var olapMod = angular.module('olap.controllers', ['olap.configuration','olap.directives'])
+var olapMod = angular.module('olap.controllers', [
+                                                  'olap.configuration',
+                                                  'olap.directives'
+                                                  ])
 
-olapMod.controller("olapController", ["$scope", "$timeout", "$window","$mdDialog", "$http",'$sce','$mdToast'                                    
-,'sbiModule_messaging','sbiModule_restServices',olapFunction ]);
+olapMod.controller("olapController", [
+                                      "$scope", 
+                                      "$timeout", 
+                                      "$window",
+                                      "$mdDialog", 
+                                      "$http",
+                                      '$sce',
+                                      '$mdToast',
+                                      'sbiModule_messaging',
+                                      'sbiModule_restServices',
+                                       olapFunction 
+                                      ]);
 
-function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast,sbiModule_messaging,sbiModule_restServices) {
-	
+function olapFunction(
+		$scope, 
+		$timeout, 
+		$window, 
+		$mdDialog, 
+		$http, 
+		$sce,
+		$mdToast,
+		sbiModule_messaging,
+		sbiModule_restServices
+) {
 	templateRoot = "/knowagewhatifengine/html/template";
-	$scope.templateList = templateRoot + '/main/filter/treeFirstLevel.html';
-	$scope.templateListChild = templateRoot + '/main/filter/treeDeeperLevels.html';
-	$scope.filterCard = templateRoot + '/main/filter/filterCard.html';
-	$scope.filterPanel = templateRoot + '/main/filter/filterPanel.html';
-	$scope.mainToolbar = templateRoot + '/main/toolbar/mainToolbar.html';
-	$scope.olapPanel = templateRoot + '/main/olap/olapPanel.html';
-	$scope.topToolbar = templateRoot + '/main/olap/topToolbar.html';
-	$scope.leftToolbarPlusMain = templateRoot + '/main/olap/leftToolbarPlusMain.html';
-	
-	$scope.leftPanel = templateRoot + '/left/leftPanel.html';
-	$scope.rightPanel = templateRoot + '/right/rightPanel.html';
-	
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
@@ -64,7 +74,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	$scope.filterDialogToolbarName;
 	
 	$scope.showSiblings = true;
-	
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
@@ -84,7 +93,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,$mdToast
 	var visibleSelected = [];
 	
 	$scope.enableDisableSorting = function(){
-		
 		
 		$scope.sortDisable();
 	}
