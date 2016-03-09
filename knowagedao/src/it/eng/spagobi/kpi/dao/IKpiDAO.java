@@ -50,7 +50,14 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<RuleOutput> listRuleOutputByType(String type);
 
-	public RuleOutput loadMeasureByName(String name);
+	/**
+	 * Checks if given measure names are really existing on db
+	 * 
+	 * @param measure
+	 *            names
+	 * @return true if all measures are existing false otherwise
+	 */
+	public Boolean existsMeasureNames(String... names);
 
 	/**
 	 * Saves a new Rule and returns its id

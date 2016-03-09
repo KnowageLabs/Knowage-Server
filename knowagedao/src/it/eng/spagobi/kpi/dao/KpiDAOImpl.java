@@ -623,21 +623,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return thresholds;
 	}
 
-	@Override
-	public RuleOutput loadMeasureByName(final String name) {
-		List<SbiKpiRuleOutput> ruleOutputs = list(new ICriterion<SbiKpiRuleOutput>() {
-			@Override
-			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiRuleOutput.class).createAlias("type", "type").createAlias("sbiKpiAlias", "sbiKpiAlias")
-						.add(Restrictions.eq("type.valueCd", MEASURE)).add(Restrictions.eq("sbiKpiAlias.name", name));
-			}
-		});
-		if (ruleOutputs != null && !ruleOutputs.isEmpty()) {
-			return from(ruleOutputs.get(0));
-		}
-		return null;
-	}
-
 	private RuleOutput from(SbiKpiRuleOutput sbiKpiRuleOutput) {
 		RuleOutput ruleOutput = new RuleOutput();
 		ruleOutput.setId(sbiKpiRuleOutput.getId());
@@ -875,6 +860,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						.setMaxResults(1).uniqueResult();
 			}
 		});
+	}
+
+	@Override
+	public Boolean existsMeasureNames(final String... names) {
+		List<SbiKpiRuleOutput> ruleOutputs = list(new ICriterion<SbiKpiRuleOutput>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiKpiRuleOutput.class).createAlias("type", "type").createAlias("sbiKpiAlias", "sbiKpiAlias")
+						.add(Restrictions.eq("type.valueCd", MEASURE)).add(Restrictions.in("sbiKpiAlias.name", names));
+			}
+		});
+		return ruleOutputs != null && !ruleOutputs.isEmpty();
+		// TODO check if measures are all existing
 	}
 
 }
