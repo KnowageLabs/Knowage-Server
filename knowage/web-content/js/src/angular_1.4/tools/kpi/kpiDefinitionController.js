@@ -3,6 +3,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
+
+
 app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast',kpiDefinitionMasterControllerFunction ]);
 
 function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast){
@@ -314,3 +316,9 @@ function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
 
 
 }
+
+
+
+
+
+

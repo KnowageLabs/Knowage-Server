@@ -1,5 +1,6 @@
 app.controller('kpiDefinitionCardinalityController', ['$scope','sbiModule_translate', kpiDefinitionCardinalityControllerFunction ]);
 
+
 function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.translate=sbiModule_translate;
 	$scope.attributesList=[];

@@ -13,25 +13,34 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.kpi.definition='';
 		$scope.kpi.cardinality={};
 		angular.copy({},$scope.cardinality);
-		
+
 		$timeout(function(){
 			$scope.selectedTab.tab=0;
 		},0)
-		
+
 		$angularListDetail.goToDetail();
 		$scope.flagActivateBrother('addEvent');
 
 	}
 	$scope.loadKPI=function(item){
-		angular.copy({},$scope.cardinality);
-		$timeout(function(){
-			$scope.selectedTab.tab=0;
-		},0)
-		var index =$scope.indexInList(item, $scope.kpiListOriginal);
-		if(index!=-1){
-			angular.copy($scope.kpiListOriginal[index],$scope.kpi); 
-		}
-		$scope.flagActivateBrother('loadedEvent');
+
+
+		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadKpi")
+		.then(function(response){ 
+
+			angular.copy({},$scope.cardinality);
+			$timeout(function(){
+				$scope.selectedTab.tab=0;
+			},0)
+
+			angular.copy(response.data,$scope.kpi); 
+			console.log($scope.kpi);
+			$scope.flagActivateBrother('loadedEvent');
+
+		},function(response){
+			console.log("errore")
+		});
+
 	}
 	$scope.$on('savedEvent',function(e){
 		$scope.kpiList=[];
