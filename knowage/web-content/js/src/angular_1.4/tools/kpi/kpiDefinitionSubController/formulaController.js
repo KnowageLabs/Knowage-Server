@@ -6,7 +6,6 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.currentKPI ={
 			"formula": ""
 	}
-//	$scope.measures = ['pippo', 'pluto','paperino'];
 	$scope.dataSourceTable= {};
 	$scope.functionalities = ['SUM','MAX','MIN','COUNT'];
 	$scope.selectedFunctionalities='SUM';
@@ -66,29 +65,11 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				}
 
 			}
-		/*	if(event.keyIdentifier!="Left"){
-				var cur = cm.getCursor();
-				var token = cm.getTokenAt(cur);
-				if(token.type=="keyword" || token.type=="variable-2"){
-					cm.setCursor({line: cm.getCursor().line, ch:token.end});
-				}
-				
-			}
-			if(event.keyIdentifier!="Right"){
-				var cur = cm.getCursor();
-				var token = cm.getTokenAt(cur);
-				if(token.type=="keyword" || token.type=="variable-2"){
-					cm.setCursor({line: cm.getCursor().line, ch:token.start});
-				}
-			}*/
-
-
 		});
 
 
 
 		_editor.on("mousedown", function(cm,event){
-			//console.log(cm.getTokenAt(cm.coordsChar(event.pageX, event.pageY, "page")));
 
 			for(var i=0;i<event.srcElement.classList.length;i++){
 				$scope.token = event.srcElement.innerHTML;
@@ -148,9 +129,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		if (flag) 
 			cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"error_word"})
 
-			//angular.element(document.querySelectorAll(".CodeMirror-gutter-elt")).addClass("error_word fa fa-times-circle")
 			angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).attr("target","Measure Missing")
-//			angular.element(document.querySelectorAll(".CodeMirrorMathematica .CodeMirror-code span.error_word ")).append("<span class='fake' target='Measure Missing'></span>")
 	}
 
 
@@ -184,8 +163,6 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				}
 			}
 			if(response=="MAX"){
-				//if add atomic:true it is not modificable
-				//angular.element(document.querySelectorAll(".CodeMirror-code span.cm-keyword")).addClass("cm-m-max")
 				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-max",atomic:true});
 			}else if(response=="MIN"){
 				cm.markText({line:cm.getCursor().line,ch:token.start},{line:cm.getCursor().line,ch:token.end},{className:"cm-m-min",atomic:true})
@@ -203,15 +180,12 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		sbiModule_restServices.get("1.0/kpi", 'listMeasure').success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
 					} else {
 
 						$scope.measures=data;
-						console.log($scope.measures);
 					}
 
 				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
 
 				})
 	}
@@ -229,7 +203,6 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		cm.setValue("");
 		cm.clearHistory();
 
-		// cm.clearGutter("gutterId");
 		$scope.kpi.definition =JSON.parse($scope.kpi.definition);
 		cm.setValue($scope.kpi.definition.formulaSimple);
 		$scope.changeIndexWithMeasures($scope.kpi.definition,cm);
@@ -495,7 +468,6 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingmeasure"));
 			}
 			if($scope.formula!="" && flag){
-				//	$scope.showAction($scope.formulaDecoded);
 				$scope.formulaForDB["formula"] =$scope.formula ;
 				$scope.formulaForDB["measures"]=$scope.measuresToJSON;
 				$scope.formulaForDB["functions"]=$scope.functionsTOJSON;

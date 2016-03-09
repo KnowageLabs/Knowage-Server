@@ -30,11 +30,9 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 			},0)
 
 			angular.copy(response.data,$scope.kpi); 
-			console.log($scope.kpi);
 			$scope.flagActivateBrother('loadedEvent');
 
 		},function(response){
-			console.log("errore")
 		});
 
 	}
@@ -69,7 +67,6 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
-			console.log("errore")
 		});
 	}
 	$scope.getListKPI();

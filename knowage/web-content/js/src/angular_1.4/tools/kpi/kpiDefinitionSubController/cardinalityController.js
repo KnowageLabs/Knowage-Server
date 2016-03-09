@@ -15,10 +15,10 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		if($scope.cardinality.measureList.length>0){
 			$scope.createFormulaToShow();
 		}
-		
+
 	})
 
-	
+
 	$scope.$on('nullCardinalityEvent',function(e){
 		$scope.clearFormulaToShow();
 		$scope.attributesList=[];
@@ -28,9 +28,9 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.clearFormulaToShow = function(){
 		angular.element(document.getElementsByClassName("showFormula")).remove();
 
-	
+
 	}
-	
+
 
 	$scope.getAllMeasure=function(){
 		if(Object.keys($scope.cardinality).length!=0){
@@ -43,7 +43,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 				}
 			}
 		}
-		
+
 	};
 	$scope.getAllMeasure();
 
@@ -97,7 +97,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	}
 
 
-	//hide box if measure not have attribute
+	//hide box if measure not has attribute
 	$scope.measureHaveAttribute=function(attr,measure){
 		return measure.attributes.hasOwnProperty(attr);
 	}
@@ -111,8 +111,6 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		return !$scope.isContainedByUnderSet(attr,measure);
 	}
 
-	//la mia misura contiene (selezionati) tutti gli attributes della cardinalità  (gli attributes del campo union)
-	//IL MUMERO DI attributes SELEZIONATI DELLA MISURA è UGUALE AL NUMERO DI ELEMENTI  DELL' UNIONE
 	$scope.checkMeasure=function(measure){
 		var tot=0;
 		for( var attr in measure.attributes){
@@ -218,15 +216,15 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	}
 
 	$scope.blinkMeasure=function(event,attr,index){
-		//blink measure in formula  event.target.cellIndex
-		
+		//blink measure in formula 
+
 		$scope.currentCell.row = attr;
 		$scope.currentCell.column = index;
 		$scope.indexOfMeasure  = index;
 		string="M"+$scope.indexOfMeasure ;
 		angular.element(document.getElementById(string)).css('background','#eceff1 ');
 
-		
+
 	}
 
 	$scope.removeblinkMeasure=function(){
