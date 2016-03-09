@@ -615,7 +615,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<Threshold> listThreshold() {
-		List<SbiKpiThreshold> sbiLst = list(SbiKpiThreshold.class);
+		List<SbiKpiThreshold> sbiLst = list(new ICriterion<SbiKpiThreshold>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session
+						.createCriteria(SbiKpiThreshold.class)
+						.setProjection(
+								Projections.projectionList().add(Projections.property("id"), "id").add(Projections.property("name"), "name")
+										.add(Projections.property("description"), "description"))
+						.setResultTransformer(Transformers.aliasToBean(SbiKpiThreshold.class));
+			}
+		});
 		List<Threshold> thresholds = new ArrayList<>();
 		for (SbiKpiThreshold sbiThreshold : sbiLst) {
 			thresholds.add(from(sbiThreshold, false));
@@ -672,14 +682,21 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return kpi;
 	}
 
+	/**
+	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
+	 * 
+	 * @param sbiKpiThreshold
+	 * @param full
+	 * @return
+	 */
 	private Threshold from(SbiKpiThreshold sbiKpiThreshold, boolean full) {
 		Threshold threshold = new Threshold();
 		threshold.setId(sbiKpiThreshold.getId());
 		threshold.setName(sbiKpiThreshold.getName());
 		threshold.setDescription(sbiKpiThreshold.getDescription());
-		threshold.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiThreshold.getType().getValueNm()));// sbiKpiThreshold.getType().getValueNm());
-		threshold.setTypeId(sbiKpiThreshold.getType().getValueId());
 		if (full) {
+			threshold.setType(MessageBuilderFactory.getMessageBuilder().getMessage(sbiKpiThreshold.getType().getValueNm()));
+			threshold.setTypeId(sbiKpiThreshold.getType().getValueId());
 			for (Object obj : sbiKpiThreshold.getSbiKpiThresholdValues()) {
 				SbiKpiThresholdValue sbiValue = (SbiKpiThresholdValue) obj;
 				ThresholdValue tv = new ThresholdValue();
