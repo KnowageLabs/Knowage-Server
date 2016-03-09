@@ -148,7 +148,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{name}/existsMeasure")
-	public String loadMeasureByName(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
+	public String existsMeasure(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		return dao.existsMeasureNames(name).toString();
 	}
@@ -317,7 +317,7 @@ public class KpiService {
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
 			List<String> errors = new ArrayList<>();
-			checkMandatory_(errors, kpi);
+			checkMandatory(req, errors, kpi);
 
 			if (kpi.getThreshold() == null) {
 				errors.add(getMessage(NEW_KPI_THRESHOLD_MANDATORY));
@@ -489,7 +489,7 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory_(List<String> errors, Kpi kpi) throws JSONException {
+	private void checkMandatory(HttpServletRequest req, List<String> errors, Kpi kpi) throws JSONException, EMFUserError {
 		if (kpi.getName() == null) {
 			errors.add(getMessage(NEW_KPI_NAME_MANDATORY));
 		}
@@ -511,10 +511,10 @@ public class KpiService {
 				errors.add(getMessage(NEW_KPI_DEFINITION_INVALIDCHARACTERS));
 			}
 			// validating kpi formula
-			JSONArray measures = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
-			// TODO
-			// IKpiDAO dao = getKpiDAO(req);
-			// dao.existsMeasureNames
+			JSONArray measureArray = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
+			IKpiDAO dao = getKpiDAO(req);
+			String[] measures = measureArray.join(",").split(",");
+			dao.existsMeasureNames(measures);
 		}
 	}
 
