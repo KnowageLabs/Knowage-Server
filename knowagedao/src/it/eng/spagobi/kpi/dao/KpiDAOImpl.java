@@ -888,8 +888,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						.add(Restrictions.eq("type.valueCd", MEASURE)).add(Restrictions.in("sbiKpiAlias.name", names));
 			}
 		});
-		return ruleOutputs != null && !ruleOutputs.isEmpty();
-		// TODO check if measures are all existing
+		return ruleOutputs != null && ruleOutputs.size() == names.length;
 	}
 
 }
