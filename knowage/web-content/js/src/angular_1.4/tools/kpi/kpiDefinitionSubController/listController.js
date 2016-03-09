@@ -8,12 +8,8 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 	}
 
 	$scope.addKpi= function(){
-		$scope.kpi.id=undefined;
-		$scope.kpi.name='';
-		$scope.kpi.definition='';
-		$scope.kpi.cardinality={};
-		angular.copy({},$scope.cardinality);
-
+		angular.copy($scope.emptyKpi,$scope.kpi);
+		
 		$timeout(function(){
 			$scope.selectedTab.tab=0;
 		},0)

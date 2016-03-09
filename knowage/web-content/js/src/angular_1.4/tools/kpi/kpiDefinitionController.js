@@ -11,6 +11,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.translate=sbiModule_translate;
 	//variables formula
 	$scope.checkFormula = false;
+	$scope.emptyKpi = {"name":"","definition":"",'id':undefined,cardinality:"{\"measureList\":[],\"checkedAttribute\":{}}",threshold:{thresholdValues:[]},placeholder:""};
 	$scope.kpi = {"name":"","definition":"",'id':undefined};
 	$scope.activeSave = "";
 	$scope.AttributeCategoryList=[];
@@ -41,9 +42,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		if($scope.showGUI){
 			$scope.showSaveGUI().then(function(response){{}
 			if($scope.activeSave=="add"){
-				//int his moment i set manually threshold
-				$scope.kpi.threshold= {"id":1,"description":"test soglia 1","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":3,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
-
 				$scope.saveKPI();
 			}else{
 				$scope.saveKPI();
@@ -214,7 +212,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		
 		$scope.$broadcast ('parseEvent');
 		if($scope.kpi.cardinality!=undefined && Object.keys($scope.kpi.cardinality).length!=0){
-			var obj = JSON.parse($scope.kpi.cardinality);
+			var obj=$scope.kpi.cardinality
+			if(!angular.isObject($scope.kpi.cardinality)){ 
+				 obj = JSON.parse($scope.kpi.cardinality);
+			}
 			if(obj.measureList.length!=0 && !$scope.formulaModified.value){
 				angular.copy(obj,$scope.cardinality); 
 				$scope.$broadcast ('activateCardinalityEvent');
@@ -239,9 +240,9 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				$scope.resetMatrix();
 			}
 		}else{
-			if( Object.keys($scope.kpi.cardinality).length==0){
-				$scope.$broadcast ('nullCardinalityEvent');
-			}else
+//			if( Object.keys($scope.kpi.cardinality).length==0){
+//				$scope.$broadcast ('nullCardinalityEvent');
+//			}else
 				$scope.resetMatrix();
 		}
 
@@ -285,9 +286,9 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	};
 	
 	$scope.loadThreshold=function(){
-		if(!$scope.kpi.threshold){
-			$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":2,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
-		}
+//		if(!$scope.kpi.threshold){
+//			$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":2,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
+//		}
 		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
 			$scope.kpi.threshold.thresholdValues[i].move="<div layout=\"row\"> " 
 															+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
