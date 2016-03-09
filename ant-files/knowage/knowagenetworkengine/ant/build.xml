@@ -178,8 +178,6 @@
 				<file name='./spagobi/commons/Format.js' />
 				<file name='./spagobi/commons/Utils.js' />
 
-				<file name='./spagobi/locale/LocaleUtils.js' />
-
 				<file name='./spagobi/network/NetworkContainerPanel.js' />
 				<file name='./spagobi/network/NetworkInfoPanel.js' />
 				<file name='./spagobi/network/NetworkObject.js' />
