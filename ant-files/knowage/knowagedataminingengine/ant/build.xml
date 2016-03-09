@@ -177,23 +177,8 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/datamining-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name='./spagobi/service/ServiceRegistry.js' />
-				<file name='./spagobi/service/RestService.js' />
-
-				<file name='./spagobi/commons/Format.js' />
-				<file name='./spagobi/commons/Utils.js' />
-				<file name='./spagobi/commons/Log.js' />
-
-				<file name='./spagobi/widgets/Help.js' />
-
+				<file name='./src/angular_1.4/datamining/dataminingController.js' />
 				<file name='./spagobi/exception/ExceptionHandler.js' />
-
-				<file name='./spagobi/datamining/ResultPanel.js' />
-				<file name='./spagobi/datamining/UploadPanel.js' />
-				<file name='./spagobi/datamining/OutputPanel.js' />
-				<file name='./spagobi/datamining/OutputsTabPanel.js' />
-				<file name='./spagobi/datamining/CommandsTabPanel.js' />
-				<file name='./spagobi/datamining/DataMiningPanel.js' />
 
 			</filelist>
 
