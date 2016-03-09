@@ -27,6 +27,7 @@ function olapFunction(
 		sbiModule_messaging,
 		sbiModule_restServices
 ) {
+	
 	templateRoot = "/knowagewhatifengine/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
@@ -93,6 +94,26 @@ function olapFunction(
 	var oldSelectedFilter="";
 	var visibleSelected = [];
 	
+	$scope.handleResponse = function(response) {
+		source = response.data;
+		$scope.table = $sce.trustAsHtml(source.table)
+		$scope.columns = source.columns;
+		$scope.rows = source.rows;
+		$scope.columnsAxisOrdinal = source.columnsAxisOrdinal;
+		$scope.filterCardList = source.filters;
+		$scope.hasPendingTransformations = source.hasPendingTransformations;
+		$scope.modelConfig = source.modelConfig;
+		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
+		$scope.showMdxVar = source.mdxFormatted;
+	}
+	
+
+	$scope.crossNavigationEnabled = false;
+	
+	$scope.enableDisableCrossNavigation = function() {
+		$scope.crossNavigationEnabled = !$scope.crossNavigationEnabled;
+	}
+	
 	$scope.enableDisableSorting = function(){
 		
 		$scope.sortDisable();
@@ -141,8 +162,7 @@ function olapFunction(
 		 sbiModule_restServices.promisePost
 		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
 			.then(function(response) {
-				$scope.table = $sce.trustAsHtml(response.data.table);
-				$scope.modelConfig = response.data.modelConfig;				
+				$scope.handleResponse(response);			
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 				
@@ -155,8 +175,7 @@ function olapFunction(
 		 sbiModule_restServices.promisePost
 		 ('1.0/axis/'+axis+'/moveHierarchy/'+hierarchieUniqeName+'/'+newPosition+'/'+direction+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
 			.then(function(response) {
-				$scope.table = $sce.trustAsHtml(response.data.table);
-				$scope.modelConfig = response.data.modelConfig;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while movin hierarchy", 'Error');
 				
@@ -169,8 +188,7 @@ function olapFunction(
 		 sbiModule_restServices.promisePost
 		 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
 			.then(function(response) {
-				$scope.table = $sce.trustAsHtml(response.data.table);
-				$scope.modelConfig = response.data.modelConfig;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
 				
@@ -185,10 +203,7 @@ function olapFunction(
 			.then(function(response) {
 				$scope.table = $sce.trustAsHtml( response.data.table);
 				   $scope.ready = true;
-				   $scope.rows = response.data.rows;
-				   $scope.columns = response.data.columns;
-				   $scope.filterCardList = response.data.filters;
-				   $scope.showMdxVar = response.data.mdxFormatted;
+				   $scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("error", 'Error');
 				
@@ -200,11 +215,7 @@ function olapFunction(
 		 
 		 sbiModule_restServices.promiseGet("1.0","/member/sort/1/0/[[Measures].[Unit Sales]]/BDESC?SBI_EXECUTION_ID="+JSsbiExecutionID)
 			.then(function(response) {
-				   $scope.table = $sce.trustAsHtml( response.data.table);
-				   $scope.rows = response.data.rows;
-				   $scope.columns = response.data.columns;
-				   $scope.filterCardList = response.data.filters;
-				   $scope.showMdxVar = response.data.mdxFormatted;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
@@ -215,12 +226,7 @@ function olapFunction(
 		 
 		 sbiModule_restServices.promiseGet("1.0","/member/sort/disable?SBI_EXECUTION_ID="+JSsbiExecutionID)
 			.then(function(response) {
-				   $scope.table = $sce.trustAsHtml( response.data.table);
-				   $scope.rows = response.data.rows;
-			 		$scope.modelConfig = response.data.modelConfig;
-				   $scope.columns = response.data.columns;
-				   $scope.filterCardList = response.data.filters;
-				   $scope.showMdxVar = response.data.mdxFormatted;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
@@ -241,11 +247,7 @@ function olapFunction(
 		 
 		 sbiModule_restServices.promiseGet("1.0",path)
 			.then(function(response) {
-				   $scope.table = $sce.trustAsHtml( response.data.table);
-				   $scope.rows = response.data.rows;
-				   $scope.columns = response.data.columns;
-				   $scope.filterCardList = response.data.filters;
-				   $scope.showMdxVar = response.data.mdxFormatted;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
@@ -449,7 +451,6 @@ function olapFunction(
 			});
 	}
 	
-	
 	$scope.sendWriteBackCellService = function(ordinal,expression){
 		
 		 var path = '/model/setValue/'+ordinal+'?SBI_EXECUTION_ID='+JSsbiExecutionID; 
@@ -458,11 +459,7 @@ function olapFunction(
 		 
 		 sbiModule_restServices.promisePost("1.0/model/setValue/"+ordinal+"?SBI_EXECUTION_ID="+JSsbiExecutionID,"",st)
 			.then(function(response) {
-				   $scope.table = $sce.trustAsHtml( response.data.table);
-				   $scope.rows = response.data.rows;
-				   $scope.columns = response.data.columns;
-				   $scope.filterCardList = response.data.filters;
-				   $scope.showMdxVar = response.data.mdxFormatted;
+				$scope.handleResponse(response);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("error", 'Error');
 				
@@ -552,17 +549,11 @@ function olapFunction(
 	$scope.sendMdxQuery = function(mdx) {
 		sbiModule_restServices.promisePost("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID,"",mdx)
 		.then(function(response) {
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.rows = response.data.rows;
-			$scope.columns = response.data.columns;
-			$scope.filterCardList = response.data.filters;
+			$scope.handleResponse(response);
 			checkShift();
-			$scope.showMdxVar = response.data.mdxFormatted;
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-			$scope.modelConfig = response.data.modelConfig;
-
-			initFilterList();
+			initFilterList();			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
@@ -614,8 +605,7 @@ function olapFunction(
 		sbiModule_restServices.promiseGet
 		("1.0",'/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response) {
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.showMdxVar = response.data.mdxFormatted;
+			$scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
 			
@@ -626,28 +616,24 @@ function olapFunction(
 		sbiModule_restServices.promiseGet
 		("1.0",'/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response) {
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.showMdxVar = response.data.mdxFormatted;
+			$scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
 			
 		});		
 	}
+	
+	
+
 
 	$scope.swapAxis = function() {
 		sbiModule_restServices.promisePost("1.0/axis/swap?SBI_EXECUTION_ID="+JSsbiExecutionID,"")
 		.then(function(response) {
-			var x;
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			x = $scope.rows;
-			$scope.rows = $scope.columns;
-			$scope.columns = x;
-			
+			$scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured during swap axis functionality", 'Error');
 			
-		});	
-	}
+		});	}
 
 	$scope.openFilters = function(ev) {
 		$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(
