@@ -46,6 +46,7 @@
                 		ng-model=thresholdList
                 		item-name='name' 
                 		show-search-bar=true
+                		click-function="loadSelectedThreshold(item,listId)" 
                 		>
                 		</angular-list>
 

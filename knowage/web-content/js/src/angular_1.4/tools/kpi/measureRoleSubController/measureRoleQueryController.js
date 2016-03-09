@@ -132,6 +132,10 @@ $scope.isPlaceholderCM=function(cm){
 	}
 	$scope.loadDatasources();
 	
+	$scope.$on('alterDatasource', function(event, args) {
+		$scope.alterDatasource(args.datasourceId) 
+ 	});
+	
 	$scope.alterDatasource=function(datasrc){
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/"+datasrc)
 		.then(function(response){

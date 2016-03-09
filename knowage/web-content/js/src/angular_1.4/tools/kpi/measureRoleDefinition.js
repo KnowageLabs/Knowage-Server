@@ -22,6 +22,11 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.$broadcast("loadRuleById",{ruleId:ruleId});
 	}
 	
+	$scope.broadcastAlterDatasource=function(dataSourceId){
+		
+		$scope.$broadcast("alterDatasource",{datasourceId:dataSourceId});
+	}
+	
 	$scope.broadcastLoadAliasList=function(ruleId){
 		var deferred = $q.defer();
 		$scope.$broadcast("loadAliasList",{ruleId:ruleId,deferred:deferred});
@@ -439,7 +444,8 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 						angular.copy(response.data,$scope.originalRule);
 						angular.copy($scope.emptyProperty,$scope.detailProperty);
 						$scope.detailProperty.dataSourcesIsSelected=true;
-						$scope.detailProperty.queryChanged=false; 
+						$scope.detailProperty.queryChanged=false;  
+						$scope.broadcastAlterDatasource(response.data.dataSourceId); 
 						$angularListDetail.goToDetail();
 						$timeout(function(){
 							angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror.refresh();

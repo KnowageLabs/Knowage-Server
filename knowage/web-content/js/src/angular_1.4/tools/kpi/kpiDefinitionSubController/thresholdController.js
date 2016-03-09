@@ -101,11 +101,7 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	
 	
 	
-	$scope.thresholdFunction={
-			toggleMin: function(row,column,evt){
-				evt.stopPropagation();
-				console.log("Download .....");
-			},
+	$scope.thresholdFunction={ 
 			severityType:[],
 			moveUp: function(evt,index){
 				evt.stopPropagation();
@@ -134,5 +130,15 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 			}
 	}
 
-	
+	$scope.loadSelectedThreshold=function(item,listId){ 
+		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadThreshold")
+		.then(function(response){  
+			angular.copy(response.data,$scope.kpi.threshold);
+			$scope.loadThreshold();
+		},function(response){
+			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.threshold.error"));
+		});
+		
+		
+	}
 }
