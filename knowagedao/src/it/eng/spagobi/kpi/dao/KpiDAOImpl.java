@@ -454,10 +454,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Boolean execute(Session session) throws Exception {
 				SbiKpiKpi kpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, id);
+				Integer categoryId = kpi.getCategory().getValueId();
+				Integer kpiId = kpi.getId();
+				session.delete(kpi);
 				if (kpi.getCategory() != null) {
-					Integer categoryId = kpi.getCategory().getValueId();
-					Integer kpiId = kpi.getId();
-					session.delete(kpi);
 					removeKpiCategory(session, categoryId, kpiId);
 				}
 				return Boolean.TRUE;
@@ -639,10 +639,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		ruleOutput.setAlias(sbiKpiRuleOutput.getSbiKpiAlias().getName());
 		ruleOutput.setAliasId(sbiKpiRuleOutput.getSbiKpiAlias().getId());
 		if (sbiKpiRuleOutput.getCategory() != null) {
-			Domain category = new Domain();
-			category.setValueId(sbiKpiRuleOutput.getCategory().getValueId());
-			category.setValueCd(sbiKpiRuleOutput.getCategory().getValueCd());
-			ruleOutput.setCategory(category);
+			ruleOutput.setCategory(from(sbiKpiRuleOutput.getCategory()));
 		}
 		if (sbiKpiRuleOutput.getHierarchy() != null) {
 			ruleOutput.setHierarchy(from(sbiKpiRuleOutput.getHierarchy()));
