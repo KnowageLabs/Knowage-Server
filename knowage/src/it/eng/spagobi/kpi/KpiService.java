@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.kpi;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -48,37 +76,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -192,7 +192,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -322,8 +322,8 @@ public class KpiService {
 
 			if (errors.isEmpty()) {
 				// kpi name must be unique
-				if (kpi.getId() == null && dao.getKpiIdByName(kpi.getName()) != null || kpi.getId() != null
-						&& !kpi.getId().equals(dao.getKpiIdByName(kpi.getName()))) {
+				if (kpi.getId() == null && dao.getKpiIdByName(kpi.getName()) != null
+						|| kpi.getId() != null && !kpi.getId().equals(dao.getKpiIdByName(kpi.getName()))) {
 					errors.add(MessageFormat.format(message.getMessage(NEW_KPI_KPI_NAME_NOT_AVAILABLE), kpi.getName()));
 				}
 			}
@@ -382,7 +382,7 @@ public class KpiService {
 	 */
 	private void checkPlaceholder(List<String> errors, String placeholder) throws JSONException {
 		// currently we are only checking input string for valid json format
-		new JSONArray(placeholder);
+		new JSONObject(placeholder);
 	}
 
 	private class Measure {

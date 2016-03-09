@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/kpiCustomStyle.css", currTheme)%>">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/cardinalityController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/filtersController.js"></script>
 <script type="text/ng-template" id="templatesaveKPI.html">
 <md-dialog aria-label="Select Function"  ng-cloak>
   <form>
@@ -128,10 +129,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab3" >
+				<md-tab id="tab3"  md-on-select="setFilters()">
        				<md-tab-label>{{translate.load("sbi.kpi.filters")}}</md-tab-label>
         			<md-tab-body>
-        			TODO
+        			<%@include	file="./kpiTemplate/filtersTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				

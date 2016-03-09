@@ -9,6 +9,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 
 	$scope.$on('activateCardinalityEvent',function(e){
+		$scope.attributesList=[];
 		$scope.getAllMeasure();
 		$scope.clearFormulaToShow();
 		if($scope.cardinality.measureList.length>0){

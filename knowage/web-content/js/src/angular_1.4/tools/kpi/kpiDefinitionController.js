@@ -5,9 +5,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast',kpiDefinitionMasterControllerFunction ]);
+app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout',kpiDefinitionMasterControllerFunction ]);
 
-function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast){
+function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout){
 	$scope.translate=sbiModule_translate;
 	//variables formula
 	$scope.checkFormula = false;
@@ -20,6 +20,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
 	$scope.selectedTab={'tab':0};
+	
+	//variables placeholder
+	$scope.placeHolderObjectList = {};
+	$scope.placeHolderList=[];
 	
 	//variables cardinality
 	$scope.cardinality={};
@@ -140,10 +144,28 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}
 		});
 	}
-
+	$scope.parsePlaceholder = function(){
+		for(var key in Object.keys($scope.kpi.placeholder)){
+			if($scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]]==""){
+				delete $scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]];
+			}
+		}
+		 
+	}
 	$scope.saveKPI = function(){
-		$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
-		$scope.kpi.cardinality=JSON.stringify($scope.cardinality);
+		if(angular.isObject($scope.kpi.definition)){
+			$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
+
+		}
+		if(Object.keys($scope.cardinality).length>0){
+			$scope.kpi.cardinality=JSON.stringify($scope.cardinality);
+		}
+		if(angular.isObject($scope.kpi.placeholder)){
+			$scope.parsePlaceholder();
+			$scope.kpi.placeholder=JSON.stringify($scope.kpi.placeholder);
+		}
+		
+		
 		//after i'm setting this with a method getthreshold()
 		$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":3,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
 		//$scope.kpi.threshold = JSON.stringify($scope.kpi.threshold);
@@ -240,9 +262,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				$scope.resetMatrix();
 			}
 		}else{
-//			if( Object.keys($scope.kpi.cardinality).length==0){
-//				$scope.$broadcast ('nullCardinalityEvent');
-//			}else
+		
+				$scope.$broadcast ('nullCardinalityEvent');
 				$scope.resetMatrix();
 		}
 
@@ -263,7 +284,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 							angular.copy(data,$scope.cardinality.measureList);
 							$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
 							$scope.$broadcast ('activateCardinalityEvent');
-							//$scope.cardinality.measureList=data;
 						}
 
 					}).error(function(data, status, headers, config) {
@@ -273,15 +293,60 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		}
 	}
-	$scope.indexInList=function(item, list) {
 
+	$scope.setFilters = function(){
+		$scope.$broadcast ('parseEvent');
+		$scope.placeHolderList=[];
+		if($scope.kpi.placeholder=="" || $scope.kpi.placeholder==null || Object.keys($scope.kpi.placeholder).length==0){
+			$scope.kpi.placeholder={};
+			if($scope.kpi.definition!=undefined && Object.keys($scope.kpi.definition).length!=0){
+				$scope.$broadcast('activateFiltersEvent');
+			}
+		}else if($scope.formulaModified.value){
+			//I keep only placeholder valid
+			sbiModule_restServices.post("1.0/kpi", 'listPlaceholderByMeasures',$scope.kpi.definition.measures).success(
+					function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							console.log("layer non Ottenuti");
+						} else {
+
+							var lista=data;
+							if(!angular.isObject($scope.kpi.placeholder)){
+								$scope.kpi.placeholder = JSON.parse($scope.kpi.placeholder);
+							}
+							
+							for(key in Object.keys($scope.kpi.placeholder)){
+								if(lista.indexOf(Object.keys($scope.kpi.placeholder)[key])==-1){
+									//remove placeholder
+									delete $scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]];
+								}
+							}
+						}
+						$scope.$broadcast('activateFiltersEvent');
+
+					}).error(function(data, status, headers, config) {
+						console.log("layer non Ottenuti " + status);
+
+					})
+			
+
+			
+		}else{
+			//placeholder presents
+			$scope.kpi.placeholder = JSON.parse($scope.kpi.placeholder);
+			$scope.$broadcast('activateFiltersEvent');
+		}
+
+		
+	}
+	
+	$scope.indexInList=function(item, list) {
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.measureName==item){
 				return i;
 			}
 		}
-
 		return -1;
 	};
 	
