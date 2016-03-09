@@ -973,25 +973,27 @@ function renderWordCloud(chartConf,catchSVG){
 //		}	
 		
 		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+		/**
+		 * KNOWAGE-701 and 702 JIRA issue: removed height and width from the customization of the 
+		 * toolbar (breadcrumbs), since those two are dictated by the dimensions of the words inside
+		 * the each segment of the toolbar (breadcrumb).
+		 * 		 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 //		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width)*bcHeightFactor;
-		var bcHeight = parseInt(jsonObject.toolbar.style.height)*bcWidthFactor;
+//		var bcHeight = parseInt(jsonObject.toolbar.style.height)*bcWidthFactor;
 		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
 		var bcTail = parseInt(jsonObject.toolbar.style.tail);
 		
 		/**
-		 * If the height of the breadcrumb (toolbar) is smaller than the font size user
-		 * specified for its text (content), take the font size value, since that is the 
-		 * height of the font (text) and set it as the height of the breadcrumb (segements
-		 * that contain text). Breadcrumb height should follow this value in the described
-		 * case, when we will add another 5px for padding of the text inside the breadcrumb 
-		 * - from the bottom edge and from the top egde).
-		 * 
+		 * KNOWAGE-702 JIRA issue: removed height from the customization of the toolbar
+		 * (breadcrumbs).		 
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if (bcHeight < Number(removePixelsFromFontSize(jsonObject.toolbar.style.fontSize)))
-		{
+//		if (bcHeight < Number(removePixelsFromFontSize(jsonObject.toolbar.style.fontSize)))
+//		{
 			bcHeight = Number(removePixelsFromFontSize(jsonObject.toolbar.style.fontSize)) + 5;
-		}
+//		}
 		
 		/* Dimensions of the Sunburst chart. */
 	    /* Dimensions of the window in which chart is going to be placed.
