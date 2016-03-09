@@ -249,7 +249,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <!-- START-PRODUCTION 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi-all-ext410-5.1.0.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi-all-ext410-1.0.js")%>'></script>
 
 END-PRODUCTION -->
 
