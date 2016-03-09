@@ -841,6 +841,31 @@ function olapFunction(
 		$scope.showDialog(ev,$scope.filterDial);
 	}
 	
+	$scope.checkCheckboxes = function (item, list) {
+		if(item.hasOwnProperty("name")){
+			var index = $scope.indexInList(item, list);
+
+			if(index != -1){
+				$scope.dtAssociatedLevels.splice(index,1);
+			}else{
+				$scope.dtAssociatedLevels.push(item);
+			}
+		} 
+		console.log($scope.dtAssociatedLevels);
+	};
+	
+	$scope.indexInList=function(item, list) {
+		if(item.hasOwnProperty("name")){
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.name==item.name){
+				return i;
+			}
+		}
+		}
+		return -1;
+	}
+	
 	$scope.getCollections = function() {
 		
 		sbiModule_restServices.promiseGet
@@ -853,13 +878,6 @@ function olapFunction(
 			
 				});
 		}
-	$scope.treeOptions = {
-			
-			multiSelection: true,
-			dirSelectable: false
-			
-	
-	};
 	$scope.drillThrough = function(ordinal) {
 
 		var c = JSON.stringify($scope.dtAssociatedLevels);
