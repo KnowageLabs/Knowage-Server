@@ -330,7 +330,7 @@ public class KpiService {
 				checkCardinality(errors, kpi.getCardinality());
 			}
 			if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
-				checkPlaceholder(req, errors, kpi);
+				checkPlaceholder(req, kpi);
 			}
 
 			if (!errors.isEmpty()) {
@@ -348,7 +348,7 @@ public class KpiService {
 			}
 
 			return Response.ok().build();
-		} catch (IOException | JSONException e) {
+		} catch (IOException | JSONException | SpagoBIException e) {
 			logger.error(req.getPathInfo(), e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
@@ -375,32 +375,44 @@ public class KpiService {
 	 */
 
 	/**
-	 * @param req
+	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
+	 * 
+	 * @param servlet
+	 *            request
 	 * @param placeholder
 	 * @throws EMFUserError
+	 * @throws SpagoBIException
 	 * @throws JSONException
 	 */
-	private void checkPlaceholder(HttpServletRequest req, List<String> errors, Kpi kpi) throws EMFUserError {
-		// currently we are only checking input string for valid json format
+	private void checkPlaceholder(HttpServletRequest req, Kpi kpi) throws EMFUserError, SpagoBIException {
+		Iterator<String> placeholders = null;
 		try {
-			new JSONArray(kpi.getPlaceholder());
+			placeholders = new JSONObject(kpi.getPlaceholder()).keys();
 		} catch (JSONException e) {
-			logger.error(getMessage(NEW_KPI_KPI_PLACEHOLDER_NOT_VALID_JSON), e);
+			throw new SpagoBIServiceException(getMessage(NEW_KPI_KPI_PLACEHOLDER_NOT_VALID_JSON), e);
 		}
-		try {
-			JSONArray measuresArray = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
-			IKpiDAO dao = getKpiDAO(req);
-			List<String> measureList = new ArrayList<>();
-			for (int i = 0; i < measuresArray.length(); i++) {
-				if (!measureList.contains(measuresArray.getString(i))) {
-					measureList.add(measuresArray.getString(i));
+		if (placeholders.hasNext()) {
+			try {
+				JSONArray measuresArray = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
+				IKpiDAO dao = getKpiDAO(req);
+				List<String> measureList = new ArrayList<>();
+				for (int i = 0; i < measuresArray.length(); i++) {
+					if (!measureList.contains(measuresArray.getString(i))) {
+						measureList.add(measuresArray.getString(i));
+					}
 				}
+				if (!measureList.isEmpty()) {
+					List<String> lst = dao.listPlaceholderByMeasures(measureList);
+					while (placeholders.hasNext()) {
+						String placeholder = placeholders.next();
+						if (!lst.contains(placeholder)) {
+							throw new SpagoBIException("Placeholder \"" + placeholder + "\" not valid");
+						}
+					}
+				}
+			} catch (JSONException e) {
+				throw new SpagoBIServiceException("KPI - checkPlaceholder - error", e);
 			}
-			if (!measureList.isEmpty()) {
-				List<String> lst = dao.listPlaceholderByMeasures(measureList);
-			}
-		} catch (JSONException e) {
-			logger.error("KPI - checkPlaceholder - error", e);
 		}
 	}
 
