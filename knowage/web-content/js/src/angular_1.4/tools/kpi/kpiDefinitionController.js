@@ -27,7 +27,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.placeHolderList=[];
 	
 	//variables cardinality
-	$scope.cardinality={};
+	$scope.cardinality={"measureList":[],"checkedAttribute":{}};
 
 	
 	
@@ -100,7 +100,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			});
 		}else{
 			$scope.formulaModified.value=false;
-			angular.copy({},$scope.cardinality);
+			angular.copy({"measureList":[],"checkedAttribute":{}},$scope.cardinality);
 			$scope.$broadcast('clearAllEvent');
 			$scope.$broadcast ('cancelEvent');
 		}
