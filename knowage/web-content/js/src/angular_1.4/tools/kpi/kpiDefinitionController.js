@@ -375,7 +375,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$scope.kpi.threshold.thresholdValues[i].includeMinCheck="<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>";
 			$scope.kpi.threshold.thresholdValues[i].includeMaxCheck='<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
 			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
-			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severity" class="noMargin">'
+			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severityId" class="noMargin">'
 																		+'<md-option value=""></md-option>'
 																		+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
 																		+'	{{sev.translatedValueName}}'
