@@ -28,7 +28,7 @@
 
  <md-button class="md-raised" ng-click="addNewThreshold()">Add new Threshold</md-button>
 <angular-table ng-show="kpi.threshold.thresholdValues.length>0" flex class="overflow relative" full-width
-		id='kpiListTable' ng-model=kpi.threshold.thresholdValues
+		id='kpiListTableThreshold' ng-model=kpi.threshold.thresholdValues
 		columns='thresholdColumn'
 		click-function="" 
 		scope-functions="thresholdFunction"

@@ -110,8 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		id='kpiListTable' ng-model=kpiList
 		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
 		columnsSearch='["name"]' show-search-bar=true
-		highlights-selected-item=true 
-		speed-menu-option=measureMenuOption scope-functions=tableFunction click-function="loadKPI(item);"> </angular-table>
+		speed-menu-option=measureMenuOption 
+		scope-functions=tableFunction 
+		click-function="loadKPI(item);"> </angular-table>
 		</list>
 		<detail save-function="parseFormula" cancel-function="cancel">
  	
