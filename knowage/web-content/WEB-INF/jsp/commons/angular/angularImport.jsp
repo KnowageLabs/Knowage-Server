@@ -74,5 +74,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/catalogue/css/angular-toastr.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js"></script>		
 
+<!-- colorpicker -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
+
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	

@@ -12,11 +12,11 @@ color:black;
 
 
 /* Tabella con molte colonne */
-angular-table[fullWidth] #angularTableTemplate{
+angular-table[full-width] #angularTableTemplate{
 /* padding: 0 !important; */
 width: 100%;
 }
-angular-table[fullWidth]  table{
+angular-table[full-width]  table{
 width: auto!important;
 }
 
