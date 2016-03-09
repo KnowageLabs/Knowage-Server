@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.pivot4j.ui.html;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.Writer;
 import java.util.HashMap;
@@ -38,13 +45,6 @@ import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.RenderPropertyUtils;
-
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -71,13 +71,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			// need the name of the measure to check if it's editable
 			String measureName = getMeasureName(context);
-			attributes.put("contentEditable", "true");
+
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
 			// String memberUniqueName = context.getMember().getUniqueName();
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('" + id + "','" + measureName + "')");
+			attributes.put("ng-dblclick", "makeEditable('" + id + "','" + measureName + "')");
 			attributes.put("id", id);
 		} else if (context.getCellType() == CellTypes.VALUE) {
 			String uniqueName = context.getMember().getUniqueName();
@@ -137,16 +137,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("ng-click",
-										"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + " ')");
+								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ " ')");
 								startElement("img", attributes);
 								endElement("img");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("ng-click",
-										"drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
+								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ "' )");
 
 								startElement("img", attributes);
 								endElement("img");
