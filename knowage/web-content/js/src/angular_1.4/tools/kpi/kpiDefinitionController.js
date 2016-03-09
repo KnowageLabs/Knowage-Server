@@ -35,9 +35,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_KPI_CATEGORY")
 	.then(function(response){ 
 		angular.copy(response.data,$scope.AttributeCategoryList);
-		console.log("Cisono",$scope.AttributeCategoryList);
 	},function(response){
-		console.log("errore")
+		
 	});
 
 	$scope.parseFormula = function(){
@@ -66,11 +65,11 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.cancelMeasureFunction=function(){
 		if(!angular.equals($scope.originalRule,$scope.currentRule)){
 			var confirm = $mdDialog.confirm()
-			.title('Modifica in corso?')
-			.content('sei sicuro di voler annullare l\'operazione?.')
+			.title($scope.translate.load("sbi.layer.modify.progress"))
+			.content($scope.translate.load("sbi.layer.modify.progress.message.modify"))
 			.ariaLabel('cancel metadata') 
-			.ok('OK')
-			.cancel('CANCEL');
+			.ok($scope.translate.load("sbi.general.ok"))
+			.cancel($scope.translate.load("sbi.general.cancel"));
 			$mdDialog.show(confirm).then(function() {
 
 				$angularListDetail.goToList();
@@ -85,11 +84,11 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.cancel = function(){
 		if($scope.formulaModified.value){
 			var confirm = $mdDialog.confirm()
-			.title('Modifica in corso?')
-			.content('sei sicuro di voler annullare l\'operazione?.')
+			.title($scope.translate.load("sbi.layer.modify.progress"))
+			.content($scope.translate.load("sbi.layer.modify.progress.message.modify"))
 			.ariaLabel('cancel metadata') 
-			.ok('OK')
-			.cancel('CANCEL');
+			.ok($scope.translate.load("sbi.general.ok"))
+			.cancel($scope.translate.load("sbi.general.cancel"));
 			$mdDialog.show(confirm).then(function() {
 				$scope.formulaModified.value=false;
 				$scope.cardinality.measureList=[];
@@ -172,7 +171,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		sbiModule_restServices.post("1.0/kpi", 'saveKpi',$scope.kpi).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
 						$scope.showAction(data);
 					} else {
 						$scope.$broadcast ('savedEvent');
@@ -180,7 +178,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					}
 
 				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
 					$scope.showAction(data);
 				})
 
@@ -217,7 +214,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 		}, function() {
-			console.log("annulla")
 		});
 	}
 	$scope.setTab = function(Tab){
@@ -278,7 +274,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			sbiModule_restServices.post("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							console.log("layer non Ottenuti");
 							$scope.showAction(data);
 						} else {
 							angular.copy(data,$scope.cardinality.measureList);
@@ -287,7 +282,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 						}
 
 					}).error(function(data, status, headers, config) {
-						console.log("layer non Ottenuti " + status);
 						$scope.showAction(data);
 					})
 
@@ -307,9 +301,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			sbiModule_restServices.post("1.0/kpi", 'listPlaceholderByMeasures',$scope.kpi.definition.measures).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							console.log("layer non Ottenuti");
 						} else {
-
 							var lista=data;
 							if(!angular.isObject($scope.kpi.placeholder)){
 								$scope.kpi.placeholder = JSON.parse($scope.kpi.placeholder);
@@ -325,7 +317,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 						$scope.$broadcast('activateFiltersEvent');
 
 					}).error(function(data, status, headers, config) {
-						console.log("layer non Ottenuti " + status);
 
 					})
 			
