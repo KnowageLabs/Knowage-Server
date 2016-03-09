@@ -150,7 +150,36 @@
 }
 
 
+color-picker.tableColorPiker span.color-picker-swatch{
+	top:0px!important;
+}
 
+color-picker.tableColorPiker input.color-picker-input, input.tableInput{
+	width: 100%;
+    background-color: transparent;
+    border: none;
+    min-width: 80px;
+    max-width: 200px;
+}
+
+color-picker.tableColorPiker .color-picker-panel{
+	position: fixed !important;
+	left:auto !important;
+}
+
+.noMargin{
+	margin:0px !important;
+}
+
+button.h20{
+	height: 20px !important;
+}
+
+
+/* angular-table.thresholdtable table>thead>tr>th>div { */
+/* 	min-width: 80px; */
+/*     max-width: 200px; */
+/* } */
 
 
 

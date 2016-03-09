@@ -1,4 +1,4 @@
-var app = angular.module('kpiDefinitionManager', [ 'ngMaterial', 'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror']);
+var app = angular.module('kpiDefinitionManager', [ 'ngMaterial', 'angular_table' ,'sbiModule', 'angular-list-detail','ui.codemirror','color.picker','angular_list']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
@@ -283,6 +283,56 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		return -1;
 	};
+	
+	$scope.loadThreshold=function(){
+		if(!$scope.kpi.threshold){
+			$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":2,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
+		}
+		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
+			$scope.kpi.threshold.thresholdValues[i].move="<div layout=\"row\"> " 
+															+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
+															+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
+															+" </md-button>" 
+															+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
+															+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
+															+"</md-button>" 
+															+"</div>";
+			$scope.kpi.threshold.thresholdValues[i].inputLable=' <input  class="tableInput" ng-model="row.label"  ></input>'
+			$scope.kpi.threshold.thresholdValues[i].includeNumericInputMin=' <input type="number" class="tableInput" ng-model="row.minValue" step="0,1"  ></input>'
+			$scope.kpi.threshold.thresholdValues[i].includeNumericInputMax=' <input type="number" class="tableInput" ng-model="row.maxValue" step="0,1"  ></input>'
+			$scope.kpi.threshold.thresholdValues[i].includeMinCheck="<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>";
+			$scope.kpi.threshold.thresholdValues[i].includeMaxCheck='<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
+			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
+			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severity" class="noMargin">'
+																		+'<md-option value=""></md-option>'
+																		+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev}}">'
+																		+'	{{sev.translatedValueName}}'
+																		+' </md-option>'
+																		+'</md-select>';
+		}
+	};
+	
+	$scope.errorHandler=function(text,title){
+		var titleFin=title || "";
+		var textFin=text;
+		if(angular.isObject(text)){
+			if(text.hasOwnProperty("errors")){
+				textFin="";
+				for(var i=0;i<text.errors.length;i++){
+					textFin+=text.errors[i].message+" <br> ";
+				}
+			}else{
+				textFin=JSON.stringify(text)
+			}
+		}
+		
+		var confirm = $mdDialog.confirm()
+		.title(titleFin)
+		.content(textFin)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(confirm);
+	}
 
 };
 function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){

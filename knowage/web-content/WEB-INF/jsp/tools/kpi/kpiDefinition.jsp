@@ -97,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/formulaController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/listController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/kpiDefinitionSubController/thresholdController.js"></script>
 
 
 
@@ -134,10 +135,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab  id="tab4">
+				<md-tab id="tab4" md-on-select="loadThreshold()" >
        				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
-        			TODO
+        			<%@include	file="./kpiTemplate/thresholdTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 			</md-tabs>
