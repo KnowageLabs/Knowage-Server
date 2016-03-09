@@ -9,7 +9,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 	$scope.addKpi= function(){
 		angular.copy($scope.emptyKpi,$scope.kpi);
-		
+		$scope.kpi.threshold.typeId=$scope.thresholdTypeList[0].valueId;
 		$timeout(function(){
 			$scope.selectedTab.tab=0;
 		},0)

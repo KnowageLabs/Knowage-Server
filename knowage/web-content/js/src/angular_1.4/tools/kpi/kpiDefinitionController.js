@@ -11,7 +11,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.translate=sbiModule_translate;
 	//variables formula
 	$scope.checkFormula = false;
-	$scope.emptyKpi = {"name":"","definition":"",'id':undefined,cardinality:"{\"measureList\":[],\"checkedAttribute\":{}}",threshold:{thresholdValues:[]},placeholder:""};
+	$scope.emptyKpi = {"name":"","definition":"",'id':undefined,cardinality:"{\"measureList\":[],\"checkedAttribute\":{}}",threshold:{description:"",thresholdValues:[]},placeholder:""};
 	$scope.kpi = {"name":"","definition":"",'id':undefined};
 	$scope.activeSave = "";
 	$scope.AttributeCategoryList=[];
@@ -20,6 +20,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
 	$scope.selectedTab={'tab':0};
+	$scope.thresholdTypeList=[];
 	
 	//variables placeholder
 	$scope.placeHolderObjectList = {};
@@ -143,32 +144,32 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}
 		});
 	}
-	$scope.parsePlaceholder = function(){
-		for(var key in Object.keys($scope.kpi.placeholder)){
-			if($scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]]==""){
-				delete $scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]];
+	$scope.parsePlaceholder = function(placeholder){
+		for(var key in Object.keys( placeholder)){
+			if( placeholder[Object.keys( placeholder)[key]]==""){
+				delete  placeholder[Object.keys( placeholder)[key]];
 			}
 		}
 		 
 	}
-	$scope.saveKPI = function(){
-		if(angular.isObject($scope.kpi.definition)){
-			$scope.kpi.definition = JSON.stringify($scope.kpi.definition);
+	
 
-		}
-		if(Object.keys($scope.cardinality).length>0){
-			$scope.kpi.cardinality=JSON.stringify($scope.cardinality);
-		}
-		if(angular.isObject($scope.kpi.placeholder)){
-			$scope.parsePlaceholder();
-			$scope.kpi.placeholder=JSON.stringify($scope.kpi.placeholder);
-		}
+	$scope.saveKPI = function(){
+		var tmpKpiToSave={};
+		angular.copy($scope.kpi,tmpKpiToSave);
 		
-		
-		//after i'm setting this with a method getthreshold()
-		$scope.kpi.threshold= {"id":1,"description":"test soglia 1 desc","name":"test soglia 1","typeId":10,"type":"Range","thresholdValues":[{"id":1,"position":1,"label":"L1","color":"#00FFFF","severityId":86,"severity":"Low","minValue":0,"includeMin":true,"maxValue":50,"includeMax":false},{"id":2,"position":3,"label":"L2 old","color":"#FF00FF","severityId":86,"severity":"Low","minValue":50,"includeMin":true,"maxValue":null,"includeMax":false}]}
-		//$scope.kpi.threshold = JSON.stringify($scope.kpi.threshold);
-		sbiModule_restServices.post("1.0/kpi", 'saveKpi',$scope.kpi).success(
+		if(angular.isObject(tmpKpiToSave.definition)){
+			tmpKpiToSave.definition = JSON.stringify($scope.kpi.definition);
+		}
+		if(Object.keys(tmpKpiToSave.cardinality).length>0){
+			tmpKpiToSave.cardinality=JSON.stringify($scope.cardinality);
+		}
+		if(angular.isObject(tmpKpiToSave.placeholder)){
+			$scope.parsePlaceholder(tmpKpiToSave.placeholder);
+			tmpKpiToSave.placeholder=JSON.stringify(tmpKpiToSave.placeholder);
+		}
+		$scope.convertThresholdToCorrectObject(tmpKpiToSave);
+		sbiModule_restServices.post("1.0/kpi", 'saveKpi',tmpKpiToSave).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						$scope.showAction(data);
@@ -183,6 +184,20 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	}
+	
+	$scope.convertThresholdToCorrectObject=function(kpi){
+		for(var i=0;i<kpi.threshold.thresholdValues.length;i++){
+			delete kpi.threshold.thresholdValues[i].move;
+			delete kpi.threshold.thresholdValues[i].inputLable;
+			delete kpi.threshold.thresholdValues[i].includeNumericInputMin;
+			delete kpi.threshold.thresholdValues[i].includeNumericInputMax;
+			delete kpi.threshold.thresholdValues[i].includeMinCheck;
+			delete kpi.threshold.thresholdValues[i].includeMaxCheck;
+			delete kpi.threshold.thresholdValues[i].selectColor;
+			delete kpi.threshold.thresholdValues[i].comboSeverity;
+		}
+	}
+	
 	$scope.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,	 
@@ -362,7 +377,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
 			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severity" class="noMargin">'
 																		+'<md-option value=""></md-option>'
-																		+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev}}">'
+																		+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
 																		+'	{{sev.translatedValueName}}'
 																		+' </md-option>'
 																		+'</md-select>';

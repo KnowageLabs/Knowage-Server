@@ -7,18 +7,27 @@
   
    <md-input-container flex class="md-block">
           <label>description</label>
-          <textarea ng-model="kpi.threshold.description" md-maxlength="150" rows="1" md-select-on-focus></textarea>
+          <textarea ng-model="kpi.threshold.description" md-maxlength="150" ></textarea>
         </md-input-container>
+        
+        
+      <md-input-container flex class="md-block" >
+	        <label>Type</label>
+	        <md-select ng-model="kpi.threshold.typeId" >
+	          <md-option ng-repeat="thresh in thresholdTypeList" value="{{thresh.valueId}}">
+	            {{thresh.translatedValueName}}
+	          </md-option>
+	        </md-select>
+      </md-input-container>
         
        <md-button class="md-icon-button md-primary" aria-label="load" ng-click="openThresholdSidenav()">
         <md-icon md-font-icon="fa fa-external-link fa-2x"></md-icon>
       </md-button>
-  </div>
-
+  </div> 
 
 
  <md-button class="md-raised" ng-click="addNewThreshold()">Add new Threshold</md-button>
-<angular-table flex class="overflow relative" full-width
+<angular-table ng-show="kpi.threshold.thresholdValues.length>0" flex class="overflow relative" full-width
 		id='kpiListTable' ng-model=kpi.threshold.thresholdValues
 		columns='thresholdColumn'
 		click-function="" 

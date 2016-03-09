@@ -3,6 +3,7 @@ app.controller('kpiDefinitionThresholdController', ['$scope','sbiModule_translat
 function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdSidenav){
 	$scope.thresholdList=[];
 	
+	
 	$scope.loadPlaceholderList=function(){
  		sbiModule_restServices.promiseGet("1.0/kpi","listThreshold")
 		.then(function(response){ 
@@ -12,6 +13,18 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 		});
  	};
  	$scope.loadPlaceholderList();
+ 	
+ 	$scope.loadThresholdTypeList=function(){
+ 		sbiModule_restServices.promiseGet("2.0/domains","listByCode/THRESHOLD_TYPE")
+ 		.then(function(response){ 
+ 			angular.copy(response.data,$scope.thresholdTypeList); 
+ 		},function(response){
+ 			 $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->THRESHOLD_TYPE"); 
+ 		});
+ 		};
+ 	$scope.loadThresholdTypeList();
+ 	
+ 	
 	
 	$scope.addNewThreshold=function(){
 		var emptyThreshold={"position":$scope.kpi.threshold.thresholdValues.length+1,"label":"","color":"#00FFFF","includeMin":false,"includeMax":false,"minValue":"","maxValue":""}
