@@ -95,7 +95,7 @@ try{
 							<i class="fa fa-pencil" style="color:white"></i>
 						</md-button>						
 						<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-								ng-click="alert('Save ...')">
+								ng-click="createNewViewpoint()">
 							<i class="fa fa-floppy-o" style="color:white"></i>
 						</md-button>
 					</div>
@@ -116,8 +116,8 @@ try{
 					<md-list-item ng-repeat="parameter in documentParameters">
 						<md-input-container flex>
 							<%--
-							--%>
 							<md-content ng-if="parameter.type=='STRING' && parameter.selectionType=='COMBOBOX'">{{parameter|json}}</md-content>
+							--%>
 							
 							<!-- manual number input -->
 							<label ng-if="parameter.type=='NUM' && parameter.selectionType==''" >

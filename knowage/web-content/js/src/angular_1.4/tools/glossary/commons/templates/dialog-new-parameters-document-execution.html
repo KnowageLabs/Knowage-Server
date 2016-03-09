@@ -1,0 +1,58 @@
+
+<md-dialog aria-label="New glossary" style="width: 80%;  overflow-y: visible;">
+<md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2 style="    font-size: 20px;    text-align: center;    width: 100%;">{{vpCtrl.headerTitle}}</h2>
+       </div>
+  </md-toolbar>
+  <form name="glossaryForm" class="wordForm md-padding" novalidate    >
+  <md-dialog-content class="sticky-container">
+    
+
+	<div layout="row" layout-wrap>
+		<div flex="100">
+
+			<md-input-container> <!-- Use floating label instead of placeholder -->
+			<label>{{translate.load("sbi.execution.viewpoints.name");}}</label> 
+			<input ng-model="vpCtrl.newViewpoint.NAME" type="text" > </md-input-container>
+		</div>
+	</div>
+	
+	<div layout="row" layout-wrap>
+		<div flex="100">
+			<md-input-container> <!-- Use floating label instead of placeholder -->
+			<label>{{translate.load("sbi.execution.viewpoints.description");}}</label>
+			<input ng-model="vpCtrl.newViewpoint.DESCRIPTION" type="text" > </md-input-container>
+		</div>
+	</div>
+	
+	
+	<div layout="row" layout-wrap>
+		<div flex="100">
+			<md-input-container  >
+					<label>{{translate.load("sbi.execution.subobjects.visibility")}}</label>
+							<md-select ng-model="vpCtrl.newViewpoint.SCOPE"  >
+							<md-option value="PUBLIC">{{translate.load("sbi.execution.subobjects.visibility.public");}}</md-option>
+					        <md-option value="PRIVATE">{{translate.load("sbi.execution.subobjects.visibility.private");}}</md-option>
+							</md-select>
+			</md-input-container>
+		</div>
+	</div>
+	
+
+  </md-dialog-content>
+     
+  <div class="md-actions" layout="row">
+   
+    <md-button ng-click="vpCtrl.annulla()" class="md-primary">
+  {{translate.load("sbi.ds.wizard.cancel");}} 
+    </md-button>
+  
+    <md-button ng-click="vpCtrl.submit()" class="md-primary" ng-disabled="!vpCtrl.newViewpoint.NAME || !vpCtrl.newViewpoint.DESCRIPTION || !vpCtrl.newViewpoint.SCOPE"  >
+    {{translate.load("sbi.generic.update");}}
+    </md-button>
+  </div>
+  
+  
+  </form>
+</md-dialog>

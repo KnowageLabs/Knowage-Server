@@ -24,15 +24,27 @@
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 	
+	//vik
+	var EmptyViewpoint = {
+			NAME : "",
+			DESCRIPTION: "",
+			SCOPE : "",
+			OBJECT_LABEL : "",
+			ROLE :"",
+			VIEWPOINT : JSON.parse("{}")
+	};
+	
+	
 	documentExecutionApp.controller( 'documentExecutionController', 
-			['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
+			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties',
 			 documentExecutionControllerFn]);
 
 
 	function documentExecutionControllerFn(
-			$scope, $http, $mdSidenav,$mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, sbiModule_messaging, execProperties) {
+			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config, sbiModule_messaging, execProperties) {
 
+		
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = {};
 		$scope.roles = execProperties.roles;
@@ -45,6 +57,9 @@
 		
 		$scope.showParametersPanel = true;
 
+		
+		$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
+		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
@@ -151,41 +166,7 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			var jsonDatum =  {};
-			
-			console.log("$scope.documentParameters -> ", $scope.documentParameters);
-			if($scope.documentParameters.length > 0){
-				for(var i = 0; i < $scope.documentParameters.length; i++ ){
-					var parameter = $scope.documentParameters[i];
-					
-					var valueKey = parameter.urlName;
-					var descriptionKey = parameter.urlName + "_field_visible_description";
-					
-					var jsonDatumValue = null;
-					if(parameter.valueSelection.toLowerCase() == 'lov') {
-						if(Array.isArray(parameter.parameterValue)) {
-							var arrayAsString = '';
-							
-							for(var j = 0; j < parameter.parameterValue.length; j++) {
-								if(j > 0) {
-									arrayAsString += ',';
-								}
-								arrayAsString += "'" + parameter.parameterValue[j] + "'";
-							}
-
-							jsonDatumValue = arrayAsString;
-						} else {
-							jsonDatumValue = parameter.parameterValue;
-						}
-					} else {
-						jsonDatumValue = parameter.parameterValue;
-					}
-					
-					jsonDatum[valueKey] = jsonDatumValue;
-					jsonDatum[descriptionKey] = jsonDatumValue;
-				}
-			}			
-			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(jsonDatum));			
+			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(buildStringParameters()));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -230,27 +211,7 @@
 		}
 		
 		
-		/*
-		 * START EXECUTION PROCESS
-		 * Return the SBI_EXECUTION_ID code 
-		 */
-//		$scope.startExecutionProcess = function(role) {
-//			var params = 
-//				"&OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID
-//				+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL
-//				+ "&isFromCross=" + execProperties.executionInstance.isFromCross
-//				+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
-//				+ "&ROLE=" + role;		
-//			$http.post(
-//					sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=" +
-//					"START_EXECUTION_PROCESS_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE" + params
-//			).success(function(data, status, headers, config){
-//				$scope.getParametersForExecution(role, data.execContextId);
-//			})
-//			.error(function(data, status, headers, config) {
-//				console.log("Error " + status + ": ", data);
-//			});
-//		};
+
 
 		/*
 		 * GET PARAMETERS 
@@ -320,135 +281,7 @@
 						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0) 
 						|| parameter.parameterValue == '')
 			) == true;
-		};
-		
-		/*
-		 * GET VIEWPOINTS
-		 * return saved params
-		 */
-//		$scope.getViewPoints = function(role, execContextId) {
-//			var params = 
-//				"&OBJECT_ID=" + execProperties.executionInstance.OBJECT_I
-//				+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL 
-//				+ "&isFromCross=" + execProperties.executionInstance.isFromCross 
-//				+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
-//				+ "&ROLE=" + role 
-//				+ "&SBI_EXECUTION_ID=" + execContextId;
-//
-//			$http.post(
-//					sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=" +
-//					"GET_VIEWPOINTS_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE" +  params
-//			).success(function(data){
-//				$scope.getSubObject(role ,execContextId); //??
-//				$scope.execContextId = execContextId;
-//				console.log('GET VIEW POINTS return data ->', data);
-//				//Handler data save
-//			})
-//			.error(function(data, status, headers, config) {
-//				console.log("Error " + status + ": ", data);
-//			});
-//		};
-		
-		/*
-		 * GET SUBJECT OBJECT 
-		 */
-//		$scope.getSubObject = function(role,execContextId) {
-//			var params =
-//				"&OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID
-//				+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL 
-//				+ "&isFromCross=" + execProperties.executionInstance.isFromCross 
-//				+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
-//				+ "&ROLE=" + role 
-//				+ "&SBI_EXECUTION_ID=" + execContextId;
-//
-//			$http.post(
-//					sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME="  + 
-//					"GET_SUBOBJECTS_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE" +  params
-//			).success(function(data){
-//				$scope.getSnapShots(role, execContextId);
-//			})
-//			.error(function(data, status, headers, config) {
-//				console.log("Error " + status + ": ", data);
-//			});
-//		};	
-		
-		/*
-		 * GET SNAP SHOTS
-		 */
-//		$scope.getSnapShots = function(role, execContextId) {
-//			var params = 
-//				"&OBJECT_ID=" + execProperties.executionInstance.OBJECT_ID
-//				+ "&OBJECT_LABEL=" + execProperties.executionInstance.OBJECT_LABEL 
-//				+ "&isFromCross=" + execProperties.executionInstance.isFromCross
-//				+ "&isPossibleToComeBackToRolePage=" + execProperties.executionInstance.isPossibleToComeBackToRolePage 
-//				+ "&ROLE=" + role 
-//				+ "&SBI_EXECUTION_ID=" + execContextId;
-//
-//			$http.post(
-//					sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=" +
-//					"GET_SNAPSHOTS_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE"+ params
-//			).success(function(data){
-//
-//			})
-//			.error(function(data, status, headers, config) {
-//				console.log("Error " + status + ": ", data);
-//			});
-//		};
-		
-		
-		/*
-		 * GET URL DOCUMENT 
-		 * Load iframe URL
-		 */
-//		$scope.getURLForExecution = function(role, execContextId, parameters) {
-//			var paramStr = (Object.keys(parameters).length > 0) ? 
-//					JSON.stringify(parameters) : '{}'; 
-//					
-//			var obj = new Object();
-//
-//			obj.OBJECT_ID = execProperties.executionInstance.OBJECT_ID;
-//			obj.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
-//			obj.isFromCross = execProperties.executionInstance.isFromCross;
-//			obj.isPossibleToComeBackToRolePage = execProperties.executionInstance.isPossibleToComeBackToRolePage;
-//			obj.SBI_EXECUTION_ID = execContextId;
-//			obj.PARAMETERS = paramStr;
-//			obj.ROLE = role;
-//
-//			$http({
-//				method: 'POST',
-//				url: sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=" +
-//				"GET_URL_FOR_EXECUTION_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE",
-//
-//				transformRequest: function(obj) {
-//					var str = [];
-//					for(var p in obj){
-//						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-//					}
-//					return str.join("&");
-//				},
-//				data: obj,
-//				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-//			})
-//			.success(function(data){
-//				console.log(data);
-//				if ('errors' in data){
-//					if(data['errors'].length > 0 ){
-//						var strErros='';
-//						for(var i=0; i<=data['errors'].length-1;i++){
-//							strErros=strErros + data['errors'][i] + ' \n';
-//						}
-//						alert(strErros);
-//					}
-//				}else{
-//					$scope.documentUrl=data.url;
-//				}
-//			})
-//			.error(function(data, status, headers, config) {
-//				console.log("Error " + status + ": ", data);
-//			});
-//		};
-
-		
+		};		
 
 		$scope.isParameterPanelDisabled = function(){
 			return (!$scope.documentParameters || $scope.documentParameters.length == 0);
@@ -468,8 +301,110 @@
 			console.log('Deleting document -> ', execProperties);
 		};
 		
+		
+		
+		$scope.createNewViewpoint = function(){
+			$mdDialog.show({
+				scope : $scope,
+				preserveScope : true,
+				controllerAs : 'vpCtrl',
+				controller : function($mdDialog) {
+					var vpctl = this;
+					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
+					
+					vpctl.submit = function() {
+						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+						vpctl.newViewpoint.ROLE = $scope.selectedRole;
+						vpctl.newViewpoint.VIEWPOINT = buildStringParameters();
+						console.log('submit ' , vpctl.newViewpoint);
+						sbiModule_restServices.post(
+								"1.0/documentviewpoint",
+								"addViewpoint", vpctl.newViewpoint)
+						   .success(function(data, status, headers, config) {
+							if(data.errors && data.errors.length > 0 ){
+								showToast(data.errors[0].message);
+							}else{
+								$mdDialog.hide();
+								showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+							}							
+						})
+						.error(function(data, status, headers, config) {
+							showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
+						});
+					};
+					
+					vpctl.annulla = function($event) {
+						$mdDialog.hide();
+						$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
+					};
+				},
+
+				// "/knowage/js/dialog-new-glossary.html"
+				templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html'
+			});
+		};
+		
+		
+		
+		
+		
+		
+		function buildStringParameters(){
+			console.log("$scope.documentParameters -> ", $scope.documentParameters);
+			var jsonDatum =  {};
+			if($scope.documentParameters.length > 0){
+				for(var i = 0; i < $scope.documentParameters.length; i++ ){
+					var parameter = $scope.documentParameters[i];
+					
+					var valueKey = parameter.urlName;
+					var descriptionKey = parameter.urlName + "_field_visible_description";
+					
+					var jsonDatumValue = null;
+					if(parameter.valueSelection.toLowerCase() == 'lov') {
+						if(Array.isArray(parameter.parameterValue)) {
+							var arrayAsString = '';
+							
+							for(var j = 0; j < parameter.parameterValue.length; j++) {
+								if(j > 0) {
+									arrayAsString += ',';
+								}
+								arrayAsString += "'" + parameter.parameterValue[j] + "'";
+							}
+
+							jsonDatumValue = arrayAsString;
+						} else {
+							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+						}
+					} else {
+						
+						jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+					}
+					jsonDatum[valueKey] = jsonDatumValue;
+					jsonDatum[descriptionKey] = jsonDatumValue;
+				}
+			}			
+			return  jsonDatum;
+		}
+		
+		
+		function showToast(text, time) {
+			var timer = time == undefined ? 6000 : time;
+			console.log(text)
+			$mdToast.show($mdToast.simple().content(text).position('top').action(
+					'OK').highlightAction(false).hideDelay(timer));
+		}
+		
+		
+		
 		console.log("documentExecutionControllerFn OUT ");
 	};
+	
+	
+	
+	 
+	
+	
+	
 	
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
