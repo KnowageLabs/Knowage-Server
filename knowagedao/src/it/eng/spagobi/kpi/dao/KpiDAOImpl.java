@@ -607,7 +607,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiValue.setMinValue(tv.getMinValue());
 		sbiValue.setLabel(tv.getLabel());
 		sbiValue.setPosition(tv.getPosition());
-		sbiValue.setSeverity(new SbiDomains(tv.getSeverityId()));
+		if (tv.getSeverityId() != null) {
+			sbiValue.setSeverity(new SbiDomains(tv.getSeverityId()));
+		}
 		return sbiValue;
 	}
 
@@ -708,8 +710,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				tv.setLabel(sbiValue.getLabel());
 				tv.setPosition(sbiValue.getPosition());
-				tv.setSeverity(MessageBuilderFactory.getMessageBuilder().getMessage(sbiValue.getSeverity().getValueNm()));// sbiValue.getSeverity().getValueNm());
-				tv.setSeverityId(sbiValue.getSeverity().getValueId());
+				if (sbiValue.getSeverity() != null) {
+					tv.setSeverityId(sbiValue.getSeverity().getValueId());
+				}
 				threshold.getThresholdValues().add(tv);
 			}
 		}

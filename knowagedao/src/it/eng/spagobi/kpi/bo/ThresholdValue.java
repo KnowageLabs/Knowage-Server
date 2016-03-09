@@ -34,7 +34,6 @@ public class ThresholdValue implements Serializable {
 	 * domainCd="SEVERITY"
 	 */
 	private Integer severityId;
-	private String severity;
 
 	private BigDecimal minValue;
 	private boolean includeMin;
@@ -121,21 +120,6 @@ public class ThresholdValue implements Serializable {
 	 */
 	public void setSeverityId(Integer severityId) {
 		this.severityId = severityId;
-	}
-
-	/**
-	 * @return the severity
-	 */
-	public String getSeverity() {
-		return severity;
-	}
-
-	/**
-	 * @param severity
-	 *            the severity to set
-	 */
-	public void setSeverity(String severity) {
-		this.severity = severity;
 	}
 
 	/**
