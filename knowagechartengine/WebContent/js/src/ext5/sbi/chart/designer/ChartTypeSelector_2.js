@@ -392,7 +392,7 @@ Ext.define
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				var chartSpecificConfigCheck = Designer.getConfigurationForStyle(Designer.styleName,true)[currentOrNewChartType.toLowerCase()];
-								
+						
 				/**
 				 * Check if the event is fired because of the change of the chart type and not
 				 * because of the initial rendering the Designer (because that is also a moment

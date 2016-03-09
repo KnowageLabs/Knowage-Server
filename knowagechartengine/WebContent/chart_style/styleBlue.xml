@@ -181,8 +181,8 @@
 		
 		<sunburst>
 			<CHART type="SUNBURST" opacMouseOver="10">
-				<TOOLBAR  style="position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:14px;"/>
-				<TIP style="fontFamily:Verdana;fontWeight:bold;fontSize:14px;color:#006699;align:;width:200;" text="Insert text here"/>
+				<TOOLBAR  style="position:bottom;spacing:5;tail:10;percFontColor:#006699;fontFamily:Verdana;fontWeight:normal;fontSize:14px;"/>
+				<TIP style="fontFamily:Verdana;fontWeight:bold;fontSize:14px;color:#006699;width:200;" text=""/>
 			</CHART>
 		</sunburst>
 		

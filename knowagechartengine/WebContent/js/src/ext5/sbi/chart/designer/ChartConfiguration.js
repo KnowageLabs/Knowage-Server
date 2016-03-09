@@ -2,7 +2,7 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
 	extend: 'Ext.form.Panel',
 	layout: 'anchor',
 	border: false,
-	item: [ ],
+	item: [],
     main:null,
     second:null,
     
@@ -14,7 +14,7 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
 	 * panel) on the Step 2 when its item are not visible anymore due to 
 	 * resizing of the window of the browser.
 	 * 
-	 * @author: danristo (danilo.ristovski@mht.net)
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
     //overflowX: "auto", 
     overflowY: "auto",
@@ -28,10 +28,12 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
     	this.title = config.title && config.title != null ? config.title: this.title;
     	this.viewModel = config.viewModel;
         this.callParent(config);
+
         this.main = Ext.create('Sbi.chart.designer.ChartConfigurationMainContainer',{
         	id: "main",
         	viewModel: this.viewModel
         });
+        
 		this.second = Ext.create('Sbi.chart.designer.ChartConfigurationSecondContainer',{
 			viewModel: this.viewModel
 		});

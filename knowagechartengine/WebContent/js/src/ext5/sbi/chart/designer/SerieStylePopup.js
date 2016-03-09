@@ -463,10 +463,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		});
 		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
-		console.log(dataAtRow);
-		console.log(dataAtRow.get('serieTooltipBorderWidth'));
-		console.log(dataAtRow.get('serieTooltipBorderRadius'));
-		
 		var serieTooltipBorderWidth = dataAtRow.get('serieTooltipBorderWidth');
 		this.tooltipBorderWidthNumberfield = Ext.create('Ext.form.field.Number', {
 			id: "serieTolltipBorderWidth",

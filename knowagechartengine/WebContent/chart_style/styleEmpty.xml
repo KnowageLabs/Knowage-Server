@@ -183,8 +183,8 @@
 
 		<sunburst>
 			<CHART type="SUNBURST" opacMouseOver="">
-				<TOOLBAR  style="position:;height:;width:;spacing:;tail:;percFontColor:;fontFamily:;fontWeight:;fontSize:;"/>
-				<TIP style="fontFamily:;fontWeight:;fontSize:;color:;align:;width:;" text=""/>
+				<TOOLBAR  style="position:;spacing:;tail:;percFontColor:;fontFamily:;fontWeight:;fontSize:;"/>
+				<TIP style="fontFamily:;fontWeight:;fontSize:;color:;width:;" text=""/>
 			</CHART>
 		</sunburst>
 

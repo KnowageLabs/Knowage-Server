@@ -1,22 +1,3 @@
-<%--
-Knowage, Open Source Business Intelligence suite
-Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
-Knowage is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
-Knowage is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
---%>
-
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
  pageEncoding="UTF-8"%>
 
@@ -33,7 +14,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
 
 <script>
-  
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
 		Highcharts.setOptions({
 			chart : {
@@ -72,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		                   align: "center"
 		                },
 		              
-				}
+			}
 			},
 			drilledCategories:[] //array used to save category names when drilling
 			
@@ -110,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{
 			        lang:
 			    	{
-			        	drillUpText:"Back to: <b>{series.name}</b>"
+			        	drillUpText: "Back to: <b>{series.name}</b>"
 			    	}
 		    	}
 			); */
@@ -134,10 +114,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			*/
-			
 			if (isNaN(e.category))
 			{
-				
 				var chart = this;
 				chart.showLoading('Loading...');
 				Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
@@ -210,7 +188,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        }
    
 		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
-
 	}
 
 	function handleCockpitSelection(e) {

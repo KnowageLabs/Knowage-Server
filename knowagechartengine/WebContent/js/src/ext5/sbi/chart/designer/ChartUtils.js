@@ -308,7 +308,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var VALUES = {};
 
-			var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
+			var SERIE = ChartUtils.getSeriesDataAsOriginalJson(chartModel);
 
 			if (SERIE.length > 0) {
 				VALUES['SERIE'] = SERIE;
@@ -330,8 +330,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			result['CHART'] = CHART;
 
-			// RESULT SHOW
-//			console.log(result); 
+			// RESULT PRINT
+			//console.log(result); 
 
 			return result;
 		},
@@ -596,7 +596,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return result;
 		},
 
-		getSeriesDataAsOriginalJson : function () {
+		getSeriesDataAsOriginalJson : function (chartModel) {
 			var result = [];
 	
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
@@ -617,8 +617,34 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 : '';
 					serie['column'] = serieAsMap.get('serieColumn') != undefined ? serieAsMap.get('serieColumn')
 						 : '';
-					serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
-						 : '';
+					
+					var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+					
+					if (Sbi.chart.designer.ChartUtils.isCockpitEngine && chartType.toUpperCase() == "PARALLEL")
+					{
+						//console.log("+++",chartModel);
+						//console.log("===",chartModel.get('groupByCategory'));
+						
+						if (chartModel && (chartModel.get('groupByCategory')=="false" ||
+								chartModel.get('groupByCategory')==false ||
+									chartModel.get('groupByCategory') == ""))
+						{
+							serie['groupingFunction'] = "NONE";
+						}
+						else
+						{
+							serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
+									 : '';
+						}
+					}	
+					else
+					{
+						serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
+								 : '';
+					}
+					
+					//console.log("serieAsMap:",serie['groupingFunction']);
+					
 					serie['name'] = serieAsMap.get('axisName') != undefined ? serieAsMap.get('axisName')
 						 : '';
 					serie['orderType'] = serieAsMap
@@ -627,7 +653,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 : '';					
 					
 						/**
-						 * Prefix, precision and postfix for formatting of the serie value.						 * 
+						 * Prefix, precision and postfix for formatting of the serie value.						 
 						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
 					serie['postfixChar'] = '';
@@ -1345,12 +1371,29 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				toolbarStyle += 'position:'
 				 + ((chartModel.get('toolbarPosition')) ? chartModel.get('toolbarPosition')
 					 : '') + ';';
-				toolbarStyle += 'height:'
-				 + ((Number(chartModel.get('toolbarHeight'))) ? Number(chartModel.get('toolbarHeight'))
-					 : '') + ';';
-				toolbarStyle += 'width:'
-				 + (Number((chartModel.get('toolbarWidth'))) ? Number(chartModel.get('toolbarWidth'))
-					 : '') + ';';
+				
+				/**
+ 	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+ 	        	 * using this static value for the height of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the height of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				toolbarStyle += 'height:'
+//				 + ((Number(chartModel.get('toolbarHeight'))) ? Number(chartModel.get('toolbarHeight'))
+//					 : '') + ';';
+				
+				/**
+ 	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+ 	        	 * using this static value for the width of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the length of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				toolbarStyle += 'width:'
+//				 + (Number((chartModel.get('toolbarWidth'))) ? Number(chartModel.get('toolbarWidth'))
+//					 : '') + ';';
+				
 				toolbarStyle += 'spacing:'
 				 + (Number((chartModel.get('toolbarSpacing'))) ? Number(chartModel.get('toolbarSpacing'))
 					 : '') + ';';
@@ -1406,15 +1449,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 + chartModel.get('tipColor')
 					 : '') + ';';
 				
-				tipStyle += 'align:'
-				 + ((chartModel.get('tipAlign')) ? chartModel.get('tipAlign')
-					 : '') + ';';
 				tipStyle += 'width:'
 				 + ((chartModel.get('tipWidth')) ? chartModel.get('tipWidth')
 					 : '') + ';';
 
 				TIP['text'] = (chartModel.get('tipText') != undefined) ? chartModel.get('tipText')
 				 : '';
+				
 				TIP['style'] = tipStyle;
 				CHART['TIP'] = TIP;
 
@@ -1986,7 +2027,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					});
 				});
 			}
-			
+		
 			var wordcloudTooltip=null;
 		    var wordcloudTooltipStyle = null;
 		    
@@ -1996,7 +2037,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.WORDCLOUD_TOOLTIP.style) : '';
 		    	
 		    }
-		
+					
 			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
 				/**
 				 * Generic parameters for charts. They are common for all chart types.
@@ -2007,6 +2048,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				
 				heightDimType: (jsonTemplate.CHART.heightDimType && jsonTemplate.CHART.heightDimType!="") ? 
 									jsonTemplate.CHART.heightDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
+									
 				widthDimType: (jsonTemplate.CHART.widthDimType && jsonTemplate.CHART.widthDimType!="") ? 
 									jsonTemplate.CHART.widthDimType : Sbi.settings.chart.configurationStep.defaultDimensionType,
 									
@@ -2038,7 +2080,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				nodataDimension : jsonEmptyMsgStyle.fontSize,
 				nodataStyle : jsonEmptyMsgStyle.fontWeight,
 
-				showLegend : chartLegend.show,
+				showLegend : chartLegend.show ? chartLegend.show : "",
 				legendTitle : jsonLegendTitleText,
 				legendTitleAlign : jsonLegendTitleStyle.align,
 				legendTitleColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendTitleStyle.color),
@@ -2064,23 +2106,21 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				legendColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
 				legendBackgroundColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),
 
-				colorPalette : colorPalette,
+				colorPalette : colorPalette ? colorPalette : "",
 
 				/**
 				 * Added for the WORDCLOUD chart
 				 * (danilo.ristovski@mht.net)
 				 */
-				
-				
-				maxWords : jsonTemplate.CHART.maxWords,
-				maxAngle : jsonTemplate.CHART.maxAngle,
-				minAngle : jsonTemplate.CHART.minAngle,
-				maxFontSize : jsonTemplate.CHART.maxFontSize,
-				minFontSize : jsonTemplate.CHART.minFontSize,
-				wordPadding : jsonTemplate.CHART.wordPadding,
-				sizeCriteria : jsonTemplate.CHART.sizeCriteria,
-                wordLayout: jsonTemplate.CHART.wordLayout,
-                preventOverlap: jsonTemplate.CHART.preventOverlap,
+				maxWords : jsonTemplate.CHART.maxWords ? jsonTemplate.CHART.maxWords : "",
+				maxAngle : jsonTemplate.CHART.maxAngle ? jsonTemplate.CHART.maxAngle : "",
+				minAngle : jsonTemplate.CHART.minAngle ? jsonTemplate.CHART.minAngle : "",
+				maxFontSize : jsonTemplate.CHART.maxFontSize ? jsonTemplate.CHART.maxFontSize : "",
+				minFontSize : jsonTemplate.CHART.minFontSize ? jsonTemplate.CHART.minFontSize : "",
+				wordPadding : jsonTemplate.CHART.wordPadding ? jsonTemplate.CHART.wordPadding : "",
+				sizeCriteria : jsonTemplate.CHART.sizeCriteria ? jsonTemplate.CHART.sizeCriteria : "",
+                wordLayout: jsonTemplate.CHART.wordLayout ? jsonTemplate.CHART.wordLayoutv : "",
+                preventOverlap: jsonTemplate.CHART.preventOverlap ?  jsonTemplate.CHART.preventOverlap : "",
                 wordcloudTooltipPrecision:(wordcloudTooltip != null)?wordcloudTooltip.precision:null,
                 wordcloudTooltipPrefix:(wordcloudTooltip != null)?wordcloudTooltip.prefix:null,
                 wordcloudTooltipPostfix:(wordcloudTooltip != null)?wordcloudTooltip.postfix:null,
@@ -2092,100 +2132,119 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
                 wordcloudTooltipAlign:(wordcloudTooltipStyle != null)  ? wordcloudTooltipStyle.align : null,		
                 wordcloudTooltipBorderWidth:(wordcloudTooltip != null)?wordcloudTooltip.borderWidth:null,
                 wordcloudTooltipBorderRadius:(wordcloudTooltip != null)?wordcloudTooltip.borderRadius:null,		
-                		
+				
 				/**
 				 * Added for the SUNBURST chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				opacMouseOver : jsonTemplate.CHART.opacMouseOver,
+				opacMouseOver : jsonTemplate.CHART.opacMouseOver ? jsonTemplate.CHART.opacMouseOver : "",
 				
 				/**
 				 * Added for the PARALLEL chart.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				showTableParallel: jsonTemplate.CHART.showTableParallel,
+				showTableParallel: jsonTemplate.CHART.showTableParallel ? jsonTemplate.CHART.showTableParallel : "",
 
-				toolbarPosition : jsonToolbarStyle.position,
-				toolbarHeight : jsonToolbarStyle.height,
-				toolbarWidth : jsonToolbarStyle.width,
-				toolbarSpacing : jsonToolbarStyle.spacing,
-				toolbarTail : jsonToolbarStyle.tail,
-				toolbarPercFontColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonToolbarStyle.percFontColor),
+				toolbarPosition : jsonToolbarStyle.position ? jsonToolbarStyle.position : "",
+						
+				/**
+	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+	        	 * using this static value for the height of elements inside the breadcrumb
+	        	 * (toolbar) anymore, rather following the height of each element's word.
+	        	 * 
+	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	        	 */		
+//				toolbarHeight : jsonToolbarStyle.height ? jsonToolbarStyle.height : "",
+						
+				/**
+	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+	        	 * using this static value for the width of elements inside the breadcrumb
+	        	 * (toolbar) anymore, rather following the length of each element's word.
+	        	 * 
+	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	        	 */
+//				toolbarWidth : jsonToolbarStyle.width ? jsonToolbarStyle.width : "",
+						
+				toolbarSpacing : jsonToolbarStyle.spacing ? jsonToolbarStyle.spacing : "",
+				toolbarTail : jsonToolbarStyle.tail ? jsonToolbarStyle.tail : "",
+				toolbarPercFontColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonToolbarStyle.percFontColor) ?  
+						Sbi.chart.designer.ChartUtils.removeStartingHash(jsonToolbarStyle.percFontColor): "",
 
-				toolbarFontFamily : jsonToolbarStyle.fontFamily,
-				toolbarFontWeight : jsonToolbarStyle.fontWeight,
-				toolbarFontSize : jsonToolbarStyle.fontSize,
+				toolbarFontFamily : jsonToolbarStyle.fontFamily ? jsonToolbarStyle.fontFamily : "",
+				toolbarFontWeight : jsonToolbarStyle.fontWeight ? jsonToolbarStyle.fontWeight : "",
+				toolbarFontSize : jsonToolbarStyle.fontSize ? jsonToolbarStyle.fontSize : "",
 
-				tipText : jsonTipText,
-				tipFontFamily : jsonTipStyle.fontFamily,
-				tipFontWeight : jsonTipStyle.fontWeight,
-				tipFontSize : jsonTipStyle.fontSize,
-				tipColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color),
-				tipWidth : jsonTipStyle.width,
+				tipText : jsonTipText ? jsonTipText : "",
+				tipFontFamily : jsonTipStyle.fontFamily ? jsonTipStyle.fontFamily : "",
+				tipFontWeight : jsonTipStyle.fontWeight ? jsonTipStyle.fontWeight : "",
+				tipFontSize : jsonTipStyle.fontSize ? jsonTipStyle.fontSize : "",
+				tipColor : Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color) ? 
+						Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color) : "",
+				tipWidth : jsonTipStyle.width ? jsonTipStyle.width : "",
 
 				/**
 				 * Added for the PARALLEL chart (LIMIT tag)
 				 * (danilo.ristovski@mht.net)
 				 */
-				maxNumberOfLines : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : null,
-				serieFilterColumn : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : null,
-				orderTopMinBottomMax : (jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : null,
-                groupByCategory:jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : false,
+				maxNumberOfLines : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : "",
+				serieFilterColumn : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : "",
+				orderTopMinBottomMax : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : "",
+                groupByCategory: jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : "",
 				
 				/**
 				 * Added for the PARALLEL chart (AXES_LINES tag)
 				 * (danilo.ristovski@mht.net)
 				 */
-				axisColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.axisColor) : null,
-				axisColNamePadd : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.axisColNamePadd : null,
-				brushColor : (jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.brushColor) : null,
-				brushWidth : (jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.brushWidth : null,
+				axisColor : (jsonParallelAxisStyle && jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.axisColor) : "",
+				axisColNamePadd : (jsonParallelAxisStyle && jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.axisColNamePadd : "",
+				brushColor : (jsonParallelAxisStyle && jsonParallelAxisStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.brushColor) : "",
+				brushWidth : (jsonParallelAxisStyle && jsonParallelAxisStyle != null) ? jsonParallelAxisStyle.brushWidth : "",
 
 				/**
 				 * Added for the PARALLEL chart (TOOLTIP tag)
 				 * (danilo.ristovski@mht.net)
 				 */
-				parallelTooltipFontFamily : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontFamily : null,
-				parallelTooltipFontSize : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontSize : null,
-				parallelTooltipMinWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minWidth : null,
-				parallelTooltipMaxWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxWidth : null,
-				parallelTooltipMinHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minHeight : null,
-				parallelTooltipMaxHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxHeight : null,
-				parallelTooltipPadding : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.padding : null,
-				parallelTooltipBorder : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.border : null,
-				parallelTooltipBorderRadius : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.borderRadius : null,
+				parallelTooltipFontFamily : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontFamily : "",
+				parallelTooltipFontSize : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.fontSize : "",
+				parallelTooltipMinWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minWidth : "",
+				parallelTooltipMaxWidth : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxWidth : "",
+				parallelTooltipMinHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.minHeight : "",
+				parallelTooltipMaxHeight : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.maxHeight : "",
+				parallelTooltipPadding : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.padding : "",
+				parallelTooltipBorder : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.border : "",
+				parallelTooltipBorderRadius : (jsonParallelTooltipStyle != null) ? jsonParallelTooltipStyle.borderRadius : "",
 
 				/**
 				 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
 				 * (danilo.ristovski@mht.net)
 				 */
-				parallelLegendTitleFontFamily : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontFamily : null,
-				parallelLegendTitleFontSize : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontSize : null,
-				parallelLegendTitleFontWeight : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontWeight : null,
+				parallelLegendTitleFontFamily : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontFamily : "",
+				parallelLegendTitleFontSize : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontSize : "",
+				parallelLegendTitleFontWeight : (jsonParallelLegendTitle != null) ? jsonParallelLegendTitle.fontWeight : "",
 
 				/**
 				 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
 				 * (danilo.ristovski@mht.net)
 				 */
-				parallelLegendElementFontFamily : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontFamily : null,
-				parallelLegendElementFontSize : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontSize : null,
-				parallelLegendElementFontWeight : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontWeight : null,
+				parallelLegendElementFontFamily : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontFamily : "",
+				parallelLegendElementFontSize : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontSize : "",
+				parallelLegendElementFontWeight : (jsonParallelLegendElement != null) ? jsonParallelLegendElement.fontWeight : "",
 
 				/**
 				 * Added for the SCATTER chart
 				 * (danilo.ristovski@mht.net)
 				 */
 				scatterZoomType : (jsonScatterZoomType != null) ? jsonScatterZoomType : "",
-				scatterStartOnTick : (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : false,
-				scatterEndOnTick : (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : false,
-				scatterShowLastLabel : (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : false,
+				scatterStartOnTick : (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : "",
+				scatterEndOnTick : (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : "",
+				scatterShowLastLabel : (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : "",
 
 				/**
 				 * Added for the HEATMAP chart
 				 * (danilo.ristovski@mht.net)
 				 *
 				 */
-				symbolHeight : (jsonHeatmapChartSybmolHeight != null) ? jsonHeatmapChartSybmolHeight : null,
+				symbolHeight : (jsonHeatmapChartSybmolHeight != null) ? jsonHeatmapChartSybmolHeight : "",
 
 				/**
 				 * Added for the GAUGE chart. Mandatory parameters for the chart -
@@ -2193,30 +2252,30 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * chart type).
 				 * (danilo.ristovski@mht.net)
 				 */
-				startAnglePane : (jsonGaugeMinAnglePane != null) ? jsonGaugeMinAnglePane : null,
-				endAnglePane : (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : null,
+				startAnglePane : (jsonGaugeMinAnglePane != null) ? jsonGaugeMinAnglePane : "",
+				endAnglePane : (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : "",
 
-				gaugeMin : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : null,
-				gaugeMax : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : null,
-				gaugeLineColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : null,
+				gaugeMin : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : "",
+				gaugeMax : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : "",
+				gaugeLineColor : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : "",
 				//gaugeOffset : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
-				gaugeLineWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : null,
-				gaugeEndOnTick : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : null,
+				gaugeLineWidth : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : "",
+				gaugeEndOnTick : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : "",
 
-				gaugeTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPosition : null,
-				gaugeTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickColor : null,
-				gaugeTickPixelInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPixelInterval : null,
-				gaugeTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickWidth : null,
-				gaugeTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickLength : null,
+				gaugeTickPosition : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPosition : "",
+				gaugeTickColor : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickColor : "",
+				gaugeTickPixelInterval : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPixelInterval : "",
+				gaugeTickWidth : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickWidth : "",
+				gaugeTickLength : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickLength : "",
 
-				gaugeMinorTickColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickColor : null,
-				gaugeMinorTickInterval : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickInterval : null,
-				gaugeMinorTickLength : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickLength : null,
-				gaugeMinorTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : null,
-				gaugeMinorTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : null,
+				gaugeMinorTickColor : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickColor : "",
+				gaugeMinorTickInterval : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickInterval : "",
+				gaugeMinorTickLength : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickLength : "",
+				gaugeMinorTickPosition : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : "",
+				gaugeMinorTickWidth : (jsonGaugeAxesListData && jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : "",
 
-				gaugeDistance : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.distance != null) ? jsonGaugeAxesListData.LABELS.distance : null,
-				gaugeRotation : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.rotation != null) ? jsonGaugeAxesListData.LABELS.rotation : null
+				gaugeDistance : (jsonGaugeAxesListData && jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.distance != null) ? jsonGaugeAxesListData.LABELS.distance : "",
+				gaugeRotation : (jsonGaugeAxesListData && jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.rotation != null) ? jsonGaugeAxesListData.LABELS.rotation : ""
 			});
 			
 			return cModel;

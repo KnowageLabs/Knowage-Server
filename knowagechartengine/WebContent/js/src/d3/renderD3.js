@@ -973,7 +973,7 @@ function renderWordCloud(chartConf,catchSVG){
 //		}	
 		
 		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width)*bcHeightFactor;
+//		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width)*bcHeightFactor;
 		var bcHeight = parseInt(jsonObject.toolbar.style.height)*bcWidthFactor;
 		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
 		var bcTail = parseInt(jsonObject.toolbar.style.tail);
@@ -1060,8 +1060,10 @@ function renderWordCloud(chartConf,catchSVG){
 	    // Parameters (dimensions) for the toolbar (breadcrumb)
 		var b = 
 		{ 
-			w: bcWidth, 	h: bcHeight, 
-			s: bcSpacing, 	t: bcTail 
+//			w: bcWidth, 	
+			h: bcHeight, 
+			s: bcSpacing, 	
+			t: bcTail 
 		};
 		
 		/*var chartDivWidth=width;
@@ -1159,10 +1161,10 @@ function renderWordCloud(chartConf,catchSVG){
 		     * title, subtitle, toolbar (breadcrumb), padding between the toolbar 
 		     * and the chart, half of the height of the chart. */
 		    var sumOfHeightsAboveChartCenter = parseInt(titleHeight + subtitleHeight + height/2 + topPadding);		    	
-		    
+		   		    
 		    if (jsonObject.toolbar.style.position=="top")
 			{   
-		    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + breadCrumbHeight);		    	
+		    	sumOfHeightsAboveChartCenter = parseInt(sumOfHeightsAboveChartCenter + bcHeight + topPadding);		    	
 	    		d3.select("#main"+randomId).append("div").attr("id","sequence"+randomId);	
 	    		d3.select("#main"+randomId).append("div").style("height",topPadding);
 			}
@@ -1442,9 +1444,7 @@ function renderWordCloud(chartConf,catchSVG){
 //								  var numberOfColor = Math.floor(Math.random()*children.length);
 //								  colors[d.name] = children[numberOfColor];								  
 //							  }
-							
-							//console.log(d);
-							
+														
 							if(d.name!=null && d.name!="")
 							{
 							  /* If current node is not a root */
@@ -1479,9 +1479,7 @@ function renderWordCloud(chartConf,catchSVG){
 							  }							  	
 							}
 							else
-							{
-								 console.log("RRRRR");
-								  console.log(d);
+							{								 
 								  return "invisible";
 							  }		
 							  
@@ -1587,7 +1585,8 @@ function renderWordCloud(chartConf,catchSVG){
 		  /* When width of the text area (rectangle) is set, count 
 		   * the height of the invisible text rectangle in which 
 		   * text will fit. */
-		  var textRectangleHight = d3.select("#explanation"+randomId)[0][0].clientHeight;		  
+		  
+		  var textRectangleHight = d3.select("#explanation"+randomId)[0][0].clientHeight;	
 		  var distanceFromTheTop = sumOfHeightsAboveChartCenter - textRectangleHight/2;
 		    
 		  /* When text area in the middle of the chart is determined,
@@ -2072,10 +2071,14 @@ function renderWordCloud(chartConf,catchSVG){
 		  
 		};
 		
+		/**
+		 * Cockpit handler - SUNBURST
+		 */
 		function clickFunction(d){
 			if(jsonObject.chart.isCockpit==true){
 				if(jsonObject.chart.outcomingEventsEnabled){
 				paramethers=crossNavigationParams(d);
+				
 				var selectParams={
 						categoryName:paramethers.categoryName,
 						categoryValue:paramethers.categoryValue,
@@ -2128,7 +2131,7 @@ function renderWordCloud(chartConf,catchSVG){
 	function renderParallelChart(data){
    
 	var records = data.data[0];
-   
+	
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){
@@ -3545,6 +3548,7 @@ function renderChordChart(jsonData)
 			tooltip.transition().duration(50).style("opacity","0");
 			if(jsonData.chart.isCockpit==true){
 				if(jsonData.chart.outcomingEventsEnabled){
+					
 				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
 				var selectParams={
 						categoryName:paramethers.categoryName,
@@ -3554,6 +3558,7 @@ function renderChordChart(jsonData)
 						groupingCategoryName:paramethers.groupingCategoryName,
 						groupingCategoryValue:paramethers.groupingCategoryValue	
 				};
+				
 				handleCockpitSelection(selectParams);
 				}
 			}else if(jsonData.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
@@ -3937,7 +3942,7 @@ function renderChordChart(jsonData)
 	var rows = jsonData.data[0].rows;
 	//var source,target,value;
 	
-	var matrix = new Array(elemSize);
+	var matrix = new Array(rows.length);
 	
 //	for (var i = 0; i < matrix.length;i++)
 //	{
@@ -3949,12 +3954,12 @@ function renderChordChart(jsonData)
 	 {		 
 		 matrix[i] = [];
 		 
-		 for (j = 0; j < elemSize; j++) 
+		 for (j = 0; j < rows.length; j++) 
 		 {
 			var column = 'column_'+(j+1);			
 			matrix[i][j] = parseFloat(rows[i][column]);
 		 };	
-  	 };  	 
+  	 };  
   	 
   	 // Variable that will let us render this chart part, but preventing listening for the mouseover event
   	 var arcs = null;
@@ -4114,8 +4119,8 @@ function renderChordChart(jsonData)
 			 var chord = d3.layout.chord()
 			  				.padding(.05)	// TODO: Customize ???
 	  						.sortSubgroups(d3.descending)
-	  						.matrix(matrix);		
-			 
+	  						.matrix(matrix);	
+			 			 
 			 // draws circles and defines the effect on the passage mouse
 			var arcs1 = svg.append("svg:g").selectAll("path")
 				.data(chord.groups)
@@ -4139,8 +4144,8 @@ function renderChordChart(jsonData)
 					});
 			
 			/**
-			 * Customization for category labels (desciptions over arcs of the CHORD chart).			 * 
-			 * @author: danristo (danilo.ristovski@mht.net)
+			 * Customization for category labels (desciptions over arcs of the CHORD chart).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			var literalLabelsFontCustom = jsonData.xAxis.labels.style;
 			

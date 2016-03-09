@@ -595,6 +595,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					globalThis.previewPanel.removeAll();
+					
+					var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/def_prev_pict_no_chart_rendered.png';
+					setPreviewImage(src,globalThis.previewPanel.getHeight(),globalThis.previewPanel.getWidth());
 				}
 			);
 
@@ -1581,6 +1584,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			);
 			
+			var chartAlreadyRendered = false;
+			
 			/**
 			 * Handles the resizing of the Preview panel that lies within the Designer page.
 			 * 
@@ -1606,6 +1611,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */					
 					var notAvailableImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
 					var loadingImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/loading_preview.png';
+					var standByImg = Sbi.chart.designer.Designer.relativePathReturn + '/img/def_prev_pict_no_chart_rendered.png';
 										
 					/**
 					 * Flags that will help us know if the current image is one of the two
@@ -1616,15 +1622,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var doNotEnterResizeForChart = false;
 					var loading = false;
 					var notAvailable = false;
+					var standBy = false;
 					
-					if (srcImg && srcImg!=null && (notAvailableImg==srcImg || loadingImg==srcImg))
+					if (srcImg && srcImg!=null && (notAvailableImg==srcImg || loadingImg==srcImg || standByImg==srcImg))
 					{
 						doNotEnterResizeForChart = true;
 						
 						if (notAvailableImg==srcImg)
 							notAvailable = true;
-						else
+						else if (loading==srcImg)
 							loading = true;
+						else 
+							standBy = true;
 					}
 					
 					/**
@@ -1845,6 +1854,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 							else if (notAvailable)
 							{							
 								setPreviewImage(notAvailableImg,heightCurrent,widthCurrent);
+							}
+							else
+							{
+								setPreviewImage(standByImg,heightCurrent,widthCurrent);
 							}
 						}					
 				}
@@ -2321,7 +2334,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				            });
 				        },
   						
-  	  					beforeDrop: function(node, data, dropRec, dropPosition) {   
+  	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
   	  				        /**
   	  				         * display category alias field only for bar and line, that will be used for 
   	  				         * default axis title when there is no custom title
@@ -2347,7 +2360,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (data.records.length == 1)
-							{  	  	  						
+							{  	  						
 	  	  						/**
 	  	  						 * Taking care of the order of the categories (based on their type) for the 
 	  	  						 * HEATMAP chart type.
@@ -2666,7 +2679,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						selectOnFocus: true,
 					}
 					
-				}, 
+				}, 				
 				
 				{
 					menuDisabled: true,
@@ -3649,7 +3662,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			var chartViewModelData = this.cViewModel.data.configModel.data;
 			
-			var numberOfSerieItems = Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length;
+			if (chartType=="PARALLEL")
+			{
+				var numberOfSerieItems = Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson(this.cViewModel.data.configModel).length;
+			}
+			else
+			{
+				var numberOfSerieItems = Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length;
+			}
 			
 			/**
 			 * The maximum number of series that the PIE chart can contain.
@@ -4434,17 +4454,31 @@ Ext.define('Sbi.chart.designer.Designer', {
 							maxValue: Ext.getCmp("sunburstToolbarTail").maxValue
 						},
 						
-						height:
-						{
-							minValue: Ext.getCmp("sunburstToolbarHeight").minValue,
-							maxValue: Ext.getCmp("sunburstToolbarHeight").maxValue
-						},
+						/**
+		 	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+		 	        	 * using this static value for the height of elements inside the breadcrumb
+		 	        	 * (toolbar) anymore, rather following the height of each element's word.
+		 	        	 * 
+		 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 	        	 */
+//						height:
+//						{
+//							minValue: Ext.getCmp("sunburstToolbarHeight").minValue,
+//							maxValue: Ext.getCmp("sunburstToolbarHeight").maxValue
+//						},
 						
-						width:
-						{
-							minValue: Ext.getCmp("sunburstToolbarWidth").minValue,
-							maxValue: Ext.getCmp("sunburstToolbarWidth").maxValue
-						}
+						/**
+		 	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+		 	        	 * using this static value for the width of elements inside the breadcrumb
+		 	        	 * (toolbar) anymore, rather following the length of each element's word.
+		 	        	 * 
+		 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 	        	 */
+//						width:
+//						{
+//							minValue: Ext.getCmp("sunburstToolbarWidth").minValue,
+//							maxValue: Ext.getCmp("sunburstToolbarWidth").maxValue
+//						}
 					},
 					
 					tip:
@@ -5169,8 +5203,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 				// == Toolbar and tip panel : Toolbar button ==
 				var sunburstToolbarSpacingGUI = Ext.getCmp("sunburstToolbarSpacing").value;
 				var sunburstToolbarTailGUI = Ext.getCmp("sunburstToolbarTail").value;
-				var sunburstToolbarHeightGUI = Ext.getCmp("sunburstToolbarHeight").value;
-				var sunburstToolbarWidthGUI = Ext.getCmp("sunburstToolbarWidth").value;
+				
+				/**
+ 	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+ 	        	 * using this static value for the height of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the height of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				var sunburstToolbarHeightGUI = Ext.getCmp("sunburstToolbarHeight").value;
+				
+				/**
+ 	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+ 	        	 * using this static value for the width of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the length of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				var sunburstToolbarWidthGUI = Ext.getCmp("sunburstToolbarWidth").value;
+				
 				// == Toolbar and tip panel : Tip button ==
 				var sunburstTipWidthGUI = Ext.getCmp("sunburstTipWidth").value;
 				
@@ -5180,8 +5231,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 				// == Toolbar and tip panel : Toolbar button ==
 				var sunburstToolbarSpacingCModel = chartViewModelData.toolbarSpacing;
 				var sunburstToolbarTailCModel = chartViewModelData.toolbarTail;
-				var sunburstToolbarHeightCModel = chartViewModelData.toolbarHeight;
-				var sunburstToolbarWidthCModel = chartViewModelData.toolbarWidth;
+				
+				/**
+ 	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+ 	        	 * using this static value for the height of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the height of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				var sunburstToolbarHeightCModel = chartViewModelData.toolbarHeight;
+				
+				/**
+ 	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+ 	        	 * using this static value for the width of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the length of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				var sunburstToolbarWidthCModel = chartViewModelData.toolbarWidth;
+				
 				// == Toolbar and tip panel : Tip button ==
 				var sunburstTipFontWeightCModel = chartViewModelData.tipFontWeight;
 				var sunburstTipColorCModel = chartViewModelData.tipColor;
@@ -5304,95 +5372,109 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				if (sunburstToolbarHeightGUI == null)
-				{
-					if (sunburstToolbarHeightCModel == null || sunburstToolbarHeightCModel == "")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}						
-				}
-				else 
-				{					
-					if (sunburstToolbarHeightGUI < checkParamValuesForCharts.sunburst.toolbar.height.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
-								checkParamValuesForCharts.sunburst.toolbar.height.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}
-					else if (sunburstToolbarHeightGUI > checkParamValuesForCharts.sunburst.toolbar.height.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
-								checkParamValuesForCharts.sunburst.toolbar.height.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}
-				}
+				/**
+ 	        	 * KNOWAGE-702 issue: The toolbar height should be removed since we are not
+ 	        	 * using this static value for the height of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the height of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				if (sunburstToolbarHeightGUI == null)
+//				{
+//					if (sunburstToolbarHeightCModel == null || sunburstToolbarHeightCModel == "")
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}						
+//				}
+//				else 
+//				{					
+//					if (sunburstToolbarHeightGUI < checkParamValuesForCharts.sunburst.toolbar.height.minValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+//								checkParamValuesForCharts.sunburst.toolbar.height.minValue,
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}
+//					else if (sunburstToolbarHeightGUI > checkParamValuesForCharts.sunburst.toolbar.height.maxValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+//								checkParamValuesForCharts.sunburst.toolbar.height.maxValue,
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}
+//				}
 				
-				if (sunburstToolbarWidthGUI == null)
-				{
-					if (sunburstToolbarWidthCModel == null || sunburstToolbarWidthCModel == "")
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}										
-				}
-				else 
-				{					
-					if (sunburstToolbarWidthGUI < checkParamValuesForCharts.sunburst.toolbar.width.minValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
-								checkParamValuesForCharts.sunburst.toolbar.width.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}
-					else if (sunburstToolbarWidthGUI > checkParamValuesForCharts.sunburst.toolbar.width.maxValue)
-					{
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
-							
-							[
-								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
-								checkParamValuesForCharts.sunburst.toolbar.width.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
-							]
-						);
-					}
-				}
+				/**
+ 	        	 * KNOWAGE-701 issue: The toolbar width should be removed since we are not
+ 	        	 * using this static value for the width of elements inside the breadcrumb
+ 	        	 * (toolbar) anymore, rather following the length of each element's word.
+ 	        	 * 
+ 	        	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	        	 */
+//				if (sunburstToolbarWidthGUI == null)
+//				{
+//					if (sunburstToolbarWidthCModel == null || sunburstToolbarWidthCModel == "")
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}										
+//				}
+//				else 
+//				{					
+//					if (sunburstToolbarWidthGUI < checkParamValuesForCharts.sunburst.toolbar.width.minValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+//								checkParamValuesForCharts.sunburst.toolbar.width.minValue,
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}
+//					else if (sunburstToolbarWidthGUI > checkParamValuesForCharts.sunburst.toolbar.width.maxValue)
+//					{
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+//								checkParamValuesForCharts.sunburst.toolbar.width.maxValue,
+//								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title")
+//							]
+//						);
+//					}
+//				}
 				
 				(!toolbarPercFontColorPickerValidValue || chartViewModelData.toolbarPercFontColor=="transparent" || chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
