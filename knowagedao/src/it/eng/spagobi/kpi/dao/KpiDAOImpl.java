@@ -346,7 +346,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				sbiKpi = from(session, sbiKpi, kpi);
 				updateSbiCommonInfo4Update(sbiKpi);
-				session.save(sbiKpi);
+				// session.save(sbiKpi);
 				return Boolean.TRUE;
 			}
 		});
@@ -573,19 +573,22 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		}
 
+		session.save(sbiKpiThreshold);
+
 		for (ThresholdValue tv : t.getThresholdValues()) {
 			SbiKpiThresholdValue sbiThresholdValue = null;
 			if (tv.getId() == null) {
 				sbiThresholdValue = from(null, tv);
 				updateSbiCommonInfo4Insert(sbiThresholdValue);
 				sbiThresholdValue.setSbiKpiThreshold(sbiKpiThreshold);
-				session.save(sbiThresholdValue);
 				sbiKpiThreshold.getSbiKpiThresholdValues().add(sbiThresholdValue);
 			} else {
 				sbiThresholdValue = (SbiKpiThresholdValue) session.load(SbiKpiThresholdValue.class, tv.getId());
 				from(sbiThresholdValue, tv);
 				updateSbiCommonInfo4Update(sbiThresholdValue);
 			}
+			sbiThresholdValue.setSbiKpiThreshold(sbiKpiThreshold);
+			session.save(sbiThresholdValue);
 			sbiKpiThreshold.getSbiKpiThresholdValues().add(sbiThresholdValue);
 		}
 		return sbiKpiThreshold;
