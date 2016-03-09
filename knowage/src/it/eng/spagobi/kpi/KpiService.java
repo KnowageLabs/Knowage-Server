@@ -150,8 +150,7 @@ public class KpiService {
 	@Path("/{name}/existsMeasure")
 	public String loadMeasureByName(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		RuleOutput ruleOutput = dao.loadMeasureByName(name);
-		return ruleOutput != null ? "true" : "false";
+		return dao.existsMeasureNames(name).toString();
 	}
 
 	@GET
@@ -160,6 +159,14 @@ public class KpiService {
 		IKpiDAO dao = getKpiDAO(req);
 		Rule r = dao.loadRule(id);
 		return Response.ok(JsonConverter.objectToJson(r, r.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadThreshold")
+	public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		Threshold threshold = dao.loadThreshold(id);
+		return Response.ok(JsonConverter.objectToJson(threshold, threshold.getClass())).build();
 	}
 
 	@GET
@@ -310,7 +317,7 @@ public class KpiService {
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
 			List<String> errors = new ArrayList<>();
-			checkMandatory(errors, kpi);
+			checkMandatory_(errors, kpi);
 
 			if (kpi.getThreshold() == null) {
 				errors.add(getMessage(NEW_KPI_THRESHOLD_MANDATORY));
@@ -482,14 +489,14 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(List<String> errors, Kpi kpi) throws JSONException {
+	private void checkMandatory_(List<String> errors, Kpi kpi) throws JSONException {
 		if (kpi.getName() == null) {
 			errors.add(getMessage(NEW_KPI_NAME_MANDATORY));
 		}
 		if (kpi.getDefinition() == null) {
 			errors.add(getMessage(NEW_KPI_DEFINITION_MANDATORY));
 		} else {
-
+			// validating kpi formula
 			ScriptEngineManager sm = new ScriptEngineManager();
 			ScriptEngine engine = sm.getEngineByExtension("js");
 			String script = new JSONObject(kpi.getDefinition()).getString("formula");
@@ -503,6 +510,11 @@ public class KpiService {
 			} else {
 				errors.add(getMessage(NEW_KPI_DEFINITION_INVALIDCHARACTERS));
 			}
+			// validating kpi formula
+			JSONArray measures = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
+			// TODO
+			// IKpiDAO dao = getKpiDAO(req);
+			// dao.existsMeasureNames
 		}
 	}
 
