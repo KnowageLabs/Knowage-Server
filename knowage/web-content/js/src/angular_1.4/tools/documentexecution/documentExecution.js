@@ -6,25 +6,11 @@
 
 	var documentExecutionApp = angular.module('documentExecutionModule');
 
-	documentExecutionApp.directive('iframeOnload', [function(){
-		return {
-		    scope: {
-		        callBack: '&iframeOnload'
-		    },
-		    link: function(scope, element, attrs){
-		        element.on('load', function(){
-		            return scope.callBack();
-		        })
-		    }
-		}}])
-	
-	
 	documentExecutionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('knowage')
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 	
-	//vik
 	var EmptyViewpoint = {
 			NAME : "",
 			DESCRIPTION: "",
@@ -42,7 +28,8 @@
 
 
 	function documentExecutionControllerFn(
-			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config, sbiModule_messaging, execProperties) {
+			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
+			sbiModule_messaging, execProperties) {
 
 		
 		console.log("documentExecutionControllerFn IN ");
@@ -54,11 +41,9 @@
 		$scope.showSelectRoles=true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = [];
-		
 		$scope.showParametersPanel = true;
-
-		
 		$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
+		$scope.viewpoints = [];
 		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
@@ -83,39 +68,6 @@
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
 			
-		
-		$scope.getParametersForExecutionFake = function(role) {			
-			if(typeof paramsStr === 'undefined'){
-				paramsStr='{}';
-			}
-			var params = 
-				"label=" + execProperties.executionInstance.OBJECT_LABEL
-				+ "&role=" + role
-				+ "&parameters=" + paramsStr;				
-			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
-			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
-				function(data, status, headers, config) {					
-					console.log("param fake .... " , data.parameters);
-					$scope.documentParameters = data.parameters;
-					
-					
-					if(data.parameters && data.parameters.length>0){									
-						$scope.showParametersPanel=true;
-						if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
-							$mdSidenav('parametersPanelSideNav').open();
-						}
-					}else{
-						$scope.showParametersPanel = false;
-						if($mdSidenav('parametersPanelSideNav').isOpen()) {
-							$mdSidenav('parametersPanelSideNav').close();
-						}
-					}
-											
-				}).error(function(data, status, headers, config) {
-					console.log("TargetLayer non Ottenuto " + status);
-				});
-		};
-		
 		
 		/*
 		 * START EXECUTION PROCESS REST
@@ -179,7 +131,9 @@
 			console.log("changeRole IN ");
 			//If new selected role is different from the previous one
 			if(role != $scope.selectedRole) { 
+				
 				$scope.executionProcesRestV1(role);
+//				$scope.executionProcesRestV1(role, JSON.stringify(buildStringParameters()));
 				$scope.getParametersForExecution(role);
 //				if($mdSidenav('parametersPanelSideNav').isOpen()) {
 //					$mdSidenav('parametersPanelSideNav').close();
@@ -201,18 +155,7 @@
 			}
 			return false
 		};
-
-		$scope.iframeOnload = function(){
-			//alert('loaded');
-//			if($mdSidenav('parametersPanelSideNav').isOpen()) {
-//				$mdSidenav('parametersPanelSideNav').close();
-//				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
-//			}
-		}
 		
-		
-
-
 		/*
 		 * GET PARAMETERS 
 		 * Check if parameters exist.
@@ -223,7 +166,6 @@
 			var params = 
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role;
-			
 			sbiModule_restServices.get("1.0/documentexecution", "filters", params)
 			.success(function(response, status, headers, config){
 				console.log('getParametersForExecution response OK -> ', response);
@@ -260,7 +202,6 @@
 			
 			var tempNewParameterValue = '';
 			for(var i = 0; i < parameter.defaultValues.length; i++) {
-				
 				var defaultValue = parameter.defaultValues[i];
 				if(defaultValue.isSelected) {
 					if(tempNewParameterValue != '') {
@@ -268,8 +209,7 @@
 					}
 					tempNewParameterValue += "'" + defaultValue.value + "'"
 				}
-			}
-			
+			}			
 			parameter.parameterValue = tempNewParameterValue;
 		};
 		
@@ -301,8 +241,18 @@
 			console.log('Deleting document -> ', execProperties);
 		};
 		
+		$scope.clearListParametersForm = function(){
+			if($scope.documentParameters.length > 0){
+				for(var i = 0; i<= $scope.documentParameters.length -1 ; i++){				
+						$scope.documentParameters[i].parameterValue='';
+				}
+			}
+		}
 		
 		
+		/*
+		 * Create new viewpoint document execution
+		 */
 		$scope.createNewViewpoint = function(){
 			$mdDialog.show({
 				scope : $scope,
@@ -311,12 +261,10 @@
 				controller : function($mdDialog) {
 					var vpctl = this;
 					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
-					
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = $scope.selectedRole;
 						vpctl.newViewpoint.VIEWPOINT = buildStringParameters();
-						console.log('submit ' , vpctl.newViewpoint);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
@@ -338,32 +286,131 @@
 						$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
 					};
 				},
-
-				// "/knowage/js/dialog-new-glossary.html"
-				templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html'
+				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
 		
-		
-		
-		
-		
-		
+		/*
+		 * GET Viewpoint document execution
+		 */
+		$scope.getViewpoints = function(){
+			$mdDialog.show({
+				scope : $scope,
+				preserveScope : true,
+				controllerAs : 'gvpCtrl',
+				controller : function($mdDialog) {
+					var gvpctl = this;
+					gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
+					sbiModule_restServices.get(
+							"1.0/documentviewpoint", 
+							"getViewpoints",
+							"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ $scope.selectedRole)
+							.success(function(data, status, headers, config) {
+								gvpctl.viewpoints= data.viewpoints;
+							})
+							.error(function(data, status, headers, config) {});
+							
+							gvpctl.close = function($event) {
+								$mdDialog.hide();
+							};
+							gvpctl.vpSpeedMenuOpt = [ 			 		               	
+							 		               	{ // Fill Form
+							 		               	label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
+						 		               		icon:"fa fa-pencil-square-o",
+						 		               		backgroundColor:'blue',
+						 		               		color:'white',
+						 		               		action : function(item) {
+						 		               			console.log(item);
+						 		               			var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+						 		               			fillParametersPanel(params);
+						 		               			$mdDialog.hide();
+						 		               			}	
+							 		               	},
+							 		               	{ //Execute Url
+							 		               	label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
+						 		               		icon:"fa fa-play-circle",
+						 		               		backgroundColor:'blue',
+						 		               		color:'white',
+						 		               		action : function(item) {
+							 		               		//decodeURIComponent						 		               		
+							 		               		var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+							 		               	    fillParametersPanel(params);
+							 		               		$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
+							 		               		$mdDialog.hide();
+						 		               		 }	
+							 		               	},
+							 		                {   //Delete Action
+							 		               		label: sbiModule_translate.load("sbi.generic.delete"),
+							 		               		icon:"fa fa-trash-o",
+							 		               		backgroundColor:'red',
+							 		               		color:'white',
+							 		               		action : function(item) {
+							 		               		//confirm action
+						 		               			var index = gvpctl.viewpoints.indexOf(item);
+						 		               			console.log('delete obj index ' + index , item);						 		               		    
+						 		               				sbiModule_restServices.get(
+						 									"1.0/documentviewpoint", 
+						 									"deleteViewpoint",
+						 									"id=" + item.vpId)
+						 									.success(function(data, status, headers, config) {
+						 										if(data.errors && data.errors.length > 0 ){
+						 											showToast(data.errors[0].message);
+						 										}else{
+						 											gvpctl.viewpoints.splice(index, 1);
+						 											//message success
+						 										}
+						 									})
+						 									.error(function(data, status, headers, config) {});						 									
+						 		               			}
+							 		               	} 	
+							 		             ];
+				},
+				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
+			});						
+		};
+		/*
+		 * Fill Parameters Panel 
+		 */
+		function fillParametersPanel(params){
+			if($scope.documentParameters.length > 0){
+				for(var i = 0; i<= $scope.documentParameters.length -1 ; i++){				
+					//Type params
+					if($scope.documentParameters[i].type=='NUM'){
+						$scope.documentParameters[i].parameterValue= parseFloat(params[$scope.documentParameters[i].urlName],10);
+					}else if($scope.documentParameters[i].type=='STRING'){
+						$scope.documentParameters[i].parameterValue= params[$scope.documentParameters[i].urlName];	
+					}
+				}
+			}			
+		}
+		/*
+		 *Convert parameter string request to json obj  
+		 */
+		function decodeRequestStringToJson(str) {
+		    var hash;
+		    var myJson = {};
+		    var hashes = str.slice(str.indexOf('?') + 1).split('&');
+		    for (var i = 0; i < hashes.length; i++) {
+		        hash = hashes[i].split('=');
+		        myJson[hash[0]] = hash[1];
+		    }
+		    return myJson;
+		}
+		/*
+		 * Build parameters obj to submit  
+		 */
 		function buildStringParameters(){
 			console.log("$scope.documentParameters -> ", $scope.documentParameters);
 			var jsonDatum =  {};
 			if($scope.documentParameters.length > 0){
 				for(var i = 0; i < $scope.documentParameters.length; i++ ){
 					var parameter = $scope.documentParameters[i];
-					
 					var valueKey = parameter.urlName;
-					var descriptionKey = parameter.urlName + "_field_visible_description";
-					
+					var descriptionKey = parameter.urlName + "_field_visible_description";					
 					var jsonDatumValue = null;
 					if(parameter.valueSelection.toLowerCase() == 'lov') {
 						if(Array.isArray(parameter.parameterValue)) {
-							var arrayAsString = '';
-							
+							var arrayAsString = '';					
 							for(var j = 0; j < parameter.parameterValue.length; j++) {
 								if(j > 0) {
 									arrayAsString += ',';
@@ -376,7 +423,6 @@
 							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
 						}
 					} else {
-						
 						jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
 					}
 					jsonDatum[valueKey] = jsonDatumValue;
@@ -386,25 +432,14 @@
 			return  jsonDatum;
 		}
 		
-		
 		function showToast(text, time) {
 			var timer = time == undefined ? 6000 : time;
 			console.log(text)
 			$mdToast.show($mdToast.simple().content(text).position('top').action(
 					'OK').highlightAction(false).hideDelay(timer));
 		}
-		
-		
-		
 		console.log("documentExecutionControllerFn OUT ");
-	};
-	
-	
-	
-	 
-	
-	
-	
+	};	
 	
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
@@ -412,9 +447,8 @@
 			link: function(scope, element, attrs){
 				element.on('load', function(){
 					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
-					element.css('height', iFrameHeight);
-					
-					alert('load iframe');
+					element.css('height', iFrameHeight);				
+					//alert('load iframe');
 				})
 			}
 		};

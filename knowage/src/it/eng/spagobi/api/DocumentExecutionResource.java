@@ -109,7 +109,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("documentError", errorList);
 			resultAsMap.put("url", "");
 			resultAsMap.put("parameters", "");
-			return Response.ok(resultAsMap).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution url", e);
 			throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
@@ -117,7 +116,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
-		// return Response.ok(toBeReturned).build();
 	}
 
 	/**

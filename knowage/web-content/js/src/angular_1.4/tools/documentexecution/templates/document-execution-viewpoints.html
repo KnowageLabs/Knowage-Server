@@ -1,0 +1,31 @@
+
+<md-dialog aria-label="Saved Parameters" style="width: 80%; height: 90%; overflow-y: visible;" layout="column">
+<md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2 style="    font-size: 20px;    text-align: center;    width: 100%;">{{gvpCtrl.headerTitle}}</h2>
+      <span flex></span>
+      <md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" 
+			ng-click="gvpCtrl.close()">
+		<i class="fa fa-times" style="color:white"></i>
+	 </md-button>
+      
+      
+       </div>
+  </md-toolbar>
+ 
+  <md-dialog-content class="sticky-container" flex style="position: relative;" layout-margin>
+			<angular-table  style="position: absolute;" layout-fill
+				id="tableViewpoints" ng-model="gvpCtrl.viewpoints" 
+				columns='[{"label":"Name","name":"vpName"},{"label":"Description","name":"vpDesc"},{"label":"Visibility","name":"vpScope"}]'
+				columns-search='["vpName","vpDesc", "vpScope"]'
+				highlights-selected-item = "true"
+				show-search-bar="true"
+				speed-menu-option=gvpCtrl.vpSpeedMenuOpt
+				>
+			</angular-table>
+  </md-dialog-content>
+     
+  
+  
+ 
+</md-dialog>

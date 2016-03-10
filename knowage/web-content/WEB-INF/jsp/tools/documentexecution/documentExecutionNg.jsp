@@ -87,15 +87,15 @@ try{
 				<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
 					<div layout="row" layout-align="center center">						
 						<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
-								ng-click="alert('Reset ...')">
+								ng-click="clearListParametersForm();">
 							<i class="fa fa-eraser" style="color:white"></i>
 						</md-button>						
 						<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
-								ng-click="alert('Open saved ...')">
+								ng-click="getViewpoints();">
 							<i class="fa fa-pencil" style="color:white"></i>
 						</md-button>						
 						<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-								ng-click="createNewViewpoint()">
+								ng-click="createNewViewpoint();">
 							<i class="fa fa-floppy-o" style="color:white"></i>
 						</md-button>
 					</div>
@@ -111,6 +111,7 @@ try{
 						</md-select>
 					</md-input-container>
 				</md-content>
+				
 				
 				<md-list ng-hide="isParameterPanelDisabled()">
 					<md-list-item ng-repeat="parameter in documentParameters">
@@ -184,6 +185,7 @@ try{
 						</md-input-container>
 					</md-list-item>
 				</md-list>
+				
 			<!-- execute button -->
 				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
 						title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
@@ -198,7 +200,7 @@ try{
 	//Module creation
 	(function() {
 		
-		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree']);
+		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {
@@ -221,6 +223,10 @@ try{
 	</script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
+			<!-- angular table -->
+			<script type="text/javascript"
+			 src="<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
+			
 	<!--
 	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/parametersPanel/parametersPanelController.js"></script>
