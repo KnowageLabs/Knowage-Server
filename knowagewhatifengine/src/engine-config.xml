@@ -44,5 +44,6 @@
 			<ALGORITHM name="Fix values" class="it.eng.spagobi.engines.whatif.model.transform.algorithm.FakeAllocatyionAlg"/>
 		</ALGORITHMS>
 	</WRITEBACK>
-
+	<DEPTHLIMIT value="5">
+	</DEPTHLIMIT>
 </ENGINE-CONFIGURATION>

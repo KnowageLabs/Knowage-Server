@@ -33,6 +33,7 @@ function olapFunction(
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
 	
+	$scope.minNumOfLetters=4;
 	$scope.searchText="";
 	$scope.searchSucessText;
 	$scope.showSearchInput=false;
@@ -93,6 +94,7 @@ function olapFunction(
 	var m;
 	var oldSelectedFilter="";
 	var visibleSelected = [];
+	var hlght = false;
 	
 	$scope.handleResponse = function(response) {
 		source = response.data;
@@ -107,7 +109,7 @@ function olapFunction(
 		$scope.showMdxVar = source.mdxFormatted;
 	}
 	
-
+	
 	$scope.crossNavigationEnabled = false;
 	
 	$scope.enableDisableCrossNavigation = function() {
@@ -133,7 +135,7 @@ function olapFunction(
 		$scope.modelConfig.drillType = type;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
-	
+	console.log(testconfig);
 	$scope.btnFunctions = function(name){
 		switch(name){
 		case "BUTTON_FATHER_MEMBERS":
@@ -994,6 +996,7 @@ function olapFunction(
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
 		
 		$scope.searchText = "";
+		hlght = false;
 		$mdDialog.hide();		
 	}
 	
@@ -1004,6 +1007,7 @@ function olapFunction(
 	
 	$scope.expandTreeAsync = function(item){
 		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
+		
 	}
 	
 	expandAsyncTree = function(d,dput,id){
@@ -1025,7 +1029,7 @@ function olapFunction(
 	};
 	
 	$scope.hideAsyncTree = function(item){
-		item.collapsed = false;		
+		item.collapsed = false;
 	}
 	
 	/**
@@ -1194,6 +1198,7 @@ function olapFunction(
 	
 	$scope.searchFilter = function(){
 		$scope.loadingNodes = true;
+		hlght = true;
 		sbiModule_restServices.promiseGet
 		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 		.then(function(response) {
@@ -1225,7 +1230,9 @@ function olapFunction(
 			$scope.dataPointers.push(filterFather);
 	};
 	
-	$scope.highlight = function(name){		
+	$scope.highlight = function(name){
+		if(!hlght)
+			return false;
 		if(name.toLowerCase().indexOf($scope.searchText.toLowerCase()) > -1)		
 			return true;		
 		else		

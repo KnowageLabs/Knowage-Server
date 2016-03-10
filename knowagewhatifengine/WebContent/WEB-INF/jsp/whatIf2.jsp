@@ -16,6 +16,7 @@
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
 	var drillType = '<%= whatIfEngineInstance.getModelConfig().getDrillType() %>'
+	var testconfig = '<%= whatIfEngineInstance.getModelConfig().getTest() %>'
 </script>
 </head>
 <body ng-controller="olapController" >

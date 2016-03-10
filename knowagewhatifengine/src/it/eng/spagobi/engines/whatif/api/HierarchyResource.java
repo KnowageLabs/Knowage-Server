@@ -44,6 +44,7 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
@@ -212,7 +213,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
 			@PathParam("axis") int axis, @PathParam("name") String name, @PathParam("showS") boolean showS) {
 		Hierarchy hierarchy = null;
-
+		int nodeLimit = WhatIfEngineConfig.getInstance().getDepthLimit();
+		nodeLimit = nodeLimit > 0 ? nodeLimit : Integer.MAX_VALUE;
 		List<Integer> positionList = new ArrayList<Integer>();
 		List<String> fatherNameList = new ArrayList<String>();
 		List<Member> list = new ArrayList<Member>();
@@ -247,7 +249,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		try {
 			String nameLower = name.toLowerCase();
 
-			for (int j = 0; j < hierarchy.getLevels().size(); j++) {
+			for (int j = 0; j < hierarchy.getLevels().size() && j < nodeLimit; j++) {
 				l = hierarchy.getLevels().get(j);
 				list = l.getMembers();
 				positionList = new ArrayList<Integer>();

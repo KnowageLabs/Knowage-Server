@@ -14,9 +14,12 @@
 					<md-icon ng-class="showSearchInput ? 'fa fa-eye-slash' :'fa fa-eye'" style="padding-top:5px;"></md-icon>
 				</md-button>
 				
-        		<input ng-show="showSearchInput" ng-model="searchText" placeholder="Insert text here" width="70%!important">
+        		<input	ng-show="showSearchInput" 
+        				ng-model="searchText" 
+        				placeholder="Insert text here" 
+        				width="70%!important"/>
 				
-				<md-button ng-show="showSearchInput" ng-click="searchFilter()" class="md-icon-button">
+				<md-button ng-show="showSearchInput" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
 				<md-tooltip md-direction="top">
           				Search
         			</md-tooltip>

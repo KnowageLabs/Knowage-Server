@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,22 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.engines.whatif;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -43,6 +33,15 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.datasource.SimpleOlapDataSource;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -113,6 +112,7 @@ public class WhatIfEngineConfig {
 	private final static String PERSISTENT_ATTRIBUTE = "persistent";
 	private final static String XMLA_URL = "url";
 	private final static String DEFAULT_ATTRIBUTE = "default";
+	private final static String DEPTHLIMIT_TAG = "DEPTHLIMIT";
 
 	public String getTemplateFilePath() {
 		String templatePath = "";
@@ -331,6 +331,17 @@ public class WhatIfEngineConfig {
 			}
 		}
 		return true;
+	}
+
+	public int getDepthLimit() {
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DEPTHLIMIT_TAG);
+		if (sb != null) {
+			String dpth = (String) sb.getAttribute("value");
+			System.out.println(dpth);
+			return Integer.parseInt(dpth);
+			// return Integer.parseInt(sb.getAttribute("value").toString());
+		}
+		return -1;
 	}
 
 	// -- ACCESS Methods -----------------------------------------------
