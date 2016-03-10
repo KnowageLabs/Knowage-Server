@@ -21,9 +21,9 @@
 
 		<!-- lov list single input -->
 		<section ng-if="!lookupParamCtrl.parameter.multivalue">
-		<!--
+			<!--
 			<label>{{lookupParamCtrl.parameter.label}}</label>
-		-->
+			-->
 			<md-radio-group ng-model="lookupParamCtrl.parameter.parameterValue" ng-required="lookupParamCtrl.parameter.mandatory">
 				<md-radio-button class="md-primary" ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues" value="{{defaultParameter.value}}">
 					{{defaultParameter.label}}

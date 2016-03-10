@@ -158,11 +158,5 @@ try{
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionUtils.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
-	
-	
-	<!--
-	<script type="text/javascript"
-			src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/parametersPanel/parametersPanelController.js"></script>
-	-->
 </body>
 </html>
