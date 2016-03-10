@@ -555,8 +555,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private SbiKpiThreshold from(Session session, SbiKpiThreshold sbiKpiThreshold, Threshold t) {
+		boolean saveAsNew = false;
 		if (sbiKpiThreshold == null) {
 			sbiKpiThreshold = new SbiKpiThreshold();
+			saveAsNew = true;
 		}
 		sbiKpiThreshold.setName(t.getName());
 		sbiKpiThreshold.setDescription(t.getDescription());
@@ -577,7 +579,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		for (ThresholdValue tv : t.getThresholdValues()) {
 			SbiKpiThresholdValue sbiThresholdValue = null;
-			if (tv.getId() == null) {
+			if (tv.getId() == null || saveAsNew) {
 				sbiThresholdValue = from(null, tv);
 				updateSbiCommonInfo4Insert(sbiThresholdValue);
 				sbiThresholdValue.setSbiKpiThreshold(sbiKpiThreshold);
