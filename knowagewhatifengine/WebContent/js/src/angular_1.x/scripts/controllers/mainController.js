@@ -135,7 +135,7 @@ function olapFunction(
 		$scope.modelConfig.drillType = type;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
-	console.log(testconfig);
+
 	$scope.btnFunctions = function(name){
 		switch(name){
 		case "BUTTON_FATHER_MEMBERS":
