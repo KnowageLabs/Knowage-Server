@@ -66,9 +66,7 @@ try{
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						<%--
-						ng-disabled="isParameterPanelDisabled()"
-						--%>
+						ng-disabled="isParameterRolePanelDisabled()"
 				>
 					<i class="fa fa-cog header"></i> 
 				</md-button>

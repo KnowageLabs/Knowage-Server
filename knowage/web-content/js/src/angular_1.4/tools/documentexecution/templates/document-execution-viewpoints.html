@@ -12,7 +12,13 @@
       
        </div>
   </md-toolbar>
- 
+ <div layout="column" layout-wrap  >
+			<div flex></div>
+				 	<md-button  class="md-fab md-mini"  ng-click="gvpCtrl.removeFilter()" ><md-icon
+						md-font-icon="fa fa-trash-o fa-2x" >
+					</md-icon></md-button>
+				<div flex></div>
+</div>
   <md-dialog-content class="sticky-container" flex style="position: relative;" layout-margin>
 			<angular-table  style="position: absolute;" layout-fill
 				id="tableViewpoints" ng-model="gvpCtrl.viewpoints" 
@@ -21,6 +27,8 @@
 				highlights-selected-item = "true"
 				show-search-bar="true"
 				speed-menu-option=gvpCtrl.vpSpeedMenuOpt
+				multi-select = "true"
+				selected-item=gvpCtrl.selectedParametersFilter
 				>
 			</angular-table>
   </md-dialog-content>

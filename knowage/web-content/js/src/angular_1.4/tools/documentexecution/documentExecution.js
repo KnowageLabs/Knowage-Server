@@ -11,14 +11,7 @@
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 	
-	var EmptyViewpoint = {
-			NAME : "",
-			DESCRIPTION: "",
-			SCOPE : "",
-			OBJECT_LABEL : "",
-			ROLE :"",
-			VIEWPOINT : JSON.parse("{}")
-	};
+	
 	
 	
 	documentExecutionApp.controller( 'documentExecutionController', 
@@ -41,7 +34,7 @@
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = [];
 		$scope.showParametersPanel = true;
-		$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
+		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteUtils.EmptyViewpoint));
 		$scope.viewpoints = [];
 		
 		$scope.initSelectedRole = function(){
@@ -271,7 +264,12 @@
 
 		$scope.isParameterPanelDisabled = function(){
 			return (!$scope.documentParameters || $scope.documentParameters.length == 0);
-		};		
+		};
+		
+		$scope.isParameterRolePanelDisabled = function(){
+			return ((!$scope.documentParameters || $scope.documentParameters.length == 0)
+					&& (execProperties.roles.length==1));
+		};
 		
 		$scope.executeDocument = function(){
 			console.log('Executing document -> ', execProperties);
@@ -333,7 +331,7 @@
 					
 					vpctl.annulla = function($event) {
 						$mdDialog.hide();
-						$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
+						$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteUtils.EmptyViewpoint));
 					};
 				},
 
@@ -364,6 +362,39 @@
 					gvpctl.close = function($event) {
 						$mdDialog.hide();
 					};
+					
+					gvpctl.selectedParametersFilter = [];
+					
+					gvpctl.removeFilter = function (item){						
+						
+						
+						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
+							var vpIdStr ='';
+							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
+								vpIdStr = vpIdStr + gvpctl.selectedParametersFilter[i].vpId
+								if(i != gvpctl.selectedParametersFilter.length-1){vpIdStr = vpIdStr +','}
+							}
+							var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ vpIdStr +'"}');
+							sbiModule_restServices.post(
+									"1.0/documentviewpoint",
+									"deleteViewpoint", objViewpoint)
+							   .success(function(data, status, headers, config) {
+								   if(data.errors && data.errors.length > 0 ){
+										 documentExecuteUtils.showToast(data.errors[0].message);
+									 }else{
+										 for(var i=0; i<gvpctl.selectedParametersFilter.length ; i++){
+											 var index = gvpctl.viewpoints.indexOf(gvpctl.selectedParametersFilter[i]);
+											 gvpctl.viewpoints.splice(index, 1);
+											 //message success 
+										 }
+									 }
+								   gvpctl.selectedParametersFilter = [];
+							})
+							.error(function(data, status, headers, config) {});
+						}						
+					}
+					
+					
 					gvpctl.vpSpeedMenuOpt = 
 						[ 			 		               	
 						 { // Fill Form
@@ -390,31 +421,31 @@
 								 $scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
 								 $mdDialog.hide();
 							 }	
-						 },
-						 {   //Delete Action
-							 label: sbiModule_translate.load("sbi.generic.delete"),
-							 icon:"fa fa-trash-o",
-							 backgroundColor:'red',
-							 color:'white',
-							 action : function(item) {
-								 //confirm action
-								 var index = gvpctl.viewpoints.indexOf(item);
-								 console.log('delete obj index ' + index , item);						 		               		    
-								 sbiModule_restServices.get(
-										 "1.0/documentviewpoint", 
-										 "deleteViewpoint",
-										 "id=" + item.vpId)
-										 .success(function(data, status, headers, config) {
-											 if(data.errors && data.errors.length > 0 ){
-												 documentExecuteUtils.showToast(data.errors[0].message);
-											 }else{
-												 gvpctl.viewpoints.splice(index, 1);
-												 //message success
-											 }
-										 })
-										 .error(function(data, status, headers, config) {});						 									
-							 }
-						 } 	
+						 }
+//						 ,{   //Delete Action
+//							 label: sbiModule_translate.load("sbi.generic.delete"),
+//							 icon:"fa fa-trash-o",
+//							 backgroundColor:'red',
+//							 color:'white',
+//							 action : function(item) {
+//								 //confirm action
+//								 var index = gvpctl.viewpoints.indexOf(item);
+//								 console.log('delete obj index ' + index , item);						 		               		    
+//								 sbiModule_restServices.get(
+//										 "1.0/documentviewpoint", 
+//										 "deleteViewpoint",
+//										 "id=" + item.vpId)
+//										 .success(function(data, status, headers, config) {
+//											 if(data.errors && data.errors.length > 0 ){
+//												 documentExecuteUtils.showToast(data.errors[0].message);
+//											 }else{
+//												 gvpctl.viewpoints.splice(index, 1);
+//												 //message success
+//											 }
+//										 })
+//										 .error(function(data, status, headers, config) {});						 									
+//							 }
+//						 } 	
 					 ];
 				},
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'

@@ -160,25 +160,44 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	@GET
+	@POST
 	@Path("/deleteViewpoint")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response deleteViewpoint(@QueryParam("id") Integer id, @Context HttpServletRequest req) {
+	public Response deleteViewpoint(@Context HttpServletRequest req) {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		IEngUserProfile userProfile;
 		IViewpointDAO viewpointDAO;
 		Viewpoint viewpoint;
+		String viewpointIds;
+		String[] ids;
 		userProfile = this.getUserProfile();
 		Assert.assertNotNull(userProfile, "Impossible to retrive user profile");
+		JSONObject requestVal;
 		try {
-			viewpointDAO = DAOFactory.getViewpointDAO();
-			viewpoint = viewpointDAO.loadViewpointByID(Integer.valueOf(id));
-			Assert.assertNotNull(viewpoint, "Viewpoint [" + id + "] does not exist on the database");
-			viewpointDAO.eraseViewpoint(viewpoint.getVpId());
-		} catch (EMFUserError e) {
-			logger.error("Impossible to delete viewpoint with name [" + id + "] already exists", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + id + "] already exists", e);
+			requestVal = RestUtilities.readBodyAsJSONObject(req);
+			if (requestVal.opt(VIEWPOINT) == null || ((String) requestVal.opt(VIEWPOINT)).trim().isEmpty()) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Viewpoint's Ids cannot be null or empty");
+			}
+			viewpointIds = (String) requestVal.opt(VIEWPOINT);
+			ids = viewpointIds.split(",");
+			for (int i = 0; i < ids.length; i++) {
+				try {
+					viewpointDAO = DAOFactory.getViewpointDAO();
+					viewpoint = viewpointDAO.loadViewpointByID(Integer.valueOf(ids[i]));
+					Assert.assertNotNull(viewpoint, "Viewpoint [" + ids[i] + "] does not exist on the database");
+					viewpointDAO.eraseViewpoint(viewpoint.getVpId());
+				} catch (EMFUserError e) {
+					logger.error("Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
+				}
+			}
+
+		} catch (IOException e1) {
+			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());
+		} catch (JSONException e1) {
+			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());
 		}
+
 		return Response.ok(resultAsMap).build();
 	}
 

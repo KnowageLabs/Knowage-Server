@@ -2,6 +2,16 @@
 	angular.module('documentExecutionModule')
 	.factory('documentExecuteUtils', function($mdToast) {
 		var obj = {
+				
+				EmptyViewpoint : {
+					NAME : "",
+					DESCRIPTION: "",
+					SCOPE : "",
+					OBJECT_LABEL : "",
+					ROLE :"",
+					VIEWPOINT : JSON.parse("{}")
+			},
+				
 				decodeRequestStringToJson: function (str) {
 					var hash;
 					var myJson = {};
@@ -16,13 +26,11 @@
 
 				showToast: function(text, time) {
 					var timer = time == undefined ? 6000 : time;
-					console.log(text)
 					$mdToast.show($mdToast.simple().content(text).position('top').action(
 					'OK').highlightAction(false).hideDelay(timer));
 				},
 
 				buildStringParameters : function (documentParameters){
-					console.log("$scope.documentParameters -> ", documentParameters);
 					var jsonDatum =  {};
 					if(documentParameters.length > 0){
 						for(var i = 0; i < documentParameters.length; i++ ){
