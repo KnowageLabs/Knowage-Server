@@ -162,10 +162,19 @@ public class KpiService {
 	}
 
 	@GET
-	@Path("/{id}/loadThreshold")
-	public Response loadThreshold(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{thresholdId}/loadThreshold")
+	public Response loadThreshold(@PathParam("thresholdId") Integer id, @QueryParam("kpiId") Integer kpiId, @Context HttpServletRequest req)
+			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		Threshold threshold = dao.loadThreshold(id);
+		// Looking for all kpi using this threshold
+		List<Integer> kpiList = dao.listKpiByThreshold(id);
+		if (kpiList == null || kpiList.size() == 0 || kpiId != null && kpiList.size() == 1 && kpiList.get(0).equals(kpiId)) {
+			// This threshold isn't used by any kpi or at most only by the kpi currently edited by user
+		} else {
+			// This threshold is used by other kpi
+			threshold.setUsedByKpi(true);
+		}
 		return Response.ok(JsonConverter.objectToJson(threshold, threshold.getClass())).build();
 	}
 
@@ -483,7 +492,7 @@ public class KpiService {
 	}
 
 	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
-		// TODO rename getNewKpiDAO to getKpiDAO
+		// TODO rename getNewKpiDAO to getKpiDAO when old kpi will be removed
 		IKpiDAO dao = DAOFactory.getNewKpiDAO();
 		setProfile(req, dao);
 		return dao;
