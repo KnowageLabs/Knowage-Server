@@ -53,43 +53,42 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	                        	size:"70px"
 	                        },
 	                        {
-	                        	label:" position ",
+	                        	label:sbiModule_translate.load("sbi.thresholds.position"),
 	                        	name:"position",
 	                        },
 	                        {
-	                        	label:"Label",
+	                        	label:sbiModule_translate.load("sbi.browser.searchpanel.attributes.label"),
 	                        	name:"inputLable",
 	                        },
 	                        {
-	                        	label:"Min",
+	                        	label:sbiModule_translate.load("sbi.thresholds.min"),
 	                        	name:"includeNumericInputMin",
 	                        	size: "60px"
 	                        },
 	                        {
-	                        	label:"Include Min",
+	                        	label:sbiModule_translate.load("sbi.thresholds.includemin"),
 	                        	name:"includeMinCheck"
 	                        },
 	                        {
-	                        	label:"Max",
+	                        	label:sbiModule_translate.load("sbi.thresholds.max"),
 	                        	name:"includeNumericInputMax",
 	                        	size: "60px"
 	                        },
 	                        {
-	                        	label:"Include Max",
+	                        	label:sbiModule_translate.load("sbi.thresholds.includemax"),
 	                        	name:"includeMaxCheck"
 	                        },
 	                        {
-	                        	label:"Severity",
+	                        	label:sbiModule_translate.load("sbi.thresholds.severity"),
 	                        	name:"comboSeverity"
 	                        },
 	                        {
-	                        	label:"Color",
+	                        	label:sbiModule_translate.load("sbi.thresholds.color"),
 	                        	name:"selectColor",
 	                        	size:"90px"
 	                        },
 	                        
 	                        ];
-	
 	
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/SEVERITY")
 	.then(function(response){ 

@@ -402,7 +402,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		.title(titleFin)
 		.content(textFin)
 		.ariaLabel('error') 
-		.ok('OK') 
+		.ok($scope.translate.load("sbi.general.ok")) 
 		return $mdDialog.show(confirm);
 	}
 
