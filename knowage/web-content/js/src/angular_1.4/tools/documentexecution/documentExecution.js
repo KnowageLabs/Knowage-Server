@@ -11,9 +11,6 @@
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 	
-	
-	
-	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils',
@@ -36,6 +33,7 @@
 		$scope.showParametersPanel = true;
 		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteUtils.EmptyViewpoint));
 		$scope.viewpoints = [];
+		$scope.documentExecuteUtils = documentExecuteUtils;
 		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
@@ -286,10 +284,11 @@
 		};
 		
 		$scope.clearListParametersForm = function(){
-			console.log('parameters ', $scope.documentParameters);
 			if($scope.documentParameters.length > 0){
-				for(var i = 0; i<= $scope.documentParameters.length -1 ; i++){				
-						$scope.documentParameters[i].parameterValue='';
+				for(var i = 0; i < $scope.documentParameters.length; i++){
+					var parameter = $scope.documentParameters[i];
+					
+					documentExecuteUtils.resetParameter(parameter);
 				}
 			}
 		};
@@ -365,9 +364,7 @@
 					
 					gvpctl.selectedParametersFilter = [];
 					
-					gvpctl.removeFilter = function (item){						
-						
-						
+					gvpctl.removeFilter = function (item) {	
 						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
 							var vpIdStr ='';
 							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
@@ -392,8 +389,7 @@
 							})
 							.error(function(data, status, headers, config) {});
 						}						
-					}
-					
+					};
 					
 					gvpctl.vpSpeedMenuOpt = 
 						[ 			 		               	
@@ -451,17 +447,24 @@
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
 			});						
 		};
-		/*
+		
+		/**
 		 * Fill Parameters Panel 
 		 */
 		function fillParametersPanel(params){
 			if($scope.documentParameters.length > 0){
-				for(var i = 0; i<= $scope.documentParameters.length -1 ; i++){				
-					//Type params
-					if($scope.documentParameters[i].type=='NUM'){
-						$scope.documentParameters[i].parameterValue= parseFloat(params[$scope.documentParameters[i].urlName],10);
-					}else if($scope.documentParameters[i].type=='STRING'){
-						$scope.documentParameters[i].parameterValue= params[$scope.documentParameters[i].urlName];	
+				for(var i = 0; i < $scope.documentParameters.length; i++){
+					var parameter = $scope.documentParameters[i];
+					
+					if(!params[parameter.urlName]) {
+						documentExecuteUtils.resetParameter(parameter);
+					} else {
+						//Type params
+						if(parameter.type=='NUM'){
+							parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+						}else if(parameter.type=='STRING'){
+							parameter.parameterValue = params[parameter.urlName];	
+						}
 					}
 				}
 			}			
@@ -479,7 +482,6 @@
 		};
 	}]);
 	
-	
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
 			restrict: 'A',
@@ -487,10 +489,9 @@
 				element.on('load', function(){
 					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
 					element.css('height', iFrameHeight);				
-					//alert('load iframe');
-				})
+					element.css('width', '100%');
+				});
 			}
 		};
-		}]
-	);
+	}]);
 })();	

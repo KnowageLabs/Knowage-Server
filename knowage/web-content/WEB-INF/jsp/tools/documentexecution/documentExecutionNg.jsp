@@ -55,7 +55,7 @@ try{
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
 	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
-		<md-toolbar class="miniheadimportexport">
+		<md-toolbar class="miniheadimportexport" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
@@ -72,12 +72,9 @@ try{
 				</md-button>
 			</div>
         </md-toolbar>
- 		<md-content layout="row" flex> 
-			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()" layout-fill
-				<%--
-				iframe-set-dimensions-onload 
-				--%>
-				></iframe>
+ 		<md-content layout="row" flex="grow"> 
+			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
+				iframe-set-dimensions-onload flex="grow"></iframe>
 				
 			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
 					ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
@@ -110,14 +107,13 @@ try{
 					</md-input-container>
 				</md-content>
 				
-				
 				<md-list ng-hide="isParameterPanelDisabled()">
 					<md-list-item ng-repeat="parameter in documentParameters">
 						<document-paramenter-element/>
 					</md-list-item>
 				</md-list>
 				
-			<!-- execute button -->
+				<!-- execute button -->
 				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
 						title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
 						ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
@@ -131,7 +127,7 @@ try{
 	//Module creation
 	(function() {
 		
-		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table']);
+		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {

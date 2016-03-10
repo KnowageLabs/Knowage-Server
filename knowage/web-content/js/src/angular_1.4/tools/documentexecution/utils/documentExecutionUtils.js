@@ -42,17 +42,11 @@
 								
 								parameter.parameterValue = parameter.parameterValue || [];
 								
-								if(Array.isArray(parameter.parameterValue)) {
-//									var arrayAsString = '';					
-//									for(var j = 0; j < parameter.parameterValue.length; j++) {
-//										if(j > 0) {
-//											arrayAsString += ',';
-//										}
-//										arrayAsString += "'" + parameter.parameterValue[j] + "'";
-//									}
-//
-//									jsonDatumValue = arrayAsString;
-//								} else {
+								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+									parameter.parameterValue = parameter.parameterValue || [];
+									
+									jsonDatumValue = parameter.parameterValue;
+								} else {
 									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
 								}
 							} else {
@@ -62,7 +56,35 @@
 							jsonDatum[descriptionKey] = jsonDatumValue;
 						}
 					}			
-					return  jsonDatum;
+					return jsonDatum;
+				},
+				
+				resetParameter: function(parameter) {
+					if(parameter.valueSelection.toLowerCase() == 'lov') {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							
+							for(var j = 0; j < parameter.defaultValues.length; j++) {
+								var defaultValue = parameter.defaultValues[j];
+								defaultValue.isSelected = false;
+							}
+						} else {
+							parameter.parameterValue = '';
+						}
+					} else {
+						parameter.parameterValue = '';
+					}
+				},
+				
+				showParameterHtml: function(parameter) {
+					if(parameter.valueSelection.toLowerCase() == 'lov' && parameter.multivalue) {
+						parameter.parameterValue = parameter.parameterValue || [];
+						var toReturn = parameter.parameterValue.join(",<br/>");
+						return toReturn;
+					} else {
+						parameter.parameterValue = parameter.parameterValue || '';
+						return parameter.parameterValue;
+					}
 				}
 		};
 		return obj;

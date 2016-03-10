@@ -1,4 +1,4 @@
-<md-input-container flex>
+<md-input-container>
 	<!--
 	<md-content ng-if="parameter.type=='STRING' && parameter.selectionType=='LIST' && parameter.multivalue">{{parameter|json}}</md-content>
 	--!>
@@ -62,15 +62,26 @@
 	<section ng-if="parameter.selectionType=='LOOKUP'">
 		<!--
 		<label flex layout-align="top center">{{parameter.label}}</label>
-	 	<md-whiteframe class="md-whiteframe-1dp" flex-sm="45" flex-gt-sm="35" flex-gt-md="25"
-	 			ng-click="popupLookupParameterDialog(parameter)" layout layout-align="center center">
-			<span>{{parameter.parameterValue}}</span>
-		</md-whiteframe>
 		-->
 		<label>{{parameter.label}}</label>
+		
 		<md-button class="md-raised md-primary" id="{{parameter.urlName}}" 
 				ng-click="popupLookupParameterDialog(parameter)">
-			{{parameter.parameterValue}}</md-button>
+			<i class="fa fa-search-plus"></i>
+			<!--
+				{{parameter.parameterValue}}
+			-->
+		</md-button>
+	 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
+			<!--
+ 			<span>{{parameter.parameterValue}}</span>
+ 			-->
+			<span ng-bind-html="documentExecuteUtils.showParameterHtml(parameter)">
+			<!--
+				{{documentExecuteUtils.showParameterHtml(parameter)}}
+ 			-->
+			</span>
+		</md-whiteframe>
 	</section>
 	
 	
