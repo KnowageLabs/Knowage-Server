@@ -1,0 +1,53 @@
+<md-dialog md-theme="{{::lookupParamCtrl.theme }}"
+		aria-label="{{::lookupParamCtrl.ariaLabel }}" ng-class="dialog.css">
+	<md-toolbar>
+		<div class="md-title" layout-fill>
+			<h2 class="md-title" layout-margin>
+				{{ ::lookupParamCtrl.dialogTitle }}
+			</h2>
+		</div>
+	</md-toolbar>
+		
+	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1">
+		<div class="md-dialog-content-body"
+				md-template="::lookupParamCtrl.mdContent"></div>
+
+		<!--
+		<md-input-container>
+			<md-content>{{lookupParamCtrl.parameter|json}}</md-content>	
+		</md-input-container>
+		-->
+
+
+		<!-- lov list single input -->
+		<section ng-if="!lookupParamCtrl.parameter.multivalue">
+		<!--
+			<label>{{lookupParamCtrl.parameter.label}}</label>
+		-->
+			<md-radio-group ng-model="lookupParamCtrl.parameter.parameterValue" ng-required="lookupParamCtrl.parameter.mandatory">
+				<md-radio-button class="md-primary" ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues" value="{{defaultParameter.value}}">
+					{{defaultParameter.label}}
+				</md-radio-button>
+			</md-radio-group>
+		</section>
+		
+		<!-- lov list multiple input -->
+		<section ng-if="lookupParamCtrl.parameter.multivalue">
+			<div ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues">
+				<md-checkbox class="md-primary" value="{{defaultParameter.value}}" ng-model="defaultParameter.isSelected"
+						ng-change="lookupParamCtrl.toggleCheckboxParameter(lookupParamCtrl.parameter, defaultParameter)">
+					{{defaultParameter.label}}
+				</md-checkbox>
+			</div>
+		</section>	
+	</md-dialog-content>
+	
+	
+	<div class="md-actions">
+		<md-button ng-click="lookupParamCtrl.abort()" class="md-primary">
+			{{ lookupParamCtrl.dialogCancelLabel }}</md-button>
+				
+		<md-button ng-click="lookupParamCtrl.save()" class="md-primary">
+			{{ lookupParamCtrl.dialogSaveLabel }}</md-button>
+	</div>
+</md-dialog>

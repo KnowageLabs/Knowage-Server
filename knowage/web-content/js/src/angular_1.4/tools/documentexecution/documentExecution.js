@@ -31,7 +31,6 @@
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties) {
 
-		
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = {};
 		$scope.roles = execProperties.roles;
@@ -90,6 +89,7 @@
 						var alert = $mdDialog.alert()
 						.title(sbiModule_translate.load("sbi.generic.warning"))
 						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));
+						
 						$mdDialog.show( alert );
 					}else{
 						if(data['errors'].length > 0 ){
@@ -194,24 +194,70 @@
 		};
 
 		$scope.toggleCheckboxParameter = function(parameter, defaultParameter) {
-			if(!defaultParameter.isSelected || defaultParameter.isSelected === false) {
-				defaultParameter.isSelected = true;
-			} else {
-				defaultParameter.isSelected = false;
-			}
+//			console.log('toggleCheckboxParameter: parameter-> ', parameter);
 			
-			var tempNewParameterValue = '';
+//			var tempNewParameterValue = '';
+			var tempNewParameterValue = [];
 			for(var i = 0; i < parameter.defaultValues.length; i++) {
 				var defaultValue = parameter.defaultValues[i];
-				if(defaultValue.isSelected) {
-					if(tempNewParameterValue != '') {
-						tempNewParameterValue += ',';
-					}
-					tempNewParameterValue += "'" + defaultValue.value + "'"
+				if(defaultValue.isSelected == true) {
+//					if(tempNewParameterValue != '') {
+//						tempNewParameterValue += ',';
+//					}
+//					tempNewParameterValue += "'" + defaultValue.value + "'";
+//					tempNewParameterValue += defaultValue.value;
+					tempNewParameterValue.push(defaultValue.value);
 				}
-			}			
+			}
 			parameter.parameterValue = tempNewParameterValue;
 		};
+		
+		$scope.popupLookupParameterDialog = function(parameter) {
+			$mdDialog.show({
+				$type: "confirm",
+				clickOutsideToClose: false,
+				theme: "knowage",
+//				ok: sbiModule_translate.load("sbi.browser.defaultRole.save"),
+//				cancel: sbiModule_translate.load("sbi.browser.defaultRole.cancel"),
+				openFrom: '#' + parameter.urlName,
+				closeTo: '#' + parameter.urlName,
+//				title: sbiModule_translate.load("sbi.kpis.parameter") + ': ' + parameter.label,
+				templateUrl : sbiModule_config.contextName
+					+ '/js/src/angular_1.4/tools/documentexecution/popupLookupParameterDialog/popupLookupParameterDialogTemplate.jspf',
+				
+				locals : {
+					parameter: parameter,
+					toggleCheckboxParameter: $scope.toggleCheckboxParameter,
+					sbiModule_translate: $scope.translate,
+				},
+				controllerAs: "lookupParamCtrl",
+				
+				controller : function($mdDialog, parameter, toggleCheckboxParameter, sbiModule_translate) {
+					var lookupParamCtrl = this;
+					
+					lookupParamCtrl.toggleCheckboxParameter = toggleCheckboxParameter;
+					
+					lookupParamCtrl.initialParameterState = {};
+					
+					angular.copy(parameter, lookupParamCtrl.initialParameterState);
+					lookupParamCtrl.parameter = parameter;
+					
+					lookupParamCtrl.dialogTitle = sbiModule_translate.load("sbi.kpis.parameter") + ': ' + parameter.label;
+					lookupParamCtrl.dialogCancelLabel = sbiModule_translate.load("sbi.browser.defaultRole.cancel");
+					lookupParamCtrl.dialogSaveLabel = sbiModule_translate.load("sbi.browser.defaultRole.save");
+					
+					lookupParamCtrl.abort = function(){
+						angular.copy(lookupParamCtrl.initialParameterState, lookupParamCtrl.parameter);
+						$mdDialog.hide();
+					};
+					
+					lookupParamCtrl.save = function(){
+						$mdDialog.hide();
+					};
+				}
+			});
+		};
+		
 		
 		$scope.showRequiredFieldMessage = function(parameter) {
 			return (
@@ -220,7 +266,7 @@
 						!parameter.parameterValue
 						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0) 
 						|| parameter.parameterValue == '')
-			) == true;
+				) == true;
 		};		
 
 		$scope.isParameterPanelDisabled = function(){
@@ -247,8 +293,7 @@
 						$scope.documentParameters[i].parameterValue='';
 				}
 			}
-		}
-		
+		};
 		
 		/*
 		 * Create new viewpoint document execution
@@ -257,6 +302,10 @@
 			$mdDialog.show({
 				scope : $scope,
 				preserveScope : true,
+				
+				// "/knowage/js/dialog-new-glossary.html"
+				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
+					
 				controllerAs : 'vpCtrl',
 				controller : function($mdDialog) {
 					var vpctl = this;
@@ -286,6 +335,7 @@
 						$scope.newViewpoint = JSON.parse(JSON.stringify(EmptyViewpoint));
 					};
 				},
+
 				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
@@ -309,61 +359,62 @@
 								gvpctl.viewpoints= data.viewpoints;
 							})
 							.error(function(data, status, headers, config) {});
-							
-							gvpctl.close = function($event) {
-								$mdDialog.hide();
-							};
-							gvpctl.vpSpeedMenuOpt = [ 			 		               	
-							 		               	{ // Fill Form
-							 		               	label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-						 		               		icon:"fa fa-pencil-square-o",
-						 		               		backgroundColor:'blue',
-						 		               		color:'white',
-						 		               		action : function(item) {
-						 		               			console.log(item);
-						 		               			var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-						 		               			fillParametersPanel(params);
-						 		               			$mdDialog.hide();
-						 		               			}	
-							 		               	},
-							 		               	{ //Execute Url
-							 		               	label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
-						 		               		icon:"fa fa-play-circle",
-						 		               		backgroundColor:'blue',
-						 		               		color:'white',
-						 		               		action : function(item) {
-							 		               		//decodeURIComponent						 		               		
-							 		               		var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-							 		               	    fillParametersPanel(params);
-							 		               		$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
-							 		               		$mdDialog.hide();
-						 		               		 }	
-							 		               	},
-							 		                {   //Delete Action
-							 		               		label: sbiModule_translate.load("sbi.generic.delete"),
-							 		               		icon:"fa fa-trash-o",
-							 		               		backgroundColor:'red',
-							 		               		color:'white',
-							 		               		action : function(item) {
-							 		               		//confirm action
-						 		               			var index = gvpctl.viewpoints.indexOf(item);
-						 		               			console.log('delete obj index ' + index , item);						 		               		    
-						 		               				sbiModule_restServices.get(
-						 									"1.0/documentviewpoint", 
-						 									"deleteViewpoint",
-						 									"id=" + item.vpId)
-						 									.success(function(data, status, headers, config) {
-						 										if(data.errors && data.errors.length > 0 ){
-						 											showToast(data.errors[0].message);
-						 										}else{
-						 											gvpctl.viewpoints.splice(index, 1);
-						 											//message success
-						 										}
-						 									})
-						 									.error(function(data, status, headers, config) {});						 									
-						 		               			}
-							 		               	} 	
-							 		             ];
+
+					gvpctl.close = function($event) {
+						$mdDialog.hide();
+					};
+					gvpctl.vpSpeedMenuOpt = 
+						[ 			 		               	
+						 { // Fill Form
+							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
+							 icon:"fa fa-pencil-square-o",
+							 backgroundColor:'blue',
+							 color:'white',
+							 action : function(item) {
+								 console.log(item);
+								 var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+								 fillParametersPanel(params);
+								 $mdDialog.hide();
+							 }	
+						 },
+						 { //Execute Url
+							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
+							 icon:"fa fa-play-circle",
+							 backgroundColor:'blue',
+							 color:'white',
+							 action : function(item) {
+								 //decodeURIComponent						 		               		
+								 var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+								 fillParametersPanel(params);
+								 $scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
+								 $mdDialog.hide();
+							 }	
+						 },
+						 {   //Delete Action
+							 label: sbiModule_translate.load("sbi.generic.delete"),
+							 icon:"fa fa-trash-o",
+							 backgroundColor:'red',
+							 color:'white',
+							 action : function(item) {
+								 //confirm action
+								 var index = gvpctl.viewpoints.indexOf(item);
+								 console.log('delete obj index ' + index , item);						 		               		    
+								 sbiModule_restServices.get(
+										 "1.0/documentviewpoint", 
+										 "deleteViewpoint",
+										 "id=" + item.vpId)
+										 .success(function(data, status, headers, config) {
+											 if(data.errors && data.errors.length > 0 ){
+												 showToast(data.errors[0].message);
+											 }else{
+												 gvpctl.viewpoints.splice(index, 1);
+												 //message success
+											 }
+										 })
+										 .error(function(data, status, headers, config) {});						 									
+							 }
+						 } 	
+					 ];
 				},
 				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
 			});						
@@ -395,7 +446,9 @@
 		        myJson[hash[0]] = hash[1];
 		    }
 		    return myJson;
-		}
+		};
+		
+		
 		/*
 		 * Build parameters obj to submit  
 		 */
@@ -439,7 +492,17 @@
 					'OK').highlightAction(false).hideDelay(timer));
 		}
 		console.log("documentExecutionControllerFn OUT ");
-	};	
+	};
+	
+	documentExecutionApp.directive('documentParamenterElement', 
+			['sbiModule_config',
+			 function(sbiModule_config){
+		return {
+			restrict: 'E',
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementTemplate.htm',
+		};
+	}]);
+	
 	
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
