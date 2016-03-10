@@ -223,7 +223,7 @@
 				closeTo: '#' + parameter.urlName,
 //				title: sbiModule_translate.load("sbi.kpis.parameter") + ': ' + parameter.label,
 				templateUrl : sbiModule_config.contextName
-					+ '/js/src/angular_1.4/tools/documentexecution/popupLookupParameterDialog/popupLookupParameterDialogTemplate.jspf',
+					+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm',
 				
 				locals : {
 					parameter: parameter,
@@ -499,7 +499,7 @@
 			 function(sbiModule_config){
 		return {
 			restrict: 'E',
-			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementTemplate.htm',
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/documentParamenterElementTemplate.htm',
 		};
 	}]);
 	
