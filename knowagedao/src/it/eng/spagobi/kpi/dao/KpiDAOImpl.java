@@ -891,4 +891,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return ruleOutputs != null && ruleOutputs.size() == names.length;
 	}
 
+	@Override
+	public List<Integer> listKpiByThreshold(final Integer thresholdId) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Integer>>() {
+			@Override
+			public List<Integer> execute(Session session) throws Exception {
+				return session.createCriteria(SbiKpiKpi.class).add(Restrictions.eq("thresholdId", thresholdId)).setProjection(Projections.property("id"))
+						.list();
+			}
+		});
+	}
+
 }

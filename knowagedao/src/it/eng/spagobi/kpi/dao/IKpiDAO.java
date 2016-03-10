@@ -60,6 +60,15 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Boolean existsMeasureNames(String... names);
 
 	/**
+	 * Retrieves all kpi that are using a threshold
+	 * 
+	 * @param threshold
+	 *            id
+	 * @return a list of kpi id
+	 */
+	public List<Integer> listKpiByThreshold(Integer thresholdId);
+
+	/**
 	 * Saves a new Rule and returns its id
 	 * 
 	 * @param rule

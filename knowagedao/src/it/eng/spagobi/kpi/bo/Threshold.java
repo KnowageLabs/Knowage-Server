@@ -22,11 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Threshold implements Serializable {
-
 	private static final long serialVersionUID = -4276808765746335659L;
-	/**
-	 * 
-	 */
+
 	private Integer id;
 	private String description;
 	private String name;
@@ -37,6 +34,11 @@ public class Threshold implements Serializable {
 	private String type;
 
 	private final List<ThresholdValue> thresholdValues = new ArrayList<>();
+
+	/**
+	 * If "true" this threshold is currently in use by a kpi
+	 */
+	private boolean usedByKpi;
 
 	public Threshold() {
 	}
@@ -125,6 +127,21 @@ public class Threshold implements Serializable {
 	 */
 	public List<ThresholdValue> getThresholdValues() {
 		return thresholdValues;
+	}
+
+	/**
+	 * @return the usedByKpi
+	 */
+	public boolean isUsedByKpi() {
+		return usedByKpi;
+	}
+
+	/**
+	 * @param usedByKpi
+	 *            the usedByKpi to set
+	 */
+	public void setUsedByKpi(boolean usedByKpi) {
+		this.usedByKpi = usedByKpi;
 	}
 
 	@Override
