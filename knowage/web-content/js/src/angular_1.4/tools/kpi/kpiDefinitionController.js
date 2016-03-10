@@ -44,6 +44,9 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		if($scope.showGUI){
 			$scope.showSaveGUI().then(function(response){{}
+			$timeout(function(){
+				$scope.selectedTab.tab=2;
+			},0)
 			if($scope.activeSave=="add"){
 				$scope.saveKPI();
 			}else{
@@ -154,6 +157,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	$scope.saveKPI = function(){
+		
 		var tmpKpiToSave={};
 		angular.copy($scope.kpi,tmpKpiToSave);
 		//save formula
@@ -200,6 +204,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			tmpKpiToSave.placeholder=JSON.stringify(tmpKpiToSave.placeholder);
 		}
 		$scope.convertThresholdToCorrectObject(tmpKpiToSave);
+
 		sbiModule_restServices.promisePost("1.0/kpi", 'saveKpi',tmpKpiToSave).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {

@@ -18,20 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content layout-fill layout="column" ng-controller="kpiDefinitionCardinalityController">
-<md-card>
+<md-card >
 <div class="toolbarFormula">
 	<div class="formula " id="formulaId"></div>
 </div>
 </md-card>
+
 <div flex class="overflow" >	
-	<table class="cardinalityTable MyClass" >
+	<table  class="cardinalityTable  " >
 	<thead>
 		<tr>
 			<th></th>
-		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
+		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" ><div>{{measure.measureName}}</div></th>
 	    </tr>
 	  </thead>
 	  <tbody>
+	  <tr id="trFirst"></tr>
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
 		<td ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
 			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 .cardinalityTable .measureCell {
-	text-align: center;
+	/*text-align: center;*/
 	height: 30px;
 }
 
@@ -175,12 +175,49 @@ color-picker.tableColorPiker .color-picker-panel{
 button.h20{
 	height: 20px !important;
 }
+/*
+.cardinalityTable th div{
+  position: absolute;
+  padding: 9px 65px;
+  background:rgb(246, 246, 246);;
+  
+ 
+}
+
+td, th {
+    padding: 10px 45px;
+   margin-left:20px;
+}
+*/
+#trFirst {
+  height: 30px;
+}
 
 
-/* angular-table.thresholdtable table>thead>tr>th>div { */
-/* 	min-width: 80px; */
-/*     max-width: 200px; */
-/* } */
-
-
-
+.cardinalityTable td, th {
+  border-bottom:1px solid #eee;
+  color: #000;
+  padding: 10px 25px;
+}
+.cardinalityTable th {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+.cardinalityTable th div{
+  position: absolute;
+  background:rgb(246, 246, 246);
+  color: black;
+  padding: 9px 25px;
+  top: 0;
+  margin-left: -25px;
+  line-height: normal;
+  margin-top: 55px;
+}
+th:first-child div{
+  border: none;
+}

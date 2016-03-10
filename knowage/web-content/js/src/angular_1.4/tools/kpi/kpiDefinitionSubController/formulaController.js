@@ -314,6 +314,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 								if((token.string==")" && token_before.string=="(")||(token.string=="(" && token_before.string==")") ){
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
+									$scope.selectedTab.tab=0;
 									break FORFirst;
 								} if(token_before.string==")"){
 
@@ -402,6 +403,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 							var className = arr[k]["className"];
 							if($scope.measureInList(token.string,$scope.measures)==-1){
 								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula"));
+								$scope.selectedTab.tab=0;
 								$scope.reset();
 								flag=false;
 							}
@@ -477,6 +479,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 		}
 		return {};
+		$scope.selectedTab.tab=0;
 	}
 
 	$scope.removeSpace=function(tokenList){

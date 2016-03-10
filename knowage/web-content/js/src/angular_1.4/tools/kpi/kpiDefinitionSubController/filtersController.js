@@ -24,6 +24,7 @@ function kpiDefinitionFiltersControllerFunction($scope,sbiModule_translate,$mdDi
 									//remove placeholder
 									delete $scope.placeholder[Object.keys($scope.placeholder)[key]];
 								}
+								
 							
 							}
 							$scope.kpi.placeholder =$scope.placeholder;

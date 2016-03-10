@@ -31,6 +31,17 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 	}
 
+/*	$scope.$watch(function() {
+		var elem=angular.element(document.getElementById("cardFormula"))[0];
+		return elem==undefined? null:  elem.offsetHeight;
+	}, function(newValue, oldValue) {
+	if($scope.noPagination!=true && newValue!=0){
+		if (newValue != oldValue) {
+			var elem2=angular.element(document.querySelector('.cardinalityTable th div'));
+			console.log('cambiato',elem2);
+		}
+	}
+	}, true);*/
 
 	$scope.getAllMeasure=function(){
 		if(Object.keys($scope.cardinality).length!=0){
