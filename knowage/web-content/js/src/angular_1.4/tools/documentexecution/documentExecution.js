@@ -23,13 +23,13 @@
 	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
-			 'sbiModule_config', 'sbiModule_messaging', 'execProperties',
+			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils',
 			 documentExecutionControllerFn]);
 
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
-			sbiModule_messaging, execProperties) {
+			sbiModule_messaging, execProperties, documentExecuteUtils) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = {};
@@ -118,7 +118,7 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(buildStringParameters()));			
+			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -133,7 +133,7 @@
 			if(role != $scope.selectedRole) { 
 				
 				$scope.executionProcesRestV1(role);
-//				$scope.executionProcesRestV1(role, JSON.stringify(buildStringParameters()));
+//				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));
 				$scope.getParametersForExecution(role);
 //				if($mdSidenav('parametersPanelSideNav').isOpen()) {
 //					$mdSidenav('parametersPanelSideNav').close();
@@ -288,6 +288,7 @@
 		};
 		
 		$scope.clearListParametersForm = function(){
+			console.log('parameters ', $scope.documentParameters);
 			if($scope.documentParameters.length > 0){
 				for(var i = 0; i<= $scope.documentParameters.length -1 ; i++){				
 						$scope.documentParameters[i].parameterValue='';
@@ -313,20 +314,20 @@
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = $scope.selectedRole;
-						vpctl.newViewpoint.VIEWPOINT = buildStringParameters();
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteUtils.buildStringParameters($scope.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
 						   .success(function(data, status, headers, config) {
 							if(data.errors && data.errors.length > 0 ){
-								showToast(data.errors[0].message);
+								documentExecuteUtils.showToast(data.errors[0].message);
 							}else{
 								$mdDialog.hide();
-								showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+								documentExecuteUtils.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
 							}							
 						})
 						.error(function(data, status, headers, config) {
-							showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
+							documentExecuteUtils.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
 						});
 					};
 					
@@ -336,7 +337,7 @@
 					};
 				},
 
-				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
+				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
 		
@@ -372,7 +373,7 @@
 							 color:'white',
 							 action : function(item) {
 								 console.log(item);
-								 var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 								 fillParametersPanel(params);
 								 $mdDialog.hide();
 							 }	
@@ -384,7 +385,7 @@
 							 color:'white',
 							 action : function(item) {
 								 //decodeURIComponent						 		               		
-								 var params = decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 								 fillParametersPanel(params);
 								 $scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
 								 $mdDialog.hide();
@@ -405,7 +406,7 @@
 										 "id=" + item.vpId)
 										 .success(function(data, status, headers, config) {
 											 if(data.errors && data.errors.length > 0 ){
-												 showToast(data.errors[0].message);
+												 documentExecuteUtils.showToast(data.errors[0].message);
 											 }else{
 												 gvpctl.viewpoints.splice(index, 1);
 												 //message success
@@ -416,7 +417,7 @@
 						 } 	
 					 ];
 				},
-				templateUrl : '/knowage/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
+				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
 			});						
 		};
 		/*
@@ -434,63 +435,7 @@
 				}
 			}			
 		}
-		/*
-		 *Convert parameter string request to json obj  
-		 */
-		function decodeRequestStringToJson(str) {
-		    var hash;
-		    var myJson = {};
-		    var hashes = str.slice(str.indexOf('?') + 1).split('&');
-		    for (var i = 0; i < hashes.length; i++) {
-		        hash = hashes[i].split('=');
-		        myJson[hash[0]] = hash[1];
-		    }
-		    return myJson;
-		};
-		
-		
-		/*
-		 * Build parameters obj to submit  
-		 */
-		function buildStringParameters(){
-			console.log("$scope.documentParameters -> ", $scope.documentParameters);
-			var jsonDatum =  {};
-			if($scope.documentParameters.length > 0){
-				for(var i = 0; i < $scope.documentParameters.length; i++ ){
-					var parameter = $scope.documentParameters[i];
-					var valueKey = parameter.urlName;
-					var descriptionKey = parameter.urlName + "_field_visible_description";					
-					var jsonDatumValue = null;
-					if(parameter.valueSelection.toLowerCase() == 'lov') {
-						if(Array.isArray(parameter.parameterValue)) {
-							var arrayAsString = '';					
-							for(var j = 0; j < parameter.parameterValue.length; j++) {
-								if(j > 0) {
-									arrayAsString += ',';
-								}
-								arrayAsString += "'" + parameter.parameterValue[j] + "'";
-							}
 
-							jsonDatumValue = arrayAsString;
-						} else {
-							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-						}
-					} else {
-						jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-					}
-					jsonDatum[valueKey] = jsonDatumValue;
-					jsonDatum[descriptionKey] = jsonDatumValue;
-				}
-			}			
-			return  jsonDatum;
-		}
-		
-		function showToast(text, time) {
-			var timer = time == undefined ? 6000 : time;
-			console.log(text)
-			$mdToast.show($mdToast.simple().content(text).position('top').action(
-					'OK').highlightAction(false).hideDelay(timer));
-		}
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	
