@@ -27,7 +27,6 @@ function olapFunction(
 		sbiModule_messaging,
 		sbiModule_restServices
 ) {
-	
 	templateRoot = "/knowagewhatifengine/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
@@ -86,6 +85,7 @@ function olapFunction(
 		$mdDialog.hide();
 		$scope.sortDisable();
 	}
+	$scope.loadingNodes=false;
 	$scope.activeaxis;
 	var filterFather;
 	
@@ -553,7 +553,7 @@ function olapFunction(
 			checkShift();
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-			initFilterList();			
+			initFilterList();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
@@ -622,9 +622,6 @@ function olapFunction(
 			
 		});		
 	}
-	
-	
-
 
 	$scope.swapAxis = function() {
 		sbiModule_restServices.promisePost("1.0/axis/swap?SBI_EXECUTION_ID="+JSsbiExecutionID,"")
@@ -1196,12 +1193,14 @@ function olapFunction(
 	};	
 	
 	$scope.searchFilter = function(){
+		$scope.loadingNodes = true;
 		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.activeaxis+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 		.then(function(response) {
 			//if(response.data[0].children.length != 0)
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
+				$scope.loadingNodes = false;
 			//else
 				//sbiModule_messaging.showWarningMessage("Sorry. Match not found for '"+$scope.searchText+"'", 'Warning');
 		}, function(response) {
@@ -1227,7 +1226,7 @@ function olapFunction(
 	};
 	
 	$scope.highlight = function(name){		
-		if(name.toLowerCase() == $scope.searchText.toLowerCase())		
+		if(name.toLowerCase().indexOf($scope.searchText.toLowerCase()) > -1)		
 			return true;		
 		else		
 			return false		

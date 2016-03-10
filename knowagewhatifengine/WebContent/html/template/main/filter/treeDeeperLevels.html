@@ -9,17 +9,21 @@
 		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
 		</md-icon>
 		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
-			{{item.name}}
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+				{{item.name}}
+			</span>
 			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.name == filterSelected[filterAxisPosition].name"> 
 			</md-icon>
 		</span>
 		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
 			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
-			{{item.name}}
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+				{{item.name}}
+			</span>
 			</md-checkbox>
 		</span>	
 		<filter-tree-deeper-levels></filter-tree-deeper-levels>	
 	</div>
 </li>
-
 </ul>
+

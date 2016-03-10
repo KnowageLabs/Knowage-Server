@@ -301,6 +301,13 @@ table tr:nth-child(even) {
 	background-image: url(../img/sorting-settings.png);
 	background-size:23px 23px;
 }
+
+.highlight-filter-result{
+	background-color: rgba(255,89,145,0.7);
+	border-radius: 5px;
+	padding: 2px;
+}
+
 md-dialog.fullscreen-dialog {
     max-width: 100%;
     max-height: 100%;

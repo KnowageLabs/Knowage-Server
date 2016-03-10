@@ -208,9 +208,9 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/{hierarchy}/search/{axis}/{name}/{equals}/{showS}")
+	@Path("/{hierarchy}/search/{axis}/{name}/{showS}")
 	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("axis") int axis, @PathParam("name") String name, @PathParam("equals") boolean equals, @PathParam("showS") boolean showS) {
+			@PathParam("axis") int axis, @PathParam("name") String name, @PathParam("showS") boolean showS) {
 		Hierarchy hierarchy = null;
 
 		List<Integer> positionList = new ArrayList<Integer>();
@@ -439,18 +439,18 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				List<Member> list = (List<Member>) m.getChildMembers();
 
 				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).getName().toLowerCase().contains(name.toLowerCase())) {
+					String parentUN = list.get(i).getParentMember() != null ? list.get(i).getParentMember().getUniqueName() : "";
+					if (list.get(i).getName().toLowerCase().contains(name.toLowerCase()) && !showS) {
 						this.collapsed = true;
 						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
-					} else if (isPotentialChild(fatherNameList, list.get(i)
-							.getUniqueName())) {/*
-												 * fatherNameList.contains(list.
-												 * get(i).getUniqueName()) OLD
-												 * but gold
-												 */
+					} else if (fatherNameList.contains(parentUN) && showS) {
+						this.collapsed = true;
+						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
+					} else if (isPotentialChild(fatherNameList, list.get(i).getUniqueName())) {
 						this.collapsed = true;
 						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
 					}
+
 				}
 
 			}
