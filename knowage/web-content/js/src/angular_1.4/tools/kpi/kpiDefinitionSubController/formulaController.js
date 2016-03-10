@@ -177,17 +177,15 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	}
 
 	$scope.getMeasures=function(){
-		sbiModule_restServices.get("1.0/kpi", 'listMeasure').success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-					} else {
+		
+		sbiModule_restServices.promiseGet("1.0/kpi", 'listMeasure')
+		.then(function(response){ 
 
-						$scope.measures=data;
-					}
+			$scope.measures=response.data;
+		},function(response){
+			$scope.errorHandler(response.data,"");
+		});
 
-				}).error(function(data, status, headers, config) {
-
-				})
 	}
 
 	$scope.getMeasures();

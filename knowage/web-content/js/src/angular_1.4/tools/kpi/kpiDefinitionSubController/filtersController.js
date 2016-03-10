@@ -12,16 +12,27 @@ function kpiDefinitionFiltersControllerFunction($scope,sbiModule_translate,$mdDi
 
 
 	$scope.loadPlaceHolder = function(){
-		sbiModule_restServices.post("1.0/kpi", 'listPlaceholderByMeasures',$scope.kpi.definition.measures).success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
+		sbiModule_restServices.promisePost("1.0/kpi", 'listPlaceholderByMeasures',$scope.kpi.definition.measures).then(
+				function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						$scope.showAction(response.data);
 					} else {
-
-						$scope.placeHolderList=data;
+						$scope.placeHolderList=response.data;
+						if($scope.formulaModified.value){
+							for(key in Object.keys($scope.placeholder)){
+								if($scope.placeHolderList.indexOf(Object.keys($scope.placeholder)[key])==-1){
+									//remove placeholder
+									delete $scope.placeholder[Object.keys($scope.placeholder)[key]];
+								}
+							
+							}
+							$scope.kpi.placeholder =$scope.placeholder;
+						}
 					}
 
-				}).error(function(data, status, headers, config) {
-
+				},function(response) {
+					$scope.errorHandler(response.data,"");
 				})
+		
 	}
 }

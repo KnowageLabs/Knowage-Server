@@ -25,7 +25,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	//variables placeholder
 	$scope.placeHolderObjectList = {};
 	$scope.placeHolderList=[];
-
+	$scope.placeholder={};
 	//variables cardinality
 	$scope.cardinality={"measureList":[],"checkedAttribute":{}};
 
@@ -156,29 +156,61 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.saveKPI = function(){
 		var tmpKpiToSave={};
 		angular.copy($scope.kpi,tmpKpiToSave);
-
-		if(angular.isObject(tmpKpiToSave.definition)){
+		//save formula
+		if(angular.isObject($scope.kpi.definition)){
 			tmpKpiToSave.definition = JSON.stringify($scope.kpi.definition);
 		}
-		if(Object.keys(tmpKpiToSave.cardinality).length>0){
-			tmpKpiToSave.cardinality=JSON.stringify($scope.cardinality);
+		//update cardinality
+		if(Object.keys($scope.cardinality).length>0){
+			if(angular.isObject($scope.cardinality)){
+				tmpKpiToSave.cardinality=JSON.stringify($scope.cardinality);
+
+			}
+		}else{
+			var obj;
+			if(angular.isObject($scope.kpi.cardinality)){
+				obj = $scope.kpi.cardinality;
+			}else{
+				obj=JSON.parse($scope.kpi.cardinality);
+			}
+			var obj2;
+			if(angular.isObject($scope.kpi.definition)){
+				obj2= $scope.kpi.definition.measures;
+			}else{
+				obj2=JSON.parse($scope.kpi.definition).measures;
+			}
+		
+			For1:for(var i=0;i<obj.length;i++){
+				if(obj.measureList[i].measureName!=obj2[i]){
+					break For1;
+				}
+			}
+			if(obj2.length!=obj.measureList.length){
+				$scope.cardinality={"measureList":[],"checkedAttribute":{}};
+				tmpKpiToSave.cardinality=JSON.stringify($scope.cardinality);
+			}
+		
 		}
-		if(angular.isObject(tmpKpiToSave.placeholder)){
+		//update placeholder
+		if(Object.keys(tmpKpiToSave.placeholder)==0){
+			tmpKpiToSave.placeholder='';
+		}
+		else if(angular.isObject(tmpKpiToSave.placeholder) && !$scope.formulaModified.value){
 			$scope.parsePlaceholder(tmpKpiToSave.placeholder);
 			tmpKpiToSave.placeholder=JSON.stringify(tmpKpiToSave.placeholder);
 		}
 		$scope.convertThresholdToCorrectObject(tmpKpiToSave);
-		sbiModule_restServices.post("1.0/kpi", 'saveKpi',tmpKpiToSave).success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						$scope.showAction(data);
+		sbiModule_restServices.promisePost("1.0/kpi", 'saveKpi',tmpKpiToSave).then(
+				function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						$scope.showAction(response.data);
 					} else {
 						$scope.$broadcast ('savedEvent');
 						$scope.formulaModified.value=false;
 					}
 
-				}).error(function(data, status, headers, config) {
-					$scope.showAction(data);
+				},function(response) {
+					$scope.errorHandler(response.data,"");
 				})
 
 
@@ -199,9 +231,18 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 	$scope.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
-		icon:'fa fa-trash' ,	 
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',	
 		action : function(item,event) {
 			$scope.deleteMeasure(item,event);
+		}
+
+	},{
+		label : sbiModule_translate.load('sbi.generic.clone'),
+		icon:'fa fa-copy' ,	 
+		backgroundColor:'transparent',	 
+		action : function(item,event) {
+			$scope.cloneKpi(item,event);
 		}
 
 	}];
@@ -229,6 +270,33 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		}, function() {
 		});
+	}
+
+	$scope.cloneKpi = function(item,event){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.generic.confirmClone"))
+		.ariaLabel('clone measure') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm).then(function() {
+			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadKpi")
+			.then(function(response){ 
+
+				angular.copy({},$scope.cardinality);
+				$timeout(function(){
+					$scope.selectedTab.tab=0;
+				},0)
+
+				angular.copy(response.data,$scope.kpi); 
+				$scope.kpi.id = undefined;
+				$scope.flagActivateBrother('loadedEvent');
+
+			},function(response){
+			});
+		}, function() {
+			console.log("annulla")
+		});
+
 	}
 	$scope.setTab = function(Tab){
 		$scope.selectedTab = Tab;
@@ -282,19 +350,18 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		$scope.cardinality.measureList=[];
 		if(Object.keys($scope.kpi.definition).length!=0){
 			var definition = $scope.kpi.definition;
-
-			sbiModule_restServices.post("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							$scope.showAction(data);
+			sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
 						} else {
-							angular.copy(data,$scope.cardinality.measureList);
+							angular.copy(response.data,$scope.cardinality.measureList);
 							$scope.cardinality.checkedAttribute={"attributeUnion":{},"attributeIntersection":{}};
 							$scope.$broadcast ('activateCardinalityEvent');
 						}
 
-					}).error(function(data, status, headers, config) {
-						$scope.showAction(data);
+					},function(response) {
+						$scope.errorHandler(response.data,"");
 					})
 
 		}
@@ -303,37 +370,20 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.setFilters = function(){
 		$scope.$broadcast ('parseEvent');
 		$scope.placeHolderList=[];
+		if($scope.formulaModified.value){
+			$scope.placeholder;
+			if(!angular.isObject($scope.kpi.placeholder)){
+				$scope.placeholder =  JSON.parse($scope.kpi.placeholder);
+			}else{
+				$scope.placeholder = $scope.kpi.placeholder;
+			}
+			$scope.kpi.placeholder = "";
+		}
 		if($scope.kpi.placeholder=="" || $scope.kpi.placeholder==null || Object.keys($scope.kpi.placeholder).length==0){
 			$scope.kpi.placeholder={};
 			if($scope.kpi.definition!=undefined && Object.keys($scope.kpi.definition).length!=0){
 				$scope.$broadcast('activateFiltersEvent');
 			}
-		}else if($scope.formulaModified.value){
-			//I keep only placeholder valid
-			sbiModule_restServices.post("1.0/kpi", 'listPlaceholderByMeasures',$scope.kpi.definition.measures).success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-						} else {
-							var lista=data;
-							if(!angular.isObject($scope.kpi.placeholder)){
-								$scope.kpi.placeholder = JSON.parse($scope.kpi.placeholder);
-							}
-
-							for(key in Object.keys($scope.kpi.placeholder)){
-								if(lista.indexOf(Object.keys($scope.kpi.placeholder)[key])==-1){
-									//remove placeholder
-									delete $scope.kpi.placeholder[Object.keys($scope.kpi.placeholder)[key]];
-								}
-							}
-						}
-						$scope.$broadcast('activateFiltersEvent');
-
-					}).error(function(data, status, headers, config) {
-
-					})
-
-
-
 		}else{
 			//placeholder presents
 			if($scope.kpi.placeholder!=""){
