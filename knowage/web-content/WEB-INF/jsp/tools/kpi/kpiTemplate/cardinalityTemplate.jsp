@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  <tbody>
 	  <tr id="trFirst"></tr>
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
-		<td ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
+		<td class="attribute" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
 			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 
 			ng-repeat="measure in cardinality.measureList" >
 			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"

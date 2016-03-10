@@ -42,7 +42,7 @@
 }
 
 .cardinalityTable th{
-	padding:0 10px;
+/*	padding:0 10px;*/
 
 	}
 
@@ -175,20 +175,7 @@ color-picker.tableColorPiker .color-picker-panel{
 button.h20{
 	height: 20px !important;
 }
-/*
-.cardinalityTable th div{
-  position: absolute;
-  padding: 9px 65px;
-  background:rgb(246, 246, 246);;
-  
- 
-}
 
-td, th {
-    padding: 10px 45px;
-   margin-left:20px;
-}
-*/
 #trFirst {
   height: 30px;
 }
@@ -214,10 +201,14 @@ td, th {
   color: black;
   padding: 9px 25px;
   top: 0;
-  margin-left: -25px;
+   margin-left: -45px;
   line-height: normal;
   margin-top: 55px;
 }
 th:first-child div{
   border: none;
+}
+.attribute{
+	max-width: 20px;
+
 }
