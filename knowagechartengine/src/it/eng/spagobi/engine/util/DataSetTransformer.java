@@ -91,7 +91,7 @@ public class DataSetTransformer {
 
 		JSONArray fr = new JSONArray();
 
-		HashMap<String, Double> res = new HashMap<String, Double>();
+		HashMap<String, Map<String, Double>> res = new HashMap<String, Map<String, Double>>();
 
 		for (int i = 0; i < result.size(); i++) {
 
@@ -100,7 +100,8 @@ public class DataSetTransformer {
 				if (!res.containsKey(result.get(i).get(columns.get(j)))) {
 
 					String name = (String) result.get(i).get(columns.get(j));
-
+					HashMap<String, Double> valueMap = new HashMap<>();
+					String categoryName = columns.get(j);
 					Double value = 0.00;
 
 					if (sizeCriteria.toString().equals("serie")) {
@@ -112,17 +113,21 @@ public class DataSetTransformer {
 						value++;
 
 					}
-
-					res.put(name, value);
+					valueMap.put(categoryName, value);
+					res.put(name, valueMap);
 
 				}
 
 				else {
 
 					String name = (String) result.get(i).get(columns.get(j));
-
-					Double oldvalue = res.get(name);
-
+					String categoryName = columns.get(j);
+					// HashMap<String, Double> valueMap = new HashMap<>();
+					HashMap<String, Double> oldValueMap = (HashMap<String, Double>) res.get(name);
+					Double oldvalue = oldValueMap.get(categoryName);
+					if (oldvalue == null) {
+						oldvalue = 0.00;
+					}
 					Double newValue = 0.00;
 
 					if (sizeCriteria.toString().equals("serie")) {
@@ -136,10 +141,10 @@ public class DataSetTransformer {
 						newValue = oldvalue + 1;
 
 					}
-
+					oldValueMap.put(categoryName, newValue);
 					res.remove(name);
 
-					res.put(name, newValue);
+					res.put(name, oldValueMap);
 
 				}
 
@@ -150,11 +155,19 @@ public class DataSetTransformer {
 		Iterator it = res.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
+			HashMap<String, Double> pairValue = (HashMap<String, Double>) pair.getValue();
 
 			JSONObject jo = new JSONObject();
 			jo.put("name", pair.getKey());
-			jo.put("value", pair.getValue());
+			ArrayList<String> categoryNames = new ArrayList<>();
+			Double value = 0.00;
+			for (String category : pairValue.keySet()) {
+				categoryNames.add(category);
+				value += pairValue.get(category);
 
+			}
+			jo.put("categoryName", categoryNames);
+			jo.put("value", value);
 			fr.put(jo);
 
 		}

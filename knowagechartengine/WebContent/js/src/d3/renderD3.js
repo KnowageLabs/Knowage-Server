@@ -835,16 +835,17 @@ function renderWordCloud(chartConf,catchSVG){
 
 				if(chartConf.chart.isCockpit==true){
 					if(chartConf.chart.outcomingEventsEnabled){
-					paramethers=fetchParamethers(d);
-					var selectParam={
-							categoryName:paramethers.categoryName,
-							categoryValue:paramethers.categoryValue,
-							serieName:paramethers.serieName,
-							serieValue:paramethers.serieValue,
-							groupingCategoryName:paramethers.groupingCategoryName,
-							groupingCategoryValue:paramethers.groupingCategoryValue	
-					};
-					
+						
+//					paramethers=fetchParamethers(d);
+//					var selectParam={
+//							categoryName:paramethers.categoryName,
+//							categoryValue:paramethers.categoryValue,
+//							serieName:paramethers.serieName,
+//							serieValue:paramethers.serieValue,
+//							groupingCategoryName:paramethers.groupingCategoryName,
+//							groupingCategoryValue:paramethers.groupingCategoryValue	
+//					};
+					var	selectParam=fetchSelectionParamethers(d);
 					handleCockpitSelection(selectParam);
 					}
 				}else if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
@@ -902,6 +903,28 @@ function renderWordCloud(chartConf,catchSVG){
 			
 			}	
 		}
+		
+		function fetchSelectionParamethers(d){
+			var param={};
+			for(j=0;j<chartConf.data[0].length;j++){
+				if(chartConf.data[0][j].name===d.text){
+					//param.categoryValue=chartConf.data[0][j].name;
+					//param.categoryName= chartConf.data[0][j].categoryName;
+					//param.serieValue=chartConf.data[0][j].value;
+					for(k=0;k<chartConf.data[0][j].categoryName.length;k++){
+						param[chartConf.data[0][j].categoryName[k]]=chartConf.data[0][j].name;
+						
+					}
+					
+					
+				}
+			}
+			
+			
+			return param;
+		}
+		
+		
 		
 		function fetchParamethers(d){
 			
@@ -1186,7 +1209,7 @@ function renderWordCloud(chartConf,catchSVG){
 	    		d3.select("#main"+randomId).append("div").style("height",bottomPadding);
 			}
 		       
-		}
+		
 		
 		/* Collect all possible colors into one array - PREDEFINED set of colors
 		 * (the ones that we are going to use in case configuration for the
@@ -1238,7 +1261,7 @@ function renderWordCloud(chartConf,catchSVG){
 		var json = buildHierarchy(jsonObject.data[0]);
 		
 		createVisualization(json);
-
+		}
 		/**
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
@@ -2079,17 +2102,17 @@ function renderWordCloud(chartConf,catchSVG){
 		function clickFunction(d){
 			if(jsonObject.chart.isCockpit==true){
 				if(jsonObject.chart.outcomingEventsEnabled){
-				paramethers=crossNavigationParams(d);
-				
-				var selectParams={
-						categoryName:paramethers.categoryName,
-						categoryValue:paramethers.categoryValue,
-						serieName:paramethers.serieName,
-						serieValue:paramethers.serieValue,
-						groupingCategoryName:paramethers.groupingCategoryName,
-						groupingCategoryValue:paramethers.groupingCategoryValue	
-				};
-				
+//				paramethers=crossNavigationParams(d);
+//				
+//				var selectParams={
+//						categoryName:paramethers.categoryName,
+//						categoryValue:paramethers.categoryValue,
+//						serieName:paramethers.serieName,
+//						serieValue:paramethers.serieValue,
+//						groupingCategoryName:paramethers.groupingCategoryName,
+//						groupingCategoryValue:paramethers.groupingCategoryValue	
+//				};
+				var selectParams=cockpitSelectionParams(d);
 				handleCockpitSelection(selectParams);
 				}
 			}else if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
@@ -2123,6 +2146,30 @@ function renderWordCloud(chartConf,catchSVG){
 			par.serieValue=d.value;
 			return par;
 		}
+		
+		function cockpitSelectionParams(d){
+			var params={};
+			categories=jsonObject.categories;
+			current=d;
+			tempLayers=[];
+			while(current.layer >= 0){
+				var tempParam={};
+				tempParam.category=categories[current.layer].value;
+				tempParam.value=current.name;
+				tempLayers.push(tempParam);
+				current=current.parent;
+			}
+			while(tempLayers.length > 0){
+				var tempObj= tempLayers.pop();
+				params[tempObj.category]=tempObj.value;
+			}
+			
+			
+		  return params;	
+			
+		}
+		
+		
 	}	
 	
 	/**
@@ -2717,11 +2764,12 @@ function renderWordCloud(chartConf,catchSVG){
 	function clickLine(d){
 		if(data.chart.isCockpit==true){
 			if(data.chart.outcomingEventsEnabled){
-			paramethers=crossNavigationParamethers(d);
-			var selectParams={
-					categoryValue:paramethers.groupingCategoryValue		
-			};
-			handleCockpitSelection(selectParams);
+			var paramethers=cockpitSelectionParamethers(d);
+//			var selectParams={
+//					categoryValue:paramethers.groupingCategoryValue		
+//			};
+//			console.log(paramethers);
+			handleCockpitSelection(paramethers);
 			}
 		}else if(data.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 			paramethers=crossNavigationParamethers(d);
@@ -2757,6 +2805,26 @@ function renderWordCloud(chartConf,catchSVG){
 				   params.groupingCategoryValue=d[groupCategory];
 				   
 				   return params;
+	}
+	
+	function cockpitSelectionParamethers(d){
+		var params={};
+		 var category=data.chart.tooltip;
+		   
+		  // params.categoryName=category;
+		  // params.categoryValue=d[category];
+		   var groupCategory=data.chart.group;
+		   //params.groupingCategoryName=groupCategory;
+		   //params.groupingCategoryValue=d[groupCategory];
+		   
+		   params[groupCategory]=d[groupCategory];
+		   if(category != ''){
+			   
+			params[category]=d[category];   
+		   }
+		
+		return params;
+		
 	}
 	
 	// TABLE
@@ -3552,14 +3620,17 @@ function renderChordChart(jsonData)
 				if(jsonData.chart.outcomingEventsEnabled){
 					
 				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
-				var selectParams={
-						categoryName:paramethers.categoryName,
-						categoryValue:paramethers.categoryValue,
-						serieName:paramethers.serieName,
-						serieValue:paramethers.serieValue,
-						groupingCategoryName:paramethers.groupingCategoryName,
-						groupingCategoryValue:paramethers.groupingCategoryValue	
-				};
+//				var selectParams={
+//						categoryName:paramethers.categoryName,
+//						categoryValue:paramethers.categoryValue,
+//						serieName:paramethers.serieName,
+//						serieValue:paramethers.serieValue,
+//						groupingCategoryName:paramethers.groupingCategoryName,
+//						groupingCategoryValue:paramethers.groupingCategoryValue	
+//				};
+				var selectParams={};
+				category= jsonData.categories[1].value;
+				selectParams[category]=paramethers.categoryValue;
 				
 				handleCockpitSelection(selectParams);
 				}

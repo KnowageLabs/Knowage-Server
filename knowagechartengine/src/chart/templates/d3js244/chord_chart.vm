@@ -337,7 +337,7 @@
 						],
 						#end
 	},
-	
+	categories: $datasettransformer.getColumnNames($columnsNeeded),
 	data:
 	[
 		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction)

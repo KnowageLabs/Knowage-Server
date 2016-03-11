@@ -80,7 +80,7 @@
     		#end
 		}
 	},
-	
+	categories: $datasettransformer.getColumnNames($columnsNeeded),
 	    colors: [
     	    
 			#*

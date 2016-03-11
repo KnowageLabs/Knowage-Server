@@ -145,11 +145,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				if(Sbi.isValorized(widget) && widget.wtype === 'chart' && widget.id === widgetId){
 					
-					var fieldMeta = widget.getFieldMetaByValue(e.categoryValue);
-					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
+// 					var fieldMeta = widget.getFieldMetaByValue(e.categoryValue);
+// 					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
 					
-					selections[categoryFieldHeader] = {values: [e.categoryValue]};					
+//					selections[categoryFieldHeader] = {values: [e.categoryValue]};					
 					
+					for(var category in e){
+						
+						
+						 if (e.hasOwnProperty(category)) {
+							 selections[category] = {values: [e[category]]};
+						   
+						    }
+					}
+                 
+                    
+ 					//console.log(selections);
 					cockpitWidgetManager.onSelection(widget, selections);
 				}
 			}		
