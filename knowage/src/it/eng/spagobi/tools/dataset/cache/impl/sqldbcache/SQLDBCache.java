@@ -745,7 +745,8 @@ public class SQLDBCache implements ICache {
 			}
 
 			BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
-			BigDecimal maxUsableMemory = getMetadata().getTotalMemory().divide(new BigDecimal(getMetadata().getCachePercentageToStore()), RoundingMode.FLOOR);
+			BigDecimal maxUsableMemory = getMetadata().getTotalMemory().multiply(new BigDecimal(getMetadata().getCachePercentageToStore()))
+					.divide(new BigDecimal(100), RoundingMode.FLOOR);
 
 			if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
 
