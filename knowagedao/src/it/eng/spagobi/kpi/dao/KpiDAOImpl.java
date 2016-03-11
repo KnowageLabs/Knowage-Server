@@ -472,7 +472,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Kpi execute(Session session) {
 				SbiKpiKpi sbiKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, id);
 				SbiKpiThreshold sbiKpiThreshold = (SbiKpiThreshold) session.load(SbiKpiThreshold.class, sbiKpi.getThresholdId());
-				return from(sbiKpi, sbiKpiThreshold, true);
+				Kpi kpi = from(sbiKpi, sbiKpiThreshold, true);
+				// Looking for all kpi using this threshold
+				List<Integer> kpiList = listKpiByThreshold(sbiKpiThreshold.getId());
+				if (kpiList == null || kpiList.isEmpty() || kpiList.size() == 1 && kpiList.get(0).equals(id)) {
+					// This threshold isn't used by any kpi or at most only by the kpi currently edited by user
+				} else {
+					// This threshold is used by other kpi
+					kpi.getThreshold().setUsedByKpi(true);
+				}
+
+				return kpi;
 			}
 		});
 	}
