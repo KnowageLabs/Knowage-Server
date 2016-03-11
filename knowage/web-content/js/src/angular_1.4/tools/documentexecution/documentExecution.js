@@ -460,7 +460,24 @@
 						if(parameter.type=='NUM'){
 							parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 						}else if(parameter.type=='STRING'){
-							parameter.parameterValue = params[parameter.urlName];	
+							parameter.parameterValue = params[parameter.urlName];
+							
+							if(parameter.defaultValues && parameter.defaultValues.length > 0) {
+								var parameterValues = parameter.parameterValue;
+
+								for(var j = 0; j < parameter.defaultValues.length; j++) {
+									var defaultValue = parameter.defaultValues[j];
+
+									for(var k = 0; k < parameterValues.length; k++) {
+										if(defaultValue.value == parameterValues[k]) {
+											defaultValue.isSelected = true;
+											break;
+										} else {
+											defaultValue.isSelected = false;
+										}
+									}
+								}
+							}
 						}
 					}
 				}
