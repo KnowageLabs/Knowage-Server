@@ -167,12 +167,7 @@ public class KpiService {
 			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		Threshold threshold = dao.loadThreshold(id);
-		// Looking for all kpi using this threshold
-		List<Integer> kpiList = dao.listKpiByThreshold(id);
-		if (kpiList == null || kpiList.size() == 0 || kpiId != null && kpiList.size() == 1 && kpiList.get(0).equals(kpiId)) {
-			// This threshold isn't used by any kpi or at most only by the kpi currently edited by user
-		} else {
-			// This threshold is used by other kpi
+		if (dao.isThresholdUsedByOtherKpi(kpiId, id)) {
 			threshold.setUsedByKpi(true);
 		}
 		return Response.ok(JsonConverter.objectToJson(threshold, threshold.getClass())).build();
