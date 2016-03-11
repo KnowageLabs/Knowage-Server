@@ -359,45 +359,42 @@
 					gvpctl.close = function($event) {
 						$mdDialog.hide();
 					};
-					
-					gvpctl.selectedParametersFilter = [];
-					
-					gvpctl.removeFilter = function (item){
-						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
-							var vpIdStr ='';
-							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
-								vpIdStr = vpIdStr + gvpctl.selectedParametersFilter[i].vpId
-								if(i != gvpctl.selectedParametersFilter.length-1){vpIdStr = vpIdStr +','}
-							}
-							var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ vpIdStr +'"}');
-							sbiModule_restServices.post(
-									"1.0/documentviewpoint",
-									"deleteViewpoint", objViewpoint)
-							   .success(function(data, status, headers, config) {
-								   if(data.errors && data.errors.length > 0 ){
-										 documentExecuteUtils.showToast(data.errors[0].message);
-									 }else{
-										 for(var i=0; i<gvpctl.selectedParametersFilter.length ; i++){
-											 var index = gvpctl.viewpoints.indexOf(gvpctl.selectedParametersFilter[i]);
-											 gvpctl.viewpoints.splice(index, 1);
-											 //message success 
-										 }
-									 }
-								   gvpctl.selectedParametersFilter = [];
-							})
-							.error(function(data, status, headers, config) {});
-						}						
-					};
+					//DELETE ALL
+//					gvpctl.selectedParametersFilter = [];				
+//					gvpctl.removeFilter = function (item){
+//						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
+//							var vpIdStr ='';
+//							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
+//								vpIdStr = vpIdStr + gvpctl.selectedParametersFilter[i].vpId
+//								if(i != gvpctl.selectedParametersFilter.length-1){vpIdStr = vpIdStr +','}
+//							}
+//							var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ vpIdStr +'"}');
+//							sbiModule_restServices.post(
+//									"1.0/documentviewpoint",
+//									"deleteViewpoint", objViewpoint)
+//							   .success(function(data, status, headers, config) {
+//								   if(data.errors && data.errors.length > 0 ){
+//										 documentExecuteUtils.showToast(data.errors[0].message);
+//									 }else{
+//										 for(var i=0; i<gvpctl.selectedParametersFilter.length ; i++){
+//											 var index = gvpctl.viewpoints.indexOf(gvpctl.selectedParametersFilter[i]);
+//											 gvpctl.viewpoints.splice(index, 1);
+//											 //message success 
+//										 }
+//									 }
+//								   gvpctl.selectedParametersFilter = [];
+//							})
+//							.error(function(data, status, headers, config) {});
+//						}						
+//					};
 					
 					gvpctl.vpSpeedMenuOpt = 
 						[ 			 		               	
 						 { // Fill Form
 							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-							 icon:"fa fa-pencil-square-o",
-							 backgroundColor:'blue',
-							 color:'white',
+							 icon:"fa fa-pencil",
+							 color:'#222222',
 							 action : function(item) {
-								 console.log(item);
 								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 								 fillParametersPanel(params);
 								 $mdDialog.hide();
@@ -405,9 +402,8 @@
 						 },
 						 { //Execute Url
 							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
-							 icon:"fa fa-play-circle",
-							 backgroundColor:'blue',
-							 color:'white',
+							 icon:"fa fa-play",
+							 color:'#222222',
 							 action : function(item) {
 								 //decodeURIComponent						 		               		
 								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
@@ -419,25 +415,39 @@
 						 ,{   //Delete Action
 							 label: sbiModule_translate.load("sbi.generic.delete"),
 							 icon:"fa fa-trash-o",
-							 backgroundColor:'red',
-							 color:'white',
+							 //backgroundColor:'red',
+							 color:'#222222',
 							 action : function(item) {
-								 //confirm action
-								 var index = gvpctl.viewpoints.indexOf(item);
-								 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
-									sbiModule_restServices.post(
-											"1.0/documentviewpoint",
-											"deleteViewpoint", objViewpoint)
-									   .success(function(data, status, headers, config) {
-										   if(data.errors && data.errors.length > 0 ){
-												 documentExecuteUtils.showToast(data.errors[0].message);
-											 }else{
-												 gvpctl.viewpoints.splice(index, 1);
-													 //message success 
-											 }
-										   gvpctl.selectedParametersFilter = [];
-									})
-									.error(function(data, status, headers, config) {});						 									
+//								 var confirm = $mdDialog
+//									.confirm()
+//									.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
+//									.content(
+//										sbiModule_translate
+//										.load("sbi.execution.parametersselection.delete.filters.message"))
+//										.ok(sbiModule_translate.load("sbi.general.continue"))
+//										.cancel(sbiModule_translate.load("sbi.general.cancel")
+//									);
+//								$mdDialog.show(confirm).then(function() {
+									var index = gvpctl.viewpoints.indexOf(item);
+									 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
+										sbiModule_restServices.post(
+												"1.0/documentviewpoint",
+												"deleteViewpoint", objViewpoint)
+										   .success(function(data, status, headers, config) {
+											   if(data.errors && data.errors.length > 0 ){
+													 documentExecuteUtils.showToast(data.errors[0].message);
+												 }else{
+													 gvpctl.viewpoints.splice(index, 1);
+														 //message success 
+												 }
+											   //gvpctl.selectedParametersFilter = [];
+										})
+										.error(function(data, status, headers, config) {});
+//										$scope.getViewpoints();
+//								}, function() {
+//									console.log('Annulla');
+//									$scope.getViewpoints();
+//								});	
 							 }
 						 } 	
 					 ];
