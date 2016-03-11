@@ -22,7 +22,7 @@
 			sbiModule_messaging, execProperties, documentExecuteUtils) {
 
 		console.log("documentExecutionControllerFn IN ");
-		$scope.executionInstance = {};
+		$scope.executionInstance = execProperties.executionInstance || {};
 		$scope.roles = execProperties.roles;
 		$scope.selectedRole = "";
 		$scope.execContextId = "";
@@ -287,7 +287,6 @@
 			if($scope.documentParameters.length > 0){
 				for(var i = 0; i < $scope.documentParameters.length; i++){
 					var parameter = $scope.documentParameters[i];
-					
 					documentExecuteUtils.resetParameter(parameter);
 				}
 			}
@@ -301,7 +300,6 @@
 				scope : $scope,
 				preserveScope : true,
 				
-				// "/knowage/js/dialog-new-glossary.html"
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
 					
 				controllerAs : 'vpCtrl',

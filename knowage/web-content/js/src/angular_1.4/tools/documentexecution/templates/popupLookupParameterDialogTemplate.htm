@@ -25,8 +25,8 @@
 			<label>{{lookupParamCtrl.parameter.label}}</label>
 			-->
 			<md-radio-group ng-model="lookupParamCtrl.parameter.parameterValue" ng-required="lookupParamCtrl.parameter.mandatory">
-				<md-radio-button class="md-primary" ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues" value="{{defaultParameter.value}}">
-					{{defaultParameter.label}}
+				<md-radio-button class="md-primary" ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues" value="{{::defaultParameter.value}}">
+					{{::defaultParameter.label}}
 				</md-radio-button>
 			</md-radio-group>
 		</section>
@@ -34,9 +34,9 @@
 		<!-- lov list multiple input -->
 		<section ng-if="lookupParamCtrl.parameter.multivalue">
 			<div ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues">
-				<md-checkbox class="md-primary" value="{{defaultParameter.value}}" ng-model="defaultParameter.isSelected"
+				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-model="defaultParameter.isSelected"
 						ng-change="lookupParamCtrl.toggleCheckboxParameter(lookupParamCtrl.parameter, defaultParameter)">
-					{{defaultParameter.label}}
+					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>
 		</section>	
