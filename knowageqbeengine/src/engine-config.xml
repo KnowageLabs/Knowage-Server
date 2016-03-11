@@ -47,5 +47,6 @@
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>	
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>	
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
 	
 </ENGINE-CONFIGURATION>

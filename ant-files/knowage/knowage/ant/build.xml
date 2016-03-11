@@ -225,7 +225,7 @@
 		</svn>
 		-->
 
-		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar">
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}.jar">
 			<fileset dir="${build}/${webapp_name}/WEB-INF/classes/">
 				<include name="it/**/*" />
 				<exclude name="it/eng/spago/**/*" />
@@ -281,20 +281,20 @@
 			<replacetoken><![CDATA[<!-- END TOMCAT RES -->]]></replacetoken>
 			<replacevalue><![CDATA[ END TOMCAT RES -->]]></replacevalue>
 		</replace>
-		<unzip src="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" dest="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}" />
-		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+		<unzip src="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}.jar" dest="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 			token="java://comp/env/resource_path" value="java:/urls/resource_path" />
-		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 				token="java://comp/env/host_url" value="java:/urls/host_url" />
-		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 				token="java://comp/env/sso_class" value="java:/urls/sso_class" />
-		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 				token="java:/comp/env/wm/SpagoWorkManager" value="java:global/SpagoBIWorkManager" />
-		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
 				token="java:comp/env/jdbc/foodmart" value="java:/jdbc/foodmart" />
-		<delete file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" />
-		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" basedir="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}"/>
-		<delete dir="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}.jar" />
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}.jar" basedir="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}"/>
+		<delete dir="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}" />
 	</target>
 
 
@@ -852,7 +852,7 @@
 
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
 		
-		<copy file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" todir="${dist}" overwrite="true" />
+		<copy file="${build}/${webapp_name}/WEB-INF/lib/knowage.core-${project.version}.jar" todir="${dist}" overwrite="true" />
 
 	</target>
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

@@ -1,22 +1,24 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.engines.rest;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilter;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.services.common.EnginConf;
@@ -26,8 +28,6 @@ import it.eng.spagobi.utilities.Helper;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.axis.encoding.Base64;
@@ -58,14 +58,14 @@ public class SimpleRestClient {
 	}
 
 	public SimpleRestClient() {
-		try {
-			String key = (String) (new InitialContext().lookup(HMACFilter.HMAC_JNDI_LOOKUP));
-			if (key == null) {
-				logger.warn("HMAC key not found. Requests will not be authenticated.");
-			}
+		String key = EnginConf.getInstance().getHmacKey();
+		if (key == null || key.isEmpty()) {
+			key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACFilter.HMAC_JNDI_LOOKUP));
+		}
+		if (key == null || key.isEmpty()) {
+			logger.warn("HMAC key not found. Requests will not be authenticated.");
+		} else {
 			authenticationProvider = new HMACFilterAuthenticationProvider(key);
-		} catch (NamingException e) {
-			logger.warn("HMAC key not found. Requests will not be authenticated.", e);
 		}
 	}
 
@@ -99,13 +99,14 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected ClientResponse executePostService(Map<String, Object> parameters, String serviceUrl, String userId, MediaType mediaType, Object data) throws Exception {
+	protected ClientResponse executePostService(Map<String, Object> parameters, String serviceUrl, String userId, MediaType mediaType, Object data)
+			throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private ClientResponse executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, MediaType mediaType, Object data)
-			throws Exception {
+	private ClientResponse executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, MediaType mediaType,
+			Object data) throws Exception {
 		logger.debug("IN");
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
@@ -123,9 +124,9 @@ public class SimpleRestClient {
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
 		logger.debug("adding headers");
-		
+
 		addAuthorizations(request, userId);
-		
+
 		if (mediaType != null && data != null) {
 			logger.debug("adding body");
 			request.body(mediaType, data);
@@ -157,12 +158,12 @@ public class SimpleRestClient {
 		logger.debug("OUT");
 		return response;
 	}
-	
-	private void addAuthorizations(ClientRequest request, String userId) throws Exception{
-		logger.debug("Adding auth for user "+userId);
-		
+
+	private void addAuthorizations(ClientRequest request, String userId) throws Exception {
+		logger.debug("Adding auth for user " + userId);
+
 		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
-		request.header("Authorization", "Direct "+encodedBytes);
+		request.header("Authorization", "Direct " + encodedBytes);
 
 	}
 

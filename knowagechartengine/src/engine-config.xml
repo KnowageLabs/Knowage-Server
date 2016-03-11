@@ -101,4 +101,6 @@
 		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"		/>
 	</chartConfiguration>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>

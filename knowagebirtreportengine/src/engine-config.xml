@@ -31,4 +31,6 @@
  <XLS_EMITTER>org.uguess.birt.report.engine.emitter.xls</XLS_EMITTER>  
  <!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
  
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+ 
 </ENGINE-CONFIGURATION>

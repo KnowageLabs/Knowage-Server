@@ -234,6 +234,11 @@
 		description="SSO INTEGRATION CLASS JNDI" isActive="true"
 		valueCheck="java://comp/env/sso_class" valueType="STRING"
 		category="SECURITY" />
+	
+	<CONFIG label="SPAGOBI_HMAC.HMAC_JNDI_LOOKUP" name="HMAC JNDI LOOKUP"
+		description="HMAC JNDI LOOKUP" isActive="true"
+		valueCheck="java:/comp/env/hmacKey" valueType="STRING"
+		category="SECURITY" />
 
 	<!-- TimeStamp Format of SpagoBI DB -->
 	<!-- PostgresSQL: Uncomment the row below and edit the file to provide Db 
