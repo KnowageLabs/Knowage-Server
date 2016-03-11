@@ -14,7 +14,7 @@
 
 			<md-input-container> <!-- Use floating label instead of placeholder -->
 			<label>{{translate.load("sbi.execution.viewpoints.name");}}</label> 
-			<input ng-model="vpCtrl.newViewpoint.NAME" type="text" > </md-input-container>
+			<input ng-model="vpCtrl.newViewpoint.NAME" type="text" md-maxlength="40" maxlength="40" > </md-input-container>
 		</div>
 	</div>
 	
@@ -22,7 +22,7 @@
 		<div flex="100">
 			<md-input-container> <!-- Use floating label instead of placeholder -->
 			<label>{{translate.load("sbi.execution.viewpoints.description");}}</label>
-			<input ng-model="vpCtrl.newViewpoint.DESCRIPTION" type="text" > </md-input-container>
+			<input ng-model="vpCtrl.newViewpoint.DESCRIPTION" type="text" md-maxlength="160" maxlength="160"> </md-input-container>
 		</div>
 	</div>
 	

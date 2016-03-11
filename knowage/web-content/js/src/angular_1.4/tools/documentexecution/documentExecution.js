@@ -364,7 +364,7 @@
 					
 					gvpctl.selectedParametersFilter = [];
 					
-					gvpctl.removeFilter = function (item) {	
+					gvpctl.removeFilter = function (item){
 						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
 							var vpIdStr ='';
 							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
@@ -418,37 +418,36 @@
 								 $mdDialog.hide();
 							 }	
 						 }
-//						 ,{   //Delete Action
-//							 label: sbiModule_translate.load("sbi.generic.delete"),
-//							 icon:"fa fa-trash-o",
-//							 backgroundColor:'red',
-//							 color:'white',
-//							 action : function(item) {
-//								 //confirm action
-//								 var index = gvpctl.viewpoints.indexOf(item);
-//								 console.log('delete obj index ' + index , item);						 		               		    
-//								 sbiModule_restServices.get(
-//										 "1.0/documentviewpoint", 
-//										 "deleteViewpoint",
-//										 "id=" + item.vpId)
-//										 .success(function(data, status, headers, config) {
-//											 if(data.errors && data.errors.length > 0 ){
-//												 documentExecuteUtils.showToast(data.errors[0].message);
-//											 }else{
-//												 gvpctl.viewpoints.splice(index, 1);
-//												 //message success
-//											 }
-//										 })
-//										 .error(function(data, status, headers, config) {});						 									
-//							 }
-//						 } 	
+						 ,{   //Delete Action
+							 label: sbiModule_translate.load("sbi.generic.delete"),
+							 icon:"fa fa-trash-o",
+							 backgroundColor:'red',
+							 color:'white',
+							 action : function(item) {
+								 //confirm action
+								 var index = gvpctl.viewpoints.indexOf(item);
+								 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
+									sbiModule_restServices.post(
+											"1.0/documentviewpoint",
+											"deleteViewpoint", objViewpoint)
+									   .success(function(data, status, headers, config) {
+										   if(data.errors && data.errors.length > 0 ){
+												 documentExecuteUtils.showToast(data.errors[0].message);
+											 }else{
+												 gvpctl.viewpoints.splice(index, 1);
+													 //message success 
+											 }
+										   gvpctl.selectedParametersFilter = [];
+									})
+									.error(function(data, status, headers, config) {});						 									
+							 }
+						 } 	
 					 ];
 				},
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
 			});						
 		};
-		
-		/**
+		/*
 		 * Fill Parameters Panel 
 		 */
 		function fillParametersPanel(params){
@@ -482,6 +481,7 @@
 		};
 	}]);
 	
+	
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
 			restrict: 'A',
@@ -493,5 +493,6 @@
 				});
 			}
 		};
-	}]);
+		}]
+	);
 })();	
