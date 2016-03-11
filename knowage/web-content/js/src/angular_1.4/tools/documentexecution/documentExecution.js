@@ -445,6 +445,45 @@
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
 			});						
 		};
+		
+		$scope.openInfoMetadata = function(){
+		    $mdDialog.show({
+		    	scope : $scope,
+				preserveScope : true,
+		    	templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/documentMetadata.html',
+		    	locals : {
+					sbiModule_translate: $scope.translate,
+					sbiModule_config: sbiModule_config,
+					executionInstance: $scope.executionInstance
+				},
+		    	parent: angular.element(document.body),
+		    	clickOutsideToClose:false,
+		    	controllerAs: "metadataDlgCtrl",
+		    	controller : function($mdDialog, sbiModule_translate, sbiModule_config, executionInstance) {
+		    		var metadataDlgCtrl = this;
+		    		metadataDlgCtrl.lblTitle = sbiModule_translate.load('sbi.execution.executionpage.toolbar.metadata');
+		    		metadataDlgCtrl.lblClose = sbiModule_translate.load('sbi.general.close');
+		    		metadataDlgCtrl.lblSave = sbiModule_translate.load('sbi.generic.update');
+		    		metadataDlgCtrl.close = function(){
+		    			$mdDialog.hide();
+		    		}
+		    		sbiModule_restServices.get('1.0/documentexecution/' + executionInstance.OBJECT_ID,'documentMetadata',null)
+		    		.success(function(response, status, headers, config){
+		    			//"GENERAL_META", "LONG_TEXT", "SHORT_TEXT"
+		    			
+		    		})
+		    		.error(function(response, status, headers, config){
+		    			console.log(response);
+		    		});
+		    	}
+		    })
+	        .then(function(answer) {
+	          $scope.status = 'You said the information was "' + answer + '".';
+	        }, function() {
+	          $scope.status = 'You cancelled the dialog.';
+	        });
+		};
+		
 		/*
 		 * Fill Parameters Panel 
 		 */
