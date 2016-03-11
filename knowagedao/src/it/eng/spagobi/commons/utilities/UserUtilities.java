@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -94,7 +94,7 @@ public class UserUtilities {
 
 	/**
 	 * Gets the user profile.
-	 * 
+	 *
 	 * @return the user profile
 	 * @throws Exception
 	 *             the exception
@@ -287,7 +287,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param username
 	 *            the username
 	 * @return true, if successful
@@ -309,7 +309,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
 	 * @return true, if successful
@@ -331,7 +331,7 @@ public class UserUtilities {
 	/**
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
-	 * 
+	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
@@ -391,7 +391,7 @@ public class UserUtilities {
 
 	/**
 	 * Creates the user functionality root.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
 	 * @throws Exception
@@ -456,7 +456,6 @@ public class UserUtilities {
 			superadminFunctionalities.add(SpagoBIConstants.TENANT_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
-			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}
 		return superadminFunctionalities;
@@ -782,7 +781,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 
@@ -819,7 +818,7 @@ public class UserUtilities {
 	/**
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
-	 * 
+	 *
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
