@@ -83,7 +83,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionURL(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("modality") String modality,
-			@QueryParam("displayToolbar") String displayToolbar, @QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) {
+			@QueryParam("displayToolbar") String displayToolbar, @QueryParam("parameters") String jsonParameters, @QueryParam("snapshotId") String snapshotId,
+			@QueryParam("subObjectID") String subObjectID, @Context HttpServletRequest req) {
 
 		logger.debug("IN");
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
