@@ -21,6 +21,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.kpiListOriginal=[];
 	$scope.selectedTab={'tab':0};
 	$scope.thresholdTypeList=[];
+	$scope.isUsedByAnotherKpi={value:false};
 
 	//variables placeholder
 	$scope.placeHolderObjectList = {};
@@ -256,7 +257,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
 		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
-		.ariaLabel('delete measure') 
+		.ariaLabel('delete kpi') 
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
@@ -437,6 +438,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				+' </md-option>'
 				+'</md-select>';
 		}
+		
+		$scope.checkIfIsUsedByAnotherKpi();
 	};
 
 	$scope.errorHandler=function(text,title){
@@ -461,6 +464,15 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		return $mdDialog.show(confirm);
 	}
 
+	$scope.checkIfIsUsedByAnotherKpi=function(){
+		if($scope.kpi.id!=undefined && $scope.kpi.threshold.usedByKpi==true){
+			$scope.isUsedByAnotherKpi.value=true;
+			$scope.kpi.threshold.usedByKpi=false;
+		}else{
+			$scope.isUsedByAnotherKpi.value=false;
+		}
+	}
+	
 };
 function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
 

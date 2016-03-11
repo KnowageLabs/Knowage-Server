@@ -176,10 +176,25 @@ button.h20{
 	height: 20px !important;
 }
 
+button.loadThreshold{
+	height: 36px;
+	margin: 22px;
+}
+
+button.addThresholdItem{
+	    margin-bottom: -45px;
+    margin-left: 45px;
+    font-size: 26px!important;
+}
+
+angular-table.thresholdTable table  {
+	min-width: 1200px;
+   
+}
+
 #trFirst {
   height: 30px;
 }
-
 
 .cardinalityTable td, th {
   border-bottom:1px solid #eee;
