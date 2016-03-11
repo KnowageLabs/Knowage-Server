@@ -131,8 +131,11 @@ try{
 				</md-content>
 				
 				<md-list ng-hide="isParameterPanelDisabled()" layout="column">
-					<md-list-item ng-repeat="parameter in documentParameters" layout="row">
-						<document-paramenter-element flex/>
+					<md-list-item ng-repeat="parameter in documentParameters" layout="row" layout-align="start">
+						<md-button class="md-icon-button" ng-click="documentExecuteUtils.resetParameter(parameter)">
+							<i class="fa fa-eraser"></i>
+						</md-button>
+						<document-paramenter-element flex layout-align="start"/>
 					</md-list-item>
 				</md-list>
 				

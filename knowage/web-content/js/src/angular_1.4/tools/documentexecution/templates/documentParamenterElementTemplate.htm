@@ -67,21 +67,15 @@
 		-->
 		<label>{{::parameter.label}}</label>
 		
-		<md-button class="md-raised md-primary" id="{{::parameter.urlName}}" 
+		<md-button class="md-icon-button" id="{{::parameter.urlName}}" 
 				ng-click="popupLookupParameterDialog(parameter)">
 			<i class="fa fa-search-plus"></i>
-			<!--
-				{{parameter.parameterValue}}
-			-->
 		</md-button>
 	 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
 			<!--
- 			<span>{{parameter.parameterValue}}</span>
+ 			<span ng-bind="parameter.parameterValue"></span>
  			-->
 			<span ng-bind-html="documentExecuteUtils.showParameterHtml(parameter)">
-			<!--
-				{{documentExecuteUtils.showParameterHtml(parameter)}}
- 			-->
 			</span>
 		</md-whiteframe>
 	</section>
