@@ -60,11 +60,11 @@ try{
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
                 <h2 class="md-flex">
-                	{{translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{translate.load("sbi.browser.defaultRole.role")}} {{selectedRole}})
+                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{::translate.load("sbi.browser.defaultRole.role")}} {{selectedRole}})
                 </h2>
                 <span flex=""></span>
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
-						title="{{translate.load('sbi.scheduler.parameters')}}"
+						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
 						ng-disabled="isParameterRolePanelDisabled()"
 				>
@@ -121,26 +121,26 @@ try{
 				
 				<md-content ng-show="showSelectRoles">
 					<md-input-container class="small counter" flex>
-						<label>{{translate.load("sbi.users.roles")}}</label>
+						<label>{{::translate.load("sbi.users.roles")}}</label>
 						<md-select aria-label="aria-label" ng-model="selectedRole" >
 							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
-								{{role|uppercase}}
+								{{::role|uppercase}}
 							</md-option>
 						</md-select>
 					</md-input-container>
 				</md-content>
 				
-				<md-list ng-hide="isParameterPanelDisabled()">
-					<md-list-item ng-repeat="parameter in documentParameters">
-						<document-paramenter-element/>
+				<md-list ng-hide="isParameterPanelDisabled()" layout="column">
+					<md-list-item ng-repeat="parameter in documentParameters" layout="row">
+						<document-paramenter-element flex/>
 					</md-list-item>
 				</md-list>
 				
 				<!-- execute button -->
 				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
-						title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
+						title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
 						ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
-					{{translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+					{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 				</md-button>				
 			</md-sidenav>
 		</md-content>
