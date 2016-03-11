@@ -8,13 +8,23 @@
 	</md-input-container>
 </angular-table-actions>
  
-<md-content flex layout="row" id="angularTableContentBox">
+<md-content flex layout="column" id="angularTableContentBox">
 	<table flex>
 		<thead></thead>
 		<tbody></tbody>
+		<tfoot>
+			<tr>
+				<td colspan="{{tableColumns.length}}" id="tdQueueTableContent" >
+				<md-content id="queueTableContent">
+				</md-content>
+<!-- 				<div id="hiddenTfootDiv" style="height: 50px"></div> -->
+				</td>
+			</tr>
+		</tfoot>
 	</table>
+	
 </md-content>
-
+<div id="fixedAngularTableContentBox"></div>
 
 <angular-table-footer>
 <div  class="box_pagination_list" layout="row" layout-align="end end">

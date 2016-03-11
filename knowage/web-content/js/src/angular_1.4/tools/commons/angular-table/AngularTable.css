@@ -280,3 +280,15 @@ padding: 0 !important;
 .animate-repeat-tablerow.ng-leave.ng-leave-active {
   transition: all 0s;
 }
+
+
+
+.absoluteTfoot tfoot>tr>td #queueTableContent{ 
+display: none;
+}
+.absoluteTfoot #fixedAngularTableContentBox,.absoluteTfoot tfoot>tr>td #hiddenTfootDiv{
+	display:block;
+}
+ #fixedAngularTableContentBox, tfoot>tr>td #hiddenTfootDiv{
+	display:none;
+}
