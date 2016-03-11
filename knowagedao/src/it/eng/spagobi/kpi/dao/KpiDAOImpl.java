@@ -467,24 +467,18 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Kpi loadKpi(final Integer id) {
-		return executeOnTransaction(new IExecuteOnTransaction<Kpi>() {
+		Kpi kpi = executeOnTransaction(new IExecuteOnTransaction<Kpi>() {
 			@Override
 			public Kpi execute(Session session) {
 				SbiKpiKpi sbiKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, id);
 				SbiKpiThreshold sbiKpiThreshold = (SbiKpiThreshold) session.load(SbiKpiThreshold.class, sbiKpi.getThresholdId());
-				Kpi kpi = from(sbiKpi, sbiKpiThreshold, true);
-				// Looking for all kpi using this threshold
-				List<Integer> kpiList = listKpiByThreshold(sbiKpiThreshold.getId());
-				if (kpiList == null || kpiList.isEmpty() || kpiList.size() == 1 && kpiList.get(0).equals(id)) {
-					// This threshold isn't used by any kpi or at most only by the kpi currently edited by user
-				} else {
-					// This threshold is used by other kpi
-					kpi.getThreshold().setUsedByKpi(true);
-				}
-
-				return kpi;
+				return from(sbiKpi, sbiKpiThreshold, true);
 			}
 		});
+		if (isThresholdUsedByOtherKpi(id, kpi.getThreshold().getId())) {
+			kpi.getThreshold().setUsedByKpi(true);
+		}
+		return kpi;
 	}
 
 	@Override
@@ -912,6 +906,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						.list();
 			}
 		});
+	}
+
+	@Override
+	public boolean isThresholdUsedByOtherKpi(Integer kpiId, Integer thresholdId) {
+		// Looking for all kpi using this threshold
+		List<Integer> kpiList = listKpiByThreshold(thresholdId);
+		if (kpiList == null || kpiList.isEmpty() || kpiList.size() == 1 && kpiList.get(0).equals(kpiId)) {
+			// This threshold isn't used by any kpi or at most only by the kpi currently edited by user
+			return false;
+		} else {
+			// This threshold is used by other kpi
+			return true;
+		}
 	}
 
 }

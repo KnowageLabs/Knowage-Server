@@ -69,6 +69,15 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Integer> listKpiByThreshold(Integer thresholdId);
 
 	/**
+	 * Return 'true' if a threshold is used by kpi other then the one with id = kpiId
+	 * 
+	 * @param kpiId
+	 * @param thresholdId
+	 * @return
+	 */
+	public boolean isThresholdUsedByOtherKpi(Integer kpiId, Integer thresholdId);
+
+	/**
 	 * Saves a new Rule and returns its id
 	 * 
 	 * @param rule
