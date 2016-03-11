@@ -55,7 +55,7 @@ try{
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
 	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
-		<md-toolbar class="miniheadimportexport">
+		<md-toolbar class="miniheadimportexport" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
@@ -63,16 +63,14 @@ try{
                 	{{translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{translate.load("sbi.browser.defaultRole.role")}} {{selectedRole}})
                 </h2>
                 <span flex=""></span>
-                <md-button class="toolbar-button-custom" aria-label="Parameters"
+				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						<%--
-						ng-disabled="isParameterPanelDisabled()"
-						--%>
+						ng-disabled="isParameterRolePanelDisabled()"
 				>
 					<i class="fa fa-filter header"></i> 
 				</md-button>
-                <md-menu-bar>
+				<md-menu-bar>
                 	<md-menu>
 		                <md-button class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >
 		                	<i class="fa fa-ellipsis-v header"></i>
@@ -97,12 +95,9 @@ try{
                 </md-menu-bar>
 			</div>
         </md-toolbar>
- 		<md-content layout="row" flex> 
-			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()" layout-fill
-				<%--
-				iframe-set-dimensions-onload 
-				--%>
-				></iframe>
+ 		<md-content layout="row" flex="grow"> 
+			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
+				iframe-set-dimensions-onload flex="grow"></iframe>
 				
 			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
 					ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
@@ -135,14 +130,13 @@ try{
 					</md-input-container>
 				</md-content>
 				
-				
 				<md-list ng-hide="isParameterPanelDisabled()">
 					<md-list-item ng-repeat="parameter in documentParameters">
 						<document-paramenter-element/>
 					</md-list-item>
 				</md-list>
 				
-			<!-- execute button -->
+				<!-- execute button -->
 				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
 						title="{{translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
 						ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
@@ -156,7 +150,7 @@ try{
 	//Module creation
 	(function() {
 		
-		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table']);
+		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {
@@ -178,14 +172,8 @@ try{
 	})();
 	</script>
 	<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionUtils.js")%>"></script>
+	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
-			<!-- angular table -->
-			<script type="text/javascript"
-			 src="<%=urlBuilder.getResourceLink(request, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
-			
-	<!--
-	<script type="text/javascript"
-			src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/parametersPanel/parametersPanelController.js"></script>
-	-->
 </body>
 </html>
