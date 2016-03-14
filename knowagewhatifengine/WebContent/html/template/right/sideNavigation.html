@@ -18,8 +18,8 @@
  -->
  <!-- DO NOT COMMIT THIS -->
 <div class="right-toolbar" layout="row">
-	<md-icon ng-show="tableIcon" class="fa fa-pie-chart fa-2x"/>
-	<md-icon ng-show="chartIcon" class="fa fa-table fa-2x"/>
+	<md-icon ng-show="tableIcon" class="fa fa-table fa-2x"/>
+	<md-icon ng-show="chartIcon" class="fa fa-pie-chart fa-2x"/>
 </div>
 
 	<div style=" background-color:blue; height:32px; border-radious:10px; border-radius: 7px 0px 0px 7px; background-color:#3b678c" layout="row">
@@ -36,24 +36,32 @@
 	md-component-id="right"
     class="md-sidenav-right"
     >
-<md-toolbar class='md-toolbar-tools knowage-blue'>Customization</md-toolbar>
+<md-toolbar class='md-toolbar-tools knowage-blue'>
+	Customization
+</md-toolbar>
 <div class="right-menu" layout="row"> 
 	<div style="width:33%;">
-		<md-button class="right-panel-buttons">
+		<md-button ng-class="tableIcon && !chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('table')">
 			<md-icon class="fa fa-table fa-2x"/>
 		</md-button>
 	</div>
 	<div style="width:33%;">
-		<md-button class="right-panel-buttons">
+		<md-button ng-class="!tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('chart')">
 			<md-icon class="fa fa-pie-chart fa-2x"/>
 		</md-button> 
 	</div>
 	<div style="width:33%;">
-		<md-button class="selected-right-panel-buttons">
+		<md-button ng-class="tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('both')">
 			<md-icon class="fa fa-table"/>
 			<md-icon class="fa fa-pie-chart"/>			
 		</md-button>
 	</div>
 </div>
 <md-toolbar class='md-toolbar-tools knowage-blue'>Menu</md-toolbar>
+<div>
+	dugme dugme
+</div>
+<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-click="closeSideNav('right')">
+	Close
+</md-button>
 </md-sidenav>

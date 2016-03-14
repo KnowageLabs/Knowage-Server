@@ -13,7 +13,7 @@ function sideNavigationController($scope, $timeout, $window, $mdDialog, $mdSiden
 	$scope.tableIcon=true;
 	$scope.chartIcon=false;
 	$scope.toggleRight = buildToggler('right');
-	
+
 	function buildToggler(navID) {
 	      return function() {
 	        $mdSidenav(navID)
@@ -21,4 +21,12 @@ function sideNavigationController($scope, $timeout, $window, $mdDialog, $mdSiden
 	      }
 	    }
 	
+	$scope.closeSideNav = function(navId){
+		$mdSidenav(navId).close();
+	}
+	
+	$scope.changeDataRepr = function(id){
+		$scope.tableIcon= id == "table" ||id == "both" ?true:false;
+		$scope.chartIcon= id == "chart" ||id == "both"?true:false;
+	}
 }

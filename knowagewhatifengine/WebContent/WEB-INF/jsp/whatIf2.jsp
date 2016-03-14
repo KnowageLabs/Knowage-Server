@@ -33,7 +33,7 @@
 
 		<div style="width:2px"></div>
 		
-		<right-panel></right-panel>
+		<sbi-side-nav></sbi-side-nav>
 	</div>
 </body>
 </html>
