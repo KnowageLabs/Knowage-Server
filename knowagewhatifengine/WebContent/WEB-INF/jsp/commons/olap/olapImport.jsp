@@ -17,7 +17,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TreeDeeperLevels.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TreeFirstLevel.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/LeftPanel.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/RightPanel.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/SideNavigation.js"></script>
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/commons/Settings.js"></script>

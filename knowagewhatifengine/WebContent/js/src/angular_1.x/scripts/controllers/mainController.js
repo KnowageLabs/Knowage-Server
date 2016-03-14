@@ -95,10 +95,6 @@ function olapFunction(
 	$scope.loadingNodes=false;
 	$scope.activeaxis;
 	
-	$scope.tableIcon=true;
-	$scope.chartIcon=false;
-	$scope.toggleRight = buildToggler('right');
-	
 	$scope.handleResponse = function(response) {
 		source = response.data;
 		$scope.table = $sce.trustAsHtml(source.table)
@@ -152,11 +148,4 @@ function olapFunction(
 	$scope.closeDialog = function(e){
 		$mdDialog.hide();
 	};
-	
-	function buildToggler(navID) {
-	      return function() {
-	        $mdSidenav(navID)
-	          .toggle();
-	      }
-	    }
 }

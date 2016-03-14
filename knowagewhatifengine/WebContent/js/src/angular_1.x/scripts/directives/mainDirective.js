@@ -10,5 +10,5 @@ angular.module('olap.directives', [
                                    'filter_tree_deeper_levels',
                                    'filter_tree_first_level',
                                    'left_panel',
-                                   'right_panel'
+                                   'sbi_side_nav'
                                    ]);
