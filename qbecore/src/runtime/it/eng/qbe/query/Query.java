@@ -251,6 +251,12 @@ public class Query implements IQuery {
 		return (selectedFieldsCount == 0);
 	}
 
+	@Override
+	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
+			String orderType, String pattern) {
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null));
+	}
+
 	/**
 	 * Extend the method by the 'orderColumn' parameter, that is now dynamic (not fixed) and it is just temporarily enabled only for the first category in the
 	 * chart. Ordering column is the attribute (column) that user can pick from the set of all available attributes that are provided by the used dataset.
@@ -273,7 +279,7 @@ public class Query implements IQuery {
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern, String temporalOperand, String temporalOperandParameter) {
 		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, temporalOperand,
-				temporalOperandParameter, null));
+				temporalOperandParameter));
 	}
 
 	public void addSelectFiled(SimpleSelectField timeIdField) {

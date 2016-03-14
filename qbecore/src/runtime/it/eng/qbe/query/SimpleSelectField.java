@@ -36,6 +36,20 @@ public class SimpleSelectField extends AbstractSelectField {
 	private String temporalOperandParameter;
 
 	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible, boolean groupByField, String orderType,
+			String pattern, String temporalOperand, String temporalOperandParameter) {
+
+		super(alias, ISelectField.SIMPLE_FIELD, include, visible);
+
+		setUniqueName(uniqueName);
+		setFunction(AggregationFunctions.get(function));
+		setGroupByField(groupByField);
+		setOrderType(orderType);
+		setPattern(pattern);
+		setTemporalOperand(temporalOperand);
+		setTemporalOperandParameter(temporalOperandParameter);
+	}
+
+	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible, boolean groupByField, String orderType,
 			String pattern, String temporalOperand, String temporalOperandParameter, String orderColumn) {
 
 		super(alias, ISelectField.SIMPLE_FIELD, include, visible);

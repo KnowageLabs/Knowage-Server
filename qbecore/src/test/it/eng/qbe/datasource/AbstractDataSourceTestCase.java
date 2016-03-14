@@ -121,7 +121,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 			for (int i = 0; i < fields.size(); i++) {
 				IModelField field = (IModelField) fields.get(i);
 
-				query.addSelectFiled(field.getUniqueName(), null, field.getName(), true, true, false, null, null, null);
+				query.addSelectFiled(field.getUniqueName(), null, field.getName(), true, true, false, null, null);
 			}
 		}
 
