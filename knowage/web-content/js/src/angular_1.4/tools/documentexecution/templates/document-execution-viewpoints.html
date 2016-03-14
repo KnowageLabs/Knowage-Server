@@ -1,36 +1,24 @@
 
-<md-dialog aria-label="Saved Parameters" style="width: 80%; height: 90%; overflow-y: visible;" layout="column">
-<md-toolbar>
-    <div class="md-toolbar-tools">
-      	<h2 style="    font-size: 20px;    text-align: center;    width: 100%;">{{::gvpCtrl.headerTitle}}</h2>
-     	<span flex></span>
-      	<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" 
-				ng-click="gvpCtrl.close()">
-		<i class="fa fa-times" style="color:white"></i>
-	 </md-button>
-	</div>
-</md-toolbar>
-<!-- <div layout="column" layout-wrap  > -->
-<!-- 	<div flex></div> -->
-<!-- 	 	<md-button  class="md-fab md-mini" ng-click="gvpCtrl.removeFilter()" ><md-icon -->
-<!-- 				md-font-icon="fa fa-trash-o fa-2x" > -->
-<!-- 		</md-icon></md-button> -->
-<!-- 	<div flex></div> -->
-<!-- </div> -->
-  	<md-dialog-content class="sticky-container" flex style="position: relative;" layout-margin>
+
+
+		<md-toolbar layout="row">
+		    <div class="md-toolbar-tools" flex layout-align="center center">
+		      	<h2 class="md-flex" >{{translate.load("sbi.execution.viewpoints.title")}}</h2>
+		     	<span flex></span>
+		      	<md-button title="Close" aria-label="Close" class="toolbar-button-custom" 
+						ng-click="returnToDocument()">
+				{{translate.load("sbi.general.close")}} 
+			 </md-button>
+			</div>
+		</md-toolbar>
 		<angular-table  style="position: absolute;" layout-fill
-			id="tableViewpoints" ng-model="gvpCtrl.viewpoints" 
+			id="tableViewpoints" ng-model="gvpCtrlViewpoints" 
 			columns='[{"label":"Name","name":"vpName"},{"label":"Description","name":"vpDesc"},{"label":"Visibility","name":"vpScope"}]'
 			columns-search='["vpName","vpDesc", "vpScope"]'
 			highlights-selected-item = "true"
 			show-search-bar="true"
-			speed-menu-option=gvpCtrl.vpSpeedMenuOpt
+			speed-menu-option=gvpCtrlVpSpeedMenuOpt
 			>
 		</angular-table>
-		<!-- 
-		multi-select = "true"
-		selected-item=gvpCtrl.selectedParametersFilter
-		 -->
-		
-  	</md-dialog-content>
-</md-dialog>
+
+  

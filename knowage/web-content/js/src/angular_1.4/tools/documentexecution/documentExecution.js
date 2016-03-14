@@ -24,7 +24,7 @@
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
 		$scope.roles = execProperties.roles;
-		$scope.selectedRole = "";
+		$scope.selectedRole = {name : ""};
 		$scope.execContextId = "";
 		$scope.documentUrl="";
 		$scope.showSelectRoles=true;
@@ -35,17 +35,26 @@
 		$scope.viewpoints = [];
 		$scope.documentExecuteUtils = documentExecuteUtils;
 		
+		$scope.currentView = 'DOCUMENT';
+		$scope.parameterView='';
+		$scope.gvpCtrlViewpoints = [];
+		
+		$scope.isParameterRolePanelDisabled = true;
+		
+		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				if(execProperties.roles.length==1) {
-					$scope.selectedRole = execProperties.roles[0];
+					$scope.selectedRole.name = execProperties.roles[0];
 					$scope.showSelectRoles=false;
 					//load parameters if role is selected
-					$scope.getParametersForExecution($scope.selectedRole);
+					$scope.getParametersForExecution($scope.selectedRole.name);
 				}
-				$scope.executionProcesRestV1($scope.selectedRole);
+				$scope.executionProcesRestV1($scope.selectedRole.name);
 			}
+			$scope.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled();
+			
 			console.log("initSelectedRole OUT ");
 		};
 
@@ -58,6 +67,11 @@
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
 			
+		$scope.returnToDocument = function(){
+			$scope.currentView = 'DOCUMENT';
+			$scope.parameterView='';
+			$scope.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled();
+		}
 		
 		/*
 		 * START EXECUTION PROCESS REST
@@ -109,7 +123,7 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			$scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));			
+			$scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -121,8 +135,7 @@
 			// $scope.selectedRole is overwritten by the ng-model attribute
 			console.log("changeRole IN ");
 			//If new selected role is different from the previous one
-			if(role != $scope.selectedRole) { 
-				
+			if(role != $scope.selectedRole.name) {  
 				$scope.executionProcesRestV1(role);
 //				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));
 				$scope.getParametersForExecution(role);
@@ -264,7 +277,7 @@
 			return (!$scope.documentParameters || $scope.documentParameters.length == 0);
 		};
 		
-		$scope.isParameterRolePanelDisabled = function(){
+		$scope.checkParameterRolePanelDisabled = function(){
 			return ((!$scope.documentParameters || $scope.documentParameters.length == 0)
 					&& (execProperties.roles.length==1));
 		};
@@ -308,7 +321,7 @@
 					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
-						vpctl.newViewpoint.ROLE = $scope.selectedRole;
+						vpctl.newViewpoint.ROLE = $scope.selectedRole.name;
 						vpctl.newViewpoint.VIEWPOINT = documentExecuteUtils.buildStringParameters($scope.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
@@ -340,122 +353,88 @@
 		 * GET Viewpoint document execution
 		 */
 		$scope.getViewpoints = function(){
-			$mdDialog.show({
-				scope : $scope,
-				preserveScope : true,
-				controllerAs : 'gvpCtrl',
-				controller : function($mdDialog) {
-					var gvpctl = this;
-					gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
-					sbiModule_restServices.get(
-							"1.0/documentviewpoint", 
-							"getViewpoints",
-							"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ $scope.selectedRole)
-							.success(function(data, status, headers, config) {
-								gvpctl.viewpoints= data.viewpoints;
-							})
-							.error(function(data, status, headers, config) {});
-
-					gvpctl.close = function($event) {
-						$mdDialog.hide();
-					};
-					//DELETE ALL
-//					gvpctl.selectedParametersFilter = [];				
-//					gvpctl.removeFilter = function (item){
-//						if(gvpctl.selectedParametersFilter && gvpctl.selectedParametersFilter.length>0){
-//							var vpIdStr ='';
-//							for(var i=0; i< gvpctl.selectedParametersFilter.length ; i++){
-//								vpIdStr = vpIdStr + gvpctl.selectedParametersFilter[i].vpId
-//								if(i != gvpctl.selectedParametersFilter.length-1){vpIdStr = vpIdStr +','}
-//							}
-//							var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ vpIdStr +'"}');
-//							sbiModule_restServices.post(
-//									"1.0/documentviewpoint",
-//									"deleteViewpoint", objViewpoint)
-//							   .success(function(data, status, headers, config) {
-//								   if(data.errors && data.errors.length > 0 ){
-//										 documentExecuteUtils.showToast(data.errors[0].message);
-//									 }else{
-//										 for(var i=0; i<gvpctl.selectedParametersFilter.length ; i++){
-//											 var index = gvpctl.viewpoints.indexOf(gvpctl.selectedParametersFilter[i]);
-//											 gvpctl.viewpoints.splice(index, 1);
-//											 //message success 
-//										 }
-//									 }
-//								   gvpctl.selectedParametersFilter = [];
-//							})
-//							.error(function(data, status, headers, config) {});
-//						}						
-//					};
-					
-					gvpctl.vpSpeedMenuOpt = 
-						[ 			 		               	
-						 { // Fill Form
-							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-							 icon:"fa fa-pencil",
-							 color:'#222222',
-							 action : function(item) {
-								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-								 fillParametersPanel(params);
-								 $mdDialog.hide();
-							 }	
-						 },
-						 { //Execute Url
-							 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
-							 icon:"fa fa-play",
-							 color:'#222222',
-							 action : function(item) {
-								 //decodeURIComponent						 		               		
-								 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-								 fillParametersPanel(params);
-								 $scope.executionProcesRestV1($scope.selectedRole, JSON.stringify(params));
-								 $mdDialog.hide();
-							 }	
-						 }
-						 ,{   //Delete Action
-							 label: sbiModule_translate.load("sbi.generic.delete"),
-							 icon:"fa fa-trash-o",
-							 //backgroundColor:'red',
-							 color:'#222222',
-							 action : function(item) {
-//								 var confirm = $mdDialog
-//									.confirm()
-//									.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
-//									.content(
-//										sbiModule_translate
-//										.load("sbi.execution.parametersselection.delete.filters.message"))
-//										.ok(sbiModule_translate.load("sbi.general.continue"))
-//										.cancel(sbiModule_translate.load("sbi.general.cancel")
-//									);
-//								$mdDialog.show(confirm).then(function() {
-									var index = gvpctl.viewpoints.indexOf(item);
-									 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
-										sbiModule_restServices.post(
-												"1.0/documentviewpoint",
-												"deleteViewpoint", objViewpoint)
-										   .success(function(data, status, headers, config) {
-											   if(data.errors && data.errors.length > 0 ){
-													 documentExecuteUtils.showToast(data.errors[0].message);
-												 }else{
-													 gvpctl.viewpoints.splice(index, 1);
-														 //message success 
-												 }
-											   //gvpctl.selectedParametersFilter = [];
-										})
-										.error(function(data, status, headers, config) {});
-//										$scope.getViewpoints();
-//								}, function() {
-//									console.log('Annulla');
-//									$scope.getViewpoints();
-//								});	
-							 }
-						 } 	
-					 ];
-				},
-				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html'
-			});						
+			$scope.currentView='PARAMETERS';
+			$scope.parameterView='FILTER_SAVED';
+			$scope.isParameterRolePanelDisabled=true;
+			//gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
+			sbiModule_restServices.get(
+					"1.0/documentviewpoint", 
+					"getViewpoints",
+					"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ $scope.selectedRole.name)
+					.success(function(data, status, headers, config) {	
+						console.log('data viewpoints '  ,  data.viewpoints);
+						$scope.gvpCtrlViewpoints = data.viewpoints;
+					})
+					.error(function(data, status, headers, config) {});																	
 		};
 		
+		
+		
+		$scope.gvpCtrlVpSpeedMenuOpt = 
+			[ 			 		               	
+			 { // Fill Form
+				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
+				 icon:"fa fa-pencil",
+				 color:'#222222',
+				 action : function(item) {
+					 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 fillParametersPanel(params);
+					 $scope.returnToDocument();
+				 }	
+			 },
+			 { //Execute Url
+				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
+				 icon:"fa fa-play",
+				 color:'#222222',
+				 action : function(item) {
+					 //decodeURIComponent						 		               		
+					 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 fillParametersPanel(params);
+					 $scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(params));
+					 $scope.returnToDocument();
+				 }	
+			 }
+			 ,{   //Delete Action
+				 label: sbiModule_translate.load("sbi.generic.delete"),
+				 icon:"fa fa-trash-o",
+				 //backgroundColor:'red',
+				 color:'#222222',
+				 action : function(item) {
+					 var confirm = $mdDialog
+						.confirm()
+						.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
+						.content(
+							sbiModule_translate
+							.load("sbi.execution.parametersselection.delete.filters.message"))
+							.ok(sbiModule_translate.load("sbi.general.continue"))
+							.cancel(sbiModule_translate.load("sbi.general.cancel")
+						);
+					$mdDialog.show(confirm).then(function() {
+						var index =$scope.gvpCtrlViewpoints.indexOf(item);
+						 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
+							sbiModule_restServices.post(
+									"1.0/documentviewpoint",
+									"deleteViewpoint", objViewpoint)
+							   .success(function(data, status, headers, config) {
+								   if(data.errors && data.errors.length > 0 ){
+										 documentExecuteUtils.showToast(data.errors[0].message);
+									 }else{
+										 $scope.gvpCtrlViewpoints.splice(index, 1);
+											 //message success 
+									 }
+								   //gvpctl.selectedParametersFilter = [];
+							})
+							.error(function(data, status, headers, config) {});
+//							$scope.getViewpoints();
+					}, function() {
+						console.log('Annulla');
+						$scope.getViewpoints();
+					});	
+				 }
+			 } 	
+		 ];
+		
+			
 		$scope.openInfoMetadata = function(){
 		    $mdDialog.show({
 		    	scope : $scope,
@@ -542,6 +521,15 @@
 		return {
 			restrict: 'E',
 			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/documentParamenterElementTemplate.htm',
+		};
+	}]);
+	
+	documentExecutionApp.directive('documentParamenterFilterHandler', 
+			['sbiModule_config',
+			 function(sbiModule_config){
+		return {
+			restrict: 'E',
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/document-execution-viewpoints.html',
 		};
 	}]);
 	

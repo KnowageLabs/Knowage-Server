@@ -1,0 +1,39 @@
+.animate-switch-container {
+  position:relative; 
+}
+.animate-switch.ng-enter,
+.animate-switch.ng-leave {
+  -webkit-transition:0.5s linear all;
+  -moz-transition:0.5s linear all;
+  -o-transition:0.5s linear all;
+  transition:0.5s linear all;
+
+  position:absolute;
+}
+
+.switch-left.ng-enter {
+  left:100%;
+}
+
+.switch-left.ng-leave,
+.switch-left.ng-enter.ng-enter-active {
+  left:0;
+}
+
+.switch-left.ng-leave.ng-leave-active {
+  left:-100%;
+}
+
+.switch-right.ng-enter {
+  right:100%;
+}
+
+.switch-right.ng-leave,
+.switch-right.ng-enter.ng-enter-active {
+  right:0;
+}
+
+.switch-right.ng-leave.ng-leave-active {
+  right:-100%;
+}
+

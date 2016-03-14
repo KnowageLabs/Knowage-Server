@@ -49,6 +49,7 @@ try{
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<!-- Styles -->
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css"> 
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentexecution/css/documentexecution.css"> 
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
 </head>
@@ -60,13 +61,13 @@ try{
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
                 <h2 class="md-flex">
-                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{::translate.load("sbi.browser.defaultRole.role")}} {{selectedRole}})
+                	{{translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{translate.load("sbi.browser.defaultRole.role")}} {{selectedRole.name}})
                 </h2>
                 <span flex=""></span>
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						ng-disabled="isParameterRolePanelDisabled()"
+						ng-disabled="isParameterRolePanelDisabled"
 				>
 					<i class="fa fa-filter header"></i> 
 				</md-button>
@@ -95,7 +96,10 @@ try{
                 </md-menu-bar>
 			</div>
         </md-toolbar>
- 		<md-content layout="row" flex="grow"> 
+        
+        <div class="animate-switch-container" layout="row" flex="grow"  ng-switch on="currentView">
+ 		
+ 		<md-content layout="row" flex="grow" class="animate-switch switch-right" ng-switch-when="DOCUMENT"> 
 			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
 				iframe-set-dimensions-onload flex="grow"></iframe>
 				
@@ -122,7 +126,7 @@ try{
 				<md-content ng-show="showSelectRoles">
 					<md-input-container class="small counter" flex>
 						<label>{{::translate.load("sbi.users.roles")}}</label>
-						<md-select aria-label="aria-label" ng-model="selectedRole" >
+						<md-select aria-label="aria-label" ng-model="selectedRole.name" >
 							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
 								{{::role|uppercase}}
 							</md-option>
@@ -147,13 +151,26 @@ try{
 				</md-button>				
 			</md-sidenav>
 		</md-content>
+		
+		
+		<div class="animate-switch switch-left" flex  ng-switch-when="PARAMETERS"> 
+			<div ng-if="parameterView == 'FILTER_SAVED'" layout="row">
+					<document-paramenter-filter-handler flex/>
+			</div>
+		</div>		
+		</div>												
+	
+	
+	
+	
+	
 	</div>
 		
 	<script type="text/javascript">
 	//Module creation
 	(function() {
 		
-		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize']);
+		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize','ngAnimate']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {
