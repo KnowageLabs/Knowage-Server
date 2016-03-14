@@ -175,9 +175,11 @@ public class EnginConf {
 	private void setHmacKey() {
 		logger.debug("IN");
 		SourceBean sb = (SourceBean) config.getAttribute("HMAC_JNDI_LOOKUP");
-		String hmacKeyJndiName = sb.getCharacters();
-		if (hmacKeyJndiName != null && hmacKeyJndiName.length() > 0) {
-			hmacKey = SpagoBIUtilities.readJndiResource(hmacKeyJndiName);
+		if (sb != null) {
+			String hmacKeyJndiName = sb.getCharacters();
+			if (hmacKeyJndiName != null && hmacKeyJndiName.length() > 0) {
+				hmacKey = SpagoBIUtilities.readJndiResource(hmacKeyJndiName);
+			}
 		}
 		logger.debug("OUT");
 	}
