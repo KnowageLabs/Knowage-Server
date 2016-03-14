@@ -1,4 +1,4 @@
-Ext.ns("Sbi.settings.olap");
+/*Ext.ns("Sbi.settings.olap");
 
 Sbi.settings.olap= {
 		options: {
@@ -24,4 +24,17 @@ Sbi.settings.olap= {
 		}
 
 
-};
+};*/
+var olapSet = angular.module('olap.settings',[]);
+
+olapSet.service('olapSharedSettings',function(){
+		var settings = {
+				minSearchLength:4
+		};
+		
+		return {
+			getSettings:function(){
+				return settings;
+			}
+		};
+	});

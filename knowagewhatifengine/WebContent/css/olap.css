@@ -27,8 +27,8 @@
 
 @-moz-document url-prefix() { 
   .top-alignment {
-     height:35%;
-  }
+     height:63%;
+  }  
 }
 
 .groupX {
@@ -212,7 +212,7 @@ md-tabs .md-tab.md-active{
 .central-panel{
     height:calc(80% - 32px);
     height: -moz-calc(80% - 32px);
-    width:60%;
+    width:100%;
     position:absolute;
 }
 
@@ -314,4 +314,98 @@ md-dialog.fullscreen-dialog {
     width: 100%;
     height: 100%;
     border-radius: 0;
+}
+
+.filter-search{
+	border: 1px solid;
+	border-radius: 5px;
+	width: 50%;
+	padding-left:5px;
+}
+
+.filter-search-redbg{
+	background-color: rgba(255,0,0, 0.3)
+}
+
+.right-panel-buttons{
+  padding: 0px;
+  margin: 10% ;
+  width:80%;
+  height:4%;
+  background-color:none;
+  min-width: 0px;
+}
+
+@-moz-document url-prefix() { 
+  .right-panel-buttons{
+	height:70%;
+  }
+}
+
+.selected-right-panel-buttons{
+  padding: 0px;
+  margin: 10% ;
+  width:80%;
+  height:4%;
+  background-color:none;
+  min-width: 0px;
+  border: 1px solid red;
+}
+@-moz-document url-prefix() { 
+  .selected-right-panel-buttons{
+	height:70%;
+  }
+}
+
+.customization-button{
+		max-height: 32px;
+		padding-top: 10%;
+		min-width: 0px;
+		margin:0px 0px 0px 30%!important;	
+	}
+
+@-moz-document url-prefix() { 
+	.customization-button{
+		max-height: 32px;
+		padding-top: 25%;
+		min-width: 0px;
+		margin:0px 0px 0px 25%!important;	
+	}
+}
+.customization-button:hover{
+	background: #4b85b4 !important;
+}
+
+.right-toolbar{
+		padding-top:35%;
+		padding-bottom:36%;
+}
+
+@-moz-document url-prefix() { 
+  .right-toolbar{
+	padding-top:43%;
+	padding-bottom:44%;
+	}
+}
+
+.right-menu{
+	padding-top:2%;
+	padding-bottom:1%;
+}
+
+@-moz-document url-prefix() { 
+	.right-menu{
+		padding-top:2%;
+		padding-bottom:2%;
+	}
+}
+
+.sidenav-right{
+	width:10%;
+}
+
+@-moz-document url-prefix() { 
+	.sidenav-right{
+		width:13%;
+	}	
 }

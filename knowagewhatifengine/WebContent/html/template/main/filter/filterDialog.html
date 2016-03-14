@@ -14,7 +14,8 @@
 					<md-icon ng-class="showSearchInput ? 'fa fa-eye-slash' :'fa fa-eye'" style="padding-top:5px;"></md-icon>
 				</md-button>
 				
-        		<input	ng-show="showSearchInput" 
+        		<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
+        				ng-show="showSearchInput" 
         				ng-model="searchText" 
         				placeholder="Insert text here" 
         				width="70%!important"/>

@@ -1,5 +1,5 @@
-<div flex=20>	
-
+<div flex=5>	
+<!-- 
 	<md-toolbar class='md-toolbar-tools knowage-blue'>Customization</md-toolbar>
 	<md-tabs class="md-tab-right">
 		<md-tab label="Table">
@@ -15,5 +15,45 @@
 			Table and chart
 		</md-tab>
 	</md-tabs>
-					
+ -->
+ <!-- DO NOT COMMIT THIS -->
+<div class="right-toolbar" layout="row">
+	<md-icon ng-show="tableIcon" class="fa fa-pie-chart fa-2x"/>
+	<md-icon ng-show="chartIcon" class="fa fa-table fa-2x"/>
 </div>
+
+	<div style=" background-color:blue; height:32px; border-radious:10px; border-radius: 7px 0px 0px 7px; background-color:#3b678c" layout="row">
+
+		<md-button class="customization-button" ng-click="toggleRight()">
+			<md-icon class="fa fa-bars" style="color:white" />		
+		</md-button>
+
+	<div>					
+</div>
+<!-- Side nac -->
+<md-sidenav
+	style="width:13%"
+	md-component-id="right"
+    class="md-sidenav-right"
+    >
+<md-toolbar class='md-toolbar-tools knowage-blue'>Customization</md-toolbar>
+<div class="right-menu" layout="row"> 
+	<div style="width:33%;">
+		<md-button class="right-panel-buttons">
+			<md-icon class="fa fa-table fa-2x"/>
+		</md-button>
+	</div>
+	<div style="width:33%;">
+		<md-button class="right-panel-buttons">
+			<md-icon class="fa fa-pie-chart fa-2x"/>
+		</md-button> 
+	</div>
+	<div style="width:33%;">
+		<md-button class="selected-right-panel-buttons">
+			<md-icon class="fa fa-table"/>
+			<md-icon class="fa fa-pie-chart"/>			
+		</md-button>
+	</div>
+</div>
+<md-toolbar class='md-toolbar-tools knowage-blue'>Menu</md-toolbar>
+</md-sidenav>

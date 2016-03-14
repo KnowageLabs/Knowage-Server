@@ -21,9 +21,9 @@
 <body ng-controller="olapController" >
 	<div layout="row">
 		
-		<div layout="column" flex=80>
+		<div layout="column" flex=95>
 		
-			<main-toolbar></main-toolbar>
+			<main-toolbar ng-hide="true"></main-toolbar>
 		
 			<filter-panel></filter-panel>
 
