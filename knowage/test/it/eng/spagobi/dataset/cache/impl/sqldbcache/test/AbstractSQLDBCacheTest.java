@@ -105,7 +105,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 	}
 
 	public void testCacheDimension() {
-		assertEquals(TestConstants.CACHE_CONFIG_CACHE_DIMENSION, cache.getMetadata().getAvailableMemory());
+		assertTrue(cache.getMetadata().getAvailableMemory().compareTo(TestConstants.CACHE_CONFIG_CACHE_DIMENSION) == 0);
 		assertEquals(new Integer(100), cache.getMetadata().getAvailableMemoryAsPercentage());
 		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN), cache.getMetadata().getCleaningQuota());
 		assertEquals(new Integer(0), cache.getMetadata().getNumberOfObjects());

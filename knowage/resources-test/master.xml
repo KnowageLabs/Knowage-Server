@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MASTER>
-	<CONFIGURATOR path="../knowage/web-content/WEB-INF/conf/config/spagobi_dao.xml" />
-	<CONFIGURATOR path="../knowage/web-content/WEB-INF/conf/config/cache.xml" />
+	<CONFIGURATOR path="../web-content/WEB-INF/conf/config/spagobi_dao.xml" />
+	<CONFIGURATOR path="../web-content/WEB-INF/conf/config/cache.xml" />
 </MASTER>
