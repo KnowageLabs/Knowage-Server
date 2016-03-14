@@ -1,6 +1,7 @@
 var olapMod = angular.module('olap.controllers', [
                                                   'olap.configuration',
-                                                  'olap.directives'
+                                                  'olap.directives',
+                                                  'olap.settings'
                                                   ])
 
 olapMod.controller("olapController", [
@@ -11,8 +12,10 @@ olapMod.controller("olapController", [
                                       "$http",
                                       '$sce',
                                       '$mdToast',
+                                      '$mdSidenav',
                                       'sbiModule_messaging',
                                       'sbiModule_restServices',
+                                      'olapSharedSettings',
                                        olapFunction 
                                       ]);
 
@@ -24,8 +27,10 @@ function olapFunction(
 		$http, 
 		$sce,
 		$mdToast,
+		$mdSidenav,
 		sbiModule_messaging,
-		sbiModule_restServices
+		sbiModule_restServices,
+		olapSharedSettings
 ) {
 	
 	templateRoot = "/knowagewhatifengine/html/template";
@@ -34,7 +39,7 @@ function olapFunction(
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
 	
-	$scope.minNumOfLetters=4;
+	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText="";
 	$scope.searchSucessText;
 	$scope.showSearchInput=false;
@@ -90,6 +95,10 @@ function olapFunction(
 	$scope.loadingNodes=false;
 	$scope.activeaxis;
 	
+	$scope.tableIcon=true;
+	$scope.chartIcon=false;
+	$scope.toggleRight = buildToggler('right');
+	
 	$scope.handleResponse = function(response) {
 		source = response.data;
 		$scope.table = $sce.trustAsHtml(source.table)
@@ -143,4 +152,18 @@ function olapFunction(
 	$scope.closeDialog = function(e){
 		$mdDialog.hide();
 	};
+	
+	$scope.bgColor = function(){
+		if( $scope.searchText == "" || $scope.searchText.length>=  $scope.minNumOfLetters)
+			return false;
+		else	
+			return true;
+	};
+	
+	function buildToggler(navID) {
+	      return function() {
+	        $mdSidenav(navID)
+	          .toggle();
+	      }
+	    }
 }
