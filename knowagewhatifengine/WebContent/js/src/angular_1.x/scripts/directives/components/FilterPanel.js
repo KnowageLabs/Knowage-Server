@@ -572,6 +572,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			
 		});	
 	}
+	
+	$scope.bgColor = function(){
+		if( $scope.searchText == "" || $scope.searchText.length>=  $scope.minNumOfLetters)
+			return false;
+		else	
+			return true;
+	};
 		
 };
 

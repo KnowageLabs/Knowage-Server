@@ -153,13 +153,6 @@ function olapFunction(
 		$mdDialog.hide();
 	};
 	
-	$scope.bgColor = function(){
-		if( $scope.searchText == "" || $scope.searchText.length>=  $scope.minNumOfLetters)
-			return false;
-		else	
-			return true;
-	};
-	
 	function buildToggler(navID) {
 	      return function() {
 	        $mdSidenav(navID)
