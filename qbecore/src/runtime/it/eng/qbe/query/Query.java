@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -70,7 +70,7 @@ public class Query implements IQuery {
 	String relationsRoles;
 
 	Map<IModelEntity, Map<String, List<String>>> mapEntityRoleField;
-	
+
 	private Map<String, Map<String, String>> inlineFilteredSelectFields;
 	private Set<String> aliasesToBeRemovedAfterExecution;
 	private Set<String> temporalFieldTypesInSelect;
@@ -79,7 +79,7 @@ public class Query implements IQuery {
 	private LinkedList<String> allYearsOnDWH;
 	private Map<String, List<String>> distinctPeriods;
 	private Map<String, String> currentPeriodValuyesByType;
-	
+
 	public Query() {
 		selectFields = new LinkedList(); /* modified by: (danilo.ristovski@mht.net) */
 		whereClause = new ArrayList();
@@ -251,16 +251,29 @@ public class Query implements IQuery {
 		return (selectedFieldsCount == 0);
 	}
 
+	/**
+	 * Extend the method by the 'orderColumn' parameter, that is now dynamic (not fixed) and it is just temporarily enabled only for the first category in the
+	 * chart. Ordering column is the attribute (column) that user can pick from the set of all available attributes that are provided by the used dataset.
+	 *
+	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	@Override
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
-			String orderType, String pattern) {
-		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null));
+			String orderType, String pattern, String orderColumn) {
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null,
+				orderColumn));
 	}
 
+	/**
+	 * Extend the method by the 'orderColumn' parameter, that is now dynamic (not fixed) and it is just temporarily enabled only for the first category in the
+	 * chart. Ordering column is the attribute (column) that user can pick from the set of all available attributes that are provided by the used dataset.
+	 *
+	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern, String temporalOperand, String temporalOperandParameter) {
 		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, temporalOperand,
-				temporalOperandParameter));
+				temporalOperandParameter, null));
 	}
 
 	public void addSelectFiled(SimpleSelectField timeIdField) {
@@ -800,7 +813,8 @@ public class Query implements IQuery {
 
 		/**
 		 * String 'orderByClause' will keep the part of the query that is required when ordering of series/categories is specified for the chart.
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		String orderByClause = "ORDER BY ";
 		String orderByClauseEmpty = orderByClause;
@@ -817,7 +831,22 @@ public class Query implements IQuery {
 			if (select instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) select;
 				String columnName = extractColumnNameFromFieldName(simpleField.getName());
+
+				/**
+				 * Set the SELECT clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same
+				 * (of the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the
+				 * 'simpleField') will be appended to the SELECT clause at its very end in order to form appropriate query for this purpose).
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				String orderColumn = simpleField.getOrderColumn();
+
+				if (orderColumn != null && orderColumn != "" && !orderColumn.equals(columnName)) {
+					selectClause += orderColumn + " AS " + orderColumn + ", ";
+				}
+
 				selectClause += simpleField.getFunction().apply(columnName) + " AS " + simpleField.getAlias() + " ";
+
 				if (selectFields.indexOf(select) != (selectFields.size() - 1)) {
 					selectClause += ", ";
 				}
@@ -853,7 +882,22 @@ public class Query implements IQuery {
 			if (groupBy instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) groupBy;
 				String columnName = extractColumnNameFromFieldName(simpleField.getName());
+
+				/**
+				 * Set the GROUP BY clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same
+				 * (of the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the
+				 * 'simpleField') will be appended to the GROUP BY clause at its very end in order to form appropriate query for this purpose).
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				String orderColumn = simpleField.getOrderColumn();
+
+				if (orderColumn != null && orderColumn != "" && !orderColumn.equals(columnName)) {
+					groupByClause += orderColumn + ", ";
+				}
+
 				groupByClause += simpleField.getFunction().apply(columnName) + " ";
+
 				if (groupByFields.indexOf(groupBy) != (groupByFields.size() - 1)) {
 					groupByClause += ", ";
 				}
@@ -863,28 +907,83 @@ public class Query implements IQuery {
 			}
 		}
 
+		int counterOfOrderBy = 0;
+
 		/**
 		 * This part is added since we need to take care of ordering of the serie and/or categories of the one is provided (specified) for them.
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @comment Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		for (ISelectField orderBy : this.getSelectFields(true)) {
+		for (ISelectField orderBy : this.getSelectFields(false)) {
 			SimpleSelectField simpleField = (SimpleSelectField) orderBy;
 			String columnName = extractColumnNameFromFieldName(simpleField.getName());
 
-			if (orderBy.getOrderType() != "" && orderBy.getOrderType() != null) {
-				orderByClause += simpleField.getFunction().apply(columnName) + " " + orderBy.getOrderType();
+			/**
+			 * Set the ORDER BY clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same (of
+			 * the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the 'simpleField') will
+			 * be appended to the ORDER BY clause at its very end in order to form appropriate query for this purpose).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 
-				if (this.getSelectFields(true).indexOf(orderBy) != this.getSelectFields(true).size() - 1) {
+			/**
+			 * Get the ordering column (column by which the results will be ordered) and its ordering type (ascending or descending) in order to provide an
+			 * appropriate ORDER BY caluse.
+			 */
+			String orderColumn = simpleField.getOrderColumn();
+			String orderType = simpleField.getOrderType();
+
+			/**
+			 * If the ordering column is specified for the category that is inspected at this moment. This part is associated to the categories (attributes,
+			 * columns).
+			 */
+			if (orderColumn != null) {
+				if (orderColumn != "" && !orderColumn.equals(columnName)) {
+					if (counterOfOrderBy > 0) {
+						orderByClause += ", ";
+					}
+
+					if (orderType != "" && orderType != null) {
+						orderByClause += simpleField.getFunction().apply(orderColumn) + " " + orderType + ", ";
+					}
+
+					orderByClause += simpleField.getFunction().apply(columnName) + " ";
+				} else {
+					if (counterOfOrderBy > 0) {
+						orderByClause += ", ";
+					}
+
+					orderByClause += simpleField.getFunction().apply(columnName) + " ";
+
+					if (orderType != "" && orderType != null) {
+						orderByClause += " " + orderType + " ";
+					}
+				}
+
+				counterOfOrderBy += 1;
+			}
+			/**
+			 * If the ordering column is not specified for the item that is inspected at this moment (the series item). This part is associated to the series.
+			 */
+			else if (orderType != "" && orderType != null) {
+
+				if (counterOfOrderBy > 0 && this.getSelectFields(true).indexOf(orderBy) != this.getSelectFields(true).size() - 1) {
 					orderByClause += ", ";
 				}
+
+				orderByClause += simpleField.getFunction().apply(columnName) + " " + orderBy.getOrderType();
+
+				counterOfOrderBy += 1;
 			}
+
 		}
 
-		/**
-		 * Added the 'orderByClause' string if the one exists due to order specification for the serie/category. (danilo.ristovski@mht.net)
-		 */
-		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause)
+		String queryFinal = "";
+
+		queryFinal = selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause)
 				+ (groupByClause.equals(groupByClauseEmpty) ? " " : groupByClause) + (orderByClause.equals(orderByClauseEmpty) ? " " : orderByClause);
+
+		return queryFinal;
 	}
 
 	private String extractColumnNameFromFieldName(String fieldName) {
@@ -915,11 +1014,11 @@ public class Query implements IQuery {
 			}
 		}
 	}
-	
+
 	public void setInlineFilteredSelectFields(Map<String, Map<String, String>> inlineFilteredSelectFields) {
 		this.inlineFilteredSelectFields = inlineFilteredSelectFields;
 	}
-	
+
 	public Map<String, Map<String, String>> getInlineFilteredSelectFields() {
 		return inlineFilteredSelectFields;
 	}
@@ -927,7 +1026,7 @@ public class Query implements IQuery {
 	public void setAliasesToBeRemovedAfterExecution(Set<String> aliasesToBeRemovedAfterExecution) {
 		this.aliasesToBeRemovedAfterExecution = aliasesToBeRemovedAfterExecution;
 	}
-	
+
 	public Set<String> getAliasesToBeRemovedAfterExecution() {
 		return aliasesToBeRemovedAfterExecution;
 	}
@@ -935,12 +1034,11 @@ public class Query implements IQuery {
 	public void setTemporalFieldTypesInSelect(Set<String> temporalFieldTypesInSelect) {
 		this.temporalFieldTypesInSelect = temporalFieldTypesInSelect;
 	}
-	
+
 	public Set<String> getTemporalFieldTypesInSelect() {
 		return temporalFieldTypesInSelect;
 	}
 
-	
 	public Set<String> getTemporalFieldTypesInQuery() {
 		Set<String> temporalFieldTypesInQuery = new HashSet<>();
 		temporalFieldTypesInQuery.addAll(temporalFieldTypesInSelect);
@@ -951,7 +1049,7 @@ public class Query implements IQuery {
 	public void setHierarchyFullColumnMap(Map<String, String> hierarchyFullColumnMap) {
 		this.hierarchyFullColumnMap = hierarchyFullColumnMap;
 	}
-	
+
 	public Map<String, String> getHierarchyFullColumnMap() {
 		return hierarchyFullColumnMap;
 	}
@@ -959,7 +1057,7 @@ public class Query implements IQuery {
 	public void setRelativeYearIndex(int relativeYearIndex) {
 		this.relativeYearIndex = relativeYearIndex;
 	}
-	
+
 	public int getRelativeYearIndex() {
 		return relativeYearIndex;
 	}
@@ -967,7 +1065,7 @@ public class Query implements IQuery {
 	public void setAllYearsOnDWH(LinkedList<String> allYearsOnDWH) {
 		this.allYearsOnDWH = allYearsOnDWH;
 	}
-	
+
 	public LinkedList<String> getAllYearsOnDWH() {
 		return allYearsOnDWH;
 	}
@@ -975,7 +1073,7 @@ public class Query implements IQuery {
 	public void setDistinctPeriods(Map<String, List<String>> distinctPeriods) {
 		this.distinctPeriods = distinctPeriods;
 	}
-	
+
 	public Map<String, List<String>> getDistinctPeriods() {
 		return distinctPeriods;
 	}
@@ -983,11 +1081,9 @@ public class Query implements IQuery {
 	public void setCurrentPeriodValuyesByType(Map<String, String> currentPeriodValuyesByType) {
 		this.currentPeriodValuyesByType = currentPeriodValuyesByType;
 	}
-	
+
 	public Map<String, String> getCurrentPeriodValuyesByType() {
 		return currentPeriodValuyesByType;
 	}
-	
+
 }
-
-

@@ -9,6 +9,8 @@ Ext.define('Sbi.chart.designer.Designer', {
         'Sbi.chart.designer.ChartTypeColumnSelector',
         'Sbi.chart.designer.ChartCategoriesContainer',
         'Sbi.chart.designer.AxisStylePopup',
+        'Sbi.chart.designer.SerieStylePopup',
+        'Sbi.chart.designer.CategoryStylePopup',
         'Sbi.chart.designer.ChartStructure',
         'Sbi.chart.designer.ChartConfigurationModel',
         'Sbi.chart.designer.ChartConfiguration',
@@ -300,6 +302,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	 * be done by this merging.
 			    	 */
 			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplateGeneric, {applyAxes: true, applySeries: true});
+
 			    }
 			    else
 			    {
@@ -370,7 +373,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * 
 				 * (danristo :: danilo.ristovski@mht.net) 
 				 */
-				if (jsonTemplate.CHART.AXES_LIST.AXIS.length == undefined) {
+				if (jsonTemplate.CHART.AXES_LIST && jsonTemplate.CHART.AXES_LIST.AXIS && jsonTemplate.CHART.AXES_LIST.AXIS.length == undefined) {
 					
 					var axisTemp = jsonTemplate.CHART.AXES_LIST.AXIS;
 					var axisArray = new Array();
@@ -2368,42 +2371,35 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  	  						 */  	  						
 	  	  						if (chartType == "HEATMAP") {
-		  	  						if (this.store.data.length == 0 && data.records.length == 1) {
-		  	  								/**
-		  	  							 * first category doesn't have to be strictly of  type DATE(Timpestamp)
-		  	  							 * validation removed
-		  	  							 * @author Ana Tomic (ana.tomic@mht.net)
-		  	  								 */
-//		  	  							if (data.records[0].data.categoryDataType != "Timestamp") {	  	  								
-//		  	  								/**
-//		  	  								 * Show the message that tells user that he should firstly define
-//		  	  								 * (drop) the item for the categories (attributes) container that
-//		  	  								 * is of a DATE type (Timestamp).
-//		  	  								 */
-//			  	  							Ext.Msg.show({
-//		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
-//		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
-//		  		            					icon : Ext.Msg.WARNING,
-//		  		            					closable : false,
-//		  		            					buttons : Ext.Msg.OK,
-//		  		            					minWidth: 200,
-//		  		            					
-//		  		            					buttonText : {
-//		  		            						ok : LN('sbi.chartengine.generic.ok')
-//		  		            					}
-//	  	  									});	
-//		  	  								
-//		  	  								return false;
-//	  	  								}	  	  								
+	  	  								  	  			
+	  	  							/**
+	  	  							 * Since we can drag just one attribute to the bottom X-axis panel, 
+	  	  							 * we need to take the 0th element of an array of drag&dropped item(s).	  	  							 
+	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  							 */
+	  	  							var itemsInTheBottomPanel = this.store.data.length;
+	  	  							var typeOfAttribute = data.records[0].data.categoryDataType;	  	  	
+	  	  							
+	  	  							/**
+	  	  							 * If the bottom X-axis panel is empty, we can drag any kind of attribute 
+	  	  							 * (any type of data).	  	  							 
+	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  							 */
+		  	  						if (itemsInTheBottomPanel==0) {
+		  	  							
+		  	  							return true;
+		  	  							
 	  	  							}
-		  	  						else if (this.store.data.length == 1 && data.records.length == 1) {	  	  	
+		  	  						else if (itemsInTheBottomPanel==1) {	  	  	
+		  	  							
 		  	  							/**
 		  	  							 * if the one of the categories is DATE(Timestamp) has to be selected as the first one
 		  	  							 * validation is used
 		  	  							 */
-		  	  							if (dropPosition == "after" && data.records[0].data.categoryDataType == "Timestamp" ||
-		  	  								dropPosition == "before" && data.records[0].data.categoryDataType != "Timestamp") {
-			  	  							Ext.Msg.show ({
+		  	  							if (dropPosition == "after" && typeOfAttribute == "Timestamp" ||		  	  								
+	  	  									dropPosition == "before" && typeOfAttribute != "Timestamp") {
+			  	  							
+		  	  								Ext.Msg.show ({
 		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.title"),	
 		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.warningmessage"),	
 		  		            					icon : Ext.Msg.WARNING,
@@ -2412,38 +2408,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  										});
 		  	  								
 			  	  							return false;
-	  	  								}	 
+	  	  								}	
 		  	  							
-		  	  							/**
-		  	  							 * If we already have one item in the CATEGORY (X-axis) container 
-		  	  							 * and we want to add the second (the last one) item, we should
-		  	  							 * check if that item inside the container is of type that is not
-		  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
-		  	  							 * is of DATE (Timestamp) type.
-		  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		  	  							 * 
-		  	  							 * this validation is not used because heatmap doesn't need strictly date
-		  	  							 * @author Ana Tomic (ana.tomic@mht.net)
-		  	  							 */
-//		  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
-//		  	  									data.records[0].data.categoryDataType != "Timestamp") {
-//		  	  								Ext.Msg.show({
-//		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
-//		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
-//		  		            					icon : Ext.Msg.WARNING,
-//		  		            					closable : false,
-//		  		            					buttons : Ext.Msg.OK
-//	  										});
-//		  	  								
-//		  	  								return false;
-//	  	  								}
 	  	  							}
 		  	  						else {
+		  	  							
 		  	  							/**
-		  	    						 * Preventing rearranging categories if the chart type is the HEATMAP
+		  	    						 * Preventing rearranging categories if the chart type is the HEATMAP.
 		  	    						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		  	    						 */
 		  	  							return false;
+		  	  							
 	  	  							}
 	  							}  	  
 	  	  						
@@ -2538,7 +2513,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	xtype: 'textfield',
 				    	id: 'textfieldAxisTitle',
 						flex: 10,
-						hidden: Sbi.chart.designer.ChartUtils.isBottomAxisTextFieldDisabled(), // *_*
+						
+						/**
+						 * For certain chart types this GUI element should be disabled.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						hidden: Sbi.chart.designer.ChartUtils.isBottomAxisTextFieldDisabled(), 
+						
 						allowBlank:  true,
 			            emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						selectOnFocus: true,
@@ -2549,8 +2530,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 					/**
 					 * Provide a button that will let user remove all category items from the 
-					 * X-axis panel.
-					 * 
+					 * X-axis panel.					 * 
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
 					Ext.create
@@ -2608,12 +2588,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 					// STYLE POPUP
 					{
 					    type:'gear',
-					    padding: "3 0 0 0",// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						height: 22,		// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					    padding: "3 0 0 0",	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						height: 22,			// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
 					    id: "stylePopupBottomPanel", // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					    hidden: Sbi.chart.designer.ChartUtils.isBottomAxisStyleButtonDisabled(), // *_*
+					    
+					    /**
+						 * For certain chart types this GUI element should be disabled.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+					    hidden: Sbi.chart.designer.ChartUtils.isBottomAxisStyleButtonDisabled(),
 					    //flex: 1,
+					    
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    	if(chartType.toUpperCase() != 'PIE') {
@@ -2625,6 +2611,69 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    	
 						    	axisStylePopup.show();						    	
 					    	}					    		
+						}
+					},
+					
+					/**
+					 * The tool that provides to the user the opportunity to set the ordering by
+					 * category and its ordering type. For some chart types, this option should be 
+					 * not provided and we will hide this tool in that situation.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					{
+					    type:'toggle',
+					    padding: "3 0 0 0",
+						height: 22,		
+						
+						id: "idCategoryStylePopupTool",
+						
+						/**
+						 * For certain chart types this GUI element should be disabled.
+						 */
+					    hidden: Sbi.chart.designer.ChartUtils.isCategoryStylePopupDisabled(), 
+					   
+					    handler: function(event, toolEl, panelHeader) 
+					    {					    	
+					    	var store = globalThis.bottomXAxisesPanel.getStore();
+							
+					    	/**
+					    	 * Create the store for the combobox that will contain all possible attributes
+					    	 * (columns) through which user can pick the particular one that he would like
+					    	 * to order the result by.
+					    	 */
+							var categoriesPickerStoreItems = globalThis.categoriesPickerStore.data.items;
+							var categoriesStore = [];
+							
+							for (i=0; i<categoriesPickerStoreItems.length; i++)
+							{
+								categoriesStore.push(categoriesPickerStoreItems[i].data);
+							}
+							
+							var previousInstance = Ext.getCmp('categoryStylePopup');
+							
+							if(previousInstance != undefined) 
+							{
+								return;
+							}
+							
+							/**
+							 * 'rowIndex' is always of value 0, since we have the order by category (column)
+							 * option only for the first category (item) that is set inside the bottom X-axis
+							 * panel of the Designer. This option should be improved, so the other categories
+							 * could also have this option.
+							 */
+							var categoryStylePopup = Ext.create
+							(
+								'Sbi.chart.designer.CategoryStylePopup', 
+								{
+									store: store,
+									rowIndex: 0,
+									categoriesPickerStore: categoriesStore
+								}
+							);
+							
+							categoryStylePopup.show();
 						}
 					},
 					
@@ -2680,6 +2729,67 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 					
 				}, 				
+				
+				/**
+				 * TODO: For future development - when the ordering by column option will be
+				 * provided also for subsequent categories, not just for the first one.
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				/*
+				Ext.create
+				(
+					'Ext.grid.column.Action', 
+					
+					{
+						menuDisabled: true,
+						sortable: false,
+						flex: 1,
+//						hidden: true,
+						align : 'center',
+						
+						id: "actionColumnXAxis",
+						
+						items: 
+						[
+							 {
+								icon: '/' + Sbi.chart.designer.Designer.mainContextName + '/themes/sbi_default/img/createTemplate.jpg',	
+								
+								handler: function(grid, rowIndex, colIndex) 
+								{
+									var store = grid.getStore();
+									
+									var categoriesPickerStoreItems = globalThis.categoriesPickerStore.data.items;
+									var categoriesStore = [];
+									
+									for (i=0; i<categoriesPickerStoreItems.length; i++)
+									{
+										categoriesStore.push(categoriesPickerStoreItems[i].data);
+									}
+									
+									var previousInstance = Ext.getCmp('categoryStylePopup');
+									
+									if(previousInstance != undefined) 
+									{
+										return;
+									}
+									
+									var categoryStylePopup = Ext.create
+									(
+										'Sbi.chart.designer.CategoryStylePopup', 
+										{
+											store: store,
+											rowIndex: rowIndex,
+											categoriesPickerStore: categoriesStore
+										}
+									);
+									
+									categoryStylePopup.show();									
+								}
+							}
+						]
+					}
+				),*/
 				
 				{
 					menuDisabled: true,

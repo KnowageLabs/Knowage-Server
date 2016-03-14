@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,7 +36,7 @@ public class SimpleSelectField extends AbstractSelectField {
 	private String temporalOperandParameter;
 
 	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible, boolean groupByField, String orderType,
-			String pattern, String temporalOperand, String temporalOperandParameter) {
+			String pattern, String temporalOperand, String temporalOperandParameter, String orderColumn) {
 
 		super(alias, ISelectField.SIMPLE_FIELD, include, visible);
 
@@ -44,6 +44,15 @@ public class SimpleSelectField extends AbstractSelectField {
 		setFunction(AggregationFunctions.get(function));
 		setGroupByField(groupByField);
 		setOrderType(orderType);
+
+		/**
+		 * Set the dynamic behavior for this class parameter, since we have opportunity to set it as a configurable parameter for some chart types (this should
+		 * be extended for other chart types that can handle the ordering by the particular column by their nature).
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		setOrderColumn(orderColumn);
+
 		setPattern(pattern);
 		setTemporalOperand(temporalOperand);
 		setTemporalOperandParameter(temporalOperandParameter);
@@ -51,8 +60,8 @@ public class SimpleSelectField extends AbstractSelectField {
 
 	public SimpleSelectField(SimpleSelectField field) {
 
-		this(field.getUniqueName(), field.getFunction().getName(), field.getAlias(), field.isIncluded(), field.isVisible(), field.isGroupByField(),
-				field.getOrderType(), field.getPattern(), field.getTemporalOperand(), field.getTemporalOperandParameter());
+		this(field.getUniqueName(), field.getFunction().getName(), field.getAlias(), field.isIncluded(), field.isVisible(), field.isGroupByField(), field
+				.getOrderType(), field.getPattern(), field.getTemporalOperand(), field.getTemporalOperandParameter(), field.getOrderColumn());
 	}
 
 	public IAggregationFunction getFunction() {

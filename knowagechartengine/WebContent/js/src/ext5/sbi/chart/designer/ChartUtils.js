@@ -422,37 +422,39 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 					axisAsJson['style'] = style;
 
-					var MAJORGRID = {};
-					MAJORGRID['interval'] = axisData.majorgridInterval ? axisData.majorgridInterval
-						 : '';
-					var majorgridStyle = '';
-					majorgridStyle += 'typeline:'
-					 + ((axisData.majorgridStyleTypeline != undefined) ? axisData.majorgridStyleTypeline
-						 : '') + ';';
+						var MAJORGRID = {};
+						MAJORGRID['interval'] = axisData.majorgridInterval ? axisData.majorgridInterval
+							 : '';
+						var majorgridStyle = '';
+						majorgridStyle += 'typeline:'
+						 + ((axisData.majorgridStyleTypeline != undefined) ? axisData.majorgridStyleTypeline
+							 : '') + ';';
 
-					/**
-					 * Fixes the problem of MAJORGRID not shown on SCATTER
-					 * (danilo.ristovski@mht.net)
-					 */
-					majorgridStyle += 'color:'
-					 + ((axisData.majorgridStyleColor != undefined) ? axisData.majorgridStyleColor
-						 : '#D8D8D8') + ';';
+						/**
+						 * Fixes the problem of MAJORGRID not shown on SCATTER
+						 * (danilo.ristovski@mht.net)
+						 */
+						majorgridStyle += 'color:'
+						 + ((axisData.majorgridStyleColor != undefined) ? axisData.majorgridStyleColor
+							 : '#D8D8D8') + ';';
 
-					MAJORGRID['style'] = majorgridStyle;
-					axisAsJson['MAJORGRID'] = MAJORGRID;
+						MAJORGRID['style'] = majorgridStyle;
+						axisAsJson['MAJORGRID'] = MAJORGRID;
 
-					var MINORGRID = {};
-					MINORGRID['interval'] = axisData.minorgridInterval ? axisData.minorgridInterval
-						 : '';
-					var minorgridStyle = '';
-					minorgridStyle += 'typeline:'
-					 + ((axisData.minorgridStyleTypeline != undefined) ? axisData.minorgridStyleTypeline
-						 : '') + ';';
-					minorgridStyle += 'color:'
-					 + ((axisData.minorgridStyleColor != undefined) ? axisData.minorgridStyleColor
-						 : '#E0E0E0') + ';';
-					MINORGRID['style'] = minorgridStyle;
-					axisAsJson['MINORGRID'] = MINORGRID;
+						var MINORGRID = {};
+						MINORGRID['interval'] = axisData.minorgridInterval ? axisData.minorgridInterval
+							 : '';
+						var minorgridStyle = '';
+						minorgridStyle += 'typeline:'
+						 + ((axisData.minorgridStyleTypeline != undefined) ? axisData.minorgridStyleTypeline
+							 : '') + ';';
+						minorgridStyle += 'color:'
+						 + ((axisData.minorgridStyleColor != undefined) ? axisData.minorgridStyleColor
+							 : '#E0E0E0') + ';';
+						MINORGRID['style'] = minorgridStyle;
+						axisAsJson['MINORGRID'] = MINORGRID;
+				
+					
 
 					var TITLE = {};
 					TITLE['text'] = axisData.titleText ? axisData.titleText
@@ -1847,6 +1849,26 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						&& chartType.toLowerCase() != 'pie'));
 			
 			return canDropMoreThanOneSerie;
+		},
+		
+		/**
+		 * For these chart types we do not need the opportunity to set the 'order by category'
+		 * for the first category that is provided for the chart, hence we should hide this
+		 * option from user. 
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		isCategoryStylePopupDisabled: function()
+		{
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			
+			/**
+			 * The GAUGE chart is skipped since the entire bottom X-axis panel is hidden
+			 * for this chart type.
+			 */
+			return (chartType=="CHORD" || chartType=="PARALLEL" || 
+						chartType=="SUNBURST" || chartType=="TREEMAP" || 
+							chartType=="WORDCLOUD");
 		},
 		/*
 		 * End check methods

@@ -116,6 +116,24 @@ Ext.define
 			this.titleTextfield.show();	
 			
 			this.actionColumnLeftAxis.items[0].iconCls = "";
+			
+			/**
+			 * Hide the tool that provides to the user the opportunity to set the ordering by
+			 * category and its ordering type. For some chart types, this option should be 
+			 * not provided, so we need to hide this tool in that situation.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			var categoryStylePopupTool = Ext.getCmp("idCategoryStylePopupTool");
+			
+			if (Sbi.chart.designer.ChartUtils.isCategoryStylePopupDisabled() && !categoryStylePopupTool.hidden)
+			{
+				categoryStylePopupTool.hide();
+			}
+			else if (categoryStylePopupTool.hidden)
+			{
+				categoryStylePopupTool.show();
+			}
 		},
 		
 		/**
