@@ -37,3 +37,13 @@
   right:-100%;
 }
 
+/* menu style */
+#menuButton:hover {color:white;}
+#menu md-menu-content span {color: #3b678c!important}
+#menu md-menu-content md-icon {color: #3b678c!important}
+#menu md-menu-content span.divider {
+	color: gray!important;
+    font-weight: 100;
+    font-style: italic;
+    font-size: smaller;
+}

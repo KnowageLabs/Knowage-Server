@@ -475,15 +475,14 @@
 		    		if(executionInstance.SUBOBJECT_ID){
 		    			params = {subobjectId: executionInstance.SUBOBJECT_ID};
 		    		}
-		    		sbiModule_restServices.get('1.0/documentexecution/' + executionInstance.OBJECT_ID, 'documentMetadata', params)
-		    		.success(function(response, status, headers, config){
+		    		sbiModule_restServices.promiseGet('1.0/documentexecution/' + executionInstance.OBJECT_ID, 'documentMetadata', params)
+		    		.then(function(response){
 		    			//"GENERAL_META", "LONG_TEXT", "SHORT_TEXT"
-		    			metadataDlgCtrl.generalMetadata = response.GENERAL_META;
-		    			metadataDlgCtrl.shortText = response.SHORT_TEXT;
-			    		metadataDlgCtrl.longText = response.LONG_TEXT;
-		    		})
-		    		.error(function(response, status, headers, config){
-		    			console.log(response);
+		    			metadataDlgCtrl.generalMetadata = response.data.GENERAL_META;
+		    			metadataDlgCtrl.shortText = response.data.SHORT_TEXT;
+			    		metadataDlgCtrl.longText = response.data.LONG_TEXT;
+		    		},function(response){
+		    			//ko
 		    		});
 		    		metadataDlgCtrl.close = function(){
 		    			$mdDialog.hide();
@@ -494,9 +493,12 @@
 		    				subobjectId: executionInstance.SUBOBJECT_ID, 
 		    				jsonMeta: metadataDlgCtrl.shortText.concat(metadataDlgCtrl.longText)
 		    			};
-		    			sbiModule_restServices.post('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
-		    			.success(function(){alert('ok');})
-		    			.error(function(){alert('ko');});
+		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
+		    			.then(function(response){
+		    				//ok
+		    			},function(response){
+		    				//ko
+		    			});
 		    		}
 		    	}
 		    })

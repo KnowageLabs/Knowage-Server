@@ -22,7 +22,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
@@ -30,15 +29,20 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +51,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -56,7 +61,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
@@ -69,6 +79,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public static final String ENG_NAME = "metadata.docEngine";
 	public static final String RATING = "metadata.docRating";
 	public static final String SUBOBJ_NAME = "metadata.subobjName";
+	public static final String METADATA = "METADATA";
 
 	// public static final String PARAMETERS = "PARAMETERS";
 	// public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
@@ -244,77 +255,38 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			MessageBuilder msgBuild = new MessageBuilder();
 			Locale locale = msgBuild.getLocale(httpRequest);
 
-			Map<String, List<DocumentMetadataProperty>> documentMetadataMap = new HashMap<>();
+			Map<String, JSONArray> documentMetadataMap = new HashMap<>();
 
-			List<DocumentMetadataProperty> generalMetadata = new ArrayList<>();
+			JSONArray generalMetadata = new JSONArray();
+			documentMetadataMap.put("GENERAL_META", generalMetadata);
+
 			// START GENERAL METADATA
 			if (subObjectId != null) {
 				// SubObj Name
-				ObjMetadata metaSubObjName = new ObjMetadata();
 				String textSubName = msgBuild.getMessage(SUBOBJ_NAME, locale);
-				metaSubObjName.setName(textSubName);
-				metaSubObjName.setDataTypeCode("GENERAL_META");
-				ObjMetacontent metaContentSubObjName = new ObjMetacontent();
 				SubObject subobj = DAOFactory.getSubObjectDAO().getSubObject(subObjectId);
-				metaContentSubObjName.setContent(subobj.getName().getBytes("UTF-8"));
-				DocumentMetadataProperty metaAndContentSubObjName = new DocumentMetadataProperty();
-				metaAndContentSubObjName.setMetadataPropertyDefinition(metaSubObjName);
-				metaAndContentSubObjName.setMetadataPropertyValue(metaContentSubObjName);
-				generalMetadata.add(metaAndContentSubObjName);
+				addMetadata(generalMetadata, textSubName, subobj.getName());
 			}
 
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
+
 			// Obj Label
-			ObjMetadata metaObjLabel = new ObjMetadata();
 			String textLabel = msgBuild.getMessage(LABEL, locale);
-			metaObjLabel.setName(textLabel);
-			metaObjLabel.setDataTypeCode("GENERAL_META");
-			ObjMetacontent metaContentObjLabel = new ObjMetacontent();
-			metaContentObjLabel.setContent(obj.getLabel().getBytes("UTF-8"));
-			DocumentMetadataProperty metaAndContentObjLabel = new DocumentMetadataProperty();
-			metaAndContentObjLabel.setMetadataPropertyDefinition(metaObjLabel);
-			metaAndContentObjLabel.setMetadataPropertyValue(metaContentObjLabel);
-			generalMetadata.add(metaAndContentObjLabel);
+			addMetadata(generalMetadata, textLabel, obj.getLabel());
 
 			// Obj Name
-			ObjMetadata metaObjName = new ObjMetadata();
 			String textName = msgBuild.getMessage(NAME, locale);
-			metaObjName.setName(textName);
-			metaObjName.setDataTypeCode("GENERAL_META");
-			ObjMetacontent metaContentObjName = new ObjMetacontent();
-			metaContentObjName.setContent(obj.getName().getBytes("UTF-8"));
-			DocumentMetadataProperty metaAndContentObjName = new DocumentMetadataProperty();
-			metaAndContentObjName.setMetadataPropertyDefinition(metaObjName);
-			metaAndContentObjName.setMetadataPropertyValue(metaContentObjName);
-			generalMetadata.add(metaAndContentObjName);
+			addMetadata(generalMetadata, textName, obj.getName());
 
 			// Obj Type
-			ObjMetadata metaObjType = new ObjMetadata();
 			String textType = msgBuild.getMessage(TYPE, locale);
-			metaObjType.setName(textType);
-			metaObjType.setDataTypeCode("GENERAL_META");
-			ObjMetacontent metaContentObjType = new ObjMetacontent();
-			metaContentObjType.setContent(obj.getBiObjectTypeCode().getBytes("UTF-8"));
-			DocumentMetadataProperty metaAndContentObjType = new DocumentMetadataProperty();
-			metaAndContentObjType.setMetadataPropertyDefinition(metaObjType);
-			metaAndContentObjType.setMetadataPropertyValue(metaContentObjType);
-			generalMetadata.add(metaAndContentObjType);
+			addMetadata(generalMetadata, textType, obj.getBiObjectTypeCode());
 
 			// Obj Engine Name
-			ObjMetadata metaObjEngineName = new ObjMetadata();
 			String textEngName = msgBuild.getMessage(ENG_NAME, locale);
-			metaObjEngineName.setName(textEngName);
-			metaObjEngineName.setDataTypeCode("GENERAL_META");
-			ObjMetacontent metaContentObjEngineName = new ObjMetacontent();
-			metaContentObjEngineName.setContent(obj.getEngine().getName().getBytes("UTF-8"));
-			DocumentMetadataProperty metaAndContentObjEngineName = new DocumentMetadataProperty();
-			metaAndContentObjEngineName.setMetadataPropertyDefinition(metaObjEngineName);
-			metaAndContentObjEngineName.setMetadataPropertyValue(metaContentObjEngineName);
-			generalMetadata.add(metaAndContentObjEngineName);
+			addMetadata(generalMetadata, textEngName, obj.getEngine().getName());
 
 			// END GENERAL METADATA
-
-			documentMetadataMap.put("GENERAL_META", generalMetadata);
 
 			List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
 			if (metadata != null && !metadata.isEmpty()) {
@@ -322,35 +294,98 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				while (it.hasNext()) {
 					ObjMetadata objMetadata = (ObjMetadata) it.next();
 					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-					DocumentMetadataProperty metaAndContent = new DocumentMetadataProperty();
-					metaAndContent.setMetadataPropertyDefinition(objMetadata);
-					objMetadata.getDataTypeCode();
-					metaAndContent.setMetadataPropertyValue(objMetacontent);
-					// metaDataAndContents.add(metaAndContent);
-					addTextMetadata(documentMetadataMap, metaAndContent);
+					addTextMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
+							objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
+							objMetadata.getObjMetaId());
 				}
 			}
 
 			if (!documentMetadataMap.isEmpty()) {
 				return Response.ok(new JSONObject(documentMetadataMap).toString()).build();
 			}
-			// if (!metaDataAndContents.isEmpty()) {
-			// JSONArray toReturn = new JSONArray();
-			// toReturn = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(metaDataAndContents, null);
-			// }
 		} catch (Exception e) {
-
+			logger.error(httpRequest.getPathInfo(), e);
 		}
 
 		return Response.ok().build();
 	}
 
-	private void addTextMetadata(Map<String, List<DocumentMetadataProperty>> metadataMap, DocumentMetadataProperty metadata) {
-		String type = metadata.getMeta().getDataTypeCode();
-		if (metadataMap.get(type) == null) {
-			metadataMap.put(type, new ArrayList<DocumentMetadataProperty>());
+	@POST
+	@Path("/saveDocumentMetadata")
+	public Response saveDocumentMetadata(@Context HttpServletRequest httpRequest) throws JSONException {
+		try {
+			JSONObject params = RestUtilities.readBodyAsJSONObject(httpRequest);
+			IObjMetacontentDAO dao = DAOFactory.getObjMetacontentDAO();
+			dao.setUserProfile(getUserProfile());
+			Integer biobjectId = params.getInt("id");
+			Integer subobjectId = params.has("subobjectId") ? params.getInt("subobjectId") : null;
+			String jsonMeta = params.getString("jsonMeta");
+
+			logger.debug("Object id = " + biobjectId);
+			logger.debug("Subobject id = " + subobjectId);
+
+			JSONArray metadata = new JSONArray(jsonMeta);
+			for (int i = 0; i < metadata.length(); i++) {
+				JSONObject aMetadata = metadata.getJSONObject(i);
+				Integer metadataId = aMetadata.getInt("id");
+				String text = aMetadata.getString("value");
+				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
+				if (aObjMetacontent == null) {
+					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
+							+ " was not found, creating a new one...");
+					aObjMetacontent = new ObjMetacontent();
+					aObjMetacontent.setObjmetaId(metadataId);
+					aObjMetacontent.setBiobjId(biobjectId);
+					aObjMetacontent.setSubobjId(subobjectId);
+					aObjMetacontent.setContent(text.getBytes("UTF-8"));
+					aObjMetacontent.setCreationDate(new Date());
+					aObjMetacontent.setLastChangeDate(new Date());
+					dao.insertObjMetacontent(aObjMetacontent);
+				} else {
+					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
+							+ " was found, it will be modified...");
+					aObjMetacontent.setContent(text.getBytes("UTF-8"));
+					aObjMetacontent.setLastChangeDate(new Date());
+					dao.modifyObjMetacontent(aObjMetacontent);
+				}
+
+			}
+			/*
+			 * indexes biobject by modifying document in index
+			 */
+			BIObject biObjToIndex = DAOFactory.getBIObjectDAO().loadBIObjectById(biobjectId);
+			LuceneIndexer.updateBiobjInIndex(biObjToIndex, false);
+
+		} catch (Exception e) {
+			logger.error(request.getPathInfo(), e);
+			return Response.ok(new JSONObject("{\"errors\":[{\"message\":\"Exception occurred while saving metadata\"}]}").toString()).build();
 		}
-		metadataMap.get(type).add(metadata);
+		return Response.ok().build();
+	}
+
+	private void addMetadata(JSONArray generalMetadata, String name, String value) throws JsonMappingException, JsonParseException, JSONException, IOException {
+		addMetadata(generalMetadata, name, value, null);
+	}
+
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id) throws JsonMappingException, JsonParseException, JSONException,
+			IOException {
+		JSONObject data = new JSONObject();
+		if (id != null) {
+			data.put("id", id);
+		}
+		data.put("name", name);
+		data.put("value", value);
+		generalMetadata.put(data);
+	}
+
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
+			JsonMappingException, JsonParseException, IOException {
+		JSONArray jsonArray = metadataMap.get(type);
+		if (jsonArray == null) {
+			jsonArray = new JSONArray();
+		}
+		addMetadata(jsonArray, name, value, id);
+		metadataMap.put(type, jsonArray);
 	}
 
 	protected String getExecutionRole(String role) throws EMFInternalError, DocumentExecutionException {
@@ -369,4 +404,5 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		return role;
 	}
+
 }

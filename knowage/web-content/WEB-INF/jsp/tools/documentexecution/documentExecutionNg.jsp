@@ -79,25 +79,23 @@ try{
 				>
 					<i class="fa fa-filter header"></i> 
 				</md-button>
-				<md-menu-bar>
+				<md-menu-bar id="menu">
                 	<md-menu>
-		                <md-button class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >
+		                <md-button id="menuButton" class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >
 		                	<i class="fa fa-ellipsis-v header"></i>
 					    </md-button>
 					    <md-menu-content>
-						    <md-menu-item>
-				                <md-button ng-click="alert('TODO File section')">
-				                	File
+					    	<span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
+						    <md-menu-item class="md-indent">
+			                	<md-icon class="fa fa-print "></md-icon>
+				                <md-button ng-click="alert('TODO')">
+				                	{{translate.load("sbi.execution.executionpage.toolbar.print")}}
 				                </md-button>
 				            </md-menu-item>
+				            <md-menu-divider></md-menu-divider>
+				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 				            <md-menu-item>
-				                <md-menu>
-				                	<md-button ng-click="$mdOpenMenu()">Info</md-button>
-				                    <md-menu-content>
-				                    	<md-menu-item><md-button ng-click="openInfoMetadata()">Metadata</md-button>
-				                    	</md-menu-item>
-				                    </md-menu-content>
-				                </md-menu>
+		                    	<md-button ng-click="openInfoMetadata()">Metadata</md-button>
 				            </md-menu-item>
 					    </md-menu-content>
                 	</md-menu>
