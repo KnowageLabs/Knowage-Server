@@ -187,9 +187,8 @@ button.addThresholdItem{
     font-size: 26px!important;
 }
 
-angular-table.thresholdTable table  {
-	min-width: 1200px;
-   
+angular-table.thresholdTable #angularFullTableContentBox  {
+
 }
 
 #trFirst {
@@ -220,10 +219,16 @@ angular-table.thresholdTable table  {
   line-height: normal;
   margin-top: 55px;
 }
-th:first-child div{
+.cardinalityTable th:first-child div{
   border: none;
 }
 .attribute{
 	max-width: 20px;
 
+}
+
+.cloneWarningTab{
+	    margin: 5px;
+    padding: 2px;
+    background-color: white;
 }

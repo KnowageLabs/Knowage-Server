@@ -467,7 +467,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.checkIfIsUsedByAnotherKpi=function(){
 		if($scope.kpi.id!=undefined && $scope.kpi.threshold.usedByKpi==true){
 			$scope.isUsedByAnotherKpi.value=true;
-			$scope.kpi.threshold.usedByKpi=false;
+//			$scope.kpi.threshold.usedByKpi=false;
 		}else{
 			$scope.isUsedByAnotherKpi.value=false;
 		}

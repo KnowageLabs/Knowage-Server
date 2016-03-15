@@ -1,6 +1,6 @@
 <md-content layout-fill layout="column" ng-controller="kpiDefinitionThresholdController"> 
  	
- 	<md-whiteframe class="md-whiteframe-2dp" layout="row"  ng-if="isUsedByAnotherKpi.value==true">
+ 	<md-whiteframe class="md-whiteframe-2dp cloneWarningTab" layout="row"  ng-if="isUsedByAnotherKpi.value==true">
 	   <p flex>{{translate.load("sbi.kpi.threshold.load.reused.title")}} {{ translate.load("sbi.kpi.threshold.load.reused.message")}}</p>
 	   <md-button    ng-click="cloneThreshold()"  >  {{translate.load("sbi.generic.clone")}} </md-button>
  	 </md-whiteframe>
@@ -30,13 +30,14 @@
     </div>
     
  
-	<angular-table  flex class="overflow relative thresholdTable"  
+	<angular-table  flex class="overflow relative thresholdTable" full-width
 		id='kpiListTableThreshold' ng-model=kpi.threshold.thresholdValues
 		columns='thresholdColumn'
 		click-function="" 
 		scope-functions="thresholdFunction"
 		no-pagination=true
-		speed-menu-option= thresholdTableActionButton>
+		speed-menu-option= thresholdTableActionButton
+		>
 		
 			<queue-table >
 				<div layout="row"> 
