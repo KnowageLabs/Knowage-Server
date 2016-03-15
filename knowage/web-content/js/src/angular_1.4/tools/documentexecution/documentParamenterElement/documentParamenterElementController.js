@@ -15,8 +15,8 @@
 		};
 	}]);
 	
-	var documentParamenterElementCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteUtils, $mdDialog) {
-		$scope.documentExecuteUtils = documentExecuteUtils;
+	var documentParamenterElementCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteServices, $mdDialog) {
+		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
 		
 		$scope.getTreeParameterValue = function(parameter) {

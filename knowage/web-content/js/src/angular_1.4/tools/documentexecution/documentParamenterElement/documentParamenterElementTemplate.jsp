@@ -1,5 +1,5 @@
 <md-button class="md-icon-button" aria-label="Clear parameter"
-		ng-click="documentExecuteUtils.resetParameter(parameter)">
+		ng-click="documentExecuteServices.resetParameter(parameter)">
 	<i class="fa fa-eraser"></i>
 </md-button>
 <div flex layout-align="start">
@@ -20,7 +20,7 @@
 				<i class="fa fa-sitemap"></i>
 			</md-button>
 			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
-				<span ng-bind-html="documentExecuteUtils.showParameterHtml(parameter)">
+				<span ng-bind-html="documentExecuteServices.showParameterHtml(parameter)">
 				</span>
 			</md-whiteframe>
 		</section>
@@ -91,7 +91,7 @@
 			</md-button>
 		 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
 				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
-					ng-bind-html="documentExecuteUtils.showParameterHtml(parameter)"></span>
+					ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
 			</md-whiteframe>
 		</section>
 		

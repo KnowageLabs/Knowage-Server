@@ -111,9 +111,9 @@ try{
 			</div>
         </md-toolbar>
         
-        <div class="animate-switch-container" layout="row" flex="grow"  ng-switch on="currentView">
+        <div  layout="row" flex="grow"  ng-switch on="currentView">
  		
-	 		<md-content layout="row" flex="grow" class="animate-switch switch-right" ng-switch-when="DOCUMENT"> 
+	 		<md-content layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
 				<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 					
@@ -170,7 +170,7 @@ try{
 				</md-sidenav>
 			</md-content>
 			
-			<div class="animate-switch switch-left" flex  ng-switch-when="PARAMETERS"> 
+			<div  flex  ng-switch-when="PARAMETERS"> 
 				<div ng-if="parameterView == 'FILTER_SAVED'" layout="row">
 					<parameter-view-point-handler flex/>
 				</div>
@@ -204,7 +204,9 @@ try{
 	})();
 	</script>
 	<script type="text/javascript" 
-			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionUtils.js")%>"></script>
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionServices.js")%>"></script>
+	<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionFactories.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/parameterViewPointHandler/parameterViewPointHandlerController.js")%>"></script>
 	<script type="text/javascript" 
@@ -212,8 +214,6 @@ try{
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
 	
-	
-	<!-- script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/textAngular/1.5.0/textAngular.min.js"></script -->
 	
 
 </body>

@@ -13,12 +13,13 @@
 	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
-			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils', 'sbiModule_helpOnLine',
+			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
+			 'documentExecuteServices',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
-			sbiModule_messaging, execProperties, documentExecuteUtils, sbiModule_helpOnLine) {
+			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -30,9 +31,10 @@
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = [];
 		$scope.showParametersPanel = true;
-		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteUtils.EmptyViewpoint));
+		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
 		$scope.viewpoints = [];
-		$scope.documentExecuteUtils = documentExecuteUtils;
+		$scope.documentExecuteFactories = documentExecuteFactories;
+		$scope.documentExecuteServices = documentExecuteServices;
 		
 		$scope.currentView = 'DOCUMENT';
 		$scope.parameterView='';
@@ -229,7 +231,7 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			$scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));			
+			$scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -243,7 +245,7 @@
 			//If new selected role is different from the previous one
 			if(role != $scope.selectedRole.name) {  
 				$scope.executionProcesRestV1(role);
-//				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteUtils.buildStringParameters($scope.documentParameters)));
+//				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));
 				$scope.getParametersForExecution(role);
 //				if($mdSidenav('parametersPanelSideNav').isOpen()) {
 //					$mdSidenav('parametersPanelSideNav').close();
@@ -341,7 +343,7 @@
 			if($scope.documentParameters.length > 0){
 				for(var i = 0; i < $scope.documentParameters.length; i++){
 					var parameter = $scope.documentParameters[i];
-					documentExecuteUtils.resetParameter(parameter);
+					documentExecuteServices.resetParameter(parameter);
 				}
 			}
 		};
@@ -363,26 +365,26 @@
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = $scope.selectedRole.name;
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteUtils.buildStringParameters($scope.documentParameters);
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters($scope.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
 						   .success(function(data, status, headers, config) {
 							if(data.errors && data.errors.length > 0 ){
-								documentExecuteUtils.showToast(data.errors[0].message);
+								documentExecuteServices.showToast(data.errors[0].message);
 							}else{
 								$mdDialog.hide();
-								documentExecuteUtils.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+								documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
 							}							
 						})
 						.error(function(data, status, headers, config) {
-							documentExecuteUtils.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
+							documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
 						});
 					};
 					
 					vpctl.annulla = function($event) {
 						$mdDialog.hide();
-						$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteUtils.EmptyViewpoint));
+						$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
 					};
 				},
 
@@ -410,13 +412,13 @@
 		};
 		
 		$scope.gvpCtrlVpSpeedMenuOpt = 
-		[ 			 		               	
+			[ 			 		               	
 			 { // Fill Form
 				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
 				 icon:"fa fa-pencil",
 				 color:'#222222',
 				 action : function(item) {
-					 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 fillParametersPanel(params);
 					 $scope.returnToDocument();
 				 }	
@@ -427,7 +429,7 @@
 				 color:'#222222',
 				 action : function(item) {
 					 //decodeURIComponent						 		               		
-					 var params = documentExecuteUtils.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 fillParametersPanel(params);
 					 $scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(params));
 					 $scope.returnToDocument();
@@ -456,18 +458,15 @@
 									"deleteViewpoint", objViewpoint)
 							   .success(function(data, status, headers, config) {
 								   if(data.errors && data.errors.length > 0 ){
-										 documentExecuteUtils.showToast(data.errors[0].message);
+									   documentExecuteServices.showToast(data.errors[0].message);
 									 }else{
-										 for(var i=0; i<gvpctl.selectedParametersFilter.length ; i++){
-											 var index = gvpctl.viewpoints.indexOf(gvpctl.selectedParametersFilter[i]);
-											 gvpctl.viewpoints.splice(index, 1);
+										 $scope.gvpCtrlViewpoints.splice(index, 1);
 											 //message success 
-										 }
 									 }
-								   gvpctl.selectedParametersFilter = [];
+								   //gvpctl.selectedParametersFilter = [];
 							})
 							.error(function(data, status, headers, config) {});
-		//							$scope.getViewpoints();
+//							$scope.getViewpoints();
 					}, function() {
 						console.log('Annulla');
 						$scope.getViewpoints();
@@ -548,7 +547,7 @@
 					var parameter = $scope.documentParameters[i];
 					
 					if(!params[parameter.urlName]) {
-						documentExecuteUtils.resetParameter(parameter);
+						documentExecuteServices.resetParameter(parameter);
 					} else {
 						//Type params
 						if(parameter.type=='NUM'){
