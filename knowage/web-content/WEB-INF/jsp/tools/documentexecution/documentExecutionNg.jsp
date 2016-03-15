@@ -73,7 +73,12 @@ try{
 					>
 					<i class="fa fa-book header"></i> 
 				</md-button>
-				
+				<md-button class="toolbar-button-custom" aria-label="Parameters"
+						title="{{::translate.load('sbi.scheduler.parameters')}}"
+						ng-click="executeParameter()" 
+				>
+					<i class="fa fa-refresh header"></i> 
+				</md-button>
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
