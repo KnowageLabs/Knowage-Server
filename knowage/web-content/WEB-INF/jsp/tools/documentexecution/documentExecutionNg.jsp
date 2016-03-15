@@ -52,6 +52,14 @@ try{
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentexecution/css/documentexecution.css"> 
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
+	
+	<style type="text/css">
+		#metadataDlg md-dialog-content {margin: 0;padding-bottom: 10px;}
+		#metadataDlg expander-box > md-content {border: 0!important; padding:0;}
+		/*#metadataDlg expander-box > md-content md-tabs {padding:0 16px;}*/
+		.animate-accordion.ng-hide-add, .animate-accordion.ng-hide-remove {transition: linear all 1s;}
+		.animate-accordion.ng-hide {height:0;}
+	</style>
 </head>
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
@@ -170,7 +178,7 @@ try{
 	//Module creation
 	(function() {
 		
-		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize','ngAnimate']);
+		angular.module('documentExecutionModule', ['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table', 'ngSanitize', 'expander-box', 'ngAnimate']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {
@@ -195,5 +203,9 @@ try{
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionUtils.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
+	
+	<!-- script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/textAngular/1.5.0/textAngular.min.js"></script -->
+	
+
 </body>
 </html>
