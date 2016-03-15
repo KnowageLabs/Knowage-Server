@@ -24,7 +24,7 @@
 		        	</md-list-item>
 		     	</md-list>
 			</expander-box>
-			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="true" title="metadataDlgCtrl.lblShortMeta"> 
+			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblShortMeta"> 
 				<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
 					<div flex>
 		     			<md-input-container>
@@ -34,12 +34,12 @@
 	        	</md-list-item>
 			</expander-box>
 			<expander-box id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta"> 
-				<md-tabs md-border-bottom md-autoselect md-align-tabs="bottom">
+				<md-tabs md-border-bottom md-dynamic-height >
 					<md-tab ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}">
-						<md-input-container class="md-block">
-				        	<label>{{::item.name}}</label>
-				        	<textarea ng-model="item.value" columns="1" md-maxlength="150" rows="5"></textarea>
-				        </md-input-container>
+					 <md-tab-body>
+					<wysiwyg-edit content="item.value"></wysiwyg-edit>
+					</md-tab-body>
+						
 					</md-tab>
 				</md-tabs>
 			</expander-box>
