@@ -53,13 +53,6 @@ try{
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
 	
-	<style type="text/css">
-		#metadataDlg md-dialog-content {margin: 0;padding-bottom: 10px;}
-		#metadataDlg expander-box > md-content {border: 0!important; padding:0;}
-		/*#metadataDlg expander-box > md-content md-tabs {padding:0 16px;}*/
-		.animate-accordion.ng-hide-add, .animate-accordion.ng-hide-remove {transition: linear all 1s;}
-		.animate-accordion.ng-hide {height:0;}
-	</style>
 </head>
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
@@ -100,10 +93,16 @@ try{
 				                	{{translate.load("sbi.execution.executionpage.toolbar.print")}}
 				                </md-button>
 				            </md-menu-item>
-				            <md-menu-divider></md-menu-divider>
 				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
-				            <md-menu-item>
-		                    	<md-button ng-click="openInfoMetadata()">Metadata</md-button>
+				            <md-menu-item class="md-indent">
+				            	<md-icon class="fa fa-info-circle"></md-icon>
+		                    	<md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-icon class="fa fa-star"></md-icon>
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
+                                	ng-click="rankDocument(selectedDocument)">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
+				                </md-button> 
 				            </md-menu-item>
 					    </md-menu-content>
                 	</md-menu>
