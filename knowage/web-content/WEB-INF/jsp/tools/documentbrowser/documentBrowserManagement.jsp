@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar>
 	
-		<section layout="row" flex>
+		<section layout="row">
 			
 			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
 				<md-toolbar class="header">
@@ -129,7 +129,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</tr>
 							</thead>
 							<tbody>
-								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
+								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty"
+										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)"
+										ng-class="{'selected-doc':wasSelected(document)}">
 									<td>{{document.typeCode}}</td>
 									<td>{{document.name}}</td>
 									<td>{{document.creationUser}}</td>
@@ -185,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-toolbar class="header" style="height: 75px;">
 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1>
 					<div layout="row" layout-align="center center">
-						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="alert('Executing '+selectedDocument.name+'...')">
+						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="executeDocument(selectedDocument)">
 							<i class="fa fa-play-circle" style="color:white"></i>
 						</md-button>
 						
