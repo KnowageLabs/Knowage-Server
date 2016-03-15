@@ -80,6 +80,7 @@ try{
 					>
 					<i class="fa fa-filter header"></i> 
 				</md-button>
+
 				<md-menu-bar id="menu">
                 	<md-menu>
 		                <md-button id="menuButton" class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >

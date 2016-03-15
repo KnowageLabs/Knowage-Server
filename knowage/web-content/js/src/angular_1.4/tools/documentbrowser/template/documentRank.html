@@ -1,0 +1,39 @@
+<md-dialog id="dialogRank" layout="column" aria-label="Select type of download"  ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>{{translate.load("sbi.execution.executionpage.toolbar.rating")}}</h1>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="close()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content flex>
+		<div class="lastScore" ng-if="rankDocumentSaved>0">
+			<h3>{{translate.load("sbi.execution.executionpage.toolbar.rating.presentrank")}}...</h3>
+			<span ng-if="1<=rankDocumentSaved"><i class="fa fa-star"></i></span>
+			<span ng-if="2<=rankDocumentSaved"><i class="fa fa-star"></i></span>
+			<span ng-if="3<=rankDocumentSaved"><i class="fa fa-star"></i></span>
+			<span ng-if="4<=rankDocumentSaved"><i class="fa fa-star"></i></span>
+			<span ng-if="5<=rankDocumentSaved"><i class="fa fa-star"></i></span>
+		</div>
+		
+		<div ng-if="rankDocumentSaved==0">
+			<h3>{{translate.load("sbi.execution.executionpage.toolbar.rating.firstvote")}}</h3>
+		</div> 
+		<div class="well" >
+			<h3>{{translate.load("sbi.execution.executionpage.toolbar.rating.vote")}}</h3>
+			<span class="rating">
+			<span id="star1"ng-click="rateScore(1)" ng-mouseover="hoverStar(1)" ng-mouseleave="leaveStar(1)"><i class="fa fa-star-o"></i></span>
+			<span id="star2" ng-click="rateScore(2)" ng-mouseover="hoverStar(2)" ng-mouseleave="leaveStar(2)"><i class="fa fa-star-o"></i></span>
+			<span id="star3" ng-click="rateScore(3)" ng-mouseover="hoverStar(3)" ng-mouseleave="leaveStar(3)"><i class="fa fa-star-o"></i></span>
+			<span id="star4" ng-click="rateScore(4)" ng-mouseover="hoverStar(4)" ng-mouseleave="leaveStar(4)"><i class="fa fa-star-o"></i></span>
+			<span id="star5" ng-click="rateScore(5)" ng-mouseover="hoverStar(5)" ng-mouseleave="leaveStar(5)"><i class="fa fa-star-o"></i></span>
+			</span>
+		</div>
+		
+	<div class="footer">
+	<md-button id="buttonRank" class="dialogButton" ng-click="saveRank()" md-autofocus>{{translate.load("sbi.execution.executionpage.toolbar.rating.submit")}}</md-button>
+	</div>
+</md-dialog-content>
+</md-dialog>

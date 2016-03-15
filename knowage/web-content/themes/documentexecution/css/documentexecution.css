@@ -47,3 +47,32 @@
     font-style: italic;
     font-size: smaller;
 }
+.well, .lastScore,.ratingSaved{
+	margin-left: 10px;
+}
+
+.rating span {
+	font-size: 30px;
+	color:#E4A400;
+	margin-left:-3px;
+}
+
+.lastScore span {
+	 font-size: 30px;
+	 color:#E4A400;
+	 margin-left:-3px;
+}
+
+.ratingSaved span{
+	font-size: 30px;
+	margin-left:-3px;
+}
+
+#dialogRank{
+	height: 350px;
+}
+
+#buttonRank{
+	margin-left: 130px;
+	bottom: -50px;
+}

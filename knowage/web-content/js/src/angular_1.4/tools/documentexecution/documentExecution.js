@@ -35,6 +35,17 @@
 		$scope.viewpoints = [];
 		$scope.documentExecuteUtils = documentExecuteUtils;
 		
+		$scope.currentView = 'DOCUMENT';
+		$scope.parameterView='';
+		$scope.gvpCtrlViewpoints = [];
+		
+		$scope.documentSelectedToRanking={};
+		$scope.rankDocumentSaved = 0;
+		$scope.requestToRating={};		
+		$scope.isClick=false;
+		
+		$scope.isParameterRolePanelDisabled = true;
+		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
@@ -48,7 +59,106 @@
 			}
 			console.log("initSelectedRole OUT ");
 		};
+		
+		//ranking document
+		$scope.rankDocument = function(document){
+			$scope.documentSelectedToRanking = document;
+			var obj = {
+					'obj':$scope.executionInstance.OBJECT_ID
+					};
+			sbiModule_restServices.promisePost("documentrating","getvote",obj).then(function(response){ 
+				//angular.copy(response.data,$scope.rankDocumentSaved);
+				$scope.rankDocumentSaved = response.data;
+			},function(response){
+				$mdDialog.cancel();
+				$scope.isClick=false;
+			});
+			
+			$mdDialog.show({
+				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentRank.html',
+				scope:$scope,
+				preserveScope: true,
+				clickOutsideToClose:true
+			})
+			.then(function(answer) {
+				$scope.status = 'You said the information was "' + answer + '".';
+				$scope.isClick=false;
+			}, function() {
+				$scope.status = 'You cancelled the dialog.';
+				$scope.isClick=false;
+			});
+		}
+		
+		$scope.rateScore=function(value){
+			$scope.requestToRating = {
+					'rating':value,
+					'obj':$scope.executionInstance.OBJECT_ID,
+			};
+			$scope.isClick=true;
 
+
+		}
+		
+		$scope.saveRank=function(){
+			
+			sbiModule_restServices.promisePost("documentrating", 'vote',$scope.requestToRating).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							$mdDialog.cancel();
+							$scope.showAction(sbiModule_translate.load('sbi.execution.executionpage.toolbar.rating.saved'));
+							$scope.isClick=false;
+						}
+
+					},function(response) {
+						$scope.isClick=false;
+						$scope.errorHandler(response.data,"");
+					})
+		}
+		$scope.hoverStar= function(value){
+			$scope.isClick=false;
+			for(var i=1;i<=value;i++){
+				var string= "star"+i;
+				angular.element(document.getElementById(string).firstChild).removeClass('fa-star-o');
+				angular.element(document.getElementById(string).firstChild).addClass('fa-star');
+				
+			}
+		}
+		
+		$scope.leaveStar= function(value){
+			if(!$scope.isClick){
+				for(var i=1;i<=value;i++){
+					var string= "star"+i;
+					angular.element(document.getElementById(string).firstChild).removeClass('fa-star');
+					angular.element(document.getElementById(string).firstChild).addClass('fa-star-o');
+				}
+			}
+			
+		}
+		
+		$scope.close=function(){
+			$mdDialog.cancel();
+			$scope.isClick=false;
+		}
+		
+		$scope.showAction = function(text) {
+			$scope.isClick=false;
+			var toast = $mdToast.simple()
+			.content(text)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top')
+
+			$mdToast.show(toast).then(function(response) {
+
+				if ( response == 'ok' ) {
+
+
+				}
+			});
+		}
 		$scope.toggleParametersPanel = function(){
 			if($scope.showParametersPanel) {
 				$mdSidenav('parametersPanelSideNav').close();

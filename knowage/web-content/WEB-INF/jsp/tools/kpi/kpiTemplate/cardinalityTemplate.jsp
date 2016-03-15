@@ -23,23 +23,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div class="formula " id="formulaId"></div>
 </div>
 </md-card>
-
-<div flex class="overflow" >	
-	<table  class="cardinalityTable  " >
+<table class="cardinalityTable ">
 	<thead>
 		<tr>
 			<th></th>
-		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" ><div>{{measure.measureName}}</div></th>
+		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in cardinality.measureList" >{{measure.measureName}}</th>
+	    </tr>
+	  </thead>
+	  </table>
+<div flex class="overflow" >	
+	<table  class="cardinalityTable" >
+	<thead >
+		<tr>
+			<th></th>
+		    <th ng-repeat="measure in cardinality.measureList" ><span class=removeHeight></span></th>
 	    </tr>
 	  </thead>
 	  <tbody>
-	  <tr id="trFirst"></tr>
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
-		<td class="attribute" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
+		<td class="attribute truncate hasTooltip" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
 			<td ng-mouseover="blinkMeasure($event,attr,$index)" ng-mouseleave="removeblinkMeasure()" 
 			ng-repeat="measure in cardinality.measureList" >
 			<div class="measureCell" ng-if="measureHaveAttribute(attr,measure)"
-			 ng-click="toggleCell(attr,measure)"  ">
+			 ng-click="toggleCell(attr,measure)"  >
 			<i ng-if="!isEnabled(attr,measure)" class="fa fa-ban invalidCell"></i>
 			<i ng-if="measure.attributes[attr]" class="fa fa-check selectedCell"></i>
 			<i ng-if="(measure.attributes[attr] && !canDisable(attr,measure))" class="fa fa-lock selectedCell"></i>
