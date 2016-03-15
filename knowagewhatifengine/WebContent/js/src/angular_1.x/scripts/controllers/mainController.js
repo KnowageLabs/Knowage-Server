@@ -55,7 +55,10 @@ function olapFunction(
 	$scope.leftSliderNeeded;
 	$scope.leftStart = 0;
 	
-	$scope.toolbarButtons = [];
+	$scope.olapToolbarButtons = [];
+	$scope.whatifToolbarButtons = [];
+	$scope.tableToolbarButtons = [];
+	
 	$scope.filterCardList = [];
 	$scope.filterSelected = [];
 	$scope.dtData = [];

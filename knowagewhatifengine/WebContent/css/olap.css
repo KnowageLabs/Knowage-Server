@@ -33,13 +33,13 @@
 
 .groupX {
     font-size: 12px;
-    margin: 10px 0;
+    margin: 10px 0px 10px 2px;
     color:#000000 !important;
     background-color: rgba(224, 224, 224, 0.96);
     text-transform: none;
     font-weight: 400;
     line-height:1;
-    min-width:75px;
+    min-width:60px;
     height: 25px;
 }
 
@@ -328,7 +328,7 @@ md-dialog.fullscreen-dialog {
 }
 
 .right-panel-buttons{
-  padding: 0px;
+  padding: 1%;
   margin: 10% ;
   width:80%;
   height:4%;
@@ -343,7 +343,7 @@ md-dialog.fullscreen-dialog {
 }
 
 .selected-right-panel-buttons{
-  padding: 0px;
+  padding: 1%;
   margin: 10% ;
   width:80%;
   height:4%;
@@ -407,5 +407,20 @@ md-dialog.fullscreen-dialog {
 @-moz-document url-prefix() { 
 	.sidenav-right{
 		width:13%;
-	}	
+	}
+}
+
+.right-toolbar-menu{
+	height: 70%;
+	width: 60%;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color:lightgrey;
+	min-width:60% !important;
+}
+
+.menu-text{
+	padding: 5% 5% 0px;
+	color: grey;
+	font-size: 90%;
 }

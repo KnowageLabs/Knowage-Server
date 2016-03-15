@@ -10,7 +10,7 @@ angular.module('main_toolbar',[])
 	
 	function mainToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
 		
-		filterXMLResult = function(res) {
+		/*filterXMLResult = function(res) {
 			var regEx = /([A-Z]+_*)+/g;
 			var i;
 			
@@ -61,7 +61,7 @@ angular.module('main_toolbar',[])
 			$scope.sendModelConfig($scope.modelConfig);
 		}
 
-		 /*service for placing member on axis**/
+		 //service for placing member on axis
 		 $scope.putMemberOnAxis = function(fromAxis,member){
 			 
 			 sbiModule_restServices.promisePost
@@ -74,7 +74,7 @@ angular.module('main_toolbar',[])
 				});	
 		}
 		 
-		 /*service for sending modelConfig**/
+		 //service for sending modelConfig
 		 $scope.sendModelConfig = function(modelConfig){
 			 
 			 sbiModule_restServices.promisePost
@@ -98,7 +98,7 @@ angular.module('main_toolbar',[])
 				});	
 			  }
 		 
-		 /** dragan  sorting */
+		 // dragan  sorting
 		 
 		  $scope.sort = function(axisToSort,axis,positionUniqueName){
 			  
@@ -118,5 +118,5 @@ angular.module('main_toolbar',[])
 					
 				});	
 			  }
-
+*/
 	};
