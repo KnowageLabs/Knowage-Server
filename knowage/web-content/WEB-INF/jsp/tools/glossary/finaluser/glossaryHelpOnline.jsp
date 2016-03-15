@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- 	breadCrumb -->
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
-
 <link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/bread-crumb.css">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <% 
 	String type="",value="",label="",parameter1="",parameter2="";
@@ -71,8 +71,6 @@ var parameter1='<%= parameter1 %>';
 var parameter2='<%= parameter2 %>';
 </script>
 
-
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/RestService.js"></script>
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/finaluser/glossaryHelpOnline.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
@@ -100,10 +98,7 @@ var parameter2='<%= parameter2 %>';
 	padding: 0px !important;
 }
 
-md-tabs.singleItem md-ink-bar, md-tabs.singleItem md-tab-item, md-tabs.singleItem md-pagination-wrapper
-	{
-	width: 100%;
-}
+
 </style>
 
 </head>
@@ -114,7 +109,7 @@ md-tabs.singleItem md-ink-bar, md-tabs.singleItem md-tab-item, md-tabs.singleIte
 
 		<div flex="30" flex-lg="30" flex-md="40" style="height: 100%"
 			ng-if="type!='WORD'">
-			<md-tabs class="mini-tabs" ng-class="{'singleItem' : data.length==1}">
+			<md-tabs class="mini-tabs" >
 				<md-tab ng-repeat="tab in data" label="{{tab.type}}" layout-fill style="height: 100%;">
 					<p style="margin: 0; text-align: center; height: 16px; background-color: #E8E8E8">{{tab.title}}</p>
 		

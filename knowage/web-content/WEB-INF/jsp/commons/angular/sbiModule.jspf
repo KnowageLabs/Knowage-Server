@@ -454,4 +454,31 @@ sbiM.factory('sbiModule_device',function($window){
 		device : deviceObj
 	}
 });
+
+sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_config,sbiModule_restServices) {
+	var holServ=this;
+	this.show=function(data){
+		$mdDialog.show({
+		      controller: function($scope,$mdDialog,translate){
+		    	  $scope.translate=translate;
+		    	  $scope.url='/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
+		    	  $scope.close = function() {
+		    		    $mdDialog.hide();
+		    		  };
+		      },
+		      locals:{ 
+		    	  translate:sbiModule_translate},
+		      templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/helpOnLineDialogTemplate.jsp'
+		    })
+	};
+	
+	this.showDocumentHelpOnLine=function(label){
+		sbiModule_restServices.promiseGet('1.0/documents',label).then(function(response){
+		var data='DOCUMENT='+response.data.id+'&LABEL='+response.data.label+''+(response.data.dataSetId!=undefined? "&DATASET="+response.data.dataSetId : '')
+			holServ.show(data);
+		},function(response){
+			alert("Errore "+response.data.errors[0].message);
+		})
+	}
+});
 </script>

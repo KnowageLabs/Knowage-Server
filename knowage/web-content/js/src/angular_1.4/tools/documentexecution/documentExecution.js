@@ -13,13 +13,13 @@
 	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
-			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils',
+			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils','sbiModule_helpOnLine',
 			 documentExecutionControllerFn]);
 
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
-			sbiModule_messaging, execProperties, documentExecuteUtils) {
+			sbiModule_messaging, execProperties, documentExecuteUtils,sbiModule_helpOnLine) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -57,6 +57,30 @@
 			}
 			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
+		
+		$scope.openHelpOnLine=function(){
+			
+			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
+			
+//			$mdDialog.show({
+//			      controller: function($scope,executionInstance,$mdDialog,translate){
+//			    	  $scope.translate=translate;
+//			    	  $scope.url='/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?';
+//			    	  $scope.close = function() {
+//			    		    $mdDialog.hide();
+//			    		  };
+//			      },
+//			      locals:{
+//			    	  executionInstance:$scope.executionInstance,
+//			    	  translate:sbiModule_translate},
+//			      templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/helpOnLineDialogTemplate.jsp'
+//			    })
+//			    .then(function(answer) {
+//			     
+//			    }, function() {
+//			    
+//			    });
+		}
 			
 		
 		/*

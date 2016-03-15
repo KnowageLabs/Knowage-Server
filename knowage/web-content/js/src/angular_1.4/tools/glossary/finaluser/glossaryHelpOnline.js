@@ -1,23 +1,18 @@
 var app = angular.module('glossaryHelpOnLine',
-		[ 'ngMaterial',  'angular_rest', 'angular_list','bread_crumb' ]);
+		[ 'ngMaterial',  'sbiModule', 'angular_list','bread_crumb' ]);
 
-app.config(function($mdThemingProvider) {
-	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
-	'blue-grey');
-});
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}]);
 
-app.service('translate', function() {
-	this.load = function(key) {
-		return messageResource.get(key, 'messages');
-	};
-});
-
+ 
 app.controller('Controller', 
-		[ "translate","$filter" ,"restServices", "$q", "$scope", "$timeout", funzione ]);
+		[ "sbiModule_translate","$filter" ,"sbiModule_restServices", "$q", "$scope", "$timeout", funzione ]);
 
-function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
+function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scope, $timeout) {
 	s=$scope;
-	s.translate=translate;
+	s.translate=sbiModule_translate;
 	s.selectedWord;
 	s.selectedIndex=0;
 	s.storyItem=[];
@@ -27,13 +22,13 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 	s.type=type;
 
 	s.loadWord=function(item,story){
-		restServices.get("1.0/glossary", "getWord", item)
+		sbiModule_restServices.get("1.0/glossary", "getWord", item)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				console.error(translate.load("sbi.glossary.load.error"));
+				console.error(sbiModule_translate.load("sbi.glossary.load.error"));
 			} else if (data.Status == "NON OK") {
-				console.error(translate.load(data.Message));
-				s.selectedWord={noDataFound:translate.load(data.Message)}
+				console.error(sbiModule_translate.load(data.Message));
+				s.selectedWord={noDataFound:sbiModule_translate.load(data.Message)}
 			}else {
 				if(story==undefined){
 					s.breadControl.resetBreadCrumb();
@@ -46,7 +41,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 	}
 
 	s.loadDocument=function(iddoc){
-		restServices.get("1.0/glossary", "getDocumentInfo", "DOCUMENT_ID=" + iddoc + "&DATASETWORD=true" )
+		sbiModule_restServices.get("1.0/glossary", "getDocumentInfo", "DOCUMENT_ID=" + iddoc + "&DATASETWORD=true" )
 		.success(function(data, status, headers, config) {
 			console.log("loadDocumentInfo ottnuti")
 			console.log(data)
@@ -67,7 +62,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 	};
 
 	s.loadDataset=function(param,isPush){
-		restServices.get(
+		sbiModule_restServices.get(
 				"1.0/glossary","getDataSetInfo",param )
 		.success(function(data, status, headers, config) {
 			console.log("loadDatasetInfo ottnuti");
@@ -105,7 +100,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 	};
 
 	s.loadDatamart=function(param){
-		restServices.get("1.0/glossary","getDatamartInfo",param )
+		sbiModule_restServices.get("1.0/glossary","getDatamartInfo",param )
 		.success(function(data, status, headers, config) {
 			console.log("DatamartInfo ottnuti")
 			console.log(data)
@@ -136,7 +131,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 		console.log("loadDatasetInfo");
 		if(value=="null"){
 			//alter the context path because this services is called also from a services with context path = knowagecockpit...
-			restServices.alterContextPath('knowage');
+			sbiModule_restServices.alterContextPath('knowage');
 			s.loadDataset("DATASET_LABEL="+label);
 		}else{
 			s.loadDataset("DATASET_ID="+value);
@@ -146,7 +141,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 		ite += "&DATAMART=" + parameter1 ;
 		s.loadDatamart(ite);
 	}else if(type=='WORD'){
-		restServices.alterContextPath('knowage');
+		sbiModule_restServices.alterContextPath('knowage');
 		s.loadWord("WORD_NAME="+label);
 	}
 	s.showInfoWORD=function(item,story){

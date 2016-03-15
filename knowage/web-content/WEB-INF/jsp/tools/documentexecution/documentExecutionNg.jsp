@@ -72,11 +72,19 @@ try{
                 	{{translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{translate.load("sbi.browser.defaultRole.role")}} {{selectedRole.name}})
                 </h2>
                 <span flex=""></span>
+                
+                <md-button class="toolbar-button-custom" aria-label="Help on line"
+						title="{{::translate.load('sbi.generic.helpOnLine')}}"
+						ng-click="openHelpOnLine()" 
+					>
+					<i class="fa fa-book header"></i> 
+				</md-button>
+				
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
 						ng-disabled="isParameterRolePanelDisabled"
-				>
+					>
 					<i class="fa fa-filter header"></i> 
 				</md-button>
 				<md-menu-bar id="menu">
