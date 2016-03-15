@@ -62,7 +62,7 @@ try{
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
                 <h2 class="md-flex">
-                	{{translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{translate.load("sbi.browser.defaultRole.role")}} {{selectedRole.name}})
+                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{::translate.load("sbi.browser.defaultRole.role")}} {{selectedRole.name}})
                 </h2>
                 <span flex=""></span>
                 
@@ -76,11 +76,10 @@ try{
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						ng-disabled="isParameterRolePanelDisabled"
-					>
+						ng-disabled="isParameterRolePanelDisabled">
 					<i class="fa fa-filter header"></i> 
 				</md-button>
-
+				
 				<md-menu-bar id="menu">
                 	<md-menu>
 		                <md-button id="menuButton" class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >
@@ -113,71 +112,69 @@ try{
         
         <div class="animate-switch-container" layout="row" flex="grow"  ng-switch on="currentView">
  		
- 		<md-content layout="row" flex="grow" class="animate-switch switch-right" ng-switch-when="DOCUMENT"> 
-			<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
-				iframe-set-dimensions-onload flex="grow"></iframe>
-				
-			<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
-					ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
-							
-				<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
-					<div layout="row" layout-align="center center">						
-						<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
-								ng-click="clearListParametersForm();">
-							<i class="fa fa-eraser" style="color:white"></i>
-						</md-button>						
-						<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
-								ng-click="getViewpoints();">
-							<i class="fa fa-pencil" style="color:white"></i>
-						</md-button>						
-						<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-								ng-click="createNewViewpoint();">
-							<i class="fa fa-floppy-o" style="color:white"></i>
-						</md-button>
-					</div>
-				</md-toolbar>
-				
-				<md-content ng-show="showSelectRoles">
-					<md-input-container class="small counter" flex>
-						<label>{{::translate.load("sbi.users.roles")}}</label>
-						<md-select aria-label="aria-label" ng-model="selectedRole.name" >
-							<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
-								{{::role|uppercase}}
-							</md-option>
-						</md-select>
-					</md-input-container>
-				</md-content>
-				
-				<md-list ng-hide="isParameterPanelDisabled()" layout="column">
-					<md-list-item ng-repeat="parameter in documentParameters" layout="row" layout-align="start">
-						<md-button class="md-icon-button" ng-click="documentExecuteUtils.resetParameter(parameter)">
-							<i class="fa fa-eraser"></i>
-						</md-button>
-						<document-paramenter-element flex layout-align="start"/>
-					</md-list-item>
-				</md-list>
-				
-				<!-- execute button -->
-				<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
-						title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
-						ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
-					{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-				</md-button>				
-			</md-sidenav>
-		</md-content>
-		
-		
-		<div class="animate-switch switch-left" flex  ng-switch-when="PARAMETERS"> 
-			<div ng-if="parameterView == 'FILTER_SAVED'" layout="row">
-					<document-paramenter-filter-handler flex/>
-			</div>
-		</div>		
+	 		<md-content layout="row" flex="grow" class="animate-switch switch-right" ng-switch-when="DOCUMENT"> 
+				<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
+					iframe-set-dimensions-onload flex="grow"></iframe>
+					
+				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
+						ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
+								
+					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
+						<div layout="row" layout-align="center center">						
+							<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
+									ng-click="clearListParametersForm();">
+								<i class="fa fa-eraser" style="color:white"></i>
+							</md-button>						
+							<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
+									ng-click="getViewpoints();">
+								<i class="fa fa-pencil" style="color:white"></i>
+							</md-button>						
+							<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
+									ng-click="createNewViewpoint();">
+								<i class="fa fa-floppy-o" style="color:white"></i>
+							</md-button>
+						</div>
+					</md-toolbar>
+					
+					<md-content ng-show="showSelectRoles">
+						<md-input-container class="small counter" flex>
+							<label>{{::translate.load("sbi.users.roles")}}</label>
+							<md-select aria-label="aria-label" ng-model="selectedRole.name" >
+								<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
+									{{::role|uppercase}}
+								</md-option>
+							</md-select>
+						</md-input-container>
+					</md-content>
+					
+					<%--
+					<span style="font-size: 8px;">
+						{{documentParameters|json}}
+					</span>
+					--%>
+					
+					<md-list ng-hide="isParameterPanelDisabled()" layout="column">
+						<md-list-item ng-repeat="parameter in documentParameters"
+								layout="row" aria-label="">
+							<document-paramenter-element parameter="parameter" layout="row" flex layout-align="start"/>
+						</md-list-item>
+					</md-list>
+					
+					<!-- execute button -->
+					<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
+							title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
+							ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
+						{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+					</md-button>				
+				</md-sidenav>
+			</md-content>
+			
+			<div class="animate-switch switch-left" flex  ng-switch-when="PARAMETERS"> 
+				<div ng-if="parameterView == 'FILTER_SAVED'" layout="row">
+					<parameter-view-point-handler flex/>
+				</div>
+			</div>		
 		</div>												
-	
-	
-	
-	
-	
 	</div>
 		
 	<script type="text/javascript">
@@ -207,6 +204,10 @@ try{
 	</script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionUtils.js")%>"></script>
+	<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/parameterViewPointHandler/parameterViewPointHandlerController.js")%>"></script>
+	<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
 	
