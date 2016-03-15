@@ -63,7 +63,7 @@ public class Xml {
 
 			transformer.transform(new StreamSource(inputStream), new StreamResult(os));
 
-			json = os.toString();
+			json = os.toString().replaceAll("\\p{Cntrl}", "");
 		}
 		return json;
 	}
