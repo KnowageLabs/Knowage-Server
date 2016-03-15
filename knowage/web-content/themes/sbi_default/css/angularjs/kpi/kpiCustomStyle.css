@@ -215,29 +215,6 @@ angular-table.thresholdTable #angularFullTableContentBox  {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.cardinalityTable th {
-  height: 0;
-  line-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  color: transparent;
-  border: none;
-  white-space: nowrap;
-}
-.cardinalityTable th div{
-  position: absolute;
-  background:rgb(246, 246, 246);
-  color: black;
-  padding: 9px 25px;
-  top: 0;
-   margin-left: -45px;
-  line-height: normal;
-  margin-top: 55px;
-}
-.cardinalityTable th:first-child div{
-  border: none;
-}
-
 
 .hasTooltip:hover  {
  overflow: visible;
@@ -248,7 +225,7 @@ angular-table.thresholdTable #angularFullTableContentBox  {
 }
 
 .cloneWarningTab{
-	    margin: 5px;
+	margin: 5px;
     padding: 2px;
     background-color: white;
 }
