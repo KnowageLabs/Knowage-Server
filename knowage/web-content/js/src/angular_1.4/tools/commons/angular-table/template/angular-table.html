@@ -7,23 +7,31 @@
 		<md-icon ng-show="showSearch" md-font-icon="fa fa-times" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
 	</md-input-container>
 </angular-table-actions>
- 
-<md-content flex layout="column" id="angularTableContentBox">
-	<table flex>
-		<thead></thead>
-		<tbody></tbody>
-		<tfoot>
-			<tr>
-				<td colspan="{{tableColumns.length}}" id="tdQueueTableContent" >
-				<md-content id="queueTableContent">
-				</md-content>
-<!-- 				<div id="hiddenTfootDiv" style="height: 50px"></div> -->
-				</td>
-			</tr>
-		</tfoot>
-	</table>
-	
-</md-content>
+<div flex layout="column" id="angularFullTableContentBox">
+	 <table class="fakeTable">
+	 	<thead>
+	 		<tr ng-include="'headThTemplate.html'">
+	 		</tr>
+	 	</thead>
+	 </table>
+	 
+	<div flex  id="angularTableContentBox"  >
+		<table class="principalTable" >
+			<thead></thead>
+			<tbody></tbody>
+			<tfoot>
+				<tr>
+					<td colspan="{{tableColumns.length}}" id="tdQueueTableContent"  >
+					<md-content id="queueTableContent">
+					</md-content>
+	<!-- 				<div id="hiddenTfootDiv" style="height: 50px"></div> -->
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		
+	</div>
+</div> 
 <div id="fixedAngularTableContentBox"></div>
 
 <angular-table-footer>
@@ -37,7 +45,7 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th ng-repeat="val in tableColumns" width="{{val.size}}">
 
-	<div ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
+	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
 		
 		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering ,'fa fa-arrow-down' : (val.name==column_ordering && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering && !reverse_col_ord)}"></md-icon>
 		<span >{{val.label}}</span>

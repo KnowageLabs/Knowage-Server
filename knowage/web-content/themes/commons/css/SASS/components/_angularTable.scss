@@ -1,0 +1,345 @@
+angular-table{
+
+table>tbody>tr>td {
+    font-size: $tableFontSize;
+    border-top: 1px $tableLineSeparator solid;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+table>thead {
+    background: white;
+  }
+
+#angularTableTemplate {
+    padding: 0 5px;
+    height: 100%;
+    overflow: auto;
+    overflow-y: hidden;
+  }
+
+angular-table-actions {
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+table thead th {
+    text-align: left;
+    font-size: $tableFontSize;
+    color: $baseColor;
+    font-weight: 600;
+  }
+
+/*
+&[multi-select] table>thead>tr>th:nth-child(2), &:not(multi-select) table>thead>tr>th:nth-child(1), &[multi-select] table>tbody>tr>td:nth-child(2), &:not(multi-select) table>tbody>tr>td:nth-child(1) {
+    padding: 5px !important
+  }
+*/
+
+table>tbody>tr.selectedRowItem {
+    background-color: $tableSelectedElementColor;
+ }
+
+table>tbody>tr:hover{
+    cursor: pointer;
+    background-color: #EEEEEE;
+}
+
+table thead th div {
+    align-items: center;
+    height: 40px;
+    line-height: 40px;
+  }
+  
+  /*style giovannilucaulivo@eng.it */
+
+*:focus {
+	outline: none;
+}
+
+.hidden{
+display:none!important;}
+
+.black{
+color:black;
+}
+
+&[no-pagination] #angularTableContentBox{ 
+	overflow-y: auto;
+}
+
+/* Tabella con molte colonne */
+
+&[full-width] #angularFullTableContentBox{ 
+	width: 100%;
+    overflow: auto;
+}
+
+	
+&[full-width] #angularTableContentBox{ 
+	  overflow-x: hidden;
+}
+
+&[full-width]  table{
+	width: auto!important;
+}
+
+/* Fine Tabella con molte colonne */
+
+
+table {
+	width: 100%;
+	table-layout: fixed; 
+	border-spacing: 0;
+}
+
+
+
+&[multi-select] table>thead>tr>th:nth-child(n+3):nth-last-child(n+2),
+&[multi-select] table>tbody>tr>td:nth-child(n+3):nth-last-child(n+2),
+&:not(multi-select) table>thead>tr>th:nth-child(n+1):nth-last-child(n+2),
+&:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
+	padding: 0 28px;
+}
+
+&[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
+&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1){
+	padding: 0 28px 0 0 !important;
+}
+
+table>thead>tr>th:last-child,
+table>tbody>tr>td:last-child{
+padding: 0 24px 0 28px;
+}
+
+ 
+
+table thead th div md-icon{
+margin-top: 9px;
+    width: 7px;
+}
+
+table>tbody>tr {
+    height: 48px;
+    transition: background-color .2s;
+}
+
+
+table>tbody>tr>td {
+    font-size: 13px;
+    color: rgba(0,0,0,.87);
+    border-top: 1px rgba(0,0,0,.12) solid;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+  
+table>thead>tr>th>div {
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+table>tbody>tr>td button.actionButton{	
+height: 25px !important;
+    width: 25px!important;
+    min-height: 25px!important;
+    }
+    
+    table>tbody>tr>td button.actionButton md-icon{	
+   line-height: 25px!important;
+    }
+
+@-moz-document url-prefix() {
+	table>tbody>tr>td{
+	  text-overflow: inherit;
+	}
+}
+
+table td div{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	line-height: 26px;
+	}
+
+
+angular-table-actions md-input-container.tableSearchBar {
+    padding-bottom: 0px; 
+    height: 25px;
+}
+
+angular-table-actions{
+    padding: 0 24px 0 10px;
+    height: 30px;
+    }
+    
+angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
+    left: 100%;
+    margin-left: -15px;
+}
+
+
+
+/* pagination */
+
+
+#angularTableTemplate .pagination>li, #angularTableTemplate .pagination>li>span
+	{
+	position: relative;
+	float: left;
+	margin-left: -1px;
+	text-decoration: none !important;
+	background-color: #fff;
+/* 	border: 1px solid #ddd; */
+	display: block;
+	width: 20px;
+	height: 16px;
+	text-align: center;
+	line-height: 16px;
+}
+
+#angularTableTemplate .pagination {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#angularTableTemplate .pagination>li>a {
+	text-decoration: none !important;
+	width: 100%;
+    display: block;
+}
+
+#angularTableTemplate .pagination>.active, #angularTableTemplate .pagination>.active>a,
+	#angularTableTemplate .pagination>.active>a:focus, #angularTableTemplate .pagination>.active>a:hover,
+	#angularTableTemplate .pagination>.active>span, #angularTableTemplate .pagination>.active>span:focus,
+	#angularTableTemplate .pagination>.active>span:hover {
+	z-index: 2;
+	color: #000;
+	cursor: default;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
+}
+
+#angularTableTemplate .pagination>.disabled>a, #angularTableTemplate .pagination>.disabled>a:focus,
+	#angularTableTemplate .pagination>.disabled>a:hover,
+	#angularTableTemplate .pagination>.disabled>span, #angularTableTemplate .pagination>.disabled>span:focus,
+	#angularTableTemplate .pagination>.disabled>span:hover {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd;
+}
+
+
+#angularTableTemplate .dropdown_menu_list {
+	position: fixed !important;
+}
+#angularTableTemplate .position-fixed{
+position: fixed !important;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list {
+	position: relative;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	    background-color: #ECECEC;
+}
+
+#angularTableTemplate .dropdown_menu_list.open md-list {
+	display: block;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list-item, #angularTableTemplate .dropdown_menu_list md-list-item button,
+	#angularTableTemplate .dropdown_menu_list md-list-item .md-list-item-inner {
+/* 	min-height: 15px !important; */
+min-height: 22px !important;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list-item p {
+	line-height: 20px;
+	margin: 3px;
+	color: black;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button {
+	border-bottom: 1px solid rgb(176, 190, 197);
+	padding: 0;
+	margin-left: 8px;
+	margin-right: 8px;
+	border-radius: 0;
+}
+
+#angularTableTemplate md-checkbox {
+margin-bottom: 0px;
+}
+
+
+#angularTableTemplate .tableDragBar {
+padding: 0 !important;
+    text-align: center;
+    color: grey;
+}
+
+
+.animate-repeat-tablerow.ng-move,
+.animate-repeat-tablerow.ng-enter {
+    transition:all linear 0.2s;
+}
+
+.animate-repeat-tablerow.ng-leave.ng-leave-active,
+.animate-repeat-tablerow.ng-move,
+.animate-repeat-tablerow.ng-enter {
+    opacity:0;
+}
+
+.animate-repeat-tablerow.ng-leave,
+.animate-repeat-tablerow.ng-move.ng-move-active,
+.animate-repeat-tablerow.ng-enter.ng-enter-active {
+    opacity:1;
+}
+
+.animate-repeat-tablerow.ng-leave,
+.animate-repeat-tablerow.ng-leave.ng-leave-active {
+  transition: all 0s;
+}
+
+.absoluteTfoot tfoot>tr>td #queueTableContent{ 
+display: none;
+}
+.absoluteTfoot #fixedAngularTableContentBox,.absoluteTfoot tfoot>tr>td #hiddenTfootDiv{
+	display:block;
+}
+ #fixedAngularTableContentBox, tfoot>tr>td #hiddenTfootDiv{
+	display:none;
+}
+.principalTable>thead>tr>th>div{
+	height: 0px!important;
+}
+.principalTable>thead>tr>th>md-checkbox{
+	display:none;
+}
+.principalTable>thead>tr>th{
+	padding-top: 0px!important;
+    padding-bottom: 0px!important;
+}
+
+
+}

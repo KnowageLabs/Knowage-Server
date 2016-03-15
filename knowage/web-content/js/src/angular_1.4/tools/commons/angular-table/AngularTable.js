@@ -39,13 +39,14 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             allowEdit: "=?",
                             editFunction: "&?",
                             allowEditFunction: "&?",
-                            hideTableHead: "=?"
+                            hideTableHead: "=?",
+                            fullWidth:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
                                 pre: function preLink(scope, element, attrs, ctrl, transclud) {
                                     if (attrs.dragEnabled && (attrs.dragEnabled == true || attrs.dragEnabled == "true")) {
-                                        var table = angular.element(element[0].querySelector("table"))
+                                        var table = angular.element(element[0].querySelector("table.principalTable"))
                                         table.attr('ui-tree', "dragDropOptions");
                                         table.attr('drag-delay', "600");
                                         table.attr('data-clone-enabled', "enableClone");
@@ -72,7 +73,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     template.addClass(id + "ItemBox");
 
 
-                                    var table = angular.element(template[0].querySelector("table"));
+                                    var table = angular.element(template[0].querySelector("table.principalTable"));
                                     var thead = angular.element(table[0].querySelector("thead"));
                                     var tbody = angular.element(table[0].querySelector("tbody"));
                                     var footerBox = angular.element(template[0].querySelector("angular-table-footer"));
@@ -201,11 +202,24 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                         angular.element(template[0].querySelector("angular-table-actions")).css("display", "none");
                                     }
 
+                                    if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
+                                    	  scope.$watch(function () {
+                                        	  var elem = angular.element(document.querySelector('#angularTableTemplate.' + scope.id + 'ItemBox #angularTableContentBox .principalTable thead'))[0];
+                                        	  return elem == undefined ? null : elem.offsetWidth;
+                                        }, function (newValue, oldValue) {
+                                        	if(newValue!=oldValue){
+                                        		scope.loadTheadColumn(newValue);
+                                        		
+                                        	}
+                                        }, true);
+                                    }
 
                                     transclude(scope, function (clone, scope) {
                                         angular.element(element[0]).append(clone);
                                     });
 
+                                    
+                                    
                                 }
                             };
                         }
@@ -359,6 +373,7 @@ function TableControllerFunction($scope, $timeout) {
     $scope.internal_reverse_col_ord = false;
 
 
+    
     $scope.searchItem = function (searchVal) {
         if ($scope.localSearch) {
             $scope.searchFastVal = searchVal;
@@ -395,9 +410,9 @@ function TableControllerFunction($scope, $timeout) {
 
 //		var tableAction=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0];
 //		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0];
-        var tableContainer = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox #angularTableContentBox'))[0];
-        var headButton = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox table thead'))[0];
-        var listItemTemplBox = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox table tbody tr'))[0];
+        var tableContainer = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
+        var headButton = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
+        var listItemTemplBox = angular.element(document.querySelector('#angularTableTemplate.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
 
 //		var boxHeight = box.offsetHeight;
 //		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
@@ -446,10 +461,30 @@ function TableControllerFunction($scope, $timeout) {
             $scope.initializeColumns();
         }
     });
+    
+   
+$scope.loadTheadColumn=function(width){
+ 
+    $timeout(function(){
+    	var tableContentBox=angular.element(document.querySelectorAll('#angularTableTemplate.' + $scope.id + 'ItemBox #angularTableContentBox'));
+    	var fakeDiv = angular.element(document.querySelectorAll('#angularTableTemplate.' + $scope.id + 'ItemBox .faketable th>div'));
+        var principalThDiv = angular.element(document.querySelectorAll('#angularTableTemplate.' + $scope.id + 'ItemBox .principalTable th>div'));
+        for(var i=0;i<principalThDiv.length;i++){
+        	console.log(principalThDiv[i])
+        	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
+        }
+        tableContentBox.css("width",width+"px");
+    },0)
+    
+
+}
+ 
 
 }
 
 function TableBodyControllerFunction($scope) {
+	
+	
     $scope.clickItem = function (row, cell, evt) {
         if ($scope.multiSelect) {
             $scope.toggleMultiSelect(row, evt);
@@ -561,7 +596,7 @@ function TableHeaderControllerFunction($scope, $timeout) {
     $scope.selectAll = function () {
         $scope.multiSelectVal = !$scope.multiSelectVal;
         var template = angular.element(document.querySelector("#angularTableTemplate." + $scope.id + "ItemBox"));
-        var table = angular.element(template[0].querySelector("table"));
+        var table = angular.element(template[0].querySelector("table.principalTable"));
         var tbody = angular.element(table[0].querySelector("tbody"));
         var rows = tbody[0].children;
 
