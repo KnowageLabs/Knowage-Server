@@ -42,6 +42,7 @@
 #menu md-menu-content span {color: #3b678c!important}
 #menu md-menu-content md-icon {color: #3b678c!important}
 #menu md-menu-content span.divider {
+	padding-left: 10px;
 	color: gray!important;
     font-weight: 100;
     font-style: italic;
@@ -76,3 +77,10 @@
 	margin-left: 130px;
 	bottom: -50px;
 }
+
+/* Metadata Dialog*/
+#metadataDlg md-dialog-content {margin: 0;padding-bottom: 10px;}
+#metadataDlg expander-box > md-content {border: 0!important; padding:0;}
+/*#metadataDlg expander-box > md-content md-tabs {padding:0 16px;}*/
+.animate-accordion.ng-hide-add, .animate-accordion.ng-hide-remove {transition: linear all 1s;}
+.animate-accordion.ng-hide {height:0;}
