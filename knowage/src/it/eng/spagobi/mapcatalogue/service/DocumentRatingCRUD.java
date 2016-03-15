@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.tools.servermanager.importexport.document.DocumentImportExportService;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -25,7 +24,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/documentrating")
 @ManageAuthorization
 public class DocumentRatingCRUD {
-	static protected Logger logger = Logger.getLogger(DocumentImportExportService.class);
+	static protected Logger logger = Logger.getLogger(DocumentRatingCRUD.class);
 
 	@POST
 	@Path("/vote")
