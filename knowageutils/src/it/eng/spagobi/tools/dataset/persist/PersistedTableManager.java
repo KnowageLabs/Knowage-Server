@@ -853,7 +853,7 @@ public class PersistedTableManager {
 		this.rowCountColumIncluded = rowCountColumIncluded;
 	}
 
-	public String getRowCountColumnName() {
+	public static String getRowCountColumnName() {
 		return "sbicache_row_id";
 	}
 

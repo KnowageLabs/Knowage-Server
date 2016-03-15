@@ -84,27 +84,7 @@ public abstract class AbstractCacheTest extends TestCase {
 		this.createDatasets();
 
 		if (cache == null) {
-			CacheFactory cacheFactory = new CacheFactory();
-
-			// Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
-			SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
-			// table prefix for tables created by the cache
-			cacheConfiguration.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX);
-			// Dimension of cache in bytes
-			cacheConfiguration.setCacheSpaceAvailable(TestConstants.CACHE_CONFIG_CACHE_DIMENSION);
-			// percentage of the cache to clean (from 0 to 100)
-			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN);
-			// percentage of the cache to store (from 0 to 100)
-			cacheConfiguration.setCachePercentageToStore(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_STORE);
-
-			cacheConfiguration.setCacheDataSource(dataSourceWriting);
-			// schema name used for correct cache dimension calculation
-			cacheConfiguration.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
-
-			DataType dataType = new DataType(); // class used for setting data type dimension properties
-			cacheConfiguration.setObjectsTypeDimension(dataType.getProps());
-
-			cache = cacheFactory.getCache(cacheConfiguration);
+			cache = createCache();
 		}
 
 	}
@@ -223,33 +203,40 @@ public abstract class AbstractCacheTest extends TestCase {
 
 	public ICache createCacheZero() {
 		// Create a cache with space available equal to zero
-		return createCache(0);
+		SQLDBCacheConfiguration cacheConfiguration = getDefaultCacheConfiguration();
+		cacheConfiguration.setCacheSpaceAvailable(new BigDecimal(0));
+		return createCache(cacheConfiguration);
 	}
 
-	public ICache createCache(int dimension) {
+	public ICache createCache() {
+		return createCache(getDefaultCacheConfiguration());
+	}
+
+	protected ICache createCache(SQLDBCacheConfiguration cacheConfiguration) {
 		// Create a cache with space available equal to dimension
-
 		CacheFactory cacheFactory = new CacheFactory();
+		ICache cacheCustom = cacheFactory.getCache(cacheConfiguration);
+		return cacheCustom;
+	}
 
+	protected SQLDBCacheConfiguration getDefaultCacheConfiguration() {
 		// Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
-		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
+		SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
 		// table prefix for tables created by the cache
-		cacheConfigurationCustom.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX);
+		cacheConfiguration.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX);
 		// Dimension of cache in bytes
-		cacheConfigurationCustom.setCacheSpaceAvailable(new BigDecimal(dimension));
+		cacheConfiguration.setCacheSpaceAvailable(TestConstants.CACHE_CONFIG_CACHE_DIMENSION);
 		// percentage of the cache to clean (from 0 to 100)
-		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN);
+		cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN);
 		// percentage of the cache to store (from 0 to 100)
-		cacheConfigurationCustom.setCachePercentageToStore(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_STORE);
+		cacheConfiguration.setCachePercentageToStore(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_STORE);
 		// schema name used for correct cache dimension calculation
-		cacheConfigurationCustom.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
-		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
+		cacheConfiguration.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
+
+		cacheConfiguration.setCacheDataSource(dataSourceWriting);
 
 		DataType dataType = new DataType(); // class used for setting data type dimension properties
-		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
-
-		ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
-
-		return cacheCustom;
+		cacheConfiguration.setObjectsTypeDimension(dataType.getProps());
+		return cacheConfiguration;
 	}
 }
