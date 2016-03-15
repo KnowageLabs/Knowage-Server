@@ -16,7 +16,6 @@
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteUtils', 'sbiModule_helpOnLine',
 			 documentExecutionControllerFn]);
 
-
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteUtils, sbiModule_helpOnLine) {
@@ -52,7 +51,8 @@
 				if(execProperties.roles.length==1) {
 					$scope.selectedRole.name = execProperties.roles[0];
 					$scope.showSelectRoles=false;
-					//load parameters if role is selected
+					
+					//loads parameters if role is selected
 					$scope.getParametersForExecution($scope.selectedRole.name);
 					$scope.isParameterRolePanelDisabled = true;
 				}
@@ -99,24 +99,26 @@
 			$scope.isClick=true;
 		};
 		
-		$scope.saveRank=function(){
-			sbiModule_restServices.promisePost("documentrating", 'vote',$scope.requestToRating).then(
-					function(response) {
-						if (response.data.hasOwnProperty("errors")) {
-							$scope.showAction(response.data);
-						} else {
-							$mdDialog.cancel();
-							$scope.showAction(sbiModule_translate.load('sbi.execution.executionpage.toolbar.rating.saved'));
-							$scope.isClick=false;
-						}
-
-					},function(response) {
+		$scope.saveRank = function(){
+			sbiModule_restServices.promisePost("documentrating", 'vote',$scope.requestToRating)
+			.then(function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						$scope.showAction(response.data);
+					} else {
+						$mdDialog.cancel();
+						$scope.showAction(sbiModule_translate.load('sbi.execution.executionpage.toolbar.rating.saved'));
 						$scope.isClick=false;
-						$scope.errorHandler(response.data,"");
-					})
+					}
+	
+				},
+				function(response) {
+					$scope.isClick=false;
+					$scope.errorHandler(response.data,"");
+				}
+			);
 		};
 		
-		$scope.hoverStar= function(value){
+		$scope.hoverStar = function(value){
 			$scope.isClick=false;
 			for(var i=1;i<=value;i++){
 				var string= "star"+i;
@@ -126,7 +128,7 @@
 			}
 		};
 		
-		$scope.leaveStar= function(value){
+		$scope.leaveStar = function(value){
 			if(!$scope.isClick){
 				for(var i=1;i<=value;i++){
 					var string= "star"+i;

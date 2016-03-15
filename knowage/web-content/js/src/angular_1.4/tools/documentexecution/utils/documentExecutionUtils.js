@@ -2,7 +2,6 @@
 	angular.module('documentExecutionModule')
 	.factory('documentExecuteUtils', function($mdToast) {
 		var obj = {
-				
 			EmptyViewpoint : {
 				NAME : "",
 				DESCRIPTION: "",
