@@ -17,44 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
-import it.eng.spagobi.tools.dataset.crosstab.Measure;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -74,11 +36,51 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import commonj.work.Work;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.crosstab.Measure;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 /**
- * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
- * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
- * calling directly the DAO.
+ * DataLayer facade class. It manage the access to SpagoBI's datasets. It is
+ * built on top of the dao. It manages all complex operations that involve more
+ * than a simple CRUD operations over the dataset. It also manages user's
+ * profilation and autorization. Other class must access dataset through this
+ * class and not calling directly the DAO.
  *
  * @author gavardi, gioia
  *
@@ -308,7 +310,8 @@ public class DatasetManagementAPI {
 	// }
 	//
 	// if (ds instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// SpagoBICoreDatamartRetriever retriever = new
+	// SpagoBICoreDatamartRetriever();
 	// Map parameters = ds.getParamsMap();
 	// if (parameters == null) {
 	// parameters = new HashMap();
@@ -345,8 +348,9 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults,
+			Map<String, String> parametersValues, List<GroupCriteria> groupCriteria,
+			List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
 
 		try {
 
@@ -357,11 +361,14 @@ public class DatasetManagementAPI {
 			List<JSONObject> parameters = getDataSetParameters(label);
 			if (parameters.size() > parametersValues.size()) {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
-				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+				throw new ParametersNotValorizedException(
+						"The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
+
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) userProfile));
 
 			// //////////// OLD WAY ////////////////////
 			//
@@ -372,10 +379,12 @@ public class DatasetManagementAPI {
 			// }
 			//
 			// // just get without storing...ok?
-			// dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			// dataStore = cache.get(dataSet, groupCriteria, filterCriteria,
+			// projectionCriteria);
 			// /////////////////////////////////////////
 
 			IDataStore dataStore = null;
+
 			IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			if (cachedResultSet == null) {
@@ -393,14 +402,16 @@ public class DatasetManagementAPI {
 					dataStore = cache.refresh(dataSet, false);
 					// if result was not cached put refresh date as now
 					dataStore.setCacheDate(new Date());
-					dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
+					dataStore = dataStore.aggregateAndFilterRecords(
+							generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
 				}
 			} else {
 				dataStore = cachedResultSet;
 				addLastCacheDate(cache, dataStore, dataSet);
 				/*
-				 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-				 * therefore we adjust its metadata
+				 * since the datastore, at this point, is a JDBC datastore, it
+				 * does not contain information about measures/attributes,
+				 * fields' name and alias... therefore we adjust its metadata
 				 */
 				adjustMetadata((DataStore) dataStore, dataSet, null);
 				dataSet.decode(dataStore);
@@ -423,7 +434,8 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
+	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues,
+			boolean wait) {
 
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 
@@ -523,7 +535,8 @@ public class DatasetManagementAPI {
 	/**
 	 * @deprectade
 	 */
-	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
+	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults,
+			CrosstabDefinition crosstabDefinition) {
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
@@ -552,8 +565,9 @@ public class DatasetManagementAPI {
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-			 * therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does
+			 * not contain information about measures/attributes, fields' name
+			 * and alias... therefore we adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) dataStore, dataSet, null);
 
@@ -600,7 +614,8 @@ public class DatasetManagementAPI {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -740,7 +755,8 @@ public class DatasetManagementAPI {
 			}
 
 		} catch (ValidationException e) {
-			logger.error("Failed validation of dataset " + dataSet.getLabel() + " with cause: " + e.getValidationMessage());
+			logger.error(
+					"Failed validation of dataset " + dataSet.getLabel() + " with cause: " + e.getValidationMessage());
 			throw new RuntimeException(e.getValidationMessage(), e);
 		} catch (EMFUserError e) {
 			logger.error("EmfUserError ", e);
@@ -833,17 +849,23 @@ public class DatasetManagementAPI {
 				// entity id is not found on base query selected fields
 
 				/*
-				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
-				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
-				 * }
+				 * columnName = "Count"; if
+				 * (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
+				 * toReturn
+				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); }
+				 * else { logger.error("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); throw new
+				 * RuntimeException("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); }
 				 */
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,
+							function.getName(), columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				} else {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null,
+							columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				}
 			}
@@ -943,7 +965,8 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
+	 * The association is valid if number of records froma ssociation is less
+	 * than Maximum of single datasets
 	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
@@ -959,7 +982,8 @@ public class DatasetManagementAPI {
 		logger.debug("Check join");
 		boolean toReturn = false;
 
-		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z" };
+		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q",
+				"r", "s", "t", "u", "v", "z" };
 		String where = "";
 
 		SelectBuilder joinSqlBuilder = new SelectBuilder();
@@ -997,7 +1021,8 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-						// Datasets related to documents are not on DB so 'dataset' can be null
+						// Datasets related to documents are not on DB so
+						// 'dataset' can be null
 						if (dataset == null) {
 							// assFieldsJSONArray.get(assFieldsJSONArray.size()-1).remove(z);
 							fieldsAss.remove(z);
@@ -1010,7 +1035,8 @@ public class DatasetManagementAPI {
 						// if (cachedResultSet == null) {
 						if (!cache.getMetadata().containsCacheItem(dataset.getSignature())) {
 							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-							// IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+							// IDataStore dataStore = dataStore =
+							// cache.refresh(dataset, false);
 							cache.refresh(dataset, true);
 						}
 
@@ -1030,7 +1056,8 @@ public class DatasetManagementAPI {
 						logger.debug("execute " + queryText1);
 						IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
 						Object countO = ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-						Long count1 = (countO instanceof Long) ? (Long) countO : Long.valueOf(((Number) countO).longValue());
+						Long count1 = (countO instanceof Long) ? (Long) countO
+								: Long.valueOf(((Number) countO).longValue());
 
 						logger.debug("On query on table " + table + " counted " + count1 + " records");
 
@@ -1083,7 +1110,8 @@ public class DatasetManagementAPI {
 						String previousSynonim = tableSynonimMap.get(previousTable);
 
 						// add where conditions
-						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "=" + previousSynonim + "."
+						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "="
+								+ previousSynonim + "."
 								+ AbstractJDBCDataset.encapsulateColumnName(previousColumn, dataSource);
 					}
 				}
@@ -1100,7 +1128,8 @@ public class DatasetManagementAPI {
 				logger.debug("Join query is equal to [" + joinQueryText + "]");
 				IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
 				Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
-				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
+				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO
+						: Long.valueOf(((Number) joinCountO).longValue());
 
 				if (joinCount > maxSingleCount) {
 					logger.warn("Chosen join among tables return too many rows");
@@ -1119,7 +1148,8 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int maxResults) {
+	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, int maxResults) {
 		SelectBuilder sqlBuilder = new SelectBuilder();
 		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
 
@@ -1221,10 +1251,12 @@ public class DatasetManagementAPI {
 						stmt = conn.createStatement();
 						stmt.executeUpdate(query);
 					} else {
-						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+						logger.debug(
+								"Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
 					}
 				} catch (ClassNotFoundException | NamingException | SQLException e) {
-					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]", e);
+					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]",
+							e);
 				} finally {
 					if (stmt != null) {
 						try {
@@ -1244,7 +1276,8 @@ public class DatasetManagementAPI {
 			}
 		} else {
 			if (signature != null && !signature.isEmpty()) {
-				logger.error("Table name could not be found for signature [" + signature + "] and hash [" + Helper.sha256(signature) + "]");
+				logger.error("Table name could not be found for signature [" + signature + "] and hash ["
+						+ Helper.sha256(signature) + "]");
 			} else {
 				logger.error("Table name could not be found for signature [" + signature + "]");
 
