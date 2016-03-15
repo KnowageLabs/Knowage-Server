@@ -5,7 +5,7 @@ Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 Knowage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+(at your option) any later version.
 
 Knowage is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,14 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<!-- Styles -->
-	<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/glossary/css/generalStyle.css")%>">
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/documentbrowser/css/md-data-table.min.css")%>">
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/documentbrowser/css/documentBrowser.css")%>">
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/md-data-table.min.css", currTheme)%>">
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/documentBrowser.css", currTheme)%>">
 	
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/documentBrowser.js")%>"></script>
-	
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
 	
 	<title>Document Browser</title>
 </head>
@@ -54,12 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-toolbar class="header">
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
 				<!-- Folders button -->
-<!--  
 				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
--->
-				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders"
-						style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
-
 					<i class="fa fa-bars" style="color:white"></i>
 				</md-button>
 				
@@ -108,8 +102,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar>
 	
-		<section layout="row">
-
+		<section layout="row" flex>
+			
 			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
 				<md-toolbar class="header">
 	       			<h3 class="md-toolbar-tools">Folders</h3>
@@ -129,15 +123,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<thead md-order="documentsOrderProperty" style="height: 75px;">
 								<tr>
 									<th name="Type" order-by="typeCode"></th>
-									<th name="Name" order-by="name"></th>
-									<th name="Author" order-by="creationUser"></th>
-									<th name="Date" order-by="creationDate"></th>
+									<th  name="Name" order-by="name"></th>
+									<th  name="Author" order-by="creationUser"></th>
+									<th  name="Date"  order-by="creationDate"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty" 
-										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)" 
-										ng-class="{'selected-doc':wasSelected(document)}">
+								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
 									<td>{{document.typeCode}}</td>
 									<td>{{document.name}}</td>
 									<td>{{document.creationUser}}</td>
@@ -152,13 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div layout="column" ng-hide="!showDocumentGridView || showSearchView" flex>
 					<div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;">
 						<md-whiteframe flex="25" layout layout-align="center center" ng-repeat="document in folderDocuments">
-<!--  
-							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="showMainDetailDocument(document)" ng-class="{'selected-doc':wasSelected(document)}">
--->
-							<md-card style="width: 150px;" ng-click="selectDocument(document)"
-									ng-dblclick="alert(document.name)"
-									ng-class="{'selected-doc':wasSelected(document)}">
-
+							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="alert(document.name)" ng-class="{'selected-doc':wasSelected(document)}">
 								<!-- <img src="preview-images/{{document.PREVIEW_FILE}}" class="md-card-image" alt="{{document.name}}" style="width: 150px; height: 126px;"></img> -->
 								<md-card-content style="padding:0px; padding-left:2px; text-align:center;">
 									<div>{{document.name | limitEllipses:20}}</div>
@@ -177,15 +163,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<thead md-order="documentsOrderProperty" style="height: 75px;">
 								<tr>
 									<th name="Type" order-by="typeCode"></th>
-									<th name="Name" order-by="name"></th>
-									<th name="Author" order-by="creationUser"></th>
-									<th name="Date" order-by="creationDate"></th>
+									<th  name="Name" order-by="name"></th>
+									<th  name="Author" order-by="creationUser"></th>
+									<th  name="Date"  order-by="creationDate"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr md-auto-select ng-repeat="document in searchDocuments | orderBy: documentsOrderProperty"
-										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)"
-										ng-class="{'selected-doc':wasSelected(document)}">
+								<tr md-auto-select ng-repeat="document in searchDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
 									<td>{{document.typeCode}}</td>
 									<td>{{document.name}}</td>
 									<td>{{document.creationUser}}</td>
@@ -195,33 +179,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</table>
 					</md-data-table-container>
 				</div>
-				
-				
-				
-				
 			</md-content>
 		
 			<md-sidenav class="md-sidenav-right selected-doc" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
 				<md-toolbar class="header" style="height: 75px;">
 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1>
 					<div layout="row" layout-align="center center">
-						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom"
-								ng-click="executeDocument(selectedDocument)">
+						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="alert('Executing '+selectedDocument.name+'...')">
 							<i class="fa fa-play-circle" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" 
-								ng-click="alert('Editing '+selectedDocument.name+'...')">
+						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" ng-click="alert('Editing '+selectedDocument.name+'...')">
 							<i class="fa fa-pencil" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" 
-								ng-click="alert('Cloning '+selectedDocument.name+'...')">
+						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" ng-click="alert('Cloning '+selectedDocument.name+'...')">
 							<i class="fa fa-clone" style="color:white"></i>
 						</md-button>
 						
-						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" 
-								ng-click="alert('Deleting '+selectedDocument.name+'...')">
+						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" ng-click="alert('Deleting '+selectedDocument.name+'...')">
 							<i class="fa fa-trash-o" style="color:white"></i>
 						</md-button>
 					</div>
@@ -252,7 +228,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<script type="text/ng-template" id="folders_renderer.html">
 		<div ng-click="setSelectedFolder(folder)" class="customTreeNode" ui-tree-handle>
-			<md-button ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}">
+			<md-button  ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}">
 			<md-icon>{{folder.subfolders.length>0?(folder.showSubfolders?"&#xE313;":"&#xE315;"):""}}</md-icon>
 			<md-icon>&#xE2C7;</md-icon>&nbsp;{{folder.NAME}}
 			</md-button>

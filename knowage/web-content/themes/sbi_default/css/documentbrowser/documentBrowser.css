@@ -1,0 +1,17 @@
+.header {
+	background-color: #3b668c !important;
+  	color: #ffffff !important;
+}
+
+.toolbar-button-custom {
+	min-width: 50px;
+	width: 50px;
+}
+
+.md-button.md-raised {
+	background-color: #BBBBBB;
+}
+
+.selected-doc {
+	background-color: #E8EAF6;
+}
