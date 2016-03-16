@@ -1103,6 +1103,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 		recordBaseConfig = recordBaseConfig || {};
 		nodeType = node.attributes.type || node.attributes.attributes.type;
 
+		var nodeParentType = node.parentNode.attributes.type || node.parentNode.attributes.attributes.type;
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 
 			field = {
@@ -1199,7 +1200,8 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 				this.selectGridPanel.addField(field);
 			}
 
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD
+				|| nodeParentType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD ) {
 			if(node.parentNode.attributes.attributes.isdefault)	{
 				var i = 0;
 				while (node.parentNode.childNodes[i]!=node) { 
@@ -1254,6 +1256,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 	if(node.attributes) {
 		recordBaseConfig = recordBaseConfig || {};
 		nodeType = node.attributes.type || node.attributes.attributes.type;
+		var nodeParentType = node.parentNode.attributes.type || node.parentNode.attributes.attributes.type;
 
 		if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 
@@ -1311,7 +1314,8 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 				}
 			}
 
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD
+				|| nodeParentType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD ) {
 			if(node.parentNode.attributes.attributes.isdefault)	{
 				var i = 0;
 				while (node.parentNode.childNodes[i]!=node) { 

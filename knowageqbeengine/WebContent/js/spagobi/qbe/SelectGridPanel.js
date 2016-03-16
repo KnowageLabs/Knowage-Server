@@ -997,7 +997,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			if(items[i].attributes && items[i].attributes.iconCls=='temporal_dimension'){
 				var fields = items[i].attributes.children;
 				for(f in fields ){
-					if(fields[f].cls='default_hierarchies'){
+					if(fields[f].cls=='default_hierarchies'){
 						var levels = fields[f].children;
 						for(l in levels){
 							switch(levels[l].type){

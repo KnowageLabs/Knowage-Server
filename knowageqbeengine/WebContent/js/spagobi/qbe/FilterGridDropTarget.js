@@ -248,6 +248,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 		
 		node = ddSource.dragData.node;     
 		nodeType = node.attributes.type || node.attributes.attributes.type;
+		var nodeParentType = node.parentNode.attributes.type || node.parentNode.attributes.attributes.type
 		
 		if(colIndex) {
 			dropColDataIndex = this.targetGrid.getColumnModel().getDataIndex( colIndex );
@@ -322,7 +323,8 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION) {
 			//no action requeired for relation
 			
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD
+				|| nodeParentType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD ) {
 			if(node.parentNode.attributes.attributes.isdefault)	{
 				var i = 0;
 				while (node.parentNode.childNodes[i]!=node) { 
