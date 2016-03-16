@@ -8,9 +8,13 @@ angular.module('scrolly_directive',[])
 	                
 	            element.bind('scroll', function () {
 	                
-	                console.log(raw.scrollTop );
-	    var pos = Math.round(raw.scrollTop/100);
-	    scope.startFrom(pos);
+	                console.log(raw.scrollTop+"gore");
+	                console.log(raw.scrollLeft+"levo");
+	    scope.modelConfig.startRow = Math.round(raw.scrollTop/100);
+	    scope.modelConfig.startColumn = Math.round(raw.scrollLeft/100);
+	    scope.$apply();
+	    console.log(scope.modelConfig);
+	    scope.sendModelConfig(scope.modelConfig);
 	                
 	               
 	            });

@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +35,6 @@ import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
@@ -45,6 +45,60 @@ public class ModelConfig implements Serializable {
 	private Boolean suppressEmpty;
 	private Boolean enableDrillThrough;
 	private Boolean sortingEnabled;
+	private int startRow;
+	private int rowsSet;
+	private int rowCount;
+	private int startColumn;
+	private int columnSet;
+	private int columnCount;
+
+	public int getStartRow() {
+		return startRow;
+	}
+
+	public void setStartRow(int startRow) {
+		this.startRow = startRow;
+	}
+
+	public int getRowsSet() {
+		return rowsSet;
+	}
+
+	public void setRowsSet(int rowsSet) {
+		rowsSet = rowsSet;
+	}
+
+	public int getRowCount() {
+		return rowCount;
+	}
+
+	public void setRowCount(int rowCount) {
+		rowCount = rowCount;
+	}
+
+	public int getStartColumn() {
+		return startColumn;
+	}
+
+	public void setStartColumn(int startColumn) {
+		this.startColumn = startColumn;
+	}
+
+	public int getColumnSet() {
+		return columnSet;
+	}
+
+	public void setColumnSet(int columnSet) {
+		columnSet = columnSet;
+	}
+
+	public int getColumnCount() {
+		return columnCount;
+	}
+
+	public void setColumnCount(int columnCount) {
+		columnCount = columnCount;
+	}
 
 	public Boolean getSortingEnabled() {
 		return sortingEnabled;
@@ -80,6 +134,12 @@ public class ModelConfig implements Serializable {
 		showProperties = false;
 		enableDrillThrough = false;
 		sortingEnabled = false;
+		startRow = 0;
+		rowsSet = 10;
+		rowCount = 1;
+		startColumn = 0;
+		columnSet = 10;
+		columnCount = 1;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
 

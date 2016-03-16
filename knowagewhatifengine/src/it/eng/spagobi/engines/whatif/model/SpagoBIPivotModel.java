@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,9 +32,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -304,63 +302,124 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.targetsClickable = targetsClickable;
 	}
 
-	public void setSubset(CellSetAxis axis, Integer startFrom, Integer count) {
+	public void setSubset(Integer startRow, Integer startColumn, Integer count) {
 
-		QueryAxis qa = getQueryAxis(axis);
+		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
+		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
+		QueryAxis qaRows = getQueryAxis(rows);
+		QueryAxis qaColumns = getQueryAxis(columns);
 
-		if (isSubset(qa)) {
+		if (!isSubset(qaRows)) {
 
-			FunCall f = getSubSetFunction(qa);
-
-		} else {
-			Exp setForAx = qa.getExp();
-			axis.getPositionCount();
+			Exp setForAx = qaRows.getExp();
+			// axis.getPositionCount();
 
 			List<Exp> args = new ArrayList<Exp>(3);
 
 			args.add(setForAx);
-			args.add(Literal.create(startFrom));
+			args.add(Literal.create(startRow));
 			args.add(Literal.create(count));
 			FunCall subset = new FunCall("Subset", Syntax.Function, args);
-			qa.setExp(subset);
+			qaRows.setExp(subset);
+
+		} else {
+
+		}
+		if (!isSubset(qaColumns)) {
+
+			Exp setForAx = qaColumns.getExp();
+			// axis.getPositionCount();
+
+			List<Exp> args = new ArrayList<Exp>(3);
+
+			args.add(setForAx);
+			args.add(Literal.create(startColumn));
+			args.add(Literal.create(count));
+			FunCall subset = new FunCall("Subset", Syntax.Function, args);
+			qaColumns.setExp(subset);
+
+		} else {
+
 		}
 
+		/*
+		 * if (isSubset(qaRows)) {
+		 * 
+		 * 
+		 * 
+		 * } else { Exp setForAx = qa.getExp(); axis.getPositionCount();
+		 * 
+		 * List<Exp> args = new ArrayList<Exp>(3);
+		 * 
+		 * args.add(setForAx); args.add(Literal.create(startFrom));
+		 * args.add(Literal.create(count)); FunCall subset = new
+		 * FunCall("Subset", Syntax.Function, args); qa.setExp(subset); }
+		 */
+
 		fireModelChanged();
 	}
 
-	public void startFrom(CellSetAxis axis, Integer start) {
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-		String time = "startForm method start " + format.format(new Date());
-		System.out.println(time);
-		QueryAxis qa = getQueryAxis(axis);
-		FunCall f = getSubSetFunction(qa);
+	public void startFrom(Integer x, Integer y) {
 
-		Exp exp = f.getArgs().get(0);
-		qa.setExp(exp);
+		SwapAxes transform = this.getTransform(SwapAxes.class);
+		if (transform.isSwapAxes()) {
+			int temp = x;
+			x = y;
+			y = temp;
+		}
+		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
+		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
+		QueryAxis qaRows = getQueryAxis(rows);
+		QueryAxis qaColumns = getQueryAxis(columns);
+		FunCall subsetRows = getSubSetFunction(qaRows);
+		FunCall subsetColumns = getSubSetFunction(qaColumns);
+
+		Exp expRows = subsetRows.getArgs().get(0);
+		Exp expColumns = subsetColumns.getArgs().get(0);
+
+		qaRows.setExp(expRows);
+		qaColumns.setExp(expColumns);
 		fireModelChanged();
-		time = "startForm method 296 " + format.format(new Date());
-		System.out.println(time);
-		// Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
-		// System.out.println(rowCount);
 
-		f.getArgs().set(1, Literal.create(start));
-		f.getArgs().set(2, Literal.create(10));
-		qa.setExp(f);
-		time = "startForm method end " + format.format(new Date());
-		System.out.println(time);
-		System.out.println();
-		System.out.println();
+		Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
+		Integer columnCount = getCellSet().getAxes().get(0).getPositionCount();
+		System.out.println(rowCount + " x " + columnCount);
+		if (y < rowCount - 1) {
+			subsetRows.getArgs().set(1, Literal.create(y));
+		} else {
+			subsetRows.getArgs().set(1, Literal.create(rowCount - 1));
+		}
+		subsetRows.getArgs().set(2, Literal.create(10));
+		qaRows.setExp(subsetRows);
+
+		if (x < columnCount - 1) {
+			subsetColumns.getArgs().set(1, Literal.create(x));
+		} else {
+			subsetColumns.getArgs().set(1, Literal.create(columnCount - 1));
+		}
+		subsetColumns.getArgs().set(2, Literal.create(10));
+		qaColumns.setExp(subsetColumns);
+
 		fireModelChanged();
 
 	}
 
-	public void removeSubset(CellSetAxis axis) {
-		QueryAxis qa = getQueryAxis(axis);
-		FunCall f = getSubSetFunction(qa);
+	public void removeSubset() {
+		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
+		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
+		QueryAxis qaRows = getQueryAxis(rows);
+		QueryAxis qaColumns = getQueryAxis(columns);
+		FunCall subsetRows = getSubSetFunction(qaRows);
+		FunCall subsetColumns = getSubSetFunction(qaColumns);
 
-		if (f.getFunction().equalsIgnoreCase("Subset")) {
-			Exp exp = f.getArgs().get(0);
-			qa.setExp(exp);
+		if (subsetRows.getFunction().equalsIgnoreCase("Subset")) {
+			Exp exp = subsetRows.getArgs().get(0);
+			qaRows.setExp(exp);
+
+		}
+		if (subsetColumns.getFunction().equalsIgnoreCase("Subset")) {
+			Exp exp = subsetColumns.getArgs().get(0);
+			qaColumns.setExp(exp);
 		}
 		fireModelChanged();
 

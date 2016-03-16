@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -73,11 +73,11 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		}
 		// model.setSorting(false);
-		model.removeSubset(model.getCellSet().getAxes().get(1));
-		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeSubset();
+
 		model.swapAxisSort();
-		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
-		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+		model.setSubset(0, 0, 10);
+
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
@@ -107,12 +107,12 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
 		model.setSorting(false);
-		model.removeSubset(model.getCellSet().getAxes().get(1));
-		model.removeSubset(model.getCellSet().getAxes().get(0));
+		model.removeSubset();
+
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
-		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+		model.setSubset(0, 0, 10);
+
 		return renderModel(getPivotModel());
 	}
 
@@ -143,12 +143,12 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
 		model.setSorting(false);
-		model.removeSubset(model.getCellSet().getAxes().get(1));
-		model.removeSubset(model.getCellSet().getAxes().get(0));
+
+		model.removeSubset();
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(model.getCellSet().getAxes().get(1), 0, 10);
-		model.setSubset(model.getCellSet().getAxes().get(0), 0, 15);
+		model.setSubset(0, 0, 10);
+
 		String table = renderModel(model);
 		return table;
 	}

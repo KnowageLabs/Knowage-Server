@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<formulas>
+	<formula name= "Max">
+	
+		<syntax>Max( Set_Expression [ , Numeric_Expression ] )</syntax>
+		<input_arguments>
+			<argument>
+				<expected_value>Set_Expression</expected_value>
+				<agument_descriprion>A valid Multidimensional Expressions (MDX) expression that returns a set</agument_descriprion>
+			</argument>
+			<argument>
+				<expected_value>Numeric_Expression</expected_value>
+				<agument_descriprion>
+					A valid numeric expression that is typically a Multidimensional Expressions (MDX) expression of cell coordinates that return a number.									</agument_descriprion>
+			</argument>
+			
+		</input_arguments>
+		<output>Number</output>
+		<description>
+			Returns the maximum value of a numeric expression that is evaluated over a set.
+		</description>
+		<type>aggregation</type>
+	</formula>
+
+
+
+
+
+</formulas>

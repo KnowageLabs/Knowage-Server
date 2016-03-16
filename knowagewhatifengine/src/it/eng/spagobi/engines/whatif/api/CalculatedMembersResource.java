@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
@@ -132,8 +133,10 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			@PathParam("parentMemberUniqueName") String parentMemberUniqueName, @PathParam("axisOrdinal") int axisOrdinal) {
 		logger.debug("IN");
 		Member parentMember;
+
 		logger.debug("expression= " + calculateFieldFormula);
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		
 		Axis axis;
 		String calculateFieldFormulaParsed = new String();
 		try {
@@ -156,7 +159,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		logger.debug("Adding the calculated fields into the model");
 		CalculatedMember cc = new CalculatedMember(calculateFieldName, calculateFieldFormulaParsed, parentMember, axis);
 		ei.getSpagoBIPivotModel().addCalculatedField(cc);
-
+		
 		String table = renderModel(ei.getPivotModel());
 		logger.debug("OUT");
 		return table;
