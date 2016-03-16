@@ -12,17 +12,19 @@
 	<script src="libraries/angular_1.4/angular-aria.min.js"></script>
 	<script src="libraries/angular_1.4/angular-animate.min.js"></script>
 	
-	<!-- Angular Material Library -->
+	<!-- Angular Material Libraries -->
 	<script src="libraries/angular-material_0.10.0/angular-material.js"></script>
-	
-	<!-- Angular Material style sheet -->
 	<link rel="stylesheet" href="libraries/angular-material_0.10.0/angular-material.min.css">
 	
-
+	<!--  Angular Table and relative utility libraries -->
+	<script type="text/javascript" src="libraries/contextmenu/ng-context-menu.min.js"></script>
+	<script type="text/javascript" src="libraries/pagination/dirPagination.js"></script>
+	<link rel="stylesheet" href="libraries/font-awesome-4.4.0/css/font-awesome.min.css">
+	<script type="text/javascript" src="libraries/angular-table/AngularTable.js"></script>
+	<link rel="stylesheet" type="text/css" href="libraries/angular-table/AngularTable.css">
 	
 	
-	
-	
+	<!-- Controller for this page -->
 	<script type="text/javascript" src="js/controllerCalc.js"></script>	
 
 
@@ -32,7 +34,7 @@
 </head>
 <body layout-margin layout-padding ng-controller="calculatorRuntimeCtrl as ctrl">
 	<md-toolbar flex> <div class="md-toolbar-tools">Knowage Price Calculator </div> </md-toolbar>
-	<md-content layout-margin layout-padding flex layout="column" layout-align="center center">
+	<md-content layout-margin layout-padding flex layout="column" layout-align="center center" ng-if=ctrl.showCalculate>
 		  
 		  
 		  
@@ -63,7 +65,7 @@
 	</md-content>
 
 
-	<md-content ng-if=ctrl.showResults>
+	<md-content ng-if=ctrl.showSimpleResults>
 		<p>
 			Cost silver Subscription = {{ctrl.silverCost}}€
 		</p>
@@ -74,14 +76,89 @@
 		
 	</md-content>
 	
+	<md-content ng-if=ctrl.showTableResults>
+					<!-- {{ctrl.categoryData}} -->
+					<!--<angular-table 	id='categoriesTable' 	ng-model=ctrl.categoryData
+											       columns='["Category","goldPrice","silverPrice"]'
+											highlights-selected-item = "true"
+											no-pagination="false"
+					></angular-table>-->
+					<div layout="row" layout-align="center center">
+						<table>
+						  <tr>
+						    <th>Max number of users</th>
+						    <th>Silver price</th> 
+						    <th>Gold price</th>
+						  </tr>
+						  <tr ng-repeat="category in ctrl.categoryData">
+						    <td>{{category.Category}}</td>
+						    <td>{{category.silverPrice}}€</td>
+						    <td>{{category.goldPrice}}€</td>					    
+						  </tr>
+						</table>
+					</div>
 
 
+		
+	</md-content>
+	
+	
+	<md-content ng-if=ctrl.productsOEMintDataResults  layout-margin layout-padding flex layout="column" layout-align="center center" >
+
+		<div>
+			<p>Silver prices:</p>
+			<table>
+			  <tr>
+			    <th class="oemIntTab">Products</th>
+			    <th class="oemIntTab">Max 1 client</th> 
+			    <th class="oemIntTab">Max 20 clients</th> 
+			    <th class="oemIntTab">Max 50 clients</th>
+			    <th class="oemIntTab">Max 100 clients</th> 
+			    <th class="oemIntTab">Max 200 clients</th>
+			    <th class="oemIntTab">Unlimited clients</th>
+			  </tr>
+			  <tr ng-repeat="product in ctrl.productsOEMintDataSilver">
+			  	<td class="oemIntTab">{{product.products}}</td>
+			  	<td class="oemIntTab">{{product.max_1_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_20_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_50_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_100_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_200_clients_price}}€</td>	
+			    <td class="oemIntTab">{{product.Unlimited_max_number_of_clients_price}}€</td>						    
+			  </tr>
+			</table>
+		</div>
+		
+		<div>
+			<p>Gold prices:</p>
+			<table>
+			  <tr>
+			    <th class="oemIntTab">Products</th>
+				<th class="oemIntTab">Max 1 client</th> 	    
+			    <th class="oemIntTab">Max 20 clients</th> 
+			    <th class="oemIntTab">Max 50 clients</th>
+			    <th class="oemIntTab">Max 100 clients</th> 
+			    <th class="oemIntTab">Max 200 clients</th>
+			    <th class="oemIntTab">Unlimited clients</th>
+			  </tr>
+			  <tr ng-repeat="product in ctrl.productsOEMintDataGold">
+			  	<td class="oemIntTab">{{product.products}}</td>
+			  	<td class="oemIntTab">{{product.max_1_clients_price}}€</td>	
+			    <td class="oemIntTab">{{product.max_20_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_50_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_100_clients_price}}€</td>
+			    <td class="oemIntTab">{{product.max_200_clients_price}}€</td>	
+			    <td class="oemIntTab">{{product.Unlimited_max_number_of_clients_price}}€</td>						    
+			  </tr>
+			</table>
+		</div>
 
 
-
-
-
-
+		
+	</md-content>
+	
+	
+	
 
 
 

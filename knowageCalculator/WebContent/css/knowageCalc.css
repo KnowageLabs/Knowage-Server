@@ -4,3 +4,32 @@
 	background-color:#3B678C !important;
 	color:#FFFFFF;
 }
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 5px;
+    text-align: center;
+    width:33%
+}
+
+th{
+    padding: 2%;
+    text-align: center;
+    color:rgba(255, 255, 255, 0.87);
+    background-color: #3F51B5;
+    font-weight: normal;
+    width:33%
+}
+table{
+	width:100%;
+}
+
+.oemIntTab
+{
+	width:14% !important;
+}

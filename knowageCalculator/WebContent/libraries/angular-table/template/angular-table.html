@@ -1,0 +1,95 @@
+<div id="angularTableTemplate" class="{{id}}ItemBox layout-fill layout-column" style="position:absolute;">
+
+<angular-table-actions layout="row" layout-align="end center">
+	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=true;"  >
+		<md-icon md-font-icon="fa fa-search" ng-click="showSearch=true;"></md-icon> 
+		<input  ng-show="showSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
+		<md-icon ng-show="showSearch" md-font-icon="fa fa-times" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
+	</md-input-container>
+</angular-table-actions>
+ 
+<md-content flex layout="row" id="angularTableContentBox">
+	<table flex>
+		<thead></thead>
+		<tbody></tbody>
+	</table>
+</md-content>
+
+
+<angular-table-footer>
+<div  class="box_pagination_list" layout="row" layout-align="end end">
+	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageCangedFunction({newPageNumber:newPageNumber,itemsPerPage:itemsPerPage,searchValue:prevSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls>
+</div>
+</angular-table-footer>
+
+
+
+<script type="text/ng-template" id="headThTemplate.html">
+<th ng-repeat="val in tableColumns" width="{{val.size}}">
+
+	<div ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
+		
+		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering ,'fa fa-arrow-down' : (val.name==column_ordering && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering && !reverse_col_ord)}"></md-icon>
+		<span >{{val.label}}</span>
+	</div>
+
+	<md-checkbox  ng-checked="multiSelectVal" ng-if="val.name=='--MULTISELECT--'"  ng-click="selectAll()" aria-label="selected item checked"> </md-checkbox>
+
+</th>
+</script>
+
+<script type="text/ng-template" id="bodyTemplate.html">
+
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
+	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}">
+
+<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)"  context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="row[column.name]" ng-dblclick="startEdit(row,column,row[column.name],$event)"  ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
+		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,row[column.name],$event)" autofocus />
+		
+		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>
+
+		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,row[column.name],$event)" aria-label="selected item checked"> </md-checkbox>
+		
+		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length==1"  ng-click='$event.stopPropagation();speedMenuOption[0].action(row,$event); ' class="md-icon-button actionButton" aria-label="More" 
+		action-background-color={{speedMenuOption[0].backgroundColor}}>
+ 			<md-tooltip md-direction="top">{{speedMenuOption[0].label}}</md-tooltip>	
+       	 <md-icon md-font-icon="{{speedMenuOption[0].icon}}" aria-label="{{speedMenuOption[0].label}}" action-color={{speedMenuOption[0].color}}></md-icon>
+      	</md-button>
+
+		<md-fab-speed-dial ng-if="column.name=='--SPEEDMENU--' &&  speedMenuOption.length>1 " md-direction="left" ng-class="'md-fling'" style="    position: absolute;  right: 0;   margin-top: -20px;" >
+		        <md-fab-trigger >
+		          <md-button aria-label="menu" class="md-fab actionButton " ng-click="$event.stopPropagation();">
+		            <md-icon md-font-icon="fa fa-bullseye" ></md-icon>
+		          </md-button>
+		        </md-fab-trigger>
+		        <md-fab-actions>
+		          <div class="md-fab-action-item" ng-repeat=" menuItem in speedMenuOption" >
+				        <md-button ng-click='$event.stopPropagation();menuItem.action(row,$event);' aria-label="{{menuItem.label}}" class="md-fab md-raised actionButton" action-background-color={{menuItem.backgroundColor}}>
+							 <md-tooltip md-direction="top">{{menuItem.label}}</md-tooltip>										           
+							 <md-icon action-color="{{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
+				         </md-button>
+			        </div>
+		       	</md-fab-actions>
+		</md-fab-speed-dial>
+
+		<div class="dropdown_menu_list " style="z-index: 999; " id='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' )>
+			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined && column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'"> 
+				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(row,row[column.name],$event);$event.stopPropagation();' tabindex='{{$index}}' >
+					<p >{{menuItem.label}}</p>
+				</md-list-item>
+			</md-list>
+		</div>	
+	</td>
+ 
+</tr>
+
+	
+</script>
+
+</div>
+
+
+
+
