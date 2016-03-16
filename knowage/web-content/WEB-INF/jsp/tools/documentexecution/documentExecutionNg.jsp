@@ -126,7 +126,7 @@ try{
 						ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
 								
 					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
-						<div layout="row" layout-align="center center">						
+						<div layout="row" class="md-toolbar-tools" layout-align="center center">						
 							<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 									ng-click="clearListParametersForm();">
 								<i class="fa fa-eraser" style="color:white"></i>
