@@ -14,7 +14,7 @@
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService'
+			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
@@ -320,70 +320,6 @@
 			});
 		};
 				
-		
-		$scope.openInfoMetadata = function(){
-		    $mdDialog.show({
-		    	scope : $scope,
-				preserveScope : true,
-		    	templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/documentMetadata.html',
-		    	locals : {
-					sbiModule_translate: $scope.translate,
-					sbiModule_config: sbiModule_config,
-					executionInstance: $scope.executionInstance
-				},
-		    	parent: angular.element(document.body),
-		    	clickOutsideToClose:false,
-		    	controllerAs: "metadataDlgCtrl",
-		    	controller : function($mdDialog, sbiModule_translate, sbiModule_config, executionInstance) {
-		    		var metadataDlgCtrl = this;
-		    		metadataDlgCtrl.lblTitle = sbiModule_translate.load('sbi.execution.executionpage.toolbar.metadata');
-		    		metadataDlgCtrl.lblCancel = sbiModule_translate.load('sbi.general.cancel');
-		    		metadataDlgCtrl.lblClose = sbiModule_translate.load('sbi.general.close');
-		    		metadataDlgCtrl.lblSave = sbiModule_translate.load('sbi.generic.update');
-		    		metadataDlgCtrl.lblGeneralMeta = sbiModule_translate.load('sbi.execution.metadata.generalmetadata');
-		    		metadataDlgCtrl.lblShortMeta = sbiModule_translate.load('sbi.execution.metadata.shorttextmetadata');
-		    		metadataDlgCtrl.lblLongMeta = sbiModule_translate.load('sbi.execution.metadata.longtextmetadata');
-		    		metadataDlgCtrl.generalMetadata = [];
-		    		metadataDlgCtrl.shortText = [];
-		    		metadataDlgCtrl.longText = [];
-		    		var params = null;
-		    		if(executionInstance.SUBOBJECT_ID){
-		    			params = {subobjectId: executionInstance.SUBOBJECT_ID};
-		    		}
-		    		sbiModule_restServices.promiseGet('1.0/documentexecution/' + executionInstance.OBJECT_ID, 'documentMetadata', params)
-		    		.then(function(response){
-		    			//"GENERAL_META", "LONG_TEXT", "SHORT_TEXT"
-		    			metadataDlgCtrl.generalMetadata = response.data.GENERAL_META;
-		    			metadataDlgCtrl.shortText = response.data.SHORT_TEXT;
-			    		metadataDlgCtrl.longText = response.data.LONG_TEXT;
-		    		},function(response){
-		    			//ko
-		    		});
-		    		metadataDlgCtrl.close = function(){
-		    			$mdDialog.hide();
-		    		}
-		    		metadataDlgCtrl.save = function(){
-		    			var saveObj = {
-		    				id: executionInstance.OBJECT_ID,
-		    				subobjectId: executionInstance.SUBOBJECT_ID, 
-		    				jsonMeta: metadataDlgCtrl.shortText.concat(metadataDlgCtrl.longText)
-		    			};
-		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
-		    			.then(function(response){
-		    				//ok
-		    			},function(response){
-		    				//ko
-		    			});
-		    		}
-		    	}
-		    })
-	        .then(function(answer) {
-	        	$scope.status = 'You said the information was "' + answer + '".';
-	        }, function() {
-	        	$scope.status = 'You cancelled the dialog.';
-	        });
-		};
-		
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	

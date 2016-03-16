@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
@@ -100,10 +99,12 @@ try{
 				                </md-button>
 				            </md-menu-item>
 				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
+				            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
 				            <md-menu-item class="md-indent">
 				            	<md-icon class="fa fa-info-circle"></md-icon>
 		                    	<md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
 				            </md-menu-item>
+				            <%} %>
 				            <md-menu-item class="md-indent">
 				            	<md-icon class="fa fa-sticky-note-o"></md-icon>
 		                    	<md-button ng-click="alert('TODO')">{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</md-button>
