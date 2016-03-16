@@ -31,7 +31,6 @@
 		$scope.showSelectRoles=true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = execProperties.parametersData.documentParameters;
-		$scope.showParametersPanel = true;
 		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
 		$scope.viewpoints = [];
 		$scope.documentExecuteFactories = documentExecuteFactories;
@@ -41,6 +40,7 @@
 		$scope.currentView = execProperties.currentView;
 		$scope.parameterView=execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
+		$scope.showParametersPanel = execProperties.showParametersPanel;
 		$scope.documentSelectedToRanking={};
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
@@ -57,7 +57,7 @@
 					execProperties.selectedRole.name = execProperties.roles[0];
 					$scope.showSelectRoles=false;
 					//loads parameters if role is selected
-					$scope.getParametersForExecution(execProperties.selectedRole.name);
+					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name);
 					execProperties.isParameterRolePanelDisabled.status = true;
 				}
 				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name);
@@ -163,17 +163,7 @@
 			});
 		};
 		
-		$scope.toggleParametersPanel = function(){
-			if($scope.showParametersPanel) {
-				$mdSidenav('parametersPanelSideNav').close();
-			} else {
-				$mdSidenav('parametersPanelSideNav').open();
-			}
-			$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
-		};
-		
-		$scope.openHelpOnLine=function(){
-			
+		$scope.openHelpOnLine=function(){	
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
 					
@@ -186,7 +176,7 @@
 			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
-				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
+				execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
 			}
 			console.log("executeParameter OUT ");
 		};
@@ -195,49 +185,11 @@
 			console.log("changeRole IN ");
 			if(role != execProperties.selectedRole.name) {  
 				docExecute_urlViewPointService.executionProcesRestV1(role);
-				$scope.getParametersForExecution(role);
+				docExecute_urlViewPointService.getParametersForExecution(role);
 			}
 			console.log("changeRole OUT ");
 		};
 	
-		
-		/*
-		 * GET PARAMETERS 
-		 * Check if parameters exist.
-		 * exist - open parameters panel
-		 * no exist - get iframe url  
-		 */
-		$scope.getParametersForExecution = function(role) {		
-			
-			var params = 
-				"label=" + execProperties.executionInstance.OBJECT_LABEL
-				+ "&role=" + role;
-			sbiModule_restServices.get("1.0/documentexecution", "filters", params)
-			.success(function(response, status, headers, config){
-				console.log('getParametersForExecution response OK -> ', response);
-				//check if document has parameters 
-				if(response && response.filterStatus && response.filterStatus.length>0){
-					//check default parameter control TODO										
-					$scope.showParametersPanel=true;
-					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
-						$mdSidenav('parametersPanelSideNav').open();
-					}
-					//execProperties.parametersData.documentParameters = response.filterStatus;
-					angular.copy(response.filterStatus, execProperties.parametersData.documentParameters);
-					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
-				}else{
-					$scope.showParametersPanel = false;
-					if($mdSidenav('parametersPanelSideNav').isOpen()) {
-						$mdSidenav('parametersPanelSideNav').close();
-					}
-					//$scope.getURLForExecution(role, execContextId, data);
-				}
-			})
-			.error(function(response, status, headers, config) {
-				console.log('getParametersForExecution response ERROR -> ', response);
-				sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-			});
-		};
 		
 		$scope.showRequiredFieldMessage = function(parameter) {
 			return (

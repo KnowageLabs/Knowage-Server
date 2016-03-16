@@ -80,7 +80,7 @@ try{
 				</md-button>
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
-						ng-click="toggleParametersPanel()" 
+						ng-click="paramRolePanelService.toggleParametersPanel()" 
 						ng-disabled="isParameterRolePanelDisabled.status">
 					<i class="fa fa-filter header"></i> 
 				</md-button>
@@ -154,7 +154,7 @@ try{
 					iframe-set-dimensions-onload flex="grow"></iframe>
 					
 				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
-						ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
+						ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')" >
 								
 					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
 						<div layout="row" layout-align="center center">						
@@ -235,7 +235,8 @@ try{
 				selectedRole : {name : ""},
  				currentView :  {status : "DOCUMENT"},
  				parameterView : {status : ""},
- 				isParameterRolePanelDisabled : {status : false}
+ 				isParameterRolePanelDisabled : {status : false},
+ 				showParametersPanel : {status : true}
 			};
 			return obj;
 		});

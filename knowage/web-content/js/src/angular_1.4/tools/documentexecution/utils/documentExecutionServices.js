@@ -101,7 +101,7 @@
 	angular.module('documentExecutionModule')
 	.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
-			) {
+			,$mdSidenav,docExecute_paramRolePanelService) {
 		
 		var serviceScope = this;	
 		
@@ -147,16 +147,10 @@
 				});
 		};
 		
-		
-		
-		
 		this.getViewpoints = function(){
-			
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='FILTER_SAVED';
 			execProperties.isParameterRolePanelDisabled.status=true;
-
-			//gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
 			sbiModule_restServices.get(
 					"1.0/documentviewpoint", 
 					"getViewpoints",
@@ -170,6 +164,36 @@
 		
 		
 		
+		this.getParametersForExecution = function(role) {		
+			var params = 
+				"label=" + execProperties.executionInstance.OBJECT_LABEL
+				+ "&role=" + role;
+			sbiModule_restServices.get("1.0/documentexecution", "filters", params)
+			.success(function(response, status, headers, config){
+				console.log('getParametersForExecution response OK -> ', response);
+				//check if document has parameters 
+				if(response && response.filterStatus && response.filterStatus.length>0){
+					//check default parameter control TODO										
+					execProperties.showParametersPanel.status=true;
+					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
+						$mdSidenav('parametersPanelSideNav').open();
+					}
+					//execProperties.parametersData.documentParameters = response.filterStatus;
+					angular.copy(response.filterStatus, execProperties.parametersData.documentParameters);
+					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
+				}else{
+					execProperties.showParametersPanel.status = false;
+					if($mdSidenav('parametersPanelSideNav').isOpen()) {
+						$mdSidenav('parametersPanelSideNav').close();
+					}
+				}
+			})
+			.error(function(response, status, headers, config) {
+				console.log('getParametersForExecution response ERROR -> ', response);
+				sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+			});
+		};
+		
 		
 		
 		
@@ -180,9 +204,8 @@
 
 (function() {
 	angular.module('documentExecutionModule')
-	.service('docExecute_paramRolePanelService', function(execProperties) {
+	.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav) {
 				
-		
 		this.checkParameterRolePanelDisabled = function(){
 			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
 					&& (execProperties.roles.length==1));
@@ -193,7 +216,6 @@
 			execProperties.parameterView.status='';
 			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
 		};
-		
 		
 		this.isExecuteParameterDisabled = function() {
 			if(execProperties.parametersData.documentParameters.length > 0) {
@@ -209,6 +231,14 @@
 		};
 		
 		
+		this.toggleParametersPanel = function(){
+			if(execProperties.showParametersPanel.status) {
+				$mdSidenav('parametersPanelSideNav').close();
+			} else {
+				$mdSidenav('parametersPanelSideNav').open();
+			}
+			execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
+		};
 		
 	});
 })();

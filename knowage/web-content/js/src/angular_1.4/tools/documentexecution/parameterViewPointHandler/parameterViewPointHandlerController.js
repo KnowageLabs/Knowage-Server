@@ -75,7 +75,7 @@
 //							$scope.getViewpoints();
 					}, function() {
 						console.log('Annulla');
-						docExecute_urlViewPointService.getViewpoints();
+						//docExecute_urlViewPointService.getViewpoints();
 					});	
 				 }
 			 } 	
