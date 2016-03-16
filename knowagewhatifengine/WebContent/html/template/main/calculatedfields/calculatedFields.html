@@ -1,0 +1,69 @@
+
+
+<md-dialog>
+     <md-toolbar style="background-color: #3b678c !important;">
+        <div class="md-toolbar-tools" >
+          <h2 flex="flex">Insert Function</h2>
+           <md-button ng-click="closeDialog()" class="md-icon-button" style="float:right;">
+            <md-icon class="fa fa-times fa-2x"></md-icon>
+          </md-button>
+        </div>
+      </md-toolbar>
+    <md-dialog-content>
+    
+    <div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>Calculated field name</label>
+							<input name="lbl" ng-model="SelectedConstraint.label"
+							ng-maxlength="20" ng-change="setDirty()">
+							
+							 </md-input-container>
+						</div>
+					</div>
+    
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Recents">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Recents</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Temporal">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Temporal</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum enim, vel tempor sapien arcu a tellus. Vivamus convallis sodales ante varius gravida. Curabitur a purus vel augue ultrices ultricies id a nisl. Nullam malesuada consequat diam, a facilisis tortor volutpat et. Sed urna dolor, aliquet vitae posuere vulputate, euismod ac lorem. Sed felis risus, pulvinar at interdum quis, vehicula sed odio. Phasellus in enim venenatis, iaculis tortor eu, bibendum ante. Donec ac tellus dictum neque volutpat blandit. Praesent efficitur faucibus risus, ac auctor purus porttitor vitae. Phasellus ornare dui nec orci posuere, nec luctus mauris semper.</p>
+            <p>Morbi viverra, ante vel aliquet tincidunt, leo dolor pharetra quam, at semper massa orci nec magna. Donec posuere nec sapien sed laoreet. Etiam cursus nunc in condimentum facilisis. Etiam in tempor tortor. Vivamus faucibus egestas enim, at convallis diam pulvinar vel. Cras ac orci eget nisi maximus cursus. Nunc urna libero, viverra sit amet nisl at, hendrerit tempor turpis. Maecenas facilisis convallis mi vel tempor. Nullam vitae nunc leo. Cras sed nisl consectetur, rhoncus sapien sit amet, tempus sapien.</p>
+            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Arithmetic">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Arithmetic</h1>
+            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Aggregation">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Aggregation</h1>
+            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+          </md-content>
+        </md-tab>
+        <md-tab label="Saved Members">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Saved Members</h1>
+            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <md-button ng-click="answer('not useful')" >
+        OK
+      </md-button>
+      <md-button ng-click="closeDialog()" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+

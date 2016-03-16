@@ -4,7 +4,7 @@
 	  <md-toolbar style="background-color: #3b678c !important;">
         <div class="md-toolbar-tools" >
           <h2 flex="flex">Drillthrough</h2>
-           <md-button ng-click="closeDtDialog()" class="md-icon-button" style="float:right;">
+           <md-button ng-click="closeDialog()" class="md-icon-button" style="float:right;">
             <md-icon class="fa fa-times fa-2x"></md-icon>
           </md-button>
         </div>
@@ -47,7 +47,7 @@
 	
 	
 	</md-content>	
-		<md-dialog-actions layout="row">
+		<md-dialog-actions layout="row" style="margin-top:5px;">
 		
 			<md-input-container >
 			<label>Maximum rows</label>
@@ -59,8 +59,8 @@
 		        <md-option value="100">100</md-option>
 		      </md-select>
 		     </md-input-container>
-	
-			<md-button ng-click="closeDtDialog()">
+				<span flex></span>
+			<md-button ng-click="closeDialog()">
 				Cancel
 			</md-button>
 			<md-button ng-click="exportDrill()">

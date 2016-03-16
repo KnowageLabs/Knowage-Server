@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,7 +19,6 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +42,7 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.MetadataElement;
+import org.olap4j.metadata.Property;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.DrillExpandMember;
@@ -50,8 +50,10 @@ import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
 import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.transform.SwapAxes;
+import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
@@ -222,6 +224,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				hierarchy.put("name", h.getName());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
+
 					JSONObject levelsObject = new JSONObject();
 					levelsObject.put("name", level.getName());
 					levelsObject.put("hierarchy", level.getHierarchy().getUniqueName());
@@ -242,15 +245,47 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
+	@Path("/properties/")
+	@Produces("text/html; charset=UTF-8")
+	public String getProperties() throws OlapException {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		NonInternalPropertyCollector np = new NonInternalPropertyCollector();
+
+		List<Hierarchy> hs = model.getCube().getHierarchies();
+		for (Hierarchy hierarchy : hs) {
+			List<Level> levels = hierarchy.getLevels();
+			for (Level level : levels) {
+				List<Property> properties = np.getProperties(level);
+				List<Member> members = level.getMembers();
+				for (Member member : members) {
+
+					for (Property property : properties) {
+						System.out.println(member.getName());
+						System.out.println(property.getName());
+						System.out.println(member.getPropertyFormattedValue(property));
+
+					}
+
+				}
+
+			}
+		}
+
+		return null;
+	}
+
+	@GET
 	@Path("/drilltrough/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillt(@PathParam("ordinal") Integer ordinal) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
-		ResultSetMetaData metadata;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
+		int max_rows = WhatIfEngineConfig.getInstance().getDrillTroughMaxRows();
 		try {
 			Cell cell = cellSet.getCell(ordinal);
 			DrillThrough transform = model.getTransform(DrillThrough.class);

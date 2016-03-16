@@ -113,6 +113,7 @@ public class WhatIfEngineConfig {
 	private final static String XMLA_URL = "url";
 	private final static String DEFAULT_ATTRIBUTE = "default";
 	private final static String DEPTHLIMIT_TAG = "DEPTHLIMIT";
+	private final static String DRILLTROUGH_MAX_ROWS_TAG = "DRILLTROUGH_MAX_ROWS";
 
 	public String getTemplateFilePath() {
 		String templatePath = "";
@@ -340,6 +341,16 @@ public class WhatIfEngineConfig {
 			System.out.println(dpth);
 			return Integer.parseInt(dpth);
 			// return Integer.parseInt(sb.getAttribute("value").toString());
+		}
+		return -1;
+	}
+
+	public int getDrillTroughMaxRows() {
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DRILLTROUGH_MAX_ROWS_TAG);
+		if (sb != null) {
+			String max = (String) sb.getAttribute("value");
+			System.out.println(max);
+			return Integer.parseInt(max);
 		}
 		return -1;
 	}

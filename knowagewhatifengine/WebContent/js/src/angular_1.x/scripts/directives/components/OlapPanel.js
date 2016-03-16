@@ -98,9 +98,18 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 						
 							});
 		}
-			
-			
 		}
+	
+	$scope.getProps = function() {
+		sbiModule_restServices.promiseGet
+		("1.0",'/member/properties/'+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
+			console.log(response);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
+			
+		});		
+	}
 	
 		$scope.formatColumns = function(array){
 			var arr = [];
@@ -395,9 +404,25 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			
 		});
 	  };
-	  $scope.closeDtDialog = function(ev) {
+	  $scope.closeDialog = function(ev) {
 		  $mdDialog.hide();
       }; 
+      
+      
+      $scope.showCCWizard = function(){
+  		
+    		
+  		$mdDialog
+  			.show({
+  				scope : $scope,
+  				preserveScope : true,
+  				controllerAs : 'olapCtrl',
+  				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
+  				//targetEvent : ev,
+  				clickOutsideToClose : false,
+  				hasBackdrop:false
+  			});
+  	}
 
 	
 };
