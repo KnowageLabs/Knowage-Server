@@ -209,6 +209,10 @@ public class MongoDataReader extends AbstractDataReader {
 				if (obj == null || obj.equals("")) {
 					obj = resultObject.optString("_firstBatch");
 				}
+				
+				if (obj == null || obj.equals("")) {
+					obj = resultObject.optString("_batch");
+				}
 
 				try {
 					logger.debug("The result of the aggregation is an array");
