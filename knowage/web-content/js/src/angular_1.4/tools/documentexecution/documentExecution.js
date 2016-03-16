@@ -14,19 +14,20 @@
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices',
+			 'documentExecuteServices','docExecute_urlService',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
-			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices) {
+			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
+			,docExecute_urlService) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
 		$scope.roles = execProperties.roles;
 		$scope.selectedRole = {name : ""};
 		$scope.execContextId = "";
-		$scope.documentUrl="";
+		//$scope.documentUrl="";
 		$scope.showSelectRoles=true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = [];
@@ -35,6 +36,8 @@
 		$scope.viewpoints = [];
 		$scope.documentExecuteFactories = documentExecuteFactories;
 		$scope.documentExecuteServices = documentExecuteServices;
+		
+		$scope.urlService = docExecute_urlService;
 		
 		$scope.currentView = 'DOCUMENT';
 		$scope.parameterView='';
@@ -58,7 +61,7 @@
 					$scope.getParametersForExecution($scope.selectedRole.name);
 					$scope.isParameterRolePanelDisabled = true;
 				}
-				$scope.executionProcesRestV1($scope.selectedRole.name);
+				docExecute_urlService.executionProcesRestV1($scope.selectedRole.name);
 			}
 			
 			console.log("initSelectedRole OUT ");
@@ -181,49 +184,7 @@
 			$scope.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled();
 		};
 		
-		/*
-		 * START EXECUTION PROCESS REST
-		 * Return the SBI_EXECUTION_ID code 
-		 */
-		$scope.executionProcesRestV1 = function(role, paramsStr) {			
-			if(typeof paramsStr === 'undefined'){
-				paramsStr='{}';
-			}
-			var params = 
-				"label=" + execProperties.executionInstance.OBJECT_LABEL
-				+ "&role=" + role
-				+ "&parameters=" + paramsStr;				
-			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
-			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
-				function(data, status, headers, config) {					
-					console.log(data);
-					if(data['documentError'] && data['documentError'].length > 0 ){
-						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
-						var alert = $mdDialog.alert()
-						.title(sbiModule_translate.load("sbi.generic.warning"))
-						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));
-						
-						$mdDialog.show( alert );
-					}else{
-						if(data['errors'].length > 0 ){
-							var strErros='';
-							for(var i=0; i<=data['errors'].length-1;i++){
-								strErros=strErros + data['errors'][i].description + '. \n';
-							}
-							//sbiModule_messaging.showErrorMessage(strErros, 'Error');
-							var alert = $mdDialog.alert()
-							.title(sbiModule_translate.load("sbi.generic.warning"))
-							.content(strErros).ok(sbiModule_translate.load("sbi.general.ok"));
-							$mdDialog.show( alert );
-						}else{
-							$scope.documentUrl=data.url;
-						}	
-					}	
-					
-				}).error(function(data, status, headers, config) {
-					console.log("TargetLayer non Ottenuto " + status);
-				});
-		};
+
 		
 		/*
 		 * EXECUTE PARAMS
@@ -231,7 +192,7 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			$scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));			
+			docExecute_urlService.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -244,7 +205,7 @@
 			console.log("changeRole IN ");
 			//If new selected role is different from the previous one
 			if(role != $scope.selectedRole.name) {  
-				$scope.executionProcesRestV1(role);
+				docExecute_urlService.executionProcesRestV1(role);
 //				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));
 				$scope.getParametersForExecution(role);
 //				if($mdSidenav('parametersPanelSideNav').isOpen()) {
@@ -411,69 +372,7 @@
 			.error(function(data, status, headers, config) {});																	
 		};
 		
-		$scope.gvpCtrlVpSpeedMenuOpt = 
-			[ 			 		               	
-			 { // Fill Form
-				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-				 icon:"fa fa-pencil",
-				 color:'#222222',
-				 action : function(item) {
-					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 fillParametersPanel(params);
-					 $scope.returnToDocument();
-				 }	
-			 },
-			 { //Execute Url
-				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
-				 icon:"fa fa-play",
-				 color:'#222222',
-				 action : function(item) {
-					 //decodeURIComponent						 		               		
-					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 fillParametersPanel(params);
-					 $scope.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(params));
-					 $scope.returnToDocument();
-				 }	
-			 }
-			 ,{   //Delete Action
-				 label: sbiModule_translate.load("sbi.generic.delete"),
-				 icon:"fa fa-trash-o",
-				 //backgroundColor:'red',
-				 color:'#222222',
-				 action : function(item) {
-					 var confirm = $mdDialog
-						.confirm()
-						.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
-						.content(
-							sbiModule_translate
-							.load("sbi.execution.parametersselection.delete.filters.message"))
-							.ok(sbiModule_translate.load("sbi.general.continue"))
-							.cancel(sbiModule_translate.load("sbi.general.cancel")
-						);
-					$mdDialog.show(confirm).then(function() {
-						var index =$scope.gvpCtrlViewpoints.indexOf(item);
-						 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
-							sbiModule_restServices.post(
-									"1.0/documentviewpoint",
-									"deleteViewpoint", objViewpoint)
-							   .success(function(data, status, headers, config) {
-								   if(data.errors && data.errors.length > 0 ){
-									   documentExecuteServices.showToast(data.errors[0].message);
-									 }else{
-										 $scope.gvpCtrlViewpoints.splice(index, 1);
-											 //message success 
-									 }
-								   //gvpctl.selectedParametersFilter = [];
-							})
-							.error(function(data, status, headers, config) {});
-//							$scope.getViewpoints();
-					}, function() {
-						console.log('Annulla');
-						$scope.getViewpoints();
-					});	
-				 }
-			 } 	
-		 ];
+		
 		
 		$scope.openInfoMetadata = function(){
 		    $mdDialog.show({
@@ -538,45 +437,6 @@
 	        });
 		};
 		
-		/*
-		 * Fill Parameters Panel 
-		 */
-		function fillParametersPanel(params){
-			if($scope.documentParameters.length > 0){
-				for(var i = 0; i < $scope.documentParameters.length; i++){
-					var parameter = $scope.documentParameters[i];
-					
-					if(!params[parameter.urlName]) {
-						documentExecuteServices.resetParameter(parameter);
-					} else {
-						//Type params
-						if(parameter.type=='NUM'){
-							parameter.parameterValue = parseFloat(params[parameter.urlName],10);
-						}else if(parameter.type=='STRING'){
-							parameter.parameterValue = params[parameter.urlName];
-							
-							if(parameter.defaultValues && parameter.defaultValues.length > 0) {
-								var parameterValues = parameter.parameterValue;
-
-								for(var j = 0; j < parameter.defaultValues.length; j++) {
-									var defaultValue = parameter.defaultValues[j];
-
-									for(var k = 0; k < parameterValues.length; k++) {
-										if(defaultValue.value == parameterValues[k]) {
-											defaultValue.isSelected = true;
-											break;
-										} else {
-											defaultValue.isSelected = false;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}			
-		};
-
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	

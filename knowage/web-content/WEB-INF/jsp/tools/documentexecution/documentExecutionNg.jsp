@@ -119,7 +119,7 @@ try{
         <div  layout="row" flex="grow"  ng-switch on="currentView">
  		
 	 		<md-content layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
-				<iframe ng-src="{{documentUrl}}" iframe-onload="iframeOnload()"
+				<iframe ng-src="{{urlService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 					
 				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
