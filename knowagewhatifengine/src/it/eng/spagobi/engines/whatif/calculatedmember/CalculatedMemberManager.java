@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -84,7 +84,7 @@ public class CalculatedMemberManager {
 
 	/**
 	 * Service to inject the calculated member in the tree
-	 * 
+	 *
 	 * @param calculateFieldName
 	 *            the name of the calculated member
 	 * @param calculateFieldFormula
@@ -106,8 +106,7 @@ public class CalculatedMemberManager {
 		// member
 		// formula
 		try {
-			if (!calculatedMember.getParentMember().getDimension().getDimensionType().name().equalsIgnoreCase(new String("MEASURE")))
-			{
+			if (!calculatedMember.getParentMember().getDimension().getDimensionType().name().equalsIgnoreCase(new String("MEASURE"))) {
 				nodoCalcolato = new IdentifierNode(getParentSegments(calculatedMember.getParentMember(), calculatedMember.getCalculateFieldName()));// build
 				// identifier
 				// node
@@ -130,28 +129,18 @@ public class CalculatedMemberManager {
 		selectNode.getAxisList().clear();
 
 		if (calculatedMember.getParentMemberAxis().axisOrdinal() == (Axis.ROWS.axisOrdinal())) {
-			selectNode.getAxisList().add(new AxisNode(null,
-					false, Axis.COLUMNS,
-					new ArrayList<IdentifierNode>(),
-					new CallNode(null, "{}", Syntax.Braces, column)));
+			selectNode.getAxisList().add(
+					new AxisNode(null, false, Axis.COLUMNS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, column)));
 
 			insertCalculatedInParentNode(null, 0, row, tree, calculatedMember.getParentMember().getUniqueName());
-			selectNode.getAxisList().add(new AxisNode(null,
-					false, Axis.ROWS,
-					new ArrayList<IdentifierNode>(),
-					new CallNode(null, "{}", Syntax.Braces, row)));
+			selectNode.getAxisList().add(new AxisNode(null, false, Axis.ROWS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, row)));
 		} else {
 
 			insertCalculatedInParentNode(null, 0, column, tree, calculatedMember.getParentMember().getUniqueName());
-			selectNode.getAxisList().add(new AxisNode(null,
-					false, Axis.COLUMNS,
-					new ArrayList<IdentifierNode>(),
-					new CallNode(null, "{}", Syntax.Braces, column)));
+			selectNode.getAxisList().add(
+					new AxisNode(null, false, Axis.COLUMNS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, column)));
 
-			selectNode.getAxisList().add(new AxisNode(null,
-					false, Axis.ROWS,
-					new ArrayList<IdentifierNode>(),
-					new CallNode(null, "{}", Syntax.Braces, row)));
+			selectNode.getAxisList().add(new AxisNode(null, false, Axis.ROWS, new ArrayList<IdentifierNode>(), new CallNode(null, "{}", Syntax.Braces, row)));
 		}
 
 		return selectNode.toString();
@@ -206,21 +195,21 @@ public class CalculatedMemberManager {
 
 	/**
 	 * Service to find where to insert the calculated member in the tree
-	 * 
+	 *
 	 * @param parentCallNode
-	 * 
+	 *
 	 * @param positionInParentCallNode
-	 * 
+	 *
 	 * @param parseNode
-	 * 
+	 *
 	 * @param calculatedFieldTree
-	 * 
+	 *
 	 * @param parentNodeUniqueName
 	 * @return boolean true when the parent is found
 	 */
 
-	private static boolean insertCalculatedInParentNode(CallNode parentCallNode, int positionInParentCallNode, ParseTreeNode parseNode, ParseTreeNode calculatedFieldTree,
-			String parentNodeUniqueName) {
+	private static boolean insertCalculatedInParentNode(CallNode parentCallNode, int positionInParentCallNode, ParseTreeNode parseNode,
+			ParseTreeNode calculatedFieldTree, String parentNodeUniqueName) {
 
 		if (parseNode instanceof CallNode) {
 			CallNode node = (CallNode) parseNode;
@@ -261,13 +250,12 @@ public class CalculatedMemberManager {
 
 	/**
 	 * Service to get an MDX Parser
-	 * 
+	 *
 	 * @return The MDX Parser
 	 */
 	private static MdxParser createParser(SpagoBIPivotModel model) {
 		OlapConnection olapConnection = model.getOlapConnection();
-		return olapConnection.getParserFactory()
-				.createMdxParser(olapConnection);
+		return olapConnection.getParserFactory().createMdxParser(olapConnection);
 	}
 
 }
