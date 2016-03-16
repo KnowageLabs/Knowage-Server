@@ -1,11 +1,24 @@
 <div>
-<div class="menu-text">Drill types</div>
-<md-button class="groupX left" ng-click="changeDrillType('position')" ng-disabled="">Position</md-button>
-		
-<md-button class="groupX middle" ng-click="changeDrillType('member')">Member</md-button>
-		
-<md-button class="groupX right" ng-click="changeDrillType('replace')">Replace</md-button>
-
+<div class="menu-text" style="padding-bottom:5%">Drill types</div>
+<md-grid-list
+	md-cols="2"	md-row-height="25px">
+	
+	<md-grid-tile>
+		<md-button class="drill-buttons" ng-click="changeDrillType('position')">Position</md-button>
+	</md-grid-tile>
+	 
+	<md-grid-tile>
+		<md-button class="drill-buttons" ng-click="changeDrillType('member')">Member</md-button>
+	</md-grid-tile>
+	 
+	<md-grid-tile>
+		<md-button class="drill-buttons" ng-click="changeDrillType('replace')">Replace</md-button>
+	</md-grid-tile>
+	 
+	<md-grid-tile>
+		<md-button class="drill-buttons" ng-click="enableDisableDrillThrough()">Drill trough</md-button>
+	</md-grid-tile>	 
+</md-grid-list>
 <div class="menu-text">OLAP functions</div>
 <md-grid-list
         md-cols="3" md-row-height="50px">

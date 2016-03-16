@@ -424,3 +424,10 @@ md-dialog.fullscreen-dialog {
 	color: grey;
 	font-size: 90%;
 }
+
+.drill-buttons{
+	background-color: lightgrey;
+	height: 25px;
+	line-height: 1;
+	text-transform: none;
+}
