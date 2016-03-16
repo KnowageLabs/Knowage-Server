@@ -105,9 +105,39 @@ try{
 		                    	<md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
 				            </md-menu-item>
 				            <md-menu-item class="md-indent">
+				            	<md-icon class="fa fa-sticky-note-o"></md-icon>
+		                    	<md-button ng-click="alert('TODO')">{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</md-button>
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
 				            	<md-icon class="fa fa-star"></md-icon>
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
                                 	ng-click="rankDocument(selectedDocument)">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
+				            <md-menu-item class="md-indent">
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}" class="toolbar-button-custom"
+                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}" class="toolbar-button-custom"
+                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showview')}}" class="toolbar-button-custom"
+                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showview')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}" class="toolbar-button-custom"
+                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}" class="toolbar-button-custom"
+                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
 				                </md-button> 
 				            </md-menu-item>
 					    </md-menu-content>
@@ -219,6 +249,8 @@ try{
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/parameterViewPointHandler/parameterViewPointHandlerController.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
+	<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/menuFunctions/infoMetadataService.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
 	

@@ -14,13 +14,13 @@
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService',
+			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService'
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -45,6 +45,10 @@
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
 		$scope.isClick=false;
+		
+		$scope.openInfoMetadata = function(){
+			infoMetadataService.openInfoMetadata();
+		}
 		
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");

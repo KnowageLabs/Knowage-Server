@@ -1,3 +1,4 @@
+<%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" style="width: 80%; height: 90%; overflow-y: visible;" layout="column">
 	
@@ -9,10 +10,12 @@
 					ng-click="metadataDlgCtrl.close()">
 					{{metadataDlgCtrl.lblCancel}}
 			 	</md-button>
+			 	 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
 		      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="toolbar-button-custom" 
 					ng-click="metadataDlgCtrl.save()">
 					{{::metadataDlgCtrl.lblSave}}
 			 	</md-button>
+			 	<%} %>
 	       	</div>
 	  	</md-toolbar>
  
