@@ -9,15 +9,7 @@
 				OBJECT_LABEL : "",
 				ROLE :"",
 				VIEWPOINT : JSON.parse("{}")
-			},
-			
-			
-			
-			
-			
-			
-			
-			
+			},			
 		};
 		return obj;
 	});

@@ -11,8 +11,11 @@
 	
 	
 	var documentParamenterViewPointCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteServices, $mdDialog
-			,sbiModule_restServices,docExecute_urlService) {
-				
+			,sbiModule_restServices,docExecute_urlViewPointService,execProperties,docExecute_paramRolePanelService) {
+						
+	
+		
+		
 		
 		$scope.gvpCtrlVpSpeedMenuOpt = 
 			[ 			 		               	
@@ -23,7 +26,7 @@
 				 action : function(item) {
 					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 fillParametersPanel(params);
-					 $scope.returnToDocument();
+					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
 			 },
 			 { //Execute Url
@@ -34,8 +37,8 @@
 					 //decodeURIComponent						 		               		
 					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 fillParametersPanel(params);
-					 docExecute_urlService.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(params));
-					 $scope.returnToDocument();
+					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(params));
+					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
 			 }
 			 ,{   //Delete Action
@@ -54,7 +57,7 @@
 							.cancel(sbiModule_translate.load("sbi.general.cancel")
 						);
 					$mdDialog.show(confirm).then(function() {
-						var index =$scope.gvpCtrlViewpoints.indexOf(item);
+						var index =docExecute_urlViewPointService.gvpCtrlViewpoints.indexOf(item);
 						 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
 							sbiModule_restServices.post(
 									"1.0/documentviewpoint",
@@ -63,7 +66,7 @@
 								   if(data.errors && data.errors.length > 0 ){
 									   documentExecuteServices.showToast(data.errors[0].message);
 									 }else{
-										 $scope.gvpCtrlViewpoints.splice(index, 1);
+										 docExecute_urlViewPointService.gvpCtrlViewpoints.splice(index, 1);
 											 //message success 
 									 }
 								   //gvpctl.selectedParametersFilter = [];
@@ -72,7 +75,7 @@
 //							$scope.getViewpoints();
 					}, function() {
 						console.log('Annulla');
-						$scope.getViewpoints();
+						docExecute_urlViewPointService.getViewpoints();
 					});	
 				 }
 			 } 	
@@ -83,9 +86,9 @@
 		 * Fill Parameters Panel 
 		 */
 		function fillParametersPanel(params){
-			if($scope.documentParameters.length > 0){
-				for(var i = 0; i < $scope.documentParameters.length; i++){
-					var parameter = $scope.documentParameters[i];
+			if(execProperties.parametersData.documentParameters.length > 0){
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+					var parameter = execProperties.parametersData.documentParameters[i];
 					
 					if(!params[parameter.urlName]) {
 						documentExecuteServices.resetParameter(parameter);

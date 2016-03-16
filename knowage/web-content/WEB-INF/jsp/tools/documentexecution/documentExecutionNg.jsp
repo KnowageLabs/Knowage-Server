@@ -82,7 +82,7 @@ try{
 				<md-button class="toolbar-button-custom" aria-label="Parameters"
 						title="{{::translate.load('sbi.scheduler.parameters')}}"
 						ng-click="toggleParametersPanel()" 
-						ng-disabled="isParameterRolePanelDisabled">
+						ng-disabled="isParameterRolePanelDisabled.status">
 					<i class="fa fa-filter header"></i> 
 				</md-button>
 				
@@ -116,23 +116,23 @@ try{
 			</div>
         </md-toolbar>
         
-        <div  layout="row" flex="grow"  ng-switch on="currentView">
+        <div  layout="row" flex="grow"  ng-switch on="currentView.status">
  		
 	 		<md-content layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
-				<iframe ng-src="{{urlService.documentUrl}}" iframe-onload="iframeOnload()"
+				<iframe ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 					
 				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
 						ng-class="{'md-locked-open': showParametersPanel}" md-is-locked-open="$mdMedia('gt-md')" >
 								
 					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
-						<div layout="row" class="md-toolbar-tools" layout-align="center center">						
+						<div layout="row" layout-align="center center">						
 							<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 									ng-click="clearListParametersForm();">
 								<i class="fa fa-eraser" style="color:white"></i>
 							</md-button>						
 							<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
-									ng-click="getViewpoints();">
+									ng-click="urlViewPointService.getViewpoints();">
 								<i class="fa fa-pencil" style="color:white"></i>
 							</md-button>						
 							<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
@@ -167,7 +167,7 @@ try{
 					</md-list>
 					
 					<!-- execute button -->
-					<md-button class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()"
+					<md-button class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"
 							title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
 							ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
 						{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
@@ -176,7 +176,7 @@ try{
 			</md-content>
 			
 			<div  flex  ng-switch-when="PARAMETERS"> 
-				<div ng-if="parameterView == 'FILTER_SAVED'" layout="row">
+				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
 					<parameter-view-point-handler flex/>
 				</div>
 			</div>		
@@ -199,9 +199,12 @@ try{
 					'isPossibleToComeBackToRolePage' : false
 				},
 				parametersData: {
-					parameterList: [],
-					showParametersPanel: false
-				}
+					documentParameters: []
+				},
+				selectedRole : {name : ""},
+ 				currentView :  {status : "DOCUMENT"},
+ 				parameterView : {status : ""},
+ 				isParameterRolePanelDisabled : {status : false}
 			};
 			return obj;
 		});

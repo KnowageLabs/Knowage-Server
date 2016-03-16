@@ -14,54 +14,49 @@
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlService',
+			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlService) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
 		$scope.roles = execProperties.roles;
-		$scope.selectedRole = {name : ""};
+		$scope.selectedRole = execProperties.selectedRole;
 		$scope.execContextId = "";
 		//$scope.documentUrl="";
 		$scope.showSelectRoles=true;
 		$scope.translate = sbiModule_translate;
-		$scope.documentParameters = [];
+		$scope.documentParameters = execProperties.parametersData.documentParameters;
 		$scope.showParametersPanel = true;
 		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
 		$scope.viewpoints = [];
 		$scope.documentExecuteFactories = documentExecuteFactories;
 		$scope.documentExecuteServices = documentExecuteServices;
-		
-		$scope.urlService = docExecute_urlService;
-		
-		$scope.currentView = 'DOCUMENT';
-		$scope.parameterView='';
-		$scope.gvpCtrlViewpoints = [];
-		
+		$scope.paramRolePanelService = docExecute_paramRolePanelService;
+		$scope.urlViewPointService = docExecute_urlViewPointService;		
+		$scope.currentView = execProperties.currentView;
+		$scope.parameterView=execProperties.parameterView;
+		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
 		$scope.documentSelectedToRanking={};
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
 		$scope.isClick=false;
 		
-		$scope.isParameterRolePanelDisabled = false;
-	
 		$scope.initSelectedRole = function(){
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				if(execProperties.roles.length==1) {
-					$scope.selectedRole.name = execProperties.roles[0];
+					execProperties.selectedRole.name = execProperties.roles[0];
 					$scope.showSelectRoles=false;
-					
 					//loads parameters if role is selected
-					$scope.getParametersForExecution($scope.selectedRole.name);
-					$scope.isParameterRolePanelDisabled = true;
+					$scope.getParametersForExecution(execProperties.selectedRole.name);
+					execProperties.isParameterRolePanelDisabled.status = true;
 				}
-				docExecute_urlService.executionProcesRestV1($scope.selectedRole.name);
+				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name);
 			}
 			
 			console.log("initSelectedRole OUT ");
@@ -177,22 +172,14 @@
 			
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
-			
-		$scope.returnToDocument = function(){
-			$scope.currentView = 'DOCUMENT';
-			$scope.parameterView='';
-			$scope.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled();
-		};
-		
-
-		
+					
 		/*
 		 * EXECUTE PARAMS
 		 * Submit param form
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			docExecute_urlService.executionProcesRestV1($scope.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));			
+			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
@@ -201,33 +188,14 @@
 		};
 		
 		$scope.changeRole = function(role) {
-			// $scope.selectedRole is overwritten by the ng-model attribute
 			console.log("changeRole IN ");
-			//If new selected role is different from the previous one
-			if(role != $scope.selectedRole.name) {  
-				docExecute_urlService.executionProcesRestV1(role);
-//				$scope.executionProcesRestV1(role, JSON.stringify(documentExecuteServices.buildStringParameters($scope.documentParameters)));
+			if(role != execProperties.selectedRole.name) {  
+				docExecute_urlViewPointService.executionProcesRestV1(role);
 				$scope.getParametersForExecution(role);
-//				if($mdSidenav('parametersPanelSideNav').isOpen()) {
-//					$mdSidenav('parametersPanelSideNav').close();
-//					$scope.showParametersPanel = $mdSidenav('parametersPanelSideNav').isOpen();
-//				}
 			}
 			console.log("changeRole OUT ");
 		};
 	
-		$scope.isExecuteParameterDisabled = function() {
-			if($scope.documentParameters.length > 0) {
-				for(var i = 0; i < $scope.documentParameters.length; i++ ) {
-					if($scope.documentParameters[i].mandatory 
-							&& (!$scope.documentParameters[i].parameterValue
-									|| $scope.documentParameters[i].parameterValue == '' )) {
-						return true;
-					}
-				}
-			}
-			return false
-		};
 		
 		/*
 		 * GET PARAMETERS 
@@ -236,6 +204,7 @@
 		 * no exist - get iframe url  
 		 */
 		$scope.getParametersForExecution = function(role) {		
+			
 			var params = 
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role;
@@ -249,10 +218,9 @@
 					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
 						$mdSidenav('parametersPanelSideNav').open();
 					}
-					$scope.documentParameters = response.filterStatus;
-					$scope.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled();
-					//$scope.getViewPoints(role, execContextId); 
-					//$scope.getParameterValues();
+					//execProperties.parametersData.documentParameters = response.filterStatus;
+					angular.copy(response.filterStatus, execProperties.parametersData.documentParameters);
+					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
 					$scope.showParametersPanel = false;
 					if($mdSidenav('parametersPanelSideNav').isOpen()) {
@@ -278,12 +246,7 @@
 		};		
 
 		$scope.isParameterPanelDisabled = function(){
-			return (!$scope.documentParameters || $scope.documentParameters.length == 0);
-		};
-		
-		$scope.checkParameterRolePanelDisabled = function(){
-			return ((!$scope.documentParameters || $scope.documentParameters.length == 0)
-					&& (execProperties.roles.length==1));
+			return (!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0);
 		};
 		
 		$scope.executeDocument = function(){
@@ -301,9 +264,9 @@
 		};
 		
 		$scope.clearListParametersForm = function(){
-			if($scope.documentParameters.length > 0){
-				for(var i = 0; i < $scope.documentParameters.length; i++){
-					var parameter = $scope.documentParameters[i];
+			if(execProperties.parametersData.documentParameters.length > 0){
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+					var parameter = execProperties.parametersData.documentParameters[i];
 					documentExecuteServices.resetParameter(parameter);
 				}
 			}
@@ -325,8 +288,8 @@
 					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
-						vpctl.newViewpoint.ROLE = $scope.selectedRole.name;
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters($scope.documentParameters);
+						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
@@ -352,27 +315,7 @@
 				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
-		
-		/*
-		 * GET Viewpoint document execution
-		 */
-		$scope.getViewpoints = function(){
-			$scope.currentView='PARAMETERS';
-			$scope.parameterView='FILTER_SAVED';
-			$scope.isParameterRolePanelDisabled=true;
-			//gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
-			sbiModule_restServices.get(
-					"1.0/documentviewpoint", 
-					"getViewpoints",
-					"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ $scope.selectedRole.name)
-			.success(function(data, status, headers, config) {	
-				console.log('data viewpoints '  ,  data.viewpoints);
-				$scope.gvpCtrlViewpoints = data.viewpoints;
-			})
-			.error(function(data, status, headers, config) {});																	
-		};
-		
-		
+				
 		
 		$scope.openInfoMetadata = function(){
 		    $mdDialog.show({

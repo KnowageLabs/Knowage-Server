@@ -81,7 +81,7 @@
 })();
 
 
-//vik
+
 (function() {
 	angular.module('documentExecutionModule')
 	.service('docExecute_pageviewService', function() {
@@ -99,12 +99,14 @@
 
 (function() {
 	angular.module('documentExecutionModule')
-	.service('docExecute_urlService', function(execProperties,
+	.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
 			) {
 		
 		var serviceScope = this;	
+		
 		serviceScope.documentUrl = '';
+		
 		this.executionProcesRestV1 = function(role, paramsStr) {			
 			if(typeof paramsStr === 'undefined'){
 				paramsStr='{}';
@@ -121,8 +123,7 @@
 						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
 						var alertDialog = $mdDialog.alert()
 						.title(sbiModule_translate.load("sbi.generic.warning"))
-						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));
-						
+						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));						
 						$mdDialog.show( alertDialog );
 					}else{
 						if(data['errors'].length > 0 ){
@@ -145,26 +146,67 @@
 					console.log("TargetLayer non Ottenuto " + status);
 				});
 		};
+		
+		
+		
+		
+		this.getViewpoints = function(){
+			
+			execProperties.currentView.status = 'PARAMETERS';
+			execProperties.parameterView.status='FILTER_SAVED';
+			execProperties.isParameterRolePanelDisabled.status=true;
+
+			//gvpctl.headerTitle = sbiModule_translate.load("sbi.execution.viewpoints.title");
+			sbiModule_restServices.get(
+					"1.0/documentviewpoint", 
+					"getViewpoints",
+					"label=" + execProperties.executionInstance.OBJECT_LABEL + "&role="+ execProperties.selectedRole.name)
+			.success(function(data, status, headers, config) {	
+				console.log('data viewpoints '  ,  data.viewpoints);
+				serviceScope.gvpCtrlViewpoints = data.viewpoints;
+			})
+			.error(function(data, status, headers, config) {});																	
+		};
+		
+		
+		
+		
+		
+		
+		
 	});
 })();
 
 
 (function() {
 	angular.module('documentExecutionModule')
-	.service('docExecute_filtersSavedService', function(docExecute_pageviewService) {
+	.service('docExecute_paramRolePanelService', function(execProperties) {
 				
 		
-//		this.isParameterRolePanelDisabled= false;
-//		this.parameterView = '';
-//		
-//		this.returnToDocument = function(){
-//			docExecute_pageviewService.setCurrentView('DOCUMENT');
-//			this.parameterView='';
-//			this.isParameterRolePanelDisabled = $scope.checkParameterRolePanelDisabled(); 
-//		}
-//		
+		this.checkParameterRolePanelDisabled = function(){
+			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
+					&& (execProperties.roles.length==1));
+		};
+		
+		this.returnToDocument = function(){
+			execProperties.currentView.status = 'DOCUMENT';
+			execProperties.parameterView.status='';
+			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
+		};
 		
 		
+		this.isExecuteParameterDisabled = function() {
+			if(execProperties.parametersData.documentParameters.length > 0) {
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++ ) {
+					if(execProperties.parametersData.documentParameters[i].mandatory 
+							&& (!execProperties.parametersData.documentParameters[i].parameterValue
+									|| execProperties.parametersData.documentParameters[i].parameterValue == '' )) {
+						return true;
+					}
+				}
+			}
+			return false
+		};
 		
 		
 		
