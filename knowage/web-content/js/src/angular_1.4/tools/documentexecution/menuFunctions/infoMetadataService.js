@@ -10,8 +10,6 @@
 		var lblShortMeta = sbiModule_translate.load('sbi.execution.metadata.shorttextmetadata');
 		var lblLongMeta = sbiModule_translate.load('sbi.execution.metadata.longtextmetadata');
 		
-		console.log('infoMetadataService inizio');
-		
 		return {
 		openInfoMetadata : function(){
 		    $mdDialog.show({

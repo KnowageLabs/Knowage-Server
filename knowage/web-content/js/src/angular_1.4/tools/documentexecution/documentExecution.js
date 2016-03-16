@@ -227,7 +227,16 @@
 				}
 			}
 		};
-						
+		
+		$scope.printDocument = function() {
+			var frame = window.frames["documentFrame"];
+			if(frame.print){
+				frame.print();
+			}else if(frame.contentWindow){
+				frame.contentWindow.print();
+			}
+		} ;
+		
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	

@@ -94,7 +94,7 @@ try{
 					    	<span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
 						    <md-menu-item class="md-indent">
 			                	<md-icon class="fa fa-print "></md-icon>
-				                <md-button ng-click="alert('TODO')">
+				                <md-button ng-click="printDocument()">
 				                	{{translate.load("sbi.execution.executionpage.toolbar.print")}}
 				                </md-button>
 				            </md-menu-item>
@@ -149,8 +149,8 @@ try{
         
         <div  layout="row" flex="grow"  ng-switch on="currentView.status">
  		
-	 		<md-content layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
-				<iframe ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
+	 		<md-content id="documentFrameContainer" layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
+				<iframe id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 					
 				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
