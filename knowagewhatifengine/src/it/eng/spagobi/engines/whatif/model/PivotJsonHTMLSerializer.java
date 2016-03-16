@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
+import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -25,6 +37,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.jdbc.util.BasicFormatterImpl;
@@ -58,16 +72,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
-import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonHTMLSerializer.class);
@@ -87,6 +91,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String POSITION = "position";
 	private static final String AXIS = "axis";
 	private static final String SLICERS = "slicers";
+	private static final String FORMULAS = "formulas";
 
 	private final OlapConnection connection;
 	private final ModelConfig modelConfig;
@@ -226,9 +231,14 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 			jgen.writeStartObject();
 			jgen.writeStringField(TABLE, table);
+			/***********************************************/
+			serializeFunctions(FORMULAS, jgen);
+			/***********************************************/
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS);
 			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS);
-
+			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
+			// serializeFilters(FILTERS, jgen, hierarchy, (PivotModelImpl)
+			// value);
 			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
@@ -324,34 +334,64 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		jgen.writeEndArray();
 	}
 
-	/*
-	 * private void serializeFilters(String field, JsonGenerator jgen,
-	 * List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
-	 * JsonGenerationException, IOException {
-	 *
-	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 *
-	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 *
-	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
-	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
-	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
-	 * HashMap<String, Object>(); hierarchyObject.put(NAME,
-	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
-	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
-	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 *
-	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
-	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
-	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
-	 * j++) { Map<String, String> slicer = new HashMap<String, String>();
-	 * slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName()); slicer.put(NAME,
-	 * slicers.get(j).getName()); slicerMap.add(slicer); }
-	 * hierarchyObject.put(SLICERS, slicerMap); }
-	 * jgen.writeObject(hierarchyObject);
-	 *
-	 * } } jgen.writeEndArray(); }
-	 */
+	private void serializeFunctions(String field, JsonGenerator jgen) throws JsonProcessingException, IOException, JSONException, JAXBException {
+
+		List<MDXFormula> formulas = MDXFormulaHandler.getFormulas();
+		jgen.writeArrayFieldStart(field);
+		for (MDXFormula formula : formulas) {
+
+			Map<String, Object> formulaObject = new HashMap<String, Object>();
+
+			formulaObject.put("name", formula.getName());
+			formulaObject.put("syntax", formula.getSyntax());
+			formulaObject.put("argument", formula.getArguments());
+			formulaObject.put("description", formula.getDescription());
+			formulaObject.put("output", formula.getOutput());
+			formulaObject.put("type", formula.getType());
+
+			jgen.writeObject(formulaObject);
+		}
+
+		jgen.writeEndArray();
+
+	}
+
+	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
+			JsonGenerationException, IOException {
+
+		QueryAdapter qa = new QueryAdapter(model);
+		qa.initialize();
+
+		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+
+		jgen.writeArrayFieldStart(field);
+		if (hierarchies != null) {
+			for (int i = 0; i < hierarchies.size(); i++) {
+				Hierarchy hierarchy = hierarchies.get(i);
+				Map<String, Object> hierarchyObject = new HashMap<String, Object>();
+				hierarchyObject.put(NAME, hierarchy.getName());
+				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
+				hierarchyObject.put(POSITION, "" + i);
+				hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
+
+				List<Member> slicers = ph.getSlicer(hierarchy);
+				if (slicers != null && slicers.size() > 0) {
+					List<Map<String, String>> slicerMap = new ArrayList<Map<String, String>>();
+					for (int j = 0; j < slicers.size(); j++) {
+						Map<String, String> slicer = new HashMap<String, String>();
+						slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
+						slicer.put(NAME, slicers.get(j).getName());
+						slicerMap.add(slicer);
+					}
+					hierarchyObject.put(SLICERS, slicerMap);
+				}
+				jgen.writeObject(hierarchyObject);
+
+			}
+		}
+		jgen.writeEndArray();
+	}
+
 	public String formatQueryString(String queryString) {
 		String formattedQuery;
 		BasicFormatterImpl fromatter;
