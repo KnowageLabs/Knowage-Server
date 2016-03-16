@@ -227,51 +227,7 @@
 				}
 			}
 		};
-		
-		/*
-		 * Create new viewpoint document execution
-		 */
-		$scope.createNewViewpoint = function(){
-			$mdDialog.show({
-				scope : $scope,
-				preserveScope : true,
-				
-				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
-					
-				controllerAs : 'vpCtrl',
-				controller : function($mdDialog) {
-					var vpctl = this;
-					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
-					vpctl.submit = function() {
-						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
-						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
-						sbiModule_restServices.post(
-								"1.0/documentviewpoint",
-								"addViewpoint", vpctl.newViewpoint)
-						   .success(function(data, status, headers, config) {
-							if(data.errors && data.errors.length > 0 ){
-								documentExecuteServices.showToast(data.errors[0].message);
-							}else{
-								$mdDialog.hide();
-								documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
-							}							
-						})
-						.error(function(data, status, headers, config) {
-							documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
-						});
-					};
-					
-					vpctl.annulla = function($event) {
-						$mdDialog.hide();
-						$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
-					};
-				},
-
-				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
-			});
-		};
-				
+						
 		console.log("documentExecutionControllerFn OUT ");
 	};
 	

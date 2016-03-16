@@ -13,9 +13,6 @@
 	var documentParamenterViewPointCtrl = function($scope, sbiModule_config, sbiModule_translate, documentExecuteServices, $mdDialog
 			,sbiModule_restServices,docExecute_urlViewPointService,execProperties,docExecute_paramRolePanelService) {
 						
-	
-		
-		
 		
 		$scope.gvpCtrlVpSpeedMenuOpt = 
 			[ 			 		               	

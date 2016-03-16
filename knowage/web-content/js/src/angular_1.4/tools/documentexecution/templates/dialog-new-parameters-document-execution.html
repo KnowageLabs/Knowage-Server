@@ -10,7 +10,8 @@
 			<div layout="row" layout-wrap>
 				<div flex="100">
 					<md-input-container> <!-- Use floating label instead of placeholder -->
-						<label>{{::translate.load("sbi.execution.viewpoints.name");}}</label> 
+<!-- 						<label>{{::translate.load("sbi.execution.viewpoints.name");}}</label>  -->
+						<label>{{::vpCtrl.name}}</label> 
 						<input ng-model="vpCtrl.newViewpoint.NAME" type="text" md-maxlength="40" maxlength="40" >
 					</md-input-container>
 				</div>
@@ -19,7 +20,8 @@
 			<div layout="row" layout-wrap>
 				<div flex="100">
 					<md-input-container> <!-- Use floating label instead of placeholder -->
-						<label>{{translate.load("sbi.execution.viewpoints.description");}}</label>
+<!-- 						<label>{{translate.load("sbi.execution.viewpoints.description");}}</label> -->
+						<label>{{::vpCtrl.description}}</label>
 						<input ng-model="vpCtrl.newViewpoint.DESCRIPTION" type="text" md-maxlength="160" maxlength="160">
 					</md-input-container>
 				</div>
@@ -28,10 +30,16 @@
 			<div layout="row" layout-wrap>
 				<div flex="100">
 					<md-input-container  >
-						<label>{{translate.load("sbi.execution.subobjects.visibility")}}</label>
+<!-- 						<label>{{translate.load("sbi.execution.subobjects.visibility")}}</label> -->
+						
+						<label>{{::vpCtrl.visibility}}</label>
 						<md-select ng-model="vpCtrl.newViewpoint.SCOPE"  >
-							<md-option value="PUBLIC">{{::translate.load("sbi.execution.subobjects.visibility.public");}}</md-option>
-					        <md-option value="PRIVATE">{{::translate.load("sbi.execution.subobjects.visibility.private");}}</md-option>
+<!-- 							<md-option value="PUBLIC">{{::translate.load("sbi.execution.subobjects.visibility.public");}}</md-option> -->
+<!-- 					        <md-option value="PRIVATE">{{::translate.load("sbi.execution.subobjects.visibility.private");}}</md-option> -->
+					        
+					        <md-option value="PUBLIC">{{::vpCtrl.publicOpt}}</md-option>
+					        <md-option value="PRIVATE">{{::vpCtrl.privateOpt}}</md-option>
+					        
 						</md-select>
 					</md-input-container>
 				</div>
@@ -41,11 +49,13 @@
 	  	<div class="md-actions" layout="row">
 	   
 		    <md-button ng-click="vpCtrl.annulla()" class="md-primary">
-		  		{{::translate.load("sbi.ds.wizard.cancel");}} 
+<!-- 		  		{{::translate.load("sbi.ds.wizard.cancel");}}  -->
+		  		{{::vpCtrl.cancelOpt}} 
 		    </md-button>
 		  
 		    <md-button ng-click="vpCtrl.submit()" class="md-primary" ng-disabled="!vpCtrl.newViewpoint.NAME || !vpCtrl.newViewpoint.DESCRIPTION || !vpCtrl.newViewpoint.SCOPE"  >
-		    	{{::translate.load("sbi.generic.update");}}
+<!-- 		    	{{::translate.load("sbi.generic.update");}} -->
+		    	{{::vpCtrl.submitOpt}} 
 		    </md-button>
 	 	 </div>
 	</form>

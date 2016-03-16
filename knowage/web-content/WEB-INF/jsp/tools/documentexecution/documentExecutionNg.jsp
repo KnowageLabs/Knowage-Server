@@ -167,7 +167,7 @@ try{
 								<i class="fa fa-pencil" style="color:white"></i>
 							</md-button>						
 							<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-									ng-click="createNewViewpoint();">
+									ng-click="urlViewPointService.createNewViewpoint();">
 								<i class="fa fa-floppy-o" style="color:white"></i>
 							</md-button>
 						</div>

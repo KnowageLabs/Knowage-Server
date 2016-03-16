@@ -101,7 +101,7 @@
 	angular.module('documentExecutionModule')
 	.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
-			,$mdSidenav,docExecute_paramRolePanelService) {
+			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories) {
 		
 		var serviceScope = this;	
 		
@@ -195,7 +195,51 @@
 		};
 		
 		
-		
+		this.createNewViewpoint = function(){
+			$mdDialog.show({
+				//scope : serviceScope,
+				preserveScope : true,				
+				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
+				controllerAs : 'vpCtrl',
+				controller : function($mdDialog) {
+					var vpctl = this;
+					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
+					vpctl.name = sbiModule_translate.load("sbi.execution.viewpoints.name");
+					vpctl.description = sbiModule_translate.load("sbi.execution.viewpoints.description");
+					vpctl.visibility = sbiModule_translate.load("sbi.execution.subobjects.visibility");
+					vpctl.publicOpt = sbiModule_translate.load("sbi.execution.subobjects.visibility.public");
+					vpctl.privateOpt = sbiModule_translate.load("sbi.execution.subobjects.visibility.private");
+					vpctl.cancelOpt = sbiModule_translate.load("sbi.ds.wizard.cancel");
+					vpctl.submitOpt = sbiModule_translate.load("sbi.generic.update");					
+					vpctl.submit = function() {
+						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						sbiModule_restServices.post(
+								"1.0/documentviewpoint",
+								"addViewpoint", vpctl.newViewpoint)
+						   .success(function(data, status, headers, config) {
+							if(data.errors && data.errors.length > 0 ){
+								documentExecuteServices.showToast(data.errors[0].message);
+							}else{
+								$mdDialog.hide();
+								documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+							}							
+						})
+						.error(function(data, status, headers, config) {
+							documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
+						});
+					};
+					
+					vpctl.annulla = function($event) {
+						$mdDialog.hide();
+						serviceScope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
+					};
+				},
+
+				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
+			});
+		};
 		
 		
 	});
