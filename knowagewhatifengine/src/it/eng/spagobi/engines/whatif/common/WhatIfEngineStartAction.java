@@ -68,7 +68,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
 
-	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
+	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
 	@GET
@@ -145,8 +145,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
-						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -166,8 +166,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
-						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
