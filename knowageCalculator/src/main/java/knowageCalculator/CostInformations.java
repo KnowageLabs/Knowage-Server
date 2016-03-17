@@ -246,11 +246,11 @@ public class CostInformations {
 						double price = (basicPriceOneUser * deltaWeightsTot / referenceProductGroupWeight) * cat;
 						if (cat == 300) {
 							silverRow.put("Unlimited_max_number_of_clients_price", price);
-							goldRow.put("Unlimited_max_number_of_clients_price", price * increasePercentageForGoldSubscription);
+							goldRow.put("Unlimited_max_number_of_clients_price", price * (1 + increasePercentageForGoldSubscription));
 
 						} else {
 							silverRow.put("max_" + cat + "_clients_price", price);
-							goldRow.put("max_" + cat + "_clients_price", price * increasePercentageForGoldSubscription);
+							goldRow.put("max_" + cat + "_clients_price", price * (1 + increasePercentageForGoldSubscription));
 						}
 					}
 					silverTable.put(silverRow);
