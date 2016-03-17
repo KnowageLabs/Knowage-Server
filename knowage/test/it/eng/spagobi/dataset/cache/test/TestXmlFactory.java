@@ -22,7 +22,6 @@ import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,15 +37,14 @@ import org.json.JSONObject;
  */
 public class TestXmlFactory {
 
-	private static JSONObject getJsonObjectFromXml(String xmlFilePath) throws Exception {
-		String xmlFileAbsolutePath = new File(xmlFilePath).getAbsolutePath();
+	private static JSONObject getJsonObjectFromXml(String xmlFileAbsolutePath) throws Exception {
 		String xmlString = new String(Files.readAllBytes(Paths.get(xmlFileAbsolutePath)), "UTF-8");
 		String jsonString = Xml.xml2json(xmlString);
 		JSONObject jsonObject = new JSONObject(jsonString);
 		return jsonObject;
 	}
 
-	public static DataSource createDataSource(String xmlFilePath, boolean isWritingDatasource) throws Exception {
+	public static DataSource createDataSource(String xmlFileAbsolutePath, boolean isWritingDatasource) throws Exception {
 		String dataset;
 		boolean isReadOnly;
 		boolean isWriteDefault;
@@ -60,7 +58,7 @@ public class TestXmlFactory {
 			isWriteDefault = false;
 		}
 
-		JSONObject jsonObject = getJsonObjectFromXml(xmlFilePath);
+		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONObject jsonDataset = jsonObject.getJSONObject("test").getJSONObject(dataset);
 		String label = jsonDataset.getString("text");
 		String url = jsonDataset.getString("url");
@@ -73,8 +71,8 @@ public class TestXmlFactory {
 		return TestDataSourceFactory.createDataSource(label, url, user, password, driver, hibDialectClass, hibDialectName, isReadOnly, isWriteDefault);
 	}
 
-	public static SQLDBCacheConfiguration createCacheConfiguration(String xmlFilePath, DataSource dataSourceWriting) throws Exception {
-		JSONObject jsonObject = getJsonObjectFromXml(xmlFilePath);
+	public static SQLDBCacheConfiguration createCacheConfiguration(String xmlFileAbsolutePath, DataSource dataSourceWriting) throws Exception {
+		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONObject jsonCacheConfiguration = jsonObject.getJSONObject("test").getJSONObject("cacheConfiguration");
 		String tableNamePrefix = jsonCacheConfiguration.getString("tableNamePrefix");
 		BigDecimal size = BigDecimal.valueOf(jsonCacheConfiguration.getLong("spaceAvailable"));
@@ -94,23 +92,19 @@ public class TestXmlFactory {
 		return cacheConfiguration;
 	}
 
-	public static String getTableName(String xmlFilePath) throws Exception {
-		JSONObject jsonObject = getJsonObjectFromXml(xmlFilePath);
+	public static String getTableName(String xmlFileAbsolutePath) throws Exception {
+		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONObject jsonTable = jsonObject.getJSONObject("test").getJSONObject("table");
 		String tableName = jsonTable.getString("name");
 		return tableName;
 	}
 
-	public static Map<String, String> getReadingTypes(String xmlFilePath) throws Exception {
-		return getTypes(xmlFilePath, "readingType");
+	public static Map<String, String> getWritingTypes(String xmlFileAbsolutePath) throws Exception {
+		return getTypes(xmlFileAbsolutePath, "writingType");
 	}
 
-	public static Map<String, String> getWritingTypes(String xmlFilePath) throws Exception {
-		return getTypes(xmlFilePath, "writingType");
-	}
-
-	private static Map<String, String> getTypes(String xmlFilePath, String type) throws Exception {
-		JSONObject jsonObject = getJsonObjectFromXml(xmlFilePath);
+	private static Map<String, String> getTypes(String xmlFileAbsolutePath, String type) throws Exception {
+		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONArray fields = jsonObject.getJSONObject("test").getJSONObject("table").getJSONArray("field");
 
 		Map<String, String> map = new HashMap<String, String>();

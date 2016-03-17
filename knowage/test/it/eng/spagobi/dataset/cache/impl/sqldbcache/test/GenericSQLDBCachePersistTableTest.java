@@ -25,25 +25,62 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
  *
  */
-public class GenericSQLDBCacheTest extends AbstractCacheTest {
+@RunWith(value = Parameterized.class)
+public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 
-	static private final String XML_FILE_PATH = "test/resources/dataset/files/GenericSQLDBCacheTest.xml";
+	static private final String XML_FOLDER_PATH = "test/resources/dataset/files";
+	static private Logger logger = Logger.getLogger(GenericSQLDBCachePersistTableTest.class);
 
-	static private Logger logger = Logger.getLogger(GenericSQLDBCacheTest.class);
+	private String xmlFileAbsolutePath;
+
+	public GenericSQLDBCachePersistTableTest(String xmlFileAbsolutePath) {
+		super();
+		this.xmlFileAbsolutePath = xmlFileAbsolutePath;
+		try {
+			setUp();
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Parameters
+	public static Collection data() {
+		File xmlFolder = new File(XML_FOLDER_PATH);
+		File[] xmlFiles = xmlFolder.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith("CachePersistTableTest.xml".toLowerCase());
+			}
+		});
+		Object[][] xmlFileAbsolutePaths = new Object[xmlFiles.length][1];
+		for (int i = 0; i < xmlFiles.length; i++) {
+			xmlFileAbsolutePaths[i][0] = xmlFiles[i].getAbsolutePath();
+		}
+		return Arrays.asList(xmlFileAbsolutePaths);
+	}
 
 	@Override
 	public void createDataSources() {
 		try {
-			dataSourceReading = TestXmlFactory.createDataSource(XML_FILE_PATH, false);
-			dataSourceWriting = TestXmlFactory.createDataSource(XML_FILE_PATH, true);
+			dataSourceReading = TestXmlFactory.createDataSource(xmlFileAbsolutePath, false);
+			dataSourceWriting = TestXmlFactory.createDataSource(xmlFileAbsolutePath, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
@@ -53,7 +90,7 @@ public class GenericSQLDBCacheTest extends AbstractCacheTest {
 	@Override
 	public JDBCDataSet createJDBCDataset() {
 		try {
-			String tableName = TestXmlFactory.getTableName(XML_FILE_PATH);
+			String tableName = TestXmlFactory.getTableName(xmlFileAbsolutePath);
 			JDBCDataSet jdbcDataSet = super.createJDBCDataset();
 			jdbcDataSet.setQuery("select * from " + tableName);
 			return jdbcDataSet;
@@ -67,7 +104,7 @@ public class GenericSQLDBCacheTest extends AbstractCacheTest {
 	@Override
 	protected SQLDBCacheConfiguration getDefaultCacheConfiguration() {
 		try {
-			return TestXmlFactory.createCacheConfiguration(XML_FILE_PATH, dataSourceWriting);
+			return TestXmlFactory.createCacheConfiguration(xmlFileAbsolutePath, dataSourceWriting);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
@@ -75,10 +112,11 @@ public class GenericSQLDBCacheTest extends AbstractCacheTest {
 		}
 	}
 
+	@Test
 	public void testJDBCDataSetFieldTypes() {
 		Map<String, String> writingTypes;
 		try {
-			writingTypes = TestXmlFactory.getWritingTypes(XML_FILE_PATH);
+			writingTypes = TestXmlFactory.getWritingTypes(xmlFileAbsolutePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
