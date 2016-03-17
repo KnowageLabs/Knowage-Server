@@ -71,6 +71,7 @@
 	</target>
 
 	<target name="create.knowage.utils.jar" >
+		<ant dir="../jdbccore/ant" />
 		<ant dir="../knowageutilsjson/ant" />
 		<ant dir="../knowageutils/ant" />
 	</target>
@@ -537,6 +538,8 @@
 		<delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
 		<delete dir="../../../SpagoBISocialAnalysis/dist"/>
 		-->
+		<delete dir="../../../jdbccore/ant-build"/>
+		<delete dir="../../../jdbccore/dist"/>
 
 	</target>
 
