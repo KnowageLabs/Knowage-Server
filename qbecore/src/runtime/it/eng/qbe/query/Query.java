@@ -913,7 +913,23 @@ public class Query implements IQuery {
 			}
 		}
 
-		int counterOfOrderBy = 0;
+		/**
+		 * allSeriesForOrdering - the string that will contain all series through which the table should be firstly ordered.
+		 *
+		 * allCategoriesForOrdering - the string that will be used for the ORDER BY clause of the query that we are going to construct. The ordering by
+		 * potential column and the category for it comes after the ordering by the series item(s).
+		 *
+		 * keepCategoryForOrdering - the part of the ORDER BY clause that is associated to the first category of the document.
+		 *
+		 * columnAndCategoryAreTheSame - indicator if the column that is set as an ordering one for the first category is of the same value (name) as the
+		 * category. In that case we will skip duplicating of columns of the table that the query should specify in the SELECT, GROUP BY and ORDER BY clause.
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		ArrayList<String> allCategoriesForOrdering = new ArrayList<String>();
+		ArrayList<String> allSeriesForOrdering = new ArrayList<String>();
+		String keepCategoryForOrdering = "";
+		boolean columnAndCategoryAreTheSame = false;
 
 		/**
 		 * This part is added since we need to take care of ordering of the serie and/or categories of the one is provided (specified) for them.
@@ -944,44 +960,114 @@ public class Query implements IQuery {
 			 * columns).
 			 */
 			if (orderColumn != null) {
-				if (orderColumn != "" && !orderColumn.equals(columnName)) {
-					if (counterOfOrderBy > 0) {
-						orderByClause += ", ";
-					}
+				/**
+				 * If the order column is not an empty string value (is defined).
+				 */
+				if (!orderColumn.equals("")) {
+					/**
+					 * If the ordering column is the same as the category for which is set.
+					 */
+					if (orderColumn.equals(columnName)) {
+						columnAndCategoryAreTheSame = true;
 
-					if (orderType != "" && orderType != null) {
-						orderByClause += simpleField.getFunction().apply(orderColumn) + " " + orderType + ", ";
-					}
-
-					orderByClause += simpleField.getFunction().apply(columnName) + " ";
-				} else {
-					if (counterOfOrderBy > 0) {
-						orderByClause += ", ";
-					}
-
-					orderByClause += simpleField.getFunction().apply(columnName) + " ";
-
-					if (orderType != "" && orderType != null) {
-						orderByClause += " " + orderType + " ";
+						if (orderType.equals(""))
+							allCategoriesForOrdering.add(columnName + " ASC");
+						else
+							allCategoriesForOrdering.add(columnName + " " + orderType);
+					} else {
+						if (orderType.equals(""))
+							allCategoriesForOrdering.add(orderColumn + " ASC");
+						else
+							allCategoriesForOrdering.add(orderColumn + " " + orderType);
 					}
 				}
 
-				counterOfOrderBy += 1;
+				/**
+				 * If the order column is an empty string, that means that we do not have anything to which we will append the ordering by the current category
+				 * (there is not ordering column). For that reason, apply the ordering for the current category.
+				 */
+				keepCategoryForOrdering = columnName + " ASC";
+
+				/*------ Previous implementation -------*/
+				// if (orderColumn!= "" && !orderColumn.equals(columnName))
+				// {
+				// if (orderType != "" && orderType != null)
+				// {
+				// allCategoriesForOrdering.add(simpleField.getFunction().apply(orderColumn) + " " + orderType);
+				// }
+				// else
+				// {
+				// /**
+				// * If the user specifies only the column through which if wants to order the table
+				// * (it does not specify the ordering type of it - ASC or DESC), use the default one,
+				// * i.e. the ascending (ASC) ordering type for that column.
+				// */
+				// allCategoriesForOrdering.add(simpleField.getFunction().apply(orderColumn) + " ASC");
+				// }
+				//
+				// allCategoriesForOrdering.add(columnName + " ASC");
+				// }
+				// else
+				// {
+				// /**
+				// * Set the ordering type of the first category of the chart as ascending
+				// * since this is the default one when drilling down.
+				// */
+				// String orderTemp = "";
+				//
+				// if (orderColumn.equals(""))
+				// orderTemp = simpleField.getFunction().apply(columnName) + " ASC";
+				// else if (!orderType.equals(""))
+				// orderTemp = simpleField.getFunction().apply(columnName) + " " + orderType;
+				//
+				// allCategoriesForOrdering.add(orderTemp);
+				// }
+
 			}
 			/**
-			 * If the ordering column is not specified for the item that is inspected at this moment (the series item). This part is associated to the series.
+			 * If the ordering column is not specified for the item that is inspected at this moment (the series item). This part is associated to the series
+			 * and their ordering type.
 			 */
 			else if (orderType != "" && orderType != null) {
-
-				if (counterOfOrderBy > 0 && this.getSelectFields(true).indexOf(orderBy) != this.getSelectFields(true).size() - 1) {
-					orderByClause += ", ";
-				}
-
-				orderByClause += simpleField.getFunction().apply(columnName) + " " + orderBy.getOrderType();
-
-				counterOfOrderBy += 1;
+				allSeriesForOrdering.add(simpleField.getFunction().apply(columnName) + " " + orderBy.getOrderType());
 			}
+		}
 
+		/**
+		 * If 'keepCategoryForOrdering' is an empty string we are dealing with drilling down, so in that case we do not need nor do not have a record about the
+		 * category that is set as the first category for the chart and this one should not be put at the end of the query.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.equals(""))
+			allCategoriesForOrdering.add(keepCategoryForOrdering);
+
+		/**
+		 * The ORDER BY clause should firstly contain the ordering by series and afterwards the ordering by category and its potentially associated column
+		 * (attribute).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+
+		if (allSeriesForOrdering.size() > 0) {
+			for (int i = 0; i < allSeriesForOrdering.size(); i++) {
+				if (i < allSeriesForOrdering.size() - 1)
+					orderByClause = orderByClause + allSeriesForOrdering.get(i) + ", ";
+				else
+					orderByClause = orderByClause + allSeriesForOrdering.get(i);
+			}
+		}
+
+		if (!orderByClause.equals(orderByClauseEmpty) && allCategoriesForOrdering.size() > 0)
+			orderByClause = orderByClause + ", ";
+
+		if (allCategoriesForOrdering.size() > 0) {
+			for (int i = 0; i < allCategoriesForOrdering.size(); i++) {
+				if (i < allCategoriesForOrdering.size() - 1)
+					orderByClause = orderByClause + allCategoriesForOrdering.get(i) + ", ";
+				else
+					orderByClause = orderByClause + allCategoriesForOrdering.get(i);
+			}
 		}
 
 		String queryFinal = "";

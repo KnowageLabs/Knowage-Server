@@ -947,7 +947,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					//Sbi.trace("[StoreManager.getStore]: there is already a store for id [" + storeId +"]");
 					store = registeredStore.aggregatedVersions[i];
 				}
-			}
+			}			
+			
 		} else {
 			//Sbi.trace("[StoreManager.getStore]: There is no store registered with id [" + storeId + "]");
 		}
@@ -956,6 +957,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			//Sbi.trace("[StoreManager.getStore]: no store found with id [" + storeId + "] and specified aggregation level");
 		}
 
+		
+		
 		Sbi.trace("[StoreManager.getStore]: OUT");
 
 		return store;
@@ -1117,6 +1120,22 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				if(agg1.categories[i].nature != agg2.categories[i].nature) {
 //					Sbi.trace("[StoreManager.isSameAggregationLevel]: aggregations are not the same (category[" + i + "] are not equals. " +
 //							"[nature] is different [" + agg1.categories[i].nature + ", " + agg2.categories[i].nature + "])");
+					return false;
+				}
+				
+				/**
+				 * Set the checking for the category's order column and associated order type
+				 * for the first category in order to determine if they are defined and not
+				 * the same value in two aggregations.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if(Sbi.isValorized(agg1.categories[i].orderColumn) && Sbi.isValorized(agg2.categories[i].orderColumn) 
+						&& (agg1.categories[i].orderColumn != agg2.categories[i].orderColumn)){
+					return false;
+				}
+				
+				if(Sbi.isValorized(agg1.categories[i].orderType) && Sbi.isValorized(agg2.categories[i].orderType) 
+						&& (agg1.categories[i].orderType != agg2.categories[i].orderType)){
 					return false;
 				}
 			}

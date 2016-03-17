@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -113,7 +113,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 
@@ -124,7 +124,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 
@@ -135,7 +135,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 
@@ -146,7 +146,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 
@@ -167,7 +167,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 
@@ -204,7 +204,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 
@@ -256,7 +256,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 
@@ -434,37 +434,148 @@ public class SQLDBCache implements ICache {
 				SelectBuilder sqlBuilder = new SelectBuilder();
 				sqlBuilder.from(tableName);
 
+				/**
+				 * orderColumn - the column of the table through which the table will be ordered for the first category.
+				 *
+				 * appendColumnForCategories - the string that will be used for the ORDER BY clause of the query that we are going to construct. The ordering by
+				 * potential column and the category for it comes after the ordering by the series item(s).
+				 *
+				 * arrayCategoriesForOrdering - an array list that contains category, its potential ordering column and their ordering type attached to them.
+				 * When the clause for the order by is going to be created, we will take all items from this array list in order to create a final order by SQL
+				 * string.
+				 *
+				 * keepCategoryForOrdering - the part of the ORDER BY clause that is associated to the first category of the document.
+				 *
+				 * columnAndCategoryAreTheSame - indicator if the column that is set as an ordering one for the first category is of the same value (name) as
+				 * the category. In that case we will skip duplicating of columns of the table that the query should specify in the SELECT, GROUP BY and ORDER
+				 * BY clause.
+				 *
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				String orderColumn = "";
+				String appendColumnForCategories = "";
+				ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
+				String keepCategoryForOrdering = "";
+				boolean columnAndCategoryAreTheSame = false;
+
 				// Columns to SELECT
 				if (projections != null) {
+
 					for (ProjectionCriteria projection : projections) {
+
 						String aggregateFunction = projection.getAggregateFunction();
 
 						Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
 						String columnName = projection.getColumnName();
+
 						if (datasetAlias != null) {
 							columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
 						}
+
 						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 
+						/**
+						 * Aggregation function is possible only for series, hence this is the part for handling them and their ordering criteria for the final
+						 * query.
+						 * 
+						 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
 						if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+
 							String aliasName = projection.getAliasName();
 							aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+
 							if (aliasName != null && !aliasName.isEmpty()) {
 
 								// https://production.eng.it/jira/browse/KNOWAGE-149
 								// This variable is used for the order clause
 								String tmpColumn = aggregateFunction + "(" + columnName + ") ";
 								String orderType = projection.getOrderType();
+
 								if (orderType != null && !orderType.equals("")) {
 									orderColumns.add(tmpColumn + " " + orderType);
 								}
 
 								columnName = tmpColumn + " AS " + aliasName;
 							}
-						}
-						sqlBuilder.column(columnName);
 
+						}
+						/**
+						 * Handling of the ordering criteria set for the first category.
+						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						else {
+							String orderType = projection.getOrderType();
+							orderColumn = projection.getOrderColumn();
+
+							/**
+							 * If the order type is not defined for current item, consider it as it is of an empty value (empty string).
+							 */
+							if (orderType == null) {
+								orderType = "";
+							}
+
+							/**
+							 * If the order column is defined and is not an empty string the column (attribute) through which the first category should be
+							 * ordered is set.
+							 */
+							if (orderColumn != null && !orderColumn.equals("")) {
+								orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
+
+								/**
+								 * If the ordering column is the same as the category for which is set.
+								 */
+								if (orderColumn.equals(columnName)) {
+									columnAndCategoryAreTheSame = true;
+
+									if (orderType.equals(""))
+										arrayCategoriesForOrdering.add(columnName + " ASC");
+									else
+										arrayCategoriesForOrdering.add(columnName + " " + orderType);
+								} else {
+									if (orderType.equals(""))
+										arrayCategoriesForOrdering.add(orderColumn + " ASC");
+									else
+										arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+
+									sqlBuilder.column(orderColumn);
+								}
+							}
+
+							/**
+							 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
+							 */
+							keepCategoryForOrdering = columnName + " ASC";
+						}
+
+						sqlBuilder.column(columnName);
 					}
+
+					/**
+					 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append the part
+					 * for ordering that category to the end of the ORDER BY clause.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.equals(""))
+						arrayCategoriesForOrdering.add(keepCategoryForOrdering);
+
+					/**
+					 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of particular
+					 * ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we will keep the same
+					 * approach.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
+						if (i < arrayCategoriesForOrdering.size() - 1)
+							appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i) + ", ";
+						else
+							appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i);
+					}
+
+					orderColumns.add(appendColumnForCategories);
 				}
 
 				// WHERE conditions
@@ -534,28 +645,48 @@ public class SQLDBCache implements ICache {
 				// GROUP BY conditions
 				if (groups != null) {
 					for (GroupCriteria group : groups) {
+
 						String aggregateFunction = group.getAggregateFunction();
 
 						Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
 						String columnName = group.getColumnName();
+
 						if (datasetAlias != null) {
 							columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
 						}
+
 						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
 						if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 							columnName = aggregateFunction + "(" + columnName + ")";
 						}
+						/**
+						 * If there is an ordering columns set to the first category and if the one is not the same value as the category, append its name to
+						 * the GROUP BY clause, just before the first category name.
+						 * 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						else {
+							/**
+							 * The last expression serves for skipping the duplication of the same column in the GROUP BY clause.
+							 */
+							if (orderColumn != null && !orderColumn.equals("") && !orderColumn.equals(columnName)) {
+								sqlBuilder.groupBy(orderColumn);
+							}
+						}
+
 						sqlBuilder.groupBy(columnName);
 					}
 				}
 
 				// ORDER BY conditions
 				// https://production.eng.it/jira/browse/KNOWAGE-149
-				for (String orderColumn : orderColumns) {
-					sqlBuilder.orderBy(orderColumn);
+				for (String orderColumnTemp : orderColumns) {
+					sqlBuilder.orderBy(orderColumnTemp);
 				}
 
 				String queryText = sqlBuilder.toString();
+
 				logger.debug("Cached dataset access query is equal to [" + queryText + "]");
 
 				IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
@@ -580,7 +711,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 
@@ -594,7 +725,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 
@@ -687,12 +818,15 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
-
 	@Override
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
+		return refresh(dataSet, wait, false);
+	}
+
+	public IDataStore refresh(IDataSet dataSet, boolean wait, boolean force) {
 
 		IDataStore dataStore = null;
 		try {
@@ -701,7 +835,7 @@ public class SQLDBCache implements ICache {
 			dataStore = dataSet.getDataStore();
 
 			if (wait == true) {
-				this.put(dataSet, dataStore);
+				this.put(dataSet, dataStore, force);
 			} else {
 				if (spagoBIWorkManager == null) {
 					throw new RuntimeException("Impossible to save the store in background because the work manager is not properly initialized");
@@ -725,12 +859,16 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 
 	@Override
 	public void put(IDataSet dataSet, IDataStore dataStore) {
+		put(dataSet, dataStore, false);
+	}
+
+	public void put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
 		logger.trace("IN");
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
@@ -738,6 +876,11 @@ public class SQLDBCache implements ICache {
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
+
+			if (forceUpdate) {
+				logger.debug("Update the dataset in cache if its old enought");
+				updateAlreadyPresent();
+			}
 			// check again it is not already inserted
 			if (getMetadata().containsCacheItem(signature)) {
 				logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
@@ -833,7 +976,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 
@@ -863,7 +1006,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 
@@ -874,7 +1017,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	private boolean delete(String signature, boolean isHash) {
@@ -933,9 +1076,33 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
+
+	/**
+	 * Update the cache table if it's older than the CacheDsLastAccessTtl time
+	 */
+	public void updateAlreadyPresent() {
+		logger.trace("IN");
+		try {
+			List<CacheItem> items = getMetadata().getCacheItems();
+			for (CacheItem item : items) {
+				long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
+				if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
+					logger.debug("FORCE REMOVE: The table with name " + item.getTable() + " is old and is going be to be removed");
+					delete(item.getSignature(), true);
+				}
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occured while deleting cache to quota", t);
+		} finally {
+			logger.trace("OUT");
+		}
+	}
 
 	@Override
 	public void deleteToQuota() {
@@ -974,7 +1141,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 
@@ -993,7 +1160,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
 	 */
 	public void deleteOnlyStale() {
@@ -1102,7 +1269,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 
@@ -1113,7 +1280,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -1126,7 +1293,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1139,7 +1306,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 
@@ -1151,7 +1318,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 
@@ -1178,7 +1345,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 

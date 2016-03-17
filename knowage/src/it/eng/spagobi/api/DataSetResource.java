@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -381,7 +381,30 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String aliasName = categoryObject.getString("alias");
 
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
+			/**
+			 * The ordering column and its ordering type for the first category of the document.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			String orderColumn = (categoryObject.has("orderColumn") && categoryObject.opt("orderColumn") != null) ? categoryObject.getString("orderColumn")
+					: null;
+			String orderType = (categoryObject.has("orderColumn") && categoryObject.opt("orderType") != null) ? categoryObject.opt("orderType").toString()
+					.toUpperCase() : null;
+
+			ProjectionCriteria aProjectionCriteria = null;
+
+			if (orderColumn == null) {
+				aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
+			} else {
+				/**
+				 * Create a new projection object that through the new constructor that handles additional parameter - the ordering column for the category of
+				 * the document. Set the associated ordering type (of the first category's column).
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderType, orderColumn);
+			}
+
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for (int i = 0; i < measuresObject.length(); i++) {
