@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -806,10 +806,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * 
-	 * @return a JSON object representing the input request to the service with
-	 *         the following structure:
-	 * 
+	 *
+	 * @return a JSON object representing the input request to the service with the following structure:
+	 *
 	 *         <code>
 	 * 		{
 	 * 			action: STRING
@@ -827,16 +826,16 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	 * 				type: STRING
 	 * 				engineId: NUMBER
 	 * 				metadata: [JSON, ..., JSON]
-	 * 			}		
+	 * 			}
 	 * 			, customData: {
 	 * 				query: [STRING]
 	 * 				workseheet: [JSON]
 	 * 				smartfilter:  [JSON]
 	 * 			}
 	 * 			, folders: [STRING, ... , STRING]
-	 * 		}	
+	 * 		}
 	 * 	</code>
-	 * 
+	 *
 	 **/
 
 	public JSONObject parseRequest() {
@@ -1002,12 +1001,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			LowFunctionality userFunc = null;
 			try {
 				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
 			} catch (Exception e) {
 				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 			}
-			if(userFunc != null){
+			if (userFunc != null) {
 				filteredFoldersJSON.put(userFunc.getId());
 				userFolderId = userFunc.getId();
 			}
