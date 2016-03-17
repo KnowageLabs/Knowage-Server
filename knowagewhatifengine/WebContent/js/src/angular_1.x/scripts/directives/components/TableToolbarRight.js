@@ -83,18 +83,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			});	
 	}
 	 
-	 /*service for sending modelConfig**/
-	 $scope.sendModelConfig = function(modelConfig){
-		 
-		 sbiModule_restServices.promisePost
-		 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
-			.then(function(response) {
-				$scope.handleResponse(response);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
-				
-			});	
-	}
 	 
 	 $scope.sortDisable = function(){
 		 
