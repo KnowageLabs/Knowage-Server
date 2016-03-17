@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -144,15 +145,15 @@ public class SelfServiceDataSetCRUD {
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
 					if (showDerivedDatasets) {
-						dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+						dataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 					} else {
-						dataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+						dataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 					}
 				} else {
 					if (showDerivedDatasets) {
-						dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());
+						dataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
 					} else {
-						dataSets = dataSetDao.loadNotDerivedUserDataSets(profile.getUserUniqueIdentifier().toString());
+						dataSets = dataSetDao.loadNotDerivedUserDataSets(((UserProfile) profile).getUserId().toString());
 
 					}
 				}
@@ -224,7 +225,7 @@ public class SelfServiceDataSetCRUD {
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 			if (typeDocWizard == null) {
 				actions.put(detailAction);
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))) {
+				if (((UserProfile) profile).getUserId().toString().equals(datasetJSON.get("owner"))) {
 					// the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
@@ -248,14 +249,13 @@ public class SelfServiceDataSetCRUD {
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
-			if(dsType==null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)){
+			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
 					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
 			}
-
 
 			datasetJSON.put("actions", actions);
 			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {
@@ -281,7 +281,8 @@ public class SelfServiceDataSetCRUD {
 			Assert.assertNotNull(id, deleteNullIdDataSetError);
 			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 			dsDAO.setUserProfile(profile);
-			dsDAO.setUserID(profile.getUserUniqueIdentifier().toString());
+			// dsDAO.setUserID(profile.getUserUniqueIdentifier().toString());
+			dsDAO.setUserID(((UserProfile) profile).getUserId().toString());
 			IDataSet ds = dsDAO.loadDataSetById(new Integer(id));
 
 			// Create DatasetNotificationEvent but wait to notify
