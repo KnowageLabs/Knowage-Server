@@ -44,7 +44,6 @@ function olapFunction(
 	$scope.searchText="";
 	$scope.searchSucessText;
 	$scope.showSearchInput=false;
-	$scope.openLeftMenu=false;
 		
 	$scope.rows;
 	$scope.maxRows = 3;
@@ -67,6 +66,8 @@ function olapFunction(
 	$scope.dtMaxRows= 0;
 	$scope.ord = null;
 	$scope.dtAssociatedLevels= [];
+	$scope.formulasData = [];
+	
 	$scope.isFilterSelected = false;
 	$scope.filterAxisPosition;
 	$scope.showMdxVar = "";
@@ -110,6 +111,7 @@ function olapFunction(
 		$scope.modelConfig = source.modelConfig;
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
+		$scope.formulasData = source.formulas;
 	}
 	
 	$scope.sendModelConfig = function(modelConfig){
@@ -124,10 +126,6 @@ function olapFunction(
 				
 			});	
 	}
-	
-	$scope.toggleMenu=function(){
-		$scope.openLeftMenu=!$scope.openLeftMenu;
-	};
 
 	$scope.startFrom = function(start) {
 		if ($scope.ready) {

@@ -164,9 +164,32 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			
 				});
 		}
+	
+	$scope.checkCheckboxes = function (item, list) {
+		if(item.hasOwnProperty("name")){
+			var index = $scope.indexInList(item, list);
 
+			if(index != -1){
+				$scope.dtAssociatedLevels.splice(index,1);
+			}else{
+				$scope.dtAssociatedLevels.push(item);
+			}
+		} 
+		console.log($scope.dtAssociatedLevels);
+	};
 	
-	
+	$scope.indexInList=function(item, list) {
+		if(item.hasOwnProperty("name")){
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.name==item.name){
+				return i;
+			}
+		}
+		}
+		return -1;
+	}
+
 	/**dragan*/
 	/*writeback funtionality*/
 	/**
@@ -410,8 +433,31 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       
       
       $scope.showCCWizard = function(){
+  		$scope.aggregattionList = [];
+  		$scope.temporalList = [];
+  		$scope.arithmeticList = [];
   		
-    		
+    	  
+    	  for (var i = 0; i < $scope.formulasData.length; i++) {
+    		  
+    		  switch ($scope.formulasData[i].type) {
+  			case "aggregation":
+  				$scope.aggregattionList.push($scope.formulasData[i]);
+  				
+  				break;
+  			case "arithetic":
+  				
+  				break;
+  			case "temporal":
+  				
+  				break;
+  			default:
+  				break;
+  			}
+    		  
+		}
+    	  console.log("AAAAAAAAAAAA");
+		  console.log($scope.aggregattionList);	
   		$mdDialog
   			.show({
   				scope : $scope,
@@ -423,7 +469,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
   				hasBackdrop:false
   			});
   	}
-
+     
 	
 };
 
