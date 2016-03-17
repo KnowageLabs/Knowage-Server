@@ -46,6 +46,7 @@
 			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.utils*.jar" />
 		</delete>
 		<!-- copies the newly created jar file -->
+		<copy file="${jdbc.core.dir}/dist/jdbc.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		<copy file="${knowageutils.json.dir}/dist/knowage.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		<copy file="${knowageutils.dir}/dist/knowage.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>

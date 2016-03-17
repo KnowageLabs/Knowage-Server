@@ -18,6 +18,9 @@
         <dependent-module archiveName="knowageservermanager.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/knowageservermanager/knowageservermanager">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="jdbccore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jdbccore/jdbccore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="build/classes"/>
         <property name="context-root" value="knowage"/>
     </wb-module>

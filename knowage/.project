@@ -8,6 +8,7 @@
 		<project>knowageutilsjson</project>
 		<project>qbecore</project>
 		<project>knowageservermanager</project>
+		<project>jdbccore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

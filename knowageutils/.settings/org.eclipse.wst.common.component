@@ -5,5 +5,8 @@
         <dependent-module deploy-path="/" handle="module:/resource/knowageutilsjson/knowageutilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="jdbccore.jar" deploy-path="/" handle="module:/resource/jdbccore/jdbccore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 </wb-module>
 </project-modules>
