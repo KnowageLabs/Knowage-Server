@@ -98,7 +98,7 @@ public class CostInformations {
 
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
-			String xlsFilePath = input.getFile().substring(1);
+			String xlsFilePath = input.getFile();// .substring(1);
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
 			logger.debug("File exists:" + f.exists());
@@ -168,7 +168,7 @@ public class CostInformations {
 
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
-			String xlsFilePath = input.getFile().substring(1);
+			String xlsFilePath = input.getFile();// .substring(1);
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
 			logger.debug("File exists:" + f.exists());
@@ -283,7 +283,7 @@ public class CostInformations {
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
-			String xlsFilePath = input.getFile().substring(1);
+			String xlsFilePath = input.getFile();// .substring(1)
 
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
