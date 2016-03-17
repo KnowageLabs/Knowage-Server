@@ -93,7 +93,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     String jSonPars = "[{}]";
     Object documentIdO = qbeEngineInstance.getEnv().get("DOCUMENT_ID");
     if(documentIdO != null) { 
-		SbiDocumentServiceProxy proxy = new SbiDocumentServiceProxy(profile.getUserId().toString(), session);
+		SbiDocumentServiceProxy proxy = new SbiDocumentServiceProxy(profile.getUserUniqueIdentifier().toString(), session);
 		jSonPars = proxy.getDocumentAnalyticalDriversJSON(Integer.valueOf(documentIdO.toString()), locale.getLanguage(), locale.getCountry());
     }
 %>
