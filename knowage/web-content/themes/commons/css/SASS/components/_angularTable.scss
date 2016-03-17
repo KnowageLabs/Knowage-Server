@@ -12,11 +12,11 @@ table>thead {
     background: white;
   }
 
-#angularTableTemplate {
+&{
     padding: 0 5px;
-    height: 100%;
     overflow: auto;
     overflow-y: hidden;
+    min-height:200px;
   }
 
 angular-table-actions {
@@ -186,7 +186,7 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 /* pagination */
 
 
-#angularTableTemplate .pagination>li, #angularTableTemplate .pagination>li>span
+  .pagination>li,   .pagination>li>span
 	{
 	position: relative;
 	float: left;
@@ -201,21 +201,21 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 	line-height: 16px;
 }
 
-#angularTableTemplate .pagination {
+  .pagination {
 	margin: 0px !important;
 	padding: 0px !important;
 }
 
-#angularTableTemplate .pagination>li>a {
+  .pagination>li>a {
 	text-decoration: none !important;
 	width: 100%;
     display: block;
 }
 
-#angularTableTemplate .pagination>.active, #angularTableTemplate .pagination>.active>a,
-	#angularTableTemplate .pagination>.active>a:focus, #angularTableTemplate .pagination>.active>a:hover,
-	#angularTableTemplate .pagination>.active>span, #angularTableTemplate .pagination>.active>span:focus,
-	#angularTableTemplate .pagination>.active>span:hover {
+  .pagination>.active,   .pagination>.active>a,
+	  .pagination>.active>a:focus,   .pagination>.active>a:hover,
+	  .pagination>.active>span,   .pagination>.active>span:focus,
+	  .pagination>.active>span:hover {
 	z-index: 2;
 	color: #000;
 	cursor: default;
@@ -223,10 +223,10 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 	border-color: rgb(232, 232, 232);
 }
 
-#angularTableTemplate .pagination>.disabled>a, #angularTableTemplate .pagination>.disabled>a:focus,
-	#angularTableTemplate .pagination>.disabled>a:hover,
-	#angularTableTemplate .pagination>.disabled>span, #angularTableTemplate .pagination>.disabled>span:focus,
-	#angularTableTemplate .pagination>.disabled>span:hover {
+  .pagination>.disabled>a,   .pagination>.disabled>a:focus,
+	  .pagination>.disabled>a:hover,
+	  .pagination>.disabled>span,   .pagination>.disabled>span:focus,
+	  .pagination>.disabled>span:hover {
 	color: #777;
 	cursor: not-allowed;
 	background-color: #fff;
@@ -234,14 +234,14 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 }
 
 
-#angularTableTemplate .dropdown_menu_list {
+  .dropdown_menu_list {
 	position: fixed !important;
 }
-#angularTableTemplate .position-fixed{
+  .position-fixed{
 position: fixed !important;
 }
 
-#angularTableTemplate .dropdown_menu_list md-list {
+  .dropdown_menu_list md-list {
 	position: relative;
 	top: 100%;
 	left: 0;
@@ -263,23 +263,23 @@ position: fixed !important;
 	    background-color: #ECECEC;
 }
 
-#angularTableTemplate .dropdown_menu_list.open md-list {
+  .dropdown_menu_list.open md-list {
 	display: block;
 }
 
-#angularTableTemplate .dropdown_menu_list md-list-item, #angularTableTemplate .dropdown_menu_list md-list-item button,
-	#angularTableTemplate .dropdown_menu_list md-list-item .md-list-item-inner {
+  .dropdown_menu_list md-list-item,   .dropdown_menu_list md-list-item button,
+	  .dropdown_menu_list md-list-item .md-list-item-inner {
 /* 	min-height: 15px !important; */
 min-height: 22px !important;
 }
 
-#angularTableTemplate .dropdown_menu_list md-list-item p {
+  .dropdown_menu_list md-list-item p {
 	line-height: 20px;
 	margin: 3px;
 	color: black;
 }
 
-#angularTableTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button {
+  .dropdown_menu_list md-list.bottomBorder md-list-item button {
 	border-bottom: 1px solid rgb(176, 190, 197);
 	padding: 0;
 	margin-left: 8px;
@@ -287,12 +287,12 @@ min-height: 22px !important;
 	border-radius: 0;
 }
 
-#angularTableTemplate md-checkbox {
+  md-checkbox {
 margin-bottom: 0px;
 }
 
 
-#angularTableTemplate .tableDragBar {
+  .tableDragBar {
 padding: 0 !important;
     text-align: center;
     color: grey;
@@ -321,13 +321,13 @@ padding: 0 !important;
   transition: all 0s;
 }
 
-.absoluteTfoot tfoot>tr>td #queueTableContent{ 
+&.absoluteTfoot  tfoot>tr>td #queueTableContent{ 
 display: none;
 }
-.absoluteTfoot #fixedAngularTableContentBox,.absoluteTfoot tfoot>tr>td #hiddenTfootDiv{
+&.absoluteTfoot #fixedAngularTableContentBox{
 	display:block;
 }
- #fixedAngularTableContentBox, tfoot>tr>td #hiddenTfootDiv{
+ #fixedAngularTableContentBox{
 	display:none;
 }
 .principalTable>thead>tr>th>div{

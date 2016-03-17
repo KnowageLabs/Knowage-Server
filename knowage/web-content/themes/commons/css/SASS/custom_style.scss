@@ -24,6 +24,9 @@ md-toolbar.md-knowage-theme {
 		}
 }
 
+md-toolbar.secondaryToolbar.md-knowage-theme {
+	background-color: $secondaryColor !important;
+}
 .md-button.md-knowage-theme.md-fab {
     &:not([disabled]) {
             background-color: $fabPrimaryColor !important;

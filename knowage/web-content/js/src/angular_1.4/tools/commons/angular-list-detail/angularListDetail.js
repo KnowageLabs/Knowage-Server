@@ -66,7 +66,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'	</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-list-content" layout-margin flex>'+
+		'<md-content class="kn-list-content" layout-margin layout flex>'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -121,7 +121,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'		<md-button aria-label="save" ng-disabled="AWD_detailController.disableSaveButton" ng-if="saveFuncName!=undefined && AWD_detailController.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-detail-content" layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
+		'<md-content class="kn-detail-content" layout layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
