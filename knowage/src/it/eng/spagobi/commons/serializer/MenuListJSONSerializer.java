@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -76,6 +76,7 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String HELP = "HELP";
 
 	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION_ANGULAR&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_BOOKMARK = "/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_SUBSCRIPTIONS = "/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_PENCIL = "/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYANALYSIS=TRUE";
@@ -90,9 +91,6 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
 	private static final String HREF_CACHE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp";
 
-	
-	
-	
 	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
 	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
@@ -198,6 +196,9 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(TARGET, "_self");
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
+							}
+							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 							}
 							if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
 								// admins and devs can see ONLY models tab,
@@ -337,7 +338,7 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(glossaryManagementTechnical);
 		}
 
-		//TODO configure authorization
+		// TODO configure authorization
 		if (isAbleTo(SpagoBIConstants.MANAGE_CROSS_NAVIGATION, funcs)) {
 			JSONObject o = new JSONObject();
 			o.put(ICON_CLS, "glossary_management"); // TODO: change icon
@@ -348,7 +349,7 @@ public class MenuListJSONSerializer implements Serializer {
 			o.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_CROSS_DEFINITION + "');");
 			tempMenuList.put(o);
 		}
-		
+
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
 			domainManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
@@ -398,7 +399,7 @@ public class MenuListJSONSerializer implements Serializer {
 			lovsManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_LOVS + "');");
 			tempMenuList.put(lovsManagementTechnical);
 		}
-		
+
 		if (isAbleTo(SpagoBIConstants.CACHE_MANAGEMENT, funcs)) {
 			JSONObject cacheManagement = new JSONObject();
 			cacheManagement.put(ICON_CLS, "cache_management");

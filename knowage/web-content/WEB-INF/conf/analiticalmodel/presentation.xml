@@ -29,9 +29,11 @@
 
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_CREATE_DOCUMENT" publisher_name="UserDocumentBrowserCreateDoc"/>
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_ACTION" publisher_name="UserDocumentBrowserPublisher"/>
+<MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" publisher_name="UserDocumentBrowserAngularPublisher"/>
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_PORTLET_ACTION" publisher_name="UserDocumentBrowserPortletPublisher"/>
 
 <MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ACTION" publisher_name="ExecuteDocumentPublisher"/>
+<MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ANGULAR_ACTION" publisher_name="ExecuteDocumentAngularPublisher"/>
 <MAPPING business_type="ACTION" business_name="CREATE_DATASET_FOR_WORKSHEET_ACTION" publisher_name="CreateWorksheetObjectPublisher"/>
 <MAPPING business_type="ACTION" business_name="SELECT_DATASET_ACTION" publisher_name="SelectDatasetPublisher"/>
 

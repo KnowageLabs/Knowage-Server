@@ -181,7 +181,13 @@
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION"
 			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
 			iconCls="folder_open"/>
-
+	<!-- angular temp test start-->  
+	<ITEM code="doc_admin_angular" 	title="#menu.DocumentDev"
+			functionality="DocumentDevManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
+			iconCls="folder_open"/>
+	<!-- angular temp test end -->
 	<ITEM code="my_data_admin" title="#menu.MyData"  
 	             functionality="SelfServiceMetaModelManagement" 
 	             url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE&amp;MYDATA=TRUE" 

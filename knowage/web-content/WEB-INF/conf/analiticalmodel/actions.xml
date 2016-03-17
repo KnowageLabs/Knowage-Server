@@ -64,6 +64,10 @@
  	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ <ACTION name="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
  
  <ACTION name="DOCUMENT_USER_BROWSER_START_PORTLET_ACTION" 
  	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserStartAction" scope="REQUEST">
@@ -201,7 +205,10 @@
  	class="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
-
+<ACTION name="EXECUTE_DOCUMENT_ANGULAR_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
  <ACTION name="GET_DOCUMENT_INFO_ACTION" 
  	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
  	<CONFIG/>
