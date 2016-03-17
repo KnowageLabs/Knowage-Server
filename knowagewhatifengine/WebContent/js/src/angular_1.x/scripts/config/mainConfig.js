@@ -3,6 +3,5 @@ angular.module('olap.configuration', [
                                       'ngMaterial',
                                       'angular_table', 
                                       'ngSanitize',
-                                      'ngDraggable',
-                                      'treeControl'
+                                      'ngDraggable'
                                       ]);
