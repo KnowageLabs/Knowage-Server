@@ -54,10 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- toastr -->
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/toastr/angular-toastr.tpls.js"></script>
-	
-	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/at-control/tree-control.css">
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/at-control/angular-tree-control.js"></script>
-	
+		
 	<!-- angular list -->
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-list/angular-list.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-list/AngularList.js"></script>	
