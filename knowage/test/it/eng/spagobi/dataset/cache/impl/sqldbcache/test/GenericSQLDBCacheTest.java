@@ -76,10 +76,8 @@ public class GenericSQLDBCacheTest extends AbstractCacheTest {
 	}
 
 	public void testJDBCDataSetFieldTypes() {
-		Map<String, String> readingTypes;
 		Map<String, String> writingTypes;
 		try {
-			readingTypes = TestXmlFactory.getReadingTypes(XML_FILE_PATH);
 			writingTypes = TestXmlFactory.getWritingTypes(XML_FILE_PATH);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,8 +87,6 @@ public class GenericSQLDBCacheTest extends AbstractCacheTest {
 
 		sqlDataset.loadData();
 		IDataStore dataStore = sqlDataset.getDataStore();
-		checkJDBCDataSetFieldTypes(dataStore, readingTypes);
-
 		cache.put(sqlDataset, dataStore);
 		dataStore = cache.get(sqlDataset.getSignature());
 		checkJDBCDataSetFieldTypes(dataStore, writingTypes);

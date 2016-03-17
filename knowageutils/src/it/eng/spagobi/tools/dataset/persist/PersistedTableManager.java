@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.persist;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -39,12 +38,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -318,11 +314,10 @@ public class PersistedTableManager {
 						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(j);
 						IField field = record.getFieldAt(j);
 						if (this.isRowCountColumIncluded()) {
-							addField(toReturn, j + 1, field, fieldMeta);
+							PersistedTableHelper.addField(toReturn, j + 1, field, fieldMeta, getColumnSize());
 						} else {
-							addField(toReturn, j, field, fieldMeta);
+							PersistedTableHelper.addField(toReturn, j, field, fieldMeta, getColumnSize());
 						}
-
 					} catch (Throwable t) {
 						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
 					}
@@ -334,143 +329,6 @@ public class PersistedTableManager {
 			throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
 		}
 		return toReturn;
-	}
-
-	private void addField(PreparedStatement insertStatement, int fieldIndex, IField field, IFieldMetaData fieldMeta) {
-		try {
-			// in case of a measure with String type, convert it into a Double
-			if (fieldMeta.getFieldType().equals(FieldType.MEASURE) && fieldMeta.getType().toString().contains("String")) {
-				try {
-					logger.debug("Column type is string but the field is measure: converting it into a double");
-					// only for primitive type is necessary to use setNull
-					// method if value is null
-					if (StringUtilities.isEmpty((String) field.getValue())) {
-						insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
-					} else {
-						try {
-							insertStatement.setDouble(fieldIndex + 1, Double.parseDouble(field.getValue().toString()));
-						} catch (NumberFormatException e) {
-							String toParse = field.getValue().toString();
-							if (toParse != null) {
-								if (toParse.indexOf(",") != toParse.lastIndexOf(",")) {// if
-																						// the
-																						// comma
-																						// is
-																						// a
-																						// group
-																						// separator
-									toParse = toParse.replace(",", "");
-								} else {
-									toParse = toParse.replace(",", ".");// use the .
-									// instead of
-									// the comma
-								}
-
-							}
-
-							insertStatement.setDouble(fieldIndex + 1, Double.parseDouble(toParse));
-						}
-
-					}
-				} catch (Throwable t) {
-					throw new RuntimeException("An unexpected error occured while converting to double measure field [" + fieldMeta.getName()
-							+ "] whose value is [" + field.getValue() + "]", t);
-				}
-			} else if (fieldMeta.getType().toString().contains("String")) {
-				Integer lenValue = (field.getValue() == null) ? new Integer("0") : new Integer(field.getValue().toString().length());
-				Integer prevValue = getColumnSize().get(fieldMeta.getName()) == null ? new Integer("0") : getColumnSize().get(fieldMeta.getName());
-				if (lenValue > prevValue) {
-					getColumnSize().remove(fieldMeta.getName());
-					getColumnSize().put(fieldMeta.getName(), lenValue);
-				}
-				if (!(field.getValue() instanceof String)) {
-					logger.debug("An unexpected error occured while extimating field [" + fieldMeta.getName() + "] memory size whose type is equal to ["
-							+ fieldMeta.getType().toString() + "]. Field forced to String");
-					Object nonStringValue = field.getValue();
-					if (nonStringValue != null) {
-						insertStatement.setString(fieldIndex + 1, nonStringValue.toString());
-					} else {
-						insertStatement.setString(fieldIndex + 1, "");
-					}
-				} else {
-					insertStatement.setString(fieldIndex + 1, (String) field.getValue());
-				}
-
-			} else if (fieldMeta.getType().toString().contains("Date")) {
-				insertStatement.setDate(fieldIndex + 1, (Date) field.getValue());
-			} else if (fieldMeta.getType().toString().contains("Timestamp")) {
-				insertStatement.setTimestamp(fieldIndex + 1, (Timestamp) field.getValue());
-			} else if (fieldMeta.getType().toString().contains("Short")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
-				} else {
-					insertStatement.setInt(fieldIndex + 1, ((Short) field.getValue()).intValue());
-				}
-			} else if (fieldMeta.getType().toString().contains("Integer")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
-				} else {
-					insertStatement.setInt(fieldIndex + 1, (Integer) field.getValue());
-				}
-			} else if (fieldMeta.getType().toString().contains("Double")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
-				} else {
-					insertStatement.setDouble(fieldIndex + 1, (Double) field.getValue());
-				}
-
-			} else if (fieldMeta.getType().toString().contains("Float")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.FLOAT);
-				} else {
-					insertStatement.setDouble(fieldIndex + 1, (Float) field.getValue());
-				}
-			} else if (fieldMeta.getType().toString().contains("Long")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BIGINT);
-				} else {
-					insertStatement.setLong(fieldIndex + 1, (Long) field.getValue());
-				}
-			} else if (fieldMeta.getType().toString().contains("Boolean")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
-				if (field.getValue() == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BOOLEAN);
-				} else {
-					insertStatement.setBoolean(fieldIndex + 1, (Boolean) field.getValue());
-				}
-
-			} else if (fieldMeta.getType().toString().contains("BigDecimal")) {
-				insertStatement.setBigDecimal(fieldIndex + 1, (BigDecimal) field.getValue());
-			} else if (fieldMeta.getType().toString().contains("[B")) { // BLOB
-				insertStatement.setBytes(fieldIndex + 1, (byte[]) field.getValue());
-				// ByteArrayInputStream bis = new
-				// ByteArrayInputStream((byte[])field.getValue());
-				// toReturn.setBinaryStream(1, bis,
-				// ((byte[])field.getValue()).length);
-			} else if (fieldMeta.getType().toString().contains("[C")) { // CLOB
-				insertStatement.setBytes(fieldIndex + 1, (byte[]) field.getValue());
-				// toReturn.setAsciiStream(i2+1, new
-				// ByteArrayInputStream((byte[])field.getValue()),
-				// ((byte[])field.getValue()).length);
-			} else {
-				// toReturn.setString(i2+1, (String)field.getValue());
-				logger.debug("Cannot setting the column " + fieldMeta.getName() + " with type " + fieldMeta.getType().toString());
-			}
-		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while adding to statement value [" + field.getValue() + "] of field ["
-					+ fieldMeta.getName() + "] whose type is equal to [" + fieldMeta.getType().toString() + "]", t);
-		}
 	}
 
 	private String getSQLColumnName(IFieldMetaData fmd) {

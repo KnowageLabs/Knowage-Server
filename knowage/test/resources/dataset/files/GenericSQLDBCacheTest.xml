@@ -5,56 +5,56 @@
 		spaceAvailable="104857600"
 		percentageToClean="50"
 		percentageToStore="50"
-		schemaName="spagobi_testw">
+		schemaName="ds_cache">
 		cacheConfiguration
 	</cacheConfiguration>
 	<readingDataset
-		url="jdbc:mysql://172.27.1.83:3306/spagobi_testr"
-		user="spagobi"
-		password="bispago"
+		url="jdbc:mysql://localhost:3306/foodmart_key"
+		user="root"
+		password="root"
 		driver="com.mysql.jdbc.Driver"
 		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
 		hibDialectName="sbidomains.nm.mysql">
-		datasetTest_mysql_read
+		datasetTest_read
 	</readingDataset>
 	<writingDataset
-		url="jdbc:mysql://172.27.1.83:3306/spagobi_testw"
-		user="spagobi"
-		password="bispago"
+		url="jdbc:mysql://localhost:3306/ds_cache"
+		user="root"
+		password="root"
 		driver="com.mysql.jdbc.Driver"
 		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
 		hibDialectName="sbidomains.nm.mysql">
-		datasetTest_mysql_write
+		datasetTest_write
 	</writingDataset>
 	<table name="customer">
-		<field readingType="java.lang.Integer" writingType="java.lang.Integer">customer_id</field>
-		<field readingType="java.lang.Long" writingType="java.lang.Long">account_num</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">lname</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">fname</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">mi</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">address1</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">address2</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">address3</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">address4</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">city</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">state_province</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">postal_code</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">country</field>
-		<field readingType="java.lang.Integer" writingType="java.lang.Integer">customer_region_id</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">phone1</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">phone2</field>
-		<field readingType="java.sql.Date" writingType="java.sql.Date">birthdate</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">marital_status</field>
-		<field readingType="java.lang.String" writingType="java.lang.String" >yearly_income</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">gender</field>
-		<field readingType="java.lang.Integer" writingType="java.lang.Integer">total_children</field>
-		<field readingType="java.lang.Integer" writingType="java.lang.Integer">num_children_at_home</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">education</field>
-		<field readingType="java.sql.Date" writingType="java.sql.Date">date_accnt_opened</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">member_card</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">occupation</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">houseowner</field>
-		<field readingType="java.lang.Integer" writingType="java.lang.Integer">num_cars_owned</field>
-		<field readingType="java.lang.String" writingType="java.lang.String">fullname</field>
+		<field writingType="java.lang.Integer">customer_id</field>
+		<field writingType="java.lang.Long">account_num</field>
+		<field writingType="java.lang.String">lname</field>
+		<field writingType="java.lang.String">fname</field>
+		<field writingType="java.lang.String">mi</field>
+		<field writingType="java.lang.String">address1</field>
+		<field writingType="java.lang.String">address2</field>
+		<field writingType="java.lang.String">address3</field>
+		<field writingType="java.lang.String">address4</field>
+		<field writingType="java.lang.String">city</field>
+		<field writingType="java.lang.String">state_province</field>
+		<field writingType="java.lang.String">postal_code</field>
+		<field writingType="java.lang.String">country</field>
+		<field writingType="java.lang.Integer">customer_region_id</field>
+		<field writingType="java.lang.String">phone1</field>
+		<field writingType="java.lang.String">phone2</field>
+		<field writingType="java.sql.Date">birthdate</field>
+		<field writingType="java.lang.String">marital_status</field>
+		<field writingType="java.lang.String" >yearly_income</field>
+		<field writingType="java.lang.String">gender</field>
+		<field writingType="java.lang.Integer">total_children</field>
+		<field writingType="java.lang.Integer">num_children_at_home</field>
+		<field writingType="java.lang.String">education</field>
+		<field writingType="java.sql.Date">date_accnt_opened</field>
+		<field writingType="java.lang.String">member_card</field>
+		<field writingType="java.lang.String">occupation</field>
+		<field writingType="java.lang.String">houseowner</field>
+		<field writingType="java.lang.Integer">num_cars_owned</field>
+		<field writingType="java.lang.String">fullname</field>
 	</table>
 </test>
