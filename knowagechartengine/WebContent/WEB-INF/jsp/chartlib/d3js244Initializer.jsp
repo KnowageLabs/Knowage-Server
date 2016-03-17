@@ -99,8 +99,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	
 	
-	function handleCrossNavigationTo(e){
+	function handleCrossNavigationTo(e,chartType){
 		if (!e.seriesOptions) {
+			if(chartType=="SUNBURST"){
+				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+					    "SUNBURST",
+						e.crossNavigationDocumentName, 
+						e.crossNavigationDocumentParams,
+						null,
+						null,
+						null,
+						null,
+						null,
+					    null,
+					    e.stringParameters
+						);
+			}else{
+			
 			var chart = this;
 			//chart.showLoading('Loading...');
 			var categoryName=e.categoryName;
@@ -111,6 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var groupingCategoryValue=e.groupingCategoryValue;
 			
 			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+					"D3CHART",
 					e.crossNavigationDocumentName, 
 					e.crossNavigationDocumentParams,
 					categoryName,
@@ -120,6 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					groupingCategoryName,
 					groupingCategoryValue
 					);
+			}
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 			chart.hideLoading();
 		}

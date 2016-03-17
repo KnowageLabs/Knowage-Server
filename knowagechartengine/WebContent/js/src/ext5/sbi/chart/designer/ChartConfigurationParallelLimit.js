@@ -17,7 +17,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-		height: 180,
+		height: 190,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),
 		bodyPadding: 10,

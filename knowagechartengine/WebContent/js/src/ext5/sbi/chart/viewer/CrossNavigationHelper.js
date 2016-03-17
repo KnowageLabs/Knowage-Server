@@ -5,9 +5,14 @@ Ext.define('Sbi.chart.viewer.CrossNavigationHelper', {
 	statics: {
 		breadcrumb: [],
 		
-		navigateTo: function(documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue){ 
+		navigateTo: function(chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters){ 
 			var parametersAsString = '';
-			
+			/**
+			 * if chart type is SUNBURST parameters are already parsed to string
+			 */
+			if(chartType=== "SUNBURST"){
+				parametersAsString=stringParameters;
+			}else{ 
 			for(var i = 0; i < documentParameters.length; i++) {
 				var param = documentParameters[i];
 
@@ -27,7 +32,8 @@ Ext.define('Sbi.chart.viewer.CrossNavigationHelper', {
 					parametersAsString += param.urlName + '=' + param.value + '&';
 				}
 			}
-			
+			}
+			console.log(parametersAsString);
 			var frameName = "iframe_" + this.displayName;
 			parent.execCrossNavigation(frameName, documentName, parametersAsString);
 		},

@@ -2100,6 +2100,7 @@ function renderWordCloud(chartConf,catchSVG){
 		 * Cockpit handler - SUNBURST
 		 */
 		function clickFunction(d){
+			console.log(jsonObject.crossNavigation.crossNavigationDocumentParams);
 			if(jsonObject.chart.isCockpit==true){
 				if(jsonObject.chart.outcomingEventsEnabled){
 //				paramethers=crossNavigationParams(d);
@@ -2117,34 +2118,71 @@ function renderWordCloud(chartConf,catchSVG){
 				}
 			}else if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 				paramethers=crossNavigationParams(d);
+				
 				var navigParams={
 					crossNavigationDocumentName:jsonObject.crossNavigation.crossNavigationDocumentName,
 					crossNavigationDocumentParams:jsonObject.crossNavigation.crossNavigationDocumentParams,
-					categoryName:paramethers.categoryName,
-					categoryValue:paramethers.categoryValue,
-					serieName:paramethers.serieName,
-					serieValue:paramethers.serieValue,
-					groupingCategoryName:paramethers.groupingCategoryName,
-					groupingCategoryValue:paramethers.groupingCategoryValue
+					//categoryName:paramethers.categoryName,
+					stringParameters:paramethers
 				};
-				handleCrossNavigationTo(navigParams);
+				console.log(paramethers);
+				var chartType="SUNBURST";
+				handleCrossNavigationTo(navigParams,chartType);
 			}
 			
 			
 		}
 		
 		function crossNavigationParams(d){
-			var par={
-				"categoryName":null,
-				"categoryValue":null,
-				"serieName":null,
-				"serieValue":null,
-				"groupingCategoryName":null,
-				"groupingCategoryValue":null
-			};
-			par.categoryValue=d.name;
-			par.serieValue=d.value;
-			return par;
+//			var par={
+//				"categoryName":null,
+//				"categoryValue":null,
+//				"serieName":null,
+//				"serieValue":null,
+//				"groupingCategoryName":null,
+//				"groupingCategoryValue":null
+//			};
+			toReturn="";
+			var docParams=jsonObject.crossNavigation.crossNavigationDocumentParams;
+			var categoryParams= cockpitSelectionParams(d);
+			
+			for(i=0;i<docParams.length;i++){
+				   console.log(docParams[i]);
+					for(cat in categoryParams){
+						var paramName= cat + "_NAME";
+						console.log(paramName);
+						if(docParams[i].type===paramName){
+							toReturn+= docParams[i].urlName+ "="+cat+"&";
+						}
+						var paramValue=cat+"_VALUE";
+						console.log(paramValue);
+						if(docParams[i].type===paramValue){
+							toReturn+= docParams[i].urlName+ "="+categoryParams[cat]+"&";
+						}
+					
+						
+					}
+					if(p.type==="SERIE_VALUE"){
+						toReturn+= docParams[i].urlName+ "="+d.value+"&";
+					}
+					
+					if(p.type==="ABSOLUTE"){
+						toReturn+= docParams[i].urlName+ "="+p.value+"&";
+					}
+					
+					if(p.type==="RELATIVE"){
+						toReturn+= docParams[i].urlName+ "="+p.value+"&";
+					}
+					
+				
+				
+			}
+			
+//			par.categoryValue=d.name;
+//			par.serieValue=d.value;
+//			return par;
+			
+			return toReturn;
 		}
 		
 		function cockpitSelectionParams(d){
@@ -2180,7 +2218,7 @@ function renderWordCloud(chartConf,catchSVG){
 	function renderParallelChart(data){
    
 	var records = data.data[0];
-	
+	//console.log(records);
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){

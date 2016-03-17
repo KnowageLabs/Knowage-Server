@@ -11,7 +11,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 	extend: 'Ext.panel.Panel',
 	requires: [
 	           'Sbi.chart.designer.DocumentParamModel',
-	           'Sbi.chart.designer.DocumentModel',
+	           'Sbi.chart.designer.DocumentModel'
 	           ],
 	
 	constructor: function(config) {
@@ -180,20 +180,27 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 			}
 		});
 		
+	   
+		var paramTypeStore = Ext.data.StoreManager.lookup('storeCrossNavigationParameters');
+		/**
+		 * changed paramTypeStore to be dynamically updated 
+		 */
+//		var paramTypeStore = Ext.create('Ext.data.Store', {
+//			fields: ['label', 'value'],
+//			data : [
+//		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.seriename'), value: 'SERIE_NAME'},
+//		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.serievalue'), value: 'SERIE_VALUE'},
+//		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryname'), value: 'CATEGORY_NAME'},
+//		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryvalue'), value: 'CATEGORY_VALUE'},
+//				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryname'), value: 'GROUPING_NAME'},
+//				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryvalue'), value: 'GROUPING_VALUE'},
+//				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.absolute'), value: 'ABSOLUTE'},
+//				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.relative'), value: 'RELATIVE'}
+//			]
+//		});
 		
-		var paramTypeStore = Ext.create('Ext.data.Store', {
-			fields: ['label', 'value'],
-			data : [
-		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.seriename'), value: 'SERIE_NAME'},
-		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.serievalue'), value: 'SERIE_VALUE'},
-		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryname'), value: 'CATEGORY_NAME'},
-		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryvalue'), value: 'CATEGORY_VALUE'},
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryname'), value: 'GROUPING_NAME'},
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryvalue'), value: 'GROUPING_VALUE'},
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.absolute'), value: 'ABSOLUTE'},
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.relative'), value: 'RELATIVE'}
-			]
-		});
+		
+		var globalScope = this;
 		
 		this.parameterGridPanel = Ext.create('Ext.grid.Panel', {
 			store: this.documentParamStore,
@@ -217,11 +224,12 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 						valueField: 'value',
 						displayField: 'label',
 						
-						store: paramTypeStore
-//						, listeners: {
+						store: paramTypeStore,
+//						listeners: {
 //							select: function( combo, records, eOpts ) {
-//								console.log('documentParamStore.data.items-> ', documentParamStore.data.items);
-//							}
+//								//console.log('documentParamStore.data.items-> ', documentParamStore.data.items);
+//								
+//							}                     
 //						}
 					}),
 					renderer: function(val){
@@ -267,7 +275,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 		
 		this.add(this.mainDocumentPanel);
     },
-    
+
     /**
      * @returns the "DRILL" json object representing the Cross navigation data;
      * this function must be used in order to create the "DRILL" node of the jsonTemplate.

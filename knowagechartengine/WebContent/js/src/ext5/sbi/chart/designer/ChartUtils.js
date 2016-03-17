@@ -2935,6 +2935,86 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			tempObject.push(source);
 			
 			return tempObject;
+		},
+
+		/**
+		 * returns data for parameters that will be used on cross navigation parameter selection 
+		 */
+		getParamTypes: function(){
+			 var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			 var tempStore=[];
+			 var serieName={};
+		      serieName.label=LN('sbi.chartengine.designer.crossnavigation.paramType.seriename');
+		      serieName.value= "SERIE_NAME";
+		      var serieValue={};
+		      serieValue.label=LN('sbi.chartengine.designer.crossnavigation.paramType.serievalue');
+		      serieValue.value= "SERIE_VALUE";
+		      
+		      tempStore.push(serieName);
+			  tempStore.push(serieValue);
+			  
+			  /**
+			   * currently only for sunburst possibility to chose on what category parameter is related 
+			   */
+			if(chartType== "SUNBURST"){
+		     
+		    
+		      var category = this.getCategoriesDataAsOriginalJson();
+		      for(i=0;i < category.length;i++){
+		    	  // forms name parameter for current category
+		    	  var t={};
+		    	  t.label=LN('sbi.chartengine.designer.crossnavigation.paramType.categoryname')+ "- "+category[i].column;
+		    	  t.value= category[i].column+"_NAME";
+		    	  tempStore.push(t);
+		    	  // forms value parameter for current category
+		    	  var t1={};
+		    	  t1.label=LN('sbi.chartengine.designer.crossnavigation.paramType.categoryvalue')+"- "+category[i].column;
+		    	  t1.value= category[i].column+"_VALUE";
+		    	  tempStore.push(t1);
+		    	  
+		      }
+		     
+		      
+		      
+			}else{
+				
+				var categoryName={};
+				categoryName.label=LN('sbi.chartengine.designer.crossnavigation.paramType.categoryname');
+				categoryName.value= "CATEGORY_NAME";
+			    tempStore.push(categoryName);
+				
+			    var categoryValue={};
+				categoryValue.label=LN('sbi.chartengine.designer.crossnavigation.paramType.categoryvalue');
+				categoryValue.value= "CATEGORY_VALUE";
+			    tempStore.push(categoryValue);
+				
+			    
+			    var groupingCategoryName={};
+			    groupingCategoryName.label=LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryname');
+			    groupingCategoryName.value= "GROUPING_NAME";
+			    tempStore.push(groupingCategoryName);
+			    
+			    
+			    var groupingCategoryValue={};
+			    groupingCategoryValue.label=LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryvalue');
+			    groupingCategoryValue.value= "GROUPING_VALUE";
+			    tempStore.push(groupingCategoryValue);
+			    
+			   }
+			
+			 var absolute={};
+		      absolute.label=LN('sbi.chartengine.designer.crossnavigation.paramType.absolute');
+		      absolute.value= "ABSOLUTE";
+		      
+		      var relative={};
+		      relative.label=LN('sbi.chartengine.designer.crossnavigation.paramType.relative');
+		      relative.value= "RELATIVE";
+			
+		      tempStore.push(absolute);
+		      tempStore.push(relative);
+			
+		   return tempStore;
 		}
+		
 	}
 });

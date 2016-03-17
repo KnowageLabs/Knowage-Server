@@ -1012,6 +1012,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}]
 			});
 			
+			this.crossParamsStore= Ext.create('Ext.data.Store', {
+				id: "storeCrossNavigationParameters",
+				fields: ['label', 'value'],
+				
+			});
+			
+			
 			var columnsPickerStore = this.columnsPickerStore;
 			
 			/** 
@@ -2235,7 +2242,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			var numberOfMaxItems = null;
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
-			
+			var globalScope=this;
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
   				viewConfig: {	
@@ -2277,6 +2284,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 							{
   								this.ownerCt.setHeight(containersInitHeight + (numCategItemsInContainer-numberOfMaxItems+1)*heightOfSingleItem);
 							}
+  							
+  							var crossParamTypes=ChartUtils.getParamTypes();
+  							 globalScope.crossParamsStore.removeAll();  	
+                             globalScope.crossParamsStore.add(crossParamTypes);  							
+  							
   						},  						
   						
   						/**
@@ -2460,10 +2472,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 				  	      				 * 						to be arranged into the regular matrix form.
 				  	      				 * 
 				  	      				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				  	      				 * 
+				  	      				 *  WORDCLOUD is limited to have only one category, avoid the case one item belongs to more than one category
 				  	      				 */			  	      				
 				  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn') 
 				  	      						|| (this.store.data.length == 1 && 
-				  	      								(chartType == "RADAR" || chartType == "SCATTER" || chartType == "PIE")) 
+				  	      								(chartType == "RADAR" || chartType == "SCATTER" || chartType == "PIE" || chartType == "WORDCLOUD")) 
 				  	      									|| (this.store.data.length == 2 && 
 				  	      											(chartType == "PARALLEL" || 
 				  	      													chartType == "HEATMAP" || 
@@ -2838,9 +2852,19 @@ Ext.define('Sbi.chart.designer.Designer', {
           								{
               								grid.ownerCt.setHeight(grid.ownerCt.getHeight()-heightOfSingleItem);
           								}
+              							/**
+              							 * updates store for cross navigation paramethers 
+              							 */
+              							var crossParamTypes=ChartUtils.getParamTypes();
+            							 globalScope.crossParamsStore.removeAll();  	
+                                       globalScope.crossParamsStore.add(crossParamTypes);  
+              							
             						}
             					}
+            					
             				});
+							
+								
 						}
 					}]
 				}],
@@ -3353,6 +3377,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			Ext.getCmp("chartBottomCategoriesContainer").getView().fireEvent("categoriesLoaded",categoriesStore.data.length);
+		
 		},			
 			
 		loadAxesAndSeries: function(jsonTemplate) {
@@ -3464,6 +3489,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								Sbi.chart.designer.ChartUtils.createEmptyAxisData(true);
 					
 					bottomXAxisesPanel.setAxisData(axisData);
+					
 				}
 			});
 			
@@ -3577,7 +3603,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							if(chartType == "PARALLEL") {
 								globalScope.seriesBeforeDropStore.add(newCol);
 							}
-							
+					    
 							store.add(newCol);
 						}
 					});
@@ -6420,6 +6446,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			//Since it remained only one serieStore let's update its data for it complies with the new leftColumnsContainer data
 			serieStorePool[0].axisAlias = leftColumnsContainer.axisData.alias;
 			serieStorePool[0].idAxisesContainer = leftColumnsContainer.axisData.id;
+			/**
+			 * updates store for cross navigation
+			 */
+			var crossParamTypes=ChartUtils.getParamTypes();
+			this.crossParamsStore.removeAll();  	
+            this.crossParamsStore.add(crossParamTypes);  
 		},
 		
 		/**
@@ -6433,6 +6465,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanCategoriesAxis: function() {
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));			
 			this.categoriesStore.removeAll();
+			/**
+			 * updates store for cross navigation
+			 */
+			var crossParamTypes=ChartUtils.getParamTypes();
+			this.crossParamsStore.removeAll();  	
+            this.crossParamsStore.add(crossParamTypes);  
+			
 		},
 		
 		/**

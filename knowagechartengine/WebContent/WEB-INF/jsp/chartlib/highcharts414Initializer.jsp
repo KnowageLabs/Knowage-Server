@@ -218,7 +218,7 @@
 	};
 
 	function handleCrossNavigationTo(e) {
-		
+		console.log(e.point);
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
@@ -227,7 +227,9 @@
 			var categoryValue = e.point.name;
 
 			if (e.point.hasOwnProperty('category')) {
+				if(isNaN(e.point.category)){
 				categoryName = e.point.category;
+				}
 			}
 			
 			var serieName = e.point.series.name;
@@ -241,12 +243,15 @@
 				groupingCategoryName = e.point.group.name;
 				groupingCategoryValue = e.point.group.value;
 			}
-
+			
+            // fisrt parameter is string chart type 
+            
 			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+					"HIGHCHART",
 					e.point.crossNavigationDocumentName,
 					e.point.crossNavigationDocumentParams, categoryName,
 					categoryValue, serieName, serieValue, groupingCategoryName,
-					groupingCategoryValue);
+					groupingCategoryValue, null);
 
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
 					.getChartWebServiceManager();
