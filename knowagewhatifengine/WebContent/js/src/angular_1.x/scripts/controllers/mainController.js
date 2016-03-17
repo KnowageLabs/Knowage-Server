@@ -112,6 +112,19 @@ function olapFunction(
 		$scope.showMdxVar = source.mdxFormatted;
 	}
 	
+	$scope.sendModelConfig = function(modelConfig){
+		 
+		 sbiModule_restServices.promisePost
+		 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
+			.then(function(response) {
+				$scope.table = $sce.trustAsHtml(response.data.table);
+				$scope.modelConfig = response.data.modelConfig;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
+				
+			});	
+	}
+	
 	$scope.toggleMenu=function(){
 		$scope.openLeftMenu=!$scope.openLeftMenu;
 	};
