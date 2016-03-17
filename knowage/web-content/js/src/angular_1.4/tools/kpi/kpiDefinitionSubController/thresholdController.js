@@ -32,7 +32,7 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 		$scope.loadThreshold();
 		$scope.checkIfIsUsedByAnotherKpi();
 		$timeout(function() {
-		var tbox=angular.element(document.querySelector('#angularTableTemplate.kpiListTableThresholdItemBox #angularTableContentBox'))[0];
+		var tbox=angular.element(document.querySelector('angular-table.kpiListTableThresholdItemBox #angularTableContentBox'))[0];
 		tbox.scrollTop = tbox.scrollHeight;
 		},0);
 	};

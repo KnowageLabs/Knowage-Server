@@ -27,237 +27,209 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<!-- Styles -->
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/md-data-table.min.css", currTheme)%>">
+	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<%-- 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/md-data-table.min.css", currTheme)%>"> --%>
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/documentBrowser.css", currTheme)%>">
 	
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script>
+<!-- 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script> -->
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
+	<!-- 	breadCrumb -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+	
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
 	
-	<title>Document Browser</title>
+	
+	 
 </head>
 
-<body class="bodyStyle" ng-app="documentBrowserModule" id="ng-app">
-	<div layout="column" ng-controller="documentBrowserController as ctrl" ng-cloak>
-		<!-- 
-		<div>folderDocuments.length = {{folderDocuments.length}}</div>
-		<div>searchDocuments.length = {{searchDocuments.length}}</div>
-		<div>showSearchResultHeader() = {{showSearchResultHeader()}}</div>
-		<div>showDefaultHeader() = {{showDefaultHeader()}}</div>
-		<div>showBreadcrumbHeader() = {{showBreadcrumbHeader()}}</div>
-		<div>selectedFolder = {{selectedFolder.name}}</div>
-		-->
-		
+<body   ng-app="documentBrowserModule" id="ng-app" layout="column" ng-controller="documentBrowserController" ng-cloak>
+	  	
 		<!-- Toolbar -->
-		<md-toolbar class="header">
+		<md-toolbar class="documentBrowserToolbar" >
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
 				<!-- Folders button -->
-				<md-button class="toolbar-button-custom" title="Folders" aria-label="Folders" style="min-width: 40px;" hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
-					<i class="fa fa-bars" style="color:white"></i>
+				<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
+					  <md-icon md-font-icon="fa fa-bars"></md-icon>
 				</md-button>
 				
 				<!-- Title -->
-				<h1 ng-hide="showSearchView">Document Browser</h1>
+				<md-icon md-font-icon="fa  fa-folder-open-o fa-2x" layout-margin></md-icon>
+				<h1 ng-hide="showSearchView">{{translate.load("sbi.browser.title")}}</h1>
+				<h1 ng-show="showSearchView">{{translate.load("sbi.browser.document.searchDocuments")}}</h1>
 				
-				<!-- Search back -->
-				<md-button class="md-icon-button" title="Back" aria-label="Back" style="margin-right:0px;" ng-show="showSearchView" ng-click="toggleSearchView()">
-					<i class="fa fa-arrow-left" style="color:white"></i>
-				</md-button>
+				<span flex=""></span>
 				
-				<!-- Search input -->
-				<md-input-container ng-show="showSearchView">
-					<label class="header" for="searchInput">Search documents</label>
-					<input class="header" type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
+			    
+			    <!-- Search input -->
+			    <md-input-container ng-show="showSearchView" class="searchInput">
+					<label>{{translate.load("sbi.generic.search.title")}}</label>
+					<input   type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
 				</md-input-container>
 				
 				<!-- Search clear -->
 				<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show="showSearchView" ng-click="setSearchInput('')">
-					<i class="fa fa-times" style="color:white"></i>
+					   <md-icon md-font-icon="fa fa-times"></md-icon>
 				</md-button>
 				
-				<span flex=""></span>
+				<!--  Search button -->
+				<md-button class="md-icon-button" title="Search" aria-label="Search" ng-class="{'selectedButton':showSearchView}" ng-click="toggleSearchView()">
+					  <md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
 				
 				<!-- Document view button -->
-				<md-button title="{{showDocumentGridView?'List view':'Grid view'}}" aria-label="{{showDocumentGridView?'List view':'Grid view'}}" class="toolbar-button-custom" ng-hide="showSearchView" ng-click="toggleDocumentView()">
-					<i class="fa fa-th-list" style="color:white" ng-show="showDocumentGridView"></i>
-					<i class="fa fa-th" style="color:white" ng-hide="showDocumentGridView"></i>
+				<md-button class="md-icon-button"  ng-click="toggleDocumentView()" title="{{showDocumentGridView?'List view':'Grid view'}}" aria-label="{{showDocumentGridView?'List view':'Grid view'}}" >
+					 <md-icon md-font-icon="fa" ng-class="showDocumentGridView ? 'fa-th-list' : 'fa-th'" ></md-icon>
 				</md-button>
 				
-				<!-- Search button -->
-				<md-button class="toolbar-button-custom" title="Search" aria-label="Search" ng-class="{'md-raised':showSearchView}" ng-click="toggleSearchView()">
-					<i class="fa fa-search" style="color:white"></i>
-				</md-button>
-				
-				<!-- Document Detail button-->
-				<md-button class="toolbar-button-custom" title="Details" aria-label="Details" ng-class="{'md-raised':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" ng-disabled="!isSelectedDocumentValid()">
-					<i class="fa fa-info-circle" style="color:white"></i>
-				</md-button>
+				 <!-- Document Detail button-->
+				<md-button class="md-icon-button"  ng-class="{'selectedButton':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" ng-disabled="!isSelectedDocumentValid()" title="Details" aria-label="Details">
+					 <md-icon md-font-icon="fa fa-info-circle"></md-icon>
+				 </md-button>
 				
 				<!-- Settings button-->
-				<md-button class="toolbar-button-custom" title="Settings" aria-label="Settings" ng-click="alert('Settings')">
-					<i class="fa fa-cog header"></i>
+				<md-button class="md-icon-button" title="Settings" aria-label="Settings" ng-click="alert('Settings')">
+				 	<md-icon md-font-icon="fa fa-cog"></md-icon>
 				</md-button>
 				
 			</div>
 		</md-toolbar>
 	
-		<section layout="row">
+	<md-content layout="row" flex>
+		<md-content layout="row" flex ng-show="!showSearchView">
 			
-			<md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-hide="showSearchView">
-				<md-toolbar class="header">
-	       			<h3 class="md-toolbar-tools">Folders</h3>
+			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" >
+				<md-toolbar class=" secondaryToolbar">
+	       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
      			</md-toolbar>
-     			<document-tree ng-model="folders" create-tree="true" drag-enabled="false" click-function="setSelectedFolder(item)" multi-select="false"></document-tree>
+     			<md-content layout-margin>
+     				<document-tree ng-model="folders" create-tree="true"   click-function="setSelectedFolder(item)"  ></document-tree>
+				</md-content>
 			</md-sidenav>
 
-			<md-content layout-padding flex>
-				<div ng-include="'search_result_header.html'" ng-show="showSearchResultHeader()"></div>
-				<div layout="row" ng-hide="showSearchView" ng-include="'breadcrumbs_header.html'" ></div>
-				<div ng-include="'no_documents.html'" ng-show="showDefaultHeader()"></div>
+			<md-content layout-margin flex layout="column"> 
 				
+				<bread-crumb ng-model=folderBread item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
+				
+				<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3> 
+	 
 				<!-- Document List View -->
-				<div layout="column" ng-hide="showDocumentGridView || showSearchView" ng-class="{'doc-list-border': folderDocuments.length>0}" flex> 
-					<md-data-table-container ng-show="folderDocuments.length>0">
-						<table md-data-table>
-							<thead md-order="documentsOrderProperty" style="height: 75px;">
-								<tr>
-									<th name="Type" order-by="typeCode"></th>
-									<th  name="Name" order-by="name"></th>
-									<th  name="Author" order-by="creationUser"></th>
-									<th  name="Date"  order-by="creationDate"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr md-auto-select ng-repeat="document in folderDocuments | orderBy: documentsOrderProperty"
-										ng-click="selectDocument(document)" ng-dblclick="executeDocument(document)"
-										ng-class="{'selected-doc':wasSelected(document)}">
-									<td>{{document.typeCode}}</td>
-									<td>{{document.name}}</td>
-									<td>{{document.creationUser}}</td>
-									<td>{{document.creationDate | limitTo: 10}}</td>
-								</tr>
-							</tbody>
-						</table>
-					</md-data-table-container>
-				</div>
+				 	<angular-table  ng-hide="showDocumentGridView || folderDocuments.length==0 " flex 
+						id='documentListTable' ng-model=folderDocuments
+						columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
+						columnsSearch='["name"]' 
+						show-search-bar=true
+						speed-menu-option=documentTableButton 
+						highlights-selected-item="true"
+						selected-item=selectedDocument
+						click-function="selectDocument(item);">
+					</angular-table>
+				 
+				
 				
 				<!-- Document Grid View -->
-				<div layout="column" ng-hide="!showDocumentGridView || showSearchView" flex>
-					<div layout="row" layout-padding layout-wrap layout-fill style="padding-bottom: 32px;">
-						<md-whiteframe flex="25" layout layout-align="center center" ng-repeat="document in folderDocuments">
-							<md-card style="width: 150px;" ng-click="selectDocument(document)" ng-dblclick="alert(document.name)" ng-class="{'selected-doc':wasSelected(document)}">
-								<!-- <img src="preview-images/{{document.PREVIEW_FILE}}" class="md-card-image" alt="{{document.name}}" style="width: 150px; height: 126px;"></img> -->
-								<md-card-content style="padding:0px; padding-left:2px; text-align:center;">
-									<div>{{document.name | limitEllipses:20}}</div>
-									<div>{{document.creationUser | limitEllipses:20}}</div>
-									<div>{{document.creationDate}}</div>
-								</md-card-content>
-							</md-card>
-						</md-whiteframe>
-					</div>
-				</div>
-			
-				<!-- Document Search View -->
-				<div layout="column" ng-show="showSearchView" ng-class="{'doc-list-border': searchDocuments.length>0}" flex> 
-					<md-data-table-container ng-show="searchDocuments.length>0">
-						<table md-data-table>
-							<thead md-order="documentsOrderProperty" style="height: 75px;">
-								<tr>
-									<th name="Type" order-by="typeCode"></th>
-									<th  name="Name" order-by="name"></th>
-									<th  name="Author" order-by="creationUser"></th>
-									<th  name="Date"  order-by="creationDate"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr md-auto-select ng-repeat="document in searchDocuments | orderBy: documentsOrderProperty" ng-click="selectDocument(document)" ng-dblclick="alert('Executing '+document.name+'...')" ng-class="{'selected-doc':wasSelected(document)}">
-									<td>{{document.typeCode}}</td>
-									<td>{{document.name}}</td>
-									<td>{{document.creationUser}}</td>
-									<td>{{document.creationDate | limitTo: 10}}</td>
-								</tr>
-							</tbody>
-						</table>
-					</md-data-table-container>
-				</div>
+				<div layout="row" layout-wrap ng-hide="!showDocumentGridView " >
+				<md-card class="documentCard" ng-repeat="document in folderDocuments">
+			        <img ng-src="{{imagePath}}" class="md-card-image" alt="img">
+			        <md-card-title>
+			          <md-card-title-text>
+			            <span class="md-headline ellipsis">{{document.name}}</span>
+			             <md-tooltip md-delay="1500">
+			              {{document.name}}
+			            </md-tooltip>
+			          </md-card-title-text>
+			        </md-card-title>
+<!-- 			        <md-card-content> -->
+<!-- 			          <p> -->
+<!-- 			          {{document}} -->
+<!-- 			          </p> -->
+<!-- 			        </md-card-content> -->
+			        <md-card-actions layout="row" layout-align="space-around center">
+			          <md-button class="md-icon-button" aria-label="Favorite">
+			            <md-icon md-font-icon="fa fa-play-circle"></md-icon>
+			          </md-button>
+			          <md-button class="md-icon-button" aria-label="Settings">
+			            <md-icon md-font-icon="fa fa-copy"></md-icon>
+			          </md-button>
+			          <md-button class="md-icon-button" aria-label="Share">
+			            <md-icon md-font-icon="fa fa-trash"></md-icon>
+			          </md-button>
+			        </md-card-actions>
+			      </md-card>
+ 
+				</div> 
 			</md-content>
+		 
+		</md-content>
 		
-			<md-sidenav class="md-sidenav-right selected-doc" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
-				<md-toolbar class="header" style="height: 75px;">
-					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1>
-					<div layout="row" layout-align="center center">
-						<md-button title="Execute Document" aria-label="Execute Document" class="toolbar-button-custom" ng-click="executeDocument(selectedDocument)">
-							<i class="fa fa-play-circle" style="color:white"></i>
+		<md-content layout="column" flex ng-show="showSearchView">
+			<h3 class="md-title" ng-show="searchInput.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
+			<h3 class="md-title" ng-show="searchInput.length>0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</h3>
+	 
+		<!-- Document Search View -->
+			<angular-table  ng-hide="showDocumentGridView || searchDocuments==undefined || searchDocuments.length==0" flex 
+				id='documentSearchTable' ng-model=searchDocuments
+				columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
+				speed-menu-option=documentTableButton 
+				highlights-selected-item="true"
+				selected-item=selectedDocument
+				highlights-selected-item="true"
+				click-function="selectDocument(item);">
+			</angular-table>
+		
+		</md-content>
+		
+		<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
+				<md-toolbar class="secondaryToolbar">
+<!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->
+					<div layout="row" layout-align="space-around center">
+						<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+								<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 						</md-button>
 						
-						<md-button title="Edit Document" aria-label="Edit Document" class="toolbar-button-custom" ng-click="alert('Editing '+selectedDocument.name+'...')">
-							<i class="fa fa-pencil" style="color:white"></i>
+						<md-button title="Edit Document" aria-label="Edit Document" class="md-icon-button" ng-click="alert('Editing '+selectedDocument.name+'...')">
+								<md-icon md-font-icon="fa fa-pencil"></md-icon>
 						</md-button>
 						
-						<md-button title="Clone Document" aria-label="Clone Document" class="toolbar-button-custom" ng-click="alert('Cloning '+selectedDocument.name+'...')">
-							<i class="fa fa-clone" style="color:white"></i>
+						<md-button title="Clone Document" aria-label="Clone Document" class="md-icon-button" ng-click="alert('Cloning '+selectedDocument.name+'...')">
+								<md-icon md-font-icon="fa fa-clone"></md-icon>
 						</md-button>
 						
-						<md-button title="Delete Document" aria-label="Delete Document" class="toolbar-button-custom" ng-click="alert('Deleting '+selectedDocument.name+'...')">
-							<i class="fa fa-trash-o" style="color:white"></i>
+						<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="alert('Deleting '+selectedDocument.name+'...')">
+								<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 						</md-button>
 					</div>
 				</md-toolbar>
-				
-				<md-list>
-					<md-list-item layout="row">
-						<span flex="40"><b>Description:</b></span>
-						<span flex="60">{{selectedDocument.description}}</span>
-					</md-list-item>
-					<md-list-item layout="row">
-						<span flex="40"><b>State:</b></span>
-						<span flex="60">{{selectedDocument.stateCode}}</span>
-					</md-list-item>
-					<md-list-item layout="row">
-						<span flex="40"><b>Type:</b></span>
-						<span flex="60">{{selectedDocument.typeCode}}</span>
-					</md-list-item>
-					<md-list-item layout="row">
-						<span flex="40"><b>Author:</b></span>
-						<span flex="60">{{selectedDocument.creationDate}}</span>
-					</md-list-item>
-				</md-list>
+				<md-content layout-margin>
+					<md-list>
+						 <md-list-item class="md-2-line">
+						          <div class="md-list-item-text">
+						            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+						            <p>{{selectedDocument.description}}</p>
+						          </div>
+						 </md-list-item>
+						 <md-list-item class="md-2-line">
+						          <div class="md-list-item-text">
+						            <h3><b>{{translate.load("sbi.generic.state")}}</b></h3>
+						            <p>{{selectedDocument.stateCode}}</p>
+						          </div>
+						 </md-list-item>
+						 <md-list-item class="md-2-line">
+						          <div class="md-list-item-text">
+						            <h3><b>{{translate.load("sbi.generic.type")}}</b></h3>
+						            <p>{{selectedDocument.typeCode}}</p>
+						          </div>
+						 </md-list-item>
+						 <md-list-item class="md-2-line">
+						          <div class="md-list-item-text">
+						            <h3><b>{{translate.load("sbi.generic.creationdate")}}</b></h3>
+						            <p>{{selectedDocument.creationDate}}</p>
+						          </div>
+						 </md-list-item>
+					</md-list>
+				</md-content>
 			</md-sidenav>
-			
-		</section>
-	</div>
+	</md-content>
 	
-	<script type="text/ng-template" id="folders_renderer.html">
-		<div ng-click="setSelectedFolder(folder)" class="customTreeNode" ui-tree-handle>
-			<md-button  ng-class="{'md-primary':folder.selected,'md-raised':folder.selected}">
-			<md-icon>{{folder.subfolders.length>0?(folder.showSubfolders?"&#xE313;":"&#xE315;"):""}}</md-icon>
-			<md-icon>&#xE2C7;</md-icon>&nbsp;{{folder.NAME}}
-			</md-button>
-		</div>
-		<ol ui-tree-nodes="" ng-model="folder.subfolders" ng-show="folder.showSubfolders">
-			<li ng-repeat="folder in folder.subfolders" ui-tree-node ng-include="'folders_renderer.html'"></li>
-		</ol>
-	</script>
-	
-	<script type="text/ng-template" id="search_result_header.html">
-		<h3 class="md-title">{{searchDocuments.length || 0}} documents found.</h3>
-	</script>
-
-	<script type="text/ng-template" id="no_documents.html">
-		<h3 class="md-title">No documents to display.</h3>
-	</script>
-
-	<!-- Should be included in a div with layout row-->
-	<script type="text/ng-template" id="breadcrumbs_header.html">
-		<div ng-repeat="folderChild in getFolderAncestors(selectedFolder, folders)">
-			<span ng-hide="$first">
-				&gt;
-			</span>
-			<md-button ng-click="setSelectedFolder(folderChild)">
-				{{folderChild.name}}
-			</md-button>
-		</div>
- 	</script>
 </body>
 </html>

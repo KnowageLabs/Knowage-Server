@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 	<angular-list-detail ng-controller="measureRoleMasterController"  full-screen="true">
 		
-		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction">
+		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction" layout-column>
 	 	<angular-table id='measureListTable' ng-model=measureRoleList
 				columns='measureRoleColumnsList'
 			 	 show-search-bar=true
