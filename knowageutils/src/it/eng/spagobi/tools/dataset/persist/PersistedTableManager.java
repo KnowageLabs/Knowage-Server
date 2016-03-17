@@ -313,10 +313,16 @@ public class PersistedTableManager {
 					try {
 						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(j);
 						IField field = record.getFieldAt(j);
+						Object fieldValue = field.getValue();
+						String fieldMetaName = fieldMeta.getName();
+						String fieldMetaTypeName = fieldMeta.getType().toString();
+						boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 						if (this.isRowCountColumIncluded()) {
-							PersistedTableHelper.addField(toReturn, j + 1, field, fieldMeta, getColumnSize());
+							PersistedTableHelper.addField(toReturn, j + 1, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
+									getColumnSize());
 						} else {
-							PersistedTableHelper.addField(toReturn, j, field, fieldMeta, getColumnSize());
+							PersistedTableHelper.addField(toReturn, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
+									getColumnSize());
 						}
 					} catch (Throwable t) {
 						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);

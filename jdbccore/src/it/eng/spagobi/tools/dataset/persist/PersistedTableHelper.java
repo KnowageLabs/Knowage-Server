@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -38,18 +33,17 @@ public class PersistedTableHelper {
 
 	private static transient Logger logger = Logger.getLogger(PersistedTableHelper.class);
 
-	public static void addField(PreparedStatement insertStatement, int fieldIndex, IField field, IFieldMetaData fieldMeta, Map<String, Integer> columnSizes) {
-		Object fieldValue = field.getValue();
-		String fieldMetaName = fieldMeta.getName();
-		String fieldMetaTypeName = fieldMeta.getType().toString();
-		FieldType fieldMetaFieldType = fieldMeta.getFieldType();
+	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
+			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
+
 		try {
 			// in case of a measure with String type, convert it into a Double
-			if (fieldMetaFieldType.equals(FieldType.MEASURE) && fieldMetaTypeName.contains("String")) {
+			if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
 				try {
 					logger.debug("Column type is string but the field is measure: converting it into a double");
 					// only for primitive type is necessary to use setNull method if value is null
-					if (StringUtilities.isEmpty((String) fieldValue)) {
+					String fieldValueString = (String) fieldValue;
+					if (fieldValueString == null || "".equals(fieldValueString.trim())) {
 						insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
 					} else {
 						try {

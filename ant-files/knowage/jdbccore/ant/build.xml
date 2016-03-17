@@ -16,13 +16,6 @@
     		<fileset dir="${runtime.lib}">
           		<include name="**/*.jar"/>
     		</fileset>
-    		<!-- LIBRERIE necessarie per la compilazione -->
-    		<fileset dir="${knowageutils.json.dir}/dist">
-          		<include name="**/*.jar"/>
-    		</fileset>
-			<fileset dir="${jdbc.core.dir}/dist">
-          		<include name="**/*.jar"/>
-    		</fileset>
  	</path>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -41,15 +34,15 @@
   </target>
 
 
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
-	  <target name="upgrade.mf"  >
-			<replaceregexp file="${src}/META-INF/MANIFEST.MF">
-				<regexp pattern="(Implementation-Version:)(.*?$)"/>
-				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
-			</replaceregexp>
-	  </target> 
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <target name="upgrade.mf"  >
+		<replaceregexp file="${src}/META-INF/MANIFEST.MF">
+			<regexp pattern="(Implementation-Version:)(.*?$)"/>
+			<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+		</replaceregexp>
+  </target> 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   COMPILAZIONE							                                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
