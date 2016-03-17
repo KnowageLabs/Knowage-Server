@@ -69,20 +69,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		$scope.modelConfig.drillType = type;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
-
-	 /*service for placing member on axis**/
-	 $scope.putMemberOnAxis = function(fromAxis,member){
-		 
-		 sbiModule_restServices.promisePost
-		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
-			.then(function(response) {
-				$scope.handleResponse(response);			
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
-				
-			});	
-	}
-	 
 	 
 	 $scope.sortDisable = function(){
 		 
@@ -94,8 +80,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				
 			});	
 		  }
-	 
-	 /** dragan  sorting */
 	 
 	  $scope.sort = function(axisToSort,axis,positionUniqueName){
 		  
