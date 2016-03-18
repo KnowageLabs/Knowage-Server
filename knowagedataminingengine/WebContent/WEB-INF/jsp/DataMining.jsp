@@ -179,7 +179,7 @@ author:...
 		
 			<md-content ng-if="!variableForm" layout-wrap>
 				<md-tabs class="mini-tabs" md-selected="idx_output" layout="column" md-dynamic-height> 
-					<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}">
+					<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}" md-on-select="getOutputResultFromTabClick(cmd,out)">
 						<md-content layout="column" layout-padding>
 							<md-content>
 								<md-content layout = 'row' layout-margin>

@@ -190,11 +190,16 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 					restServices.get($scope.pathRest.vers, urlCommand, null, tmpConfig)
 					.success(function(data){
 						for (var i = 0; i < outputs.length; i++){
-							var singleOutputPromise = $scope.createSingleOutputPromise();
-							var parameters = {};
-							parameters.singleOutput = outputs[i];
-							parameters.commandName =  commandName;
-							singleOutputPromise.resolve(parameters);
+							if (outputs[i].outputMode == "auto"){
+								$scope.idx_output = i;
+								var singleOutputPromise = $scope.createSingleOutputPromise();
+								var parameters = {};
+								parameters.singleOutput = outputs[i];
+								parameters.commandName =  commandName;
+								singleOutputPromise.resolve(parameters);
+								break;
+							}
+						
 						}
 					})
 					.error(function(data, status){
@@ -225,7 +230,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 			var cmd = data;
 			for ( var i = 0 ; cmd.variables != null && i < cmd.variables.length && cmd.variables[i].currentVal === undefined ; i++){
 				cmd.variables[i].currentVal =  cmd.variables[i].defaultVal;
-			 }
+			}
 			var parameters = {};
 			parameters.outputs = cmd.outputs;
 			parameters.commandName =  cmd.name;
@@ -272,6 +277,17 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 			 $scope.createCommandPromise().resolve(cmd);
 		}
 	};
+	
+	//When an output tab is selected, get the result if not already present in results
+	$scope.getOutputResultFromTabClick = function (cmd,output){
+		if ($scope.results[cmd.name] == undefined || $scope.results[cmd.name][output.outputName] == undefined){			
+			var singleOutputPromise = $scope.createSingleOutputPromise();
+			var parameters = {};
+			parameters.commandName =  cmd.name;
+			parameters.singleOutput = output;
+			singleOutputPromise.resolve(parameters);
+		}
+	}
 	
 	//If the command has files, show buttons to upload file
 	$scope.visibilityUploadButton = function (commandName){
