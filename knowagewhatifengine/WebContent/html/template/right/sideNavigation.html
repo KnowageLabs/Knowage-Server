@@ -1,25 +1,7 @@
 <div flex=5>	
-<!-- 
-	<md-toolbar class='md-toolbar-tools knowage-blue'>Customization</md-toolbar>
-	<md-tabs class="md-tab-right">
-		<md-tab label="Table">
-			<md-content >
-				Here goes the customization for table
-			</md-content>
-		</md-tab>
-		
-		<md-tab label="Chart">
-		</md-tab>
-		
-		<md-tab label="Table & Chart">
-			Table and chart
-		</md-tab>
-	</md-tabs>
- -->
- <!-- DO NOT COMMIT THIS -->
 <div class="right-toolbar" layout="row">
-	<md-icon ng-show="tableIcon" class="fa fa-table fa-2x" style="font-size:1.9em"/>
-	<md-icon ng-show="chartIcon" class="fa fa-pie-chart fa-2x" style="font-size:1.9em"/>
+	<md-icon ng-show="tableIcon" class="fa fa-table fa-2x" style="font-size:1.9em; color:white;"/>
+	<md-icon ng-show="chartIcon" class="fa fa-pie-chart fa-2x" style="font-size:1.9em; color:white;"/>
 </div>
 
 	<div style=" background-color:blue; height:32px; border-radious:10px; border-radius: 7px 0px 0px 7px; background-color:#3b678c" layout="row">
@@ -58,8 +40,6 @@
 	</div>
 </div>
 <md-toolbar class='md-toolbar-tools knowage-blue'>Menu</md-toolbar>
-	<sbi-table-toolbar></sbi-table-toolbar>
-<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-click="closeSideNav('right')">
-	Close
-</md-button>
+	<sbi-table-toolbar ng-show="tableIcon && !chartIcon"></sbi-table-toolbar>
+	<sbi-chart-toolbar ng-show="!tableIcon && chartIcon"></sbi-table-toolbar>
 </md-sidenav>

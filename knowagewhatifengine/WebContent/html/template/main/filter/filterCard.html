@@ -1,15 +1,29 @@
-<md-card ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" flex=15  ng-drag="true" ng-drag-data="filter" ng-drag-success="dragSuccess('filter',$index)" style="overflow:hidden">
-	<md-card-title class="knowage-blue filter-toolbar">
-		<md-card-title-text >
-			<span>{{filter.name}}</span>
-		</md-card-title-text>
-	</md-card-title>
-	<md-card-actions layout="row" layout-align="end">
-		<div style="width:80%;text-align: center;">
-			{{filterSelected[$index].visible ? filterSelected[$index].name : '...'}}
+
+<div style="width:100%" layout="row"> 
+	<div class="new-filter-card" 
+			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" 
+			ng-drag="true" ng-drag-data="filter" 
+			ng-drag-success="dragSuccess('filter',$index)"
+			>
+			
+		<div layout="row" class="top">
+			<div class="button-area" >
+				<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e)" ng-hide="true">
+					<md-icon class="fa fa-sitemap" style="color:white; margin-top:10%"></md-icon>	
+				</md-button>
+			</div>
+			<div class="name-area">{{filter.name}}</div>
 		</div>
-		<md-button class="md-icon-button" style="bottom:0;" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)">
-			<md-icon md-font-icon="fa fa-filter"></md-icon>
-		</md-button>
-	</md-card-actions>   
-</md-card>
+	
+	 	<div layout="row" class="bottom">
+			<div class="name-area">
+				{{filterSelected[$index].visible ? filterSelected[$index].name : '...'}}
+			</div>
+			<div class="button-area">
+				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)">
+					<md-icon md-font-icon="fa fa-filter"></md-icon>
+				</md-button>
+			</div>
+		</div>
+	</div>
+</div>

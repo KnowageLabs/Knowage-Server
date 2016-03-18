@@ -27,7 +27,7 @@
 
 @-moz-document url-prefix() { 
   .top-alignment {
-     height:63%;
+     height:55%;
   }  
 }
 
@@ -210,8 +210,7 @@ md-tabs .md-tab.md-active{
 }
 
 .central-panel{
-    height:calc(80% - 32px);
-    height: -moz-calc(80% - 32px);
+    height:85%;
     width:100%;
     position:absolute;
 }
@@ -383,8 +382,8 @@ md-dialog.fullscreen-dialog {
 
 @-moz-document url-prefix() { 
   .right-toolbar{
-	padding-top:43%;
-	padding-bottom:44%;
+	padding-top:23%;
+	padding-bottom:23%;
 	}
 }
 
@@ -430,4 +429,78 @@ md-dialog.fullscreen-dialog {
 	height: 25px;
 	line-height: 1;
 	text-transform: none;
+}
+
+/*New filter card*/
+.new-filter-card{
+	width:12%;
+	border-radius:10px;
+	margin: 5px; 
+	height: 80%;
+	cursor: pointer;
+}
+
+.new-filter-card .top{
+	height:50%; 
+	border-radius: 10px 10px 0px 0px;
+	 border: 1px solid; 
+	 background-color:#3b678c;
+}
+
+.new-filter-card .top .button-area{
+	width:20%;
+}
+
+.new-filter-card .top .button-area .multi-hierarachy-btn{
+	width: 20px !important;
+    height: 20px;
+    min-width: 0px;
+    margin: 5% 0px 0px 15% !important;
+    line-height: 1;
+    padding-left:0px;
+}
+
+.multi-hierarachy-btn:hover{
+	background-color:inherit!important;	
+}
+
+.new-filter-card .top .name-area{
+	line-height: 2.5;
+	color:white;
+	text-align: center;
+}
+
+@-moz-document url-prefix() { 
+	.new-filter-card .top .name-area{
+		line-height: 1.5;
+		color:white;
+		text-align: center;
+	}
+}
+.new-filter-card .bottom{
+	height:50%;
+	border-radius: 0px 0px 10px 10px;
+	border: 1px solid; 
+	border-top:0px;
+	background-color:#ffffff;
+}
+
+.new-filter-card .bottom .name-area{
+	width:80%;
+	overflow:hidden;
+	line-height: 2;
+	text-align: center;
+}
+
+@-moz-document url-prefix() { 
+	.new-filter-card .bottom .name-area{
+		width:80%;
+		padding:15%;
+		overflow:hidden;
+		line-height: 1;
+		text-align: center;
+	}
+}
+.new-filter-card .bottom .button-area{
+	width:20%;
 }

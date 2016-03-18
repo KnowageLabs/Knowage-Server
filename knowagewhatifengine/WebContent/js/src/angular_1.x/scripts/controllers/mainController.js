@@ -126,6 +126,10 @@ function olapFunction(
 				
 			});	
 	}
+	
+	$scope.toggleMenu=function(){
+		$scope.openLeftMenu=!$scope.openLeftMenu;
+	};
 
 	$scope.startFrom = function(start) {
 		if ($scope.ready) {
@@ -158,7 +162,7 @@ function olapFunction(
 			targetEvent : ev,
 			clickOutsideToClose : false
 		});
-	}
+	};
 	
 	$scope.closeDialog = function(e){
 		$mdDialog.hide();
