@@ -404,6 +404,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 					parameters.singleOutput = output ;
 					promiseResult.resolve(parameters);
 				}else{
+					$scope.results[commandName] = {};
 					var promiseOutputs = $scope.createOutputsPromise();
 					parameters.outputs = cmd.outputs;
 					promiseOutputs.resolve(parameters)
