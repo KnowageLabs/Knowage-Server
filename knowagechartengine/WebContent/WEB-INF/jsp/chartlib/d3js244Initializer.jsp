@@ -26,6 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3.js"></script> 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Wordcloud.js"></script> 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Sunburst.js"></script> 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Parallel.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Chord.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/CrossNavigationHelper.js"></script>
 <script>
 
