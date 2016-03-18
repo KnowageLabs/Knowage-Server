@@ -41,9 +41,12 @@
 		$scope.parameterView=execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
 		$scope.showParametersPanel = execProperties.showParametersPanel;
+		//rank
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
 		$scope.isClick=false;
+		$scope.setRank = false;
+		//note
 		$scope.noteLoaded = {};
 		$scope.typeNote='Private';
 		$scope.notesList = [];
@@ -100,6 +103,7 @@
 		};
 		
 		$scope.rateScore=function(value){
+			$scope.setRank = true;
 			$scope.requestToRating = {
 					'rating':value,
 					'obj':$scope.executionInstance.OBJECT_ID,
@@ -127,6 +131,13 @@
 		};
 		
 		$scope.hoverStar = function(value){
+			if($scope.setRank){
+				for(var i=1;i<=5;i++){
+					var string= "star"+i;
+					angular.element(document.getElementById(string).firstChild).removeClass('fa-star');
+					angular.element(document.getElementById(string).firstChild).addClass('fa-star-o');
+				}
+			}
 			$scope.isClick=false;
 			for(var i=1;i<=value;i++){
 				var string= "star"+i;
@@ -137,11 +148,23 @@
 		};
 		
 		$scope.leaveStar = function(value){
-			if(!$scope.isClick){
+			
+			if(!$scope.isClick && !$scope.setRank){
 				for(var i=1;i<=value;i++){
 					var string= "star"+i;
 					angular.element(document.getElementById(string).firstChild).removeClass('fa-star');
 					angular.element(document.getElementById(string).firstChild).addClass('fa-star-o');
+				}
+			} else if(!$scope.isClick && $scope.setRank){
+				for(var i=1;i<=5;i++){
+					var string= "star"+i;
+					angular.element(document.getElementById(string).firstChild).removeClass('fa-star');
+					angular.element(document.getElementById(string).firstChild).addClass('fa-star-o');
+				}
+				for(var i=1;i<=$scope.requestToRating.rating;i++){
+					var string= "star"+i;
+					angular.element(document.getElementById(string).firstChild).removeClass('fa-star-o');
+					angular.element(document.getElementById(string).firstChild).addClass('fa-star');
 				}
 			}
 		};
