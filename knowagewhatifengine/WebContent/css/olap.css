@@ -301,6 +301,11 @@ table tr:nth-child(even) {
 	background-size:23px 23px;
 }
 
+.cross-navigation{
+	background-image: url(../img/DESC-columns.png);
+	background-size:23px 23px;
+}
+
 .highlight-filter-result{
 	background-color: rgba(255,89,145,0.7);
 	border-radius: 5px;
