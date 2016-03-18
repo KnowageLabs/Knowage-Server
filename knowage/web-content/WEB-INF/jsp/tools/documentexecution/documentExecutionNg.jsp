@@ -107,10 +107,6 @@ try{
 				            </md-menu-item>
 				            <%} %>
 				            <md-menu-item class="md-indent">
-				            	<md-icon class="fa fa-sticky-note-o"></md-icon>
-		                    	<md-button ng-click="alert('TODO')">{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</md-button>
-				            </md-menu-item>
-				            <md-menu-item class="md-indent">
 				            	<md-icon class="fa fa-star"></md-icon>
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
                                 	ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}

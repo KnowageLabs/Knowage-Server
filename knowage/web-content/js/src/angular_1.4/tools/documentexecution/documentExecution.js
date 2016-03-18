@@ -294,8 +294,21 @@
 						} else {
 							console.log(response);
 							
-							sbiModule_download.getBlob(response.data.file,$scope.executionInstance.OBJECT_LABEL,"application/"+typeExport,typeExport);
-							
+							var arr = response.data.file;
+							var byteArray = new Uint8Array(arr);
+							sbiModule_download.getBlob(byteArray,$scope.executionInstance.OBJECT_LABEL,"application/"+typeExport,typeExport);
+
+							/*var a = window.document.createElement('a');
+
+							a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
+							a.download = $scope.executionInstance.OBJECT_LABEL+'.'+typeExport;
+							// Append anchor to body.
+							document.body.appendChild(a)
+							a.click();
+
+
+							// Remove anchor from body
+							document.body.removeChild(a)*/
 							
 						}
 

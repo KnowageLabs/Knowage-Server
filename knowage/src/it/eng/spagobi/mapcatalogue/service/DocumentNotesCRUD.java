@@ -250,7 +250,7 @@ public class DocumentNotesCRUD {
 	@POST
 	@Path("/getDownalNote")
 	@Produces("application/octet-stream")
-	public Response getDownalNote(@Context HttpServletRequest req) {
+	public String getDownalNote(@Context HttpServletRequest req) {
 		// calculateBIObjectRating
 		JSONObject requestVal;
 		List globalObjNoteList = null;
@@ -345,7 +345,7 @@ public class DocumentNotesCRUD {
 
 			object.put("file", bFile);
 
-			return Response.ok(bFile).build();
+			return object.toString();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
