@@ -433,43 +433,48 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       
       
       $scope.showCCWizard = function(){
-  		$scope.aggregattionList = [];
-  		$scope.temporalList = [];
-  		$scope.arithmeticList = [];
-  		
-    	  
-    	  for (var i = 0; i < $scope.formulasData.length; i++) {
-    		  
-    		  switch ($scope.formulasData[i].type) {
-  			case "aggregation":
-  				$scope.aggregattionList.push($scope.formulasData[i]);
-  				
-  				break;
-  			case "arithetic":
-  				
-  				break;
-  			case "temporal":
-  				
-  				break;
-  			default:
-  				break;
-  			}
-    		  
-		}
-    	  console.log("AAAAAAAAAAAA");
-		  console.log($scope.aggregattionList);	
-  		$mdDialog
-  			.show({
-  				scope : $scope,
-  				preserveScope : true,
-  				controllerAs : 'olapCtrl',
-  				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
-  				//targetEvent : ev,
-  				clickOutsideToClose : false,
-  				hasBackdrop:false
-  			});
-  	}
+    		$scope.aggregattionList = [];
+    		$scope.temporalList = [];
+    		$scope.arithmeticList = [];
+    		
+      	  
+      	  for (var i = 0; i < $scope.formulasData.length; i++) {
+      		  
+      		  switch ($scope.formulasData[i].type) {
+    			case "aggregation":
+    				$scope.aggregattionList.push($scope.formulasData[i]);
+    				
+    				break;
+    			case "arithmetic":
+    				$scope.arithmeticList.push($scope.formulasData[i]);
+    				break;
+    			case "temporal":
+    				$scope.temporalList.push($scope.formulasData[i]);
+    				break;
+    			default:
+    				break;
+    			}
+      		  
+  		}
+      	  console.log("AAAAAAAAAAAA");
+  		  console.log($scope.aggregattionList);	
+    		$mdDialog
+    			.show({
+    				scope : $scope,
+    				preserveScope : true,
+    				controllerAs : 'olapCtrl',
+    				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
+    				//targetEvent : ev,
+    				clickOutsideToClose : false,
+    				hasBackdrop:false
+    			});
+    	}
      
-	
+	$scope.isSelected = function(obj) {
+		$scope.selected = !$scope.selected;
+		$scope.formula_syntax = obj.syntax;
+		$scope.formula_desc = obj.description;
+		
+	}
 };
 
