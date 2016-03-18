@@ -75,7 +75,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		// model.setSorting(false);
 		model.removeSubset();
 
-		model.swapAxisSort();
+		model.swapAxisSort(ei.getModelConfig());
 		model.setSubset(0, 0, 10);
 
 		String table = renderModel(model);
