@@ -344,13 +344,13 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		/*
 		 * if (isSubset(qaRows)) {
-		 * 
-		 * 
-		 * 
+		 *
+		 *
+		 *
 		 * } else { Exp setForAx = qa.getExp(); axis.getPositionCount();
-		 * 
+		 *
 		 * List<Exp> args = new ArrayList<Exp>(3);
-		 * 
+		 *
 		 * args.add(setForAx); args.add(Literal.create(startFrom));
 		 * args.add(Literal.create(count)); FunCall subset = new
 		 * FunCall("Subset", Syntax.Function, args); qa.setExp(subset); }
@@ -525,35 +525,32 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	public void swapAxisSort(ModelConfig modelConfig) {
 		CellSetAxis rows = getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
 		CellSetAxis columns = getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
-
+		this.setSorting(true);
 		SwapAxes transform = getTransform(SwapAxes.class);
 
-		if (modelConfig.getSortingEnabled()) {
-			if (transform.isSwapAxes()) {
-				for (Position positionOnRows : rows.getPositions()) {
-					if (isSorting(positionOnRows)) {
-						sort(rows, positionOnRows);
-					}
-
-				}
-				for (Position positionOnColunms : columns.getPositions()) {
-					if (isSorting(positionOnColunms)) {
-						sort(columns, positionOnColunms);
-					}
-				}
-			} else {
-				for (Position positionOnRows : rows.getPositions()) {
-					if (isSorting(positionOnRows)) {
-						sort(columns, positionOnRows);
-					}
-
-				}
-				for (Position positionOnColunms : columns.getPositions()) {
-					if (isSorting(positionOnColunms)) {
-						sort(rows, positionOnColunms);
-					}
+		if (transform.isSwapAxes()) {
+			for (Position positionOnRows : rows.getPositions()) {
+				if (isSorting(positionOnRows)) {
+					sort(rows, positionOnRows);
 				}
 
+			}
+			for (Position positionOnColunms : columns.getPositions()) {
+				if (isSorting(positionOnColunms)) {
+					sort(columns, positionOnColunms);
+				}
+			}
+		} else {
+			for (Position positionOnRows : rows.getPositions()) {
+				if (isSorting(positionOnRows)) {
+					sort(columns, positionOnRows);
+				}
+
+			}
+			for (Position positionOnColunms : columns.getPositions()) {
+				if (isSorting(positionOnColunms)) {
+					sort(rows, positionOnColunms);
+				}
 			}
 
 		}

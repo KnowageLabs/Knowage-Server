@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.whatif.model;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
 import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
@@ -336,24 +337,27 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	private void serializeFunctions(String field, JsonGenerator jgen) throws JsonProcessingException, IOException, JSONException, JAXBException {
 
-		List<MDXFormula> formulas = MDXFormulaHandler.getFormulas();
+		MDXFormulas formulas = MDXFormulaHandler.getFormulas();
 		jgen.writeArrayFieldStart(field);
-		for (MDXFormula formula : formulas) {
 
-			Map<String, Object> formulaObject = new HashMap<String, Object>();
+		if (formulas != null) {
+			for (MDXFormula formula : formulas.getFormulas()) {
 
-			formulaObject.put("name", formula.getName());
-			formulaObject.put("syntax", formula.getSyntax());
-			formulaObject.put("argument", formula.getArguments());
-			formulaObject.put("description", formula.getDescription());
-			formulaObject.put("output", formula.getOutput());
-			formulaObject.put("type", formula.getType());
+				Map<String, Object> formulaObject = new HashMap<String, Object>();
 
-			jgen.writeObject(formulaObject);
+				formulaObject.put("syntax", formula.getSyntax());
+				formulaObject.put("argument", formula.getArguments());
+				formulaObject.put("description", formula.getDescription());
+				formulaObject.put("output", formula.getOutput());
+				formulaObject.put("type", formula.getType());
+
+				jgen.writeObject(formulaObject);
+			}
 		}
 
 		jgen.writeEndArray();
-
+		String name = MDXFormula.class.getDeclaredFields()[0].getName();
+		System.out.println(name);
 	}
 
 	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
