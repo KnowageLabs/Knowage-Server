@@ -79,6 +79,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
 			attributes.put("ng-dblclick", "makeEditable('" + id + "','" + measureName + "')");
 			attributes.put("id", id);
+			attributes.put("measureName", measureName);
+			attributes.put("ordinal", String.valueOf(positionId));
+			attributes.put("cell", null);
 		} else if (context.getCellType() == CellTypes.VALUE) {
 			String uniqueName = context.getMember().getUniqueName();
 			int axis = context.getAxis().axisOrdinal();
@@ -100,9 +103,12 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					Map<String, String> attributes = new TreeMap<String, String>();
 					attributes.put("src", "../img/ico_search.gif");
 					attributes.put("id", "drillt");
+
 					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
 					startElement("img", attributes);
 					endElement("img");
+					attributes = null;
+
 				}
 			}
 
