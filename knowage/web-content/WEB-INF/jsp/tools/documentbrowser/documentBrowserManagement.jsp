@@ -28,9 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<!-- Styles -->
 	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
-<%-- 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/md-data-table.min.css", currTheme)%>"> --%>
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/documentbrowser/documentBrowser.css", currTheme)%>">
-	
+
 <!-- 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js"></script> -->
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
 	<!-- 	breadCrumb -->
@@ -43,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 
 </head>
 
-<body   ng-app="documentBrowserModule" id="ng-app" layout="column" ng-controller="documentBrowserController" ng-cloak>
+<body   ng-app="documentBrowserModule" id="ng-app" layout="column" ng-controller="documentBrowserController" ng-cloak class="kn-documentBrowser">
 	  	
 		<!-- Toolbar -->
 		<md-toolbar class="documentBrowserToolbar" >
@@ -118,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						id='documentListTable' ng-model=folderDocuments
 						columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
 						columnsSearch='["name"]' 
-						show-search-bar=true
+						show-search-bar=false
 						speed-menu-option=documentTableButton 
 						highlights-selected-item="true"
 						selected-item=selectedDocument
@@ -130,29 +128,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<!-- Document Grid View -->
 				<div layout="row" layout-wrap ng-hide="!showDocumentGridView " >
 				<md-card class="documentCard" ng-repeat="document in folderDocuments">
-			        <img ng-src="{{imagePath}}" class="md-card-image" alt="img">
+<!-- 				ng-src="{{getImageUrl(document)}}" -->
+			        
 			        <md-card-title>
 			          <md-card-title-text>
-			            <span class="md-headline ellipsis">{{document.name}}</span>
+			            <span class=" ellipsis">{{document.name}}</span>
 			             <md-tooltip md-delay="1500">
 			              {{document.name}}
 			            </md-tooltip>
 			          </md-card-title-text>
 			        </md-card-title>
+			        <img  class="md-card-image document_browser_image_{{document.typeCode}}"  >
 <!-- 			        <md-card-content> -->
 <!-- 			          <p> -->
 <!-- 			          {{document}} -->
 <!-- 			          </p> -->
 <!-- 			        </md-card-content> -->
-			        <md-card-actions layout="row" layout-align="space-around center">
+			        <md-card-actions layout="row" layout-align="end">
+			        	<span flex></span>
 			          <md-button class="md-icon-button" aria-label="Favorite">
-			            <md-icon md-font-icon="fa fa-play-circle"></md-icon>
+			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 			          </md-button>
 			          <md-button class="md-icon-button" aria-label="Settings">
-			            <md-icon md-font-icon="fa fa-copy"></md-icon>
+			            <md-icon md-font-icon="fa fa-copy fa-2x"></md-icon>
 			          </md-button>
 			          <md-button class="md-icon-button" aria-label="Share">
-			            <md-icon md-font-icon="fa fa-trash"></md-icon>
+			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
 			        </md-card-actions>
 			      </md-card>

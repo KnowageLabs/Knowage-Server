@@ -7,6 +7,7 @@
   'components/federatedDataset',
   'components/importExportDocuments',
   'components/templatemanagement',
+  'components/documentBrowser',
   'components/angularTable';
    
  
@@ -227,4 +228,11 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
     position: absolute;
     right: 5px;
     top: 5px;
+}
+
+.ellipsis {
+	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

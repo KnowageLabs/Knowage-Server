@@ -1,0 +1,188 @@
+.kn-documentBrowser{
+
+	md-toolbar.documentBrowserToolbar button.md-icon-button,
+		.selectedDocumentSidenav md-toolbar button.md-icon-button {
+		height: 40px;
+		width: 40px;
+	}
+	
+	md-toolbar.documentBrowserToolbar button.md-icon-button.selectedButton {
+		background-color: #A9C3DB;
+		color: #fff;
+	}
+	
+	md-toolbar.documentBrowserToolbar button.md-icon-button md-icon,
+		.selectedDocumentSidenav md-toolbar button.md-icon-button md-icon {
+		line-height: 22px;
+	}
+	
+	md-toolbar.documentBrowserToolbar md-input-container.searchInput input {
+		color: white;
+		border-color: rgb(248, 252, 255) !important;
+	}
+	
+	md-toolbar.documentBrowserToolbar md-input-container.searchInput label {
+		color: white;
+	}
+	
+	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div {
+		width: 100%;
+	}
+	
+	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div>p
+		{
+		-moz-hyphens: auto;
+		-ms-hyphens: auto;
+		-webkit-hyphens: auto;
+		hyphens: auto;
+		word-wrap: break-word;
+	}
+	
+	.documentCard {
+		width: 300px;
+		background-color: #A9C3DB;
+		padding: 8px 0 0 0;
+	}
+	
+	.documentCard md-card-title {
+	    color: #FAFAFA;
+    	text-transform: uppercase;
+    	padding-left: 8px;
+	}
+	.documentCard md-card-actions {
+	background-color: #FAFAFA;
+	}
+	
+	.documentCard img {
+		max-height: 150px;
+	    width: 100%;
+	    height: 150px;
+	    background-size: contain;
+	    background-position: top center;
+	    background-repeat: no-repeat;
+	    margin: 6px 0;
+	}
+	
+	.document_browser_image_EMPTY{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_empty.png')!important;
+	}
+	
+	.document_browser_image_REPORT{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_report.png')!important;
+	}
+	
+	.document_browser_image_OLAP{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_olap.png')!important;
+	}
+	
+	.document_browser_image_DATA_MINING{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_datamining.png')!important;
+	}
+	
+	.document_browser_image_DATAMART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_dashboard.png')!important;
+	}
+	
+	.document_browser_image_DASH{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_dashboard.png')!important;
+	}
+	
+	.document_browser_image_MAP{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_locatiointelligence.png')!important;
+	}
+	
+	.document_browser_image_OFFICE_DOC{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_officedoc.png')!important;
+	}
+	
+	.document_browser_image_ETL{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_etl.png')!important;
+	}
+	
+	.document_browser_image_DOCUMENT_COMPOSITE{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_cockpits.png')!important;
+	}
+	
+	.document_browser_image_KPI{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_kpi.png')!important;
+	}
+	
+	.document_browser_image_SMART_FILTER{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_smart_filter.png')!important;
+	}
+	
+	.document_browser_image_CONSOLE{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_console.png')!important;
+	}
+	
+	.document_browser_image_WORKSHEET{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_worksheet.png')!important;
+	}
+	
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_chart.png')!important;
+	}
+	
+	.document_browser_image_MOBILE_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_mobile_chart.png')!important;
+	}
+	
+	.document_browser_image_MOBILE_COCKPIT{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+	}
+	
+	.document_browser_image_MOBILE_REPORT{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_mobile_report.png')!important;
+	}
+	
+	.document_browser_image_NETWORK{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_network.png')!important;
+	}
+	
+	.document_browser_image_ACCESSIBLE_HTML{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_acc.png')!important;
+	}
+	
+	.document_browser_image_QBE{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_qbe.png')!important;
+	}
+	
+	
+	
+	
+	/*
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_adhocreporting.png')!important;
+	}
+	
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_collaborations.png')!important;
+	}
+	
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_datamanagement.png')!important;
+	}
+	
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_externalprocess.png')!important;
+	}
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_freeinquiry.png')!important;
+	}
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_inmemory.png')!important;
+	}
+	.document_browser_image_CHART{
+	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_whatif.png')!important;
+	}
+	
+	*/
+	
+	
+	
+
+	
+	
+	
+	
+}
