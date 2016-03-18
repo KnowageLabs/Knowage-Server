@@ -64,7 +64,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	restServices.alterContextPath($scope.pathRest.host);
 	
 	/*****************************/
-	/** Functions               **/
+	/** Promise Functions       **/
 	/*****************************/
 	
 	//GET the result of [commandName, output, variables]
@@ -270,6 +270,10 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 				$scope.commandPromise.reject();
 			});
 	
+	/*****************************/
+	/** Support Function        **/
+	/*****************************/
+	
 	//When tab is selected, if not present the command result, calculate result
 	$scope.calculateResult = function(cmd){
 		commandName = cmd.name;
@@ -397,7 +401,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 				parameters.variables = variables;
 				if (output !== undefined){
 					var promiseResult = $scope.createResultPromise();
-					parameters.singleOutput = ouput ;
+					parameters.singleOutput = output ;
 					promiseResult.resolve(parameters);
 				}else{
 					var promiseOutputs = $scope.createOutputsPromise();
