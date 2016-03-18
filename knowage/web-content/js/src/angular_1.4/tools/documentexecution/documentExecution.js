@@ -14,13 +14,13 @@
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService',
+			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -41,10 +41,14 @@
 		$scope.parameterView=execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
 		$scope.showParametersPanel = execProperties.showParametersPanel;
-		$scope.documentSelectedToRanking={};
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
 		$scope.isClick=false;
+		$scope.noteLoaded = {};
+		$scope.typeNote='Private';
+		$scope.notesList = [];
+		$scope.profile="";
+		$scope.selectedTab={'tab':0};
 		
 		$scope.openInfoMetadata = function(){
 			infoMetadataService.openInfoMetadata();
@@ -66,9 +70,9 @@
 			console.log("initSelectedRole OUT ");
 		};
 		
+
 		//ranking document
-		$scope.rankDocument = function(document){
-			$scope.documentSelectedToRanking = document;
+		$scope.rankDocument = function(){
 			var obj = {
 					'obj':$scope.executionInstance.OBJECT_ID
 					};
@@ -162,7 +166,155 @@
 				}
 			});
 		};
+		$scope.note = {'info': 'Info'};
+		//note document
+		$scope.noteDocument=function(){
+			var obj = {'id' : $scope.executionInstance.OBJECT_ID};
+			sbiModule_restServices.promisePost("documentnotes", 'getNote',obj).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							console.log(response);
+							angular.copy(response.data,$scope.noteLoaded);
+							$scope.contentNotes = $scope.noteLoaded.nota;
+							$scope.profile = response.data.profile;
+						}
+
+					},function(response) {
+						$scope.errorHandler(response.data,"");
+					})
+					
+			$mdDialog.show({
+				controller: DialogControllerKPI,
+				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentNote.html',
+				scope:$scope,
+				preserveScope: true,
+				clickOutsideToClose:true
+			})
+			.then(function(answer) {
+				$scope.status = 'You said the information was "' + answer + '".';
+			}, function() {
+				$scope.status = 'You cancelled the dialog.';
+			});
+		}
 		
+		$scope.saveNote = function(){
+			var obj = {
+					'nota' : $scope.contentNotes,
+					'idObj': $scope.executionInstance.OBJECT_ID,
+					'type' : $scope.typeNote
+			}
+			sbiModule_restServices.promisePost("documentnotes", 'saveNote',obj).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							$scope.showAction("Saved");
+							$scope.getList();
+						}
+
+					},function(response) {
+						$scope.errorHandler(response.data,"");
+					})
+	
+		}
+		$scope.getNotesList = function(){
+			
+			if($scope.notesList.length==0){
+				$scope.getList();
+			}
+		}
+		$scope.getList = function(){
+			var obj = {'id' : $scope.executionInstance.OBJECT_ID};
+			sbiModule_restServices.promisePost("documentnotes", 'getListNotes',obj).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							angular.copy(response.data,$scope.notesList)
+							
+						}
+
+					},function(response) {
+						$scope.errorHandler(response.data,"");
+					})
+		}
+		$scope.deleteNote = function(nota){
+			var obj ={
+					"id":nota.biobjId,
+					"execReq":nota.execReq,
+					"owner":nota.owner
+			}
+			
+			var confirm = $mdDialog.confirm()
+					.title("Are you sure?")
+					.ariaLabel('cancel metadata') 
+					.ok($scope.translate.load("sbi.general.ok"))
+					.cancel($scope.translate.load("sbi.general.cancel"));
+					$mdDialog.show(confirm).then(function() {
+						sbiModule_restServices.promisePost("documentnotes", 'deleteNote',obj).then(
+								function(response) {
+									if (response.data.hasOwnProperty("errors")) {
+										$scope.showAction(response.data);
+									} else {
+										$scope.showAction("Nota deleted");
+										$scope.getList();
+									}
+
+								},function(response) {
+									$scope.errorHandler(response.data,"");
+								})
+					}, function() {
+						return;
+					});
+		}
+		
+		$scope.editNote = function(nota){
+			$scope.contentNotes=nota.content;
+			$scope.noteLoaded.content = nota.content;
+			$scope.noteLoaded.id = nota.id;
+			$scope.noteLoaded.lastChangeDate = nota.lastChangeDate;
+			$scope.noteLoaded.creationDate = nota.creationDate;
+			$scope.noteLoaded.exeqReq = nota.exeqReq;
+			$scope.noteLoaded.owner = nota.owner;
+			$scope.selectedTab.tab=0;
+		
+		}
+		
+		$scope.exportNote = function(typeExport){
+			var obj = {
+					'idObj': $scope.executionInstance.OBJECT_ID,
+					'type' : typeExport	
+			}
+			sbiModule_restServices.promisePost("documentnotes", 'getDownalNote',obj).then(
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							console.log(response);
+							
+							sbiModule_download.getBlob(response.data.file,$scope.executionInstance.OBJECT_LABEL,"application/"+typeExport,typeExport);
+							
+							
+						}
+
+					},function(response) {
+						$scope.errorHandler(response.data,"");
+					})
+			
+		}
+		
+		$scope.bin2String = function(array) {
+			  var result = "";
+			  for (var i = 0; i < array.length; i++) {
+			    result += String.fromCharCode(parseInt(array[i], 2));
+			  }
+			  return result;
+			}
+		$scope.setTab = function(Tab){
+			$scope.selectedTab = Tab;
+		}
 		$scope.openHelpOnLine=function(){	
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
@@ -239,7 +391,17 @@
 		
 		console.log("documentExecutionControllerFn OUT ");
 	};
-	
+	function DialogControllerKPI($scope,$mdDialog){
+		$scope.contentNotes = "";
+		$scope.close = function(){
+			$mdDialog.cancel();
+
+		}
+		$scope.apply = function(){
+			$mdDialog.cancel();
+		}
+
+	}
 	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
 		return {
 			restrict: 'A',
@@ -252,4 +414,8 @@
 			}
 		};
 	}]);
+
 })();	
+
+
+

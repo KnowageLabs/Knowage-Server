@@ -1,0 +1,77 @@
+<md-dialog id="dialogNote" layout="column" aria-label="Select type of download"  ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</h1>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="close()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+
+    </md-toolbar>
+ 
+    			
+		<md-tabs class="tabNote" flex md-border-bottom   md-selected='selectedTab.tab'>
+			<md-tab>
+				<md-tab-label >Note</md-tab-label>
+				<md-tab-body>
+					<expander-box id="Info" color="white" background-color="rgb(63,81,181)" expanded="false" title="note.info">
+						<div layout="row" class="headerNote">
+				    		<span flex><h5>Owner:  {{noteLoaded.owner}} </h5></span>
+				    		<span flex><h5>Creation date:  {{noteLoaded.creationDate}}</h5></span>
+				    		<span flex><h5>Last change date:  {{noteLoaded.lastChangeDate}}</h5></span>
+				    	</div>
+					</expander-box>
+					<div class="wysiwygClass">
+						<wysiwyg-edit content="contentNotes"></wysiwyg-edit>
+					</div>
+					<div>
+						<md-select class="selectTypeNote" name="typeNote" ng-model="typeNote" required> 
+							<md-option  value="Private">Private</md-option>
+							<md-option  value="Public">Public</md-option>
+						</md-select>
+					</div>
+			<div class="footer">
+	
+			<md-button id="buttonNote" ng-if="noteLoaded.owner==profile" class="md-raised" ng-click="saveNote()" >{{translate.load("sbi.execution.executionpage.toolbar.rating.submit")}}</md-button>
+		</div>
+				</md-tab-body>
+						
+			</md-tab>
+			<md-tab md-on-select="getNotesList()">
+				<md-tab-label >Notes List</md-tab-label>
+				<md-tab-body >
+				<md-content layout="column" layout-fill class="contentListNote">
+					
+				<div id="contentWhiteFrame" class="overflow" flex layout="column">
+					 <md-whiteframe class="md-whiteframe-4dp" layout-margin  ng-repeat = "nota in notesList" >
+			   					<div class="listNotes">
+			   					 <md-toolbar>
+								     <div class="md-toolbar-tools" layout="row" class="headerNote">
+							    		<span flex><h5>Owner:  {{nota.owner}} </h5></span>
+							    		<span flex><h5>Creation date:  {{nota.creationDate}}</h5></span>
+							    		<span flex><h5>Last change date:  {{nota.lastChangeDate}}</h5></span>
+							    	</div>
+								   </md-toolbar>
+						           <p ng-bind-html="nota.content"></p>
+						           <div layout="row">
+						           <span flex></span>
+							           <md-button class ="md-icon-button iconNote" ng-click="deleteNote(nota)"><md-icon md-font-icon="fa fa-trash-o" aria-label="Delete" ng-if="nota.owner ==profile" ></md-icon></md-button>
+							           <md-button class ="md-icon-button iconNote" ng-click="editNote(nota)"><md-icon md-font-icon="fa fa-pencil-square-o" aria-label="Edit"></md-icon></md-button>
+						          	</div>
+					          	</div>
+	 				 </md-whiteframe>
+	 				</div> 
+					<div layout="row">
+					<!--<md-button class="md-raised" ng-click="exportNote('pdf')" ><i class="fa fa-file-pdf-o"></i>Export in PDF</md-button>
+					 	<md-button class="md-raised" ng-click="exportNote('rtf')"><i class="fa fa-file-word-o"></i>Export in RTF</md-button>
+					  -->	
+					</div>
+					 </md-content>
+				</md-tab-body>
+						
+			</md-tab>
+		</md-tabs>
+		
+		
+</md-dialog>

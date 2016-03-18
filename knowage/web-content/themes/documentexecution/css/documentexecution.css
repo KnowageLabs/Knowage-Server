@@ -79,9 +79,46 @@
 	margin-left: 130px;
 	bottom: -50px;
 }
-
+#dialogNote{
+	height: 800px;
+	width:900px;
+}
 /* Metadata Dialog*/
 #metadataDlg md-dialog-content {margin: 0;padding-bottom: 10px;}
 #metadataDlg expander-box > md-content {border: 0!important; padding:0;}
 .animate-accordion.ng-hide-add, .animate-accordion.ng-hide-remove {transition: linear all 1s;}
 .animate-accordion.ng-hide {height:0;}
+
+.headerNote{
+	height: 40px;
+}
+
+.headerNote span{
+	margin-top: -17px;
+}
+
+#buttonNote{
+	    margin-left: 750px;
+}
+
+
+.tinyeditor-footer{
+	display:none;
+}
+
+.listNotes {
+	width: 100%;
+	overflow: auto;
+}
+
+.contentListNote {
+	background-color: rgba(148, 148, 148, 0.11);
+}
+
+.md-whiteframe-4dp {
+	background-color:white;
+}
+
+.overflow{
+	overflow:auto;
+}

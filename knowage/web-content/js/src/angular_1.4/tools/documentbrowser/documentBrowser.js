@@ -71,6 +71,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate,
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders);
+			console.log("arriva",$scope.folders);
 		},function(response){
 			alert(respone.data)
 		});

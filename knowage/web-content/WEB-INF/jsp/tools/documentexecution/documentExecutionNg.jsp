@@ -113,7 +113,13 @@ try{
 				            <md-menu-item class="md-indent">
 				            	<md-icon class="fa fa-star"></md-icon>
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
-                                	ng-click="rankDocument(selectedDocument)">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
+                                	ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
+				                </md-button> 
+				            </md-menu-item>
+				            <md-menu-item class="md-indent">
+				            	<md-icon class="fa fa-sticky-note-o"></md-icon>
+				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
+                                	ng-click="noteDocument()">{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}
 				                </md-button> 
 				            </md-menu-item>
 				            <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
@@ -221,7 +227,7 @@ try{
 	(function() {
 		
 		angular.module('documentExecutionModule', 
-				['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG']);
+				['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
 			var obj = {
