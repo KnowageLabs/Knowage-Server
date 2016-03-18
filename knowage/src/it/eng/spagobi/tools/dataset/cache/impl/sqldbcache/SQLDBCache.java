@@ -575,7 +575,9 @@ public class SQLDBCache implements ICache {
 							appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i);
 					}
 
-					orderColumns.add(appendColumnForCategories);
+					if (!appendColumnForCategories.equals("")) {
+						orderColumns.add(appendColumnForCategories);
+					}
 				}
 
 				// WHERE conditions
