@@ -141,7 +141,7 @@ public class OutputExecutor {
 			logger.debug("Text output");
 
 			REXP rexp = null;
-			REXP rexp2 = null;
+
 			if (function != null && function.length() > 0) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
