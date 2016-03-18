@@ -522,13 +522,13 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		return 0;
 	}
 
-	public void swapAxisSort() {
+	public void swapAxisSort(ModelConfig modelConfig) {
 		CellSetAxis rows = getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
 		CellSetAxis columns = getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
 
 		SwapAxes transform = getTransform(SwapAxes.class);
 
-		if (isSorting()) {
+		if (modelConfig.getSortingEnabled()) {
 			if (transform.isSwapAxes()) {
 				for (Position positionOnRows : rows.getPositions()) {
 					if (isSorting(positionOnRows)) {
