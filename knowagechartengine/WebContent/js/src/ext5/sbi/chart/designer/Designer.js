@@ -1016,8 +1016,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				id: "storeCrossNavigationParameters",
 				fields: ['label', 'value'],
 				
-			});
-			
+			});			
 			
 			var columnsPickerStore = this.columnsPickerStore;
 			
@@ -2861,10 +2860,7 @@ Ext.define('Sbi.chart.designer.Designer', {
               							
             						}
             					}
-            					
             				});
-							
-								
 						}
 					}]
 				}],
@@ -3377,7 +3373,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			Ext.getCmp("chartBottomCategoriesContainer").getView().fireEvent("categoriesLoaded",categoriesStore.data.length);
-		
 		},			
 			
 		loadAxesAndSeries: function(jsonTemplate) {
@@ -3489,7 +3484,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 								Sbi.chart.designer.ChartUtils.createEmptyAxisData(true);
 					
 					bottomXAxisesPanel.setAxisData(axisData);
-					
 				}
 			});
 			
@@ -3603,7 +3597,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							if(chartType == "PARALLEL") {
 								globalScope.seriesBeforeDropStore.add(newCol);
 							}
-					    
+							
 							store.add(newCol);
 						}
 					});
@@ -3779,14 +3773,39 @@ Ext.define('Sbi.chart.designer.Designer', {
 		},
 		
 		/**
-		 * Returns a list of validation errors as string format
+		 * Returns a list of validation errors in a string format.
+		 * 
+		 * @param isCockpitCalling - an indicator if we are calling this function from the Cockpit
+		 * (when saving the chart template form this engine) or not (in that case we are calling it
+		 * from the Chart engine). (author: Danilo Ristovski) 
+		 * 
 		 * @editedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 * */		
-		validateTemplate: function() {
-			
+		validateTemplate: function(isCockpitCalling) {
+						
 			var errorMsg = '';		
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 						
+			/**
+			 * According to the input parameter we will be able to distinguish whether we are coming
+			 * from the Cockpit engine or not. If we are coming from the Cockpit engine (clicking on
+			 * the Confirm button in order to save changes made inside the Designer widget), inspect
+			 * if we are saving the template from the Advanced editor, because we need a preparation
+			 * of the data that is characteristic only for the saving from this tab of the Designer. 
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if (isCockpitCalling===true)
+			{
+				var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+      			
+      			if (activeTab.getId() == 'advancedEditor') 
+      			{  	
+      				var json = activeTab.getChartData(); 
+      				Sbi.chart.designer.Designer.update(json);
+      			}
+			}
+			
 			/**
 			 * We will use chart model (data from the ChartUtils.js 'cModel')
 			 * that holds all the parameters that user specified on the 

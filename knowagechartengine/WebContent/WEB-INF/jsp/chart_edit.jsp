@@ -5,7 +5,7 @@ Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 Knowage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+(at your option) any later version.
 
 Knowage is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -147,7 +147,7 @@ author:
 			
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 -->
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>		
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>	
     </head>
 	
 	<%-- == BODY ========================================================== --%>
@@ -229,10 +229,29 @@ author:
  		</script>
  		
  		<script language="javascript" type="text/javascript">
+ 			
+ 			/*
+ 				The function that is called when the chart template is saved from the Designer
+ 				widget inside the Cockpit engine (when user clicks on the Confirm button in the
+ 				widget window). 				
+ 				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 			*/
 			function saveFromCockpit(){
 				Sbi.trace("[Chart.saveFromCockpit]: IN");
 				var result = false;
-				var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
+				
+				/*
+					An input parameter of the validation function inside the Designer.js that 
+					serves as an indicator whether we call it from the Cockpit or not (in that
+					case we are calling it from the Chart engine). According to it, we will 
+					later (in the 'validateTemplate' function inside the Designer.js) apply a 
+					snippet that is characteristic only for saving the template from the Advanced 
+					editor.
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				*/
+				var cockpitCalling = true;
+				
+				var errorMessages = Sbi.chart.designer.Designer.validateTemplate(cockpitCalling);
 				
 				var chartEngineWidgetDesigner = window.parent.cockpitPanel.widgetContainer.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.customConfPanel.designer;
 				
