@@ -702,15 +702,27 @@ function renderChordChart(jsonData)
 	  		 
 	  		 rowsPairedWithColumns.push(tempObject);
 		 }  	 
-	  	 
-	  	 // since we have all the data, enable fading of stripes and rendering the table in legend
-	  	 arcs.on("mouseover", fadeMouseOver())	
-	  	 	 .on("mouseout", fadeMouseOut());
+		 
+		 /**
+		  * Check if there are any arcs (if there is non-zero value for the item that is
+		  * selected in the Cockpit (Cockpit selection).
+		  * 
+		  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  */	  	 
+		 if (arcs!=null) {
+			 
+			// since we have all the data, enable fading of stripes and rendering the table in legend
+			 arcs
+			 	.on("mouseover", fadeMouseOver())	
+	  	 	 	.on("mouseout", fadeMouseOut());
 	  	   	 
-	  	 arcs.on
-	  	 (
-			 "click", clickOnItem()			 
-	  	 );
+		  	 arcs.on
+		  	 (
+				 "click", clickOnItem()			 
+		  	 ); 
+		  	 
+		 }
+	  	 
   	 }
 	 else
 	 {
@@ -773,82 +785,129 @@ function renderChordChart(jsonData)
 			  * 
 			  * (from: https://github.com/mbostock/d3/wiki/Chord-Layout)
 			  */
-			 var chord = d3.layout.chord()
-			  				.padding(.05)	// TODO: Customize ???
+			 var chord = d3.layout
+			 				.chord()
+			  				.padding(.05)
 	  						.sortSubgroups(d3.descending)
 	  						.matrix(matrix);	
-			 			 
-			 // draws circles and defines the effect on the passage mouse
-			var arcs1 = svg.append("svg:g").selectAll("path")
-				.data(chord.groups)
-				.enter();			
-			
-			arcs =	arcs1.append("svg:path")
-			.style("fill", function(d) { return fill(d.index); })
-			.style("stroke", function(d) { return fill(d.index); })
-			.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));		
-
-			 var ticks1 = svg.append("svg:g").selectAll("g")
-				.data(chord.groups)
-				.enter();
+			 
+			 var tickLabelsFontCustom = jsonData.yAxis.labels.style;
+			 
+			 /**
+			  * If matrix has at least one non-zero item (item of value that is not zero).
+			  * So we should have at least one non-zero serie value for the selection
+			  * provided inside the Cockpit engine for the CHORD chart in order to draw arcs
+			  * and ticks. If this condition is not satisfied (we are dealing with the one
+			  * item of value zero), we will not have arcs and ticks, but a single text line
+			  * in the middle of the window (widget) inside which the chart is rendered. The
+			  * value of the text will be the value (the name) of the item that is selected.
+			  * 
+			  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			  */
+			 if(matrix.length > 1 || (matrix.length==1 && matrix[0][0]!=0))
+			 {
+				 // draws circles and defines the effect on the passage mouse
+				 var arcs1 = svg.append("svg:g").selectAll("path")
+								.data(chord.groups)
+								.enter(); 
 				
-			var	ticks = ticks1.append("svg:g").selectAll("g")
-				.data(groupTicks)
-				.enter().append("svg:g")
-				.attr("transform", function(d) {
-					return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-					   + "translate(" + outerRadius + ",0)";
-					});
-			
-			/**
-			 * Customization for category labels (desciptions over arcs of the CHORD chart).
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			var literalLabelsFontCustom = jsonData.xAxis.labels.style;
-			
-			 ticks1.append("svg:text")
-			  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
-			   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-			  .attr("transform", function(d) {
-					return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-					+ "translate(" + (innerRadius + 60) + ")"
-					+ (d.angle > Math.PI ? "rotate(180)" : "");
-			  })
-			  .attr("fill", literalLabelsFontCustom.color)
-			  .style("font-family",literalLabelsFontCustom.fontFamily)	
-			  .style("font-style",literalLabelsFontCustom.fontStyle)
-			  .style("font-size",literalLabelsFontCustom.fontSize)
-			  .style("font-weight",literalLabelsFontCustom.fontWeight)
-			  .style("text-decoration",literalLabelsFontCustom.textDecoration)
-			  .text(function(d,i) { return allFieldsArray[i];})		  
+				 arcs =	arcs1.append("svg:path")
+							.style("fill", function(d) { return fill(d.index); })
+							.style("stroke", function(d) { return fill(d.index); })
+							.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));				 			
 
-			 //aggiunge le lineette "graduate"		 
-			 ticks.append("svg:line")
-				.attr("x1", "1")
-				.attr("y1", "0")
-				.attr("x2", "5")
-				.attr("y2", "0")
-				.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
-	       
-			/**
-			 * Customization for serie labels (ticks on arcs of the CHORD chart).			 * 
-			 * @author: danristo (danilo.ristovski@mht.net)
-			 */
-			var tickLabelsFontCustom = jsonData.yAxis.labels.style;
+				 var ticks1 = svg.append("svg:g").selectAll("g")
+							.data(chord.groups)
+							.enter();
+				
+				 var	ticks = ticks1.append("svg:g").selectAll("g")
+								.data(groupTicks)
+								.enter().append("svg:g")
+								.attr("transform", function(d) {
+									return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+									+ "translate(" + outerRadius + ",0)";
+									});
 			
-			 //aggiunge le label unitďż˝ di misura
-			ticks.append("svg:text")
-				.attr("x", "8")
-				.attr("dy", ".35em")
-				.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
-				.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-				.attr("fill", tickLabelsFontCustom.color)
-				.style("font-family",tickLabelsFontCustom.fontFamily)	
-				.style("font-style",tickLabelsFontCustom.fontStyle)
-				.style("font-size",tickLabelsFontCustom.fontSize)
-				.style("font-weight",tickLabelsFontCustom.fontWeight)
-				.style("text-decoration",tickLabelsFontCustom.textDecoration)
-				.text(function(d) { return d.label; });
+				 /**
+				  * Customization for category labels (desciptions over arcs of the CHORD chart).
+				  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				  */
+				 var literalLabelsFontCustom = jsonData.xAxis.labels.style;
+				
+				 ticks1.append("svg:text")
+				  		.each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
+				  		.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+				  		.attr("transform", function(d) {
+				  			return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+				  			+ "translate(" + (innerRadius + 60) + ")"
+				  			+ (d.angle > Math.PI ? "rotate(180)" : "");
+				  			})
+				  		.attr("fill", literalLabelsFontCustom.color)
+				  		.style("font-family",literalLabelsFontCustom.fontFamily)	
+				  		.style("font-style",literalLabelsFontCustom.fontStyle)
+				  		.style("font-size",literalLabelsFontCustom.fontSize)
+				  		.style("font-weight",literalLabelsFontCustom.fontWeight)
+				  		.style("text-decoration",literalLabelsFontCustom.textDecoration)
+				  		.text(function(d,i) { return allFieldsArray[i]; })		  
+	
+				 //aggiunge le lineette "graduate"		 
+				 ticks.append("svg:line")
+					.attr("x1", "1")
+					.attr("y1", "0")
+					.attr("x2", "5")
+					.attr("y2", "0")
+					.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
+		       
+				/**
+				 * Customization for serie labels (ticks on arcs of the CHORD chart).			 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */			
+				 //aggiunge le label unit� di misura
+				ticks.append("svg:text")
+					.attr("x", "8")
+					.attr("dy", ".35em")
+					.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
+					.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+					.attr("fill", tickLabelsFontCustom.color)
+					.style("font-family",tickLabelsFontCustom.fontFamily)	
+					.style("font-style",tickLabelsFontCustom.fontStyle)
+					.style("font-size",tickLabelsFontCustom.fontSize)
+					.style("font-weight",tickLabelsFontCustom.fontWeight)
+					.style("text-decoration",tickLabelsFontCustom.textDecoration)
+					.text(function(d) { return d.label; });
+			 }
+			 else
+			 {
+				 /**
+				 * Customization for category labels (desciptions over arcs of the CHORD chart).
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				var literalLabelsFontCustom = jsonData.xAxis.labels.style;
+				 
+				svg.append("svg:g").selectAll("g")
+					.data(chord.groups)
+					.enter().append("svg:text")
+			  		.attr("fill", literalLabelsFontCustom.color)
+			  		.style("font-family",literalLabelsFontCustom.fontFamily)	
+			  		.style("font-style",literalLabelsFontCustom.fontStyle)
+			  		.style("font-size",literalLabelsFontCustom.fontSize)
+			  		.style("font-weight",literalLabelsFontCustom.fontWeight)
+			  		.style("text-decoration",literalLabelsFontCustom.textDecoration)
+			  		.text
+			  		(
+		  				function(d) { 
+		  					
+		  					/**
+		  					 * Return the text value of the only series zero value item that is 
+		  					 * selected by clicking on the arc towards which no one (no item) is 
+		  					 * coming.
+		  					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  					 */
+		  					return allFieldsArray[0]; 
+		  					
+	  					}
+	  				);
+			 }
 			
 			 //disegna le fasce da un'area ad un altra
 			 svg.append("svg:g")
