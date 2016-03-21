@@ -95,7 +95,7 @@ author:...
 	</head>
 <body class="bodyStile" ng-controller="Controller" ng-class="{'loading-body' : pendingRequest > 0}" ng-cloak>
 	<div id="popupContainer">
-		<md-content ng-hide = "pendingRequest > 0" layout-margin layout="row" layout-align = "start stretch ">
+		<md-content class="no-margin-bottom" ng-hide = "pendingRequest > 0" layout-margin layout="row" layout-align = "start stretch ">
 			<md-input-container flex="50">
 				<md-select placeholder="Select Command" ng-model="cmd" ng-change="calculateResult(cmd)">
 		          <md-option ng-repeat="cmd in commands" ng-value="cmd">
@@ -120,8 +120,8 @@ author:...
 				{{translate.load("sbi.dm.execution.loading");}} 
 				</span>
 		</div>
-		<md-content ng-hide = "pendingRequest > 0" layout="column" layout-margin>
-			<md-content ng-if="variableForm" layout-wrap>
+		<md-content class="no-margin-top" ng-hide = "pendingRequest > 0" layout="column" layout-margin>
+			<md-content class="no-margin-top" ng-if="variableForm" layout-wrap>
 				<div class = "border-container" >
 					<md-toolbar class="md-blue minihead element-border">
 					    <div class="md-toolbar-tools">
@@ -146,7 +146,7 @@ author:...
 					</div>
 				</div>
 			</md-content>
-			<md-content ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-wrap>
+			<md-content class="no-margin-top no-margin-bottom" ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-wrap>
 				<div flex="30">
 					<md-select placeholder="Select Dataset to Upload" ng-model="dataset">
 						<md-option ng-value="ds" ng-repeat="ds in datasets[cmd.name]" >
@@ -181,8 +181,8 @@ author:...
 				<md-tabs class="mini-tabs" md-selected="idx_output" layout="column" md-dynamic-height> 
 					<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}" md-on-select="getOutputResultFromTabClick(cmd,out)">
 						<md-content layout="column" layout-padding>
-							<md-content>
-								<md-content layout = 'row' layout-margin>
+							<md-content class="no-padding-top">
+								<md-content class="no-margin-top" layout = 'row' layout-wrap>
 									<div ng-if = "out.variables !== 'null' && out.variables !== undefined && out.variables.length > 0">
 										<md-button class="md-button md-raised md-ExtraMini md-larger" ng-click = "toogleOuputVariables()" arial-label = "button output variable" >
 											<span style="font-size: 65%;">Outputs Variables</span>
@@ -190,7 +190,7 @@ author:...
 									</div>
 								</md-content>
 								
-								<div class = "border-container" ng-if = "visibleOuputVariables && out.variables !== undefined && out.variables.length > 0" >
+								<div class = "border-container little-margin-bottom" ng-if = "visibleOuputVariables && out.variables !== undefined && out.variables.length > 0" >
 									<md-toolbar class="md-blue minihead element-border">
 									    <div class="md-toolbar-tools">
 									 		Update variables of output '<b>{{out.ouputLabel}}</b>'
@@ -211,7 +211,6 @@ author:...
 										 </md-content>
 									 </div>
 								</div>
-								<br>
 								<div class = "border-container">
 									<md-toolbar class="minihead element-border" ng-class="{'error-toolbar' : results[cmd.name][out.outputName].error}">
 										    <div class="md-toolbar-tools">

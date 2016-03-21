@@ -264,6 +264,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 				//select the tab with auto and solve the command;
 				$scope.idx_command = autoIdx;
 				$scope.commands[autoIdx].results = {};
+				$scope.cmd = $scope.commands[autoIdx];
 				$scope.commandPromise.resolve($scope.commands[autoIdx]);
 			})
 			.error(function(data, status) {

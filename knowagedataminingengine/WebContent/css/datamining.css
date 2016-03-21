@@ -96,3 +96,24 @@ svg {
 .loading-body {
 	background-color: #ededed;
 }
+
+md-tabs.mini-tabs md-tabs-content-wrapper {
+	top: 0px !important;
+}
+
+.little-margin-bottom{
+	margin-bottom: 10px;
+}
+
+.no-padding-top{
+	padding-top: 0px;	
+}
+
+.no-margin-top{
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+.no-margin-bottom {
+	margin-bottom: 0px !important;
+}
