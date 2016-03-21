@@ -47,7 +47,7 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			  
 			  for(var i in temporalDimension.attributes.children) {
 				  var hierarchy = temporalDimension.attributes.children[i];
-				  if(hierarchy.cls == 'default_hierarchies') {
+				  if(hierarchy.cls == 'default_hierarchy') {
 					  for (j in hierarchy.children) {
 						  if(hierarchy.children[j].alias) {
 							  hierachiesColumnTypes += (""!=hierachiesColumnTypes?",":"") + hierarchy.children[j].type;
