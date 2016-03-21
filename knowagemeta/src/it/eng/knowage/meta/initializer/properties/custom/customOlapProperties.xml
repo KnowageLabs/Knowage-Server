@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  
+  
+  <!--  ===================================================================================================== -->
+  <!--  MODEL																								  -->
+  <!--  ===================================================================================================== -->
+  <model>
+  	   
+
+  
+  </model>
+  
+  <!--  ===================================================================================================== -->
+  <!--  Hierarchy																								  -->
+  <!--  ===================================================================================================== -->
+  <hierarchy>
+   
+   	<categories>
+      <category name="Structural"
+      description="Structural properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.hasall" name="HasAll"
+      description="Has All Hierarchy Properties"
+      category="Structural" defaultValue="true" />
+      
+      <type id="structural.defaultHierarchy" name="DefaultHierarchy"
+      description="Is Default Hierarchy"
+      category="Structural" defaultValue="false" />
+      
+      <type id="structural.allmembername" name="All Member Name"
+      description="The role played by this table in the data model (generic, cube or dimension)"
+      category="Structural" defaultValue="All" />
+    </types>
+    
+    <typesValues>
+      <admissibleValuesOf typeId="structural.hasall">
+        <value>true</value>
+        <value>false</value>
+      </admissibleValuesOf>
+
+    </typesValues>
+  
+  </hierarchy>
+
+  <!--  ===================================================================================================== -->
+  <!--  Level																								  -->
+  <!--  ===================================================================================================== -->
+  <level>
+   
+   	<categories>
+      <category name="Structural"
+      description="Structural properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.uniquemembers" name="Unique Members"
+      description="Unique members for the level"
+      category="Structural" defaultValue="false" />
+
+    </types>
+    
+    <types>
+      <type id="structural.leveltype" name="Level Type"
+      description="Type of the level"
+      category="Structural" defaultValue="none" />
+    </types>    
+    
+    <typesValues>
+      <admissibleValuesOf typeId="structural.uniquemembers">
+        <value>true</value>
+        <value>false</value>
+      </admissibleValuesOf>
+
+    </typesValues>
+  
+  </level>
+
+
+</properties>

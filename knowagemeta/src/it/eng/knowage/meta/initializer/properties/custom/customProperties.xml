@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  
+  
+  <!--  ===================================================================================================== -->
+  <!--  MODEL																								  -->
+  <!--  ===================================================================================================== -->
+  <model>
+  	   
+    <categories>
+      <category name="Structural"
+      description="Structural properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.package" name="Package Name"
+      description="Package name used in JPA mapping"
+      category="Structural" defaultValue="it.eng.spagobi.meta" />
+   
+      <type id="structural.file" name="File"
+      description="File used to store this model"
+      category="Structural" defaultValue="model.sbimodel" />
+      
+       <type id="structural.initializer.name" name="Initializer Name"
+      description="The name of the initializer used to build the model"
+      category="Structural" defaultValue="unknown" />
+      
+       <type id="structural.initializer.version" name="Initializer Version"
+      description="The version of the initializer used to build the model"
+      category="Structural" defaultValue="unknown" />
+      
+      <type id="structural.mapping.useSchema" name="Use schema name in mapping"
+      description="Select if you want to use the schema name in the mapping for the query "
+      category="Structural" defaultValue="true" />
+      
+      <type id="structural.mapping.useCatalog" name="Use catalog name in mapping"
+      description="Select if you want to use the schema name in the mapping for the query "
+      category="Structural" defaultValue="true" />
+      
+    </types>
+    	<typesValues>
+	      <admissibleValuesOf typeId="structural.mapping.useSchema">
+	        <value>true</value>
+	        <value>false</value>
+	      </admissibleValuesOf>
+	      
+	      <admissibleValuesOf typeId="structural.mapping.useCatalog">
+	        <value>true</value>
+	        <value>false</value>
+	      </admissibleValuesOf>
+	      
+   		</typesValues>
+  
+  </model>
+  
+  <!--  ===================================================================================================== -->
+  <!--  TABLE																								  -->
+  <!--  ===================================================================================================== -->
+  <table>
+   
+   	<categories>
+      <category name="Structural"
+      description="Structural properties" />
+      <category name="Style" description="Style properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.visible" name="Visible"
+      description="Specify if this table is visible in the query editor"
+      category="Structural" defaultValue="true" />
+      
+      <type id="structural.tabletype" name="Type"
+      description="The role played by this table in the data model (generic, cube or dimension)"
+      category="Structural" defaultValue="generic" />
+    </types>
+    
+    <typesValues>
+      <admissibleValuesOf typeId="structural.visible">
+        <value>true</value>
+        <value>false</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.tabletype">
+        <value>generic</value>      
+        <value>cube</value>
+        <value>dimension</value>
+        <value>temporal dimension</value>
+        <value>time dimension</value>
+        <value>geographic dimension</value>
+      </admissibleValuesOf>
+    </typesValues>
+  
+  </table>
+  
+  <!--  ===================================================================================================== -->
+  <!--  COLUMN																								  -->
+  <!--  ===================================================================================================== -->
+  <column>
+    <categories>
+      <category name="Structural"
+      description="Structural properties" />
+      <category name="Style" description="Style properties" />
+      <category name="Behavioural"
+      description="behavioural properties" />
+    </categories>
+    
+    <types>
+     <type id="structural.visible" name="Visible"
+      description="Specify if this column is visible in the query editor"
+      category="Structural" defaultValue="true" />
+      
+      <type id="structural.columntype" name="Type"
+      description="The role played by this column in the data model (measure or attribute)"
+      category="Structural" defaultValue="attribute" />
+      
+      <type id="structural.aggtype" name="Aggregation Type"
+      description="The preferred aggregation type for the give column (COUNT, SUM, AVG, MAX, MIN)"
+      category="Structural" defaultValue="SUM" />
+      
+      <type id="structural.format" name="Format String"
+      description="The numeric format to use if the value is numeric"
+      category="Structural" defaultValue="#,###" />
+      
+      <type id="structural.attribute" name="Profile attribute"
+      description="A profile attribute used to filter"
+      category="Structural" defaultValue="" />
+      
+      <type id="structural.datatype" name="Data Type"
+      description="The data type of the given column (VARCHAR, INTEGER, DOUBLE, ...)"
+      category="Structural" defaultValue="VARCHAR" />
+      
+	  <type id="style.alignment" name="Alignment Type"
+      description="The preferred alignment type for the give column (LEFT, CENTER, RIGHT, JUSTIFIED)"
+      category="Style" defaultValue="LEFT" />
+      
+      <type id="behavioural.notEnabledRoles" name="Roles NOT enabled"
+      description="Roles NOT enabled to view this column"
+      category="Behavioural" defaultValue="" />
+      
+      
+    </types>
+    
+    <typesValues>
+      <admissibleValuesOf typeId="structural.visible">
+        <value>true</value>
+        <value>false</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.columntype">
+        <value>measure</value>
+        <value>attribute</value>
+        <value>calendar</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.format">
+        <value>#,###</value>
+        <value>#,###.0</value>
+        <value>#,###.00</value>
+        <value>#,###.000</value>
+        <value>#,###.0000</value>
+        <value>#,###.00000</value>
+        <value>#.###</value>
+        <value>$#,##0.00</value>
+        <value>€#,##0.00</value>
+      </admissibleValuesOf>
+            
+      <admissibleValuesOf typeId="structural.aggtype">
+        <value>COUNT</value>
+        <value>SUM</value>
+        <value>AVG</value>
+        <value>MAX</value>
+        <value>MIN</value>
+        <value>DISTINCT-COUNT</value>
+      </admissibleValuesOf>
+
+      <admissibleValuesOf typeId="structural.attribute">
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.datatype">
+        <value>VARCHAR</value>
+        <value>INTEGER</value>
+        <value>DOUBLE</value>
+        <value>DATE</value>
+        <value>TIMESTAMP</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="style.alignment">
+        <value>LEFT</value>
+        <value>CENTER</value>
+        <value>RIGHT</value>
+        <value>JUSTIFIED</value>
+      </admissibleValuesOf>	  
+      
+    </typesValues>
+  </column>
+  
+  <!--  ===================================================================================================== -->
+  <!--  CALCULATED COLUMN																				      -->
+  <!--  ===================================================================================================== -->
+  <calculatedcolumn>
+    <categories>
+      <category name="Structural"
+      description="Structural properties" />
+      <category name="Style" description="Style properties" />
+    </categories>
+    
+    <types>
+     <type id="structural.visible" name="Visible"
+      description="Specify if this column is visible in the query editor"
+      category="Structural" defaultValue="true" />
+      
+      <type id="structural.columntype" name="Type"
+      description="The role played by this column in the data model (attribute or measure)"
+      category="Structural" defaultValue="attribute" />
+      
+      <type id="structural.aggtype" name="Aggregation Type"
+      description="The preferred aggregation type for the give column (COUNT, SUM, AVG, MAX, MIN)"
+      category="Structural" defaultValue="COUNT" />
+      
+      <type id="structural.datatype" name="Data Type"
+      description="The data type of the given column (STRING, NUMBER)"
+      category="Structural" defaultValue="NUMBER" />
+      
+      <type id="structural.expression" name="Calculated Column expression"
+      description="The text of the expression that is used for this calculated column"
+      category="Structural" defaultValue="2+2" />
+      
+	  <type id="style.alignment" name="Alignment Type"
+      description="The preferred alignment type for the give column (LEFT, CENTER, RIGHT, JUSTIFIED)"
+      category="Style" defaultValue="LEFT" />
+    </types>
+    
+    <typesValues>
+      <admissibleValuesOf typeId="structural.visible">
+        <value>true</value>
+        <value>false</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.columntype">
+        <value>attribute</value>
+        <value>measure</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.aggtype">
+        <value>COUNT</value>
+        <value>SUM</value>
+        <value>AVG</value>
+        <value>MAX</value>
+        <value>MIN</value>
+        <value>NONE</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="structural.datatype">
+        <value>STRING</value>
+        <value>NUMBER</value>
+      </admissibleValuesOf>
+      
+      <admissibleValuesOf typeId="style.alignment">
+        <value>LEFT</value>
+        <value>CENTER</value>
+        <value>RIGHT</value>
+        <value>JUSTIFIED</value>
+      </admissibleValuesOf>	  
+      
+    </typesValues>
+  </calculatedcolumn>  
+  
+  
+  <!--  ===================================================================================================== -->
+  <!--  IDENTIFIER																							  -->
+  <!--  ===================================================================================================== -->
+  <identifier></identifier>
+  
+  <!--  ===================================================================================================== -->
+  <!--  RELATIONSHIP																						  -->
+  <!--  ===================================================================================================== -->
+  <relationship>
+      <categories>
+     	 <category name="Structural" description="Structural properties" />
+      </categories>
+      <types>
+      	<type id="structural.destinationRole" name="Destination Role"
+      description="Role name of the destination table"
+      category="Structural" defaultValue="role name" />
+      </types>
+      <types>
+      	<type id="structural.forceVisibilityAsSubentity" name="Force visibility as Sub-entity"
+      description="Force visibility of destination Table as Sub-entity"
+      category="Structural" defaultValue="false" />
+      </types>
+      <types>
+      	<type id="structural.cardinality" name="Business Relationship Cardinality"
+      description="Business Relationship Cardinality"
+      category="Structural" defaultValue="many-to-one" />
+      </types>
+      
+      <typesValues>
+     	 <admissibleValuesOf typeId="structural.forceVisibilityAsSubentity">
+      	 	 <value>true</value>
+       		 <value>false</value>
+     	 </admissibleValuesOf>
+      </typesValues>
+  </relationship>
+
+</properties>

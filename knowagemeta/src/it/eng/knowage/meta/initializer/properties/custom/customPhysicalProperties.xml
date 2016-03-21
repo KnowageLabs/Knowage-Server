@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  
+  
+  <!--  ===================================================================================================== -->
+  <!--  MODEL																								  -->
+  <!--  ===================================================================================================== -->
+  <model>
+  	   
+    <categories>
+      <category name="Connection"
+      description="Connection properties" />
+    </categories>
+    
+    <types>
+      <type id="connection.name" name="Connection Name"
+      description="Data Source Connection Name"
+      category="Connection" defaultValue="connection name" />
+   
+      <type id="connection.url" name="Connection Url"
+      description="Data Source Connection Url"
+      category="Connection" defaultValue="url" />
+      
+      <type id="connection.username" name="Connection Username"
+      description="Data Source Connection Username"
+      category="Connection" defaultValue="username" />
+      
+      <type id="connection.password" name="Connection Password"
+      description="Data Source Connection Password"
+      category="Connection" defaultValue="password" />
+     
+      <type id="connection.databasename" name="Connection DatabaseName"
+      description="Data Source Connection Database Name"
+      category="Connection" defaultValue="databasename" />      
+      
+      <type id="connection.driver" name="Connection driver"
+      description="Data Source Connection driver"
+      category="Connection" defaultValue="driver" />      
+      
+      <type id="connection.databasequotestring" name="Connection DatabaseQuoteString"
+      description="Data Source Connection Database Quote String"
+      category="Connection" defaultValue=" " />          
+      
+    </types>
+  
+  </model>
+  
+  <!--  ===================================================================================================== -->
+  <!--  TABLE																								  -->
+  <!--  ===================================================================================================== -->
+  <table>
+   
+   	<categories>
+      <category name="Structural"
+      description="Structural properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.deleted" name="Deleted"
+      description="Specify if this table was deleted after a db update"
+      category="Structural" defaultValue="false" />
+    </types>
+
+  
+  </table>
+  
+  <!--  ===================================================================================================== -->
+  <!--  COLUMN																								  -->
+  <!--  ===================================================================================================== -->
+  <column>
+   	<categories>
+      <category name="Structural"
+      description="Structural properties" />
+    </categories>
+    
+    <types>
+      <type id="structural.deleted" name="Deleted"
+      description="Specify if this column was deleted after a db update"
+      category="Structural" defaultValue="false" />
+    </types>
+
+  </column>
+
+</properties>
