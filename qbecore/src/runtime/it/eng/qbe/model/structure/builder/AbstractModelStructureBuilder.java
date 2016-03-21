@@ -1,19 +1,19 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+  
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ 
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+  
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 package it.eng.qbe.model.structure.builder;
 
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -110,18 +111,20 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 			DeserializedRelation aDeserializedRelation = new DeserializedRelation(sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(),
 						relationship.getLabel());
 			
-			DeserializedRelation aDeserializedRelationInMap = mergedRelations.get(sourceEntity.getUniqueName()+destinationEntity.getUniqueName()+relationship.getLabel());
+			String key = sourceEntity.getUniqueName()+destinationEntity.getUniqueName()+relationship.getLabel()+relationship.getType();
+			DeserializedRelation aDeserializedRelationInMap = mergedRelations.get(key);
 			
 			if(aDeserializedRelationInMap == null){
-				mergedRelations.put(sourceEntity.getUniqueName()+destinationEntity.getUniqueName()+relationship.getLabel(),aDeserializedRelation);
+				mergedRelations.put(key,aDeserializedRelation);
 			}else{
 				aDeserializedRelationInMap.addSources(sourceFields);
 				aDeserializedRelationInMap.addTo(destinationFields);
 			}
 		}
 		
+		List<String> relationNamesList = sortRelations(mergedRelations.keySet());
 		
-		for (String relationshipName : mergedRelations.keySet()) {
+		for (String relationshipName : relationNamesList) {
 			DeserializedRelation aDeserializedRelation = mergedRelations.get(relationshipName);
 			try {
 				modelStructure.addRootEntityRelationship(modelName, aDeserializedRelation.getFromEntity(), aDeserializedRelation.getFromFields(), aDeserializedRelation.getToEntity(), aDeserializedRelation.getToFields(), aDeserializedRelation.getType(),
@@ -131,6 +134,27 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 				logger.error("Impossible to add relationship between [" + aDeserializedRelation.getFromEntity().getName() + "] and [" + aDeserializedRelation.getToEntity().getName() + "]", t);
 			}
 		}
+	}
+	
+	/**
+	 * Sort the relations in order to get the many to one before.. This because t
+	 * @param relationNames
+	 * @return
+	 */
+	private List<String>  sortRelations(Set<String> relationNames ){
+		List<String> relationNamesList = new ArrayList<String>();
+		for (String relationshipName : relationNames) {
+			if(relationshipName.endsWith("many-to-one")){
+				relationNamesList.add(relationshipName);
+			}
+		}
+		
+		for (String relationshipName : relationNames) {
+			if(!relationshipName.endsWith("many-to-one")){
+				relationNamesList.add(relationshipName);
+			}
+		}
+		return relationNamesList;
 	}
 	
 	private class DeserializedRelation{
