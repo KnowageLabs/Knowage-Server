@@ -33,6 +33,7 @@ public class RuleOutput implements Serializable {
 	private Integer aliasId;
 	private String rule;
 	private Integer ruleId;
+	private Integer ruleVersion;
 
 	public RuleOutput() {
 	}
@@ -210,6 +211,21 @@ public class RuleOutput implements Serializable {
 	 */
 	public void setType(Domain type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the ruleVersion
+	 */
+	public Integer getRuleVersion() {
+		return ruleVersion;
+	}
+
+	/**
+	 * @param ruleVersion
+	 *            the ruleVersion to set
+	 */
+	public void setRuleVersion(Integer ruleVersion) {
+		this.ruleVersion = ruleVersion;
 	}
 
 	@Override

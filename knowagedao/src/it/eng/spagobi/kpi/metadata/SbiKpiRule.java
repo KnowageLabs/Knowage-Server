@@ -29,55 +29,58 @@ import java.util.Set;
  */
 public class SbiKpiRule extends SbiHibernateModel implements java.io.Serializable {
 
-	private Integer id;
+	private SbiKpiRuleId sbiKpiRuleId = new SbiKpiRuleId();
 	private String name;
 	private String definition;
 	private Integer dataSourceId;
+	private Character active;
 
 	private Set<SbiKpiRuleOutput> sbiKpiRuleOutputs = new HashSet<>(0);
 	private Set<SbiKpiPlaceholder> sbiKpiPlaceholders = new HashSet<>(0);
 
-	public SbiKpiRule() {
+	/**
+	 * @return the sbiKpiRuleId
+	 */
+	public SbiKpiRuleId getSbiKpiRuleId() {
+		return sbiKpiRuleId;
 	}
 
-	public Integer getId() {
-		return this.id;
+	/**
+	 * @param sbiKpiRuleId
+	 *            the sbiKpiRuleId to set
+	 */
+	public void setSbiKpiRuleId(SbiKpiRuleId sbiKpiRuleId) {
+		this.sbiKpiRuleId = sbiKpiRuleId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
+	/**
+	 * @return the name
+	 */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
+	/**
+	 * @param name
+	 *            the name to set
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @return the definition
+	 */
 	public String getDefinition() {
-		return this.definition;
+		return definition;
 	}
 
+	/**
+	 * @param definition
+	 *            the definition to set
+	 */
 	public void setDefinition(String definition) {
 		this.definition = definition;
-	}
-
-	public Set<SbiKpiRuleOutput> getSbiKpiRuleOutputs() {
-		return this.sbiKpiRuleOutputs;
-	}
-
-	public void setSbiKpiRuleOutputs(Set<SbiKpiRuleOutput> sbiKpiRuleOutputs) {
-		this.sbiKpiRuleOutputs = sbiKpiRuleOutputs;
-	}
-
-	public Set<SbiKpiPlaceholder> getSbiKpiPlaceholders() {
-		return this.sbiKpiPlaceholders;
-	}
-
-	public void setSbiKpiPlaceholders(Set<SbiKpiPlaceholder> sbiKpiPlaceholders) {
-		this.sbiKpiPlaceholders = sbiKpiPlaceholders;
 	}
 
 	/**
@@ -93,6 +96,51 @@ public class SbiKpiRule extends SbiHibernateModel implements java.io.Serializabl
 	 */
 	public void setDataSourceId(Integer dataSourceId) {
 		this.dataSourceId = dataSourceId;
+	}
+
+	/**
+	 * @return the sbiKpiRuleOutputs
+	 */
+	public Set<SbiKpiRuleOutput> getSbiKpiRuleOutputs() {
+		return sbiKpiRuleOutputs;
+	}
+
+	/**
+	 * @param sbiKpiRuleOutputs
+	 *            the sbiKpiRuleOutputs to set
+	 */
+	public void setSbiKpiRuleOutputs(Set<SbiKpiRuleOutput> sbiKpiRuleOutputs) {
+		this.sbiKpiRuleOutputs = sbiKpiRuleOutputs;
+	}
+
+	/**
+	 * @return the sbiKpiPlaceholders
+	 */
+	public Set<SbiKpiPlaceholder> getSbiKpiPlaceholders() {
+		return sbiKpiPlaceholders;
+	}
+
+	/**
+	 * @param sbiKpiPlaceholders
+	 *            the sbiKpiPlaceholders to set
+	 */
+	public void setSbiKpiPlaceholders(Set<SbiKpiPlaceholder> sbiKpiPlaceholders) {
+		this.sbiKpiPlaceholders = sbiKpiPlaceholders;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Character getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active
+	 *            the active to set
+	 */
+	public void setActive(Character active) {
+		this.active = active;
 	}
 
 }

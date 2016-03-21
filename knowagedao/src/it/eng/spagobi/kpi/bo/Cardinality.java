@@ -6,6 +6,7 @@ import java.util.Map;
 public class Cardinality {
 
 	private Integer ruleId;
+	private int ruleVersion;
 	private String ruleName;
 	private String measureName;
 	private Map<String, Boolean> attributes = new HashMap<String, Boolean>();
@@ -68,6 +69,21 @@ public class Cardinality {
 	 */
 	public void setAttributes(Map<String, Boolean> attributes) {
 		this.attributes = attributes;
+	}
+
+	/**
+	 * @return the ruleVersion
+	 */
+	public int getRuleVersion() {
+		return ruleVersion;
+	}
+
+	/**
+	 * @param ruleVersion
+	 *            the ruleVersion to set
+	 */
+	public void setRuleVersion(int ruleVersion) {
+		this.ruleVersion = ruleVersion;
 	}
 
 }

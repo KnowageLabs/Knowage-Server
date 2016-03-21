@@ -84,13 +84,17 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return rule id
 	 * @throws SpagoBIException
 	 */
-	public Integer insertRule(Rule rule) throws SpagoBIException;
+	public Rule insertRule(Rule rule) throws SpagoBIException;
+
+	public Rule insertNewVersionRule(Rule rule) throws SpagoBIException;
+
+	public Kpi insertNewVersionKpi(Kpi kpi) throws SpagoBIException;
 
 	public void updateRule(Rule rule) throws SpagoBIException;
 
-	public void removeRule(Integer id);
+	public void removeRule(Integer id, Integer version, boolean toBeVersioned);
 
-	public Rule loadRule(Integer id);
+	public Rule loadRule(Integer id, Integer version);
 
 	public Integer getRuleIdByName(String name);
 
@@ -102,7 +106,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @param kpi
 	 * @return new generated kpi id
 	 */
-	public Integer insertKpi(Kpi kpi);
+	public Kpi insertKpi(Kpi kpi);
 
 	/**
 	 * Update an existing kpi
@@ -112,9 +116,9 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public void updateKpi(Kpi kpi);
 
-	public void removeKpi(Integer id);
+	public void removeKpi(Integer id, Integer version, boolean toBeVersioned);
 
-	public Kpi loadKpi(Integer id);
+	public Kpi loadKpi(Integer id, Integer version);
 
 	/**
 	 * Retrieves a kpi id by searching for its name

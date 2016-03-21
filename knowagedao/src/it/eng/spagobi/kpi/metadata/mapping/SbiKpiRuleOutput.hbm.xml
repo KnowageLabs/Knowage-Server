@@ -22,6 +22,7 @@
         
         <many-to-one name="sbiKpiRule" class="it.eng.spagobi.kpi.metadata.SbiKpiRule" lazy="false" >
             <column name="RULE_ID" />
+            <column name="RULE_VERSION" />
         </many-to-one>
         
         <many-to-one name="sbiKpiAlias" class="it.eng.spagobi.kpi.metadata.SbiKpiAlias" lazy="false" cascade="save-update">

@@ -29,9 +29,12 @@ public class Kpi implements Serializable {
 	 * 
 	 */
 	private Integer id;
+	private Integer version;
 	private String name;
 	private String author;
 	private Date dateCreation;
+
+	private boolean enableVersioning;
 
 	/**
 	 * A json object
@@ -71,6 +74,21 @@ public class Kpi implements Serializable {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the version
+	 */
+	public Integer getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version
+	 *            the version to set
+	 */
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	/**
@@ -201,6 +219,21 @@ public class Kpi implements Serializable {
 	 */
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
+	}
+
+	/**
+	 * @return the enableVersioning
+	 */
+	public boolean isEnableVersioning() {
+		return enableVersioning;
+	}
+
+	/**
+	 * @param enableVersioning
+	 *            the enableVersioning to set
+	 */
+	public void setEnableVersioning(boolean enableVersioning) {
+		this.enableVersioning = enableVersioning;
 	}
 
 }

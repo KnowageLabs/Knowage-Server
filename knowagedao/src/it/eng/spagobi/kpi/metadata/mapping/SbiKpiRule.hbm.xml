@@ -7,27 +7,37 @@
         the hibernate.org cfg2hbm engine
 -->
     <class name="it.eng.spagobi.kpi.metadata.SbiKpiRule" table="SBI_KPI_RULE">
-        
-        <id name="id" type="integer">
-           <column name="ID" />
-		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<composite-id name="sbiKpiRuleId" class="it.eng.spagobi.kpi.metadata.SbiKpiRuleId">
+			<key-property name="id" column="ID" type="int" />
+			<key-property name="version" column="VERSION" type="int" />
+		   	<generator class="it.eng.spagobi.kpi.metadata.generator.SbiKpiRuleIdGenerator">
+		   		<param name="object_id_column">ID</param>
+		   		<param name="object_version_column">VERSION</param>
+		   		<param name="object_table_name">SBI_KPI_RULE</param>
 				<param name="optimizer">none</param>
 				<param name="segment_value">SBI_KPI_RULE</param>	
 				<param name="initial_value">1</param>	
 		   </generator>
-        </id>
+		</composite-id>
         
         <property name="name" column="NAME" type="string" not-null="true" length="40"/>
         <property name="definition" column="DEFINITION" type="string" not-null="true" length="1024"/>
         <property name="dataSourceId" column="DATASOURCE_ID" type="int" not-null="true"/>
+        <property name="active" column="ACTIVE" type="char" />
         
         <set name="sbiKpiRuleOutputs" cascade="all,delete-orphan" lazy="true" inverse="true">
-            <key column="RULE_ID" />
+            <key >
+            	<column name="RULE_ID" />
+            	<column name="RULE_VERSION" />
+            </key>
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput" />
         </set>
         
         <set name="sbiKpiPlaceholders" table="SBI_KPI_RULE_PLACEHOLDER" cascade="save-update" lazy="true">
-			<key column="RULE_ID"/>
+			<key >
+            	<column name="RULE_ID" />
+            	<column name="RULE_VERSION" />
+            </key>
 			<many-to-many column="PLACEHOLDER_ID"  class="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder"/>
 		</set> 
         

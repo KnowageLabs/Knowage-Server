@@ -21,7 +21,10 @@
         
         <set name="sbiKpiRules" table="SBI_KPI_RULE_PLACEHOLDER" lazy="true">
 			<key column="PLACEHOLDER_ID"/>
-			<many-to-many column="RULE_ID"  class="it.eng.spagobi.kpi.metadata.SbiKpiRule"/>
+			<many-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRule">
+				<column name="RULE_ID" />
+				<column name="RULE_VERSION" />
+			</many-to-many>
 		</set>
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
