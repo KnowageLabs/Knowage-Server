@@ -6,6 +6,7 @@
 		<project>knowagedao</project>
 		<project>knowageutils</project>
 		<project>knowageutilsjson</project>
+		<project>jdbccore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

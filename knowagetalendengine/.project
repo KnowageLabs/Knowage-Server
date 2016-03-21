@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>knowageutils</project>
+		<project>jdbccore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
