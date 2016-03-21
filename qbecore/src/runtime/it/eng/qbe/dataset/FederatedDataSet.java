@@ -69,6 +69,8 @@ public class FederatedDataSet extends QbeDataSet {
 		federation.setLabel(dataSetConfig.getFederationlabel());
 		federation.setFederation_id(dataSetConfig.getFederationId());
 		federation.setRelationships(dataSetConfig.getFederationRelations());
+		
+		federation.setDegenerated(dataSetConfig.isDegenerated());
 
 		// load the map dataset->cached table name
 		JSONObject jsonConf = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
@@ -104,7 +106,8 @@ public class FederatedDataSet extends QbeDataSet {
 		sbd.setFederationlabel(federation.getLabel());
 		sbd.setFederationRelations(federation.getRelationships());
 		sbd.setFederationId(federation.getFederation_id());
-
+		sbd.setDegenerated(federation.isDegenerated());
+		
 		sbd.setType(DS_TYPE);
 
 		return sbd;

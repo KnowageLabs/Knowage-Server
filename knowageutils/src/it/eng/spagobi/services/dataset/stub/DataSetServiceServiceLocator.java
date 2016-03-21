@@ -33,7 +33,7 @@ public class DataSetServiceServiceLocator extends org.apache.axis.client.Service
     }
 
     // Use to get a proxy class for DataSetService
-    private java.lang.String DataSetService_address = "http://localhost:8181/SpagoBI/services/DataSetService";
+    private java.lang.String DataSetService_address = "http://localhost:8181/knowag/services/DataSetService";
 
     public java.lang.String getDataSetServiceAddress() {
         return DataSetService_address;

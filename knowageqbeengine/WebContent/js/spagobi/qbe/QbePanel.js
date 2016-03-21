@@ -514,8 +514,44 @@ getAmbiguousFieldsFromCache : function (query) {
 
 	}, this);		
 }
-
 ,
+
+
+openSaveDataSetWizard: function(fromMyAnalysis) {
+	if (fromMyAnalysis != undefined && fromMyAnalysis != null && fromMyAnalysis == 'TRUE'){
+		this.fromMyAnalysis = fromMyAnalysis;
+	}
+	var queries = this.getQueriesCatalogue();
+	
+	var empty = true;
+	//check if the query is empty
+	if(queries && queries.catalogue && queries.catalogue.queries){
+
+		for(var i=0; i<queries.catalogue.queries.length;i++){
+			var object = queries.catalogue.queries[i];
+			if(object && object.fields && object.fields.length>0){
+				empty = false;
+				break;
+			}
+		}
+	}
+	
+	if(!empty){
+		var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( { queries : queries } );
+		
+		saveDatasetWindow.on('save', function(theWindow, formState) { 
+			theWindow.close(); 
+			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == 'TRUE'){
+				this.fireEvent('save') 
+			}
+		}, this);
+		
+		saveDatasetWindow.show();
+	}else{
+		Sbi.exception.ExceptionHandler.showErrorMessage(LN("sbi.qbe.qbepanel.emptyquerytext"), LN("sbi.qbe.qbepanel.emptyquerytitle"));
+	}
+}
+	/*,
 openSaveDataSetWizard: function(fromMyAnalysis) {
 	if (fromMyAnalysis != undefined && fromMyAnalysis != null && fromMyAnalysis == 'TRUE'){
 		this.fromMyAnalysis = fromMyAnalysis;
@@ -530,7 +566,7 @@ openSaveDataSetWizard: function(fromMyAnalysis) {
 	}, this);
 	
 	saveDatasetWindow.show();
-}
+}*/
 
 /*
  * This method is invoked by Sbi.execution.DocumentExecutionPage on SpagoBI core!!!

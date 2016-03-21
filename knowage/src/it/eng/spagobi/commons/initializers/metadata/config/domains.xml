@@ -160,6 +160,9 @@
 	<DOMAIN valueCd="org.hibernate.dialect.impala"
 		valueNm="sbidomains.nm.impala" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.impala" />
+	<DOMAIN valueCd="org.hibernate.dialect.drill"
+		valueNm="sbidomains.nm.drill" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.drill" />
 	<DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres"
 		domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.ingres" />
@@ -458,17 +461,6 @@
 		
 	<DOMAIN valueCd="DAY_OF_WEEK" valueNm="Day of the week"
 		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
-	
-	<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
-	
-	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
-		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
-		
-	<DOMAIN valueCd="ATTRIBUTE" valueNm="sbidomains.nm.attribute"
-		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.attribute" />
-		
-	<DOMAIN valueCd="TEMPORAL_ATTRIBUTE" valueNm="sbidomains.nm.temporalattribute"
-		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
+<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
 
-	
 </DOMAINS>

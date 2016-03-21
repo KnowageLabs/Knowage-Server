@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.services.dataset.stub;
 
+
 public interface DataSetServiceService extends javax.xml.rpc.Service {
     public java.lang.String getDataSetServiceAddress();
 
