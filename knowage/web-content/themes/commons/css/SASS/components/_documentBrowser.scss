@@ -47,13 +47,17 @@
 	.documentCard md-card-title {
 	    color: #FAFAFA;
     	text-transform: uppercase;
-    	padding-left: 8px;
 	}
+	.documentCard md-card-title p {
+	    margin: 0px 5px;
+	}
+	
+	
 	.documentCard md-card-actions {
 	background-color: #FAFAFA;
 	}
 	
-	.documentCard img {
+	.documentCard div.md-card-image {
 		max-height: 150px;
 	    width: 100%;
 	    height: 150px;
@@ -178,7 +182,9 @@
 	
 	*/
 	
-	
+	.preferiteDocumentIcon{
+	color: #E4A400;
+	}
 	
 
 	

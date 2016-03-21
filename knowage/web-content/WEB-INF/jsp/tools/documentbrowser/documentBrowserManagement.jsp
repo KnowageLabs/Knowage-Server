@@ -128,29 +128,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<!-- Document Grid View -->
 				<div layout="row" layout-wrap ng-hide="!showDocumentGridView " >
 				<md-card class="documentCard" ng-repeat="document in folderDocuments">
-<!-- 				ng-src="{{getImageUrl(document)}}" -->
-			        
-			        <md-card-title>
+		        <md-card-title>
 			          <md-card-title-text>
-			            <span class=" ellipsis">{{document.name}}</span>
+			            <p class=" ellipsis">{{document.name}}</p>
 			             <md-tooltip md-delay="1500">
 			              {{document.name}}
 			            </md-tooltip>
 			          </md-card-title-text>
 			        </md-card-title>
-			        <img  class="md-card-image document_browser_image_{{document.typeCode}}"  >
-<!-- 			        <md-card-content> -->
-<!-- 			          <p> -->
-<!-- 			          {{document}} -->
-<!-- 			          </p> -->
-<!-- 			        </md-card-content> -->
+			        <div class="md-card-image document_browser_image_{{document.typeCode}}"  ></div>
 			        <md-card-actions layout="row" layout-align="end">
+			          <md-button class="md-icon-button" aria-label="tag">
+			            <md-icon md-font-icon="fa  fa-tag fa-2x"></md-icon>
+			          </md-button>
 			        	<span flex></span>
-			          <md-button class="md-icon-button" aria-label="Favorite">
-			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
+			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="selectDocument(document);">
+			            <md-icon md-font-icon="fa fa-info-circle fa-2x"></md-icon>
 			          </md-button>
 			          <md-button class="md-icon-button" aria-label="Settings">
-			            <md-icon md-font-icon="fa fa-copy fa-2x"></md-icon>
+			            <md-icon md-font-icon="fa fa-star fa-2x" ng-click="document.pref=!document.pref" ng-init="document.pref==false" ng-class="{'preferiteDocumentIcon': document.pref==true}"></md-icon>
 			          </md-button>
 			          <md-button class="md-icon-button" aria-label="Share">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>

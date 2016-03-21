@@ -86,7 +86,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate,
 	};
 	
 	$scope.isSelectedDocumentValid = function() {
-		return $scope.selectedDocument !== null;
+		return $scope.selectedDocument !== undefined;
 	};
  
 	 

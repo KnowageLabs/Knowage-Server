@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-content layout-margin>
  <md-input-container >
         <label> {{translate.load("sbi.generic.tipology")}}</label>
-        <md-select ng-model="mtdValue.type" ng-model-options="{trackBy: '$value.valueCd'}"  >
+        <md-select ng-model="mtdValue.type" ng-model-options="{trackBy: '$value.valueCd'}" ng-disabled="mtdValue.isBlockedType" >
           <md-option ng-repeat="tipolo in tipologiesType" ng-value={{tipolo}}>
             {{translate.load(tipolo.translatedValueName)}}
           </md-option>

@@ -13,6 +13,7 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.currentRule={};
 	$scope.detailProperty={};
 	$scope.originalRule={};
+	$scope.selectedTab={'tab':0};
 	
 	$scope.updateListRule=function(){
 		$scope.$broadcast("updateListRule");
@@ -343,9 +344,15 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  		for(var index in  columns){
  			tmpMeas.push( columns[index].label);
  			if($scope.ruleOutputsIndexOfColumName(columns[index].label)==-1){
+ 				var isBlocked=false;
+ 				var type=$scope.tipologiesType[1];
+ 				if(columns[index].type=='int' || columns[index].type=="float"){
+ 					 type=$scope.tipologiesType[0];
+ 				}
+ 				
  				$scope.currentRule.ruleOutputs.push({
  					alias:columns[index].label,
- 					type:$scope.tipologiesType[1]});
+ 					type:type });
  			}
  		}
  		
@@ -360,7 +367,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  	 	
  	$scope.aliasExtist=function(aliasName){
 		 for(var i=0;i<$scope.aliasList.length;i++){
-			if( $scope.aliasList[i].name==aliasName){
+			if(angular.equals($scope.aliasList[i].name.toUpperCase(),aliasName.toUpperCase())){
 				return true;
 			}
 		}
@@ -448,6 +455,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 						$scope.broadcastAlterDatasource(response.data.dataSourceId); 
 						$angularListDetail.goToDetail();
 						$timeout(function(){
+							$scope.selectedTab.tab=0;
 							angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror.refresh();
 						},0)
 					},function(response){
@@ -464,12 +472,20 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.measureRoleColumnsList=[
 	                           {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"alias"},
 	                           {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rule"},
+	                           {"label":$scope.translate.load("sbi.generic.category"),"name":"categoryName"},                           
 	                          {"label":$scope.translate.load("sbi.generic.author"),"name":"author"},
 	                           ];
 	
 	$scope.loadMeasureRoleList=function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
 		.then(function(response){
+			
+			for(var i=0;i<response.data.length;i++){
+				if(response.data[i].category!=null){
+					response.data[i].categoryName=response.data[i].category.translatedValueName;
+				}
+				
+			}
 			$scope.measureRoleList=response.data;
 			},function(response){
 				$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.list.error"));

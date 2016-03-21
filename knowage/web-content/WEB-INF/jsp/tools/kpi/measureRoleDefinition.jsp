@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<div layout="row" class="absolute" layout-fill>
 		 
-			<md-tabs flex  >
+			<md-tabs flex md-selected='selectedTab.tab' >
 			
 				<md-tab id="tab1">
        				<md-tab-label>{{translate.load("sbi.ds.query")}}</md-tab-label>

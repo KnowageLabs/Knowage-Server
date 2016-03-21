@@ -12,7 +12,7 @@
   
    		<md-input-container flex class="md-block">
           <label>{{translate.load("sbi.generic.descr")}}</label>
-          <input ng-model="kpi.threshold.description" md-maxlength="1000" ></textarea>
+          <input ng-model="kpi.threshold.description" md-maxlength="1000">
         </md-input-container>
     </div>    
       <div layout="row">   
