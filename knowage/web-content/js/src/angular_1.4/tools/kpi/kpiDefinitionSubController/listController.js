@@ -21,7 +21,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.loadKPI=function(item){
 
 
-		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadKpi")
+		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/"+item.version+"/loadKpi")
 		.then(function(response){ 
 
 			angular.copy({},$scope.cardinality);
@@ -58,6 +58,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 			for(var i=0;i<response.data.length;i++){
 				var obj = {};
 				obj["name"]=response.data[i].name;
+				obj["version"]=response.data[i].version;
 				if(response.data[i].category!=undefined){
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}

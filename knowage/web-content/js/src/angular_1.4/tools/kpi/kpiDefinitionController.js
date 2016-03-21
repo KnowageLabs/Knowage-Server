@@ -285,7 +285,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
-			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadKpi")
+			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/"+item.version+"/loadKpi")
 			.then(function(response){ 
 
 				angular.copy({},$scope.cardinality);

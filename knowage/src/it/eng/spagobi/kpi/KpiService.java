@@ -154,10 +154,10 @@ public class KpiService {
 	}
 
 	@GET
-	@Path("/{id}/loadRule")
-	public Response loadRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{id}/{version}/loadRule")
+	public Response loadRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		Rule r = dao.loadRule(id);
+		Rule r = dao.loadRule(id, version);
 		return Response.ok(JsonConverter.objectToJson(r, r.getClass())).build();
 	}
 
@@ -268,17 +268,29 @@ public class KpiService {
 			String requestVal = RestUtilities.readBody(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
 			Integer id = rule.getId();
+			Integer version = rule.getVersion();
 			// Rule name must be unique
 			if (id == null && dao.getRuleIdByName(rule.getName()) != null || id != null && !id.equals(dao.getRuleIdByName(rule.getName()))) {
 				String errorMsg = getMessage(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
 				return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", errorMsg)))).build();
 			}
 			if (id == null) {
-				id = dao.insertRule(rule);
+				// Save a new Rule
+				Rule newRule = dao.insertRule(rule);
+				id = newRule.getId();
+				version = newRule.getVersion();
 			} else {
-				dao.updateRule(rule);
+				if (rule.isEnableVersioning()) {
+					// Save Rule as new version
+					Rule newRule = dao.insertNewVersionRule(rule);
+					id = newRule.getId();
+					version = newRule.getVersion();
+				} else {
+					// Update existing Rule
+					dao.updateRule(rule);
+				}
 			}
-			return Response.ok("{\"id\":" + id + "}").build();
+			return Response.ok(new JSONObject().put("id", id).put("version", version).toString()).build();
 		} catch (IOException e) {
 			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
 		} catch (SpagoBIException e) {
@@ -298,9 +310,9 @@ public class KpiService {
 	}
 
 	@GET
-	@Path("/{id}/loadKpi")
-	public Response loadKpi(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		Kpi kpi = getKpiDAO(req).loadKpi(id);
+	@Path("/{id}/{version}/loadKpi")
+	public Response loadKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
+		Kpi kpi = getKpiDAO(req).loadKpi(id, version);
 		return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
 	}
 
@@ -355,7 +367,11 @@ public class KpiService {
 			if (kpi.getId() == null) {
 				dao.insertKpi(kpi);
 			} else {
-				dao.updateKpi(kpi);
+				if (kpi.isEnableVersioning()) {
+					dao.insertNewVersionKpi(kpi);
+				} else {
+					dao.updateKpi(kpi);
+				}
 			}
 
 			return Response.ok().build();
@@ -366,18 +382,20 @@ public class KpiService {
 	}
 
 	@DELETE
-	@Path("/{id}/deleteKpi")
-	public Response deleteKpi(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{id}/{version}/deleteKpi")
+	public Response deleteKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		dao.removeKpi(id);
+		// TODO get toBeVersioned flag
+		dao.removeKpi(id, version, false);
 		return Response.ok().build();
 	}
 
 	@DELETE
-	@Path("/{id}/deleteRule")
-	public Response deleteRule(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{id}/{version}/deleteRule")
+	public Response deleteRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		dao.removeRule(id);
+		// TODO get toBeVersioned flag
+		dao.removeRule(id, version, false);
 		return Response.ok().build();
 	}
 

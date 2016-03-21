@@ -18,8 +18,8 @@ function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.$broadcast("updateListRule");
 	}
 	
-	$scope.loadBroadcastRuleById=function(ruleId){
-		$scope.$broadcast("loadRuleById",{ruleId:ruleId});
+	$scope.loadBroadcastRuleById=function(ruleId,ruleVersion){
+		$scope.$broadcast("loadRuleById",{ruleId:ruleId,ruleVersion:ruleVersion});
 	}
 	
 	$scope.broadcastAlterDatasource=function(dataSourceId){
@@ -114,7 +114,7 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 						if($scope.newPlaceholder.length>0){
 							loadPlaceholderListFunction();
 						}
-						loadBroadcastRuleById(response.data.id);
+						loadBroadcastRuleById(response.data.id,response.data.version);
 						})
 					
 				},function(response){
@@ -424,17 +424,17 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	};
 	
 	$scope.$on('loadRuleById', function(event, args) {
- 		$scope.loadRuleById(args.ruleId);
+ 		$scope.loadRuleById(args.ruleId,args.ruleVersion);
  	});
 	
-	$scope.loadRuleById=function(ruleId,clone){ 
+	$scope.loadRuleById=function(ruleId,ruleVersion,clone){ 
 		var rid;
 		if(clone!=true){
 			rid=ruleId;
 		}
 		$scope.broadcastLoadAliasList(rid).then(
 				function(){
-					sbiModule_restServices.promiseGet("1.0/kpi",ruleId+"/loadRule")
+					sbiModule_restServices.promiseGet("1.0/kpi",ruleId+"/"+ruleVersion+"/loadRule")
 					.then(function(response){ 
 						if(clone==true){
 							response.data.id=undefined;
@@ -457,7 +457,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	};
 	
 	$scope.measureClickFunction=function(item){
-		$scope.loadRuleById(item.ruleId,false);
+		$scope.loadRuleById(item.ruleId,item.ruleVersion,false);
 	};
 	
 	$scope.measureRoleList=[];
@@ -511,7 +511,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
         .ok($scope.translate.load("sbi.general.yes"))
         .cancel($scope.translate.load("sbi.general.No"));
 		   $mdDialog.show(confirm).then(function() {
-			   $scope.loadRuleById(item.ruleId,true);    
+			   $scope.loadRuleById(item.ruleId,item.ruleVersion,true);    
 		   }, function() {
 		    console.log("annulla")
 		   });
