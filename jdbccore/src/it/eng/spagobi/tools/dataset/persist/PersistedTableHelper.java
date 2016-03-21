@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.persist;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -35,7 +36,6 @@ public class PersistedTableHelper {
 
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
-
 		try {
 			// in case of a measure with String type, convert it into a Double
 			if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
@@ -87,15 +87,21 @@ public class PersistedTableHelper {
 				}
 			} else if (fieldMetaTypeName.contains("Date")) {
 				insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
-			} else if (fieldMetaTypeName.contains("Timestamp")) {
-				insertStatement.setTimestamp(fieldIndex + 1, (Timestamp) fieldValue);
+			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
+				if (fieldValue instanceof oracle.sql.TIMESTAMP) {
+					insertStatement.setTimestamp(fieldIndex + 1, ((oracle.sql.TIMESTAMP) fieldValue).timestampValue());
+				} else {
+					insertStatement.setTimestamp(fieldIndex + 1, (Timestamp) fieldValue);
+				}
+			} else if (fieldMetaTypeName.contains("Time")) {
+				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
 			} else if (fieldMetaTypeName.contains("Short")) {
 				// only for primitive type is necessary to use setNull method if
 				// value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
-					insertStatement.setInt(fieldIndex + 1, ((Short) fieldValue).intValue());
+					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Integer")) {
 				// only for primitive type is necessary to use setNull method if
@@ -145,13 +151,31 @@ public class PersistedTableHelper {
 				// ByteArrayInputStream((byte[])field.getValue());
 				// toReturn.setBinaryStream(1, bis,
 				// ((byte[])field.getValue()).length);
+			} else if (fieldMetaTypeName.contains("BLOB")) {
+				if (fieldValue instanceof oracle.sql.BLOB) {
+					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.BLOB) fieldValue).getBytes());
+				} else {
+					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+				}
 			} else if (fieldMetaTypeName.contains("[C")) { // CLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
 				// toReturn.setAsciiStream(i2+1, new
 				// ByteArrayInputStream((byte[])field.getValue()),
 				// ((byte[])field.getValue()).length);
+			} else if (fieldMetaTypeName.contains("CLOB")) {
+				if (fieldValue instanceof oracle.sql.CLOB) {
+					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.CLOB) fieldValue).getBytes());
+				} else {
+					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+				}
+			} else if (fieldMetaTypeName.contains("Data")) {
+				// only for primitive type is necessary to use setNull method if value is null
+				if (fieldValue == null) {
+					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
+				} else {
+					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
+				}
 			} else {
-				// toReturn.setString(i2+1, (String)field.getValue());
 				logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 			}
 		} catch (Throwable t) {

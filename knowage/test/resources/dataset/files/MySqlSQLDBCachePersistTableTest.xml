@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+	<cacheConfiguration
+		tableNamePrefix="sbicache"
+		spaceAvailable="104857600"
+		percentageToClean="50"
+		percentageToStore="50"
+		schemaName="ds_cache">
+		cacheConfiguration
+	</cacheConfiguration>
+	<readingDataset
+		url="jdbc:mysql://localhost:3306/knowage"
+		user="root"
+		password="root"
+		driver="com.mysql.jdbc.Driver"
+		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
+		hibDialectName="sbidomains.nm.mysql">
+		datasetTest_read
+	</readingDataset>
+	<writingDataset
+		url="jdbc:mysql://localhost:3306/ds_cache"
+		user="root"
+		password="root"
+		driver="com.mysql.jdbc.Driver"
+		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
+		hibDialectName="sbidomains.nm.mysql">
+		datasetTest_write
+	</writingDataset>
+	<table name="cachepersisttest">
+		<field writingType="java.lang.Boolean">colbit</field>
+		<field writingType="[B">colbit8</field>
+		<field writingType="java.lang.Integer">coltinyint</field>
+		<field writingType="java.lang.Integer">colsmallint</field>
+		<field writingType="java.lang.Integer">colmediumint</field>
+		<field writingType="java.lang.Integer">colint</field>
+		<field writingType="java.lang.Long">colbigint</field>
+		<field writingType="java.lang.Float">colfloat</field>
+		<field writingType="java.lang.Double">coldouble</field>
+		<field writingType="java.math.BigDecimal">coldecimal</field>
+		<field writingType="java.sql.Date">coldate</field>
+		<field writingType="java.sql.Timestamp">coldatetime</field>
+		<field writingType="java.sql.Timestamp">coltimestamp</field>
+		<field writingType="java.sql.Time">coltime</field>
+		<field writingType="java.sql.Date">colyear</field>
+		<field writingType="java.lang.String">colchar8</field>
+		<field writingType="java.lang.String">colvarchar8</field>
+		<field writingType="[B">colbinary8</field>
+		<field writingType="[B">colvarbinary8</field>
+		<field writingType="[B">coltinyblob</field>
+		<field writingType="java.lang.String">coltinytext</field>
+		<field writingType="[B">colblob</field>
+		<field writingType="java.lang.String">coltext</field>
+		<field writingType="[B">colmediumblob</field>
+		<field writingType="java.lang.String">colmediumtext</field>
+		<field writingType="[B">collongblob</field>
+		<field writingType="java.lang.String">collongtext</field>
+	</table>
+</test>

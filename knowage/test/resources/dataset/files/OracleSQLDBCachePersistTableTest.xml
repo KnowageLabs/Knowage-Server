@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+	<cacheConfiguration
+		tableNamePrefix="sbicache"
+		spaceAvailable="104857600"
+		percentageToClean="50"
+		percentageToStore="50"
+		schemaName="ds_cache">
+		cacheConfiguration
+	</cacheConfiguration>
+	<readingDataset
+		url="jdbc:oracle:thin:@172.27.1.83:1521:repo"
+		user="bilancio_mi"
+		password="bilancio_mi"
+		driver="oracle.jdbc.driver.OracleDriver"
+		hibDialectClass="org.hibernate.dialect.Oracle9Dialect"
+		hibDialectName="sbidomains.nm.oracle_9i10g">
+		datasetTest_read
+	</readingDataset>
+	<writingDataset
+		url="jdbc:mysql://localhost:3306/ds_cache"
+		user="root"
+		password="root"
+		driver="com.mysql.jdbc.Driver"
+		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
+		hibDialectName="sbidomains.nm.mysql">
+		datasetTest_write
+	</writingDataset>
+	<table name="CACHE_PERSIST_TEST">
+		<field writingType="java.lang.String">colchar</field>
+		<field writingType="java.lang.String">COLCHARACTER</field>
+		<field writingType="java.lang.String">COLLONG</field>
+		<field writingType="java.lang.String">COLVARCHAR</field>
+		<field writingType="java.lang.String">COLVARCHAR2</field>
+		<field writingType="oracle.sql.NString">COLNCHAR</field>
+		<field writingType="oracle.sql.NString">COLNVARCHAR</field>
+		<field writingType="[B">COLRAW</field>
+		<field writingType="java.lang.Integer">COLINT</field>
+		<field writingType="java.lang.Integer">COLINTEGER</field>
+		<field writingType="java.math.BigDecimal">COLDEC</field>
+		<field writingType="java.math.BigDecimal">COLDECIMAL</field>
+		<field writingType="java.math.BigDecimal">COLNUMBER</field>
+		<field writingType="java.math.BigDecimal">COLNUMERIC</field>
+		<field writingType="java.math.Double">COLDOUBLEPRECISION</field>
+		<field writingType="java.math.Double">COLFLOAT</field>
+		<field writingType="java.lang.Integer">COLSMALLINT</field>
+		<field writingType="java.math.Float">COLREAL</field>
+		<field writingType="java.sql.Timestamp">COLDATE</field>
+		<field writingType="java.sql.Timestamp">COLTIMESTAMP</field>
+		<field writingType="java.lang.String">COLINTERVALDAY</field>
+		<field writingType="java.lang.String">COLINTERVALYEAR</field>
+		<field writingType="java.sql.Clob">COLCLOB</field>
+		<field writingType="java.sql.Blob">COLBLOB</field>
+	</table>
+</test>

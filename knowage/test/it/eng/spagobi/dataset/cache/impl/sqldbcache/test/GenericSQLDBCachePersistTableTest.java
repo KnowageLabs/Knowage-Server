@@ -23,7 +23,6 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguratio
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -135,14 +134,11 @@ public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 		for (int i = 0; i < metaData.getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = metaData.getFieldMeta(i);
 			String fieldMetaName = fieldMeta.getName();
-			if (fieldMetaName.equalsIgnoreCase(PersistedTableManager.getRowCountColumnName())) {
-				continue;
+			if (types.containsKey(fieldMetaName)) {
+				String expectedType = types.get(fieldMetaName);
+				String actualType = fieldMeta.getType().toString();
+				assertTrue("Field [" + fieldMetaName + "] expected:[" + expectedType + "] but was:[" + actualType + "]", actualType.contains(expectedType));
 			}
-			assertTrue("Unexpected field [" + fieldMetaName + "]", types.containsKey(fieldMetaName));
-
-			String expectedType = types.get(fieldMetaName);
-			String actualType = fieldMeta.getType().toString();
-			assertTrue("Field [" + fieldMetaName + "] expected:[" + expectedType + "] but was:[" + actualType + "]", actualType.contains(expectedType));
 		}
 	}
 }
