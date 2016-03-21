@@ -270,7 +270,8 @@ public class KpiService {
 			Integer id = rule.getId();
 			Integer version = rule.getVersion();
 			// Rule name must be unique
-			if (id == null && dao.getRuleIdByName(rule.getName()) != null || id != null && !id.equals(dao.getRuleIdByName(rule.getName()))) {
+			Integer otherId = dao.getRuleIdByName(rule.getName());
+			if (otherId != null && (id == null || !id.equals(otherId))) {
 				String errorMsg = getMessage(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
 				return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", errorMsg)))).build();
 			}
@@ -547,9 +548,14 @@ public class KpiService {
 
 		if (placeholders != null && !placeholders.isEmpty()) {
 			for (Placeholder placeholder : placeholders) {
+				String value = placeholder.getValue();
+				if (value != null) {
+					// To execute query through IDataSet, parameters must be quoted manually
+					value = "'" + value.trim().replace("'", "") + "'";
+				}
 				parameterMap.put(placeholder.getName(), placeholder.getValue());
 			}
-			// Replacing parameters from notation "@name" to "$P{name}"
+			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
 			for (String paramName : parameterMap.keySet()) {
 				query = query.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
@@ -599,6 +605,7 @@ public class KpiService {
 			JSONObject col = new JSONObject();
 			col.put("name", column.getString("name"));
 			col.put("label", column.getString("header"));
+			col.put("type", column.getString("type"));
 			columns.put(col);
 		}
 		ret.put("rows", dataSetJSON.get(JSONDataWriter.ROOT));
