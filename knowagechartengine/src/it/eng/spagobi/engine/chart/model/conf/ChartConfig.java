@@ -20,9 +20,11 @@ package it.eng.spagobi.engine.chart.model.conf;
 public class ChartConfig {
 
 	/*
-	 * - Velocity Model properties vmPath="/chart/templates/{name}/" vmName="{type}_chart.vm"
-	 * 
-	 * - Library Initializer properties libIniPath="/chartlib/" libIniNAme="{name}Initializer.jspf"
+	 * - Velocity Model properties vmPath="/chart/templates/{name}/"
+	 * vmName="{type}_chart.vm"
+	 *
+	 * - Library Initializer properties libIniPath="/chartlib/"
+	 * libIniNAme="{name}Initializer.jspf"
 	 */
 
 	private final String type;
@@ -31,18 +33,20 @@ public class ChartConfig {
 	private final String vmName;
 	private final String libIniPath;
 	private final String libIniName;
+	private final String enabeldInCockpit;
 
-	public ChartConfig(String type, String name, String vmPath, String vmName, String libIniPath, String libIniName) {
+	public ChartConfig(String type, String name, String vmPath, String vmName, String libIniPath, String libIniName, String enabledInCockpit) {
 		this.type = type;
 		this.name = name;
 		this.vmPath = isEmpty(vmPath) ? "/chart/templates/" + name + "/" : vmPath;
 		this.vmName = isEmpty(vmName) ? type + "_chart.vm" : vmName;
 		this.libIniPath = isEmpty(libIniPath) ? "chartlib/" : libIniPath;
-		
+		this.enabeldInCockpit = enabledInCockpit;
+
 		/**
-		 * Initializer files for two chart libraries used by the project
-		 * is changed from .jspf to .jsp file (extension).
-		 * 
+		 * Initializer files for two chart libraries used by the project is
+		 * changed from .jspf to .jsp file (extension).
+		 *
 		 * @modifiedBy: danristo (danilo.ristovski@mht.net)
 		 */
 		this.libIniName = isEmpty(libIniName) ? name + "Initializer.jsp" : libIniName;
@@ -70,6 +74,10 @@ public class ChartConfig {
 
 	private boolean isEmpty(String s) {
 		return s == null || s.equals("");
+	}
+
+	public boolean isEnabledInCockpit() {
+		return enabeldInCockpit.equals("true");
 	}
 
 }

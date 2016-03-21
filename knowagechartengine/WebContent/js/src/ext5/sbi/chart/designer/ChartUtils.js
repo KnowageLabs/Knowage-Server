@@ -622,28 +622,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					
 					var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					
-					if (Sbi.chart.designer.ChartUtils.isCockpitEngine && chartType.toUpperCase() == "PARALLEL")
-					{
-						//console.log("+++",chartModel);
-						//console.log("===",chartModel.get('groupByCategory'));
-						
-						if (chartModel && (chartModel.get('groupByCategory')=="false" ||
-								chartModel.get('groupByCategory')==false ||
-									chartModel.get('groupByCategory') == ""))
-						{
-							serie['groupingFunction'] = "NONE";
-						}
-						else
-						{
-							serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
-									 : '';
-						}
-					}	
-					else
-					{
+//					if (Sbi.chart.designer.ChartUtils.isCockpitEngine && chartType.toUpperCase() == "PARALLEL")
+//					{
+//						//console.log("+++",chartModel);
+//						//console.log("===",chartModel.get('groupByCategory'));
+//						
+//						if (chartModel && (chartModel.get('groupByCategory')=="false" ||
+//								chartModel.get('groupByCategory')==false ||
+//									chartModel.get('groupByCategory') == ""))
+//						{
+//							serie['groupingFunction'] = "NONE";
+//						}
+//						else
+//						{
+//							serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
+//									 : '';
+//						}
+//					}	
+//					else
+//					{
 						serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
 								 : '';
-					}
+//					}
 					
 					//console.log("serieAsMap:",serie['groupingFunction']);
 					
@@ -1534,6 +1534,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 : '') + ';';
                 var groupByCategory= chartModel.get('groupByCategory') ? chartModel.get('groupByCategory')
    					 : false;
+                // in cockpit should always be grouped by category
+                if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+                	groupByCategory=true;
+                }
 				LIMIT['style'] = limitStyle;
 				LIMIT['groupByCategory']=groupByCategory;
 
@@ -2211,8 +2215,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				maxNumberOfLines : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.maxNumberOfLines : "",
 				serieFilterColumn : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.serieFilterColumn : "",
 				orderTopMinBottomMax : (jsonParallelLimitStyle && jsonParallelLimitStyle != null) ? jsonParallelLimitStyle.orderTopMinBottomMax : "",
-                groupByCategory: jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : "",
-				
+                groupByCategory: jsonTemplate.CHART.LIMIT ? jsonTemplate.CHART.LIMIT.groupByCategory : Sbi.chart.designer.ChartUtils.isCockpitEngine,
+			
 				/**
 				 * Added for the PARALLEL chart (AXES_LINES tag)
 				 * (danilo.ristovski@mht.net)

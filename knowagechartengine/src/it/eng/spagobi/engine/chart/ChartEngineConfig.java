@@ -68,8 +68,8 @@ public class ChartEngineConfig {
 				String vmName = (String) chart.getAttribute("vmName");
 				String libIniPath = (String) chart.getAttribute("libIniPath");
 				String libIniName = (String) chart.getAttribute("libIniName");
-
-				chartLibConf.put(type, new ChartConfig(type, name, vmPath, vmName, libIniPath, libIniName));
+				String enabledInCockpit = (String) chart.getAttribute("enabledInCockpit");
+				chartLibConf.put(type, new ChartConfig(type, name, vmPath, vmName, libIniPath, libIniName, enabledInCockpit));
 			}
 		}
 		logger.trace("OUT");
@@ -93,17 +93,15 @@ public class ChartEngineConfig {
 	public static Map<String, ChartConfig> getChartLibConf() {
 		return chartLibConf;
 	}
-	
-	public static String getEngineResourcePath(){
-		 String path = null;
-		  if(getEngineConfig().getResourcePath() != null) {
-		   path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + "chart";
-		  } else {
-		   path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + "chart";
-		  }
-		  
-		  return path;
-	}
-	}
 
+	public static String getEngineResourcePath() {
+		String path = null;
+		if (getEngineConfig().getResourcePath() != null) {
+			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + "chart";
+		} else {
+			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + "chart";
+		}
 
+		return path;
+	}
+}

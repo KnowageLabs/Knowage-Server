@@ -195,7 +195,8 @@ Ext.define
 	    				xtype: 'checkboxfield',
 	    				id: 'GroupByCategoryParallel',
 	    				bind : '{configModel.groupByCategory}',
-	    					
+	    				disabled: Sbi.chart.designer.ChartUtils.isCockpitEngine,
+	    				checked:  Sbi.chart.designer.ChartUtils.isCockpitEngine,	
 	    				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
 	    				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
 	    				

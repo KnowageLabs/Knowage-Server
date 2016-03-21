@@ -475,6 +475,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			);
 			
+			var stringCockpitEngine="false";
+			if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
+				stringCockpitEngine="true";
+			}
+			
 			/**
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
@@ -483,7 +488,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 				   method : 'GET',
 				   url : 'types',
-				   
+				   params: {
+					   isCockpitEngine: stringCockpitEngine,
+				   },
 				   success: function(response) 
 				   {
 				        var obj = Ext.decode(response.responseText);
