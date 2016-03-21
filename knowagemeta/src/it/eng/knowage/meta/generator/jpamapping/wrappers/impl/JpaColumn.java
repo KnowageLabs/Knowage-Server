@@ -14,16 +14,16 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
 import it.eng.knowage.meta.generator.utils.StringUtils;
-import it.eng.spagobi.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
-import it.eng.spagobi.meta.model.ModelProperty;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.business.BusinessView;
-import it.eng.spagobi.meta.model.business.BusinessViewInnerJoinRelationship;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalModel;
-import it.eng.spagobi.meta.model.util.JDBCTypeMapper;
+import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 
 import java.util.List;
 

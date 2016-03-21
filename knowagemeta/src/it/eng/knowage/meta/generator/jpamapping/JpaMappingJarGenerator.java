@@ -5,13 +5,13 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.generator.jpamapping;
 
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.utils.Zipper;
-import it.eng.spagobi.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelObject;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 

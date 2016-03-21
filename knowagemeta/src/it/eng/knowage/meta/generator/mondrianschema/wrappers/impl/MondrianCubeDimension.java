@@ -22,11 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.knowage.meta.generator.mondrianschema.wrappers.impl;
 
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCubeDimesion;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.olap.Cube;
-import it.eng.spagobi.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.olap.Cube;
+import it.eng.knowage.meta.model.olap.Dimension;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

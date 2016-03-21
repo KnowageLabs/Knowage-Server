@@ -1,32 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con"
-		path="org.eclipse.jst.j2ee.internal.module.container" />
-	<classpathentry kind="src" path="src" />
-	<classpathentry kind="src" path="test" />
-	<classpathentry kind="con"
-		path="org.eclipse.jst.j2ee.internal.web.container" />
-	<classpathentry kind="con"
-		path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3" />
-	<classpathentry kind="con"
-		path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.web;#system#" />
+			<attribute name="owner.project.facets" value="jst.web;#system#"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con"
-		path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
-			<attribute name="owner.project.facets" value="java" />
+			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src"
-		path="/knowagedao" />
-	<classpathentry combineaccessrules="false" kind="src"
-		path="/knowageutils" />
-	<classpathentry combineaccessrules="false" kind="src"
-		path="/knowageutilsjson" />
-	<classpathentry combineaccessrules="false" kind="src"
-		path="/qbecore" />
-	<classpathentry kind="output" path="WebContent/WEB-INF/classes" />
+	<classpathentry combineaccessrules="false" kind="src" path="/knowagedao"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/velocity-1.6.4.jar"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

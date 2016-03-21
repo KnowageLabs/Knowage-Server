@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.model.olap;
 
@@ -40,7 +40,7 @@ public interface Hierarchy extends ModelObject {
 	 * If the meaning of the '<em>Table</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Table</em>' reference.
 	 * @see #setTable(BusinessColumnSet)
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getHierarchy_Table()
@@ -51,7 +51,7 @@ public interface Hierarchy extends ModelObject {
 
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Hierarchy#getTable <em>Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Table</em>' reference.
 	 * @see #getTable()
@@ -66,7 +66,7 @@ public interface Hierarchy extends ModelObject {
 	 * If the meaning of the '<em>Dimension</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Dimension</em>' container reference.
 	 * @see #setDimension(Dimension)
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getHierarchy_Dimension()
@@ -79,7 +79,7 @@ public interface Hierarchy extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Hierarchy#getDimension <em>Dimension</em>}' container reference. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Dimension</em>' container reference.
 	 * @see #getDimension()
@@ -94,7 +94,7 @@ public interface Hierarchy extends ModelObject {
 	 * If the meaning of the '<em>Levels</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Levels</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getHierarchy_Levels()
 	 * @see it.eng.knowage.meta.model.olap.Level#getHierarchy

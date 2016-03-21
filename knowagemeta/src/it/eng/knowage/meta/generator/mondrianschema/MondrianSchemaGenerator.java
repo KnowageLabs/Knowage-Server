@@ -5,19 +5,17 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.generator.mondrianschema;
 
-import it.eng.spagobi.commons.resource.IResourceLocator;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.IGenerator;
-import it.eng.knowage.meta.generator.SpagoBIMetaGeneratorPlugin;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCube;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
-import it.eng.spagobi.meta.model.ModelObject;
-import it.eng.spagobi.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.olap.OlapModel;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,10 +32,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it), Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class MondrianSchemaGenerator implements IGenerator {
-	private static final IResourceLocator RL = SpagoBIMetaGeneratorPlugin.getInstance().getResourceLocator();
+	/**
+	 * TODO REVIEW FOR PORTING
+	 */
+	// private static final IResourceLocator RL = SpagoBIMetaGeneratorPlugin.getInstance().getResourceLocator();
 
 	public static String defaultTemplateFolderPath = "templates";
 
@@ -59,9 +60,11 @@ public class MondrianSchemaGenerator implements IGenerator {
 		logger.trace("IN");
 		templatesDirRelativePath = null;
 		try {
-			templatesDirRelativePath = RL.getPropertyAsString("mondrianschema.templates.dir", defaultTemplateFolderPath);
+			/**
+			 * TODO REVIEW FOR PORTING
+			 */
+			// templatesDirRelativePath = RL.getPropertyAsString("mondrianschema.templates.dir", defaultTemplateFolderPath);
 
-			templateDir = RL.getFile(templatesDirRelativePath);
 			logger.debug("Template dir is equal to [{}]", templateDir);
 			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
 
@@ -197,8 +200,8 @@ public class MondrianSchemaGenerator implements IGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see it.eng.knowage.meta.generator.IGenerator#generate(it.eng.spagobi.meta.model.ModelObject, java.lang.String, boolean)
+	 *
+	 * @see it.eng.knowage.meta.generator.IGenerator#generate(it.eng.knowage.meta.model.ModelObject, java.lang.String, boolean)
 	 */
 	@Override
 	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping) {

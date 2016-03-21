@@ -25,11 +25,11 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianHierarchy;
 import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
-import it.eng.spagobi.meta.model.ModelProperty;
-import it.eng.spagobi.meta.model.business.BusinessColumnSet;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.olap.Dimension;
-import it.eng.spagobi.meta.model.olap.Hierarchy;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.Hierarchy;
 
 import java.util.ArrayList;
 import java.util.List;

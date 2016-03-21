@@ -14,12 +14,12 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaRelationship;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.StringUtils;
-import it.eng.spagobi.meta.model.ModelProperty;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.physical.PhysicalTable;
-import it.eng.spagobi.meta.model.util.JDBCTypeMapper;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 
 import java.util.ArrayList;
 import java.util.Collection;

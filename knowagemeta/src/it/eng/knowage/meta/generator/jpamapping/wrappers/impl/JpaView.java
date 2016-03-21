@@ -5,11 +5,11 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
-import it.eng.spagobi.commons.exception.SpagoBIPluginException;
+import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaCalculatedColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaSubEntity;
@@ -17,17 +17,17 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
-import it.eng.spagobi.meta.model.ModelProperty;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessColumnSet;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.business.BusinessView;
-import it.eng.spagobi.meta.model.business.BusinessViewInnerJoinRelationship;
-import it.eng.spagobi.meta.model.business.CalculatedBusinessColumn;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaView implements IJpaView {
 	private final BusinessView businessView;
@@ -55,7 +55,7 @@ public class JpaView implements IJpaView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaView#getPackage()
 	 */
 	@Override
@@ -75,7 +75,7 @@ public class JpaView implements IJpaView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaView#getClassName()
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class JpaView implements IJpaView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaView#getInnerTables()
 	 */
 	@Override
@@ -117,10 +117,10 @@ public class JpaView implements IJpaView {
 
 	/**
 	 * Return list of jpaColumns that belongs to the View used
-	 * 
+	 *
 	 * for qbe.properties generation and to maintain the columns order in the query view
-	 * 
-	 * 
+	 *
+	 *
 	 * @return
 	 */
 	public List<IJpaColumn> getColumns() {
@@ -155,7 +155,7 @@ public class JpaView implements IJpaView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaView#getColumns(it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaViewInnerTable)
 	 */
 	@Override
@@ -198,7 +198,7 @@ public class JpaView implements IJpaView {
 
 				}
 			}
-		} catch (SpagoBIPluginException e) {
+		} catch (KnowageMetaException e) {
 			logger.error("Calculated Column in JPAView error: ");
 			logger.error(e.getMessage());
 		}
@@ -212,7 +212,7 @@ public class JpaView implements IJpaView {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaView#getJoinRelationships()
 	 */
 	@Override

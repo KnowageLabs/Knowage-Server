@@ -11,12 +11,12 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessView;
-import it.eng.spagobi.meta.model.business.BusinessViewInnerJoinRelationship;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
 
 import java.util.ArrayList;
 import java.util.List;

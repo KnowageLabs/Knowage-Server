@@ -13,11 +13,11 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaSubEntity;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
-import it.eng.spagobi.meta.model.business.BusinessColumnSet;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.business.BusinessTable;
-import it.eng.spagobi.meta.model.business.BusinessView;
-import it.eng.spagobi.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
 
 import java.util.ArrayList;
 import java.util.List;

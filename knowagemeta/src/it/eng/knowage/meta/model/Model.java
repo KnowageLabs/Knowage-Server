@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.model;
 
@@ -43,7 +43,7 @@ public interface Model extends ModelObject {
 	 * If the meaning of the '<em>Physical Models</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Physical Models</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModel_PhysicalModels()
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModel#getParentModel
@@ -60,7 +60,7 @@ public interface Model extends ModelObject {
 	 * If the meaning of the '<em>Business Models</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Business Models</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModel_BusinessModels()
 	 * @see it.eng.knowage.meta.model.business.BusinessModel#getParentModel
@@ -77,7 +77,7 @@ public interface Model extends ModelObject {
 	 * If the meaning of the '<em>Olap Models</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Olap Models</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModel_OlapModels()
 	 * @see it.eng.knowage.meta.model.olap.OlapModel#getParentModel
@@ -93,7 +93,7 @@ public interface Model extends ModelObject {
 	 * If the meaning of the '<em>Property Types</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Property Types</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModel_PropertyTypes()
 	 * @model containment="true"
@@ -109,7 +109,7 @@ public interface Model extends ModelObject {
 	 * If the meaning of the '<em>Property Categories</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Property Categories</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModel_PropertyCategories()
 	 * @model containment="true"

@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.model.impl;
 
@@ -49,7 +49,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPhysicalModels() <em>Physical Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPhysicalModels()
 	 * @generated
 	 * @ordered
@@ -58,7 +58,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getBusinessModels() <em>Business Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getBusinessModels()
 	 * @generated
 	 * @ordered
@@ -67,7 +67,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getOlapModels() <em>Olap Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getOlapModels()
 	 * @generated
 	 * @ordered
@@ -76,7 +76,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getPropertyTypes() <em>Property Types</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPropertyTypes()
 	 * @generated
 	 * @ordered
@@ -86,7 +86,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPropertyCategories() <em>Property Categories</em>}' containment reference list. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @see #getPropertyCategories()
 	 * @generated
 	 * @ordered
@@ -95,7 +95,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected ModelImpl() {
@@ -104,7 +104,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -128,7 +128,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -156,7 +156,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -182,7 +182,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -201,7 +201,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -223,7 +223,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -245,7 +245,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -278,7 +278,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -305,7 +305,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override

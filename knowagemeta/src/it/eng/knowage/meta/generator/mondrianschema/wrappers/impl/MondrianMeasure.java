@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.knowage.meta.generator.mondrianschema.wrappers.impl;
 
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianMeasure;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.olap.Measure;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.olap.Measure;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

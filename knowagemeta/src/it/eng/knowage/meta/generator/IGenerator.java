@@ -9,7 +9,7 @@
  **/
 package it.eng.knowage.meta.generator;
 
-import it.eng.spagobi.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

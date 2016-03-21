@@ -12,8 +12,8 @@ package it.eng.knowage.meta.generator.jpamapping;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.Compiler;
-import it.eng.spagobi.meta.model.ModelObject;
-import it.eng.spagobi.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.business.BusinessModel;
 
 import java.io.File;
 

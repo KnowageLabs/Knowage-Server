@@ -26,10 +26,10 @@ import java.util.List;
 
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianHierarchy;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianLevel;
-import it.eng.spagobi.meta.model.business.BusinessIdentifier;
-import it.eng.spagobi.meta.model.business.BusinessTable;
-import it.eng.spagobi.meta.model.olap.Hierarchy;
-import it.eng.spagobi.meta.model.olap.Level;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.olap.Hierarchy;
+import it.eng.knowage.meta.model.olap.Level;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

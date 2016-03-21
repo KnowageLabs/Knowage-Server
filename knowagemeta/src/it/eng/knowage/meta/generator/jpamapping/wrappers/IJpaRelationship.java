@@ -12,7 +12,7 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.AbstractJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaRelationshipColumnsNames;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 
 import java.util.ArrayList;
 import java.util.List;

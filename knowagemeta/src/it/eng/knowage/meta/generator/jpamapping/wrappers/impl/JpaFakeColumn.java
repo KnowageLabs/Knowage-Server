@@ -13,8 +13,8 @@ import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
 import it.eng.knowage.meta.generator.utils.StringUtils;
-import it.eng.spagobi.meta.model.physical.PhysicalColumn;
-import it.eng.spagobi.meta.model.util.JDBCTypeMapper;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 
 /**
  * Used to generate mapping also for columns that does not exist as business column in the real model. Useful to add behind the scenes some columns that are

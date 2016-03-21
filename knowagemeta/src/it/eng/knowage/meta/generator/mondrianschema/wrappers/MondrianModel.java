@@ -28,9 +28,9 @@ import java.util.List;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.impl.MondrianCube;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.impl.MondrianDimension;
 
-import it.eng.spagobi.meta.model.olap.Cube;
-import it.eng.spagobi.meta.model.olap.Dimension;
-import it.eng.spagobi.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.olap.Cube;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.OlapModel;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

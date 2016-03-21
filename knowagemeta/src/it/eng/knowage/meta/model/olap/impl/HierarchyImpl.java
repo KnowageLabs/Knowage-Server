@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.model.olap.impl;
 
@@ -52,7 +52,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	/**
 	 * The cached value of the '{@link #getTable() <em>Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getTable()
 	 * @generated
 	 * @ordered
@@ -61,7 +61,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * The cached value of the '{@link #getLevels() <em>Levels</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getLevels()
 	 * @generated
 	 * @ordered
@@ -70,7 +70,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected HierarchyImpl() {
@@ -79,7 +79,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public BusinessColumnSet basicGetTable() {
@@ -116,7 +116,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -129,7 +129,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetDimension(Dimension newDimension, NotificationChain msgs) {
@@ -151,7 +151,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -173,7 +173,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -205,7 +205,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -221,7 +221,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -235,7 +235,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -255,7 +255,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -278,7 +278,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -299,7 +299,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -317,7 +317,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.model.ModelObject#getPropertyTypes()
 	 */
 	@Override
@@ -389,7 +389,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 
 	/**
 	 * Return the values of the siblingColumnName on the table used for this hierarchy
-	 * 
+	 *
 	 */
 	@Override
 	public IDataStore getSiblingValues(String siblingColumnName) {

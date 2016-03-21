@@ -5,25 +5,23 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.generator.jpamapping;
 
-import it.eng.spagobi.commons.exception.SpagoBIPluginException;
-import it.eng.spagobi.commons.resource.IResourceLocator;
+import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.IGenerator;
-import it.eng.knowage.meta.generator.SpagoBIMetaGeneratorPlugin;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaModel;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
 import it.eng.knowage.meta.generator.utils.StringUtils;
-import it.eng.spagobi.meta.model.Model;
-import it.eng.spagobi.meta.model.ModelObject;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.olap.OlapModel;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -121,8 +119,10 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	public static String defaultTemplateFolderPath = "templates";
 	public static final String DEFAULT_SRC_DIR = "src";
 	public static final String DEFAULT_DIST_DIR = "dist";
-
-	private static final IResourceLocator RL = SpagoBIMetaGeneratorPlugin.getInstance().getResourceLocator();
+	/**
+	 * TODO REVIEW FOR PORTING
+	 */
+	// private static final IResourceLocator RL = SpagoBIMetaGeneratorPlugin.getInstance().getResourceLocator();
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMappingCodeGenerator.class);
 
@@ -133,9 +133,11 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 		templatesDirRelativePath = null;
 		try {
-			templatesDirRelativePath = RL.getPropertyAsString("jpamapping.templates.dir", defaultTemplateFolderPath);
-
-			templateDir = RL.getFile(templatesDirRelativePath);
+			/**
+			 * TODO REVIEW FOR PORTING
+			 */
+			// templatesDirRelativePath = RL.getPropertyAsString("jpamapping.templates.dir", defaultTemplateFolderPath);
+			// templateDir = RL.getFile(templatesDirRelativePath);
 			logger.debug("Template dir is equal to [{}]", templateDir);
 			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
 
@@ -230,7 +232,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Delete the file and all it's children
-	 * 
+	 *
 	 * @param file
 	 */
 	private void deleteFile(File file) {
@@ -247,7 +249,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		boolean fileDeletionResult = file.delete();
 		if (!fileDeletionResult) {
 			logger.error("Can't delete the file [{}] the file is writtable? [{}]", file.getAbsolutePath(), file.canWrite());
-			throw new SpagoBIPluginException("Can't delete the file " + file.getAbsolutePath() + " the file is writtable? " + file.canWrite() + " "
+			throw new KnowageMetaException("Can't delete the file " + file.getAbsolutePath() + " the file is writtable? " + file.canWrite() + " "
 					+ file.canExecute());
 
 		}
@@ -255,7 +257,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Generate the JPA Mapping of one BusinessModel in one outputFile
-	 * 
+	 *
 	 * @param model
 	 *            BusinessModel
 	 * @param outputFile
@@ -324,7 +326,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaTable
@@ -352,7 +354,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param views
@@ -381,7 +383,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaView

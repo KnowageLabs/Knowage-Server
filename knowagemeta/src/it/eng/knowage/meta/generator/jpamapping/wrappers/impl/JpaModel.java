@@ -11,9 +11,9 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.business.BusinessTable;
-import it.eng.spagobi.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
 
 import java.util.ArrayList;
 import java.util.List;

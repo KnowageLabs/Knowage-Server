@@ -27,12 +27,12 @@ import java.util.List;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCube;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCubeDimesion;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianMeasure;
-import it.eng.spagobi.meta.model.business.BusinessColumnSet;
-import it.eng.spagobi.meta.model.business.BusinessRelationship;
-import it.eng.spagobi.meta.model.business.BusinessTable;
-import it.eng.spagobi.meta.model.olap.Cube;
-import it.eng.spagobi.meta.model.olap.Dimension;
-import it.eng.spagobi.meta.model.olap.Measure;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.olap.Cube;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.Measure;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
