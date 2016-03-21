@@ -100,6 +100,9 @@ function olapFunction(
 	$scope.loadingNodes=false;
 	$scope.activeaxis;
 	
+	$scope.member;
+	$scope.selecetedMultiHierUN;
+	
 	$scope.handleResponse = function(response) {
 		source = response.data;
 		$scope.table = $sce.trustAsHtml(source.table)
@@ -148,7 +151,7 @@ function olapFunction(
 			});
 		}
 	}
-			
+
 	/**
 	 *Function for opening dialogs
 	 **/

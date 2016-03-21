@@ -28,7 +28,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.filterDialogToolbarName = filter.name;
 		$scope.filterAxisPosition = filter.positionInAxis;
 		$scope.activeaxis = filter.axis;
-		filterFather = filter.uniqueName;
+		filterFather = filter.selectedHierarchyUniqueName;
 		h = filter.uniqueName;
 		var exist = false;
 		
@@ -78,7 +78,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 $scope.putMemberOnAxis = function(fromAxis,member){
 		 
 		 sbiModule_restServices.promisePost
-		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.uniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
+		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
 			.then(function(response) {
 				$scope.handleResponse(response);			
 			}, function(response) {

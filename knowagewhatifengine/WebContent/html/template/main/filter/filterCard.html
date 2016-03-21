@@ -1,5 +1,5 @@
 
-<div style="width:100%" layout="row"> 
+<div style="width:100%" layout="row">
 	<div class="new-filter-card" 
 			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" 
 			ng-drag="true" ng-drag-data="filter" 
@@ -8,8 +8,8 @@
 			
 		<div layout="row" class="top">
 			<div class="button-area" >
-				<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e)" ng-hide="true">
-					<md-icon class="fa fa-sitemap" style="color:white; margin-top:10%"></md-icon>	
+				<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,filter)" ng-show="filter.hierarchies.length > 1">
+					<md-icon class="fa fa-sitemap" style="color:white; margin-top:10%"></md-icon>
 				</md-button>
 			</div>
 			<div class="name-area">{{filter.name}}</div>

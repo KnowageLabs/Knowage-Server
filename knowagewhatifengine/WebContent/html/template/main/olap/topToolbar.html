@@ -1,10 +1,10 @@
-<div layout="row">
+<div layout="row" class="top-axis">
 
 	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes' style='background-color:white!important;width:33px; cursor:pointer;' ng-click="swapAxis()">
 		&nbsp;
 	</md-toolbar>
 	
-	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" width="90%" layout="column">
+	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" style="width:95%" layout="column">
 
 		<div style="min-width:32px;min-height:32px; margin-right:1%;">
 			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded">
@@ -13,6 +13,9 @@
 		</div >
 		<div ng-repeat="column in columns | limitTo:maxCols:topStart" layout="row" style="height:80%;margin-right: 10px;">
 		<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
+			<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,column)" ng-show="column.hierarchies.length > 1">
+				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
+			</md-button>
 			<div class="name">{{column.name}}</div>
 			<div class="action">
 				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
@@ -33,6 +36,14 @@
 			</md-button>
 		</div>
 			
+	</md-toolbar>
+	
+	<div style="width:2px"></div>
+	
+	<md-toolbar class='md-toolbar-tools knowage-blue' style='cursor:pointer;border-radius: 7px 0px 0px 7px; width: 4%;'>
+		<md-button class="customization-button" ng-click="toggleRight()">
+			<md-icon class="fa fa-bars" style="color:white" />
+		</md-button>
 	</md-toolbar>
 	
 </div>

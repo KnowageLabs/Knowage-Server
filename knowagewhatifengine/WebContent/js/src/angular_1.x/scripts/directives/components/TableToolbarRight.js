@@ -69,6 +69,13 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		$scope.modelConfig.drillType = type;
 		$scope.sendModelConfig($scope.modelConfig);
 	}
+	
+	$scope.isDisabledType = function(name){
+		if($scope.modelConfig.drillType == name)
+			return true;
+		else
+			return false;
+	}
 	 
 	 $scope.sortDisable = function(){
 		 

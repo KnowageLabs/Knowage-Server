@@ -26,7 +26,7 @@ function sideNavigationController($scope, $timeout, $window, $mdDialog, $mdSiden
 	}
 	
 	$scope.changeDataRepr = function(id){
-		$scope.tableIcon= id == "table" ||id == "both" ?true:false;
-		$scope.chartIcon= id == "chart" ||id == "both"?true:false;
+		$scope.tableIcon= id == "table" || id == "both" ?true:false;
+		$scope.chartIcon= id == "chart" || id == "both"?true:false;
 	}
 }

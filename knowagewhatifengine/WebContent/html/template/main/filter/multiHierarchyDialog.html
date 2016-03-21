@@ -1,3 +1,37 @@
-<md-dialog style='height:25%; width:25%;' layout="column">
-	well hello there
+<md-dialog style='height:30%; width:25%;' layout="column">
+	
+	<md-toolbar class="knowage-blue" style="min-height:20px">
+      <div>
+      		{{member.name}}
+      	<span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog(ev)" style="float: right;">
+          <md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    
+    <md-dialog-content style="padding:10px;font-size:85%">
+    	<span>
+    	The selected hierarchy is {{member.hierarchies[member.selectedHierarchyPosition].name}}.
+    	You can change it acting on the form below.
+    	</span>
+    	<br/>
+    	<label>Available hierarchies:</label>
+    	<md-input-container style="width:50%; padding-left:10%">    		
+    		<md-select ng-model="selecetedMultiHierUN" style="font-size:85%;">
+    			<md-option  ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}" style="height:30px">
+    				<span style="font-size:85%;">{{hier.name}}</span>
+    			</md-option>
+    		</md-select>
+    	</md-input-container>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row">
+    	<md-button ng-click="closeDialog(ev)" style="line-height:25px">
+			Cancel
+		</md-button>
+		<md-button ng-click="updateHierarchie(ev)" style="line-height:25px">
+			Save
+		</md-button>
+    </md-dialog-actions>
 </md-dialog>

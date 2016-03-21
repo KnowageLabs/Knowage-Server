@@ -9,8 +9,11 @@
 		<div style="height:calc(100% - 64px);">
 		<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
 		<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
+			<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
+				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
+			</md-button>
 			<div class="name">
-				<div class="rotate-text">{{row.name}}</div>
+				<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">{{row.name}}</div>
 			</div>	
 			<div class="action">
 				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, row, null)">

@@ -21,7 +21,7 @@
 <body ng-controller="olapController" >
 	<div layout="row">
 		
-		<div layout="column" flex=95>
+		<div layout="column" flex=100>
 		
 			<main-toolbar ng-hide="true"></main-toolbar>
 		
