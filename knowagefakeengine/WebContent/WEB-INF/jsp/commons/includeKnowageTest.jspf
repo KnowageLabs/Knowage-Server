@@ -1,0 +1,25 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/knowage.x-source/XXX/ant/build.xml must be updated properly
+ -->
+
+
+<!-- Include stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="${pageContext.request.contextPath}/css/xxx.css" type="text/css" />
+
+
+<!-- Include settings  -->
+<!-- script type="text/javascript" src='${pageContext.request.contextPath}/js/spagobi/commons/Settings.js'/></script-->	
+
+<!-- Include localized labels  -->
+<!-- script type="text/javascript" src='${pageContext.request.contextPath}/js/spagobi/commons/Settings.js'/></script-->	
+
+<!-- START-DEBUG -->
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/sbi/test/HelloWorldPanel.js'/></script>
+
+<!-- END-DEBUG -->
+ 
+<!-- START-PRODUCTION
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/sbi/xxx-all.js'></script>
+END-PRODUCTION -->
