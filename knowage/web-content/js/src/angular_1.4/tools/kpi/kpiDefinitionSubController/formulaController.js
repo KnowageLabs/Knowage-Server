@@ -58,7 +58,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 					cm.replaceRange("", {line:cm.getCursor().line, ch : token.start}, {line:cm.getCursor().line, ch : token.end+1})
 
-				}else	if(token.type=="operator" || token.type=="bracket"){
+				}else	if((token.type=="operator" || token.type=="bracket") && token.string!="_"){
 					token.string = " ";
 					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end})
 					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start})
@@ -551,6 +551,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		cm.setValue("");
 		cm.clearHistory();
 	});
+
 
 	$scope.indexInList=function(item, list) {
 

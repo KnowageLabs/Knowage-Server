@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
   <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
  <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/ui-codemirror.js"></script> 
- <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/mathematica/mathematica.js"></script>  
+ <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/mathematicaModified.js"></script>  
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
@@ -114,9 +114,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		scope-functions=tableFunction 
 		click-function="loadKPI(item);"> </angular-table>
 		</list>
+		<extra-button>
+			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
+		</extra-button>
 		<detail save-function="parseFormula" cancel-function="cancel">
- 	
-		<md-tabs layout-fill class="absolute" md-selected='selectedTab.tab'>
+ 		<div layout="row" class="absolute" layout-fill>
+		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-show="formulaModified.value">*</span></md-tab-label>
         			<md-tab-body>
@@ -145,8 +148,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-tab>
 			</md-tabs>
 		
-	
-
+			
+		<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="aliasTab" md-is-locked-open="showAliasTab">
+	      <md-toolbar>
+	        <h1 class="md-toolbar-tools">{{translate.load("sbi.kpi.alias")}}</h1>
+	      </md-toolbar>
+	     	<md-content layout-margin flex class="relative" >
+	        <angular-list layout-fill class="absolute" id="aliasListANGL"
+                		ng-model=measures
+                		item-name='alias' 
+                		show-search-bar=true 
+                		>
+                		</angular-list> 
+	      </md-content>
+	    </md-sidenav>
+	</div>
 
 		</detail>
 	</angular-list-detail>

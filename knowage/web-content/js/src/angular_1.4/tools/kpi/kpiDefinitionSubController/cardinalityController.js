@@ -8,11 +8,30 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.currentCell={};
 
 
+	$scope.createFormulaToShow = function(){
+		var string = $scope.kpi.definition.formulaSimple.split(" ");
+		var count =0;
+		for(var i=0;i<string.length;i++){
+			if(string[i].trim()=="+" ||string[i].trim()=="-" || string[i].trim()=="/" || string[i].trim()=="*" || string[i].trim()=="(" ||
+					string[i].trim()==")" || string[i].trim()=="" || !isNaN(string[i])){
+				var span = "<span class='showFormula'>"+" "+string[i]+" "+"</span>"
+				angular.element(document.getElementsByClassName("formula")).append(span);
+			}else{
+
+				var span = "<span ng-class='{classBold:currentCell.row=="+i+"}' class='showFormula "+$scope.kpi.definition.functions[count]+"' id=M"+count+">"+" "+string[i]+" "+"</span>"
+				angular.element(document.getElementsByClassName("formula")).append(span);
+				count++;
+			}
+
+		}
+
+	}
+	
 	$scope.$on('activateCardinalityEvent',function(e){
 		$scope.attributesList=[];
 		$scope.getAllMeasure();
 		$scope.clearFormulaToShow();
-		if($scope.cardinality.measureList.length>0){
+		if($scope.kpi.cardinality.measureList.length>0){
 			$scope.createFormulaToShow();
 		}
 
@@ -31,29 +50,24 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 	}
 
-/*	$scope.$watch(function() {
-		var elem=angular.element(document.getElementById("cardFormula"))[0];
-		return elem==undefined? null:  elem.offsetHeight;
-	}, function(newValue, oldValue) {
-	if($scope.noPagination!=true && newValue!=0){
-		if (newValue != oldValue) {
-			var elem2=angular.element(document.querySelector('.cardinalityTable th div'));
-			console.log('cambiato',elem2);
-		}
-	}
-	}, true);*/
-
 	$scope.getAllMeasure=function(){
-		if(Object.keys($scope.cardinality).length!=0){
-			for(var i=0; i<$scope.cardinality.measureList.length;i++){
-				for(var tmpAttr in $scope.cardinality.measureList[i].attributes){
+		if($scope.kpi.cardinality!=undefined && $scope.kpi.cardinality!=null){
+			if(Object.keys($scope.kpi.cardinality).length!=0){
+				if(!angular.isObject($scope.kpi.cardinality)){
+					$scope.kpi.cardinality=JSON.parse($scope.kpi.cardinality);
+				}
+				
+				for(var i=0; i<$scope.kpi.cardinality.measureList.length;i++){
+					for(var tmpAttr in $scope.kpi.cardinality.measureList[i].attributes){
 
-					if($scope.attributesList.indexOf(tmpAttr)==-1){
-						$scope.attributesList.push(tmpAttr);
+						if($scope.attributesList.indexOf(tmpAttr)==-1){
+							$scope.attributesList.push(tmpAttr);
+						}
 					}
 				}
 			}
 		}
+		
 
 	};
 	$scope.getAllMeasure();
@@ -63,7 +77,6 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		if(!measure.attributes[attr] && !$scope.isEnabled(attr,measure)){
 			return;
 		}
-
 		if(measure.attributes[attr] && !$scope.canDisable(attr,measure) ){
 			return;
 		}
@@ -73,26 +86,26 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 		if(measure.attributes[attr]){
 			//update union 
-			if($scope.cardinality.checkedAttribute.attributeUnion[attr]){
-				$scope.cardinality.checkedAttribute.attributeUnion[attr]++; 
+			if($scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]){
+				$scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]++; 
 			}else{
-				$scope.cardinality.checkedAttribute.attributeUnion[attr]=1;
+				$scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]=1;
 			}
 		}else{ 
-			if($scope.cardinality.checkedAttribute.attributeUnion[attr]==1){
-				delete $scope.cardinality.checkedAttribute.attributeUnion[attr]; 
+			if($scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]==1){
+				delete $scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]; 
 			}else{
-				$scope.cardinality.checkedAttribute.attributeUnion[attr]--;
+				$scope.kpi.cardinality.checkedAttribute.attributeUnion[attr]--;
 			}
 		}
 
 
 		//update intersection
-		angular.copy({},$scope.cardinality.checkedAttribute.attributeIntersection); // reset intersection
-		var maxAttrNum=$scope.getMaxAttributeNumber($scope.cardinality.checkedAttribute.attributeUnion);
-		for(var key in $scope.cardinality.checkedAttribute.attributeUnion){
-			if($scope.cardinality.checkedAttribute.attributeUnion[key]==maxAttrNum){
-				$scope.cardinality.checkedAttribute.attributeIntersection[key]=true;
+		angular.copy({},$scope.kpi.cardinality.checkedAttribute.attributeIntersection); // reset intersection
+		var maxAttrNum=$scope.getMaxAttributeNumber($scope.kpi.cardinality.checkedAttribute.attributeUnion);
+		for(var key in $scope.kpi.cardinality.checkedAttribute.attributeUnion){
+			if($scope.kpi.cardinality.checkedAttribute.attributeUnion[key]==maxAttrNum){
+				$scope.kpi.cardinality.checkedAttribute.attributeIntersection[key]=true;
 			}
 		}
 
@@ -130,7 +143,7 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 			}
 		}
 		var resp={
-				status:( Object.keys($scope.cardinality.checkedAttribute.attributeUnion).length==tot),
+				status:( Object.keys($scope.kpi.cardinality.checkedAttribute.attributeUnion).length==tot),
 				itemNumber:tot
 		};
 
@@ -141,8 +154,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 	$scope.isContainedByUpperSet=function(attr,measure,measureItemNumber){
 		var upperSetAttributeNumber=99999999;
 		var upperSet;
-		for(var i=0;i<$scope.cardinality.measureList.length;i++){
-			var tmpMeas=$scope.cardinality.measureList[i];
+		for(var i=0;i<$scope.kpi.cardinality.measureList.length;i++){
+			var tmpMeas=$scope.kpi.cardinality.measureList[i];
 			if(tmpMeas==measure){
 				continue
 			}
@@ -179,8 +192,8 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 
 		var underSetAttributeNumber=0;
 		var underSet;
-		for(var i=0;i<$scope.cardinality.measureList.length;i++){
-			var tmpMeas=$scope.cardinality.measureList[i];
+		for(var i=0;i<$scope.kpi.cardinality.measureList.length;i++){
+			var tmpMeas=$scope.kpi.cardinality.measureList[i];
 			if(tmpMeas==measure){
 				continue
 			}
@@ -207,28 +220,10 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 		}
 	}
 
-	$scope.createFormulaToShow = function(){
-		var string = $scope.kpi.definition.formulaSimple.split(" ");
-		var count =0;
-		for(var i=0;i<string.length;i++){
-			if(string[i].trim()=="+" ||string[i].trim()=="-" || string[i].trim()=="/" || string[i].trim()=="*" || string[i].trim()=="(" ||
-					string[i].trim()==")" || string[i].trim()=="" || !isNaN(string[i])){
-				var span = "<span class='showFormula'>"+" "+string[i]+" "+"</span>"
-				angular.element(document.getElementsByClassName("formula")).append(span);
-			}else{
 
-				var span = "<span ng-class='{classBold:currentCell.row=="+i+"}' class='showFormula "+$scope.kpi.definition.functions[count]+"' id=M"+count+">"+" "+string[i]+" "+"</span>"
-				angular.element(document.getElementsByClassName("formula")).append(span);
-				count++;
-			}
-
-		}
-
-	}
 
 	$scope.blinkMeasure=function(event,attr,index){
 		//blink measure in formula 
-
 		$scope.currentCell.row = attr;
 		$scope.currentCell.column = index;
 		$scope.indexOfMeasure  = index;

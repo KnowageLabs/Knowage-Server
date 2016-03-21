@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-content layout-fill layout="column"
 	ng-controller="kpiDefinitionFiltersController">
 <form>
-	<div layout="column" layout-wrap>
-		<div flex=10 ng-repeat="placeholder in placeHolderList">
+	<div layout="column" layout-fill layout-wrap>
+		<div flex=10  ng-repeat="placeholder in placeHolderList">
 			<div layout="row">
 			<div flex>
 			<md-input-container flex class="small counter" > 
