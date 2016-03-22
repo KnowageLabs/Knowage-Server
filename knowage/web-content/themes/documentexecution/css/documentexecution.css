@@ -122,3 +122,17 @@
 .overflow{
 	overflow:auto;
 }
+
+ 
+
+md-toolbar.documentExecutionToolbar button.md-icon-button {
+	height: 40px;
+	width: 40px;
+}
+md-toolbar.documentExecutionToolbar md-menu-bar {
+    padding: 0px;
+}
+	
+md-toolbar.documentExecutionToolbar button.md-icon-button md-icon {
+	line-height: 22px;
+}

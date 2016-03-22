@@ -6,8 +6,12 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller( 'documentBrowserNavigationController', ['$scope',documentBrowserMasterFunction]);
-function documentBrowserMasterFunction($scope){
+app.controller( 'documentBrowserNavigationController', ['$scope','$rootScope',documentBrowserMasterFunction]);
+function documentBrowserMasterFunction($scope,$rootScope){
 	$scope.runningDocuments=[];
+	$rootScope.test="ciaoi";
+	$rootScope.closeDocument=function(docId){
+		alert("chiudo il documento... todo",docId)
+	}
 }
 

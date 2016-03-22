@@ -58,7 +58,7 @@ try{
 
 <body class="bodyStyle" ng-app="documentExecutionModule">
 	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
-		<md-toolbar class="miniheadimportexport" flex="nogrow">
+		<md-toolbar class="documentExecutionToolbar" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
@@ -67,29 +67,22 @@ try{
                 </h2>
                 <span flex=""></span>
                 
-                <md-button class="toolbar-button-custom" aria-label="Help on line"
-						title="{{::translate.load('sbi.generic.helpOnLine')}}"
-						ng-click="openHelpOnLine()" 
-					>
-					<i class="fa fa-book header"></i> 
+                <md-button class="md-icon-button" aria-label="Help on line" title="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
+					 <md-icon md-font-icon="fa fa-book"></md-icon>
 				</md-button>
-				<md-button class="toolbar-button-custom" aria-label="Parameters"
-						title="{{::translate.load('sbi.scheduler.parameters')}}"
-						ng-click="executeParameter()" 
-				>
-					<i class="fa fa-refresh header"></i> 
+				
+				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()">
+					 <md-icon md-font-icon="fa fa-refresh"></md-icon>
 				</md-button>
-				<md-button class="toolbar-button-custom" aria-label="Parameters"
-						title="{{::translate.load('sbi.scheduler.parameters')}}"
-						ng-click="paramRolePanelService.toggleParametersPanel()" 
-						ng-disabled="isParameterRolePanelDisabled.status">
-					<i class="fa fa-filter header"></i> 
+				
+				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()" ng-disabled="isParameterRolePanelDisabled.status">
+					<md-icon md-font-icon="fa fa-filter"></md-icon>
 				</md-button>
 				
 				<md-menu-bar id="menu">
                 	<md-menu>
-		                <md-button id="menuButton" class="toolbar-button-custom" aria-label="Menu" ng-click="$mdOpenMenu()" >
-		                	<i class="fa fa-ellipsis-v header"></i>
+		                <md-button id="menuButton" class="md-icon-button" aria-label="Menu" ng-click="$mdOpenMenu()" >
+		                	<md-icon md-font-icon="fa  fa-ellipsis-v"></md-icon>
 					    </md-button>
 					    <md-menu-content>
 					    	<span class="divider">{{translate.load("sbi.ds.wizard.file")}}</span>
@@ -147,6 +140,10 @@ try{
 					    </md-menu-content>
                 	</md-menu>
                 </md-menu-bar>
+                
+               	<md-button class="md-icon-button" title="close" aria-label="Clear"  ng-click="closeDocument()">
+					   <md-icon md-font-icon="fa fa-times"></md-icon>
+				</md-button>
 			</div>
         </md-toolbar>
         
