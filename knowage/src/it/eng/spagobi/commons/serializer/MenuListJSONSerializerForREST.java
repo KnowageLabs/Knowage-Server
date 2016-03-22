@@ -389,7 +389,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_CROSS_NAVIGATION, funcs)) {
 			JSONObject o = new JSONObject();
-			o.put(ICON_CLS, "spellcheck"); // TODO: change icon
+			o.put(ICON_CLS, "compare_arrows");
 			o.put(TOOLTIP, messageBuilder.getMessage("menu.cross.definition", locale));
 			o.put(ICON_ALIGN, "top");
 			o.put(SCALE, "large");
@@ -402,98 +402,128 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
-			domainManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			domainManagementTechnical.put(ICON_CLS, "assignment");
+			domainManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.domain.management", locale)); // TODO
 			domainManagementTechnical.put(ICON_ALIGN, "top");
 			domainManagementTechnical.put(SCALE, "large");
 			domainManagementTechnical.put(TARGET, "_self");
 			domainManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_DOMAIN + "');");
+			domainManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_DOMAIN);
+			domainManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(domainManagementTechnical);
 		}
 
 		if (isAbleTo(SpagoBIConstants.CONFIG_MANAGEMENT, funcs)) {
 			JSONObject configManagementTechnical = new JSONObject();
-			configManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			configManagementTechnical.put(ICON_CLS, "build");
+			configManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.config.management", locale)); // TODO
 			configManagementTechnical.put(ICON_ALIGN, "top");
 			configManagementTechnical.put(SCALE, "large");
 			configManagementTechnical.put(TARGET, "_self");
 			configManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_CONFIG + "');");
+			configManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_CONFIG);
+			configManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(configManagementTechnical);
 		}
 
 		if (isAbleTo(SpagoBIConstants.TENANT_MANAGEMENT, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "supervisor_account");
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.tenant.management", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 
 		if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT, funcs)) {
 			JSONObject udpManagementTechnical = new JSONObject();
-			udpManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			udpManagementTechnical.put(ICON_CLS, "local_library");
+			udpManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.udp.management", locale)); // TODO
 			udpManagementTechnical.put(ICON_ALIGN, "top");
 			udpManagementTechnical.put(SCALE, "large");
 			udpManagementTechnical.put(TARGET, "_self");
 			udpManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_UDP + "');");
+			udpManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_UDP);
+			udpManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(udpManagementTechnical);
 		}
 
 		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
 			JSONObject lovsManagementTechnical = new JSONObject();
-			lovsManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			lovsManagementTechnical.put(ICON_CLS, "list");
+			lovsManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.lovs.management", locale)); // TODO
 			lovsManagementTechnical.put(ICON_ALIGN, "top");
 			lovsManagementTechnical.put(SCALE, "large");
 			lovsManagementTechnical.put(TARGET, "_self");
 			lovsManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_LOVS + "');");
+			lovsManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_LOVS);
+			lovsManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(lovsManagementTechnical);
 		}
 		// add
 
 		if (isAbleTo(SpagoBIConstants.TEMPLATE_MANAGEMENT, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "insert_drive_file");
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.template.management", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 		if (isAbleTo(SpagoBIConstants.IMP_EXP_DOCUMENT, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "description");
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.document", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 		if (isAbleTo(SpagoBIConstants.IMP_EXP_RESOURCES, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "rotate_90_degrees_ccw");
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.resources", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 		if (isAbleTo(SpagoBIConstants.IMP_EXP_USERS, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "portrait");
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.users", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 		if (isAbleTo(SpagoBIConstants.IMP_EXP_CATALOG, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "style"); // TODO: change icon
+			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.catalog", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
 			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_TENANT + "');");
+			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_TENANT);
+			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
 		}
 		// end
