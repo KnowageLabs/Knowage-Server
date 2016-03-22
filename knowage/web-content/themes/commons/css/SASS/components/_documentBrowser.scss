@@ -67,6 +67,46 @@
 	    margin: 6px 0;
 	}
 	
+	
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper md-tabs-canvas,
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper md-tabs-canvas md-pagination-wrapper,
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item {
+		height:25px!important;
+	}
+	
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-ink-bar{
+		color:  #c70751 !important;
+		background:  #c70751 !important;
+	}
+		
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item {
+		padding-top:2px;
+		padding-bottom:2px;
+		color:rgb(183, 183, 183);
+	}
+	
+	md-tabs.documentNavigationToolbar>md-tabs-content-wrapper {
+		top:25px;
+	}
+	
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper {
+		background-color:$baseColor;
+	}
+	
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item>md-icon {
+		font-size: 15px;
+		padding-top: 4px;
+		color:rgb(183, 183, 183);
+	}
+	 
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper .md-tab.md-active,
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper .md-tab.md-active>md-icon, 
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper .md-tab.md-focused,
+	md-tabs.documentNavigationToolbar>md-tabs-wrapper .md-tab.md-focused>md-icon{
+		color: white;
+    	font-weight: normal;
+	}
+	
 	.document_browser_image_EMPTY{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_empty.png')!important;
 	}
@@ -150,10 +190,7 @@
 	.document_browser_image_QBE{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_qbe.png')!important;
 	}
-	
-	
-	
-	
+	 
 	/*
 	.document_browser_image_CHART{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_adhocreporting.png')!important;

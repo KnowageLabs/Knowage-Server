@@ -8,7 +8,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 	$scope.breadCrumbControl;
 	$scope.folderBread=[]
 	$scope.selectedFolder;
-	$scope.selectedDocument = null;
+	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
 	$scope.showDocumentDetail = false;
 	$scope.showDocumentGridView = false;
@@ -20,13 +20,15 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 	
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
+			$scope.selectedDocument = undefined;
+			$scope.showDocumentDetail = false;
 			$scope.loadFolderDocuments(folder.id)
 		}
 	}
 	
 	$scope.setSelectedFolder = function (folder) {
 		if ($scope.selectedFolder==undefined || folder.name !== $scope.selectedFolder.name) {
-			$scope.selectedDocument = null;
+			$scope.selectedDocument = undefined;
 			$scope.showDocumentDetail = false;
 			
 			$scope.breadCrumbControl.resetBreadCrumb(); 
@@ -129,10 +131,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 		angular.copy(document,tmpDoc);
 		tmpDoc.url=url;
 		$scope.runningDocuments.push(tmpDoc);
-		
-		
-//		$scope.redirectIframe(url);
-//		$scope.runDocument(url);
+		 
 	};
 
 	$scope.wasSelected = function(document) {
