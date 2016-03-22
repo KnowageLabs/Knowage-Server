@@ -49,11 +49,11 @@ public class TestXmlFactory {
 		boolean isReadOnly;
 		boolean isWriteDefault;
 		if (isWritingDatasource) {
-			dataset = "writingDataset";
+			dataset = "writingDataSource";
 			isReadOnly = false;
 			isWriteDefault = true;
 		} else {
-			dataset = "readingDataset";
+			dataset = "readingDataSource";
 			isReadOnly = true;
 			isWriteDefault = false;
 		}

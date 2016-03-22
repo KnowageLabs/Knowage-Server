@@ -8,24 +8,24 @@
 		schemaName="ds_cache">
 		cacheConfiguration
 	</cacheConfiguration>
-	<readingDataset
-		url="jdbc:postgresql://localhost:5432/knowage"
-		user="postgres"
-		password="root"
+	<readingDataSource
+		url="jdbc:postgresql://spagobidb:5432/knowagecache"
+		user="knowagecache"
+		password="knowagecache"
 		driver="org.postgresql.Driver"
 		hibDialectClass="org.hibernate.dialect.PostgreSQLDialect"
 		hibDialectName="sbidomains.nm.postgresql">
-		datasetTest_read
-	</readingDataset>
-	<writingDataset
-		url="jdbc:mysql://localhost:3306/ds_cache"
-		user="root"
-		password="root"
+		datasource_read
+	</readingDataSource>
+	<writingDataSource
+		url="jdbc:mysql://172.27.1.83:3306/spagobi_testw"
+		user="spagobi"
+		password="bispago"
 		driver="com.mysql.jdbc.Driver"
 		hibDialectClass="org.hibernate.dialect.MySQLInnoDBDialect"
 		hibDialectName="sbidomains.nm.mysql">
-		datasetTest_write
-	</writingDataset>
+		datasource_write
+	</writingDataSource>
 	<table name="cachepersisttest">
 		<field writingType="java.lang.Integer">colsmallint</field>
 		<field writingType="java.lang.Integer">colint</field>

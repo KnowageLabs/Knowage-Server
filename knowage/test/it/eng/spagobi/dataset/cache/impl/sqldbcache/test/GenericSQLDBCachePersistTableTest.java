@@ -124,8 +124,10 @@ public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 
 		sqlDataset.loadData();
 		IDataStore dataStore = sqlDataset.getDataStore();
+		cache.deleteAll();
 		cache.put(sqlDataset, dataStore);
 		dataStore = cache.get(sqlDataset.getSignature());
+		cache.deleteAll();
 		checkJDBCDataSetFieldTypes(dataStore, writingTypes);
 	}
 

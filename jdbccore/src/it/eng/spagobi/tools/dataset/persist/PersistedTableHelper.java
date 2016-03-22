@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -96,48 +97,42 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("Time")) {
 				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
 			} else if (fieldMetaTypeName.contains("Short")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
 					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Integer")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
 					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Double")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DOUBLE);
 				} else {
 					insertStatement.setDouble(fieldIndex + 1, (Double) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Float")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.FLOAT);
 				} else {
 					insertStatement.setDouble(fieldIndex + 1, (Float) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Long")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BIGINT);
 				} else {
 					insertStatement.setLong(fieldIndex + 1, (Long) fieldValue);
 				}
 			} else if (fieldMetaTypeName.contains("Boolean")) {
-				// only for primitive type is necessary to use setNull method if
-				// value is null
+				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.BOOLEAN);
 				} else {
@@ -147,10 +142,6 @@ public class PersistedTableHelper {
 				insertStatement.setBigDecimal(fieldIndex + 1, (BigDecimal) fieldValue);
 			} else if (fieldMetaTypeName.contains("[B")) { // BLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
-				// ByteArrayInputStream bis = new
-				// ByteArrayInputStream((byte[])field.getValue());
-				// toReturn.setBinaryStream(1, bis,
-				// ((byte[])field.getValue()).length);
 			} else if (fieldMetaTypeName.contains("BLOB")) {
 				if (fieldValue instanceof oracle.sql.BLOB) {
 					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.BLOB) fieldValue).getBytes());
@@ -159,21 +150,23 @@ public class PersistedTableHelper {
 				}
 			} else if (fieldMetaTypeName.contains("[C")) { // CLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
-				// toReturn.setAsciiStream(i2+1, new
-				// ByteArrayInputStream((byte[])field.getValue()),
-				// ((byte[])field.getValue()).length);
 			} else if (fieldMetaTypeName.contains("CLOB")) {
 				if (fieldValue instanceof oracle.sql.CLOB) {
-					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.CLOB) fieldValue).getBytes());
+					StringBuilder sb = new StringBuilder();
+					oracle.sql.CLOB clob = (oracle.sql.CLOB) fieldValue;
+					long length = clob.length();
+					long index = 1;
+					while (length > Integer.MAX_VALUE) {
+						sb.append(clob.getSubString(index, Integer.MAX_VALUE));
+						index += Integer.MAX_VALUE;
+						length -= Integer.MAX_VALUE;
+					}
+					if (length > 0) {
+						sb.append(clob.getSubString(index, (int) length));
+					}
+					insertStatement.setClob(fieldIndex + 1, new StringReader(sb.toString()));
 				} else {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
-				}
-			} else if (fieldMetaTypeName.contains("Data")) {
-				// only for primitive type is necessary to use setNull method if value is null
-				if (fieldValue == null) {
-					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
-				} else {
-					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
 				}
 			} else {
 				logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.database;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 /**
  * VoltDB implementation
  *
@@ -34,6 +35,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 		super(dataSource);
 	}
 
+	@Override
 	public String getDataBaseType(Class javaType) {
 		String toReturn = null;
 		String javaTypeName = javaType.toString();
@@ -55,11 +57,11 @@ public class VoltDBDataBase extends AbstractDataBase {
 			toReturn = " BOOLEAN ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " TIMESTAMP ";
-		} else if (javaTypeName.contains("java.sql.Timestamp")) {
+		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " TIMESTAMP ";
-		} else if (javaTypeName.contains("[B")) {
+		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " VARBINARY ";
-		} else if (javaTypeName.contains("[C")) {
+		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
 			toReturn = " TEXT ";
 		} else {
 			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
@@ -70,16 +72,17 @@ public class VoltDBDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
+	@Override
 	public String getAliasDelimiter() {
 		return "";
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
