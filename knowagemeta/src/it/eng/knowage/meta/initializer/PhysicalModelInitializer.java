@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.initializer;
 
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class PhysicalModelInitializer {
 
@@ -123,10 +123,10 @@ public class PhysicalModelInitializer {
 			if (quote.equals("\"")) {
 				quote = "\\\"";
 			}
-			if(quote.equals(" ")){
+			if (quote.equals(" ")) {
 				quote = "";
 			}
-			
+
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING, quote);
 			logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]",
 					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue());
@@ -559,7 +559,7 @@ public class PhysicalModelInitializer {
 	// ---------------------------------------------------------
 	/**
 	 * Get tables names that are present in the database but not in the passed physical model
-	 * 
+	 *
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -598,7 +598,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Get columns names that are present in the database but not in the passed physical model
-	 * 
+	 *
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -649,7 +649,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Get tables and columns names that are present in the database but not in the passed physical model
-	 * 
+	 *
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -713,7 +713,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update originaModel with new tables and columns from updateModel, also mark as deleted the tables or columns not found in the updated model
-	 * 
+	 *
 	 */
 	public PhysicalModel updateModel(PhysicalModel originalModel, PhysicalModel updatedModel, List<String> selectedTables) {
 		EList<PhysicalTable> originalTables = originalModel.getTables();
@@ -853,7 +853,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update originalTable with new columns information found in the updatedTable
-	 * 
+	 *
 	 * @param originalTable
 	 *            table to update
 	 * @param updatedTable
@@ -935,7 +935,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Check foreign keys of the originalTable using informations from the updatedTable
-	 * 
+	 *
 	 * @param originalTable
 	 * @param updatedTable
 	 */
@@ -980,9 +980,9 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update (if necessary) the originalPhysicalForeignKey with the information retrieved from the updatedPhysicalForeignKey
-	 * 
+	 *
 	 * Important: We skip the check of source tables because we call this method only in the checkForeignKeys() method
-	 * 
+	 *
 	 * @param originalPhysicalForeignKey
 	 * @param updatedPhysicalForeignKey
 	 */
@@ -1089,7 +1089,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Create a new foreign key to the passed model using the same informations found in the passed examplePhysicalForeignKey
-	 * 
+	 *
 	 * @param model
 	 * @param examplePhysicalForeignKey
 	 */
@@ -1199,7 +1199,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Return a collection of elements (tables and columns) that are marked as deleted in the passed physical model
-	 * 
+	 *
 	 * @param physicalModel
 	 * @return markedElements elements marked as deleted (tables and columns)
 	 */
@@ -1231,7 +1231,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Remove the physical foreign key from the Physical Model and also remove pending references (ex in BusinessRelationship)
-	 * 
+	 *
 	 */
 	public void removePhysicalForeignKey(PhysicalModel physicalModel, PhysicalForeignKey physicalForeignKey) {
 		physicalModel.getForeignKeys().remove(physicalForeignKey);

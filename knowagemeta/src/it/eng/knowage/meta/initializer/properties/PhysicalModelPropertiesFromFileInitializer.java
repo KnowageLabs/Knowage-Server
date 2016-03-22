@@ -67,7 +67,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			 * TODO REVIEW FOR PORTING
 			 */
 			// File propertiesFile = RL.getFile("properties/customPhysicalProperties.xml");
-			InputStream is = getClass().getClassLoader().getResourceAsStream("customPhysicalProperties.xml");
+			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customPhysicalProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);

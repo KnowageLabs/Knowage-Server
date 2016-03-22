@@ -75,7 +75,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			 * TODO REVIEW FOR PORTING
 			 */
 			// File propertiesFile = RL.getFile("properties/customProperties.xml");
-			InputStream is = getClass().getClassLoader().getResourceAsStream("customProperties.xml");
+			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);
