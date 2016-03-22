@@ -68,6 +68,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	}
+	
 	$scope.flagActivateBrother= function(event){
 		$scope.$broadcast (event);
 	}

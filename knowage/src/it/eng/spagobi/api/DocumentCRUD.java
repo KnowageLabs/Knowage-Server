@@ -17,6 +17,38 @@
  */
 package it.eng.spagobi.api;
 
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -48,39 +80,9 @@ import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -107,7 +109,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Path("/clone")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String cloneDocument(@Context HttpServletRequest req) {
+	public Response cloneDocument(@Context HttpServletRequest req) {
 
 		logger.debug("IN");
 		String ids = req.getParameter(OBJECT_ID);
@@ -122,9 +124,10 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 		logger.debug("Execute clone");
-		documentManagementAPI.cloneDocument(id);
+		BIObject cloned = documentManagementAPI.cloneDocument(id);
 		logger.debug("OUT");
-		return "{}";
+		String toBeReturned = JsonConverter.objectToJson(cloned, BIObject.class);
+		return Response.ok(toBeReturned).build();
 	}
 
 	/**

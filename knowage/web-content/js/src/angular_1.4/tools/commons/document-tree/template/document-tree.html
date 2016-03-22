@@ -1,12 +1,12 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="folders_renderer.html">
-		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined">
+		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover, 'blue-stack' : isClicked == folder.name}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined" >
 			<div layout = "row" layout-align="start center">
 				<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
-				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0)"  md-font-icon="{{iconFolder}}"></md-icon>				
-				<md-icon ng-click='openFolder(folder)' ng-if="folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0) " md-font-icon="{{iconFolderOpen}}"></md-icon>
-				<md-icon ng-click='openFolder(folder)' ng-if="(folder[subfoldersId] !== undefined && folder[subfoldersId].length == 0 && (folder.biObjects == undefined || folder.biObjects.length == 0))" md-font-icon="{{iconDocument}}"></md-icon>
-				<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined && (folder[subfoldersId].length != 0 && (folder.biObjects != undefined || folder.biObjects.length != 0))" md-font-icon="{{iconDocument}}"></md-icon>				
+				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{iconFolder}}"></md-icon>				
+				<md-icon ng-click='openFolder(folder)' ng-if=" folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{iconFolderOpen}}"></md-icon>
+				<md-icon ng-click='openFolder(folder)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
+				<md-icon ng-click='openFolder(folder)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>				
 				<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
 					<md-icon ng-if='folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
 					<md-icon ng-if='folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
@@ -167,5 +167,12 @@
 		color: white !important;
 		height: 35px;
 }
+
+	.blue-stack{
+	background-color: rgb(169, 195, 219);
+	}
+	.blue-stack span{
+	 font-weight: bold;
+	}
 	
 </style>

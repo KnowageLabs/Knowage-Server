@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
@@ -45,17 +56,6 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -224,8 +224,8 @@ public class AnalyticalModelDocumentManagementAPI {
 					throw new SpagoBIRuntimeException("Analytical driver " + analyticalDriver + " cannot be loaded", t);
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Unable to manage an analytical driver descriptor of type ["
-						+ analyticalDriverDescriptor.getClass().getName() + "]");
+				throw new SpagoBIRuntimeException(
+						"Unable to manage an analytical driver descriptor of type [" + analyticalDriverDescriptor.getClass().getName() + "]");
 			}
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
@@ -353,15 +353,15 @@ public class AnalyticalModelDocumentManagementAPI {
 	 * @param document
 	 *            The document id of the document to clone
 	 */
-	public void cloneDocument(Integer documentId) {
+	public BIObject cloneDocument(Integer documentId) {
 		logger.debug("IN");
 
 		Assert.assertNotNull(documentId, "Input parameter [documentId] cannot be null");
-
+		BIObject clonedDocument = null;
 		if (documentId != null) {
 			BIObject document = getDocument(documentId);
 			logger.debug("Cloning the document");
-			BIObject clonedDocument = document.clone();
+			clonedDocument = document.clone();
 
 			logger.debug("Cloning the template");
 			ObjTemplate clonedTemplate = document.getActiveTemplate();
@@ -394,8 +394,10 @@ public class AnalyticalModelDocumentManagementAPI {
 			}
 
 			logger.debug("Document [" + document.getLabel() + "] succesfully cloned");
+
 		}
 
+		return clonedDocument;
 	}
 
 	private void updateClonedDocumentProperties(BIObject document) {
@@ -506,8 +508,8 @@ public class AnalyticalModelDocumentManagementAPI {
 				}
 				String metadataPropertyName = documentMatadataPropertyJSON.optString(MetadataJSONSerializer.NAME);
 				if (metadataPropertyId == null && metadataPropertyName == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME
-							+ "] cannot be both null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME + "] cannot be both null");
 				}
 
 				if (metadataPropertyId == null) {
@@ -524,8 +526,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				String documentMetadataPropertyValue = documentMatadataPropertyJSON.getString(MetadataJSONSerializer.TEXT);
 				if (documentMetadataPropertyValue == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId
-							+ "] be null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId + "] be null");
 				}
 
 				ObjMetacontent documentMatadataProperty = documentMetadataPropertyDAO.loadObjMetacontent(metadataPropertyId, document.getId(), subObjectId); // TODO
@@ -593,6 +595,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 			// order parameters on priority value to mantein the same order of the original
 			Comparator<BIObjectParameter> comparator = new Comparator<BIObjectParameter>() {
+				@Override
 				public int compare(BIObjectParameter c1, BIObjectParameter c2) {
 					return c1.getPriority().compareTo(c2.getPriority());
 				}
@@ -802,8 +805,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			try {
 				documentParameterDAO.insertBIObjectParameter(documentParameter);
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document ["
-						+ document + "]", t);
+				throw new SpagoBIRuntimeException(
+						"Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document [" + document + "]", t);
 			}
 
 			if (document.getBiObjectParameters() == null) {
@@ -814,8 +817,8 @@ public class AnalyticalModelDocumentManagementAPI {
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document ["
-					+ documentDescriptor + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document [" + documentDescriptor + "]", t);
 		}
 	}
 

@@ -1,8 +1,6 @@
-'use strict';
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus',documentBrowserFunction]);
 
-
-function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus){
+function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -184,6 +182,59 @@ function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate,
 	$scope.alert = function(message) {
 		alert(message);
 	};
+	
+	
+	$scope.deleteRelativeDoc = function(Document){
+		
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.browser.document.delete.ask.title"))
+		.content($scope.translate.load("sbi.browser.document.delete.ask"))
+		.ariaLabel('delete Document') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+
+			var index = $scope.folderDocuments.indexOf(Document);
+			sbiModule_restServices.promiseDelete("1.0/documents", Document.label)
+			.then(function(response) {
+			$scope.folderDocuments.splice(index,1);
+			},function(response) {
+				console.log("DELETE FAILLLLLLLLLLLLLLL");
+			});
+
+
+
+		}, function() {
+		});
+	
+	}
+	
+	
+	$scope.cloneDocument = function(Document){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.browser.document.clone.ask.title"))
+		.content($scope.translate.load("sbi.browser.document.clone.ask"))
+		.ariaLabel('delete Document') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+
+			//var index = $scope.folderDocuments.indexOf(Document);
+			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
+			.then(function(response) {
+				console.log(response.data);
+			$scope.folderDocuments.push(response.data);
+			},function(response) {
+				console.log("Clone FAILLLLLLLLLLLLLLL");
+			});
+
+
+
+		}, function() {
+		});
+	}
+	
+	
 	
 	$scope.documentTableButton=[{
 		label : sbiModule_translate.load('sbi.generic.run'),
