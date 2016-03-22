@@ -60,14 +60,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body>
 	<angular-list-detail ng-controller="kpiTargetController" full-screen=true >
-		<list label="translate.load('sbi.kpi.list')" new-function="addKpi" >
+		<list label="translate.load('sbi.kpi.list')"  >
 		<angular-table 
-		id='kpiListTable' ng-model=kpiList
-		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
+		id='targetListTable' ng-model=targets
+		columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Data Start Validation","name":"startValidation"},{"label":"Data End Validation","name":"endValidation"}]'
 		columnsSearch='["name"]' show-search-bar=true
-		speed-menu-option=measureMenuOption 
 		scope-functions=tableFunction 
-		click-function="loadKPI(item);"> </angular-table>
+		> </angular-table>
 		</list>
 		
 		</angular-list-detail>
