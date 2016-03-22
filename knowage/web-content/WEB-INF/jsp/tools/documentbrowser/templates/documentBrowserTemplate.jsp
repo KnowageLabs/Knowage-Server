@@ -57,7 +57,7 @@
 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
 	     			</md-toolbar>
 	     			<md-content layout-margin>
-	     				<document-tree ng-model="folders" create-tree="true"   click-function="setSelectedFolder(item)"  ></document-tree>
+	     				<document-tree ng-model="folders" create-tree="true" selected-item="selectedFolder"  click-function="setSelectedFolder(item)"  ></document-tree>
 					</md-content>
 				</md-sidenav>
 	
