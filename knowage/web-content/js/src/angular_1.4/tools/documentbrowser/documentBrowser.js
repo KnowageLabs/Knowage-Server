@@ -1,12 +1,6 @@
 'use strict';
-var app = angular.module('documentBrowserModule', ['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree','angular_table','bread_crumb']);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus',documentBrowserFunction]);
 
-app.config(['$mdThemingProvider', function($mdThemingProvider) {
-	$mdThemingProvider.theme('knowage')
-	$mdThemingProvider.setDefaultTheme('knowage');
-}]);
-
-app.controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus',documentBrowserFunction]);
 
 function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus){
 	$scope.translate=sbiModule_translate;
@@ -94,6 +88,8 @@ function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate,
 		document.location.replace(url);
 	}
 	
+	
+	
 	$scope.setDetailOpen = function(isOpen) {
 		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
 			$scope.toggleDocumentDetail();
@@ -131,7 +127,14 @@ function documentBrowserFunction($scope, $http, $mdSidenav, sbiModule_translate,
 			+ '&OBJECT_NAME=' + document.name
 			;
 		
-		$scope.redirectIframe(url);
+		var tmpDoc={};
+		angular.copy(document,tmpDoc);
+		tmpDoc.url=url;
+		$scope.runningDocuments.push(tmpDoc);
+		
+		
+//		$scope.redirectIframe(url);
+//		$scope.runDocument(url);
 	};
 
 	$scope.wasSelected = function(document) {
