@@ -200,7 +200,7 @@
 		<ITEM	code="kpiDefinition" title="#menu.KpiModel" groupingMenu="true" iconCls="traffic">
 			<ITEM	title="#menu.kpi.kpiDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp" />	
 			<ITEM	title="#menu.kpi.measureRoleDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRoleDefinition.jsp" />	
-			
+			<ITEM	title="#menu.kpi.targetDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp" />
 <!-- 			<ITEM	title="#menu.KpiDefinition" -->
 <!-- 					functionality="KpiManagement" -->
 <!-- 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
