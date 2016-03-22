@@ -33,8 +33,6 @@ public class Rule implements Serializable {
 	private String definition;
 	private Integer dataSourceId;
 
-	private boolean enableVersioning;
-
 	private List<RuleOutput> ruleOutputs = new ArrayList<>();
 	private List<Placeholder> placeholders = new ArrayList<>();
 
@@ -148,21 +146,6 @@ public class Rule implements Serializable {
 	 */
 	public void setPlaceholders(List<Placeholder> placeholders) {
 		this.placeholders = placeholders;
-	}
-
-	/**
-	 * @return the enableVersioning
-	 */
-	public boolean isEnableVersioning() {
-		return enableVersioning;
-	}
-
-	/**
-	 * @param enableVersioning
-	 *            the enableVersioning to set
-	 */
-	public void setEnableVersioning(boolean enableVersioning) {
-		this.enableVersioning = enableVersioning;
 	}
 
 	@Override

@@ -19,6 +19,13 @@
         
         <property name="name" column="NAME" type="string" length="40" not-null="true"/>
         
+        <set name="sbiKpiRuleOutputs" cascade="none" lazy="true" >
+            <key >
+            	<column name="ALIAS_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput" />
+        </set>
+        
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

@@ -1,15 +1,23 @@
 package it.eng.spagobi.kpi.bo;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cardinality {
+public class Cardinality implements Serializable {
 
 	private Integer ruleId;
 	private int ruleVersion;
 	private String ruleName;
 	private String measureName;
 	private Map<String, Boolean> attributes = new HashMap<String, Boolean>();
+
+	public Cardinality() {
+	}
+
+	public Cardinality(String name) {
+		measureName = name;
+	}
 
 	/**
 	 * @return the ruleId
@@ -86,4 +94,13 @@ public class Cardinality {
 		this.ruleVersion = ruleVersion;
 	}
 
+	@Override
+	public int hashCode() {
+		return measureName != null ? measureName.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Cardinality && measureName != null ? measureName.equals(((Cardinality) o).getMeasureName()) : super.equals(o);
+	}
 }

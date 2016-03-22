@@ -25,6 +25,7 @@ import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.List;
@@ -48,7 +49,15 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public Map<String, List<String>> aliasValidation(Rule rule);
 
-	public List<RuleOutput> listRuleOutputByType(String type);
+	/**
+	 * Retrieves all rule output filtered by type (MEASURE, ATTRIBUTE, TEMPORAL_ATTRIBUTE) and status (only active / only not active / all records)
+	 * 
+	 * @param type
+	 *            (see SbiDomains)
+	 * @param status
+	 * @return rule output list
+	 */
+	public List<RuleOutput> listRuleOutputByType(String type, STATUS status);
 
 	/**
 	 * Checks if given measure names are really existing on db
@@ -98,7 +107,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Integer getRuleIdByName(String name);
 
-	public List<Kpi> listKpi();
+	/**
+	 * Retrieves all kpi filtered by status (only active / only not active / all records)
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public List<Kpi> listKpi(STATUS status);
 
 	/**
 	 * Insert a new kpi

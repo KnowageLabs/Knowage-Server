@@ -19,10 +19,14 @@ package it.eng.spagobi.kpi.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
+import java.util.Set;
+
 public class SbiKpiAlias extends SbiHibernateModel {
 
 	private Integer id;
 	private String name;
+
+	private Set<SbiKpiRuleOutput> sbiKpiRuleOutputs;
 
 	public SbiKpiAlias() {
 	}
@@ -59,6 +63,21 @@ public class SbiKpiAlias extends SbiHibernateModel {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the sbiKpiRuleOutputs
+	 */
+	public Set<SbiKpiRuleOutput> getSbiKpiRuleOutputs() {
+		return sbiKpiRuleOutputs;
+	}
+
+	/**
+	 * @param sbiKpiRuleOutputs
+	 *            the sbiKpiRuleOutputs to set
+	 */
+	public void setSbiKpiRuleOutputs(Set<SbiKpiRuleOutput> sbiKpiRuleOutputs) {
+		this.sbiKpiRuleOutputs = sbiKpiRuleOutputs;
 	}
 
 }
