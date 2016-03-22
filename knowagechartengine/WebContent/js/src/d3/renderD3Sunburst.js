@@ -1213,7 +1213,7 @@ function renderSunburst(jsonObject)
 			var categoryParams= cockpitSelectionParams(d);
 			
 			for(i=0;i<docParams.length;i++){
-				   console.log(docParams[i]);
+				   p=docParams[i];
 					for(cat in categoryParams){
 						var paramName= cat + "_NAME";
 						console.log(paramName);
@@ -1233,7 +1233,7 @@ function renderSunburst(jsonObject)
 					}
 					
 					if(p.type==="ABSOLUTE"){
-						toReturn+= docParams[i].urlName+ "="+p.value+"&";
+						toReturn+= docParams[i].urlName + "="+p.value+"&";
 					}
 					
 					if(p.type==="RELATIVE"){
