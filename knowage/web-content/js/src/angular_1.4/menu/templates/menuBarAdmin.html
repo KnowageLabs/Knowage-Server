@@ -23,10 +23,10 @@
 	      <ul id="customMenu" class="nav sidebar-nav">
 	      	<li data-ng-repeat="custom in customs"> 
 	      	<a data-ng-if="!custom.menu" href="#" title="{{custom.text}}" data-ng-click="menuCall(custom.src,custom.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label</i>  {{custom.text}}</a> 
-	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
+	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown-{{$index}}" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
 	      		<ul data-ng-if="custom.menu" class="nav sidebar-nav">
 	      		<li class="dropdown">
-	      		 <ul  id=custom-dropdown class=dropdown-menu >
+	      		 <ul  id="custom-dropdown-{{$index}}" class="dropdown-menu" >
 	            	<li data-ng-repeat="menu in custom.menu"><a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  {{menu.text}}</a> </li>
 	       		 </ul>
 	       		</li> 
