@@ -66,6 +66,7 @@ import org.apache.log4j.Logger;
 import com.hazelcast.core.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import commonj.work.Work;
 import commonj.work.WorkItem;
 
@@ -866,15 +867,16 @@ public class SQLDBCache implements ICache {
 	 */
 
 	@Override
-	public void put(IDataSet dataSet, IDataStore dataStore) {
-		put(dataSet, dataStore, false);
+	public long put(IDataSet dataSet, IDataStore dataStore) {
+		return put(dataSet, dataStore, false);
 	}
+	
 
-	public void put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
+	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
 		logger.trace("IN");
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
-
+		long timeSpent = 0;
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
@@ -886,7 +888,7 @@ public class SQLDBCache implements ICache {
 			// check again it is not already inserted
 			if (getMetadata().containsCacheItem(signature)) {
 				logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
-				return;
+				return 0;
 			}
 
 			BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
@@ -901,7 +903,9 @@ public class SQLDBCache implements ICache {
 
 				// check again if the cleaning mechanism is on and if there is enough space for the resultset
 				if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+					long start = System.currentTimeMillis();
 					String tableName = persistStoreInCache(dataSet, signature, dataStore);
+					timeSpent = System.currentTimeMillis()-start;
 					Map<String, Object> properties = new HashMap<String, Object>();
 					List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
 					if (breakIndexes != null) {
@@ -939,6 +943,7 @@ public class SQLDBCache implements ICache {
 		}
 
 		logger.debug("OUT");
+		return timeSpent;
 	}
 
 	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {

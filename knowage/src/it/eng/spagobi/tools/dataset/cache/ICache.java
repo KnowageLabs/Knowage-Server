@@ -177,7 +177,7 @@ public interface ICache {
 	 * @param dataStore
 	 *            the resultSet to cache
 	 */
-	void put(IDataSet dataSet, IDataStore dataStore);
+	long put(IDataSet dataSet, IDataStore dataStore);
 
 	/**
 	 * @return the metadata description object of the cache
