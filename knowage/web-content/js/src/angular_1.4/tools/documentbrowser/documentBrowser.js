@@ -1,12 +1,11 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout',documentBrowserFunction]);
 
-function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus){
+function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
 	$scope.searchDocuments = [];
-	$scope.breadCrumbControl;
-	$scope.folderBread=[]
+	$scope.breadCrumbControl; 
 	$scope.selectedFolder;
 	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
@@ -32,24 +31,24 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 			$scope.showDocumentDetail = false;
 			
 			$scope.breadCrumbControl.resetBreadCrumb(); 
-			
-			var pathObj=[];
-			var tmpFolder=angular.extend({},folder); 
-			do{
-				var tmp=angular.extend({},tmpFolder);
-				tmpFolder=tmp.$parent;
-				delete tmp.$parent;
-				pathObj.push(tmp); 
-			}	while(tmp.parentId!=null)
-			
-			for(var i=pathObj.length-1;i>=0;i--){
-				$scope.breadCrumbControl.insertBread(pathObj[i]);
-			}
+ 
+				var pathObj=[];
+				var tmpFolder=angular.extend({},folder); 
+				do{
+					var tmp=angular.extend({},tmpFolder);
+					tmpFolder=tmp.$parent;
+					delete tmp.$parent;
+					pathObj.push(tmp); 
+				}	while(tmp.parentId!=null)
 				
-			if(folder!=null){
-				$scope.loadFolderDocuments(folder.id)
-			}
-			
+				for(var i=pathObj.length-1;i>=0;i--){
+					$scope.breadCrumbControl.insertBread(pathObj[i]);
+				}
+					
+				if(folder!=null){
+					$scope.loadFolderDocuments(folder.id)
+				}
+ 
 		}
 	};
  
@@ -100,21 +99,20 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 
 	
 	$scope.selectDocument= function ( document ) { 
-		if (document !== null) {
+		if (document !== undefined) {
 			$scope.lastDocumentSelected = document;
 		}
-		var alreadySelected = (document !== null && $scope.selectedDocument === document);
+		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
 		$scope.selectedDocument = document;
 		if (alreadySelected) {
 			$scope.selectedDocument=undefined;
 			$scope.setDetailOpen(!$scope.showDocumentDetail);
 		} else {
-			$scope.setDetailOpen(document !== null);
+			$scope.setDetailOpen(document !== undefined);
 		}
 	};
 	
 	$scope.executeDocument = function(document) {
-		console.log('document -> ', document);
 		
 		var params = {};
 		
@@ -170,7 +168,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 		if ($scope.showSearchView) {
 			setFocus('searchInput');
 		}
-		$scope.selectDocument(null);
+		$scope.selectDocument();
 	};
 	
 	 
@@ -182,8 +180,11 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 		alert(message);
 	};
 	
+	$scope.editDocument=function(){
+		alert("todo")
+	};
 	
-	$scope.deleteRelativeDoc = function(Document){
+	$scope.deleteDocument = function(Document){
 		
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.browser.document.delete.ask.title"))

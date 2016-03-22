@@ -21,7 +21,7 @@ angular.module('bread_crumb', ['ngMaterial'])
 				scope.addItem(item);
 			};
 			scope.control.resetBreadCrumb = function(){
-				scope.ngModel=[];
+				angular.copy([],scope.ngModel);
 			};
 		}
 	}

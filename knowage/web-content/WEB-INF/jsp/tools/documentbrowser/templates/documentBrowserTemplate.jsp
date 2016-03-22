@@ -1,6 +1,6 @@
 	<md-content ng-controller="documentBrowserController" layout="column"  ng-cloak layout-fill>
-			<!-- Toolbar -->
-			<md-toolbar class="documentBrowserToolbar" >
+		<!-- Toolbar -->
+		<md-toolbar class="documentBrowserToolbar" >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
 					<!-- Folders button -->
 					<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
@@ -50,7 +50,7 @@
 			</md-toolbar>
 		
 		<md-content layout="row" flex>
-			<md-content layout="row" flex ng-show="!showSearchView">
+		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
 				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" >
 					<md-toolbar class=" secondaryToolbar">
@@ -62,75 +62,34 @@
 				</md-sidenav>
 	
 				<md-content layout-margin flex layout="column"> 
-					
-					<bread-crumb ng-model=folderBread item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
-					
+				
+					<bread-crumb  item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
 					<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3> 
 		 
-					<!-- Document List View -->
-					 	<angular-table  ng-hide="showDocumentGridView || folderDocuments.length==0 " flex 
-							id='documentListTable' ng-model=folderDocuments
-							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
-							columnsSearch='["name"]' 
-							show-search-bar=false
-							speed-menu-option=documentTableButton 
-							highlights-selected-item="true"
-							selected-item=selectedDocument
-							click-function="selectDocument(item);">
-						</angular-table>
-					 
-					
-					
-					<!-- Document Grid View -->
-					<div layout="row" layout-wrap ng-hide="!showDocumentGridView " >
-					<md-card class="documentCard" ng-repeat="document in folderDocuments">
-			        <md-card-title>
-				          <md-card-title-text>
-				            <p class=" ellipsis">{{document.name}}</p>
-				             <md-tooltip md-delay="1500">
-				              {{document.name}}
-				            </md-tooltip>
-				          </md-card-title-text>
-				        </md-card-title>
-				        <div class="md-card-image document_browser_image_{{document.typeCode}}"  ></div>
-				        <md-card-actions layout="row" layout-align="end">
-				          <md-button class="md-icon-button" aria-label="tag">
-				            <md-icon md-font-icon="fa  fa-tag fa-2x"></md-icon>
-				          </md-button>
-				        	<span flex></span>
-				          <md-button class="md-icon-button" aria-label="Favorite" ng-click="selectDocument(document);">
-				            <md-icon md-font-icon="fa fa-info-circle fa-2x"></md-icon>
-				          </md-button>
-				          <md-button class="md-icon-button" aria-label="Settings">
-				            <md-icon md-font-icon="fa fa-star fa-2x" ng-click="document.pref=!document.pref" ng-init="document.pref==false" ng-class="{'preferiteDocumentIcon': document.pref==true}"></md-icon>
-				          </md-button>
-				          <md-button class="md-icon-button" aria-label="Share">
-				            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
-				          </md-button>
-				        </md-card-actions>
-				      </md-card>
-	 
-					</div> 
-				</md-content>
-			 
+				 	<document-view flex ng-model="folderDocuments"
+						show-grid-view="showDocumentGridView"
+						table-speed-menu-option="documentTableButton"
+						selected-document=selectedDocument
+						select-document-action="selectDocument(doc);"
+						edit-document-action="editDocument(doc)"
+						clone-document-action="cloneDocument(doc)"
+						delete-document-action="deleteDocument(doc)"
+						execute-document-action="executeDocument(doc)"
+				 	  ></document-view>
+		   	</md-content>
 			</md-content>
-			
-			<md-content layout="column" flex ng-show="showSearchView">
-				<h3 class="md-title" ng-show="searchInput.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
-				<h3 class="md-title" ng-show="searchInput.length>0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</h3>
+				<md-content layout="column" flex ng-show="showSearchView">
+					<h3 class="md-title" ng-show="searchInput.length==0 || searchInput==undefined " >{{translate.load("sbi.browser.document.noDocument")}}</h3>
+					<h3 class="md-title" ng-show="searchInput.length>0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</h3>
 		 
-			<!-- Document Search View -->
-				<angular-table  ng-hide="showDocumentGridView || searchDocuments==undefined || searchDocuments.length==0" flex 
-					id='documentSearchTable' ng-model=searchDocuments
-					columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
-					speed-menu-option=documentTableButton 
-					highlights-selected-item="true"
-					selected-item=selectedDocument
-					highlights-selected-item="true"
-					click-function="selectDocument(item);">
-				</angular-table>
-			
-			</md-content>
+			 		<document-view  flex ng-model="searchDocuments"
+				 	 show-grid-view="showDocumentGridView"
+				 	  table-speed-menu-option="documentTableButton"
+				 	  selected-document=selectedDocument
+				 	  select-document-action="selectDocument(doc);"
+				 	  ></document-view>
+  
+				</md-content>
 			
 			<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
 					<md-toolbar class="secondaryToolbar">
@@ -140,7 +99,7 @@
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>
 							
-							<md-button title="Edit Document" aria-label="Edit Document" class="md-icon-button" ng-click="alert('Editing '+selectedDocument.name+'...')">
+							<md-button title="Edit Document" aria-label="Edit Document" class="md-icon-button" ng-click="editDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							</md-button>
 							
@@ -148,7 +107,7 @@
 									<md-icon md-font-icon="fa fa-clone"></md-icon>
 							</md-button>
 							
-							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteRelativeDoc(selectedDocument)">
+							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 							</md-button>
 						</div>
@@ -182,5 +141,9 @@
 						</md-list>
 					</md-content>
 				</md-sidenav>
+	
 		</md-content>
+		
+	
 	</md-content>
+	
