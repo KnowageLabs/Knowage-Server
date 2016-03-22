@@ -194,11 +194,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							</md-button>
 							
-							<md-button title="Clone Document" aria-label="Clone Document" class="md-icon-button" ng-click="alert('Cloning '+selectedDocument.name+'...')">
+							<md-button title="Clone Document" aria-label="Clone Document" class="md-icon-button" ng-click="cloneDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-clone"></md-icon>
 							</md-button>
 							
-							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="alert('Deleting '+selectedDocument.name+'...')">
+							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteRelativeDoc(selectedDocument)">
 									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 							</md-button>
 						</div>
