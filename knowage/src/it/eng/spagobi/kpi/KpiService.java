@@ -32,6 +32,7 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
@@ -142,7 +143,8 @@ public class KpiService {
 	public Response listMeasure(@Context HttpServletRequest req, @QueryParam("orderProperty") String orderProperty, @QueryParam("orderType") String orderType)
 			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<RuleOutput> measures = dao.listRuleOutputByType(MEASURE);
+		// Listing only active records
+		List<RuleOutput> measures = dao.listRuleOutputByType(MEASURE, STATUS.ACTIVE);
 		return Response.ok(JsonConverter.objectToJson(measures, measures.getClass())).build();
 	}
 
@@ -281,15 +283,10 @@ public class KpiService {
 				id = newRule.getId();
 				version = newRule.getVersion();
 			} else {
-				if (rule.isEnableVersioning()) {
-					// Save Rule as new version
-					Rule newRule = dao.insertNewVersionRule(rule);
-					id = newRule.getId();
-					version = newRule.getVersion();
-				} else {
-					// Update existing Rule
-					dao.updateRule(rule);
-				}
+				// Rule can only be modified logically
+				Rule newRule = dao.insertNewVersionRule(rule);
+				id = newRule.getId();
+				version = newRule.getVersion();
 			}
 			return Response.ok(new JSONObject().put("id", id).put("version", version).toString()).build();
 		} catch (IOException e) {
@@ -306,7 +303,7 @@ public class KpiService {
 	@Path("/listKpi")
 	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<Kpi> kpis = dao.listKpi();
+		List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
 		return Response.ok(JsonConverter.objectToJson(kpis, kpis.getClass())).build();
 	}
 
@@ -345,7 +342,7 @@ public class KpiService {
 			if (errors.isEmpty()) {
 				// kpi name must be unique
 				Integer sameNameKpiId = dao.getKpiIdByName(kpi.getName());
-				if (sameNameKpiId != null && !sameNameKpiId.equals(kpi.getId())) {
+				if (sameNameKpiId != null && (kpi.getId() == null || !sameNameKpiId.equals(kpi.getId()))) {
 					errors.add(getMessage(NEW_KPI_KPI_NAME_NOT_AVAILABLE, kpi.getName()));
 				}
 			}
@@ -384,19 +381,19 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/{version}/deleteKpi")
-	public Response deleteKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
+	public Response deleteKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @QueryParam("toBeVersioned") Boolean toBeVersioned,
+			@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		// TODO get toBeVersioned flag
-		dao.removeKpi(id, version, false);
+		dao.removeKpi(id, version, Boolean.TRUE.equals(toBeVersioned));
 		return Response.ok().build();
 	}
 
 	@DELETE
 	@Path("/{id}/{version}/deleteRule")
 	public Response deleteRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
+		// Rule can only be removed logically
 		IKpiDAO dao = getKpiDAO(req);
-		// TODO get toBeVersioned flag
-		dao.removeRule(id, version, false);
+		dao.removeRule(id, version, true);
 		return Response.ok().build();
 	}
 
