@@ -10,7 +10,7 @@ app.controller('kpiTargetController', ['$scope','sbiModule_translate', 'sbiModul
 function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.target = {};
-	//retry it after with a service rest
+	
 	$scope.targets = [
 	                  {
 	                	  'name':'Target1',
