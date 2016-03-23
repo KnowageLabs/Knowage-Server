@@ -210,6 +210,9 @@ function saveDocument(goBack) {
 	if (goBack == 'true'){
 	    document.getElementById('saveAndGoBack').name = 'saveAndGoBack';
 		document.getElementById('saveAndGoBack').value = 'saveAndGoBack';		
+		if(window.parent.angular.element(window.frameElement).scope()){
+			window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
+			}
 	}
 		
 	document.objectForm.submit();
@@ -1520,9 +1523,15 @@ function saveAndGoBackConfirm(message, url){
 				document.getElementById('saveAndGoBack').click();
 			} else {
 				location.href = url;
+				if(window.parent.angular.element(window.frameElement).scope()){
+				window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
+				}
 			}
 		} else {
 			location.href = url;
+			if(window.parent.angular.element(window.frameElement).scope()){
+				window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
+			}
 		}
 }
 

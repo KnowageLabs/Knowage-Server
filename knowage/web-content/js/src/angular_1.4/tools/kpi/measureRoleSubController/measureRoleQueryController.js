@@ -33,10 +33,15 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
 	        	var str=tok.string.substring(1,tok.string.length); 
 	        	var hintList=[];
 	        	for(var key in $scope.placeholderList){
-	        		 if(str=="" || $scope.placeholderList[key].name.startsWith(str)){
+	        		 if(str=="" || $scope.placeholderList[key].name.toUpperCase().startsWith(str.toUpperCase())){
 	        			 hintList.push($scope.placeholderList[key].name);
 	        		 }
 	        	} 
+	        	if($scope.placeholderList.length==1){ 
+	        			hintList.push(str);  
+	        	}
+	        	
+	        	
 		        return {list:hintList, 
 		        	from: CodeMirror.Pos(cur.line,start),
 	                to: CodeMirror.Pos(cur.line, end)}
@@ -51,9 +56,7 @@ function measureRoleQueryControllerFunction($scope,sbiModule_translate,sbiModule
         autofocus: true,
         theme:"eclipse", 
         lineNumbers: true, 
-        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) },
-//        	"'@'":   function(cm){  $scope.keyAssistFunc(cm) }
-        },
+        extraKeys: {  "Ctrl-Space":   function(cm){  $scope.keyAssistFunc(cm) } },
         hintOptions: {tables:$scope.dataSourceTable},
        };
 	

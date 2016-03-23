@@ -61,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md-item-text="item.valueCd" 
           md-floating-label="{{translate.load('sbi.generic.category')}}"
           md-autoselect	="true"
+          md-select-on-match="true"
          >
         <md-item-template>
           <span md-highlight-text="searchText">{{item.valueCd}}</span>

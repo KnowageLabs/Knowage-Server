@@ -182,7 +182,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		 $mdDialog.show({
  		      controller: DialogEditDocumentController,
  		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/editDocumentTemplate.jsp',  
- 		      clickOutsideToClose:true,
+ 		      clickOutsideToClose:false,
  		      fullscreen: true,
  		      locals:{
  		    	 }
@@ -279,8 +279,10 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope, sbiModule_translate){
-	$scope.translate=sbiModule_translate;
+function DialogEditDocumentController($scope,$mdDialog){
+	$scope.closeDialogFromExt=function(){
+		 $mdDialog.cancel();
+	}
 	$scope.editDocumentUrl="http://192.168.40.220:8080/knowage/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=11";
 }
 
