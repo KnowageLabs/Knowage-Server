@@ -16,8 +16,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.target.category = item.category;
 	//	item.startValidation =item.startValidation.replace(/\//g, ' ');
 	//	item.startValidation = item.endValidation.replace(/\//g, ' ');
-		var x="02/02/2016";
-		new Date(x);
+
 		$scope.target.startValidation = new Date(item.startValidation);
 		$scope.target.endValidation = new Date(item.endValidation);
 		$angularListDetail.goToDetail();
