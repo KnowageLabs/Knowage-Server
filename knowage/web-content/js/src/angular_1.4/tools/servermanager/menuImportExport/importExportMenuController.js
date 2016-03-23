@@ -98,7 +98,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				
 			});
 		}
-	}
+	};
 
 	
 	$scope.parseToTree = function(arr, dest){
@@ -124,7 +124,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				}
 			}
 		}
-	}
+	};
 	$scope.checkObjects = function(){
 		for(var i=0;i<$scope.menu.length;i++){
 			var index = $scope.indexObjectsInList($scope.menu[i],$scope.currentObjects );
@@ -135,7 +135,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			}
 		}
 		return true;
-	}
+	};
 	$scope.checkRole = function(){
 		
 		for(var i=0;i<$scope.exportedRoles.length;i++){
@@ -150,7 +150,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		//all roles present
 		return true;
 		
-	}
+	};
 	$scope.save = function(ev){
 		if($scope.tree.length==0){
 			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
@@ -198,7 +198,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			$scope.showAction(sbiModule_translate.load("sbi.importmenu.selectmode"));
 		}
 
-	}
+	};
 	$scope.reload = function(){
 		
 		sbiModule_restServices.get("1.0/serverManager/importExport/menu","getAllMenu")
@@ -211,7 +211,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		}).error(function(data, status, headers, config) {
 			console.log("ERRORS "+status,4000);
 		})
-	}
+	};
 	$scope.reloadTree = function(value){
 
 		
@@ -219,6 +219,11 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			for(var i=0;i<$scope.menu.length;i++){
 				var index = $scope.indexInList($scope.menu[i],$scope.currentMenu );
 				if(index==-1){
+					if($scope.menu[i].parentId!=null){
+						$scope.menu[i].parentId = "id"+$scope.menu[i].parentId;
+					}else{
+						$scope.menu[i].menuId = "id"+$scope.menu[i].menuId;
+					}
 					$scope.currentMenu.push($scope.menu[i]);
 				}
 			}
@@ -228,11 +233,11 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		}else{
 			$scope.treeInTheDB = $scope.tree;
 		}
+	};
 		
 		
 		
 		
-	}
 	$scope.removeCircularDependences = function(tree){
 		for(var i=0;i<tree.length;i++){
 			delete tree[i].$parent;
@@ -243,7 +248,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			}
 				
 		}
-	}
+	};
 	
 	$scope.indexInList=function(item, list) {
 

@@ -102,8 +102,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 							<div layout="row" layout-wrap >
 								<md-radio-group layout="row" ng-model="typeSaveMenu">
-								      <md-radio-button value="Override" ng-click="reloadTree()">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-								      <md-radio-button value="Missing" ng-click="reloadTree()">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+								      <md-radio-button value="Override" ng-click="reloadTree('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+								      <md-radio-button value="Missing" ng-click="reloadTree('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
 								 </md-radio-group>
 								
 								<span flex></span>
