@@ -186,13 +186,7 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 		}else{
 			folder.expanded = !folder.expanded;
 			$scope.setSelected(folder);
-			if ($scope.isClicked !== 'undefined' && $scope.isClicked != folder.name){
-				$scope.isClicked = folder.name;
 			}
-			else ($scope.isClicked === 'undefined')
-				$scope.isClicked = folder.name;
-			}
-		console.log($scope.isClicked);
 		}
 	
 	$scope.setSelected = function (element){

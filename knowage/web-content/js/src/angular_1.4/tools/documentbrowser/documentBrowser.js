@@ -1,6 +1,6 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout',documentBrowserFunction]);
 
-function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout){
+function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -10,12 +10,10 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
 	$scope.showDocumentDetail = false;
-	$scope.showDocumentGridView = false;
+
+	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
 	
 //	$scope.setDetailOpen(false);
-	
-	
-	
 	
 	$scope.moveBreadCrumbToFolder=function(folder,index){
 		if(folder!=null){
@@ -31,25 +29,25 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 			$scope.showDocumentDetail = false;
 			
 			$scope.breadCrumbControl.resetBreadCrumb(); 
- 
-				var pathObj=[];
-				var tmpFolder=angular.extend({},folder); 
-				do{
-					var tmp=angular.extend({},tmpFolder);
-					tmpFolder=tmp.$parent;
-					delete tmp.$parent;
-					pathObj.push(tmp); 
-				}	while(tmp.parentId!=null)
+
+			var pathObj=[];
+			var tmpFolder=angular.extend({},folder); 
+			do{
+				var tmp=angular.extend({},tmpFolder);
+				tmpFolder=tmp.$parent;
+				delete tmp.$parent;
+				pathObj.push(tmp); 
+			}	while(tmp.parentId!=null)
+
+			for(var i=pathObj.length-1;i>=0;i--){
+				$scope.breadCrumbControl.insertBread(pathObj[i]);
+			}
 				
-				for(var i=pathObj.length-1;i>=0;i--){
-					$scope.breadCrumbControl.insertBread(pathObj[i]);
-				}
-					
-				if(folder!=null){
-					$scope.loadFolderDocuments(folder.id)
-				}
- 
-		}
+			if(folder!=null){
+				$scope.loadFolderDocuments(folder.id)
+			}
+		
+		}		
 	};
  
 	$scope.loadFolderDocuments=function(folderId){
