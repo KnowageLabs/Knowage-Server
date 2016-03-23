@@ -13,5 +13,6 @@ angular.module('olap.directives', [
                                    'sbi_side_nav',
                                    'sbi_table_toolbar',
                                    'sbi_chart_toolbar',
-                                   'cell_directive'
+                                   'cell_directive',
+                                   'member_directive'
                                    ]);

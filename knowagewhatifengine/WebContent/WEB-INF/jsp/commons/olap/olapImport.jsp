@@ -21,6 +21,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TableToolbarRight.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/cell.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/ChartToolbarRight.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/Member.js"></script>
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/commons/Settings.js"></script>

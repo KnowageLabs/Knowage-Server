@@ -38,7 +38,7 @@
 	<div style="background-color: #3b678c;width: calc(100% - 32px);" layout="column";>
 	
 	<md-content scrolly>
-	 <div style="height: 216000px;width:5000px;" ></div>	<!-- background-color: #3b678c; -->
+	 <div   ng-style="{'height':modelConfig.rowCount}" ></div>	<!-- background-color: #3b678c; -->
 	 	</md-content>
 	 	<div ng-bind-html="table" compile-template style="position:absolute;top:0;max-width: calc(100% - 52px);" >
 	

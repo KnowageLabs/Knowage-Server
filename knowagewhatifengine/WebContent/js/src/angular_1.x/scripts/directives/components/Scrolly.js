@@ -3,6 +3,7 @@ angular.module('scrolly_directive',[])
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
+	        	var ready = false;
 	            var raw = element[0];
 	            console.log('loading directive');
 	                

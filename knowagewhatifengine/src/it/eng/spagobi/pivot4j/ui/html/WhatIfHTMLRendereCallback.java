@@ -24,6 +24,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.pivot4j.ui.command.DrillDownCommand;
 import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
+import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
@@ -63,6 +65,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	@Override
 	protected Map<String, String> getCellAttributes(TableRenderContext context) {
 
+		StringWriter writer = new StringWriter();
+		CssWriter cssWriter = new CssWriter(writer);
 		Map<String, String> attributes = super.getCellAttributes(context);
 		// initializeInternal(context);
 		if (context.getCellType() == CellTypes.VALUE) {
@@ -82,10 +86,30 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			attributes.put("measureName", measureName);
 			attributes.put("ordinal", String.valueOf(positionId));
 			attributes.put("cell", null);
-		} else if (context.getCellType() == CellTypes.VALUE) {
+		} else if (context.getCellType() == CellTypes.LABEL) {
 			String uniqueName = context.getMember().getUniqueName();
+			String level = context.getMember().getLevel().getUniqueName();
+			String parentMember = null;
+
+			if (context.getMember().getParentMember() != null) {
+				parentMember = context.getMember().getParentMember().getUniqueName();
+			}
+
 			int axis = context.getAxis().axisOrdinal();
-			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" + uniqueName + "','" + axis + "')");
+			// attributes.put("ondblclick",
+			// "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" +
+			// uniqueName + "','" + axis + "')");
+			cssWriter.writeStyle("background-color", "#3b678c");
+			String style = writer.toString();
+			attributes.put("style", style);
+			attributes.put("ondragstart", "return false");
+			attributes.put("onselectstart", "return false");
+			attributes.put("unselectable", "on");
+			attributes.put("tabindex", "0");
+			attributes.put("parentMember", parentMember);
+			attributes.put("uniqueName", uniqueName);
+			attributes.put("level", level);
+			attributes.put("member", null);
 
 		}
 		return attributes;
@@ -115,6 +139,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 				Map<String, String> attributes = new TreeMap<String, String>();
+
 				if (commands != null && !commands.isEmpty()) {
 					for (UICommand<?> command : commands) {
 						String cmd = command.getName();
@@ -293,6 +318,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					writeContent(label);
 				} else {
 					// TODO: OSMOSIT create member clickable
+
 					List<TargetClickable> targetsClickable = sbiModel.getTargetsClickable();
 					if (targetsClickable != null && targetsClickable.size() > 0) {
 						Member member = context.getMember();

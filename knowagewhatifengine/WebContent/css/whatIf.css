@@ -33,6 +33,18 @@
 	background: #f5f5f5;
     
 }
+/*th:focus {
+	outline:none;
+	border-color: #ff4081;
+	border-width: 2px;
+    
+}
+td:focus {
+	outline:none;
+	border-color: #ff4081;
+	border-width: 2px;
+    
+}*/
 
 .x-pivot-table thead {
 	
@@ -44,6 +56,7 @@
 	
 	/*border-top-width: 1px !important;*/
 	/*border-right-width: 1px !important;*/
+	outline:none;
 	border-bottom: 1px solid #3b678c;
 	border-right: 1px solid #3b678c;
 	color: rgba(0,0,0,0.54);
@@ -52,6 +65,40 @@
 	font-family: Verdana;
 	background: #f5f5f5;
    position: relative !important;
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+	
+}
+.x-pivot-header-column-selected {
+	
+	/*border-top-width: 1px !important;*/
+	/*border-right-width: 1px !important;*/
+	border: 2px solid #ff0080;
+	outline:none;
+	color: rgba(0,0,0,0.54);
+	font-size:18px;
+	padding:10px;
+	font-family: Verdana;
+	background: #f5f5f5;
+   position: relative !important;
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
 	
 }
 .x-pivot-cell {

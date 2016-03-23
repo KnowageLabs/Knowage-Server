@@ -34,6 +34,7 @@ function olapFunction(
 ) {
 	
 	//VARIABLES
+	
 	templateRoot = "/knowagewhatifengine/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
@@ -115,19 +116,25 @@ function olapFunction(
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
+		$scope.ready = true;
 	}
 	
 	$scope.sendModelConfig = function(modelConfig){
+		if($scope.ready){
+			$scope.ready = false;
+			sbiModule_restServices.promisePost
+			 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
+				.then(function(response) {
+					$scope.table = $sce.trustAsHtml(response.data.table);
+					$scope.modelConfig = response.data.modelConfig;
+					$scope.ready = true;
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
+					$scope.ready = true;
+				});	
+			
+		}
 		 
-		 sbiModule_restServices.promisePost
-		 ("1.0/modelconfig?SBI_EXECUTION_ID="+JSsbiExecutionID,"",modelConfig)
-			.then(function(response) {
-				$scope.table = $sce.trustAsHtml(response.data.table);
-				$scope.modelConfig = response.data.modelConfig;
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
-				
-			});	
 	}
 	
 	$scope.toggleMenu=function(){

@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
@@ -61,7 +62,6 @@ import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
 
@@ -126,7 +126,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				transform.expand(m2);
 			}
 		}
-
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		model.setSubset(startRow, startColumn, 10);
 		time = "Drilldown end " + format.format(new Date());
 		System.out.println(time);
@@ -201,6 +202,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		Integer startRow = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
 		Integer startColumn = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		model.setSubset(startRow, startColumn, 10);
 		time = "Drillup end " + format.format(new Date());
 		System.out.println(time);
