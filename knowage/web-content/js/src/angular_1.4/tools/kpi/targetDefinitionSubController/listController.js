@@ -11,7 +11,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 	}
 	$scope.loadTarget =function(item){
-		//after retry it with a service rest
+		
 		$scope.target.name = item.name;
 		$scope.target.category = item.category;
 	//	item.startValidation =item.startValidation.replace(/\//g, ' ');
