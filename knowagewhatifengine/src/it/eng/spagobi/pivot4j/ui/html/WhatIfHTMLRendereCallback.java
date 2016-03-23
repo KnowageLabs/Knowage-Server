@@ -99,9 +99,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			// attributes.put("ondblclick",
 			// "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" +
 			// uniqueName + "','" + axis + "')");
-			cssWriter.writeStyle("background-color", "#3b678c");
-			String style = writer.toString();
-			attributes.put("style", style);
+
 			attributes.put("ondragstart", "return false");
 			attributes.put("onselectstart", "return false");
 			attributes.put("unselectable", "on");
