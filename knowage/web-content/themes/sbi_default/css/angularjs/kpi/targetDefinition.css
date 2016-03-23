@@ -1,0 +1,29 @@
+.headerNote{
+	height: 40px;
+}
+
+.headerNote span{
+	margin-top: -17px;
+}
+
+#buttonNote{
+	    margin-left: 750px;
+}
+
+
+.tinyeditor-footer{
+	display:none;
+}
+
+.listNotes {
+	width: 100%;
+	overflow: auto;
+}
+
+.contentListNote {
+	background-color: rgba(148, 148, 148, 0.11);
+}
+
+.md-whiteframe-4dp {
+	background-color:white;
+}
