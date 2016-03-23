@@ -21,6 +21,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
@@ -30,10 +31,12 @@ import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -104,6 +107,7 @@ public class KpiService {
 
 	@POST
 	@Path("/buildCardinalityMatrix")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response buildCardinalityMatrix(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String arrayOfMeasures = RestUtilities.readBody(req);
@@ -118,6 +122,7 @@ public class KpiService {
 
 	@POST
 	@Path("/listPlaceholderByMeasures")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listPlaceholderByMeasures(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String arrayOfMeasures = RestUtilities.readBody(req);
@@ -133,6 +138,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listPlaceholder")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listPlaceholder(@Context HttpServletRequest req) throws EMFUserError {
 		List<Placeholder> placeholders = getKpiDAO(req).listPlaceholder();
 		return Response.ok(JsonConverter.objectToJson(placeholders, placeholders.getClass())).build();
@@ -140,6 +146,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listMeasure")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listMeasure(@Context HttpServletRequest req, @QueryParam("orderProperty") String orderProperty, @QueryParam("orderType") String orderType)
 			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
@@ -150,6 +157,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{name}/existsMeasure")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public String existsMeasure(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		return dao.existsMeasureNames(name).toString();
@@ -157,6 +165,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/{version}/loadRule")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response loadRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		Rule r = dao.loadRule(id, version);
@@ -165,6 +174,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{thresholdId}/loadThreshold")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response loadThreshold(@PathParam("thresholdId") Integer id, @QueryParam("kpiId") Integer kpiId, @Context HttpServletRequest req)
 			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
@@ -177,6 +187,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listAlias")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listAlias(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Alias> aliases = dao.listAlias();
@@ -185,6 +196,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listAvailableAlias")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listAvailableAlias(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Alias> aliases = dao.listAliasNotInMeasure(null);
@@ -193,6 +205,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listAvailableAlias/{ruleId}")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listAvailableAliasIncludingId(@PathParam("ruleId") Integer ruleId, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Alias> aliases = dao.listAliasNotInMeasure(ruleId);
@@ -210,6 +223,7 @@ public class KpiService {
 	 */
 	@POST
 	@Path("/queryPreview")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
 
 		Integer dataSourceId = null;
@@ -239,6 +253,7 @@ public class KpiService {
 
 	@POST
 	@Path("/preSaveRule")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response preSave(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String obj = RestUtilities.readBody(req);
@@ -264,6 +279,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveRule")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		try {
@@ -301,6 +317,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listKpi")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
@@ -309,6 +326,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/{version}/loadKpi")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response loadKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		Kpi kpi = getKpiDAO(req).loadKpi(id, version);
 		return Response.ok(JsonConverter.objectToJson(kpi, kpi.getClass())).build();
@@ -316,6 +334,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listThreshold")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listThreshold(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		List<Threshold> tt = dao.listThreshold();
@@ -324,6 +343,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveKpi")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
 		IKpiDAO dao = getKpiDAO(req);
 		try {
@@ -381,6 +401,7 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/{version}/deleteKpi")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response deleteKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @QueryParam("toBeVersioned") Boolean toBeVersioned,
 			@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
@@ -390,10 +411,64 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/{version}/deleteRule")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response deleteRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		// Rule can only be removed logically
 		IKpiDAO dao = getKpiDAO(req);
 		dao.removeRule(id, version, true);
+		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/listTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listTarget(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Target> targetList = dao.listTarget();
+		return Response.ok(JsonConverter.objectToJson(targetList, targetList.getClass()).toString()).build();
+	}
+
+	@GET
+	@Path("/{id}/loadTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response loadTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		Target t = dao.loadTarget(id);
+		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
+	}
+
+	@POST
+	@Path("/saveTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response saveTarget(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			Target target = (Target) JsonConverter.jsonToObject(requestVal, Target.class);
+			IKpiDAO dao = getKpiDAO(req);
+			Integer id = target.getId();
+			if (id == null) {
+				id = dao.insertTarget(target);
+			} else {
+				dao.updateTarget(target);
+			}
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		try {
+			return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
+		} catch (JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path("/{id}/deleteTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response deleteTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeTarget(id);
 		return Response.ok().build();
 	}
 
