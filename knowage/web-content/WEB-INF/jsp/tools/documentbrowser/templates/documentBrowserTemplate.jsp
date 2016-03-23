@@ -1,6 +1,6 @@
 	<md-content ng-controller="documentBrowserController" layout="column"  ng-cloak layout-fill>
 		<!-- Toolbar -->
-		<md-toolbar class="documentBrowserToolbar" >
+		<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
 					<!-- Folders button -->
 					<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
@@ -53,7 +53,7 @@
 		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
 				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" >
-					<md-toolbar class=" secondaryToolbar">
+					<md-toolbar class=" ternaryToolbar">
 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
 	     			</md-toolbar>
 	     			<md-content layout-margin>

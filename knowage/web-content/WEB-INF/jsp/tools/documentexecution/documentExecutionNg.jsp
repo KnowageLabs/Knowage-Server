@@ -55,9 +55,9 @@ try{
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
 </head>
 
-<body class="kn-documentExecution" ng-app="documentExecutionModule">
-	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
-		<md-toolbar class="documentExecutionToolbar" flex="nogrow">
+<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row">
+	<div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
+		<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
@@ -151,8 +151,18 @@ try{
 	 		<md-content id="documentFrameContainer" layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
 				<iframe id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
-					
-				<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
+			</md-content>
+			
+			<div  flex  ng-switch-when="PARAMETERS"> 
+				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
+					<parameter-view-point-handler flex/>
+				</div>
+			</div>	 
+		</div>	
+		 										
+	</div>
+	
+	<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
 						ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')" >
 								
 					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
@@ -206,15 +216,6 @@ try{
 						{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 					</md-button>				
 				</md-sidenav>
-			</md-content>
-			
-			<div  flex  ng-switch-when="PARAMETERS"> 
-				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
-					<parameter-view-point-handler flex/>
-				</div>
-			</div>		
-		</div>												
-	</div>
 		
 	<script type="text/javascript">
 	//Module creation
