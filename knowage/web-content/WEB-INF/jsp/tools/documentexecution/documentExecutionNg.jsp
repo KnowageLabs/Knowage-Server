@@ -48,7 +48,6 @@ try{
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<!-- Styles -->
 	<link rel="stylesheet" type="text/css" href="/knowage/themes/commons/css/customStyle.css"> 
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/documentexecution/css/documentexecution.css"> 
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
@@ -56,7 +55,7 @@ try{
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
 </head>
 
-<body class="bodyStyle" ng-app="documentExecutionModule">
+<body class="kn-documentExecution" ng-app="documentExecutionModule">
 	<div layout="column" ng-controller="documentExecutionController" ng-init="initSelectedRole()" ng-cloak layout-fill>
 		<md-toolbar class="documentExecutionToolbar" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
@@ -192,8 +191,10 @@ try{
 					<md-content flex>
 						<md-list ng-hide="isParameterPanelDisabled()" layout="column">
 							<md-list-item ng-repeat="parameter in documentParameters"
-									layout="row" aria-label="">
-								<document-paramenter-element parameter="parameter" layout="row" flex layout-align="start"/>
+									layout="row" aria-label="" class="md-whiteframe-1dp">
+								
+								<document-paramenter-element parameter="parameter" 
+										layout="row" flex layout-align="start"/>
 							</md-list-item>
 						</md-list>
 					</md-content>
