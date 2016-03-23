@@ -1,27 +1,22 @@
-<md-button class="md-icon-button" aria-label="Clear parameter"
+<md-button aria-label="Clear parameter" class="md-button md-fab md-mini"
 		ng-click="documentExecuteServices.resetParameter(parameter)">
 	<i class="fa fa-eraser"></i>
 </md-button>
 <div flex layout-align="start">
 	<md-input-container>
-		<%--
-		<md-content ng-if="parameter.selectionType=='TREE'">{{parameter|json}}</md-content>
-		--%>
 		
-		<%--
-		--%>
 		<!-- Tree input -->
-		<label ng-if="parameter.selectionType=='TREE'" >{{::parameter.label}}</label>
-		<section ng-if="parameter.selectionType=='TREE'">
-			<label>{{::parameter.label}}</label>
-			<input class="input_class" ng-model="parameter.parameterValue" 
-					ng-required="::parameter.mandatory">
-			<md-button class="md-icon-button" ng-click="getTreeParameterValue(parameter.parameterValue)">
-				<i class="fa fa-sitemap"></i>
-			</md-button>
+		<section ng-if="parameter.selectionType=='TREE'" layout="column">
+			<div layout="row" layout-align="start">
+				<md-button ng-click="getTreeParameterValue()" ng-required="::parameter.mandatory"
+						id="{{::parameter.urlName}}" aria-label="{{::parameter.label}}">
+					<label>{{::parameter.label}}</label>
+					<i class="fa fa-sitemap"></i>
+				</md-button>
+			</div>
+			
 			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
-				<span ng-bind-html="documentExecuteServices.showParameterHtml(parameter)">
-				</span>
+				<span ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
 			</md-whiteframe>
 		</section>
 				
@@ -83,12 +78,13 @@
 	
 		<!-- lov LOOKUP single and multiple input -->
 		<section ng-if="parameter.selectionType=='LOOKUP'">
-			<label>{{::parameter.label}}</label>
-			
-			<md-button class="md-icon-button" id="{{::parameter.urlName}}" 
-					ng-click="popupLookupParameterDialog(parameter)">
-				<i class="fa fa-search-plus"></i>
-			</md-button>
+			<div layout="row" layout-align="start">
+				<md-button class="" id="{{::parameter.urlName}}"
+						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{::parameter.label}}">
+					<label>{{::parameter.label}}</label>
+					<i class="fa fa-search-plus"></i>
+				</md-button>
+			</div>
 		 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
 				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
 					ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
@@ -96,8 +92,13 @@
 		</section>
 		
 		<!-- "required" message -->
-		<div ng-messages="::parameter.parameterValue" ng-if="showRequiredFieldMessage(parameter)">
+		<div ng-if="showRequiredFieldMessage(parameter)">
 		 	<div ng-message="required">Parameter is required.</div>
 		</div>
+		
+		<%--
+		<md-content style="font-size:8px;" ng-if="parameter.selectionType=='TREE'">{{parameter|json}}</md-content>
+		--%>
+		
 	</md-input-container>
 </div>

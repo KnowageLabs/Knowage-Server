@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -80,6 +81,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public static final String RATING = "metadata.docRating";
 	public static final String SUBOBJ_NAME = "metadata.subobjName";
 	public static final String METADATA = "METADATA";
+	public static final String NODE_ID_SEPARATOR = "___SEPA__";
 
 	// public static final String PARAMETERS = "PARAMETERS";
 	// public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
@@ -126,7 +128,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
-			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+			errorList = DocumentExecutionUtils.handleNormalExecutionError(
+					this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
 			resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url);
@@ -190,7 +193,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 			parameterAsMap.put("dependsOn", new ArrayList<>());
 
-			if (parameter.getValueSelection().equalsIgnoreCase("lov")) {
+			if (parameter.getValueSelection().equalsIgnoreCase("lov") && 
+					!parameter.getModalityValue().getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter, req);
 
 				parameterAsMap.put("defaultValues", defaultValues);
@@ -209,6 +213,68 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
+	@GET
+	@Path("/parametervalues")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getParameterValues(
+			@QueryParam("label") String label,
+			@QueryParam("role") String role,
+			@QueryParam("biparameterId") String biparameterId, 
+			@QueryParam("mode") String mode, 
+			@QueryParam("treeLovNode") String treeLovNode, 
+//			@QueryParam("treeLovNode") Integer treeLovNodeLevel,
+			@Context HttpServletRequest req) throws EMFUserError {
+		
+		MessageBuilder msgBuild = new MessageBuilder();
+		Locale locale = msgBuild.getLocale(req);
+		
+		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
+		
+		BIObjectParameter biObjectParameter = null;
+		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
+		for (int i = 0; i < parameters.size(); i++) {
+			BIObjectParameter p = (BIObjectParameter) parameters.get(i);
+			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
+				biObjectParameter = p;
+				break;
+			}
+		}
+		
+		String treeLovNodeValue;
+		Integer treeLovNodeLevel;
+		
+		if (treeLovNode.contains("lovroot")) {
+			treeLovNodeValue = "lovroot";
+			treeLovNodeLevel = 0;
+		} else {
+			String[] splittedNode = treeLovNode.split(NODE_ID_SEPARATOR);
+			treeLovNodeValue = splittedNode[0];
+			treeLovNodeLevel = new Integer(splittedNode[1]);
+		}
+		
+		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
+				role, biObject, biObjectParameter, mode, treeLovNodeLevel, treeLovNodeValue, req);
+		
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		
+		if (result.size() > 0) {
+			resultAsMap.put("filterValues", result);
+			resultAsMap.put("errors", new ArrayList<>());
+		} else {
+			resultAsMap.put("filterValues", new ArrayList<>());
+			
+			List errorList = DocumentExecutionUtils.handleNormalExecutionError(
+					this.getUserProfile(), biObject, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+					role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+			
+			resultAsMap.put("errors", errorList);
+		}
+		
+		logger.debug("OUT");
+		return Response.ok(resultAsMap).build();
+	}
+	
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another
 	 */

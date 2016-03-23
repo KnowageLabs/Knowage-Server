@@ -32,8 +32,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,6 +46,7 @@ import org.json.JSONObject;
 public class DocumentExecutionUtils {
 	public static final String PARAMETERS = "PARAMETERS";
 	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
+	public static String NODE_ID_SEPARATOR = "___SEPA__";
 	public static String MODE_SIMPLE = "simple";
 	public static String MODE_COMPLETE = "complete";
 	public static String START = "start";
@@ -233,8 +236,17 @@ public class DocumentExecutionUtils {
 		return errors;
 	}
 
-	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+
+	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
+			String executionRole, BIObject biObject, BIObjectParameter objParameter,
 			HttpServletRequest req) {
+		
+		return getLovDefaultValues(executionRole, biObject, objParameter, null, null, null, req);
+	}
+	
+	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+			String mode, Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
+		
 		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
@@ -242,44 +254,131 @@ public class DocumentExecutionUtils {
 
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
-			// ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String,Object>>();
 
-			lovProvDet = DocumentExecutionUtils.getLovDetail(objParameter);
+			lovProvDet = getLovDetail(objParameter);
 
 			IEngUserProfile profile = UserProfileManager.getProfile();
 
-			// LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+			biParameterExecDependencies = getBiObjectDependencies(executionRole, objParameter);
 
-			biParameterExecDependencies = DocumentExecutionUtils.getBiObjectDependencies(executionRole, objParameter);
-
-			lovResult = DocumentExecutionUtils.getLovResult(profile, lovProvDet, biParameterExecDependencies, biObject, req, true);
+			lovResult = getLovResult(profile, lovProvDet, biParameterExecDependencies, biObject, req, true);
+			Assert.assertNotNull(lovResult, "Impossible to get parameter's values");
 
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-
 			rows = lovResultHandler.getRows();
 
-			JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(lovProvDet, rows, MODE_SIMPLE);
-
-			int valuesLength = valuesJSON.getInt("results");
-			JSONArray values = valuesJSON.getJSONArray("root");
-
-			for (int i = 0; i < valuesLength; i++) {
-				JSONObject item = values.getJSONObject(i);
-
+			JSONArray valuesJSONArray = new JSONArray();
+			
+			if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
+				valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+			} else {
+				JSONObject valuesJSON = buildJSONForLOV(lovProvDet, rows, MODE_SIMPLE);
+				valuesJSONArray = valuesJSON.getJSONArray("root");
+			}
+			
+			for (int i = 0; i < valuesJSONArray.length(); i++) {
+				JSONObject item = valuesJSONArray.getJSONObject(i);
+				
 				HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
 				itemAsMap.put("value", item.get("value"));
-				itemAsMap.put("label", item.get("label"));
+				itemAsMap.put("label", item.has("label")? item. get("label") : item.get("value"));
+				if(item.has("id")) {
+					itemAsMap.put("id", item.get("id"));
+				}
+				if(item.has("leaf")) {
+					itemAsMap.put("leaf", item.get("leaf"));
+				}
 				itemAsMap.put("description", item.get("description"));
-
+				
 				defaultValues.add(itemAsMap);
 			}
-
-			Assert.assertNotNull(lovResult, "Impossible to get parameter's values");
 
 			return defaultValues;
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
+		}
+	}
+
+	// Same method as GetParameterValuesForExecutionAction.getChildrenForTreeLov()
+	private static JSONArray getChildrenForTreeLov(ILovDetail lovProvDet,
+			List rows, String mode, Integer treeLovNodeLevel, String treeLovNodeValue) {
+
+		String valueColumn;
+		String descriptionColumn;
+		boolean addNode;
+		String treeLovNodeName = "";
+		String treeLovParentNodeName = "";
+
+		try {
+
+			if (treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
+				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
+				treeLovParentNodeName = "lovroot";
+				treeLovNodeLevel = -1;
+				
+			// treeLovNodeLevel-1 because the fake root node is the level 0
+			}else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {
+				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1);
+				treeLovParentNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel);
+			}
+
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+
+			valueColumn = lovProvDet.getValueColumnName();
+			descriptionColumn = lovProvDet.getDescriptionColumnName();
+
+			for (int q = 0; q < rows.size(); q++) {
+				SourceBean row = (SourceBean) rows.get(q);
+				JSONObject valueJSON = null;
+				addNode = false;
+				List columns = row.getContainedAttributes();
+				valueJSON = new JSONObject();
+				boolean notNullNode = false; // if the row does not contain the value atribute we don't add the node
+				for (int i = 0; i < columns.size(); i++) {
+					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
+					if ((treeLovParentNodeName == "lovroot")
+							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) 
+									&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
+						addNode = true;
+					}
+
+					// its a leaf so we take the value and description defined in the lov definition
+					if (lovProvDet.getTreeLevelsColumns().size() == treeLovNodeLevel + 2) {
+						if (attribute.getKey().equalsIgnoreCase(descriptionColumn)) {// its the column of the description
+							valueJSON.put("description", attribute.getValue());
+							notNullNode = true;
+						}
+						if (attribute.getKey().equalsIgnoreCase(valueColumn)) {// its the column of the value
+							valueJSON.put("value", attribute.getValue());
+							valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1));
+							notNullNode = true;
+						}
+						valueJSON.put("leaf", true);
+					} else if (attribute.getKey().equalsIgnoreCase(treeLovNodeName)) {
+						valueJSON = new JSONObject();
+						valueJSON.put("description", attribute.getValue());
+						valueJSON.put("value", attribute.getValue());
+						valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1));
+						notNullNode = true;
+					}
+				}
+
+				if (addNode && notNullNode) {
+					valuesDataJSON.add(valueJSON);
+				}
+			}
+
+			JSONArray valuesDataJSONArray = new JSONArray();
+
+			for (Iterator iterator = valuesDataJSON.iterator(); iterator.hasNext();) {
+				JSONObject jsonObject = (JSONObject) iterator.next();
+				valuesDataJSONArray.put(jsonObject);
+			}
+
+			return valuesDataJSONArray;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Impossible to serialize response", e);
 		}
 	}
 
@@ -329,14 +428,10 @@ public class DocumentExecutionUtils {
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param lovDefinition
-	 *            The lov original definition
-	 * @param dependencies
-	 *            The dependencies to be considered (if any)
-	 * @param biObject
-	 *            The document object
+	 * @param profile The user profile
+	 * @param lovDefinition The lov original definition
+	 * @param dependencies The dependencies to be considered (if any)
+	 * @param biObject The document object
 	 * @return The key to be used in cache
 	 */
 	private static String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject) {
@@ -419,5 +514,4 @@ public class DocumentExecutionUtils {
 			throw new SpagoBIServiceException("Impossible to serialize response", e);
 		}
 	}
-
 }

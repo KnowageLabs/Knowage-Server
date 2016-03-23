@@ -1,41 +1,40 @@
-<md-dialog md-theme="{{::lookupParamCtrl.theme }}"
-		aria-label="{{::lookupParamCtrl.ariaLabel }}" ng-class="dialog.css">
+<md-dialog md-theme="{{::paramDialogCtrl.theme }}"
+		aria-label="{{::paramDialogCtrl.ariaLabel }}" ng-class="dialog.css">
 	<md-toolbar>
 		<div class="md-title" layout-fill>
 			<h2 class="md-title" layout-margin>
-				{{ ::lookupParamCtrl.dialogTitle }}
+				{{ ::paramDialogCtrl.dialogTitle }}
 			</h2>
 		</div>
 	</md-toolbar>
 		
 	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1">
-		<div class="md-dialog-content-body"
-				md-template="::lookupParamCtrl.mdContent"></div>
+		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
 
 		<!--
 		<md-input-container>
-			<md-content>{{lookupParamCtrl.parameter|json}}</md-content>	
+			<md-content>{{paramDialogCtrl.tempParameter|json}}</md-content>	
 		</md-input-container>
 		-->
 
 
 		<!-- lov list single input -->
-		<section ng-if="!lookupParamCtrl.parameter.multivalue">
+		<section ng-if="!paramDialogCtrl.tempParameter.multivalue">
 			<!--
-			<label>{{lookupParamCtrl.parameter.label}}</label>
+			<label>{{paramDialogCtrl.tempParameter.label}}</label>
 			-->
-			<md-radio-group ng-model="lookupParamCtrl.parameter.parameterValue" ng-required="lookupParamCtrl.parameter.mandatory">
-				<md-radio-button class="md-primary" ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues" value="{{::defaultParameter.value}}">
+			<md-radio-group ng-model="paramDialogCtrl.tempParameter.parameterValue" ng-required="paramDialogCtrl.tempParameter.mandatory">
+				<md-radio-button class="md-primary" ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues" value="{{::defaultParameter.value}}">
 					{{::defaultParameter.label}}
 				</md-radio-button>
 			</md-radio-group>
 		</section>
 		
 		<!-- lov list multiple input -->
-		<section ng-if="lookupParamCtrl.parameter.multivalue">
-			<div ng-repeat="defaultParameter in lookupParamCtrl.parameter.defaultValues">
+		<section ng-if="paramDialogCtrl.tempParameter.multivalue">
+			<div ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues">
 				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-model="defaultParameter.isSelected"
-						ng-change="lookupParamCtrl.toggleCheckboxParameter(lookupParamCtrl.parameter, defaultParameter)">
+						ng-change="paramDialogCtrl.toggleCheckboxParameter(paramDialogCtrl.tempParameter, defaultParameter)">
 					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>
@@ -44,10 +43,10 @@
 	
 	
 	<div class="md-actions">
-		<md-button ng-click="lookupParamCtrl.abort()" class="md-primary">
-			{{ lookupParamCtrl.dialogCancelLabel }}</md-button>
+		<md-button ng-click="paramDialogCtrl.abort()" class="md-primary">
+			{{ paramDialogCtrl.dialogCancelLabel }}</md-button>
 				
-		<md-button ng-click="lookupParamCtrl.save()" class="md-primary">
-			{{ lookupParamCtrl.dialogSaveLabel }}</md-button>
+		<md-button ng-click="paramDialogCtrl.save()" class="md-primary">
+			{{ paramDialogCtrl.dialogSaveLabel }}</md-button>
 	</div>
 </md-dialog>

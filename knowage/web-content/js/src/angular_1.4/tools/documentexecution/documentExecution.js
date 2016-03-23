@@ -5,16 +5,12 @@
 	};
 
 	var documentExecutionApp = angular.module('documentExecutionModule');
-
+	
 	documentExecutionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('knowage')
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
-	
-	documentExecutionApp.factory('$documentNavigationScope', function($window) {
-		  return $window.parent.angular.element($window.frameElement).scope().$parent;
-	});
-	
+
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
@@ -32,7 +28,7 @@
 		$scope.selectedRole = execProperties.selectedRole;
 		$scope.execContextId = "";
 		//$scope.documentUrl="";
-		$scope.showSelectRoles=true;
+		$scope.showSelectRoles = true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = execProperties.parametersData.documentParameters;
 		$scope.newViewpoint = JSON.parse(JSON.stringify(documentExecuteFactories.EmptyViewpoint));
@@ -42,13 +38,13 @@
 		$scope.paramRolePanelService = docExecute_paramRolePanelService;
 		$scope.urlViewPointService = docExecute_urlViewPointService;		
 		$scope.currentView = execProperties.currentView;
-		$scope.parameterView=execProperties.parameterView;
+		$scope.parameterView = execProperties.parameterView;
 		$scope.isParameterRolePanelDisabled = execProperties.isParameterRolePanelDisabled;
 		$scope.showParametersPanel = execProperties.showParametersPanel;
 		//rank
 		$scope.rankDocumentSaved = 0;
 		$scope.requestToRating={};		
-		$scope.isClick=false;
+		$scope.isClick = false;
 		$scope.setRank = false;
 		//note
 		$scope.noteLoaded = {};
@@ -58,16 +54,16 @@
 		$scope.selectedTab={'tab':0};
 		$scope.contentNotes = "";
 		
-		$scope.openInfoMetadata = function(){
+		$scope.openInfoMetadata = function() {
 			infoMetadataService.openInfoMetadata();
-		}
-		
-		$scope.initSelectedRole = function(){
+		};
+
+		$scope.initSelectedRole = function() {
 			console.log("initSelectedRole IN ");
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				if(execProperties.roles.length==1) {
 					execProperties.selectedRole.name = execProperties.roles[0];
-					$scope.showSelectRoles=false;
+					$scope.showSelectRoles = false;
 					//loads parameters if role is selected
 					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name);
 					execProperties.isParameterRolePanelDisabled.status = true;
@@ -78,20 +74,19 @@
 			console.log("initSelectedRole OUT ");
 		};
 		
-
 		//ranking document
-		$scope.rankDocument = function(){
+		$scope.rankDocument = function() {
 			var obj = {
 					'obj':$scope.executionInstance.OBJECT_ID
 					};
-			sbiModule_restServices.promisePost("documentrating","getvote",obj).then(function(response){ 
+			sbiModule_restServices.promisePost("documentrating", "getvote",obj).then(function(response) { 
 				//angular.copy(response.data,$scope.rankDocumentSaved);
 				$scope.rankDocumentSaved = response.data;
-			},function(response){
+			},function(response) {
 				$mdDialog.cancel();
-				$scope.isClick=false;
+				$scope.isClick = false;
 			});
-			
+
 			$mdDialog.show({
 				controller: rankControllerFunction,
 				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentRank.html',
@@ -101,32 +96,33 @@
 			})
 			.then(function(answer) {
 				$scope.status = 'You said the information was "' + answer + '".';
-				$scope.isClick=false;
+				$scope.isClick = false;
 			}, function() {
 				$scope.status = 'You cancelled the dialog.';
-				$scope.isClick=false;
+				$scope.isClick = false;
 			});
 		};
-		
-		
-		//note document
-		$scope.noteDocument=function(){
-			var obj = {'id' : $scope.executionInstance.OBJECT_ID};
-			sbiModule_restServices.promisePost("documentnotes", 'getNote',obj).then(
-					function(response) {
-						if (response.data.hasOwnProperty("errors")) {
-							$scope.showAction(response.data);
-						} else {
-							console.log(response);
-							angular.copy(response.data,$scope.noteLoaded);
-							$scope.contentNotes = $scope.noteLoaded.nota;
-							$scope.profile = response.data.profile;
-						}
 
-					},function(response) {
-						$scope.errorHandler(response.data,"");
-					})
-					
+		//note document
+		$scope.noteDocument = function() {
+			var obj = {'id' : $scope.executionInstance.OBJECT_ID};
+			sbiModule_restServices
+			.promisePost("documentnotes", 'getNote',obj)
+			.then(
+				function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						$scope.showAction(response.data);
+					} else {
+						console.log(response);
+						angular.copy(response.data,$scope.noteLoaded);
+						$scope.contentNotes = $scope.noteLoaded.nota;
+						$scope.profile = response.data.profile;
+					}
+				},
+				function(response) {
+					$scope.errorHandler(response.data,"");
+				});
+
 			$mdDialog.show({
 				controller: noteControllerFunction,
 				templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentNote.html',
@@ -139,10 +135,10 @@
 			}, function() {
 				$scope.status = 'You cancelled the dialog.';
 			});
-		}
-		
-		
-		$scope.openHelpOnLine=function(){	
+		};
+
+
+		$scope.openHelpOnLine = function() {	
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
 					
@@ -168,67 +164,55 @@
 			}
 			console.log("changeRole OUT ");
 		};
-	
-		
-		$scope.showRequiredFieldMessage = function(parameter) {
-			return (
-				parameter.mandatory 
-				&& (
-						!parameter.parameterValue
-						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0) 
-						|| parameter.parameterValue == '')
-				) == true;
-		};		
 
-		$scope.isParameterPanelDisabled = function(){
+		$scope.isParameterPanelDisabled = function() {
 			return (!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0);
 		};
-		
-		$scope.executeDocument = function(){
+
+		$scope.executeDocument = function() {
 			console.log('Executing document -> ', execProperties);
 		};
-	
-		$scope.editDocument = function(){
+
+		$scope.editDocument = function() {
 			alert('Editing document');
 			console.log('Editing document -> ', execProperties);
 		};
-	
-		$scope.deleteDocument = function(){
+
+		$scope.deleteDocument = function() {
 			alert('Deleting document');
 			console.log('Deleting document -> ', execProperties);
 		};
-		
-		$scope.clearListParametersForm = function(){
-			if(execProperties.parametersData.documentParameters.length > 0){
-				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+
+		$scope.clearListParametersForm = function() {
+			if(execProperties.parametersData.documentParameters.length > 0) {
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
 					var parameter = execProperties.parametersData.documentParameters[i];
 					documentExecuteServices.resetParameter(parameter);
 				}
 			}
 		};
-		
+
 		$scope.printDocument = function() {
 			var frame = window.frames["documentFrame"];
-			if(frame.print){
+			if(frame.print) {
 				frame.print();
-			}else if(frame.contentWindow){
+			}else if(frame.contentWindow) {
 				frame.contentWindow.print();
 			}
-		} ;
-		 
-		
-		$scope.closeDocument=function(){
+		};
+
+		$scope.closeDocument = function() {
 			$documentNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
-		}
-		
+		};
+
 		console.log("documentExecutionControllerFn OUT ");
 	};
 
-	documentExecutionApp.directive('iframeSetDimensionsOnload', [function(){
+	documentExecutionApp.directive('iframeSetDimensionsOnload', [function() {
 		return {
 			restrict: 'A',
-			link: function(scope, element, attrs){
-				element.on('load', function(){
+			link: function(scope, element, attrs) {
+				element.on('load', function() {
 					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
 					element.css('height', iFrameHeight);				
 					element.css('width', '100%');
@@ -236,8 +220,4 @@
 			}
 		};
 	}]);
-
-})();	
-
-
-
+})();

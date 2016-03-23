@@ -1,7 +1,8 @@
 (function() {
-	angular.module('documentExecutionModule')
-	.service('documentExecuteServices', function($mdToast) {
-		var obj = {
+	var documentExecutionModule = angular.module('documentExecutionModule');
+	
+	documentExecutionModule.service('documentExecuteServices', function($mdToast) {
+		var documentExecuteServicesObj = {
 			decodeRequestStringToJson: function (str) {
 				var hash;
 				var parametersJson = {};
@@ -21,10 +22,10 @@
 				'OK').highlightAction(false).hideDelay(timer));
 			},
 
-			buildStringParameters : function (documentParameters){
+			buildStringParameters : function (documentParameters) {
 				var jsonDatum =  {};
-				if(documentParameters.length > 0){
-					for(var i = 0; i < documentParameters.length; i++ ){
+				if(documentParameters.length > 0) {
+					for(var i = 0; i < documentParameters.length; i++ ) {
 						var parameter = documentParameters[i];
 						var valueKey = parameter.urlName;
 						var descriptionKey = parameter.urlName + "_field_visible_description";					
@@ -48,17 +49,59 @@
 				return jsonDatum;
 			},
 			
+			recursiveChildrenChecks : function(parameterValue, childrenArray) {
+				childrenArray = childrenArray || [];
+				
+				for(var i = 0; i < childrenArray.length; i++) {
+					var childItem = childrenArray[i];
+					if(childItem.checked && childItem.checked == true) {
+						parameterValue.push(childItem);
+					}
+					
+					if(!childItem.leaf) {
+						documentExecuteServicesObj.recursiveChildrenChecks(parameterValue, childItem.children);
+					}
+				}
+			},
+			
+			resetParameterInnerLovData: function(childrenArray) { 
+				childrenArray = childrenArray || [];
+				
+				for(var i = 0; i < childrenArray.length; i++) {
+					var childItem = childrenArray[i];
+					childItem.checked = false;
+					
+					if(!childItem.leaf) {
+						documentExecuteServicesObj.resetParameterInnerLovData(childItem.children);
+					}
+				}
+			},
+			
 			resetParameter: function(parameter) {
 				if(parameter.valueSelection.toLowerCase() == 'lov') {
-					if(parameter.multivalue) {
-						parameter.parameterValue = [];
-						
-						for(var j = 0; j < parameter.defaultValues.length; j++) {
-							var defaultValue = parameter.defaultValues[j];
-							defaultValue.isSelected = false;
+					if(parameter.selectionType.toLowerCase() == 'tree') {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							
+							documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
+//							for(var j = 0; j < parameter.children.length; j++) {
+//								var child = parameter.children[j];
+//								child.checked = false;
+//							}
+						} else {
+							parameter.parameterValue = '';
 						}
 					} else {
-						parameter.parameterValue = '';
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							
+							for(var j = 0; j < parameter.defaultValues.length; j++) {
+								var defaultValue = parameter.defaultValues[j];
+								defaultValue.isSelected = false;
+							}
+						} else {
+							parameter.parameterValue = '';
+						}
 					}
 				} else {
 					parameter.parameterValue = '';
@@ -66,40 +109,56 @@
 			},
 			
 			showParameterHtml: function(parameter) {
-				if(parameter.valueSelection.toLowerCase() == 'lov' && parameter.multivalue) {
-					parameter.parameterValue = parameter.parameterValue || [];
-					var toReturn = parameter.parameterValue.join(",<br/>");
-					return toReturn;
+				if(parameter.selectionType.toLowerCase() == 'tree') {
+					if(parameter.multivalue) {
+						
+						var toReturn = '';
+						
+						parameter.parameterValue = [];
+						
+						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue, parameter.children);
+						
+						for(var i = 0; i < parameter.parameterValue.length; i++) {
+							var parameterValueItem = parameter.parameterValue[i];
+							
+							if(i > 0) {
+								toReturn += ",<br/>";
+							}
+							toReturn += parameterValueItem.value;
+						}
+						
+						return toReturn;
+						
+					} else {
+						return (parameter.parameterValue && parameter.parameterValue.value)?
+								parameter.parameterValue.value : '';
+					}
 				} else {
-					parameter.parameterValue = parameter.parameterValue || '';
-					return parameter.parameterValue;
+					if(parameter.multivalue) {
+						parameter.parameterValue = parameter.parameterValue || [];
+						var toReturn = parameter.parameterValue.join(",<br/>");
+						return toReturn;
+					} else {
+						parameter.parameterValue = parameter.parameterValue || '';
+						return parameter.parameterValue;
+					}
 				}
 			}
 		};
-		return obj;
+		return documentExecuteServicesObj;
 	});
-})();
-
-
-
-(function() {
-	angular.module('documentExecutionModule')
-	.service('docExecute_pageviewService', function() {
-				this.currentView ='DOCUMENT' ;				
-				this.setCurrentView = function(currentView){
-					this.currentView = currentView;
-				};
-				this.getCurrentView = function(){
-					return this.currentView;
-				};
+	
+	documentExecutionModule.service('docExecute_pageviewService', function() {
+			this.currentView ='DOCUMENT' ;				
+			this.setCurrentView = function(currentView) {
+				this.currentView = currentView;
+			};
+			this.getCurrentView = function() {
+				return this.currentView;
+			};
 	});
-})();
-
-
-
-(function() {
-	angular.module('documentExecutionModule')
-	.service('docExecute_urlViewPointService', function(execProperties,
+	
+	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories) {
 		
@@ -108,7 +167,7 @@
 		serviceScope.documentUrl = '';
 		
 		this.executionProcesRestV1 = function(role, paramsStr) {			
-			if(typeof paramsStr === 'undefined'){
+			if(typeof paramsStr === 'undefined') {
 				paramsStr='{}';
 			}
 			var params = 
@@ -119,17 +178,17 @@
 			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
 				function(data, status, headers, config) {					
 					console.log(data);
-					if(data['documentError'] && data['documentError'].length > 0 ){
+					if(data['documentError'] && data['documentError'].length > 0 ) {
 						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
 						var alertDialog = $mdDialog.alert()
 						.title(sbiModule_translate.load("sbi.generic.warning"))
 						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));						
 						$mdDialog.show( alertDialog );
 					}else{
-						if(data['errors'].length > 0 ){
+						if(data['errors'].length > 0 ) {
 							var strErros='';
-							for(var i=0; i<=data['errors'].length-1;i++){
-								strErros=strErros + data['errors'][i].description + '. \n';
+							for(var i = 0; i<=data['errors'].length-1;i++) {
+								strErros = strErros + data['errors'][i].description + '. \n';
 							}
 							//sbiModule_messaging.showErrorMessage(strErros, 'Error');
 							var alertDialog = $mdDialog.alert()
@@ -137,7 +196,7 @@
 							.content(strErros).ok(sbiModule_translate.load("sbi.general.ok"));
 							$mdDialog.show( alertDialog );
 						}else{
-							serviceScope.documentUrl=data.url;
+							serviceScope.documentUrl = data.url;
 							//angular.copy(data.url, serviceScope.documentUrl);
 						}	
 					}	
@@ -147,10 +206,10 @@
 				});
 		};
 		
-		this.getViewpoints = function(){
+		this.getViewpoints = function() {
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='FILTER_SAVED';
-			execProperties.isParameterRolePanelDisabled.status=true;
+			execProperties.isParameterRolePanelDisabled.status = true;
 			sbiModule_restServices.get(
 					"1.0/documentviewpoint", 
 					"getViewpoints",
@@ -169,12 +228,12 @@
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role;
 			sbiModule_restServices.get("1.0/documentexecution", "filters", params)
-			.success(function(response, status, headers, config){
+			.success(function(response, status, headers, config) {
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
-				if(response && response.filterStatus && response.filterStatus.length>0){
+				if(response && response.filterStatus && response.filterStatus.length>0) {
 					//check default parameter control TODO										
-					execProperties.showParametersPanel.status=true;
+					execProperties.showParametersPanel.status = true;
 					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
 						$mdSidenav('parametersPanelSideNav').open();
 					}
@@ -194,8 +253,7 @@
 			});
 		};
 		
-		
-		this.createNewViewpoint = function(){
+		this.createNewViewpoint = function() {
 			$mdDialog.show({
 				//scope : serviceScope,
 				preserveScope : true,				
@@ -219,7 +277,7 @@
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
 						   .success(function(data, status, headers, config) {
-							if(data.errors && data.errors.length > 0 ){
+							if(data.errors && data.errors.length > 0 ) {
 								documentExecuteServices.showToast(data.errors[0].message);
 							}else{
 								$mdDialog.hide();
@@ -237,25 +295,20 @@
 					};
 				},
 
-				templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
+				templateUrl : sbiModule_config.contextName 
+					+ '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
-		
-		
 	});
-})();
-
-
-(function() {
-	angular.module('documentExecutionModule')
-	.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav) {
+	
+	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav) {
 				
-		this.checkParameterRolePanelDisabled = function(){
+		this.checkParameterRolePanelDisabled = function() {
 			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
 					&& (execProperties.roles.length==1));
 		};
 		
-		this.returnToDocument = function(){
+		this.returnToDocument = function() {
 			execProperties.currentView.status = 'DOCUMENT';
 			execProperties.parameterView.status='';
 			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
@@ -274,8 +327,7 @@
 			return false
 		};
 		
-		
-		this.toggleParametersPanel = function(){
+		this.toggleParametersPanel = function() {
 			if(execProperties.showParametersPanel.status) {
 				$mdSidenav('parametersPanelSideNav').close();
 			} else {
@@ -283,25 +335,5 @@
 			}
 			execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
-		
 	});
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

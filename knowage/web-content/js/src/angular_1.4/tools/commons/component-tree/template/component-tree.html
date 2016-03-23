@@ -1,37 +1,50 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="componentTreeHtmlScript">
+<!--
 <div layout="row" layout-align="start center" class="customTreeNode" 
-		ui-tree-handle ng-class="{'hover-element' : folder.isHover}"
-		ng-mouseenter="folder.isHover = true"
-		ng-mouseleave="folder.isHover = undefined">
+		ng-class="{'hover-element' : node.isHover}"
+		ng-mouseenter="node.isHover = true" ui-tree-handle
+		ng-mouseleave="node.isHover = undefined"
+>
+-->
+<div layout="row" layout-align="start center" class="customTreeNode">
+
 	<div layout="row" layout-align="start center">
-		<md-checkbox ng-if="multiSelect" ng-checked="folder.checked"
-				ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>
-		<md-icon ng-click='openFolder(folder)'
-				ng-if="!folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0)"
+		<md-checkbox ng-if="multiSelect" ng-checked="node.checked"
+				ng-click="toogleSelected(node)" aria-label="Checkbox"></md-checkbox>
+		
+		<md-icon ng-click="openFolder(node)"
+				ng-if="isFolder(node)"
 				md-font-icon="{{iconFolder}}"></md-icon>
-		<md-icon ng-click='openFolder(folder)'
-				ng-if="folder.expanded && folder[subfoldersId] !== undefined && (folder[subfoldersId].length > 0 || folder.biObjects.length > 0) "
+		<md-icon ng-click="openFolder(node)"
+				ng-if="isOpenFolder(node)"
 				md-font-icon="{{iconFolderOpen}}"></md-icon>
-		<md-icon ng-click='openFolder(folder)' ng-if="(folder[subfoldersId].length == 0 && (folder.biObjects == undefined || folder.biObjects.length == 0))" md-font-icon="{{iconFolderOpen}}"></md-icon>
-		<md-icon ng-click='openFolder(folder)' ng-if="folder[subfoldersId] === undefined &&(folder[subfoldersId].length != 0 && (folder.biObjects != undefined || folder.biObjects.length != 0))" md-font-icon="{{iconDocument}}"></md-icon>
-		<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
-			<md-icon ng-if='folder.sortDirection=="asc"'
-				ng-click='toogleSort(folder)' class="fa fa-sort-asc"></md-icon>
-			<md-icon ng-if='folder.sortDirection=="desc"'
-				ng-click='toogleSort(folder)' class="fa fa-sort-desc"></md-icon>
+		<!--
+		<md-icon ng-click="openFolder(node)"
+				ng-if="isOpenFolder(node)"
+				md-font-icon="{{iconFolderOpen}}"></md-icon>
+		-->
+		<md-icon ng-click="openFolder(node)"
+				ng-if="isDocument(node)"
+				md-font-icon="{{iconDocument}}"></md-icon>
+		
+		<div ng-if="orderBy !== undefined && orderBy.length > 0 && node.type =='node'">
+			<md-icon ng-if="node.sortDirection=='asc'"
+				ng-click="toogleSort(node)" class="fa fa-sort-asc"></md-icon>
+			<md-icon ng-if="node.sortDirection=='desc'"
+				ng-click="toogleSort(node)" class="fa fa-sort-desc"></md-icon>
 		</div>
-		<div ng-click='openFolder(folder)' class="line-container">
-			<span> &nbsp;{{folder[label]}}</span>
+		<div ng-click="openFolder(node)" class="line-container">
+			<span> &nbsp;{{node[label]}}</span>
 		</div>
 	</div>
 	<div class="menu-container"
-		ng-if="menuOption.length!=0 && menuOption!=undefined"
-		ng-show="folder.isHover" layout="row" layout-aling="end center">
+			ng-if="menuOption.length!=0 && menuOption!=undefined"
+			ng-show="node.isHover" layout="row" layout-aling="end center">
 		<div class="icon-container" ng-repeat=" menuItem in menuOption"
-				role="menuitem" ng-click='menuItem.action(folder,folder.$parent,$event)'
-				ng-if='menuItem.showItem === undefined || menuItem.showItem(folder,$event)'
-				tabindex='{{$index}}'>
+				role="menuitem" ng-click="menuItem.action(node, node.$parent,$event)"
+				ng-if="menuItem.showItem === undefined || menuItem.showItem(node, $event)"
+				tabindex="{{$index}}">
 			<md-icon md-font-icon="{{menuItem.icon}}"></md-idcon> 
 			<md-tooltip md-direction="left">{{menuItem.label}}</md-tooltip>
 		</div>
@@ -39,33 +52,41 @@
 </div>
 
 <ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}"
-		ui-tree-nodes="" ng-model="folder[subfoldersId]"
-		ng-if="folder.expanded">
-	<li layout="column" layout-align="start stretch" ng-show="folder.visible"
-			ng-repeat="folder in folder[subfoldersId]"
+		ui-tree-nodes="" ng-model="node[subfoldersId]"
+		ng-if="node.expanded">
+	<li layout="column" layout-align="start stretch" ng-show="node.visible"
+			ng-repeat="node in node[subfoldersId]"
 			ui-tree-node ng-include="'componentTreeHtmlScript'"></li>
-	<li ng-if="showFiles && folder.biObjects !== undefined && folder.biObjects.length > 0"
+	<!--
+	<li ng-if="showFiles && node.biObjects !== undefined && node.biObjects.length > 0"
 			layout="column" layout-align="start stretch"
-			ng-repeat="folder in folder.biObjects" ng-show="folder.visible"
+			ng-repeat="node in node.biObjects" ng-show="node.visible"
 			ui-tree-node ng-include="'componentTreeHtmlScript'"></li>
+	-->
 </ol>
 </script>
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
-<div ng-show='seeTree == true'>
+<div ng-show="seeTree==true">
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
 		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
-			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
-				<li layout="column" layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'componentTreeHtmlScript'"
-					ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+			<ol id="{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
+				<li layout="column" layout-align="start stretch" ng-repeat="node in folders" ui-tree-node
+						ng-include="'componentTreeHtmlScript'"
+						ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 				</li>
 			</ol>
 		</div>
+		
+		<!--
+		<span style="font-size:8px;">{{selectedItem|json}}</span>
+		-->
 	</div>
 </div>
  
-<md-content class='waitingContainer' ng-hide='seeTree == true' layout='row' layout-padding layout-align ='space-around center'>
+<md-content class="waitingContainer" ng-hide="seeTree==true" 
+		layout="row" layout-padding layout-align="space-around center">
 	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	<h4>Please wait...</h4>
 </md-content>
@@ -92,9 +113,11 @@
 	margin-left: 5px;
 }
 
+/*
 .hover-element {
 	background-color: rgba(144, 144, 144, 0.5);
 }
+*/
 
 .waitingContainer {
 	max-width: 100%;
@@ -179,5 +202,14 @@ md-toolbar.minihead-tree-small {
 	background-color: #3B668C !important;
 	color: white !important;
 	height: 35px;
+}
+
+.customTreeNode .selectedNode {
+	font-weight: bold;
+}
+
+.customTreeNode:hover {
+	background-color: rgba(144, 144, 144, 0.5);
+	cursor: pointer;
 }
 </style>
