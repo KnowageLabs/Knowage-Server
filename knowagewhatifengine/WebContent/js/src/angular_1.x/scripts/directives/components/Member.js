@@ -5,9 +5,17 @@ angular.module('member_directive',[])
 	        link: function (scope, element, attrs) {
 	            
 	            scope.selectedMember = {};
-	            scope.members = [];
+	            for(var i =0;i< scope.members.length;i++){
+	            	if(scope.members[i].uniqueName===element[0].attributes['uniqueName'].value){
+	            		
+	            		element[0].className = 'x-pivot-header-column-selected';
+	            		break;
+	            	}
+	            	
+	            }
+	            
 	           
-	         element.bind('mousedown', function ($event) {
+	         element.bind('click', function ($event,toaster) {
 	        	 
 	        	
 	        		 
@@ -19,7 +27,7 @@ angular.module('member_directive',[])
 			            for(var i =0;i< scope.members.length;i++){
 			            	if(scope.members[i].uniqueName===scope.selectedMember.uniqueName){
 			            		contains = true;
-			            		scope.members.pop(scope.members[i]);
+			            		scope.members.splice(i,1);
 			            		element[0].className = 'x-pivot-header-column';
 			            		break;
 			            	}
