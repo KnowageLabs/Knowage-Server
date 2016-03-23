@@ -245,12 +245,7 @@ function documentBrowserFunction($scope, $http, $mdSidenav, $mdDialog, sbiModule
 		}
 
 	} ];
-	
-	$scope.getImageUrl=function(document){
-		switch(document.typeCode){
-		case "CHART" : return "/knowage/themes/sbi_default/img/analiticalmodel/browser/document_locatiointelligence.png";
-		}
-	}
+	 
 	
 };
 

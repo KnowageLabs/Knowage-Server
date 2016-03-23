@@ -6,12 +6,23 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller( 'documentBrowserNavigationController', ['$scope','$rootScope',documentBrowserMasterFunction]);
-function documentBrowserMasterFunction($scope,$rootScope){
+app.controller( 'documentBrowserNavigationController', ['$scope',documentBrowserMasterFunction]);
+function documentBrowserMasterFunction($scope){
 	$scope.runningDocuments=[];
-	$rootScope.test="ciaoi";
-	$rootScope.closeDocument=function(docId){
-		alert("chiudo il documento... todo",docId)
+	
+	$scope.removeDocumentFromList=function(docId){
+		 for(var index in $scope.runningDocuments){
+				if($scope.runningDocuments[index].id==docId){
+					$scope.runningDocuments.splice(index,1);
+					break;
+				}
+			}
 	}
+	
+	 $scope.closeDocument=function(docId){
+		 $scope.removeDocumentFromList(docId)
+		 $scope.$apply();
+	 }
+	
 }
 

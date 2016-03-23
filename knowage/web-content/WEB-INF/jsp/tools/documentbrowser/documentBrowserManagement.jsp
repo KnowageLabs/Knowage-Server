@@ -55,7 +55,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 
 	 
 	 <md-tab ng-repeat="doc in runningDocuments">
-	 <md-tab-label>{{doc.label}}</md-tab-label>
+	 <md-tab-label>
+	 {{doc.label}}
+	  <md-button class="md-icon-button tabCloseButton" aria-label="close document" ng-click="removeDocumentFromList(doc.id)">
+            <md-icon md-font-icon="fa fa-times"></md-icon>
+      </md-button>
+	 </md-tab-label>
 	 <md-tab-body> 
 	 <iframe layout-fill class=" noBorder" ng-src="{{doc.url}}"> </iframe>
 	 

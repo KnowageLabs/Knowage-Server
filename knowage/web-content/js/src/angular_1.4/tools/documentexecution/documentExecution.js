@@ -11,16 +11,20 @@
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 	
+	documentExecutionApp.factory('$documentNavigationScope', function($window) {
+		  return $window.parent.angular.element($window.frameElement).scope().$parent;
+	});
+	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$rootScope',
+			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$documentNavigationScope',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$rootScope) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$documentNavigationScope) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -214,7 +218,7 @@
 		 
 		
 		$scope.closeDocument=function(){
-//			$rootScope.closeDocument($scope.executionInstance.OBJECT_ID); 
+			$documentNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		}
 		
 		console.log("documentExecutionControllerFn OUT ");

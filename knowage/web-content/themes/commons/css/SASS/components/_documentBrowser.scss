@@ -80,8 +80,7 @@
 	}
 		
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item {
-		padding-top:2px;
-		padding-bottom:2px;
+		padding: 2px 23px;
 		color:rgb(183, 183, 183);
 	}
 	
@@ -97,6 +96,17 @@
 		font-size: 15px;
 		padding-top: 4px;
 		color:rgb(183, 183, 183);
+	}
+	
+	md-tabs.documentNavigationToolbar .tabCloseButton{
+	    height: 20px;
+	    width: 20px;
+	    min-height: 20px;
+	   }
+	
+	md-tabs.documentNavigationToolbar .tabCloseButton md-icon{
+	    color: white!important; 
+   		line-height: 20px; 
 	}
 	 
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper .md-tab.md-active,
