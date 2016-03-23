@@ -179,7 +179,14 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	};
 	
 	$scope.editDocument=function(){
-		alert("todo")
+		 $mdDialog.show({
+ 		      controller: DialogEditDocumentController,
+ 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/editDocumentTemplate.jsp',  
+ 		      clickOutsideToClose:true,
+ 		      fullscreen: true,
+ 		      locals:{
+ 		    	 }
+ 		    })
 	};
 	
 	$scope.deleteDocument = function(Document){
@@ -271,40 +278,13 @@ app.factory('setFocus', function($rootScope, $timeout) {
 	}
 });
 
-var assert = function(condition, message) {
-	if (!condition) {
-		message = message || "Assertion failed";
-		if (typeof Error !== "undefined") {
-			throw new Error(message);
-		}
-		throw message; // Fallback
-	}
-};
 
-var reverseInPlace = function (array) {
-	assert(array != null);
-	for (var i=0;i<Math.floor(array.length/2);i++) {
-		var tmp=array[i];
-		array[i]=array[array.length-1-i];
-		array[array.length-1-i]=tmp;
-	}
-};
-
-var getFolderById = function(folderId, folders) {
-	for (var i = 0; i < folders.length; i++) {
-		var folder = folders[i];
-		if (folder.id === folderId) {
-			return folder;
-		}
-		var subFolder = getFolderById(folderId, folder.subfolders);
-		if(subFolder !== null) {
-			return subFolder; 
-		}
-	}
-	return null;
+function DialogEditDocumentController($scope, sbiModule_translate){
+	$scope.translate=sbiModule_translate;
+	$scope.editDocumentUrl="http://192.168.40.220:8080/knowage/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=11";
 }
 
 
-var stringStartsWith=function (s, prefix) {
-	return s.toLowerCase().slice(0, prefix.length) == prefix.toLowerCase();
-};
+
+
+

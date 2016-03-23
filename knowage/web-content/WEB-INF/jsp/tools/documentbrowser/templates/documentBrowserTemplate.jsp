@@ -92,7 +92,7 @@
 				</md-content>
 			
 			<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
-					<md-toolbar class="secondaryToolbar">
+					<md-toolbar class="ternaryToolbar">
 	<!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->
 						<div layout="row" layout-align="space-around center">
 							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
