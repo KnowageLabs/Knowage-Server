@@ -3,24 +3,28 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiTarget" table="SBI_KPI_TARGET" >
-        <id name="targetId" type="integer">
-            <column name="TARGET_ID" />
-   <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">none</param>
-		<param name="segment_value">SBI_KPI</param>	
-		<param name="initial_value">1</param>	
-   </generator>
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiTarget" table="SBI_KPI_TARGET" >
+        <id name="targetId" column="TARGET_ID" type="integer">
+		    <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_KPI_TARGET</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
-        <many-to-one name="categoryId" class="it.eng.spagobi.commons.metadata.SbiDomains">
+        <property name="name" type="string" column="NAME" />
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="CATEGORY_ID" />
         </many-to-one>
-        <property name="startValidity" type="string">
-            <column name="START_VALIDITY_DAY" length="400" not-null="true" />
-        </property>
-        <property name="endValidity" type="string">
-            <column name="END_VALIDITY_DAY" length="400" not-null="true" />
-        </property>
+        <property name="startValidity" type="timestamp" column="START_VALIDITY_DAY" not-null="true"/>
+        <property name="endValidity" type="timestamp" column="END_VALIDITY_DAY" not-null="false" />
+        
+        <set name="sbiKpiTargetValues" inverse="true" cascade="all-delete-orphan">
+            <key>
+                <column name="TARGET_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiTargetValue" />
+        </set>
+        
        <component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
         <property name="userIn" type="string">
@@ -54,13 +58,6 @@
             <column name="ORGANIZATION" length="20" not-null="false" />
         </property>  			 
   </component> 
-        
-        <set name="sbiKpiTargetValues" inverse="true">
-            <key>
-                <column name="TARGET_ID" />
-            </key>
-            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" />
-        </set>
         
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>

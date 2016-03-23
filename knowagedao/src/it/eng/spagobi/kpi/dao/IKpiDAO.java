@@ -24,6 +24,7 @@ import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -170,4 +171,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public List<String> listPlaceholderByMeasures(List<String> measureList);
 
+	public List<Target> listTarget();
+
+	public Target loadTarget(Integer id);
+
+	public Integer insertTarget(Target target);
+
+	public void updateTarget(Target target);
+
+	public void removeTarget(Integer id);
 }

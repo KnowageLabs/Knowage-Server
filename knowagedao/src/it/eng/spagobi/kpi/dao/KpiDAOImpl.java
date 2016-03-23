@@ -34,6 +34,8 @@ import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
@@ -43,6 +45,8 @@ import it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder;
 import it.eng.spagobi.kpi.metadata.SbiKpiRule;
 import it.eng.spagobi.kpi.metadata.SbiKpiRuleId;
 import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
+import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
+import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -79,6 +83,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String NEW_KPI_KPI_NOT_FOUND = "newKpi.kpiNotFound";
 	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
+	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
 	private static final String MEASURE = "MEASURE";
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
@@ -1017,6 +1022,139 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			// This threshold is used by other kpi
 			return true;
 		}
+	}
+
+	@Override
+	public List<Target> listTarget() {
+		List<SbiKpiTarget> lst = list(new ICriterion<SbiKpiTarget>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiKpiTarget.class).addOrder(Order.desc("startValidity"));
+			}
+		});
+		List<Target> targetList = new ArrayList<>();
+		for (SbiKpiTarget sbiKpiTarget : lst) {
+			targetList.add(from(sbiKpiTarget, false));
+		}
+		return targetList;
+	}
+
+	private Target from(SbiKpiTarget sbiKpiTarget, boolean full) {
+		Target target = new Target();
+		target.setId(sbiKpiTarget.getTargetId());
+		target.setName(sbiKpiTarget.getName());
+		target.setAuthor(sbiKpiTarget.getCommonInfo().getUserIn());
+		target.setStartValidity(sbiKpiTarget.getStartValidity());
+		target.setEndValidity(sbiKpiTarget.getEndValidity());
+		if (sbiKpiTarget.getCategory() != null) {
+			target.setCategory(from(sbiKpiTarget.getCategory()));
+		}
+		if (full) {
+			for (SbiKpiTargetValue sbiValue : sbiKpiTarget.getSbiKpiTargetValues()) {
+				target.getValues().add(from(sbiValue));
+			}
+		}
+		return target;
+	}
+
+	private TargetValue from(SbiKpiTargetValue sbiValue) {
+		return new TargetValue(sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getId(), sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getVersion(), sbiValue
+				.getSbiKpiTarget().getTargetId(), sbiValue.getValue());
+	}
+
+	@Override
+	public Target loadTarget(final Integer id) {
+		return executeOnTransaction(new IExecuteOnTransaction<Target>() {
+			@Override
+			public Target execute(Session session) throws Exception {
+				return from((SbiKpiTarget) session.load(SbiKpiTarget.class, id), true);
+			}
+		});
+	}
+
+	@Override
+	public Integer insertTarget(final Target target) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				SbiKpiTarget sbiTarget = from(target, null, session);
+				updateSbiCommonInfo4Insert(sbiTarget);
+				for (TargetValue targetValue : target.getValues()) {
+					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
+					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
+					updateSbiCommonInfo4Insert(sbiValue);
+					session.save(sbiValue);
+				}
+				return (Integer) session.save(sbiTarget);
+			}
+		});
+	}
+
+	private SbiKpiTarget from(Target target, SbiKpiTarget sbiTarget, Session session) {
+		if (sbiTarget == null) {
+			sbiTarget = new SbiKpiTarget();
+		}
+		sbiTarget.setName(target.getName());
+		sbiTarget.setStartValidity(target.getStartValidity());
+		sbiTarget.setEndValidity(target.getEndValidity());
+		// handling Category
+		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_MEASURE_CATEGORY);
+		sbiTarget.setCategory(category);
+		return sbiTarget;
+	}
+
+	@Override
+	public void updateTarget(final Target target) {
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+			@Override
+			public Boolean execute(Session session) throws Exception {
+				SbiKpiTarget sbiTarget = (SbiKpiTarget) session.load(SbiKpiTarget.class, target.getId());
+				sbiTarget = from(target, sbiTarget, session);
+				// Removing old values
+				Iterator<SbiKpiTargetValue> targetIterator = sbiTarget.getSbiKpiTargetValues().iterator();
+				while (targetIterator.hasNext()) {
+					SbiKpiTargetValue sbiValue = targetIterator.next();
+					boolean found = false;
+					for (TargetValue targetValue : target.getValues()) {
+						if (sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getId().equals(targetValue.getKpiId())
+								&& sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getVersion().equals(targetValue.getKpiVersion())) {
+							found = true;
+						}
+					}
+					if (!found) {
+						targetIterator.remove();
+					}
+				}
+				// Adding new values
+				for (TargetValue targetValue : target.getValues()) {
+					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
+					updateSbiCommonInfo4Insert(sbiValue);
+					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
+				}
+				updateSbiCommonInfo4Update(sbiTarget);
+				session.save(sbiTarget);
+				return Boolean.TRUE;
+			}
+
+		});
+	}
+
+	private SbiKpiTargetValue from(TargetValue targetValue, SbiKpiTarget sbiTarget, Session session) {
+		SbiKpiTargetValue sbiValue = new SbiKpiTargetValue();
+		SbiKpiKpi kpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(targetValue.getKpiId(), targetValue.getKpiVersion()));
+		sbiValue.setSbiKpiKpi(kpi);
+		sbiValue.setSbiKpiTarget(sbiTarget);
+
+		/*
+		 * sbiValue.setKpiId(targetValue.getKpiId()); sbiValue.setKpiVersion(targetValue.getKpiVersion()); sbiValue.setTargetId(sbiTarget.getTargetId());
+		 */
+		sbiValue.setValue(targetValue.getValue());
+		return sbiValue;
+	}
+
+	@Override
+	public void removeTarget(Integer id) {
+		delete(SbiKpiTarget.class, id);
 	}
 
 }
