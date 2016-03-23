@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body>
 	<angular-list-detail ng-controller="kpiTargetController" full-screen=true >
-		<list label="translate.load('sbi.kpi.list')"  ng-controller="listController"   new-function="addTarget" >
+		<list  ng-controller="listController"   new-function="addTarget" >
 		<angular-table 
 		id='targetListTable' ng-model=targets
 		columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Data Start Validation","name":"startValidation"},{"label":"Data End Validation","name":"endValidation"}]'
