@@ -65,7 +65,7 @@ public class ModelConfig implements Serializable {
 	}
 
 	public void setRowsSet(int rowsSet) {
-		rowsSet = rowsSet;
+		this.rowsSet = rowsSet;
 	}
 
 	public int getRowCount() {
@@ -73,7 +73,7 @@ public class ModelConfig implements Serializable {
 	}
 
 	public void setRowCount(int rowCount) {
-		rowCount = rowCount;
+		this.rowCount = rowCount;
 	}
 
 	public int getStartColumn() {
@@ -89,7 +89,7 @@ public class ModelConfig implements Serializable {
 	}
 
 	public void setColumnSet(int columnSet) {
-		columnSet = columnSet;
+		this.columnSet = columnSet;
 	}
 
 	public int getColumnCount() {
@@ -97,7 +97,7 @@ public class ModelConfig implements Serializable {
 	}
 
 	public void setColumnCount(int columnCount) {
-		columnCount = columnCount;
+		this.columnCount = columnCount;
 	}
 
 	public Boolean getSortingEnabled() {

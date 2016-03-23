@@ -167,7 +167,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
 								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ " ')");
+										+ " '); $event.stopPropagation();");
 								startElement("img", attributes);
 								endElement("img");
 
@@ -175,7 +175,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 								attributes.put("src", "../img/plus.gif");
 								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ "' )");
+										+ "' ); $event.stopPropagation();");
 
 								startElement("img", attributes);
 								endElement("img");
