@@ -428,7 +428,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	  $scope.closeDialog = function(ev) {
 		  $mdDialog.hide();
 		  $scope.dtAssociatedLevels = [];
-		  $scope.selectedMDXFunction = {};
+		  $scope.selectedMDXFunction = null;
       }; 
      
       $scope.showCCWizard = function(){
@@ -446,6 +446,29 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     			});
     	}
       
+    $scope.checkValidity = function(){
+    	
+    	if($scope.selectedMDXFunction == null){
+    		return true;
+    	}else{
+    		if($scope.selectedMDXFunction.label == ""){
+    			return true;
+    		}else{
+    			return false;
+    		}
+    	}
+    }
+    $scope.checkValidityArgs = function(){
+    	for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
+    		if($scope.selectedMDXFunction.argument[i].text == undefined){
+    			return true;
+    		}else{
+        		return false;
+        	}
+    	} 
+    	
+    }
+      
 	$scope.selectMDXFunction = function(obj) {
 		$scope.selectedMDXFunction = obj;
 		$scope.selectedMDXFunction.label ="";
@@ -453,8 +476,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.openArgumentsdialog = function(){
-  	  
-    	
+		
 		$mdDialog
 			.show({
 				scope : $scope,
@@ -480,6 +502,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
         }
 		value +="}"
 		$scope.selectedMDXFunction.argument[index].text = value;
+		
 		}else {
 			for(var i =0;i< $scope.members.length;i++){
 		        value = $scope.members[i].uniqueName ;	
@@ -495,11 +518,14 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		
 		
 		$mdDialog.hide();
-		toastr.info('Please select value and tap this notification' , 'Select', { 
+		toastr.info('Click ok to finish selection<br /><br /><md-button class="md-raised">OK</md-button>' , { 
+			  allowHtml: true,
 			  timeOut: 0,
+			  extendedTimeOut: 0,
+			  
 			  onTap: function() {
 				  $scope.valuesArray.push($scope.formatValues(index,obj)); 
-				
+				  
 					  
 				  $scope.openArgumentsdialog();
 				  toastr.clear();
@@ -510,9 +536,23 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		
 	}
 	
-$scope.test = function() {
-	$scope.finalFormula = $scope.selectedMDXFunction.name + "(" + $scope.valuesArray[0]+","+$scope.valuesArray[1]+ ")";
-	$scope.addCC();		
+$scope.sendCC = function() {
+	var value = $scope.selectedMDXFunction.name + "(";
+	
+	if ($scope.selectedMDXFunction.argument.length>=1) {
+		value+=$scope.selectedMDXFunction.argument[0].text;
+	}
+	for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
+		if($scope.selectedMDXFunction.argument[i].text != undefined){
+			value+=","+$scope.selectedMDXFunction.argument[i].text;
+		}
+	}
+	value +=")"
+	console.log(value);
+	$scope.finalFormula = value;
+	console.log("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+	$scope.addCC();
+	$mdDialog.hide();
 	}
 	
 	/*
@@ -520,8 +560,7 @@ $scope.test = function() {
 	 * */
 	
 $scope.addCC = function() {
-		
-		sbiModule_restServices.promiseGet
+		sbiModule_restServices.promisePost
 		("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response) {
 			console.log(response);

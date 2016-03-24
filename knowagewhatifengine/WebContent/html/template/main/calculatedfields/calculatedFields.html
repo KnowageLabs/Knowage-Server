@@ -78,7 +78,7 @@
   </md-dialog-content>
 
     <md-dialog-actions layout="row">
-      <md-button ng-click="openArgumentsdialog()" >
+      <md-button ng-click="openArgumentsdialog()" ng-disabled="checkValidity()">
         OK
       </md-button>
       <md-button ng-click="closeDialog()" style="margin-right:20px;" >
