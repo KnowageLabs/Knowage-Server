@@ -19,6 +19,7 @@ package it.eng.knowage.initializer;
 
 import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.impl.mysql.MySQLBusinessModelInizializationTest;
+import it.eng.knowage.impl.mysql.MySQLFilteredModelInizializtaionTest;
 import it.eng.knowage.impl.mysql.MySQLPhysicalModelInizializationTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -34,6 +35,8 @@ public class ModelInitializationTestSuite extends TestCase {
 		if (TestConstants.enableTestsOnMySql) {
 			suite.addTestSuite(MySQLPhysicalModelInizializationTest.class);
 			suite.addTestSuite(MySQLBusinessModelInizializationTest.class);
+			suite.addTestSuite(MySQLFilteredModelInizializtaionTest.class);
+
 		}
 		if (TestConstants.enableTestsOnPostgres) {
 			// suite.addTestSuite(PostgresSQLDBCacheTest.class);

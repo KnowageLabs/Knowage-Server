@@ -18,6 +18,7 @@
 package it.eng.knowage.initializer;
 
 import it.eng.knowage.common.TestConstants;
+import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
@@ -34,6 +35,7 @@ import org.junit.Assert;
 public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	protected static BusinessModelInitializer businessModelInitializer;
+	protected static PhysicalModelInitializer physicalModelInitializer;
 
 	protected static DataSource dataSourceReading;
 	protected static TestConstants.DatabaseType dbType;
@@ -41,6 +43,10 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 	protected static Model rootModel;
 	protected static PhysicalModel physicalModel;
 	protected static BusinessModel businessModel;
+
+	protected static Model filteredModel;
+	protected static PhysicalModel filteredPhysicalModel;
+	protected static BusinessModel filteredBusinessModel;
 
 	static private Logger logger = Logger.getLogger(AbstractKnowageMetaTest.class);
 
@@ -70,6 +76,19 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 	protected void tearDown() throws Exception {
 		// clean
 		dataSourceReading = null;
+	}
+
+	protected void doTearDown() {
+		dbType = null;
+		rootModel = null;
+		physicalModel = null;
+		businessModel = null;
+		filteredModel = null;
+		filteredPhysicalModel = null;
+		filteredBusinessModel = null;
+		physicalModelInitializer = null;
+		businessModelInitializer = null;
+		// generator = null;
 	}
 
 	/*
@@ -111,6 +130,16 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 		}
 		if (rootModel != null && rootModel.getBusinessModels() != null && rootModel.getBusinessModels().size() > 0) {
 			businessModel = rootModel.getBusinessModels().get(0);
+		}
+	}
+
+	public void setFilteredModel(Model model) {
+		filteredModel = model;
+		if (filteredModel != null && filteredModel.getPhysicalModels() != null && filteredModel.getPhysicalModels().size() > 0) {
+			filteredPhysicalModel = filteredModel.getPhysicalModels().get(0);
+		}
+		if (filteredModel != null && filteredModel.getBusinessModels() != null && filteredModel.getBusinessModels().size() > 0) {
+			filteredBusinessModel = filteredModel.getBusinessModels().get(0);
 		}
 	}
 
