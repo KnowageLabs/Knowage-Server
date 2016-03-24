@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.common;
 
+import java.io.File;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -24,6 +26,8 @@ package it.eng.knowage.common;
 public class TestConstants {
 
 	// public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
+
+	public static File outputFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test");
 
 	public enum DatabaseType {
 		MYSQL, POSTGRES, ORACLE, SQLSERVER
