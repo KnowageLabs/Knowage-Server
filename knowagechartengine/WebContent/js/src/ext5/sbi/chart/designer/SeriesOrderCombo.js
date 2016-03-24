@@ -4,7 +4,8 @@ Ext.define('Sbi.chart.designer.SeriesOrderCombo', {
 	store: {
 		store: 'array',
 		fields: ['name', 'value'],
-		data: [ {name: LN('sbi.chartengine.designer.seriesorder.asc'), value:'asc'}, 
+		data: [ {name: LN('sbi.chartengine.designer.seriesorder.none'), value:''},
+		        {name: LN('sbi.chartengine.designer.seriesorder.asc'), value:'asc'}, 
 		        {name: LN('sbi.chartengine.designer.seriesorder.desc'), value:'desc'} ]
 	},
 	valueField: 'value',
