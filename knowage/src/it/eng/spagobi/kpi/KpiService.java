@@ -32,6 +32,7 @@ import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
@@ -429,6 +430,15 @@ public class KpiService {
 	}
 
 	@GET
+	@Path("/listKpiWithTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listKpiWithTarget(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<TargetValue> kpiList = dao.listKpiWithTarget();
+		return Response.ok(JsonConverter.objectToJson(kpiList, kpiList.getClass()).toString()).build();
+	}
+
+	@GET
 	@Path("/{id}/loadTarget")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response loadTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
@@ -444,6 +454,7 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Target target = (Target) JsonConverter.jsonToObject(requestVal, Target.class);
+			check(target);
 			IKpiDAO dao = getKpiDAO(req);
 			Integer id = target.getId();
 			if (id == null) {
@@ -452,7 +463,7 @@ public class KpiService {
 				dao.updateTarget(target);
 			}
 			return Response.ok(new JSONObject().put("id", id).toString()).build();
-		} catch (IOException | JSONException e) {
+		} catch (IOException | JSONException | SpagoBIException e) {
 			logger.error(req.getPathInfo(), e);
 		}
 		try {
@@ -461,6 +472,12 @@ public class KpiService {
 			logger.error(req.getPathInfo(), e);
 		}
 		return Response.ok().build();
+	}
+
+	private void check(Target target) throws SpagoBIException {
+		if (target.getName() == null || target.getStartValidity() == null || target.getValues() == null || target.getValues().isEmpty()) {
+			throw new SpagoBIException("Service [/saveTarget]: Some fields are mandatory");
+		}
 	}
 
 	@DELETE
