@@ -53,12 +53,14 @@ public class SQLServerDataBase extends AbstractDataBase {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BIT ";
+		} else if (javaTypeName.contains("java.sql.Time")) {
+			toReturn = " TIME ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " DATETIME ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " DATETIME ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
-			toReturn = " TEXT ";
+			toReturn = " VARBINARY(MAX) ";
 		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
 			toReturn = " TEXT ";
 		} else {

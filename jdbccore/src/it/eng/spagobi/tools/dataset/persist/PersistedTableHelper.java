@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -101,7 +100,13 @@ public class PersistedTableHelper {
 				if (fieldValue == null) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
 				} else {
-					insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
+					if (fieldValue instanceof Integer) {
+						insertStatement.setInt(fieldIndex + 1, (Integer) fieldValue);
+					} else if (fieldValue instanceof Short) {
+						insertStatement.setShort(fieldIndex + 1, (Short) fieldValue);
+					} else {
+						logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+					}
 				}
 			} else if (fieldMetaTypeName.contains("Integer")) {
 				// only for primitive type is necessary to use setNull method if value is null
@@ -164,7 +169,7 @@ public class PersistedTableHelper {
 					if (length > 0) {
 						sb.append(clob.getSubString(index, (int) length));
 					}
-					insertStatement.setClob(fieldIndex + 1, new StringReader(sb.toString()));
+					insertStatement.setString(fieldIndex + 1, sb.toString());
 				} else {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}

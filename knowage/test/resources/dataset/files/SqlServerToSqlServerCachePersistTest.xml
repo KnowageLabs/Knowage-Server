@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+	<cacheConfiguration
+		tableNamePrefix="sbicache"
+		spaceAvailable="104857600"
+		percentageToClean="50"
+		percentageToStore="50"
+		schemaName="ds_cache">
+		cacheConfiguration
+	</cacheConfiguration>
+	<readingDataSource
+		url="jdbc:sqlserver://FRALUCCHW\\SQLEXPRESS;databaseName=knowage"
+		user="sa"
+		password="root"
+		driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		hibDialectClass="org.hibernate.dialect.SQLServerDialect"
+		hibDialectName="sbidomains.nm.sqlserver">
+		datasource_read
+	</readingDataSource>
+	<writingDataSource
+		url="jdbc:sqlserver://FRALUCCHW\\SQLEXPRESS;databaseName=knowage"
+		user="sa"
+		password="root"
+		driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		hibDialectClass="org.hibernate.dialect.SQLServerDialect"
+		hibDialectName="sbidomains.nm.sqlserver">
+		datasource_write
+	</writingDataSource>
+	<table name="cachepersisttest">
+		<field writingType="java.lang.Long">colbigint</field>
+			<field writingType="[B">colbinary</field>
+			<field writingType="java.lang.Boolean">colbit</field>
+			<field writingType="java.lang.String">colchar</field>
+			<field writingType="java.sql.Date">coldate</field>
+			<field writingType="java.sql.Timestamp">coldatetime</field>
+			<field writingType="java.sql.Timestamp">coldatetime2</field>
+			<field writingType="java.math.BigDecimal">coldecimal</field>
+			<field writingType="java.lang.Double">colfloat</field>
+			<field writingType="[B">colimage</field>
+			<field writingType="java.lang.Integer">colint</field>
+			<field writingType="java.math.BigDecimal">colmoney</field>
+			<field writingType="java.lang.String">colnchar</field>
+			<field writingType="java.lang.String">colntext</field>
+			<field writingType="java.math.BigDecimal">colnumeric</field>
+			<field writingType="java.lang.String">colnvarchar</field>
+			<field writingType="java.lang.String">colnvarchar(max)</field>
+			<field writingType="java.lang.Float">colreal</field>
+			<field writingType="java.sql.Timestamp">colsmalldatetime</field>
+			<field writingType="java.lang.Integer">colsmallint</field>
+			<field writingType="java.math.BigDecimal">colsmallmoney</field>
+			<field writingType="java.lang.String">coltext</field>
+			<field writingType="java.sql.Time">coltime</field>
+			<field writingType="[B">coltimestamp</field>
+			<field writingType="java.lang.Integer">coltinyint</field>
+			<field writingType="[B">coludt</field>
+			<field writingType="java.lang.String">coluniqueidentifier</field>
+			<field writingType="[B">colvarbinary</field>
+			<field writingType="[B">colvarbinary(max)</field>
+			<field writingType="java.lang.String">colvarchar</field>
+			<field writingType="java.lang.String">colvarchar(max)</field>
+			<field writingType="java.lang.String">colxml</field>
+	</table>
+</test>

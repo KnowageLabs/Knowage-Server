@@ -53,6 +53,8 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BOOLEAN ";
+		} else if (javaTypeName.contains("java.sql.Time")) {
+			toReturn = " TIME ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " DATE ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
