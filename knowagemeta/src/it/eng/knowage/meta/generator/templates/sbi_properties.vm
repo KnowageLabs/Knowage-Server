@@ -1,0 +1,68 @@
+# ==================================================================
+# TABLES
+# ==================================================================
+
+#foreach ($jpaTable in $jpaTables)
+
+# $jpaTable.name
+
+${jpaTable.uniqueName}.visible = $jpaTable.getAttribute("structural.visible")
+${jpaTable.uniqueName}.type = $jpaTable.type
+${jpaTable.uniqueName}.position = $velocityCount
+
+#foreach ($jpaColumn in $jpaTable.getColumns())
+${jpaColumn.uniqueName}.visible = $jpaColumn.getAttribute("structural.visible")
+${jpaColumn.uniqueName}.type = $jpaColumn.getAttribute("structural.columntype")
+${jpaColumn.uniqueName}.attribute = $jpaColumn.getAttribute("structural.attribute")
+${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
+${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
+${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")
+${jpaColumn.uniqueName}.position = $velocityCount
+#end
+
+
+
+#end
+
+
+
+# ==================================================================
+# VIEWS
+# ==================================================================
+
+#foreach ($jpaView in $jpaViews)
+
+# $jpaView.name ----------------------------------------------------
+
+${jpaView.uniqueName}.visible = $jpaView.getAttribute("structural.visible")
+${jpaView.uniqueName}.type = $jpaView.getAttribute("structural.tabletype")
+
+# view columns (positions)
+#foreach ($jpaColumn in $jpaView.getColumns())
+${jpaColumn.uniqueName}.visible = $jpaColumn.getAttribute("structural.visible")
+${jpaColumn.uniqueName}.type = $jpaColumn.getAttribute("structural.columntype")
+${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
+${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
+${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")
+${jpaColumn.uniqueName}.position = $velocityCount
+#end
+
+
+#foreach ($jpaTable in $jpaView.innerTables)
+
+# $jpaView.name > $jpaTable.sqlName -----------
+
+${jpaTable.uniqueName}.visible = false
+${jpaTable.uniqueName}.type = dimension
+
+#foreach ($jpaColumn in $jpaTable.columns)
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.visible = $jpaColumn.getAttribute("structural.visible")
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.type = $jpaColumn.getAttribute("structural.columntype")
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
+#end
+
+#end
+
+#end

@@ -18,6 +18,7 @@
 package it.eng.knowage.initializer;
 
 import it.eng.knowage.common.TestConstants;
+import it.eng.knowage.meta.generator.IGenerator;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.business.BusinessModel;
@@ -36,6 +37,8 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	protected static BusinessModelInitializer businessModelInitializer;
 	protected static PhysicalModelInitializer physicalModelInitializer;
+
+	protected static IGenerator generator = null;
 
 	protected static DataSource dataSourceReading;
 	protected static TestConstants.DatabaseType dbType;
@@ -56,7 +59,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -69,7 +72,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override

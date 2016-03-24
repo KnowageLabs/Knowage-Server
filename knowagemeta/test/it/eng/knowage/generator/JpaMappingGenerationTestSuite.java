@@ -15,28 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage;
+package it.eng.knowage.generator;
 
-import it.eng.knowage.edit.ModelEditingTestSuite;
-import it.eng.knowage.generator.JpaMappingGenerationTestSuite;
-import it.eng.knowage.initializer.ModelInitializationTestSuite;
-import it.eng.knowage.serialization.ModelSerializationTestSuite;
+import it.eng.knowage.common.TestConstants;
+import it.eng.knowage.impl.mysql.MySqlJpaMappingTestSuite;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * @author Antonella Giachino (antonella.giachino@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class MetaTestSuite extends TestCase {
+public class JpaMappingGenerationTestSuite extends TestCase {
 	static public Test suite() {
-		TestSuite suite = new TestSuite("One test suite to bring them all");
-		suite.addTest(ModelInitializationTestSuite.suite());
-		suite.addTest(ModelEditingTestSuite.suite());
-		suite.addTest(ModelSerializationTestSuite.suite());
-		suite.addTest(JpaMappingGenerationTestSuite.suite());
-		// suite.addTest(ModelQueryTestSuite.suite());
+		TestSuite suite = new TestSuite("Generation tests");
+		if (TestConstants.enableTestsOnMySql)
+			suite.addTest(MySqlJpaMappingTestSuite.suite());
+		// if (TestConstants.enableTestsOnPostgres)
+		// suite.addTest(PostgresJpaMappingTestSuite.suite());
+
+		// add here test suites of other databases ...
 
 		return suite;
 	}

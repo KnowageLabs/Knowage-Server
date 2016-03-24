@@ -1,0 +1,17 @@
+##included template. Generates the @OneToMany annotation.
+##Assumes that the context has a "jpaRelationship" object representing the generated AssociationRole
+##
+#if ($jpaRelationship.isBidirectional())
+	#set ($members = $jpaRelationship.getOppositeWithAnnotation())
+	#set ($members = $jpaRelationship.getGenCascadesWithAnnotation($members))
+	#if($jpaRelationship.genFetch() !="" && $jpaRelationship.genFetch() !="FetchType.LAZY")
+		#set ($members = $jpaRelationship.getGenFetchWithAnnotation($members))
+	#end
+@OneToMany($members)
+#else
+	#set ($members = $jpaRelationship.getGenCascadesWithAnnotation())
+	#if($jpaRelationship.genFetch() !="" && $jpaRelationship.genFetch() !="FetchType.LAZY")
+		#set ($members = $jpaRelationship.getGenFetchWithAnnotation($members))
+	#end
+@OneToMany($members)
+#end

@@ -145,7 +145,17 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			 * TODO REVIEW FOR PORTING
 			 */
 			// templatesDirRelativePath = RL.getPropertyAsString("jpamapping.templates.dir", defaultTemplateFolderPath);
+			templatesDirRelativePath = "/it/eng/knowage/meta/generator/templates";
+			// InputStream is =
+			// getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customPhysicalProperties.xml");
 			// templateDir = RL.getFile(templatesDirRelativePath);
+			templateDir = new File(templatesDirRelativePath);
+
+			// DEBUG
+			System.out.println("templateDir.getAbsolutePath(): " + templateDir.getAbsolutePath());
+			System.out.println("templateDir.getCanonicalPath(): " + templateDir.getCanonicalPath());
+			// FINE DEBUG
+
 			logger.debug("Template dir is equal to [{}]", templateDir);
 			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
 
