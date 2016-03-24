@@ -23,12 +23,6 @@ import it.eng.knowage.meta.model.ModelObject;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,52 +79,29 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 		}
 	}
 
-	@Override
-	public void hideTechnicalResources() {
-		logger.debug("IN");
-		super.hideTechnicalResources();
-
-		File baseOutputDir = getBaseOutputDir();
-		File distDir = getDistDir();
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		try {
-			if (baseOutputDir != null && baseOutputDir.exists()) {
-				IProject proj = workspace.getRoot().getProject(baseOutputDir.getParentFile().getParentFile().getName());
-				IFolder iFolder = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName());
-				if (iFolder.exists()) {
-					iFolder.setHidden(true);
-					iFolder.setTeamPrivateMember(true);
-					iFolder.setDerived(true, null);
-				}
-				if (distDir != null && distDir.exists()) {
-					IFolder iFolderDist = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName() + "\\" + distDir.getName());
-					if (iFolderDist.exists()) {
-						iFolderDist.setHidden(true);
-						iFolderDist.setDerived(true, null);
-						IFolder iFolderSource = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName() + "\\"
-								+ JpaMappingCodeGenerator.DEFAULT_SRC_DIR);
-						iFolderSource.setHidden(true);
-						iFolderSource.setDerived(true, null);
-					}
-					if (iFolder.exists() || iFolderDist.exists()) {
-						workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-						proj.refreshLocal(IResource.DEPTH_INFINITE, null);
-					}
-				} else {
-					logger.warn("Exception occurred before creating distDir: no resource to hide");
-				}
-
-			} else {
-				logger.warn("Exception occurred before creating baseoutputDir: no resource to hide");
-			}
-
-		} catch (CoreException e) {
-			logger.error("Error in hiding technical model folders ", e);
-			throw new GenerationException("Error in hiding technical model folders", e);
-		}
-		logger.debug("OUT");
-
-	}
+	/**
+	 * Commented for porting META WEB
+	 */
+	/*
+	 * @Override public void hideTechnicalResources() { logger.debug("IN"); super.hideTechnicalResources();
+	 *
+	 * File baseOutputDir = getBaseOutputDir(); File distDir = getDistDir(); IWorkspace workspace = ResourcesPlugin.getWorkspace(); try { if (baseOutputDir !=
+	 * null && baseOutputDir.exists()) { IProject proj = workspace.getRoot().getProject(baseOutputDir.getParentFile().getParentFile().getName()); IFolder
+	 * iFolder = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName()); if (iFolder.exists()) { iFolder.setHidden(true);
+	 * iFolder.setTeamPrivateMember(true); iFolder.setDerived(true, null); } if (distDir != null && distDir.exists()) { IFolder iFolderDist =
+	 * proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName() + "\\" + distDir.getName()); if (iFolderDist.exists()) {
+	 * iFolderDist.setHidden(true); iFolderDist.setDerived(true, null); IFolder iFolderSource = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" +
+	 * baseOutputDir.getName() + "\\" + JpaMappingCodeGenerator.DEFAULT_SRC_DIR); iFolderSource.setHidden(true); iFolderSource.setDerived(true, null); } if
+	 * (iFolder.exists() || iFolderDist.exists()) { workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+	 * proj.refreshLocal(IResource.DEPTH_INFINITE, null); } } else { logger.warn("Exception occurred before creating distDir: no resource to hide"); }
+	 *
+	 * } else { logger.warn("Exception occurred before creating baseoutputDir: no resource to hide"); }
+	 *
+	 * } catch (CoreException e) { logger.error("Error in hiding technical model folders ", e); throw new
+	 * GenerationException("Error in hiding technical model folders", e); } logger.debug("OUT");
+	 *
+	 * }
+	 */
 
 	// =======================================================================
 	// ACCESSOR METHODS

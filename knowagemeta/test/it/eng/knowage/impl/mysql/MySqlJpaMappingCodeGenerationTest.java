@@ -153,8 +153,8 @@ public class MySqlJpaMappingCodeGenerationTest extends AbstractKnowageMetaTest {
 		assertNotNull(fileContents);
 		assertTrue(fileContents.contains("<provider>org.hibernate.ejb.HibernatePersistence</provider>"));
 
-		assertTrue(fileContents.contains("<class>it.eng.spagobi.meta.Employee</class>"));
-		assertTrue(fileContents.contains("<class>it.eng.spagobi.meta.Position</class>"));
+		assertTrue(fileContents.contains("<class>it.eng.knowage.meta.Employee</class>"));
+		assertTrue(fileContents.contains("<class>it.eng.knowage.meta.Position</class>"));
 
 		assertTrue(fileContents.contains("<property name=\"eclipselink.session.customizer\" value=\"it.eng.qbe.datasource.jpa.JNDICustomizer\"/>"));
 	}

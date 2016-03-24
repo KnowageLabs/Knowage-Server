@@ -146,10 +146,9 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			 */
 			// templatesDirRelativePath = RL.getPropertyAsString("jpamapping.templates.dir", defaultTemplateFolderPath);
 			templatesDirRelativePath = "/it/eng/knowage/meta/generator/templates";
-			// InputStream is =
-			// getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customPhysicalProperties.xml");
+
 			// templateDir = RL.getFile(templatesDirRelativePath);
-			templateDir = new File(templatesDirRelativePath);
+			templateDir = new File(getClass().getResource("/it/eng/knowage/meta/generator/templates").getFile());
 
 			// DEBUG
 			System.out.println("templateDir.getAbsolutePath(): " + templateDir.getAbsolutePath());
@@ -576,7 +575,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	private void generateHierarchiesFile(File templateFile, BusinessModel businessModel) {
 		VelocityContext context;
 		Model model = businessModel.getParentModel();
-		if (model.getOlapModels() != null) {
+		if (model.getOlapModels() != null && model.getOlapModels().size() > 0) {
 			OlapModel olapModel = model.getOlapModels().get(0);
 
 			logger.trace("IN");
