@@ -95,15 +95,12 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				parentMember = context.getMember().getParentMember().getUniqueName();
 			}
 
-			int axis = context.getAxis().axisOrdinal();
+			int axisOrdinal = context.getAxis().axisOrdinal();
 			// attributes.put("ondblclick",
 			// "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" +
 			// uniqueName + "','" + axis + "')");
 
-			attributes.put("ondragstart", "return false");
-			attributes.put("onselectstart", "return false");
-			attributes.put("unselectable", "on");
-			attributes.put("tabindex", "0");
+			attributes.put("axisOrdinal", String.valueOf(axisOrdinal));
 			attributes.put("parentMember", parentMember);
 			attributes.put("uniqueName", uniqueName);
 			attributes.put("level", level);

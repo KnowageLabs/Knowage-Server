@@ -4,7 +4,7 @@ angular.module('member_directive',[])
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
 	            
-	            scope.selectedMember = {};
+	           
 	            for(var i =0;i< scope.members.length;i++){
 	            	if(scope.members[i].uniqueName===element[0].attributes['uniqueName'].value){
 	            		
@@ -19,7 +19,7 @@ angular.module('member_directive',[])
 	        	 
 	        	
 	        		 
-	        		 scope.selectedMember.uniqueName = element[0].attributes['uniqueName'].value;
+	        		 	scope.selectedMember.uniqueName = element[0].attributes['uniqueName'].value;
 			            scope.selectedMember.level = element[0].attributes['level'].value;
 			            scope.selectedMember.parentMember = element[0].attributes['parentMember'].value;
 			            

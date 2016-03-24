@@ -11,6 +11,7 @@ angular.module('olap_panel',[])
 function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
+		
 		sbiModule_restServices.promiseGet
 		("1.0",'/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response) {
@@ -476,5 +477,23 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		$scope.formula_desc = obj.description;
 		
 	}
+	
+	/*
+	 * Add calculated field 
+	 * */
+	
+$scope.addCC = function() {
+		
+		sbiModule_restServices.promiseGet
+		("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
+			console.log(response);
+			$scope.handleResponse(response);
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});
+		}
+
 };
 

@@ -37,6 +37,7 @@ function olapFunction(
 	
 	//selected members
 	$scope.members = [];
+	$scope.selectedMember = {};
 	
 	templateRoot = "/knowagewhatifengine/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
