@@ -427,6 +427,8 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 				var dynamicParams = crossnav.dynamicParams;
 				for(var i = 0; i < dynamicParams.length; i++) {
 					var param = dynamicParams[i];
+					var type = param.type ? param.type: 'string';
+					var delimiter = type == 'string' ? "'" : "";
 
 					if(param.scope.toLowerCase() == 'feature') {
 						if(Array.isArray(selectedElements) && multiSelect) {
@@ -439,7 +441,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 								if (elementIndex > 0) {
 									parametersAsString += ',';
 								}
-								parametersAsString += "'" + elementProperties[param.state] + "'";
+								parametersAsString += delimiter + elementProperties[param.state] + delimiter;
 							}
 						}
 						// else selectedElements is a single feature
