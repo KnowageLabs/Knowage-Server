@@ -33,6 +33,8 @@ import org.junit.Assert;
  */
 public abstract class AbstractKnowageMetaTest extends TestCase {
 
+	protected static BusinessModelInitializer businessModelInitializer;
+
 	protected static DataSource dataSourceReading;
 	protected static TestConstants.DatabaseType dbType;
 
@@ -48,7 +50,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -61,7 +63,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override

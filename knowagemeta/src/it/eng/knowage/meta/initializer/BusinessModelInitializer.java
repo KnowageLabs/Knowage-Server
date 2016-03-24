@@ -5,7 +5,7 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  **/
 package it.eng.knowage.meta.initializer;
 
@@ -43,15 +43,15 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class BusinessModelInitializer {
 
 	IPropertiesInitializer propertiesInitializer;
 	BusinessModelNamesInitializer namesInitializer;
 
-	static public String INITIALIZER_NAME = "StandardSpagoBIBusinessModelInitializer";
-	static public String INITIALIZER_VERSION = "5.2.0";
+	static public String INITIALIZER_NAME = "StandardKnowageBusinessModelInitializer";
+	static public String INITIALIZER_VERSION = "1.0";
 
 	static public BusinessModelFactory FACTORY = BusinessModelFactory.eINSTANCE;
 
@@ -577,7 +577,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create a BusinessView using the data from a BusinessTable and the added PhysicalTable with a specified join path
-	 * 
+	 *
 	 * @return BusinessView created
 	 */
 	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable,
@@ -689,7 +689,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Transform a BusinessView with only one PhysicalTable in the corresponding BusinessTable
-	 * 
+	 *
 	 * @param businessView
 	 * @return businessTable
 	 */
@@ -813,7 +813,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 * 
+	 *
 	 * @param businessModel
 	 * @return
 	 */
@@ -847,7 +847,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Remove BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 * 
+	 *
 	 * @param businessModel
 	 * @return
 	 */
@@ -877,7 +877,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Check if the relationships defined in the model respect the constraints required for Hibernate
-	 * 
+	 *
 	 * @return the collection of incorrect relationships
 	 */
 	public List<Pair<BusinessRelationship, Integer>> checkRelationshipsConstraints(BusinessModel businessModel) {

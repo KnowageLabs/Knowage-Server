@@ -15,7 +15,7 @@
     <types>
       <type id="structural.package" name="Package Name"
       description="Package name used in JPA mapping"
-      category="Structural" defaultValue="it.eng.spagobi.meta" />
+      category="Structural" defaultValue="it.eng.knowage.meta" />
    
       <type id="structural.file" name="File"
       description="File used to store this model"
