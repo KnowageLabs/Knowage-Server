@@ -8,7 +8,7 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,$mdToast,toastr) {
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
 		
@@ -43,63 +43,60 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		});	
 	}
 	
-	$scope.drillThrough = function(ordinal) {
+	$scope.enableDisableDrillThrough = function() {
 
-		var c = JSON.stringify($scope.dtAssociatedLevels);
-		console.log(c);
-		 switch (arguments.length) {
-		    case 0:
-		    	console.log("FROM DIALOG");
-		    	sbiModule_restServices.promiseGet
-				("1.0",'/member/drilltrough/'+ $scope.ord+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
-				.then(function(response,ev) {
-					$scope.dt = response.data;
-					$scope.dtData = response.data;
-					$scope.dtColumns = Object.keys(response.data[0]);
-					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
-				    }, function(response) {
-					sbiModule_messaging.showErrorMessage("error", 'Error');
-					
-						});
-		        break;
-		    case 1:
-		    	console.log("FROM CELL");
-		    	$scope.ord = ordinal;
-		    	sbiModule_restServices.promiseGet
-				("1.0",'/member/drilltrough/'+ ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
-				.then(function(response,ev) {
-					$scope.dt = response.data;
-					console.log($scope.dt);
-					$scope.dtData = response.data;
-					$scope.dtColumns = Object.keys(response.data[0]);
-					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
-					console.log($scope.formateddtColumns);
-					$scope.getCollections();
-					$scope.openDtDialog();
+		if($scope.dtAssociatedLevels.length == 0){
+			
+			sbiModule_restServices.promiseGet
+			("1.0",'/member/drilltrough/'+ $scope.selectedCell.ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+			.then(function(response,ev) {
+				$scope.dt = response.data;
+				console.log($scope.dt);
+				$scope.dtData = response.data;
+				$scope.dtColumns = Object.keys(response.data[0]);
+				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+				console.log($scope.formateddtColumns);
+				$scope.getCollections();
+				$scope.openDtDialog();
 
-				    }, function(response) {
-					sbiModule_messaging.showErrorMessage("error", 'Error');
-					
-						});
-		        break;
-		    default:
-		        break;
-		    }
-		 $scope.exportDrill = function() {
+			    }, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
 				
-				var json = JSON.stringify($scope.dtData);
-				delete $scope.dtData.$$hashKey;
-				console.log(json);
-					sbiModule_restServices.promiseGet
-					("1.0",'/member/drilltrough/export/'+ json+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
-					.then(function(response) {
-						$scope.dtData = [];
-					    }, function(response) {
-						sbiModule_messaging.showErrorMessage("error", 'Error');
-						
-							});
+					});	
+			
+		}else {
+			console.log("IZ DIALOGAA");
+			var c = JSON.stringify($scope.dtAssociatedLevels);
+			sbiModule_restServices.promiseGet
+			("1.0",'/member/drilltrough/'+ $scope.selectedCell.ordinal+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+			.then(function(response,ev) {
+				$scope.dt = response.data;
+				$scope.dtData = response.data;
+				$scope.dtColumns = Object.keys(response.data[0]);
+				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+			    }, function(response) {
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+				
+					});
+			
+			
 		}
 		}
+	
+	 $scope.exportDrill = function() {
+			
+			var json = JSON.stringify($scope.dtData);
+			delete $scope.dtData.$$hashKey;
+			console.log(json);
+				sbiModule_restServices.promiseGet
+				("1.0",'/member/drilltrough/export/'+ json+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+				.then(function(response) {
+					$scope.dtData = [];
+				    }, function(response) {
+					sbiModule_messaging.showErrorMessage("error", 'Error');
+					
+						});
+	}
 	
 	$scope.getProps = function() {
 		sbiModule_restServices.promiseGet
@@ -430,35 +427,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	  };
 	  $scope.closeDialog = function(ev) {
 		  $mdDialog.hide();
+		  $scope.dtAssociatedLevels = [];
+		  $scope.selectedMDXFunction = {};
       }; 
-      
-      
+     
       $scope.showCCWizard = function(){
-    		$scope.aggregattionList = [];
-    		$scope.temporalList = [];
-    		$scope.arithmeticList = [];
-    		
-      	  
-      	  for (var i = 0; i < $scope.formulasData.length; i++) {
-      		  
-      		  switch ($scope.formulasData[i].type) {
-    			case "aggregation":
-    				$scope.aggregattionList.push($scope.formulasData[i]);
-    				
-    				break;
-    			case "arithmetic":
-    				$scope.arithmeticList.push($scope.formulasData[i]);
-    				break;
-    			case "temporal":
-    				$scope.temporalList.push($scope.formulasData[i]);
-    				break;
-    			default:
-    				break;
-    			}
-      		  
-  		}
-      	  console.log("AAAAAAAAAAAA");
-  		  console.log($scope.aggregattionList);	
+    	  
+    	
     		$mdDialog
     			.show({
     				scope : $scope,
@@ -470,12 +445,74 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     				hasBackdrop:false
     			});
     	}
-     
-	$scope.isSelected = function(obj) {
-		$scope.selected = !$scope.selected;
-		$scope.formula_syntax = obj.syntax;
-		$scope.formula_desc = obj.description;
+      
+	$scope.selectMDXFunction = function(obj) {
+		$scope.selectedMDXFunction = obj;
+		$scope.selectedMDXFunction.label ="";
+		console.log($scope.selectedMDXFunction);
+	}
+	
+	$scope.openArgumentsdialog = function(){
+  	  
+    	
+		$mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent: angular.element(document.body),
+				controllerAs : 'olapCtrl',
+				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/argumentsDialog.html',
+				//targetEvent : ev,
+				clickOutsideToClose : false,
+				hasBackdrop:false
+			});
+	}
+	
+	$scope.formatValues = function(index,obj) {
+		var value = null;
+		if(obj.expected_value == "Set_Expression"){
+		value="{";
+		if ($scope.members.length>=1) {
+			value += $scope.members[0].uniqueName;
+		}
+		for(var i =1;i< $scope.members.length;i++){
+        value +=  ","+ $scope.members[i].uniqueName ;	
+        }
+		value +="}"
+		$scope.selectedMDXFunction.argument[index].text = value;
+		}else {
+			for(var i =0;i< $scope.members.length;i++){
+		        value = $scope.members[i].uniqueName ;	
+		        }
+			$scope.selectedMDXFunction.argument[index].text = value;
+		}
+		$scope.members = [];
+		return value;
+			
+	}
+	
+	$scope.enterSelectMode = function(index,obj) {
 		
+		
+		$mdDialog.hide();
+		toastr.info('Please select value and tap this notification' , 'Select', { 
+			  timeOut: 0,
+			  onTap: function() {
+				  $scope.valuesArray.push($scope.formatValues(index,obj)); 
+				
+					  
+				  $scope.openArgumentsdialog();
+				  toastr.clear();
+				  
+			  }
+			  
+			});
+		
+	}
+	
+$scope.test = function() {
+	$scope.finalFormula = $scope.selectedMDXFunction.name + "(" + $scope.valuesArray[0]+","+$scope.valuesArray[1]+ ")";
+	$scope.addCC();		
 	}
 	
 	/*
@@ -485,7 +522,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 $scope.addCC = function() {
 		
 		sbiModule_restServices.promiseGet
-		("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 		.then(function(response) {
 			console.log(response);
 			$scope.handleResponse(response);
@@ -494,6 +531,6 @@ $scope.addCC = function() {
 			
 				});
 		}
-
+	
 };
 

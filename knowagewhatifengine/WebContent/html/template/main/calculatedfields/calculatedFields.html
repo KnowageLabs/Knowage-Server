@@ -1,72 +1,84 @@
 
-<md-dialog>
-     <md-toolbar style="background-color: #3b678c !important;">
-        <div class="md-toolbar-tools" >
-          <h2 flex="flex">Insert Function</h2>
-           <md-button ng-click="closeDialog()" class="md-icon-button" style="float:right;">
-            <md-icon class="fa fa-times fa-2x"></md-icon>
-          </md-button>
-        </div>
-      </md-toolbar>
+<md-dialog style='width:50%;'>
+      <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Select Function</h2>
+	</md-toolbar>
       
       <md-input-container class="md-block">
           <label>Name</label>
-          <input ng-model="formula.name">
+          <input ng-model="selectedMDXFunction.label">
         </md-input-container>
       
-   <div ng-cloak layout-gt-sm="row" layout="column">
-  <div flex-gt-sm="25" flex style="margin: 10px;">
-    <h4>Aggregation</h4>
-    <md-content>
+  <md-dialog-content ng-cloak>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Aggregation">
+    <md-content class="md-padding">
       <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="formula in aggregattionList" ng-click="isSelected(formula)">
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in formulasData | filter: {'type': 'aggregation'}"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
           <div class="md-list-item-text" layout="column" >
             <h3>{{ formula.name }}</h3>
             <h4>{{  formula.syntax }}</h4>
             <p>{{  formula.description }}</p>
           </div>
         </md-list-item>
-
-    </md-content>
-  </div>
-  
-  <div flex-gt-sm="25" flex style="margin: 10px;">
-    <h4>Arithmetic</h4>
-    <md-content>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Arithmetic">
+    <md-content class="md-padding">
       <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="formula in arithmeticList" ng-click="isSelected(formula)">
-          <div class="md-list-item-text" layout="column">
-            <h3>{{ formula.name }}</h3>
-            <h4>{{  formula.syntax }}</h4>
-            <p>{{  formula.description }}</p>
-          </div>
-        </md-list-item>
-
-    </md-content>
-  </div>
-  
-  
-  <div flex-gt-sm="25" flex style="margin: 10px;">
-    <h4>Temporal</h4>
-    <md-content>
-      <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="formula in temporalList" ng-click="isSelected(formula)">
+	       <md-list-item class="md-3-line"
+         ng-repeat="formula in formulasData | filter: {'type': 'arithmetic'}"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
           <div class="md-list-item-text" layout="column" >
             <h3>{{ formula.name }}</h3>
             <h4>{{  formula.syntax }}</h4>
             <p>{{  formula.description }}</p>
           </div>
         </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Temporal">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in formulasData | filter: {'type': 'temporal'}"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Recent">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Saved Members">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      
+     
+    </md-tabs>
+  </md-dialog-content>
 
-    </md-content>
-  </div>
-</div>
-<!--  <md-subheader>Syntax:</md-subheader> -->
-<!--   <p>{{formula_syntax}}</p> -->
-<!--   <md-subheader>Description:</md-subheader> -->
-<!--   <p>{{formula_syntax}}</p> -->
     <md-dialog-actions layout="row">
-      <md-button ng-click="answer('not useful')" >
+      <md-button ng-click="openArgumentsdialog()" >
         OK
       </md-button>
       <md-button ng-click="closeDialog()" style="margin-right:20px;" >

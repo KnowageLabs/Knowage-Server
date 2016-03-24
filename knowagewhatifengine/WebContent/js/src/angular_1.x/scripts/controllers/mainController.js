@@ -69,9 +69,11 @@ function olapFunction(
 	$scope.dtData = [];
 	$scope.dtTree = [];
 	$scope.dtMaxRows= 0;
-	$scope.ord = null;
 	$scope.dtAssociatedLevels= [];
 	$scope.formulasData = [];
+	$scope.valuesArray = [];
+	$scope.selectedMDXFunction = {};
+	$scope.finalFormula = null;
 	
 	$scope.isFilterSelected = false;
 	$scope.filterAxisPosition;

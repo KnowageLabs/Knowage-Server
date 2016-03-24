@@ -1,14 +1,10 @@
 
 <md-dialog class="fullscreen-dialog">
 	
-	  <md-toolbar style="background-color: #3b678c !important;">
-        <div class="md-toolbar-tools" >
-          <h2 flex="flex">Drillthrough</h2>
-           <md-button ng-click="closeDialog()" class="md-icon-button" style="float:right;">
-            <md-icon class="fa fa-times fa-2x"></md-icon>
-          </md-button>
-        </div>
-      </md-toolbar>
+	   <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">DrillTrough</h2>
+	</md-toolbar>
+	  
       <md-subheader>Select visible levels:</md-subheader>
         <div layout="row">
       	<div>
@@ -66,7 +62,7 @@
 			<md-button ng-click="exportDrill()">
 				Export
 			</md-button>
-			<md-button ng-click="drillThrough()" md-autofocus>
+			<md-button ng-click="enableDisableDrillThrough()" md-autofocus>
 				Apply 
 			</md-button>		
 		</md-dialog-actions>

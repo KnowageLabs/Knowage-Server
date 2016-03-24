@@ -363,6 +363,13 @@ md-dialog.fullscreen-dialog {
     border-radius: 0;
 }
 
+.selected {
+color: white;
+-webkit-box-shadow:inset 0px 0px 0px 2px #3b678c;
+-moz-box-shadow:inset 0px 0px 0px 2px #3b678c;
+box-shadow:inset 0px 0px 0px 2px #3b678c;
+}
+
 .filter-search{
 	border: 1px solid;
 	border-radius: 5px;

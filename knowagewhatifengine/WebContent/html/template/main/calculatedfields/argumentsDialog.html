@@ -1,0 +1,38 @@
+
+<md-dialog>
+    
+      <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Arguments for: {{selectedMDXFunction.label}}</h2>
+	</md-toolbar>
+      
+      <p class="md-body-1">Description : {{selectedMDXFunction.description}}</p>
+
+    <div>
+   <md-input-container class="md-block" ng-repeat="argument in selectedMDXFunction.argument">
+          <label>{{argument.expected_value}}</label>
+          <input ng-model="argument.text"> 
+          <md-button ng-click="enterSelectMode($index,argument)" >
+       Select
+      	</md-button>
+          <p class="md-body-1">Description : {{argument.argument_description}}</p>
+        </md-input-container> 
+ 		</div>
+
+    <md-dialog-actions layout="row">
+    <md-button ng-click="openArgumentsdialog()" >
+        Open Editor
+      </md-button>
+      <md-button ng-click="openArgumentsdialog()" >
+        Open Saved Members
+      </md-button>
+      
+    	<span flex></span>
+      <md-button ng-click="test()" >
+        OK
+      </md-button>
+      <md-button ng-click="closeDialog()" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+

@@ -18,15 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +52,15 @@ import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -229,7 +229,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				hierarchy.put("name", h.getName());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
-
 					JSONObject levelsObject = new JSONObject();
 					levelsObject.put("name", level.getName());
 					levelsObject.put("hierarchy", level.getHierarchy().getUniqueName());
@@ -245,7 +244,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(array);
 		return array.toString();
 	}
 
@@ -265,7 +263,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				List<Property> properties = np.getProperties(level);
 				List<Member> members = level.getMembers();
 				for (Member member : members) {
-
 					for (Property property : properties) {
 						System.out.println(member.getName());
 						System.out.println(property.getName());

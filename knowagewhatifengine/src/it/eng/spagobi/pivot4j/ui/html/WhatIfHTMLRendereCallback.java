@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.pivot4j.ui.html;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
@@ -38,6 +31,7 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.Property;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.ui.CellTypes;
@@ -47,6 +41,13 @@ import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -70,7 +71,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		Map<String, String> attributes = super.getCellAttributes(context);
 		// initializeInternal(context);
 		if (context.getCellType() == CellTypes.VALUE) {
-
 			initializeInternal(context);
 
 			// need the name of the measure to check if it's editable
@@ -119,15 +119,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				int ordinal = context.getCell().getOrdinal();
 				if (context.getRenderer().getEnableDrillThrough()) {
 
-					Map<String, String> attributes = new TreeMap<String, String>();
-					attributes.put("src", "../img/ico_search.gif");
-					attributes.put("id", "drillt");
-
-					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
-					startElement("img", attributes);
-					endElement("img");
-					attributes = null;
-
+					// Map<String, String> attributes = new TreeMap<String,
+					// String>();
+					// attributes.put("src", "../img/ico_search.gif");
+					// attributes.put("id", "drillt");
+					// attributes.put("ng-click", "drillThrough(" + ordinal +
+					// ")");
+					// startElement("img", attributes);
+					// endElement("img");
 				}
 			}
 
@@ -226,7 +225,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		String propertyCategory = context.getRenderPropertyCategory();
 		RenderPropertyUtils propertyUtils = getRenderPropertyUtils();
 		link = propertyUtils.getString("link", propertyCategory, null);
-
 		if (link == null) {
 			Map<String, String> attributes = new TreeMap<String, String>();
 			String drillMode = context.getRenderer().getDrillDownMode();
@@ -355,7 +353,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean isPropertyCell(TableRenderContext context) {
 
 		if (showProperties && context.getLevel() != null && isEmptyNonPropertyCell(context) && context.getRenderer().getPropertyCollector() != null) {
-			List<org.olap4j.metadata.Property> propertieds = context.getRenderer().getPropertyCollector().getProperties(context.getLevel());
+			List<Property> propertieds = context.getRenderer().getPropertyCollector().getProperties(context.getLevel());
 			return (propertieds != null && propertieds.size() > 0);
 		}
 		return false;

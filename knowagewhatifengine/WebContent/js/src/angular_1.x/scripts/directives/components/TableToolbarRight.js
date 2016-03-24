@@ -59,10 +59,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		$scope.sortDisable();
 	}
 	
-	$scope.enableDisableDrillThrough = function(){
-		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
-		$scope.sendModelConfig($scope.modelConfig);
-	}
+//	$scope.enableDisableDrillThrough = function(){
+//		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
+//		$scope.sendModelConfig($scope.modelConfig);
+//	}
 	
 	
 	$scope.changeDrillType = function(type){
