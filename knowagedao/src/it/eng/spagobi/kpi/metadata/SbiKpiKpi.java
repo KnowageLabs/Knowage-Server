@@ -41,6 +41,8 @@ public class SbiKpiKpi extends SbiHibernateModel implements java.io.Serializable
 
 	private Set<SbiKpiRuleOutput> sbiKpiRuleOutputs = new HashSet<>();
 
+	private Set<SbiKpiTargetValue> sbiKpiTargetValues = new HashSet<>();
+
 	public SbiKpiKpi() {
 	}
 
@@ -177,6 +179,21 @@ public class SbiKpiKpi extends SbiHibernateModel implements java.io.Serializable
 	 */
 	public void setActive(Character active) {
 		this.active = active;
+	}
+
+	/**
+	 * @return the sbiKpiTargetValues
+	 */
+	public Set<SbiKpiTargetValue> getSbiKpiTargetValues() {
+		return sbiKpiTargetValues;
+	}
+
+	/**
+	 * @param sbiKpiTargetValues
+	 *            the sbiKpiTargetValues to set
+	 */
+	public void setSbiKpiTargetValues(Set<SbiKpiTargetValue> sbiKpiTargetValues) {
+		this.sbiKpiTargetValues = sbiKpiTargetValues;
 	}
 
 }

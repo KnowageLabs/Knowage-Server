@@ -68,6 +68,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinFragment;
 import org.hibernate.transform.Transformers;
 
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
@@ -1098,7 +1099,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiTarget.setStartValidity(target.getStartValidity());
 		sbiTarget.setEndValidity(target.getEndValidity());
 		// handling Category
-		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_MEASURE_CATEGORY);
+		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_TARGET_CATEGORY);
 		sbiTarget.setCategory(category);
 		return sbiTarget;
 	}
@@ -1144,10 +1145,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		SbiKpiKpi kpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(targetValue.getKpiId(), targetValue.getKpiVersion()));
 		sbiValue.setSbiKpiKpi(kpi);
 		sbiValue.setSbiKpiTarget(sbiTarget);
-
-		/*
-		 * sbiValue.setKpiId(targetValue.getKpiId()); sbiValue.setKpiVersion(targetValue.getKpiVersion()); sbiValue.setTargetId(sbiTarget.getTargetId());
-		 */
 		sbiValue.setValue(targetValue.getValue());
 		return sbiValue;
 	}
@@ -1157,4 +1154,27 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		delete(SbiKpiTarget.class, id);
 	}
 
+	@Override
+	public List<TargetValue> listKpiWithTarget() {
+		List<SbiKpiTargetValue> lst = list(new ICriterion<SbiKpiTargetValue>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session
+						.createCriteria(SbiKpiKpi.class)
+						.createAlias("sbiKpiTargetValues", "sbiKpiTargetValues", JoinFragment.LEFT_OUTER_JOIN)
+						.add(Restrictions.eq("active", 'T'))
+						.setProjection(
+								Projections.projectionList().add(Property.forName("sbiKpiKpiId.id").as("kpiId"))
+										.add(Property.forName("sbiKpiKpiId.version").as("kpiVersion"))
+										.add(Property.forName("sbiKpiTargetValues.value").as("value")))
+						.setResultTransformer(Transformers.aliasToBean(SbiKpiTargetValue.class));
+			}
+		});
+		List<TargetValue> ret = new ArrayList<>();
+		for (SbiKpiTargetValue sbiTarget : lst) {
+			TargetValue tv = new TargetValue(sbiTarget.getKpiId(), sbiTarget.getKpiVersion(), null, sbiTarget.getValue());
+			ret.add(tv);
+		}
+		return ret;
+	}
 }
