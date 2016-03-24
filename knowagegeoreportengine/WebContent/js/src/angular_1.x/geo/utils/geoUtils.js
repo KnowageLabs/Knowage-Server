@@ -466,7 +466,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 				}
 			}
 
-			var frameName = "iframe_crossNavigation";
+			var frameName = "iframe_"+geoModule_template.executionContext.DOCUMENT_LABEL;
 
 			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
 		}
