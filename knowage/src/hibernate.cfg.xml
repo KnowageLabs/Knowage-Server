@@ -146,6 +146,7 @@
             resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiObjDataSet.hbm.xml" />
             
 		<!-- KPI Engine -->
+		
 		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpi.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiDocuments.hbm.xml" />
@@ -179,6 +180,7 @@
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiError.hbm.xml" />
+		 
 
 		<!-- Menu -->
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenu.hbm.xml" />
@@ -297,7 +299,8 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiRuleOutput.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiThresholdValue.hbm.xml" />
-        
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiTarget.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiTargetValue.hbm.xml" />
         
         <!-- end mapping -->
         
