@@ -185,7 +185,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			if (objParameter.getValueSelection().equalsIgnoreCase("lov")) {
+			if (objParameter.getValueSelection().equalsIgnoreCase("lov") && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 				parameterAsMap.put("defaultValues", defaultValues);
