@@ -461,6 +461,16 @@
 		
 	<DOMAIN valueCd="DAY_OF_WEEK" valueNm="Day of the week"
 		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
-<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
+	
+	<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
+	
+	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
+		
+	<DOMAIN valueCd="ATTRIBUTE" valueNm="sbidomains.nm.attribute"
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.attribute" />
+		
+	<DOMAIN valueCd="TEMPORAL_ATTRIBUTE" valueNm="sbidomains.nm.temporalattribute"
+		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
 
 </DOMAINS>
