@@ -160,7 +160,8 @@
 	
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
-			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories) {
+			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories
+			) {
 		
 		var serviceScope = this;	
 		
@@ -210,6 +211,7 @@
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='FILTER_SAVED';
 			execProperties.isParameterRolePanelDisabled.status = true;
+			
 			sbiModule_restServices.get(
 					"1.0/documentviewpoint", 
 					"getViewpoints",
@@ -217,13 +219,17 @@
 			.success(function(data, status, headers, config) {	
 				console.log('data viewpoints '  ,  data.viewpoints);
 				serviceScope.gvpCtrlViewpoints = data.viewpoints;
+				execProperties.showParametersPanel.status = false;
+				if($mdSidenav('parametersPanelSideNav').isOpen()) {
+					$mdSidenav('parametersPanelSideNav').close();
+				}
 			})
 			.error(function(data, status, headers, config) {});																	
 		};
 		
 		
 		
-		this.getParametersForExecution = function(role) {		
+		this.getParametersForExecution = function(role, buildCorrelation) {		
 			var params = 
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role;
@@ -232,13 +238,14 @@
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
 				if(response && response.filterStatus && response.filterStatus.length>0) {
-					//check default parameter control TODO										
+										
 					execProperties.showParametersPanel.status = true;
 					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
 						$mdSidenav('parametersPanelSideNav').open();
 					}
-					//execProperties.parametersData.documentParameters = response.filterStatus;
+					//build documentParameters
 					angular.copy(response.filterStatus, execProperties.parametersData.documentParameters);
+					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
 					execProperties.showParametersPanel.status = false;
@@ -246,6 +253,7 @@
 						$mdSidenav('parametersPanelSideNav').close();
 					}
 				}
+					
 			})
 			.error(function(response, status, headers, config) {
 				console.log('getParametersForExecution response ERROR -> ', response);
@@ -312,6 +320,7 @@
 			execProperties.currentView.status = 'DOCUMENT';
 			execProperties.parameterView.status='';
 			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
+			
 		};
 		
 		this.isExecuteParameterDisabled = function() {
@@ -336,4 +345,189 @@
 			execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
 		};
 	});
+	
+	//DEPENDENCIES
+	
+	angular.module('documentExecutionModule')
+	.service('docExecute_dependencyService', function(execProperties, documentExecuteServices,sbiModule_restServices) {
+	
+		var serviceScope = this;
+	
+	
+		/*
+		 * BUILD DATA DEPENDENCIES 
+		 */
+			this.buildDataDependenciesMap = function(parameters){
+			for(var i=0; i<parameters.length ; i++){
+				if(parameters[i].dataDependencies && parameters[i].dataDependencies.length>0){						
+					for(var k=0; k<parameters[i].dataDependencies.length; k++){ 
+						var dependency = parameters[i].dataDependencies[k];						
+						dependency.parameterToChangeUrlName = parameters[i].urlName;
+						dependency.parameterToChangeId = this.getRowIdfromUrlName(parameters[i].urlName); 
+						dependency.lovParameterMode = parameters[i].selectionType;
+						//build visualCorrelationMap : Key is fatherUrlName 
+						var keyMap = dependency.objParFatherUrlName;
+						if (keyMap in serviceScope.dataDependenciesMap) {
+							var dependenciesArr =  serviceScope.dataDependenciesMap[keyMap];
+							dependenciesArr.push(dependency);
+							serviceScope.dataDependenciesMap[keyMap] = dependenciesArr;
+							} else {
+								var dependenciesArr = new Array
+								dependenciesArr.push(dependency);
+								serviceScope.dataDependenciesMap[keyMap] = dependenciesArr;
+							}						
+					}
+				}
+			}
+			for (var key in serviceScope.dataDependenciesMap) {
+				//Fill Array DATA DEPENDENCIES
+				var documentParamDependence = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
+				serviceScope.observableDataDependenciesArray.push(documentParamDependence);	
+			}
+		}
+		
+		
+		
+			 this.dataDependenciesCorrelationWatch = function(value){
+			 console.log('modify dependency : ' , value);
+				//prendere elemeti dalla mappa e ciclare
+				console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
+				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
+					var dataDependenciesElementMap = serviceScope.dataDependenciesMap[value.urlName][k];
+					var objPost = {};
+					objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+					objPost.ROLE=execProperties.selectedRole.name;
+					objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
+					console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
+					objPost.MODE= (dataDependenciesElementMap.lovParameterMode!='TREE' ) ? 'simple' : 'complete';
+					objPost.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+					sbiModule_restServices.post(
+							"1.0/documentExeParameters",
+							"getParameters", objPost)
+					   .success(function(data, status, headers, config) {
+						   if(data.status=="OK"){
+							   //from root only visibled element !!! 
+							   //set to disabled all default value parameter 
+							   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+									  if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+										  for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+											  execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=false; 
+										  }
+										  break;
+									  }
+									  
+								  }
+							   //set to enabled the correct default value 
+							   if(data.result.root && data.result.root.length>0){
+								   for(var p=0; p<data.result.root.length;p++){   
+									   console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
+									   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+										   if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+											   for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+												if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
+													execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
+												}	  
+											   }
+											   break;
+										   }
+									   }
+									   
+								   }
+							   }
+							  									   
+						   }
+					})
+					.error(function(data, status, headers, config) {});
+					
+				}			
+		  }
+		
+		
+		
+		
+		/*
+		 * BUILD VISUAL DEPENDENCIES
+		 */
+		this.buildVisualCorrelationMap = function(parameters){
+			for(var i=0; i<parameters.length ; i++){
+				if(parameters[i].visualDependencies && parameters[i].visualDependencies.length>0){						
+					for(var k=0; k<parameters[i].visualDependencies.length; k++){
+						var dependency = parameters[i].visualDependencies[k];
+						dependency.parameterToChangeUrlName = parameters[i].urlName;
+						dependency.parameterToChangeId = this.getRowIdfromUrlName(parameters[i].urlName); 
+						//build visualCorrelationMap : Key is fatherUrlName 
+						var keyMap = dependency.objParFatherUrlName;
+						if (keyMap in serviceScope.visualCorrelationMap) {
+							var dependenciesArr =  serviceScope.visualCorrelationMap[keyMap];
+							dependenciesArr.push(dependency);
+							serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
+							} else {
+								var dependenciesArr = new Array
+								dependenciesArr.push(dependency);
+								serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
+							}						
+					}
+				}
+			}
+			for (var key in serviceScope.visualCorrelationMap) {
+				//Fill Array VISUAL DEPENDENCIES
+				var documentParamVisualDependency = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
+				serviceScope.observableVisualParameterArray.push(documentParamVisualDependency);	
+			}
+		}
+	
+		this.visualCorrelationWatch = function(value){
+			  for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
+					var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
+				    //id document Parameter to control 
+					var idDocumentParameter = visualDependency.parameterToChangeId;
+					//value to compare
+					var compareValueArr = visualDependency.compareValue.split(",");
+					for(var z=0; z<compareValueArr.length; z++){
+						var newValueStr = value.parameterValue;
+						//conditions								
+						var condition = (visualDependency.operation=='contains') 
+							? (compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr); 
+						if(condition){
+							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
+							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
+							//Exit if one conditions is verify 
+							break;
+						}else{
+							execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
+						}								
+					}
+				}
+		  }
+	
+		//GET ROW ID FROM URL NAME
+		this.getRowIdfromUrlName = function(urlName){
+			var row=0;
+			for(var i=0; i<execProperties.parametersData.documentParameters.length; i++ ){
+				if(execProperties.parametersData.documentParameters[i].urlName == urlName){
+					row = i;
+					break;
+				}
+			}
+			return row;
+		}
+	
+	});
+	
+	
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -251,6 +251,11 @@ public class DocumentExecutionUtils {
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
 		List rows = null;
+		// if ("COMBOBOX".equalsIgnoreCase(objParameter.getParameter().getModalityValue().getSelectionType())
+		// || "LIST".equalsIgnoreCase(objParameter.getParameter().getModalityValue().getSelectionType())
+		// || "SLIDER".equalsIgnoreCase(objParameter.getParameter().getModalityValue().getSelectionType())
+		// || "TREE".equalsIgnoreCase(objParameter.getParameter().getModalityValue().getSelectionType())
+		// || "LOOKUP".equalsIgnoreCase(objParameter.getParameter().getModalityValue().getSelectionType())) {
 
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
@@ -289,6 +294,7 @@ public class DocumentExecutionUtils {
 					itemAsMap.put("leaf", item.get("leaf"));
 				}
 				itemAsMap.put("description", item.get("description"));
+				itemAsMap.put("isEnabled", true);
 				
 				defaultValues.add(itemAsMap);
 			}
@@ -298,6 +304,11 @@ public class DocumentExecutionUtils {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
 		}
+
+		// } else {
+		// return defaultValues;
+		// }
+
 	}
 
 	// Same method as GetParameterValuesForExecutionAction.getChildrenForTreeLov()

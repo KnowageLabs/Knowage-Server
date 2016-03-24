@@ -16,8 +16,10 @@
 	}]);
 	
 	var documentParamenterElementCtrl = function(
-			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
-			execProperties, documentExecuteServices, $mdDialog) {
+	$scope, sbiModule_config,sbiModule_restServices,
+	 sbiModule_translate, execProperties, documentExecuteServices,
+	 $mdDialog) {
+		
 		
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;

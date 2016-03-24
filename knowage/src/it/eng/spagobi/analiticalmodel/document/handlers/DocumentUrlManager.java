@@ -610,6 +610,7 @@ public class DocumentUrlManager {
 	}
 
 	public List<ObjParuse> getDependencies(BIObjectParameter parameter, String role) {
+
 		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();

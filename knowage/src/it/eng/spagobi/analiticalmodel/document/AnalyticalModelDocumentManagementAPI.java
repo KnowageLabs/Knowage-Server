@@ -639,7 +639,7 @@ public class AnalyticalModelDocumentManagementAPI {
 							BIObjectParameter newParUseFather = documentParameterDAO.loadBiObjParameterByObjIdAndLabel(destinationDocument.getId(),
 									sourceFatherParViewLabel);
 							parview.setObjParFatherId(newParUseFather.getId());
-
+							parview.setObjParFatherUrlName(newParUseFather.getParameterUrlName());
 							documentParviewDAO.insertObjParview(parview);
 						}
 					} catch (Throwable t) {

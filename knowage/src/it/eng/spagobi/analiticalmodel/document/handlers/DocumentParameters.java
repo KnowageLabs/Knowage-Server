@@ -51,6 +51,7 @@ public class DocumentParameters {
 	List visualDependencies;
 
 	// attribute used by the serializer
+	Integer biObjectId;
 	String id;
 	Integer parameterUseId;
 	String label;
@@ -136,6 +137,7 @@ public class DocumentParameters {
 
 	void initAttributes() {
 		id = analyticalDocumentParameter.getParameterUrlName();
+		biObjectId = analyticalDocumentParameter.getId();
 		// label = localize( analyticalDocumentParameter.getLabel() );
 		label = analyticalDocumentParameter.getLabel();
 		Integer parameterId = analyticalDocumentParameter.getParameter().getId();
@@ -428,6 +430,14 @@ public class DocumentParameters {
 		this.dependencies = dependencies;
 	}
 
+	public Integer getBiObjectId() {
+		return biObjectId;
+	}
+
+	public void setBiObjectId(Integer biObjectId) {
+		this.biObjectId = biObjectId;
+	}
+
 	public Integer getParameterUseId() {
 		return parameterUseId;
 	}
@@ -482,6 +492,14 @@ public class DocumentParameters {
 
 	public void setThickPerc(Integer thickPerc) {
 		this.thickPerc = thickPerc;
+	}
+
+	public BIObjectParameter getAnalyticalDocumentParameter() {
+		return analyticalDocumentParameter;
+	}
+
+	public void setAnalyticalDocumentParameter(BIObjectParameter analyticalDocumentParameter) {
+		this.analyticalDocumentParameter = analyticalDocumentParameter;
 	}
 
 }

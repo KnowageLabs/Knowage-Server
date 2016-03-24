@@ -26,8 +26,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -125,13 +123,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// displayToolbar
 			// modality
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
-			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
+			// List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
-			errorList = DocumentExecutionUtils.handleNormalExecutionError(
-					this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
-			resultAsMap.put("parameters", parameters);
+			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url);
 			resultAsMap.put("errors", errorList);
 
@@ -152,7 +149,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
 	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }],
-	 * 
+	 *
 	 *         errors: [ 'role missing', 'operation not allowed' ] }
 	 * @throws EMFUserError
 	 */
@@ -170,44 +167,40 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
-		List<BIObjectParameter> parametersList = biObject.getBiObjectParameters();
-
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
-		for (BIObjectParameter objParameter : parametersList) {
-			Parameter parameter = objParameter.getParameter();
-
+		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null);
+		for (DocumentParameters objParameter : parameters) {
 			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
-
-			parameterAsMap.put("id", objParameter.getId());
+			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
-			parameterAsMap.put("urlName", objParameter.getParameterUrlName());
-			parameterAsMap.put("type", parameter.getType());
-			parameterAsMap.put("typeCode", parameter.getModalityValue().getITypeCd());
-			parameterAsMap.put("selectionType", parameter.getModalityValue().getSelectionType());
-			parameterAsMap.put("valueSelection", parameter.getValueSelection());
-			parameterAsMap.put("selectedLayer", parameter.getSelectedLayer());
-			parameterAsMap.put("selectedLayerProp", parameter.getSelectedLayerProp());
-			parameterAsMap.put("visible", ((objParameter.getVisible() == 1)));
-			parameterAsMap.put("mandatory", ((objParameter.getRequired() == 1)));
+			parameterAsMap.put("urlName", objParameter.getId());
+			parameterAsMap.put("type", objParameter.getParType());
+			parameterAsMap.put("typeCode", objParameter.getTypeCode());
+			parameterAsMap.put("selectionType", objParameter.getSelectionType());
+			parameterAsMap.put("valueSelection", objParameter.getValueSelection());
+			parameterAsMap.put("selectedLayer", objParameter.getSelectedLayer());
+			parameterAsMap.put("selectedLayerProp", objParameter.getSelectedLayerProp());
+			parameterAsMap.put("visible", ((objParameter.isVisible())));
+			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
-			parameterAsMap.put("dependsOn", new ArrayList<>());
 
-			if (parameter.getValueSelection().equalsIgnoreCase("lov") && 
-					!parameter.getModalityValue().getSelectionType().equalsIgnoreCase("tree")) {
-				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter, req);
-
+			if (objParameter.getValueSelection().equalsIgnoreCase("lov")) {
+				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
+						objParameter.getAnalyticalDocumentParameter(), req);
 				parameterAsMap.put("defaultValues", defaultValues);
 			}
-
+			parameterAsMap.put("dependsOn", objParameter.getDependencies());
+			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
+			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 			parametersArrayList.add(parameterAsMap);
 		}
-
-		if (parametersList.size() > 0) {
+		if (parameters.size() > 0) {
 			resultAsMap.put("filterStatus", parametersArrayList);
 		} else {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 		}
+
 		resultAsMap.put("errors", new ArrayList<>());
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
@@ -216,34 +209,30 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getParameterValues(
-			@QueryParam("label") String label,
-			@QueryParam("role") String role,
-			@QueryParam("biparameterId") String biparameterId, 
-			@QueryParam("mode") String mode, 
-			@QueryParam("treeLovNode") String treeLovNode, 
-//			@QueryParam("treeLovNode") Integer treeLovNodeLevel,
+	public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
+			@QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
+			// @QueryParam("treeLovNode") Integer treeLovNodeLevel,
 			@Context HttpServletRequest req) throws EMFUserError {
-		
+
 		MessageBuilder msgBuild = new MessageBuilder();
 		Locale locale = msgBuild.getLocale(req);
-		
+
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
-		
+
 		BIObjectParameter biObjectParameter = null;
 		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
 		for (int i = 0; i < parameters.size(); i++) {
-			BIObjectParameter p = (BIObjectParameter) parameters.get(i);
+			BIObjectParameter p = parameters.get(i);
 			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
 				biObjectParameter = p;
 				break;
 			}
 		}
-		
+
 		String treeLovNodeValue;
 		Integer treeLovNodeLevel;
-		
+
 		if (treeLovNode.contains("lovroot")) {
 			treeLovNodeValue = "lovroot";
 			treeLovNodeLevel = 0;
@@ -252,29 +241,28 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			treeLovNodeValue = splittedNode[0];
 			treeLovNodeLevel = new Integer(splittedNode[1]);
 		}
-		
-		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
-				role, biObject, biObjectParameter, mode, treeLovNodeLevel, treeLovNodeValue, req);
-		
+
+		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, mode, treeLovNodeLevel,
+				treeLovNodeValue, req);
+
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		
+
 		if (result.size() > 0) {
 			resultAsMap.put("filterValues", result);
 			resultAsMap.put("errors", new ArrayList<>());
 		} else {
 			resultAsMap.put("filterValues", new ArrayList<>());
-			
-			List errorList = DocumentExecutionUtils.handleNormalExecutionError(
-					this.getUserProfile(), biObject, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-					role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
-			
+
+			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
+					this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+
 			resultAsMap.put("errors", errorList);
 		}
-		
+
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
-	
+
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another
 	 */
@@ -303,7 +291,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT")
-	 * 
+	 *
 	 * @param id
 	 *            of document
 	 * @param id

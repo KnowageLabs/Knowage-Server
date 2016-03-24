@@ -15,12 +15,12 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$documentNavigationScope',
-			 documentExecutionControllerFn]);
+			 'docExecute_dependencyService',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$documentNavigationScope) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$documentNavigationScope,docExecute_dependencyService) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -54,6 +54,8 @@
 		$scope.selectedTab={'tab':0};
 		$scope.contentNotes = "";
 		
+		$scope.dependenciesService = docExecute_dependencyService;
+		
 		$scope.openInfoMetadata = function() {
 			infoMetadataService.openInfoMetadata();
 		};
@@ -65,7 +67,7 @@
 					execProperties.selectedRole.name = execProperties.roles[0];
 					$scope.showSelectRoles = false;
 					//loads parameters if role is selected
-					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name);
+					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation);
 					execProperties.isParameterRolePanelDisabled.status = true;
 				}
 				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name);
@@ -73,6 +75,68 @@
 			
 			console.log("initSelectedRole OUT ");
 		};
+				
+		/*
+		 * DEPENDENCIES
+		 */
+		$scope.dependenciesService.observableVisualParameterArray = [];
+		$scope.dependenciesService.observableDataDependenciesArray = [];
+		$scope.dependenciesService.visualCorrelationMap = {};
+		$scope.dependenciesService.dataDependenciesMap = {};
+		
+		/*
+		 * BUILD CORRELATION
+		 * Callback function from service getParameter for visual dependencies
+		 */
+		$scope.buildCorrelation = function(parameters){			
+			docExecute_dependencyService.buildVisualCorrelationMap(parameters);
+			docExecute_dependencyService.buildDataDependenciesMap(parameters);
+		};
+				
+
+		
+		
+		
+	 /*
+	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
+	  */
+	  $scope.$watch( function() {
+		  return $scope.dependenciesService.observableVisualParameterArray;
+		},
+		function(newValue, oldValue) {
+			if (!angular.equals(newValue, oldValue)) {
+				for(var i=0; i<newValue.length; i++){
+					if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
+						docExecute_dependencyService.visualCorrelationWatch(newValue[i]);
+						break;
+					}
+					
+				}
+			}
+		},true);
+		 
+	     /*
+		  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
+		  */
+	  $scope.$watch( function() {
+		  return $scope.dependenciesService.observableDataDependenciesArray;
+		},
+		function(newValue, oldValue) {
+			if (!angular.equals(newValue, oldValue)) {
+				for(var i=0; i<newValue.length; i++){
+					//only new value different old value
+					if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
+						docExecute_dependencyService.dataDependenciesCorrelationWatch(newValue[i]);		
+						break;
+					}
+					
+				}
+			}
+		},true);
+	  
+	  
+		
+		
 		
 		//ranking document
 		$scope.rankDocument = function() {
@@ -160,7 +224,7 @@
 			console.log("changeRole IN ");
 			if(role != execProperties.selectedRole.name) {  
 				docExecute_urlViewPointService.executionProcesRestV1(role);
-				docExecute_urlViewPointService.getParametersForExecution(role);
+				docExecute_urlViewPointService.getParametersForExecution(role,$scope.buildCorrelation);
 			}
 			console.log("changeRole OUT ");
 		};

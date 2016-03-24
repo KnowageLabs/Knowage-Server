@@ -51,7 +51,7 @@ try{
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentbrowser/md-data-table.min.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
 </head>
 
@@ -73,9 +73,10 @@ try{
 				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()">
 					 <md-icon md-font-icon="fa fa-refresh"></md-icon>
 				</md-button>
-				
-				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()" ng-disabled="isParameterRolePanelDisabled.status">
-					<md-icon md-font-icon="fa fa-filter"></md-icon>
+				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
+				 ng-if="!isParameterRolePanelDisabled.status">
+					<md-icon md-font-icon="fa fa-filter"></md-icon> 
+					<!-- ng-if="!isParameterRolePanelDisabled.status" -->
 				</md-button>
 				
 				<md-menu-bar id="menu">
@@ -204,7 +205,7 @@ try{
 									layout="row" aria-label="" class="md-whiteframe-1dp">
 								
 								<document-paramenter-element parameter="parameter" 
-										layout="row" flex layout-align="start"/>
+										layout="row" flex layout-align="start" ng-show="parameter.visible"/>
 							</md-list-item>
 						</md-list>
 					</md-content>
