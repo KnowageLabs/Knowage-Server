@@ -26,6 +26,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			, menuOption : "=?" //menu to show on hover
 			, keys : '=?' //object of the keys 
 			, enableDrag:"=?"
+			, highlightsSelectedItem: "=?"
 			, optionsDragDrop:"=?"
 			, enableClone:"=?"
 			, showEmptyPlaceholder :"=?"

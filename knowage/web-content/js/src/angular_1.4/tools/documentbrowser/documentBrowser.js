@@ -10,7 +10,8 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
 	$scope.showDocumentDetail = false;
-
+	$scope.orderElements = [{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]
+	$scope.selectedOrder = $scope.orderElements[1].name;	
 	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
 	
 //	$scope.setDetailOpen(false);
@@ -221,10 +222,10 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 			.then(function(response) {
 			$scope.folderDocuments.splice(index,1);
 			},function(response) {
-				console.log("DELETE FAILLLLLLLLLLLLLLL");
+				console.log("DELETE FAIL");
 			});
 
-
+			$scope.selectedDocument = undefined;
 
 		}, function() {
 		});
@@ -247,7 +248,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 				console.log(response.data);
 			$scope.folderDocuments.push(response.data);
 			},function(response) {
-				console.log("Clone FAILLLLLLLLLLLLLLL");
+				console.log("Clone FAIL");
 			});
 
 
@@ -353,6 +354,7 @@ function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_c
 					$scope.closeDialogFromExt(reloadFolder);
 				}
 	}
+
 }
 
 

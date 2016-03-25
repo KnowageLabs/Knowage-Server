@@ -95,16 +95,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
 	     			</md-toolbar>
 	     			<md-content layout-margin>
-	     				<document-tree ng-model="folders" create-tree="true" selected-item="selectedFolder"  click-function="setSelectedFolder(item)"  ></document-tree>
+	     				<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder"  click-function="setSelectedFolder(item)"  ></document-tree>
 					</md-content>
 				</md-sidenav>
 	
 				<md-content layout-margin flex layout="column"> 
 				
-					<bread-crumb  item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
-					<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3> 
-		 
-				 	<document-view flex ng-model="folderDocuments"
+				<bread-crumb item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
+				 <md-input-container ng-show='showDocumentGridView'>
+			        <label>Order</label>
+			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">
+			          <md-option ng-repeat="orderElement in orderElements" value="{{orderElement.name}}">{{orderElement.label}}</md-option>
+			        </md-select>
+      				</md-input-container>
+					
+				 
+			<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
+				 	<document-view flex style='overflow:auto' ng-model="folderDocuments"
 						show-grid-view="showDocumentGridView"
 						table-speed-menu-option="documentTableButton"
 						selected-document=selectedDocument
@@ -113,6 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						clone-document-action="cloneDocument(doc)"
 						delete-document-action="deleteDocument(doc)"
 						execute-document-action="executeDocument(doc)"
+						ordering-document-cards=selectedOrder
 				 	  ></document-view>
 		   	</md-content>
 			</md-content>

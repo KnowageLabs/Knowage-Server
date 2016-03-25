@@ -14,6 +14,7 @@ angular.module('document_view', ['ngMaterial'])
 			cloneDocumentAction:"&",
 			deleteDocumentAction:"&",
 			executeDocumentAction:"&",
+			orderingDocumentCards:"=?",
 		},
 		link: function (scope, elem, attrs) { 
 			elem.css("position","relative")

@@ -13,7 +13,7 @@
 					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<md-card class="documentCard" ng-repeat="document in ngModel" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
+					<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
 			        <md-card-title>
 				          <md-card-title-text>
 				            <p class=" ellipsis">{{document.name}}</p>
