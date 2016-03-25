@@ -430,11 +430,11 @@ public class KpiService {
 	}
 
 	@GET
-	@Path("/listKpiWithTarget")
+	@Path("/{targetId}/listKpiWithTarget")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listKpiWithTarget(@Context HttpServletRequest req) throws EMFUserError {
+	public Response listKpiWithTarget(@PathParam("targetId") Integer targetId, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<TargetValue> kpiList = dao.listKpiWithTarget();
+		List<TargetValue> kpiList = dao.listKpiWithTarget(targetId);
 		return Response.ok(JsonConverter.objectToJson(kpiList, kpiList.getClass()).toString()).build();
 	}
 
