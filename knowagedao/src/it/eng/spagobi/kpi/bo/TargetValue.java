@@ -5,16 +5,12 @@ public class TargetValue {
 	private Integer kpiId;
 	private Integer kpiVersion;
 	private Integer targetId;
+
+	private Kpi kpi;
+
 	private Double value;
 
 	public TargetValue() {
-	}
-
-	public TargetValue(Integer kpiId, Integer kpiVersion, Integer targetId, Double value) {
-		this.kpiId = kpiId;
-		this.kpiVersion = kpiVersion;
-		this.targetId = targetId;
-		this.value = value;
 	}
 
 	/**
@@ -75,6 +71,21 @@ public class TargetValue {
 	 */
 	public void setTargetId(Integer targetId) {
 		this.targetId = targetId;
+	}
+
+	/**
+	 * @return the kpi
+	 */
+	public Kpi getKpi() {
+		return kpi;
+	}
+
+	/**
+	 * @param kpi
+	 *            the kpi to set
+	 */
+	public void setKpi(Kpi kpi) {
+		this.kpi = kpi;
 	}
 
 }

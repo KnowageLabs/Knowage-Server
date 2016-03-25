@@ -182,5 +182,5 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public void removeTarget(Integer id);
 
-	public List<TargetValue> listKpiWithTarget();
+	public List<TargetValue> listKpiWithTarget(Integer targetId);
 }

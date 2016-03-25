@@ -3,8 +3,10 @@ package it.eng.spagobi.kpi.metadata;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiKpiTargetValue extends SbiHibernateModel {
+
 	private SbiKpiTarget sbiKpiTarget;
 	private SbiKpiKpi sbiKpiKpi;
+
 	private Double value;
 
 	private Integer kpiId;

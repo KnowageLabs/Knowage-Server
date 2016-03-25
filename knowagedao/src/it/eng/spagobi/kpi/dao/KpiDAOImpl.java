@@ -1059,8 +1059,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private TargetValue from(SbiKpiTargetValue sbiValue) {
-		return new TargetValue(sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getId(), sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getVersion(), sbiValue
-				.getSbiKpiTarget().getTargetId(), sbiValue.getValue());
+		TargetValue tv = new TargetValue();
+		SbiKpiKpi sbiKpi = sbiValue.getSbiKpiKpi();
+		tv.setKpi(from(sbiKpi, null, false));
+		tv.setTargetId(sbiValue.getTargetId());
+		tv.setKpiId(sbiKpi.getSbiKpiKpiId().getId());
+		tv.setKpiVersion(sbiKpi.getSbiKpiKpiId().getVersion());
+		tv.setValue(sbiValue.getValue());
+		return tv;
 	}
 
 	@Override
@@ -1115,10 +1121,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Iterator<SbiKpiTargetValue> targetIterator = sbiTarget.getSbiKpiTargetValues().iterator();
 				while (targetIterator.hasNext()) {
 					SbiKpiTargetValue sbiValue = targetIterator.next();
+					SbiKpiKpiId sbiKpiKpiId = sbiValue.getSbiKpiKpi().getSbiKpiKpiId();
 					boolean found = false;
 					for (TargetValue targetValue : target.getValues()) {
-						if (sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getId().equals(targetValue.getKpiId())
-								&& sbiValue.getSbiKpiKpi().getSbiKpiKpiId().getVersion().equals(targetValue.getKpiVersion())) {
+						if (sbiKpiKpiId.getId().equals(targetValue.getKpiId()) && sbiKpiKpiId.getVersion().equals(targetValue.getKpiVersion())) {
 							found = true;
 						}
 					}
@@ -1155,25 +1161,25 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<TargetValue> listKpiWithTarget() {
+	public List<TargetValue> listKpiWithTarget(final Integer targetId) {
 		List<SbiKpiTargetValue> lst = list(new ICriterion<SbiKpiTargetValue>() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session
-						.createCriteria(SbiKpiKpi.class)
-						.createAlias("sbiKpiTargetValues", "sbiKpiTargetValues", JoinFragment.LEFT_OUTER_JOIN)
-						.add(Restrictions.eq("active", 'T'))
-						.setProjection(
-								Projections.projectionList().add(Property.forName("sbiKpiKpiId.id").as("kpiId"))
-										.add(Property.forName("sbiKpiKpiId.version").as("kpiVersion"))
-										.add(Property.forName("sbiKpiTargetValues.value").as("value")))
-						.setResultTransformer(Transformers.aliasToBean(SbiKpiTargetValue.class));
+				return session.createCriteria(SbiKpiTargetValue.class).createAlias("sbiKpiKpi", "sbiKpiKpi", JoinFragment.RIGHT_OUTER_JOIN)
+						.createAlias("sbiKpiTarget", "sbiKpiTarget").add(Restrictions.eq("sbiKpiKpi.active", 'T'))
+						.add(Restrictions.eq("sbiKpiTarget.targetId", targetId));
+				/*
+				 * return session .createCriteria(SbiKpiKpi.class) .createAlias("sbiKpiTargetValues", "sbiKpiTargetValues", JoinFragment.LEFT_OUTER_JOIN)
+				 * .createAlias("sbiKpiTargetValues.sbiKpiKpi", "sbiKpiKpi") .add(Restrictions.eq("active", 'T')) .setProjection(
+				 * Projections.projectionList().add(Property.forName("sbiKpiKpiId.id").as("kpiId"))
+				 * .add(Property.forName("sbiKpiKpiId.version").as("kpiVersion")) .add(Property.forName("sbiKpiTargetValues.value").as("value")))
+				 * .setResultTransformer(Transformers.aliasToBean(SbiKpiTargetValue.class));
+				 */
 			}
 		});
 		List<TargetValue> ret = new ArrayList<>();
 		for (SbiKpiTargetValue sbiTarget : lst) {
-			TargetValue tv = new TargetValue(sbiTarget.getKpiId(), sbiTarget.getKpiVersion(), null, sbiTarget.getValue());
-			ret.add(tv);
+			ret.add(from(sbiTarget));
 		}
 		return ret;
 	}

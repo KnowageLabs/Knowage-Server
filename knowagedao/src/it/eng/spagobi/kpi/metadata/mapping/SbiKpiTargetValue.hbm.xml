@@ -9,13 +9,15 @@
         		<column name="KPI_VERSION"  />
         		<column name="KPI_ID" />
         	</key-many-to-one>
-        	<key-many-to-one name="SbiKpiTarget" class="it.eng.spagobi.kpi.metadata.SbiKpiTarget" column="TARGET_ID" />
+        	<key-many-to-one name="sbiKpiTarget" class="it.eng.spagobi.kpi.metadata.SbiKpiTarget" column="TARGET_ID" />
         </composite-id>
-        <!-- 
-        <property name="kpiId" column="KPI_ID" />
-        <property name="kpiVersion" column="KPI_VERSION" />
-        <property name="targetId" column="TARGET_ID" />
-         -->
+       
+        <many-to-one name="sbiKpiKpi" class="it.eng.spagobi.kpi.metadata.SbiKpiKpi" insert="false" update="false" >
+       		<column name="KPI_VERSION"  />
+       		<column name="KPI_ID" />
+       	</many-to-one>
+        
+        <many-to-one name="sbiKpiTarget" class="it.eng.spagobi.kpi.metadata.SbiKpiTarget" column="TARGET_ID" insert="false" update="false" />
         
         <property name="value" type="double" column="TARGET_VALUE" not-null="true" />
         
