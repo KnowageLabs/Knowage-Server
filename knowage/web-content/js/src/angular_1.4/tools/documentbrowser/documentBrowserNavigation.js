@@ -6,6 +6,16 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
+app.directive('mdTabFixedFirst',
+        function ($compile) {
+            return {
+                link: function (scope, element, attrs, ctrl, transclude) {
+	        		var mdTabsWrapper= angular.element(document.querySelector("md-tabs.documentNavigationToolbar"));
+	                angular.element(mdTabsWrapper).append(element);
+                }
+            };
+        })
+
 app.controller( 'documentBrowserNavigationController', ['$scope',documentBrowserMasterFunction]);
 function documentBrowserMasterFunction($scope){
 	$scope.runningDocuments=[];

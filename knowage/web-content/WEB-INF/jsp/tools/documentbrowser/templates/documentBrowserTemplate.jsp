@@ -26,7 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-button>
 					
 					<!-- Title -->
-<!-- 					<md-icon md-font-icon="fa  fa-folder-open-o fa-2x" layout-margin></md-icon> -->
+					
+					<!-- Search clear -->
+					<md-button class="md-icon-button" title="Clear" aria-label="back" ng-show="showSearchView" ng-click="toggleSearchView()">
+						   <md-icon md-font-icon="fa fa-arrow-left"></md-icon>
+					</md-button>
+					 
 					<h1 ng-hide="showSearchView">{{translate.load("sbi.browser.title")}}</h1>
 					<h1 ng-show="showSearchView">{{translate.load("sbi.browser.document.searchDocuments")}}</h1>
 					
@@ -54,15 +59,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						 <md-icon md-font-icon="fa" ng-class="showDocumentGridView ? 'fa-th-list' : 'fa-th'" ></md-icon>
 					</md-button>
 					
-					 <!-- Document Detail button-->
-					<md-button class="md-icon-button"  ng-class="{'selectedButton':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" ng-disabled="!isSelectedDocumentValid()" title="Details" aria-label="Details">
-						 <md-icon md-font-icon="fa fa-info-circle"></md-icon>
-					 </md-button>
+<!-- 					 Document Detail button -->
+<!-- 					<md-button class="md-icon-button"  ng-class="{'selectedButton':showDocumentDetail}" ng-click="setDetailOpen(!showDocumentDetail)" ng-disabled="!isSelectedDocumentValid()" title="Details" aria-label="Details"> -->
+<!-- 						 <md-icon md-font-icon="fa fa-info-circle"></md-icon> -->
+<!-- 					 </md-button> -->
 					
-					<!-- Settings button-->
-					<md-button class="md-icon-button" title="Settings" aria-label="Settings" ng-click="alert('Settings')">
-					 	<md-icon md-font-icon="fa fa-cog"></md-icon>
-					</md-button>
+				 
 					
 					<!-- New Document -->
 					<md-menu style="padding: 0;">

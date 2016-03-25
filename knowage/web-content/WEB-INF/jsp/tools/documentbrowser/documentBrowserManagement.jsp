@@ -45,8 +45,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body   ng-app="documentBrowserModule" id="ng-app" class="kn-documentBrowser" ng-controller="documentBrowserNavigationController">
-	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar">
-	<md-tab>
+
+	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar" md-selected="documentNavigationToolbarSelectedIndex">
+	<md-tab >
 	 <md-tab-label><md-icon class="documentBrowserIcon" md-font-icon="fa  fa-folder-open-o " ></md-icon></md-tab-label>
 	 <md-tab-body>
 	  <%@ include file="/WEB-INF/jsp/tools/documentbrowser/templates/documentBrowserTemplate.jsp"%>
@@ -68,5 +69,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 </md-tab>
 	</md-tabs>
 	
+	 
+		<md-button  md-tab-fixed-first class="documentBrowserTabButton " aria-label="close document" ng-class="{'selectedDocumentBrowserTabButton' : documentNavigationToolbarSelectedIndex==0}"ng-click="documentNavigationToolbarSelectedIndex=0">
+            <md-icon md-font-icon="fa fa-folder-open-o"></md-icon>
+     	</md-button> 
 </body>
 </html>
