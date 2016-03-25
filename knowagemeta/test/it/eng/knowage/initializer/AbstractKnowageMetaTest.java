@@ -52,6 +52,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 	protected static BusinessModel filteredBusinessModel;
 
 	static private Logger logger = Logger.getLogger(AbstractKnowageMetaTest.class);
+	protected boolean tearDown = false;
 
 	public AbstractKnowageMetaTest() {
 		super();
@@ -59,7 +60,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
@@ -68,20 +69,34 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 
 		// Creating DataSources
 		// this.createDataSources();
+
+		try {
+			if (physicalModelInitializer == null)
+				physicalModelInitializer = new PhysicalModelInitializer();
+			if (businessModelInitializer == null)
+				businessModelInitializer = new BusinessModelInitializer();
+			tearDown = false;
+		} catch (Exception t) {
+			System.err.println("An unespected error occurred during setUp: ");
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		// clean
-		dataSourceReading = null;
+		if (tearDown) {
+			doTearDown();
+		}
 	}
 
 	protected void doTearDown() {
+		dataSourceReading = null;
 		dbType = null;
 		rootModel = null;
 		physicalModel = null;
@@ -91,7 +106,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 		filteredBusinessModel = null;
 		physicalModelInitializer = null;
 		businessModelInitializer = null;
-		// generator = null;
+		generator = null;
 	}
 
 	/*
