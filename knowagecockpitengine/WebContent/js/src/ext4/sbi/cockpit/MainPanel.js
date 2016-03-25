@@ -345,6 +345,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 		if (Sbi.config.environment == "MYANALYSIS") {
 			sendMessage({newUrl:url},'closeDocument');
 		} else if (Sbi.config.environment == "DOCBROWSER") {
+			
 			if (typeof sendMessage == 'function'){
 				sendMessage({},'closeDocument');
 			}else{
@@ -791,6 +792,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	, onShowSaveDocumentAsWindow: function() {
 		this.showSaveDocumentAsWin();
 	}
+	
+	, onCloseAngularAction: function() { 
+		if(window.parent.angular.element(window.frameElement).scope()){
+			window.parent.angular.element(window.frameElement).scope().closeConfirm(!this.documentSaved,this.documentSaved);
+		}
+	}
 
 	, onSaveDocument: function(win, closeDocument, params) {
 		Sbi.trace("[MainPanel.onSaveDocument]: IN");
@@ -804,7 +811,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 
 		Sbi.trace("[MainPanel.onSaveDocument]: Input parameter [closeDocument] is equal to [" + closeDocument + "]");
 		if(closeDocument === true) {
-			this.closeDocument();
+			//if angular iframe
+			if( window.name=="angularIframe" && window.parent.angular.element(window.frameElement).scope()){
+				window.parent.angular.element(window.frameElement).scope().closeDialogFromExt(true);
+			}else{
+				this.closeDocument();
+			}
 		}
 		Sbi.trace("[MainPanel.onSaveDocument]: OUT");
 	}
@@ -986,6 +998,22 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 	 		, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 	 	}));
+		
+		
+	
+		 
+			tbItems.push( new Ext.Button({
+			 	id: 'closeAngular'
+		 		, iconCls: 'delete-icon-tab'
+		 		, tooltip: 'close '
+		 		, scope: this
+		 		, handler:  this.onCloseAngularAction
+		 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+		 		, hidden: window.name!="angularIframe"
+		 	}));
+	 
+		
+		
 
 		/*
 		tbItems.push(new Ext.Button({

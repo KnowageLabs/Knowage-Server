@@ -178,15 +178,32 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		alert(message);
 	};
 	
-	$scope.editDocument=function(){
+	$scope.editDocument=function(document){
 		 $mdDialog.show({
  		      controller: DialogEditDocumentController,
- 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/editDocumentTemplate.jsp',  
+ 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
  		      clickOutsideToClose:false,
+ 		      escapeToClose :false,
  		      fullscreen: true,
- 		      locals:{
- 		    	 }
+ 		      locals:{document:document }
  		    })
+	};
+	
+	$scope.newDocument=function(type){
+		$mdDialog.show({
+			controller: DialogNewDocumentController,
+			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
+			clickOutsideToClose:false,
+			escapeToClose :false,
+			fullscreen: true,
+			locals:{
+				selectedFolder: $scope.selectedFolder,
+				typeDocument:type}
+		}) .then(function() { 
+			if($scope.selectedFolder!=undefined){
+				$scope.loadFolderDocuments($scope.selectedFolder.id);
+			}
+	    } );
 	};
 	
 	$scope.deleteDocument = function(Document){
@@ -279,13 +296,64 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope,$mdDialog){
+function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document){
 	$scope.closeDialogFromExt=function(){
 		 $mdDialog.cancel();
 	}
-	$scope.editDocumentUrl="http://192.168.40.220:8080/knowage/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=11";
+	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id;
 }
 
+function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_config,selectedFolder,typeDocument,sbiModule_config,sbiModule_user,sbiModule_translate){
+
+	var folderId= selectedFolder==undefined? "" : "&FUNCT_ID="+selectedFolder.id;
+	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_NEW"+folderId;
+
+	 if(typeDocument=="cockpit"){
+			$scope.iframeUrl= sbiModule_config.engineUrls.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
+		}
+	
+	$scope.closeDialogFromExt=function(reloadFolder){
+		if(reloadFolder){
+			$mdDialog.hide();
+		}else{
+			$mdDialog.cancel();
+		}
+	}
+	
+		$scope.closeConfirm=function(confirm,reloadFolder){
+			
+				if(confirm){
+					$mdBottomSheet.show({
+					      template: '<md-bottom-sheet layout="column">'+
+					    	  '<p><b>{{translate.load("sbi.browser.close")}}</b></p>'+
+					    	  '<span>{{translate.load("sbi.browser.close.confirm")}}</span>'+
+					    	  '<div layout="row">'+
+					    	  '	<md-button ng-click=" confirm(false)" class="md-raised" flex>{{translate.load("sbi.general.cancel")}}</md-button>'+
+					    	  '	<md-button ng-click=" confirm(true)" class="md-raised" flex>{{translate.load("sbi.general.continue")}}</md-button>'+
+					    	  '</div>'+
+					    	  '</md-bottom-sheet>',
+					       clickOutsideToClose: false,
+					       escapeToClose :false,
+					       parent:  angular.element(document.querySelector(".dialogFrameContent")),
+					       disableParentScroll:true,
+					       controller:function($scope,$mdBottomSheet,sbiModule_translate){
+					    		$scope.translate=sbiModule_translate;
+					    	   $scope.confirm=function(resp){ 
+					    		   $mdBottomSheet.hide(resp)
+					    	   }
+					       }
+					    }).then(function(close) {
+					    	if(close){
+					    		 $scope.closeDialogFromExt(reloadFolder);
+					    		 
+					    	}
+					    });
+					
+				}else{
+					$scope.closeDialogFromExt(reloadFolder);
+				}
+	}
+}
 
 
 

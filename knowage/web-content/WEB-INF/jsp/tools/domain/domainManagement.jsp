@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-
+	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/domain/domainManagement.js"></script>
 	
 </head>
@@ -50,9 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-button 	class="md-raised " ng-click="editRow()">{{translate.load("sbi.generic.update2")}}</md-button>
 		 </div>
 			
-		 
-		<md-content flex >
-				<angular-table 
+		  
+				<angular-table flex
 					id="table" ng-model="data" 
 					columns='["valueCd","valueName","domainCode","domainName","valueDescription"]'
 					columns-search='["valueCd","valueName","domainCode","domainName","valueDescription"]'
@@ -61,8 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					no-pagination="true"
 					selected-item="itemSelected"
 				></angular-table>
-	 
-		</md-content>	
+	  
 	</div>
 </body>
 </html>

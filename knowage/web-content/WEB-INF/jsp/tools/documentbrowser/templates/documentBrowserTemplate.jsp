@@ -1,3 +1,21 @@
+<%--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
 	<md-content ng-controller="documentBrowserController" layout="column"  ng-cloak layout-fill>
 		<!-- Toolbar -->
 		<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
@@ -46,6 +64,26 @@
 					 	<md-icon md-font-icon="fa fa-cog"></md-icon>
 					</md-button>
 					
+					<!-- New Document -->
+					<md-menu style="padding: 0;">
+				      <md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)">
+				        <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+				      </md-button>
+				      <md-menu-content width="4">
+				        <md-menu-item>
+				          <md-button ng-click="newDocument();">
+				            <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+				           {{translate.load("sbi.generic.document.add.traditional SpagoBI")}}
+				          </md-button>
+				        </md-menu-item>
+				        <md-menu-item>
+				          <md-button ng-click="newDocument('cockpit');">
+				            <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+				            {{translate.load("sbi.generic.document.add.adhocCockpit")}}
+				          </md-button>
+				        </md-menu-item>
+					</md-menu-content>
+					</md-menu>
 				</div>
 			</md-toolbar>
 		

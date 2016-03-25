@@ -191,8 +191,18 @@ function checkFormVisibility(docType, engineValue) {
 	
 }
 
-function saveDocument(goBack) {
+function angularGoBackFunction(reloadFolder){
+	if(window.parent.angular.element(window.frameElement).scope()){
+		window.parent.angular.element(window.frameElement).scope().closeDialogFromExt(reloadFolder);
+	}
+}
 
+function angGoBack(){
+	angularGoBackFunction();
+}
+
+function saveDocument(goBack) {
+ 
 	var type = document.getElementById('doc_type').value;
 	if (type.match('DOCUMENT_COMPOSITE') != null){
 	    var message = "<%=msgBuilder.getMessage("1012",
@@ -209,15 +219,12 @@ function saveDocument(goBack) {
 	
 	if (goBack == 'true'){
 	    document.getElementById('saveAndGoBack').name = 'saveAndGoBack';
-		document.getElementById('saveAndGoBack').value = 'saveAndGoBack';		
-		if(window.parent.angular.element(window.frameElement).scope()){
-			window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
-			}
+		document.getElementById('saveAndGoBack').value = 'saveAndGoBack';
 	}
 		
 	document.objectForm.submit();
 }
-
+ 
 </script>
 
 <form method='POST' action='<%=formUrl%>' id = 'objectForm' name='objectForm' enctype="multipart/form-data">
@@ -267,7 +274,7 @@ function saveDocument(goBack) {
 			/>
 			-->
 		</td>
-		<td class='header-button-column-portlet-section'>
+	<td class='header-button-column-portlet-section' id="saveAndGoBackTD">
 		<input type="hidden" name="" value="" id="saveAndGoBack" />
 		<a href='javascript:saveDocument("true");'> 
 			<img name='isaveAndGoBack' id='isaveAndGoBack' class='header-button-image-portlet-section'
@@ -284,6 +291,14 @@ function saveDocument(goBack) {
 			/> 
 			-->
 		</td>
+		
+		<script> 
+		//if this page is open from angular page, hide this button to prevent a incorrect result
+		if(window.name=="angularIframe"){
+			document.getElementById("saveAndGoBackTD").style.display = 'none'
+		}
+		</script>
+		
 		<td class='header-button-column-portlet-section'>
 			<%
 				if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
@@ -292,7 +307,7 @@ function saveDocument(goBack) {
 			<%
  				} else {
  			%>
-				<a href='<%=backUrl%>'>
+				<a href='<%=backUrl%>' onclick="angGoBack()">
 			<%
 				}
 			%>
@@ -1513,8 +1528,9 @@ function changeBIParameter (objParId, message) {
 	document.getElementById('objectForm').submit();
 }
 
+
+
 function saveAndGoBackConfirm(message, url){
-	
 		var biobjFormModified = isBIObjectFormChanged();
 		var biobjParFormModified = isBIParameterFormChanged();
 		if (biobjFormModified == 'true' || biobjParFormModified == 'true') {
@@ -1523,18 +1539,14 @@ function saveAndGoBackConfirm(message, url){
 				document.getElementById('saveAndGoBack').click();
 			} else {
 				location.href = url;
-				if(window.parent.angular.element(window.frameElement).scope()){
-				window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
-				}
+				angularGoBackFunction(true);
 			}
 		} else {
 			location.href = url;
-			if(window.parent.angular.element(window.frameElement).scope()){
-				window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();
-			}
+			angularGoBackFunction(true);
 		}
 }
-
+ 
 function deleteVersionConfirm(message, url){
 	if (confirm(message)){
             location.href = url;
@@ -1620,6 +1632,8 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
     	location.href = urlNo;
     }
 }
+
+
 </script>
 
 		      

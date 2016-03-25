@@ -106,6 +106,7 @@
 		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
 		
 	}
+	 
 	
 %>
 

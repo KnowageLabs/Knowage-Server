@@ -150,7 +150,7 @@ try{
         <div  layout="row" flex="grow"  ng-switch on="currentView.status">
  		
 	 		<md-content id="documentFrameContainer" layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
-				<iframe id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
+				<iframe class="noBorder" id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 			</md-content>
 			
@@ -163,10 +163,10 @@ try{
 		 										
 	</div>
 	
-	<md-sidenav class="md-sidenav-right" md-component-id="parametersPanelSideNav" layout="column"
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column"
 						ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')" >
 								
-					<md-toolbar class="header" ng-hide="isParameterPanelDisabled()">
+					<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
 						<div layout="row" layout-align="center center">						
 							<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 									ng-click="clearListParametersForm();">

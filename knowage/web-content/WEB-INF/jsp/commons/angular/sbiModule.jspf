@@ -20,7 +20,7 @@ sbiM.factory('sbiModule_config',function(){
 		localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
-		
+		engineUrls:<%= aServiceResponse.getAttribute("engineUrls") %>,
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
 		<%-- <%}%> --%>
@@ -126,8 +126,8 @@ sbiM.factory('sbiModule_user',function(){
 	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
 	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
+	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
-	
 	// 	set roles
 	user.roles =[];
 	<% for(Object rol : userRoles) { 	%>
