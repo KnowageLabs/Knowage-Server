@@ -3,12 +3,15 @@
       <md-toolbar class="knowage-blue dialog-toolbar">
 		<h2 flex="flex" class="md-title">Select Function</h2>
 	</md-toolbar>
-      
+    
+    
+    
+       <div style="margin-left: 20px;">
       <md-input-container class="md-block">
           <label>Name</label>
-          <input ng-model="selectedMDXFunction.label">
+          <input ng-model="selectedMDXFunction.label" ng-disabled="selectedMDXFunction == null">
         </md-input-container>
-      
+      </div>
   <md-dialog-content ng-cloak>
     <md-tabs md-dynamic-height md-border-bottom>
       <md-tab label="Aggregation">

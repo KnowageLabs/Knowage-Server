@@ -459,13 +459,18 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     	}
     }
     $scope.checkValidityArgs = function(){
-    	for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
-    		if($scope.selectedMDXFunction.argument[i].text == undefined){
-    			return true;
-    		}else{
-        		return false;
-        	}
-    	} 
+    	
+    	if($scope.selectedMDXFunction != null){
+    		for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
+        		if($scope.selectedMDXFunction.argument[i].text == undefined || $scope.selectedMDXFunction.argument[i].text =="" ){
+        			return true;
+        		}else{
+            		return false;
+            	}
+        	} 	
+	
+    	}
+    		return false;
     	
     }
       

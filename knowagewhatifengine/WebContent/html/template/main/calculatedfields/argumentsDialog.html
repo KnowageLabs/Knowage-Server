@@ -1,18 +1,17 @@
 
-<md-dialog>
+<md-dialog style='width:50%;'>
     
       <md-toolbar class="knowage-blue dialog-toolbar">
 		<h2 flex="flex" class="md-title">Arguments for: {{selectedMDXFunction.label}}</h2>
+		<p class="md-body-1">Description : {{selectedMDXFunction.description}}</p>
 	</md-toolbar>
-      
-      <p class="md-body-1">Description : {{selectedMDXFunction.description}}</p>
-
-    <div>
+       
+    <div style="padding: 5px;">
    <md-input-container class="md-block" ng-repeat="argument in selectedMDXFunction.argument">
           <label>{{argument.expected_value}}</label>
           <input ng-model="argument.text"> 
-          <md-button ng-click="enterSelectMode($index,argument)" >
-       Select
+          <md-button ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'">
+       Select from table
       	</md-button>
           <p class="md-body-1">Description : {{argument.argument_description}}</p>
         </md-input-container> 
