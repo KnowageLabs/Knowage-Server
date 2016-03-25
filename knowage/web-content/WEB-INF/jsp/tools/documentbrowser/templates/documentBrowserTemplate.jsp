@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-content layout="row" flex>
 		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
-				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" >
+				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-menu': !$mdMedia('gt-sm')}" >
 					<md-toolbar class=" ternaryToolbar">
 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
 	     			</md-toolbar>
@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
 				</md-content>
 			
-			<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ng-show="showDocumentDetails()">
+			<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-menu': !$mdMedia('gt-sm')}" ng-show="showDocumentDetails()">
 					<md-toolbar class="ternaryToolbar">
 	<!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->
 						<div layout="row" layout-align="space-around center">
@@ -185,3 +185,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</md-content>
 	
+	
+	<style>
+	.full-screen-menu {
+		width: 100%;
+		max-width: 100%;
+	}
+	</style>
