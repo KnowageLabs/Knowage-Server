@@ -10,7 +10,7 @@
    <md-input-container class="md-block" ng-repeat="argument in selectedMDXFunction.argument">
           <label>{{argument.expected_value}}</label>
           <input ng-model="argument.text"> 
-          <md-button ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'">
+          <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'">
        Select from table
       	</md-button>
           <p class="md-body-1">Description : {{argument.argument_description}}</p>
@@ -18,18 +18,18 @@
  		</div>
 
     <md-dialog-actions layout="row">
-    <md-button ng-click="openArgumentsdialog()" >
+    <md-button  class="md-raised" ng-click="openArgumentsdialog()" >
         Open Editor
       </md-button>
-      <md-button ng-click="openArgumentsdialog()" >
+      <md-button  class="md-raised" ng-click="openArgumentsdialog()" >
         Open Saved Members
       </md-button>
       
     	<span flex></span>
-      <md-button ng-click="sendCC()" ng-disabled="checkValidityArgs()">
+      <md-button ng-click="sendCC()" class="md-raised" ng-disabled="checkValidityArgs()" md-autofocus>
         OK
       </md-button>
-      <md-button ng-click="closeDialog()" style="margin-right:20px;" >
+      <md-button ng-click="closeDialog()" class="md-raised" style="margin-right:20px;" >
        Cancel
       </md-button>
     </md-dialog-actions>

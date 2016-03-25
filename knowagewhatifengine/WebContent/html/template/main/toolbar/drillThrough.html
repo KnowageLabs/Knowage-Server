@@ -53,16 +53,19 @@
 		        <md-option value="25">25</md-option>
 		        <md-option value="50">50</md-option>
 		        <md-option value="100">100</md-option>
+		        <md-option value="250">250</md-option>
+		        <md-option value="500">500</md-option>
+		        <md-option value="1000">1000</md-option>
 		      </md-select>
 		     </md-input-container>
 				<span flex></span>
-			<md-button ng-click="closeDialog()">
+			<md-button class="md-raised" ng-click="closeDialog()">
 				Cancel
 			</md-button>
-			<md-button ng-click="exportDrill()">
+			<md-button class="md-raised" ng-click="exportDrill()">
 				Export
 			</md-button>
-			<md-button ng-click="enableDisableDrillThrough()" md-autofocus>
+			<md-button class="md-raised"  ng-click="enableDisableDrillThrough()" md-autofocus>
 				Apply 
 			</md-button>		
 		</md-dialog-actions>
