@@ -206,16 +206,31 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	@GET
+	@POST
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
-			@QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
-			// @QueryParam("treeLovNode") Integer treeLovNodeLevel,
-			@Context HttpServletRequest req) throws EMFUserError {
+	// public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
+	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
+	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
+	// @Context HttpServletRequest req) throws EMFUserError {
+	public Response getParameterValues(@Context HttpServletRequest req) throws EMFUserError, IOException, JSONException {
 
 		MessageBuilder msgBuild = new MessageBuilder();
 		Locale locale = msgBuild.getLocale(req);
+
+		String role;
+		String label;
+		String biparameterId;
+		String treeLovNode;
+		String mode;
+		// GET PARAMETER
+
+		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+		role = (String) requestVal.opt("role");
+		label = (String) requestVal.opt("label");
+		biparameterId = (String) requestVal.opt("biparameterId");
+		treeLovNode = (String) requestVal.opt("treeLovNode");
+		mode = (String) requestVal.opt("mode");
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
@@ -242,7 +257,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			treeLovNodeLevel = new Integer(splittedNode[1]);
 		}
 
-		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, mode, treeLovNodeLevel,
+		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, requestVal, treeLovNodeLevel,
 				treeLovNodeValue, req);
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();

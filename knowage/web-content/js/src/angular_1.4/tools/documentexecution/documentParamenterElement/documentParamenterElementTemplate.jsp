@@ -70,7 +70,7 @@
 		<md-select ng-model="parameter.parameterValue"
 			 	ng-if="parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 			<md-option></md-option>
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" >
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>

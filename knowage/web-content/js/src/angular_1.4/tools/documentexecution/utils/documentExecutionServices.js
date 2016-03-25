@@ -3,17 +3,32 @@
 	
 	documentExecutionModule.service('documentExecuteServices', function($mdToast) {
 		var documentExecuteServicesObj = {
+//			decodeRequestStringToJson: function (str) {
+//				var hash;
+//				var parametersJson = {};
+//				var hashes = str.slice(str.indexOf('?') + 1).split('&');
+//				for (var i = 0; i < hashes.length; i++) {
+//					hash = hashes[i].split('=');
+//					parametersJson[hash[0]] = (/^\[.*\]$/).test(hash[1])?
+//						JSON.parse(hash[1]) : hash[1] ;
+//				}
+//				return parametersJson;
+//			},
+			
 			decodeRequestStringToJson: function (str) {
-				var hash;
 				var parametersJson = {};
-				var hashes = str.slice(str.indexOf('?') + 1).split('&');
-				for (var i = 0; i < hashes.length; i++) {
-					hash = hashes[i].split('=');
-					parametersJson[hash[0]] = (/^\[.*\]$/).test(hash[1])?
-						JSON.parse(hash[1]) : hash[1] ;
+				
+				var arrParam = str.split('%26');
+				for(var i=0; i<arrParam.length; i++){
+					var arrJsonElement = arrParam[i].split('%3D');
+					parametersJson[arrJsonElement[0]]=arrJsonElement[1];
 				}
 				return parametersJson;
 			},
+			
+			
+			
+			
 
 
 			showToast: function(text, time) {
@@ -23,6 +38,8 @@
 			},
 
 			buildStringParameters : function (documentParameters) {
+				console.log('buildStringParameters ' , documentParameters);
+				
 				var jsonDatum =  {};
 				if(documentParameters.length > 0) {
 					for(var i = 0; i < documentParameters.length; i++ ) {
@@ -30,20 +47,39 @@
 						var valueKey = parameter.urlName;
 						var descriptionKey = parameter.urlName + "_field_visible_description";					
 						var jsonDatumValue = null;
+						var jsonDatumDesc = null;
 						if(parameter.valueSelection.toLowerCase() == 'lov') {
-							parameter.parameterValue = parameter.parameterValue || [];
-							if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+							//TREE MODIFY (see with benedetto)
+							if(parameter.selectionType.toLowerCase() == 'tree'){
+								var paramArrayTree=[];
+								var paramStrTree ="";
+								for(var z=0; z<parameter.parameterValue.length; z++){
+									paramArrayTree[z]=parameter.parameterValue[z].value;
+									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
+									if(z<parameter.parameterValue.length-1){
+										paramStrTree = paramStrTree +";";
+									}
+								}
+								jsonDatumValue = paramArrayTree;
+								jsonDatumDesc=paramStrTree;
+							}else{
 								parameter.parameterValue = parameter.parameterValue || [];
-								
-								jsonDatumValue = parameter.parameterValue;
-							} else {
-								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+									parameter.parameterValue = parameter.parameterValue || [];
+									
+									jsonDatumValue = parameter.parameterValue;
+									jsonDatumDesc = jsonDatumValue;
+								} else {
+									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+									jsonDatumDesc = jsonDatumValue;
+								}
 							}
 						} else {
 							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+							jsonDatumDesc = jsonDatumValue;
 						}
 						jsonDatum[valueKey] = jsonDatumValue;
-						jsonDatum[descriptionKey] = jsonDatumValue;
+						jsonDatum[descriptionKey] = jsonDatumDesc;
 					}
 				}			
 				return jsonDatum;
@@ -178,7 +214,7 @@
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
 				function(data, status, headers, config) {					
-					console.log(data);
+					//console.log(data);
 					if(data['documentError'] && data['documentError'].length > 0 ) {
 						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
 						var alertDialog = $mdDialog.alert()
@@ -358,6 +394,7 @@
 		 * BUILD DATA DEPENDENCIES 
 		 */
 			this.buildDataDependenciesMap = function(parameters){
+			console.log('parameters ' , parameters);
 			for(var i=0; i<parameters.length ; i++){
 				if(parameters[i].dataDependencies && parameters[i].dataDependencies.length>0){						
 					for(var k=0; k<parameters[i].dataDependencies.length; k++){ 
@@ -389,56 +426,78 @@
 		
 		
 			 this.dataDependenciesCorrelationWatch = function(value){
-			 console.log('modify dependency : ' , value);
-				//prendere elemeti dalla mappa e ciclare
-				console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
+				 //console.log('modify dependency : ' , value);
+				//console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
 					var dataDependenciesElementMap = serviceScope.dataDependenciesMap[value.urlName][k];
-					var objPost = {};
-					objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
-					objPost.ROLE=execProperties.selectedRole.name;
-					objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
-					console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
-					objPost.MODE= (dataDependenciesElementMap.lovParameterMode!='TREE' ) ? 'simple' : 'complete';
-					objPost.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
-					sbiModule_restServices.post(
-							"1.0/documentExeParameters",
-							"getParameters", objPost)
-					   .success(function(data, status, headers, config) {
-						   if(data.status=="OK"){
-							   //from root only visibled element !!! 
-							   //set to disabled all default value parameter 
-							   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
-									  if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
-										  for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
-											  execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=false; 
+					//objPost.MODE= (dataDependenciesElementMap.lovParameterMode!='TREE' ) ? 'simple' : 'complete';
+					if(dataDependenciesElementMap.lovParameterMode!='TREE'){
+						var objPost = {};
+						objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+						objPost.ROLE=execProperties.selectedRole.name;
+						objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
+						console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
+						objPost.MODE='simple';
+						objPost.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						//objPost.PARAMETERS=JSON.parse('{"param1":"","param1_field_visible_description":"","param2":["South West"],"param2_field_visible_description":"South West"}');
+						sbiModule_restServices.post(
+								"1.0/documentExeParameters",
+								"getParameters", objPost)
+						   .success(function(data, status, headers, config) {  
+							   if(data.status=="OK"){
+								   //from root only visibled element !!! 
+								   //set to disabled all default value parameter 
+								   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+										  if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+											  if(execProperties.parametersData.documentParameters[z].defaultValues &&
+													  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
+												  for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+													  execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=false; 
+												  } 
+											  }
+											  break;
 										  }
-										  break;
+										  
 									  }
-									  
-								  }
-							   //set to enabled the correct default value 
-							   if(data.result.root && data.result.root.length>0){
-								   for(var p=0; p<data.result.root.length;p++){   
-									   console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
-									   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
-										   if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
-											   for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
-												if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
-													execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
-												}	  
+								   //set to enabled the correct default value 
+								   if(data.result.root && data.result.root.length>0){
+									   for(var p=0; p<data.result.root.length;p++){   
+										   //console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
+										   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+											   if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+												   if(execProperties.parametersData.documentParameters[z].defaultValues &&
+															  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
+													   for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+															if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
+																execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
+															}	  
+														   } 
+												   }
+												   break;
 											   }
-											   break;
-										   }
+										   }	   
 									   }
-									   
-								   }
+								   }else{
+									   //if no element in root hide the row component
+								   }  									   
 							   }
-							  									   
-						   }
-					})
-					.error(function(data, status, headers, config) {});
-					
+						})
+						.error(function(data, status, headers, config) {});
+						//END REST CALL
+					}else{
+						console.log('IS TREE .... CLEAR PARAM ID ' + dataDependenciesElementMap.parameterToChangeUrlName);
+						for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+							if(execProperties.parametersData.documentParameters[z].urlName==dataDependenciesElementMap.parameterToChangeUrlName){
+								console.log('azzeriamo ' + execProperties.parametersData.documentParameters[z].urlName);
+								execProperties.parametersData.documentParameters[z].children = [];
+								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);
+								break;
+							}
+						}
+						
+						
+						
+					}
 				}			
 		  }
 		

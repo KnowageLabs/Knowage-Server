@@ -30,21 +30,31 @@
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 			
-			var params = 
-				'label=' + execProperties.executionInstance.OBJECT_LABEL
-				+ '&role=' + execProperties.selectedRole.name
-				+ '&biparameterId=' + $scope.parameter.urlName
-				+ '&mode=' + 'COMPLETE'
-				+ '&treeLovNode=' + treeLovNode
-			;
+//			var params = 
+//				'label=' + execProperties.executionInstance.OBJECT_LABEL
+//				+ '&role=' + execProperties.selectedRole.name
+//				+ '&biparameterId=' + $scope.parameter.urlName
+//				+ '&mode=' + 'COMPLETE'
+//				+ '&treeLovNode=' + treeLovNode
+//			;
+			
+			
+			var params = {};
+			params.label = execProperties.executionInstance.OBJECT_LABEL;
+			params.role=execProperties.selectedRole.name;
+			params.biparameterId=$scope.parameter.urlName;
+			params.mode='complete';
+			params.treeLovNode=treeLovNode;
+			params.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						
 			
 			if(!$scope.parameter.children || $scope.parameter.children.length == 0) {
-				$scope.parameter.children = [];
+				$scope.parameter.children = $scope.parameter.children || [];
 				$scope.parameter.innerValuesMap = {};
 				
 //				treeLovNode = 'lovroot';
 					
-				sbiModule_restServices.get("1.0/documentexecution", "parametervalues", params)
+				sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
 				.success(function(response, status, headers, config) {
 					console.log('parametervalues response OK -> ', response);
 					
@@ -63,7 +73,7 @@
 				if(!innerNode.children || innerNode.children.length == 0) {
 					innerNode.children = innerNode.children || [];
 					
-					sbiModule_restServices.get("1.0/documentexecution", "parametervalues", params)
+					sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
 					.success(function(response, status, headers, config) {
 						console.log('parametervalues response OK -> ', response);
 						

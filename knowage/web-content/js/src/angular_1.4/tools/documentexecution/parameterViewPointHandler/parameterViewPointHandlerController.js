@@ -21,8 +21,10 @@
 				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
 				 icon:"fa fa-pencil",
 				 color:'#222222',
-				 action : function(item) {
-					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+				 action : function(item) { 
+					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 
+					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
@@ -33,7 +35,8 @@
 				 color:'#222222',
 				 action : function(item) {
 					 //decodeURIComponent						 		               		
-					 var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
+					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 fillParametersPanel(params);
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(params));
 					 docExecute_paramRolePanelService.returnToDocument();
@@ -92,28 +95,37 @@
 						documentExecuteServices.resetParameter(parameter);
 					} else {
 						//Type params
-						if(parameter.type=='NUM'){
-							parameter.parameterValue = parseFloat(params[parameter.urlName],10);
-						}else if(parameter.type=='STRING'){
+						
+						if(parameter.selectionType.toLowerCase() == 'tree'){
+							//TREE
+							console.log('Param ' , parameter.parameterValue);
+							console.log('param fill tree ' , params[parameter.urlName]); 
 							parameter.parameterValue = params[parameter.urlName];
-							
-							if(parameter.defaultValues && parameter.defaultValues.length > 0) {
-								var parameterValues = parameter.parameterValue;
+							console.log('Copy !!! ');
+						}else{	
+							if(parameter.type=='NUM'){
+								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+							}else if(parameter.type=='STRING'){
+								parameter.parameterValue = params[parameter.urlName];
+								
+								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
+									var parameterValues = parameter.parameterValue;
 
-								for(var j = 0; j < parameter.defaultValues.length; j++) {
-									var defaultValue = parameter.defaultValues[j];
+									for(var j = 0; j < parameter.defaultValues.length; j++) {
+										var defaultValue = parameter.defaultValues[j];
 
-									for(var k = 0; k < parameterValues.length; k++) {
-										if(defaultValue.value == parameterValues[k]) {
-											defaultValue.isSelected = true;
-											break;
-										} else {
-											defaultValue.isSelected = false;
+										for(var k = 0; k < parameterValues.length; k++) {
+											if(defaultValue.value == parameterValues[k]) {
+												defaultValue.isSelected = true;
+												break;
+											} else {
+												defaultValue.isSelected = false;
+											}
 										}
 									}
 								}
-							}
-						}
+							}	
+						}						
 					}
 				}
 			}			
