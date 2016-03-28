@@ -508,7 +508,14 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		value +="}"
 		$scope.selectedMDXFunction.argument[index].text = value;
 		
-		}else {
+		}else if(obj.expected_value == "Level_Expression"){
+			for(var i =0;i< $scope.members.length;i++){
+		        value = $scope.members[i].level ;	
+		        }
+			$scope.selectedMDXFunction.argument[index].text = value;
+			
+		}
+		else{
 			for(var i =0;i< $scope.members.length;i++){
 		        value = $scope.members[i].uniqueName ;	
 		        }
