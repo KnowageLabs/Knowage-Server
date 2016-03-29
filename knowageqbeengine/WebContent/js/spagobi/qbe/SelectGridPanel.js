@@ -1018,8 +1018,6 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 									operand:'MTD', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.mtd'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.mtd')}));
 								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
 									operand:'LAST_MONTH', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastmonth'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastmonth')}));
-								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
-									operand:'PARALLEL_MONTH', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelmonth'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelmonth')}));
 								break;
 							case "WEEK":
 								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
