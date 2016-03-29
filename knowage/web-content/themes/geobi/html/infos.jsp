@@ -30,14 +30,14 @@
 <br/>
 <div></div>
 <div style="margin-top: 40px">
-Version: 5.1.0
+Version: 1.0.0
 </div>
 <div style="margin-top: 5px">
 Logged User: <%= userName %>
 </div>
 
 <div style="position: absolute; bottom:0px; text-align: center"> 
-<i>Copyright (C) 2013 Engineering Ingegneria Informatica S.p.A.</i>
+<i>Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.</i>
 </div>
 
 </body>

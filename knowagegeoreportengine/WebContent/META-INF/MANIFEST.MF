@@ -4,5 +4,5 @@ Ant-Version: Apache Ant 1.7.0
 
 Name: KnowageGeoReportEngine.war
 Implementation-Title: KnowageGeoReportEngine
-Implementation-Version: 5.1.0
+Implementation-Version: 1.0.0
 

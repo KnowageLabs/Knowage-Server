@@ -1,7 +1,6 @@
 <Context docBase="knowage" path="/knowage" reloadable="true" source="org.eclipse.jst.j2ee.server:knowage">
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource" />
-	<ResourceLink global="jdbc/employees" name="jdbc/employees" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
 	<ResourceLink global="resource_path" name="resource_path" type="java.lang.String" />
 	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String" />

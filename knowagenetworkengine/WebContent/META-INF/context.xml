@@ -1,5 +1,4 @@
 <Context  path="/knowagenetworkengine" reloadable="true" >
-
     <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
     <ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
     <ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>

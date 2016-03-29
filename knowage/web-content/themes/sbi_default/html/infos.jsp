@@ -29,7 +29,7 @@
 		<md-content layout="column" layout-align="space-between stretch">
 			<md-content layout="column" layout-align="space-around stretch"> 
 				<md-content  style="margin-left:5px;margin-right:20px">
-					Version: 1.0
+					Version: 1.0.0
 				</md-content>
 				<md-content  style="margin-left:5px;margin-right:20px">
 					Logged User: <%= userName %>

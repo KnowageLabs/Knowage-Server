@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
-Name: KnowageDataMiningSpagoEngine.war
-Implementation-Title: KnowageDataMiningSpagoEngine
-Implementation-Version: 5.1.0 
+Name: KnowageDataMiningEngine.war
+Implementation-Title: KnowageDataMiningEngine
+Implementation-Version: 1.0.0
 

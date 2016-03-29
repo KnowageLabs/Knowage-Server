@@ -1,13 +1,11 @@
 <Context   path="/SpagoBIChartEngine" privileged="true" reloadable="false">
-	    <Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
+	<Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
-		<ResourceLink global="jdbc/employees" name="jdbc/employees" type="javax.sql.DataSource" />
-		<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
-	    <ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
-	    <ResourceLink global="sso_class" name="sso_class" type="java.lang.String"/>
-	    <ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
-	    <ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager"/>
-	    <ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
-	    <!--ResourceLink global="spagobi_domain" name="spagobi_domain" type="java.lang.String"/-->  
+	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
+	<ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
+	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String"/>
+	<ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
+	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager"/>
+	<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 </Context>

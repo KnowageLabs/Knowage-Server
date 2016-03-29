@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageBirtReportEngine.war
 Implementation-Title: KnowageBirtReportEngine
-Implementation-Version: 5.1.0
+Implementation-Version: 1.0.0
 Included: Birt 4.2.2

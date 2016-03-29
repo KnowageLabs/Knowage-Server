@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageTalendEngine.war
 Implementation-Title: KnowageTalendEngine
-Implementation-Version: 5.1.0 (Compatible with TOS 3.0.4)
+Implementation-Version: 1.0.0 (Compatible with TOS 3.0.4)
 

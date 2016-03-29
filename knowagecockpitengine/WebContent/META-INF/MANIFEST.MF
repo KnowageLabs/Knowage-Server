@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageCockpitEngine.war
 Implementation-Title: KnowageCockpitEngine
-Implementation-Version: 5.1.0
+Implementation-Version: 1.0.0
 
