@@ -196,4 +196,13 @@ public class SbiKpiKpi extends SbiHibernateModel implements java.io.Serializable
 		this.sbiKpiTargetValues = sbiKpiTargetValues;
 	}
 
+	@Override
+	public int hashCode() {
+		return sbiKpiKpiId != null ? sbiKpiKpiId.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof SbiKpiKpi && sbiKpiKpiId != null && sbiKpiKpiId.equals(((SbiKpiKpi) obj).getSbiKpiKpiId()) || super.equals(obj);
+	}
 }

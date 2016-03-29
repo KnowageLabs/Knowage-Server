@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SbiKpiTarget extends SbiHibernateModel {
-	private int targetId;
+	private Integer targetId;
 	private String name;
 	private SbiDomains category;
 	private Date startValidity;
@@ -19,7 +19,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	/**
 	 * @return the targetId
 	 */
-	public int getTargetId() {
+	public Integer getTargetId() {
 		return targetId;
 	}
 
@@ -27,7 +27,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	 * @param targetId
 	 *            the targetId to set
 	 */
-	public void setTargetId(int targetId) {
+	public void setTargetId(Integer targetId) {
 		this.targetId = targetId;
 	}
 
@@ -106,4 +106,13 @@ public class SbiKpiTarget extends SbiHibernateModel {
 		this.sbiKpiTargetValues = sbiKpiTargetValues;
 	}
 
+	@Override
+	public int hashCode() {
+		return targetId != null ? targetId.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof SbiKpiTarget && targetId != null && targetId.equals(((SbiKpiTarget) obj).getTargetId()) || super.equals(obj);
+	}
 }

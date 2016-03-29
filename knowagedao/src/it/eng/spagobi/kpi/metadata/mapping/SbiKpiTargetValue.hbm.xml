@@ -4,12 +4,10 @@
 <!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.kpi.metadata.SbiKpiTargetValue" table="SBI_KPI_TARGET_VALUE" >
-        <composite-id >
-        	<key-many-to-one name="sbiKpiKpi" class="it.eng.spagobi.kpi.metadata.SbiKpiKpi" >
-        		<column name="KPI_VERSION"  />
-        		<column name="KPI_ID" />
-        	</key-many-to-one>
-        	<key-many-to-one name="sbiKpiTarget" class="it.eng.spagobi.kpi.metadata.SbiKpiTarget" column="TARGET_ID" />
+        <composite-id name="sbiKpiTargetValueId" class="it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId" >
+        	<key-property name="kpiVersion" column="KPI_VERSION" />
+        	<key-property name="kpiId" column="KPI_ID" />
+        	<key-property name="targetId" column="TARGET_ID" />
         </composite-id>
        
         <many-to-one name="sbiKpiKpi" class="it.eng.spagobi.kpi.metadata.SbiKpiKpi" insert="false" update="false" >

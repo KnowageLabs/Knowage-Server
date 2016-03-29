@@ -47,6 +47,7 @@ import it.eng.spagobi.kpi.metadata.SbiKpiRuleId;
 import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
 import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
 import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId;
 import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -1088,28 +1089,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Integer execute(Session session) throws Exception {
 				SbiKpiTarget sbiTarget = from(target, null, session);
 				updateSbiCommonInfo4Insert(sbiTarget);
+				Integer id = (Integer) session.save(sbiTarget);
 				for (TargetValue targetValue : target.getValues()) {
 					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
 					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
-					updateSbiCommonInfo4Insert(sbiValue);
 					session.save(sbiValue);
 				}
-				return (Integer) session.save(sbiTarget);
+				return id;
 			}
 		});
-	}
-
-	private SbiKpiTarget from(Target target, SbiKpiTarget sbiTarget, Session session) {
-		if (sbiTarget == null) {
-			sbiTarget = new SbiKpiTarget();
-		}
-		sbiTarget.setName(target.getName());
-		sbiTarget.setStartValidity(target.getStartValidity());
-		sbiTarget.setEndValidity(target.getEndValidity());
-		// handling Category
-		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_TARGET_CATEGORY);
-		sbiTarget.setCategory(category);
-		return sbiTarget;
 	}
 
 	@Override
@@ -1119,6 +1107,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Boolean execute(Session session) throws Exception {
 				SbiKpiTarget sbiTarget = (SbiKpiTarget) session.load(SbiKpiTarget.class, target.getId());
 				sbiTarget = from(target, sbiTarget, session);
+				updateSbiCommonInfo4Update(sbiTarget);
+				session.save(sbiTarget);
 				// Removing old values
 				Iterator<SbiKpiTargetValue> targetIterator = sbiTarget.getSbiKpiTargetValues().iterator();
 				while (targetIterator.hasNext()) {
@@ -1137,22 +1127,45 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				// Adding new values
 				for (TargetValue targetValue : target.getValues()) {
 					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
-					updateSbiCommonInfo4Insert(sbiValue);
 					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
+					session.save(sbiValue);
 				}
-				updateSbiCommonInfo4Update(sbiTarget);
-				session.save(sbiTarget);
 				return Boolean.TRUE;
 			}
 
 		});
 	}
 
+	private SbiKpiTarget from(Target target, SbiKpiTarget sbiTarget, Session session) {
+		if (sbiTarget == null) {
+			sbiTarget = new SbiKpiTarget();
+		}
+		sbiTarget.setName(target.getName());
+		sbiTarget.setStartValidity(target.getStartValidity());
+		sbiTarget.setEndValidity(target.getEndValidity());
+		// handling Category
+		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_TARGET_CATEGORY);
+		sbiTarget.setCategory(category);
+		return sbiTarget;
+	}
+
 	private SbiKpiTargetValue from(TargetValue targetValue, SbiKpiTarget sbiTarget, Session session) {
-		SbiKpiTargetValue sbiValue = new SbiKpiTargetValue();
-		SbiKpiKpi kpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(targetValue.getKpiId(), targetValue.getKpiVersion()));
-		sbiValue.setSbiKpiKpi(kpi);
-		sbiValue.setSbiKpiTarget(sbiTarget);
+		Integer targetId = sbiTarget.getTargetId();
+		Integer kpiId = targetValue.getKpiId();
+		Integer kpiVersion = targetValue.getKpiVersion();
+		SbiKpiTargetValue sbiValue = null;
+		if (kpiId != null && kpiVersion != null && targetId != null) {
+			sbiValue = (SbiKpiTargetValue) session.get(SbiKpiTargetValue.class, new SbiKpiTargetValueId(targetId, kpiId, kpiVersion));
+		}
+		if (sbiValue == null) {
+			sbiValue = new SbiKpiTargetValue();
+			sbiValue.getSbiKpiTargetValueId().setKpiId(kpiId);
+			sbiValue.getSbiKpiTargetValueId().setKpiVersion(kpiVersion);
+			sbiValue.getSbiKpiTargetValueId().setTargetId(targetId);
+			updateSbiCommonInfo4Insert(sbiValue);
+		} else {
+			updateSbiCommonInfo4Update(sbiValue);
+		}
 		sbiValue.setValue(targetValue.getValue());
 		return sbiValue;
 	}
