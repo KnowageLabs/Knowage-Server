@@ -9,10 +9,6 @@ public class SbiKpiTargetValue extends SbiHibernateModel {
 
 	private Double value;
 
-	private Integer kpiId;
-	private Integer kpiVersion;
-	private Integer targetId;
-
 	/**
 	 * @return the sbiKpiTarget
 	 */
@@ -56,51 +52,6 @@ public class SbiKpiTargetValue extends SbiHibernateModel {
 	 */
 	public void setValue(Double value) {
 		this.value = value;
-	}
-
-	/**
-	 * @return the kpiId
-	 */
-	public Integer getKpiId() {
-		return kpiId;
-	}
-
-	/**
-	 * @param kpiId
-	 *            the kpiId to set
-	 */
-	public void setKpiId(Integer kpiId) {
-		this.kpiId = kpiId;
-	}
-
-	/**
-	 * @return the kpiVersion
-	 */
-	public Integer getKpiVersion() {
-		return kpiVersion;
-	}
-
-	/**
-	 * @param kpiVersion
-	 *            the kpiVersion to set
-	 */
-	public void setKpiVersion(Integer kpiVersion) {
-		this.kpiVersion = kpiVersion;
-	}
-
-	/**
-	 * @return the targetId
-	 */
-	public Integer getTargetId() {
-		return targetId;
-	}
-
-	/**
-	 * @param targetId
-	 *            the targetId to set
-	 */
-	public void setTargetId(Integer targetId) {
-		this.targetId = targetId;
 	}
 
 }

@@ -776,18 +776,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Kpi kpi = new Kpi();
 		kpi.setId(sbi.getSbiKpiKpiId().getId());
 		kpi.setVersion(sbi.getSbiKpiKpiId().getVersion());
-		kpi.setCardinality(sbi.getCardinality());
+		kpi.setName(sbi.getName());
 		if (sbi.getCategory() != null) {
 			kpi.setCategory(from(sbi.getCategory()));
 		}
-		kpi.setDefinition(sbi.getDefinition());
-		kpi.setName(sbi.getName());
-		kpi.setPlaceholder(sbi.getPlaceholder());
-		if (sbiKpiThreshold != null && full) {
-			kpi.setThreshold(from(sbiKpiThreshold, full));
-		}
 		kpi.setAuthor(sbi.getCommonInfo().getUserIn());
 		kpi.setDateCreation(sbi.getCommonInfo().getTimeIn());
+		if (full) {
+			kpi.setCardinality(sbi.getCardinality());
+			kpi.setDefinition(sbi.getDefinition());
+			kpi.setPlaceholder(sbi.getPlaceholder());
+			if (sbiKpiThreshold != null) {
+				kpi.setThreshold(from(sbiKpiThreshold, full));
+			}
+		}
 		return kpi;
 	}
 
@@ -1062,7 +1064,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		TargetValue tv = new TargetValue();
 		SbiKpiKpi sbiKpi = sbiValue.getSbiKpiKpi();
 		tv.setKpi(from(sbiKpi, null, false));
-		tv.setTargetId(sbiValue.getTargetId());
+		tv.setTargetId(sbiValue.getSbiKpiTarget().getTargetId());
 		tv.setKpiId(sbiKpi.getSbiKpiKpiId().getId());
 		tv.setKpiVersion(sbiKpi.getSbiKpiKpiId().getVersion());
 		tv.setValue(sbiValue.getValue());
