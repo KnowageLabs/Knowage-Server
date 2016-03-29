@@ -184,6 +184,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visible", ((objParameter.isVisible())));
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
+			
+			parameterAsMap.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (objParameter.getValueSelection().equalsIgnoreCase("lov") && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,

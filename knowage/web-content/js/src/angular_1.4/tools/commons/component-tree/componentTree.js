@@ -40,6 +40,7 @@
 				, isFolderFn : '&?'
 				, isOpenFolderFn : '&?'
 				, isDocumentFn : '&?'
+				, showNodeCheckBoxFn : '&?'
 				, dynamicTree : '@?'
 			},
 			controller: componentTreeControllerFunction,
@@ -157,19 +158,6 @@
 							}
 						}
 
-//						if(scope.isFolderFn && (typeof scope.isFolderFn == 'function')) {
-//							scope.isFolder = scope.isFolderFn;
-//						} else {
-//							scope.isFolder = function(node) {
-//								return(
-//										!node.expanded 
-//										&& node[scope.subfoldersId] !== undefined 
-//										&& (node[scope.subfoldersId].length > 0 
-//												|| node.biObjects.length > 0
-//										)
-//								);
-//							};
-//						}
 						scope.isFolder = function(node) {
 							if(scope.isFolderFn && (typeof scope.isFolderFn == 'function')) {
 								return scope.isFolderFn({node: node});
@@ -187,19 +175,6 @@
 							
 						};
 						
-//						if(scope.isOpenFolderFn && (typeof scope.isOpenFolderFn == 'function')) {
-//							scope.isOpenFolder = scope.isOpenFolderFn;
-//						} else {
-//							scope.isOpenFolder = function(node) {
-//								return(
-//										node.expanded 
-//										&& node[scope.subfoldersId] !== undefined 
-//										&& (node[scope.subfoldersId].length > 0 
-//												|| node.biObjects.length > 0
-//										)
-//								);
-//							};
-//						}
 						scope.isOpenFolder = function(node) {
 							if(scope.isOpenFolderFn && (typeof scope.isOpenFolderFn == 'function')) {
 								return scope.isOpenFolderFn({node: node});
@@ -216,20 +191,6 @@
 							}
 						};
 
-//						if(scope.isDocumentFn && (typeof scope.isDocumentFn == 'function')) {
-//							scope.isDocument = scope.isDocumentFn;
-//						} else {
-//							scope.isDocument = function(node) {
-//								return(
-//										node[scope.subfoldersId] === undefined 
-//										|| ( Array.isArray(node[scope.subfoldersId])
-//												&& node[scope.subfoldersId].length != 0 
-//												&& (node.biObjects != undefined 
-//														|| node.biObjects.length != 0)
-//										)
-//								);
-//							};
-//						}
 						scope.isDocument = function(node) {
 							if(scope.isDocumentFn && (typeof scope.isDocumentFn == 'function')) {
 								return scope.isDocumentFn({node: node});
@@ -246,10 +207,18 @@
 							}
 						};
 						
+						scope.showNodeCheckBox = function(node) {
+							if(scope.showNodeCheckBoxFn && (typeof scope.showNodeCheckBoxFn == 'function')) {
+								return scope.showNodeCheckBoxFn({node: node});
+							} else {
+								return scope.multiSelect;
+							}
+						};
+						
 						scope.seeTree = true;
 					}
 				};
-			},
+			}
 		};
 	});
 
@@ -257,7 +226,11 @@
 		$scope.toogleSelected = function(element, parent) {
 			if (element !== undefined && $scope.multiSelect) {
 				//check the element as the parent. If not the parent doesn't exist, toggle the element check
-				element.checked = parent === undefined ? !element.checked : parent.checked; 
+//				element.checked = parent === undefined ? !element.checked : parent.checked; 
+				if(parent !== undefined) {
+					element.checked = parent.checked; 
+				} 
+				
 				//different insertion if is allowed the multi-selection
 				if ( element.checked ) { //if the element is just checked, insert into selectedItem, else remove it
 					$scope.selectedItem.push(element);
@@ -357,7 +330,6 @@
 						if((newValueArrayItem.checked != oldValueArrayItem.checked)
 								|| (newValueArrayItem.expanded != oldValueArrayItem.expanded)) {
 							
-							console.log('TRUE (change of "checked" or "expanded")');
 							flagToReturn = true;
 						}
 						
@@ -371,10 +343,6 @@
 									&& oldValueArrayItemChildren.length > 0
 									&& newValueArrayItemChildren.length == oldValueArrayItemChildren.length) {
 								
-								console.log('RECURSIVE');
-								console.log('oldValueArrayItemChildren -> ', oldValueArrayItemChildren);
-								console.log('newValueArrayItemChildren -> ', newValueArrayItemChildren);
-								
 								flagToReturn = flagToReturn || checkIgnoreDeepObjectChange(newValueArrayItemChildren, oldValueArrayItemChildren);
 							} 
 						}
@@ -385,7 +353,6 @@
 			return flagToReturn;
 		};
 		
-//		var watchedNgModel = null;
 		var watchedNgModel = function() { return $scope.ngModel;};
 		
 		var updateWatchedItem = function(newValue, oldValue) {
@@ -405,9 +372,9 @@
 			}
 		};
 		
-		
 		if($scope.dynamicTree) {
 			$scope.$watch( watchedNgModel, updateWatchedItem, true);
+//			$scope.$watch( watchedNgModel, updateWatchedItem);
 		} else {
 			$scope.$watchCollection( watchedNgModel, updateWatchedItem, true);
 		}

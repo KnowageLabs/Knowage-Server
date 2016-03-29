@@ -10,8 +10,12 @@
 <div layout="row" layout-align="start center" class="customTreeNode">
 
 	<div layout="row" layout-align="start center">
-		<md-checkbox ng-if="multiSelect" ng-checked="node.checked"
+		<!--
+		<md-checkbox ng-if="showNodeCheckBox(node)" ng-checked="::node.checked"
 				ng-click="toogleSelected(node)" aria-label="Checkbox"></md-checkbox>
+		-->
+		<md-checkbox ng-if="showNodeCheckBox(node)" ng-model="node.checked"
+				ng-change="toogleSelected(node)" aria-label="Checkbox"></md-checkbox>
 		
 		<md-icon ng-click="openFolder(node)"
 				ng-if="isFolder(node)"
@@ -19,11 +23,6 @@
 		<md-icon ng-click="openFolder(node)"
 				ng-if="isOpenFolder(node)"
 				md-font-icon="{{iconFolderOpen}}"></md-icon>
-		<!--
-		<md-icon ng-click="openFolder(node)"
-				ng-if="isOpenFolder(node)"
-				md-font-icon="{{iconFolderOpen}}"></md-icon>
-		-->
 		<md-icon ng-click="openFolder(node)"
 				ng-if="isDocument(node)"
 				md-font-icon="{{iconDocument}}"></md-icon>
@@ -80,8 +79,8 @@
 		</div>
 		
 		<!--
-		<span style="font-size:8px;">{{selectedItem|json}}</span>
 		-->
+		<span style="font-size:9px;">{{selectedItem|json}}</span>
 	</div>
 </div>
  
