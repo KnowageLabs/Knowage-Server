@@ -616,9 +616,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			addSumFunctionToAllMeasureInSelect(selectFields);
 
-			// se una funzione temporale richiama un attributo temporale che non
-			// �
-			// previsto nella where e non � presente nella select, verranno
+			// se una funzione temporale richiama un attributo temporale non
+			// previsto nella where e non presente nella select, verranno
 			// visualizzati solo i dati relativi al periodo corrente.
 			Map<String, String> currentPeriodValuyesByType = addMissingCurrentPeriodWhereClauses(query,
 					temporalDimension, selectFields, whereFields, inlineFilterFieldTypes, temporalDimensionId,
@@ -631,13 +630,13 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(
 					selectFields);
 
-			// se non � presente l'anno nella select, lo aggiungo
+			// se anno non in select, lo aggiungo
 			if (!temporalFieldTypesInSelect.contains(hierarchyFullColumnMap.get("YEAR"))) {
 				addYearToQuery(query, temporalDimension, hierarchyFullColumnMap);
 				aliasesToBeRemovedAfterExecution.add(hierarchyFullColumnMap.get("YEAR"));
 			}
 
-			// dico alla query che dovr� eseguire una postExecutionAnalysis
+			// dico alla query che dovra eseguire una postExecutionAnalysis
 			query.setInlineFilteredSelectFields(inlineFilteredSelectFields);
 			query.setAliasesToBeRemovedAfterExecution(aliasesToBeRemovedAfterExecution);
 			query.setTemporalFieldTypesInSelect(temporalFieldTypesInSelect);
