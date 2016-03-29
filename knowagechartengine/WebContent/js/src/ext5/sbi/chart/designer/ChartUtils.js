@@ -2145,7 +2145,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				minFontSize : jsonTemplate.CHART.minFontSize ? jsonTemplate.CHART.minFontSize : "",
 				wordPadding : jsonTemplate.CHART.wordPadding ? jsonTemplate.CHART.wordPadding : "",
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria ? jsonTemplate.CHART.sizeCriteria : "",
-                wordLayout: jsonTemplate.CHART.wordLayout ? jsonTemplate.CHART.wordLayoutv : "",
+                wordLayout: jsonTemplate.CHART.wordLayout ? jsonTemplate.CHART.wordLayout : "",
                 preventOverlap: jsonTemplate.CHART.preventOverlap ?  jsonTemplate.CHART.preventOverlap : "",
                 wordcloudTooltipPrecision:(wordcloudTooltip != null)?wordcloudTooltip.precision:null,
                 wordcloudTooltipPrefix:(wordcloudTooltip != null)?wordcloudTooltip.prefix:null,
