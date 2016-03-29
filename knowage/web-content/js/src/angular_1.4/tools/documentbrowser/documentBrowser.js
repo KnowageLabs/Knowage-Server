@@ -60,7 +60,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
 		},function(response){
-			alert(respone.data)
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
 	$scope.loadFolders=function(){
@@ -68,7 +68,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders);
 		},function(response){
-			alert(respone.data)
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
 	$scope.loadFolders();
@@ -138,24 +138,30 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.wasSelected = function(document) {
 		return $scope.selectedDocument === document;
 	};
-	
 	 
 	$scope.setSearchInput = function (newSearchInput) {
 		$scope.searchInput = newSearchInput;
 		setFocus("searchInput");
-		if (newSearchInput.length > 0)
-			$timeout(function(){	
-				if (newSearchInput == $scope.searchInput) {
-				sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
-				.success(function(data) {
-					$scope.searchDocuments = data;
-				});
-			} else {
-				$scope.searchDocuments = [];
-			}}, 400);
-		
+
+		$timeout(function(){
+			if (newSearchInput == $scope.searchInput) {
+				if (newSearchInput.length > 0){
+					sbiModule_restServices.promiseGet("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
+					.then(function(response) {
+						$scope.searchDocuments = response.data;
+					},function(response){
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
+						.finally(function(){
+							$scope.searchDocuments = [];
+						})
+					});
+				}else{
+					$scope.searchDocuments = [];
+				}
+			}
+		}, 400);
 	}
-		
+
 	 
 	$scope.toggleDocumentView = function() {
 		$scope.showDocumentGridView = !$scope.showDocumentGridView;
@@ -223,18 +229,14 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 			$mdDialog.show(confirm).then(function() {
-
 			var index = $scope.folderDocuments.indexOf(Document);
 			sbiModule_restServices.promiseDelete("1.0/documents", Document.label)
 			.then(function(response) {
 			$scope.folderDocuments.splice(index,1);
-			},function(response) {
-				console.log("DELETE FAIL");
-			});
-
 			$scope.selectedDocument = undefined;
-
-		}, function() {
+			},function(response) {
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+			});
 		});
 	
 	}
@@ -252,15 +254,10 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 			//var index = $scope.folderDocuments.indexOf(Document);
 			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
 			.then(function(response) {
-				console.log(response.data);
 			$scope.folderDocuments.push(response.data);
 			},function(response) {
-				console.log("Clone FAIL");
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
 			});
-
-
-
-		}, function() {
 		});
 	}
 	

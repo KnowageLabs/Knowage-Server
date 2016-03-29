@@ -58,9 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 <md-tab ng-repeat="doc in runningDocuments">
 	 <md-tab-label>
 	 {{doc.label}}
-	  <md-button class="md-icon-button tabCloseButton" aria-label="close document" ng-click="removeDocumentFromList(doc.id)">
-            <md-icon md-font-icon="fa fa-times"></md-icon>
-      </md-button>
+<!-- 	  <md-button class="md-icon-button tabCloseButton" aria-label="close document" ng-click="removeDocumentFromList(doc.id)"> -->
+<!--             <md-icon md-font-icon="fa fa-times"></md-icon> -->
+<!--       </md-button> -->
 	 </md-tab-label>
 	 <md-tab-body> 
 	 <iframe layout-fill class=" noBorder" ng-src="{{doc.url}}"> </iframe>
@@ -70,8 +70,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</md-tabs>
 	
 	 
-		<md-button  md-tab-fixed-first class="documentBrowserTabButton " aria-label="close document" ng-class="{'selectedDocumentBrowserTabButton' : documentNavigationToolbarSelectedIndex==0}"ng-click="documentNavigationToolbarSelectedIndex=0">
+		<md-button  md-tab-fixed-first-document-browser class="documentBrowserTabButton " aria-label="close document" ng-class="{'selectedDocumentBrowserTabButton' : documentNavigationToolbarSelectedIndex==0}" ng-click="documentNavigationToolbarSelectedIndex=0">
             <md-icon md-font-icon="fa fa-folder-open-o"></md-icon>
      	</md-button> 
+     	
+     	
+     	
+     	
+     	<md-menu md-tab-fixed-last-clear-tabs  >
+	      <md-button aria-label="Create new document" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
+	        <md-icon md-menu-origin  md-font-icon="fa fa-trash" class="md-primary"></md-icon>
+	      </md-button>
+	      <md-menu-content width="4"> 
+	       <md-menu-item>
+	          <md-button ng-click="closeTabs('other');">
+	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	           {{translate.load("sbi.browser.close.document.other")}}
+	          </md-button>
+	        </md-menu-item>
+	        <md-menu-item>
+	          <md-button ng-click="closeTabs('right');">
+	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	          {{translate.load("sbi.browser.close.document.right")}}
+	          </md-button>
+	        </md-menu-item>
+	         <md-menu-item>
+	          <md-button ng-click="closeTabs('all');">
+	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	           {{translate.load("sbi.browser.close.document.all")}}
+	          </md-button>
+	        </md-menu-item>
+		</md-menu-content>
+		</md-menu>
+     	
 </body>
 </html>

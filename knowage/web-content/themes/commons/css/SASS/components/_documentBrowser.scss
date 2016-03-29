@@ -91,6 +91,7 @@
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper {
 		background-color:$baseColor;
 		margin-left: 80px;
+		margin-right: 35px;
 	}
 	
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item>md-icon {
@@ -109,6 +110,7 @@
    		line-height: 20px; 
 	}
 	
+	//this hide the first tab of tabs 
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:first-child {
 		width:0px;
 		padding:0px;
@@ -127,7 +129,8 @@
     	height: 28px;
     }
     
-	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton>md-icon{
+	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton>md-icon,
+	md-tabs.documentNavigationToolbar>md-menu>button.documentBrowserClearButton>md-icon{
 		color:rgb(183, 183, 183);
 	}
 	
@@ -135,21 +138,29 @@
    	 color:white;
     }
 	
-	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton{
+	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton,
+	md-tabs.documentNavigationToolbar>md-menu>button.documentBrowserClearButton{
 		margin: 0;
 		top:0;
-	    height: 30px;
+	    height: 28px;
+	    border-bottom: 2px solid transparent;
 	    min-height: 30px;
 	    width: 80px;
 	    min-width: 30px;
 	    position: absolute;
-	    z-index: 2;
-	    cursor: pointer;
+	    z-index: 2; 
 	    font-size: 27px;
 	    transition: all .5s cubic-bezier(.35,0,.25,1);
 	    background-color: $baseColor;
 	    border-radius: 0px;
 	}
+	
+	md-tabs.documentNavigationToolbar>md-menu>button.documentBrowserClearButton{
+	    right: 0px;
+	    width: 35px;
+	    
+	}
+	
 	
 	
 	.document_browser_image_EMPTY{

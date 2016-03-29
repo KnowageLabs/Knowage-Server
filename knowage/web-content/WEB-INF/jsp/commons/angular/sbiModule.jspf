@@ -197,9 +197,26 @@ sbiM.service('sbiModule_translate', function() {
 		var sf= sourceFile == undefined? 'messages' : sourceFile;
 		return messageResource.get(key, sf);
 	};
+	
+	this.format = function() {
+	    // The string containing the format items (e.g. "{0}")
+	    // will and always has to be the first argument.
+	    var theString = arguments[0];
+	    
+	    // start with the second argument (i = 1)
+	    for (var i = 1; i < arguments.length; i++) {
+	        // "gm" = RegEx options for Global search (more than one instance)
+	        // and for Multiline search
+	        var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+	        theString = theString.replace(regEx, arguments[i]);
+	    }
+	    
+	    return theString;
+	}
+	
 });
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger,$mdDialog) {
 	
 	var alteredContextPath=null;
 
@@ -369,6 +386,30 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 
 		return deferred.promise;
 	};
+	
+	
+	this.errorHandler=function(text,title){
+		var titleFin=title || "";
+		var textFin=text;
+		if(angular.isObject(text)){
+			if(text.hasOwnProperty("errors")){
+				textFin="";
+				for(var i=0;i<text.errors.length;i++){
+					textFin+=text.errors[i].message+" <br> ";
+				}
+			}else{
+				textFin=JSON.stringify(text)
+			}
+		}
+		
+		var alert = $mdDialog.alert()
+		.title(titleFin)
+		.content(textFin)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(alert); //can use the finally function
+	}
+	
 	
   });
 

@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<bread-crumb item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
 				 <md-input-container ng-show='showDocumentGridView'>
-			        <label>Order</label>
+			        <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">
 			          <md-option ng-repeat="orderElement in orderElements" value="{{orderElement.name}}">{{orderElement.label}}</md-option>
 			        </md-select>
