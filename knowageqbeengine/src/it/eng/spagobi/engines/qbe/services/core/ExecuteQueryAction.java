@@ -253,7 +253,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 				
 				
-				// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 0 a 11, i quarter da 0 a 3
+				// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 0 a 11, i quarter da 0 a 3...
 				Map<String, Integer> rowPeriodsNumbered = new HashMap<>();
 				for (String type : rowPeriodValuesByType.keySet()) {
 					String currentPeriodValue = rowPeriodValuesByType.get(type);
@@ -272,7 +272,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 				String rowLog = "| ";
 				
-				// per ogni colonna di ogni riga, se c'� un operatore inline, ne calcolo il valore
+				// per ogni colonna di ogni riga, se c'è un operatore inline, ne calcolo il valore
 				for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
 					Map<String, String> firstRecordId = new HashMap<>();
 					firstRecordId.putAll(currentRecordId);
@@ -280,7 +280,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					lastRecordId.putAll(currentRecordId);
 					
 					String fieldAlias = finalDatastore.getMetaData().getFieldAlias(fieldIndex);
-					// se la colonna � da calcolare...
+					// se la colonna è da calcolare...
 					if(fieldAlias != null && inlineFilteredSelectFields.containsKey(fieldAlias)){
 						
 						Map<String, String> inlineParameters = inlineFilteredSelectFields.get(fieldAlias);
@@ -449,24 +449,29 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							break;
 						}
 						
-						double finalValue = 0D;
-						boolean firstRecordFound = false;
-						/** INQUESTO CICLO DEVO UTILIZZARE I CAMPI FIRST E LAST */
-						for (Iterator fullIterator = fullDatastore.iterator(); fullIterator.hasNext();) {
-							Record record = (Record) fullIterator.next();
-							Map<String, String> recordId = getRecordFullId(record, finalDatastore, query);
-							if(recordId.equals(firstRecordId)) {
-								firstRecordFound = true;
+						if(firstRecordId.get(hierarchyFullColumnMap.get("YEAR")) != null) {
+							double finalValue = 0D;
+							boolean firstRecordFound = false;
+							/** INQUESTO CICLO DEVO UTILIZZARE I CAMPI FIRST E LAST */
+							for (Iterator fullIterator = fullDatastore.iterator(); fullIterator.hasNext();) {
+								Record record = (Record) fullIterator.next();
+								Map<String, String> recordId = getRecordFullId(record, finalDatastore, query);
+								if(recordId.equals(firstRecordId)) {
+									firstRecordFound = true;
+								}
+								
+								if(firstRecordFound) {
+									finalValue += Double.parseDouble(record.getFieldAt(fieldIndex).getValue().toString());
+								}
+								
+								if(recordId.equals(lastRecordId)) {
+									finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
+									break;
+								}
 							}
-							
-							if(firstRecordFound) {
-								finalValue += Double.parseDouble(record.getFieldAt(fieldIndex).getValue().toString());
-							}
-							
-							if(recordId.equals(lastRecordId)) {
-								finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
-								break;
-							}
+						}
+						else {
+							finalRecord.getFieldAt(fieldIndex).setValue(0D);
 						}
 						
 						rowLog += " | " + firstRecordId + " >>> " + lastRecordId;
