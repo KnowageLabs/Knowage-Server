@@ -1,5 +1,9 @@
 
-var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"])
+var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","angular-list-detail"])
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 app.controller("ModalitiesCheckController",ModalitiesCheckFunction);
 ModalitiesCheckFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
 function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
@@ -21,8 +25,9 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		 $scope.ccSpeedMenu= [
 		                         {
 		                            label:sbiModule_translate.load("sbi.generic.delete"),
-		                            icon:'fa fa-trash-o fa-lg',
-		                            color:'#153E7E',
+		                            icon:'fa fa-trash',
+		                           // icon:'fa fa-trash-o fa-lg',
+		                           // color:'#153E7E',
 		                            action:function(item,event){
 		                                
 		                            	$scope.confirmDelete(item,event);
@@ -136,6 +141,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	} 	                
 	
 	$scope.createConstraints =function(){ // this function is called when clicking on plus button
+		$scope.showpred = false;
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   

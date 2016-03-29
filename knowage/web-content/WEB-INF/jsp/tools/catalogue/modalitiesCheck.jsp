@@ -31,8 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+<!--  <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
+<!--<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css"> -->
+
+<link rel="stylesheet" type="text/css"    href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 <!-- Scripts -->
 <script type="text/javascript" src=" "></script> 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/modalitiesCheck.js"></script>
@@ -40,43 +42,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Constraints Management</title>
 </head>
-<body class="bodyStyle" ng-controller="ModalitiesCheckController as ctrl" >
-
-	<angular_2_col>
-		<left-col>
-		<div class="leftBox">
-	<md-toolbar class="header" >
-					<div class="md-toolbar-tools" >
-						<div style="font-size: 24px;">{{translate.load("sbi.modalities.check.title.constraints");}}</div>
-						<md-button aria-label="create_button"
-							class="md-fab md-ExtraMini addButton"
-							style="position:absolute; right:11px; top:0px;"
-							ng-click="createConstraints()"
-							>
-							 
-							<md-icon
-								md-font-icon="fa fa-plus" 
-								style=" margin-top: 6px ; color: white;">
-							</md-icon> 
-						</md-button>
-					</div>
-				
-						</md-toolbar>	
+<body class="bodyStyle kn-layerCatalogue" ng-controller="ModalitiesCheckController as ctrl" >
+	<angular-list-detail show-detail="showme|| showpred">
+ 		<list label='translate.load("sbi.modalities.check.title.constraints")' new-function="createConstraints"> 
 		
-	<md-content style="display:inline !important;">
+<!-- 	<md-toolbar class="header" > -->
+<!-- 					<div class="md-toolbar-tools" > -->
+<!-- 						<div style="font-size: 24px;">{{translate.load("sbi.modalities.check.title.constraints");}}</div> -->
+<!-- 						<md-button aria-label="create_button" -->
+<!-- 							class="md-fab md-ExtraMini addButton" -->
+<!-- 							style="position:absolute; right:11px; top:0px;" -->
+<!-- 							ng-click="createConstraints()" -->
+<!-- 							> -->
+							 
+<!-- 							<md-icon -->
+<!-- 								md-font-icon="fa fa-plus"  -->
+<!-- 								style=" margin-top: 6px ; color: white;"> -->
+<!-- 							</md-icon>  -->
+<!-- 						</md-button> -->
+<!-- 					</div> -->
+				
+<!-- 						</md-toolbar>	 -->
+		
+	<md-content >
     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
       <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
-        <md-content layout-padding
-			style="background-color: rgb(236, 236, 236);"
-			class="ToolbarBox miniToolbar noBorder leftListbox">
+        <md-content>
         <angular-table 
 						layout-fill
 						id="TestItemList_id"
 						ng-model="ItemList"
 						columns ='[
-							{"label":"LABEL","name":"label","size":"50px"},
-							{"label":"NAME","name":"name","size":"50px"},
-							{"label":"CHECK TYPE","name":"valueTypeCd","size":"85px"}
+							{"label":"LABEL","name":"label"},
+							{"label":"NAME","name":"name"},
+							{"label":"CHECK TYPE","name":"valueTypeCd",}
 							 ]'
 						show-search-bar=true
 						highlights-selected-item=true
@@ -90,17 +89,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </md-content>
       </md-tab>
       <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
-        <md-content layout-padding
-			style="background-color: rgb(236, 236, 236);"
-			class="ToolbarBox miniToolbar noBorder leftListbox">
+        <md-content >
          <angular-table 
 						layout-fill
 						id="predefined_id"
 						ng-model="PredefinedList"
 						columns ='[
-							{"label":"LABEL","name":"label","size":"50px"},
-							{"label":"NAME","name":"name","size":"50px"},
-							{"label":"CHECK TYPE","name":"valueTypeCd","size":"85px"}
+							{"label":"LABEL","name":"label"},
+							{"label":"NAME","name":"name"},
+							{"label":"CHECK TYPE","name":"valueTypeCd"}
 							 ]'
 							 
 						show-search-bar = false
@@ -114,32 +111,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </md-tab>
     </md-tabs>
   </md-content>
-  </div>
-		</left-col>
-		<right-col>
+   </list>
+		<detail label=''  save-function="saveConstraints"
+		cancel-function="cancel"
+		disable-save-button="!attributeForm.$valid || showpred"
+		show-save-button="showme || showpred" show-cancel-button="showme || showpred">
+		<div layout-fill class="containerDiv">
 		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveConstraints()"
-		class="detailBody md-whiteframe-z1">
+		class="detailBody mozSize md-whiteframe-z1">
 		
-			<div ng-show="showme">
-				<md-toolbar class="header"> 
-					<div class="md-toolbar-tools h100">
-					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
-					<div style="position: absolute; right: 0px" class="h100">
-						<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;"
-							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-						</md-button>
-						<md-button  type="submit"
-							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-							style=" margin-top: 2px;"
-							ng-disabled="!attributeForm.$valid">
-						{{translate.load("sbi.browser.defaultRole.save")}}
-						</md-button>
-					</div>
-				</div>
-				</md-toolbar>
+			
+<!-- 				<md-toolbar class="header">  -->
+<!-- 					<div class="md-toolbar-tools h100"> -->
+<!-- 					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div> -->
+<!-- 					<div style="position: absolute; right: 0px" class="h100"> -->
+<!-- 						<md-button type="button" tabindex="-1" aria-label="cancel" -->
+<!-- 							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;" -->
+<!-- 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}} -->
+<!-- 						</md-button> -->
+<!-- 						<md-button  type="submit" -->
+<!-- 							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
+<!-- 							style=" margin-top: 2px;" -->
+<!-- 							ng-disabled="!attributeForm.$valid"> -->
+<!-- 						{{translate.load("sbi.browser.defaultRole.save")}} -->
+<!-- 						</md-button> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				</md-toolbar> -->
 				
-				<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+				<md-content flex class="ToolbarBox miniToolbar noBorder" ng-show="showme">
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
@@ -217,18 +217,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>	
 
 				</md-content>
-				</div>
 				
-				<div ng-show="showpred">
 				
-				<md-toolbar class="header"> 
-					<div class="md-toolbar-tools h100">
-					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
+				<!--  div ng-show="showpred"-->
+				
+<!-- 				<md-toolbar class="header">  -->
+<!-- 					<div class="md-toolbar-tools h100"> -->
+<!-- 					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div> -->
 					
-				</div>
-				</md-toolbar>
+<!-- 				</div> -->
+<!-- 				</md-toolbar> -->
 			
-			<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+			<md-content flex class="ToolbarBox miniToolbar noBorder" ng-show="showpred">
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
@@ -267,11 +267,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</div>
 					</div>	
 				</md-content>
-			</div>
 				
 			</form>
-
-		</right-col>
-	</angular_2_col>
+			
+         </div>
+	</detail>
+	
+ </angular-list-detail>	
 </body>
 </html>

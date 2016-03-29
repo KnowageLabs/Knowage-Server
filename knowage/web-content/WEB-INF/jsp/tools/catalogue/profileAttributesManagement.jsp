@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  				 </angular-table>
 
 	</list> 
-	<detail label='selectedAttributte.name==undefined? "" : selectedAttributte.name'  save-function="saveProfileAttribute"
+	<detail label='(selectedAttribute.attributeName==undefined)? "" : selectedAttribute.attributeName'  save-function="saveProfileAttribute"
 		cancel-function="cancel"
 		disable-save-button="!attributeForm.$valid"
 		show-save-button="showMe" show-cancel-button="showMe">
