@@ -1,14 +1,14 @@
-var measureRoleApp = angular.module('measureRoleManager', [ 'ngMaterial',  'angular_table' ,'angular_list','sbiModule', 'angular-list-detail','ui.codemirror','angularUtils.directives.dirPagination']);
-measureRoleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
+var measureRuleApp = angular.module('measureRuleManager', [ 'ngMaterial',  'angular_table' ,'angular_list','sbiModule', 'angular-list-detail','ui.codemirror','angularUtils.directives.dirPagination']);
+measureRuleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-measureRoleApp.controller('measureRoleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRoleMasterControllerFunction ]);
-measureRoleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,measureListControllerFunction ]);
-measureRoleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]); 
+measureRuleApp.controller('measureRuleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRuleMasterControllerFunction ]);
+measureRuleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,measureListControllerFunction ]);
+measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]); 
 
-function measureRoleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
+function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.currentRule={};
 	$scope.detailProperty={};
@@ -213,10 +213,10 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  	
  	
  	$scope.saveMeasureFunction=function(){ 
- 		$scope.checkValidityMeasureRole().then(function(){
+ 		$scope.checkValiditymeasureRule().then(function(){
  			 $mdDialog.show({
  	 		      controller: DialogSaveController,
- 	 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRoleSubController/saveDialogTemplate.jsp',  
+ 	 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/kpi/measureRuleSubController/saveDialogTemplate.jsp',  
  	 		      clickOutsideToClose:true,
  	 		      fullscreen: true,
  	 		      locals:{
@@ -268,7 +268,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			deferred.reject(response)
 		});
  	};
- 	$scope.checkValidityMeasureRole=function(){
+ 	$scope.checkValiditymeasureRule=function(){
  		var deferred = $q.defer();
  		if($scope.detailProperty.queryChanged==true){
  			$scope.loadMetadata().then(
@@ -468,15 +468,15 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		$scope.loadRuleById(item.ruleId,item.ruleVersion,false);
 	};
 	
-	$scope.measureRoleList=[];
-	$scope.measureRoleColumnsList=[
+	$scope.measureRuleList=[];
+	$scope.measureRuleColumnsList=[
 	                           {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"alias"},
 	                           {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rule"},
 	                           {"label":$scope.translate.load("sbi.generic.category"),"name":"categoryName"},                           
 	                          {"label":$scope.translate.load("sbi.generic.author"),"name":"author"},
 	                           ];
 	
-	$scope.loadMeasureRoleList=function(){
+	$scope.loadmeasureRuleList=function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
 		.then(function(response){
 			
@@ -486,16 +486,16 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 				}
 				
 			}
-			$scope.measureRoleList=response.data;
+			$scope.measureRuleList=response.data;
 			},function(response){
 				$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.list.error"));
 		});
  	};
- 	$scope.loadMeasureRoleList();
+ 	$scope.loadmeasureRuleList();
 	
  	
  	$scope.$on('updateListRule', function(event, args) {
- 		$scope.loadMeasureRoleList();
+ 		$scope.loadmeasureRuleList();
  	});
 	
 	
@@ -511,7 +511,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 					   function(response){
 						   $mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
 							'OK').highlightAction(false).hideDelay(2000))
-						   $scope.loadMeasureRoleList();
+						   $scope.loadmeasureRuleList();
 					   },
 					   function(response){
 						   $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.remove.ko")); 

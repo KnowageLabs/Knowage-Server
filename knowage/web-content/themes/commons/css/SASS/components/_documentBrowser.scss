@@ -161,7 +161,10 @@
 	    
 	}
 	
-	
+	.full-screen-sidenav {
+		width: 100%;
+		max-width: 100%;
+	}
 	
 	.document_browser_image_EMPTY{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_empty.png')!important;

@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="measureRoleManager">
+<html ng-app="measureRuleManager">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -46,19 +46,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/measureRoleCustomStyle.css", currTheme)%>">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleDefinition.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRoleQueryController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRoleMetadataController.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRoleSubController/measureRolePreviewController.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/measureRuleCustomStyle.css", currTheme)%>">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRuleDefinition.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRuleSubController/measureRuleQueryController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRuleSubController/measureRuleMetadataController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/measureRuleSubController/measureRulePreviewController.js"></script>
 
 </head>
 <body>
-	<angular-list-detail ng-controller="measureRoleMasterController"  full-screen="true">
+	<angular-list-detail ng-controller="measureRuleMasterController"  full-screen="true">
 		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction" layout-column>
-	 	<angular-table id='measureListTable' ng-model=measureRoleList
-				columns='measureRoleColumnsList'
+	 	<angular-table id='measureListTable' ng-model=measureRuleList
+				columns='measureRuleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
 				 click-function="measureClickFunction(item);" > </angular-table>
@@ -77,21 +77,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab id="tab1">
        				<md-tab-label>{{translate.load("sbi.ds.query")}}</md-tab-label>
         			<md-tab-body >
-        				<%@include	file="./measureRoleTemplate/queryTemplate.jsp"%>
+        				<%@include	file="./measureRuleTemplate/queryTemplate.jsp"%>
         			</md-tab-body>
 				</md-tab>
 				
 				<md-tab id="tab2"  md-on-select="loadMetadata()" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-tab-label>
         			<md-tab-body  >
-        			<%@include	file="./measureRoleTemplate/metadataTemplate.jsp"%>
+        			<%@include	file="./measureRuleTemplate/metadataTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
 				<md-tab id="tab3" md-on-select="loadPreview(true)" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.ds.test")}}</md-tab-label>
         			<md-tab-body>
-        			<%@include	file="./measureRoleTemplate/previewTemplate.jsp"%>
+        			<%@include	file="./measureRuleTemplate/previewTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
