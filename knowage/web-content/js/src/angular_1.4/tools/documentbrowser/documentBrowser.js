@@ -139,14 +139,17 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.setSearchInput = function (newSearchInput) {
 		$scope.searchInput = newSearchInput;
 		setFocus("searchInput");
-		if (newSearchInput.length > 0) {
-			sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
-			.success(function(data) {
-				$scope.searchDocuments = data;
-			});
-		} else {
-			$scope.searchDocuments = [];
-		}
+		if (newSearchInput.length > 0)
+			$timeout(function(){	
+				if (newSearchInput == $scope.searchInput) {
+				sbiModule_restServices.get("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
+				.success(function(data) {
+					$scope.searchDocuments = data;
+				});
+			} else {
+				$scope.searchDocuments = [];
+			}}, 400);
+		
 	}
 		
 	 
@@ -354,7 +357,7 @@ function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_c
 					$scope.closeDialogFromExt(reloadFolder);
 				}
 	}
-
+		
 }
 
 
