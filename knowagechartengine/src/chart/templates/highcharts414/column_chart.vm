@@ -63,12 +63,13 @@
 		*#
     
         type: '$chartTypeToPrint',
+        
     	#if($chartType == 'radar')
     	polar: true,
     	#end
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
-        #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'pie' && $chartTypeToPrint != 'radar')
+        #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'radar')
         inverted: true,
         #end
         
@@ -611,8 +612,7 @@
 			text: '$categorieColumns.column',
 			customTitle: false,
 			#end
-			##y:-150,
-			 
+			##y:-150, 
 			#set ($xTitleAlign = $xAxis.TITLE.style.align)
 			#if( $xTitleAlign != '' )
 				#if ($xTitleAlign == 'center' )
@@ -842,6 +842,7 @@
     ],
     
 	series: [
+	
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
@@ -868,15 +869,20 @@
 	    	type: '$relatedSerieType',
 	    #end
 	    
+	       
 	    	## makes the datalabels overlapping
+	    	
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
+	    	
+	    	
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#foreach($row in $rows)
+			   
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					{
@@ -916,7 +922,7 @@
 						#else
 							#set($relatedSerieShowValue = true)
 						#end
-						
+					
 						dataLabels: 
 						{
 		                    enabled: $relatedSerieShowValue,
@@ -940,16 +946,31 @@
 		                   	#else
 		                   		#set ($precisionValueAsString = ':,.0f')
 							#end
-		                    
-		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',		                                				
-		                    
-		                    #*
-			                    formatter: function() {
-			                    	return '${prefixValueAsString}' + '{' + this.y + '$precisionValueAsString' + '}' + '${postfixValueAsString}';
-			                    },
-		                    *#
+		                   
+		                   labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',		                                				
+		                  
+                            		                    
+			               formatter: function() {
+			                     var value=this.y;
+			                     var newValue = value;
+	                        if (value >= 1000) {
+	                           var suffixes = ["", "k" , "M" , "G" , "T" , "P" , "E"];
+	                           var suffixNum = Math.floor( (""+value).length/3 );
+	                           var shortValue = '';
+	                           for (var precision = 2; precision >= 1; precision--) {
+	                           shortValue = parseFloat( (suffixNum != 0 ? (value / Math.pow(1000,suffixNum) ) : value).toPrecision(precision));
+	                           var dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g,'');
+	                              if (dotLessShortValue.length <= 2) { break; }
+	                        }
+	                      if (shortValue % 1 != 0)  shortNum = shortValue.toFixed(1);
+	                          newValue = shortValue+suffixes[suffixNum];
+	                       }
+	                          return newValue;
+			            },
+		                      
 	                    
 	                	}
+	                	
 					},
 				#end
 	    	],
@@ -1138,7 +1159,7 @@
         		
         		if (resultY)
         		{
-        			format = resultY[0].dataLabels.format;    			
+        			format = resultY[0].dataLabels.labelFormat;    		
         			drilling = true;
         		}
         	}    
@@ -1251,6 +1272,7 @@
     lang: {
         noData: '$chart.EMPTYMESSAGE.text',
     },
+    
     noData: {
     	style:{
     	#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
@@ -1264,13 +1286,14 @@
     },
     
     plotOptions: {
+        
         line: {
 	        marker: {
                 symbol: 'circle',
                 lineWidth: 2
             }
         },
-       
+      
         #if($chart.isCockpitEngine == 'true' && $chart.outcomingEventsEnabled == 'true')
         series: {
             cursor: 'pointer',
