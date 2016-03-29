@@ -8,7 +8,9 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,$mdToast,toastr) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies) {
+	
+	
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
 		
@@ -444,6 +446,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     				clickOutsideToClose : false,
     				hasBackdrop:false
     			});
+    		
+    		$scope.getFromCookies();
     	}
       
     $scope.checkValidity = function(){
@@ -493,8 +497,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 				clickOutsideToClose : false,
 				hasBackdrop:false
 			});
+		
 	}
-	
+		
 	$scope.formatValues = function(index,obj) {
 		var value = null;
 		if(obj.expected_value == "Set_Expression"){
@@ -559,14 +564,42 @@ $scope.sendCC = function() {
 			value+=","+$scope.selectedMDXFunction.argument[i].text;
 		}
 	}
-	value +=")"
-	console.log(value);
+	value +=")";
 	$scope.finalFormula = value;
-	console.log("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-	$scope.addCC();
+	if($scope.selectedMDXFunction.output != "Set"){
+		console.log("ZA TABELU");
+		$scope.addCC();
+	}else{
+		console.log("NAMED SET");
+		
+		var namedSet = {
+	
+			'name':$scope.selectedMDXFunction.label,
+		    'value': $scope.finalFormula
+		}
+		
+		$scope.cookieArray.push(namedSet);
+		console.log($scope.cookieArray);
+		$cookies.putObject('data',$scope.cookieArray);
+	}
+	$scope.selectedMDXFunction = null;
 	$mdDialog.hide();
 	}
 	
+	$scope.getFromCookies = function() {
+		
+	if($cookies.getObject('data') != undefined){
+		
+		$scope.cookieArray = $cookies.getObject('data');
+		console.log($scope.cookieArray);
+	}else{
+		console.log("no cookies");
+	}
+	
+	}
+
+
+
 	/*
 	 * Add calculated field 
 	 * */

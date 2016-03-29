@@ -73,9 +73,9 @@ function olapFunction(
 	$scope.formulasData = [];
 	$scope.valuesArray = [];
 	$scope.selectedMDXFunction = null;
+	$scope.cookieArray = [];
 	
 	$scope.finalFormula = null;
-	
 	$scope.isFilterSelected = false;
 	$scope.filterAxisPosition;
 	$scope.showMdxVar = "";

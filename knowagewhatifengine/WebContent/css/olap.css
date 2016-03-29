@@ -338,6 +338,10 @@ table tr:nth-child(even) {
 	background-image: url(../img/sorting-enabled.png);
 		background-size:23px 23px; 
 }
+.cc-w-btn{
+	background-image: url(../img/cc.jpg);
+		background-size:23px 23px; 
+}
 
 .sorting-settings{
 	background-image: url(../img/sorting-settings.png);
@@ -609,5 +613,5 @@ md-option[selected], md-select-menu md-option[selected]{
 		width:100%;
 		height:32px;
 		margin-top:20%;
-	}
+	}	
 }
