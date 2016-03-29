@@ -5,7 +5,7 @@
 		columns='[{"label":"Name","name":"name"},{"label":"Category","name":"valueCd"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions=tableFunction  speed-menu-option=measureMenuOption 
-		click-function="loadTarget(item);"> 
+		> 
 		
 		<queue-table >
 			<div layout="row"> 

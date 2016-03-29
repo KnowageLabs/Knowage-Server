@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions=tableFunction 
-		click-function="loadEngine(item);"> </angular-table>
+		> </angular-table>
 		</div>
    	 </md-dialog-content>
   </form>
