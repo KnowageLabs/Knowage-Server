@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-content layout="row" flex>
 		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
-				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-menu': !$mdMedia('gt-sm')}" >
+				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-menu': smallScreen}" >
 					<md-toolbar class=" ternaryToolbar">
 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
 	     			</md-toolbar>
@@ -143,6 +143,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-toolbar class="ternaryToolbar">
 	<!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->
 						<div layout="row" layout-align="space-around center">
+							<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="setDetailOpen(false)">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+							
 							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>

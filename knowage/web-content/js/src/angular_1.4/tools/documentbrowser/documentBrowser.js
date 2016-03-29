@@ -13,7 +13,11 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.orderElements = [{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]
 	$scope.selectedOrder = $scope.orderElements[1].name;	
 	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
+	$scope.smallScreen = false;
 	
+	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
+	    $scope.smallScreen = big;
+	  });
 //	$scope.setDetailOpen(false);
 	
 	$scope.moveBreadCrumbToFolder=function(folder,index){
