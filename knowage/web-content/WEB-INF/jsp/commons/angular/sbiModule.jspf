@@ -459,17 +459,18 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 	var holServ=this;
 	this.show=function(data){
 		$mdDialog.show({
-		      controller: function($scope,$mdDialog,translate){
-		    	  $scope.translate=translate;
-		    	  $scope.url='/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
-		    	  $scope.close = function() {
-		    		    $mdDialog.hide();
-		    		  };
-		      },
-		      locals:{ 
-		    	  translate:sbiModule_translate},
-		      templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/helpOnLineDialogTemplate.jsp'
-		    })
+			controller: function($scope,$mdDialog,translate){
+    	  		$scope.translate=translate;
+    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
+    	  		$scope.close = function() {
+   		    		$mdDialog.hide();
+   		  		};
+	      	},
+	      	locals:{ 
+	    	  	translate:sbiModule_translate
+    		},
+	      	templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/helpOnLineDialogTemplate.jsp'
+	    });
 	};
 	
 	this.showDocumentHelpOnLine=function(label){
@@ -478,7 +479,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 			holServ.show(data);
 		},function(response){
 			alert("Errore "+response.data.errors[0].message);
-		})
-	}
+		});
+	};
 });
 </script>

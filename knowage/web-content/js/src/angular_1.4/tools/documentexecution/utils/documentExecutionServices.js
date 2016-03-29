@@ -26,11 +26,6 @@
 				return parametersJson;
 			},
 			
-			
-			
-			
-
-
 			showToast: function(text, time) {
 				var timer = time == undefined ? 6000 : time;
 				$mdToast.show($mdToast.simple().content(text).position('top').action(
@@ -120,10 +115,6 @@
 							parameter.parameterValue = [];
 							
 							documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
-//							for(var j = 0; j < parameter.children.length; j++) {
-//								var child = parameter.children[j];
-//								child.checked = false;
-//							}
 						} else {
 							parameter.parameterValue = '';
 						}

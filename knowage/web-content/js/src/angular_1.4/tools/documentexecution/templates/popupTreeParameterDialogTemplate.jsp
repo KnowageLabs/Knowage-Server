@@ -15,8 +15,6 @@
 	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1">
 		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
 		
-				<%--
-				--%>
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 
 				text-to-show-key="value" drag-enabled="false"
 				multi-select="::paramDialogCtrl.tempParameter.multivalue"
@@ -24,6 +22,7 @@
 				is-folder-fn="paramDialogCtrl.isFolderFn(node)"
 				is-open-folder-fn="paramDialogCtrl.isOpenFolderFn(node)"
 				is-document-fn="paramDialogCtrl.isDocumentFn(node)"
+				show-node-check-box-fn="paramDialogCtrl.showNodeCheckBoxFn(node)"
 				dynamic-tree
 				/>
 	</md-dialog-content>

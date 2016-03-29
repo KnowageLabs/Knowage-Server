@@ -5,22 +5,40 @@
 <div flex layout-align="start">
 	<md-input-container>
 		
+		<!-- Map input -->
+		<section ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
+			<div layout="row" layout-align="start">
+				<md-button ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
+						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
+					<label>{{parameter.label}}</label>
+	<!-- 			<i class="fa fa-globe"></i> -->
+					<i class="fa fa-external-link"></i>
+				</md-button>
+			</div>
+			
+			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
+				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
+						ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
+			</md-whiteframe>
+		</section>
+		
 		<!-- Tree input -->
 		<section ng-if="parameter.selectionType=='TREE'" layout="column">
 			<div layout="row" layout-align="start">
 				<md-button ng-click="getTreeParameterValue()" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
 					<label>{{parameter.label}}</label>
-					<i class="fa fa-sitemap"></i>
+<!-- 				<i class="fa fa-sitemap"></i> -->
+					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
 			
-			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="center center">
-				<span ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
+			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
+				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
+						ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
 			</md-whiteframe>
 		</section>
 				
-								
 		<!-- manual number input -->
 		<label ng-if="parameter.type=='NUM' && parameter.selectionType==''" >
 			{{parameter.label}}</label>
@@ -29,11 +47,11 @@
 				ng-if="parameter.type=='NUM' && parameter.selectionType==''" >	
 		
 		<!-- manual text input -->
-		<label ng-if="parameter.type=='STRING' && parameter.selectionType==''" >
+		<label ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >
 			{{parameter.label}}</label>
 		<input class="input_class" ng-model="parameter.parameterValue" 
 				ng-required="::parameter.mandatory"
-				ng-if="parameter.type=='STRING' && parameter.selectionType==''">
+				ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
 		
 		<!-- lov list single input -->
 		<section ng-if="parameter.selectionType=='LIST' && !parameter.multivalue">
@@ -82,7 +100,7 @@
 				<md-button class="" id="{{::parameter.urlName}}"
 						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
 					<label>{{parameter.label}}</label>
-					<i class="fa fa-search-plus"></i>
+					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
 		 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
@@ -91,14 +109,15 @@
 			</md-whiteframe>
 		</section>
 		
-		<!-- "required" message -->
-		<div ng-if="showRequiredFieldMessage(parameter)">
-		 	<div ng-message="required">Parameter is required.</div>
-		</div>
-		
 		<%--
-		<md-content style="font-size:8px;" ng-if="parameter.selectionType=='TREE'">{{parameter|json}}</md-content>
+		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
+		<md-content style="font-size:8px;">{{parameter|json}}</md-content>
 		--%>
 		
 	</md-input-container>
+	
+	<!-- "required" message -->
+	<div ng-if="showRequiredFieldMessage(parameter)">
+	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.parameterRequired")}}</div>
+	</div>
 </div>

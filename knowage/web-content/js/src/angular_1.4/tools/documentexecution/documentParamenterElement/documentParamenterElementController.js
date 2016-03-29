@@ -16,10 +16,8 @@
 	}]);
 	
 	var documentParamenterElementCtrl = function(
-	$scope, sbiModule_config,sbiModule_restServices,
-	 sbiModule_translate, execProperties, documentExecuteServices,
-	 $mdDialog) {
-		
+			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia) {
 		
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
@@ -132,6 +130,7 @@
 					toggleCheckboxParameter: $scope.toggleCheckboxParameter,
 					sbiModule_translate: $scope.sbiModule_translate,
 				},
+				
 				controllerAs: "paramDialogCtrl",
 				
 				controller : function($mdDialog, parameter, toggleCheckboxParameter, sbiModule_translate) {
@@ -142,7 +141,7 @@
 					paramDialogCtrl.initialParameterState = parameter;
 					
 					paramDialogCtrl.tempParameter = {};
-					angular.copy(parameter, paramDialogCtrl.tempParameter);
+					angular.copy(paramDialogCtrl.initialParameterState, paramDialogCtrl.tempParameter);
 					
 					paramDialogCtrl.dialogTitle = sbiModule_translate.load("sbi.kpis.parameter") + ': ' + parameter.label;
 					paramDialogCtrl.dialogCancelLabel = sbiModule_translate.load("sbi.browser.defaultRole.cancel");
@@ -172,7 +171,7 @@
 					};
 					
 					paramDialogCtrl.isFolderFn = function(node) {
-						return(
+						return !!(
 								!node.expanded
 								&& (!node.leaf || node.leaf == false) 
 //								&& node.children !== undefined 
@@ -181,26 +180,89 @@
 					};
 					
 					paramDialogCtrl.isOpenFolderFn = function(node) {
-						return(
+						return !!(
 								node.expanded
 								&& (!node.leaf || node.leaf == false) 
-//								&& node.children !== undefined 
-//								&& (node.children.length > 0)
 						);
-						
 					};
 					
 					paramDialogCtrl.isDocumentFn = function(node) {
-						return(
+						return !!(
 								node.leaf
-//								node.expanded
-//								&& (!node.leaf || node.leaf == false) 
 								&& !node.children 
-//								&& (node.children.length > 0)
 						);
 					};
 					
+					paramDialogCtrl.showNodeCheckBoxFn = function(node) {
+						var param = paramDialogCtrl.initialParameterState;
+						return !!(
+							param.multivalue == true
+								&&(param.allowInternalNodeSelection
+									|| (!param.allowInternalNodeSelection 
+										&& node.leaf == true && !node.children)
+								)
+							);
+					};
+				}
+			});
+		};
+		
+		$scope.popupMapParameterDialog = function(parameter) {
+			var valueData = '';
+			
+			if(parameter.parameterValue && parameter.parameterValue.length > 0) {
+				var parameterValue = parameter.parameterValue.join("','");
+				valueData = '&SELECTEDPROPDATA=' + "'" + parameterValue + "'";
+			}
+			
+			var mapFilterSrc = 
+				sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=' 
+					+ '/WEB-INF/jsp/behaviouralmodel/analyticaldriver/mapFilter/geoMapFilter.jsp?'
+					+ 'SELECTEDLAYER=' + parameter.selectedLayer
+					+ '&SELECTEDLAYERPROP=' + parameter.selectedLayerProp
+					+ '&MULTIVALUE=' + parameter.multivalue
+					+ valueData;
+			
+			$mdDialog.show({
+				clickOutsideToClose: false,
+				theme: "knowage",
+				openFrom: '#' + parameter.urlName,
+				closeTo: '#' + parameter.urlName,
+				template:
+					'<md-dialog aria-label="Map parameter" style="height:95%; width:95%; max-width: 100%; max-height: 100%;" ng-cloak>'
+						+ '<md-toolbar layout="row">'
+							+ '<div class="md-toolbar-tools" flex layout-align="center center">'
+						      	+ '<h2 class="md-flex">{{parameter.label}}</h2>'
+						     	+ '<span flex></span>'
+						      	+ '<md-button title="Close" aria-label="Close" class="toolbar-button-custom" ng-click="close()">'
+						      		+ '{{sbiModule_translate.load("sbi.general.close")}}' 
+								+ '</md-button>'
+							+ '</div>'
+						+ '</md-toolbar>'
+						+ '<md-dialog-content flex layout="column" class="dialogFrameContent" >'
+							+ '<iframe flex class="noBorder" ng-src="{{iframeUrl}}"></iframe>'
+						+ '</md-dialog-content>' 
+					+'</md-dialog>',
 					
+				clickOutsideToClose: false,
+				
+				controller : function($scope, $mdDialog, sbiModule_translate, $documentNavigationScope) {
+					$scope.sbiModule_translate = sbiModule_translate;
+					
+					$scope.parameter = parameter;
+					$scope.selectedFeatures = [];
+
+					$scope.iframeUrl = mapFilterSrc;
+					
+					$scope.close = function() {
+						$mdDialog.hide();
+						
+						$scope.parameter.parameterValue = $scope.selectedFeatures;
+					};
+					
+					$scope.updateSelectedFeatures = function(dataToReturn) {
+						$scope.selectedFeatures = dataToReturn;
+					};
 				}
 			});
 		};

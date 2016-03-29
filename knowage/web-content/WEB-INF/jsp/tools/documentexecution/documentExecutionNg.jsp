@@ -66,15 +66,17 @@ try{
                 </h2>
                 <span flex=""></span>
                 
-                <md-button class="md-icon-button" aria-label="Help on line" title="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
+                <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
+                		title="{{::translate.load('sbi.generic.helpOnLine')}}">
 					 <md-icon md-font-icon="fa fa-book"></md-icon>
 				</md-button>
 				
-				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()">
+				<md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" 
+						title="{{::translate.load('sbi.scheduler.parameters')}}">
 					 <md-icon md-font-icon="fa fa-refresh"></md-icon>
 				</md-button>
-				<md-button class="md-icon-button" aria-label="Parameters" title="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
-				 ng-if="!isParameterRolePanelDisabled.status">
+				<md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
+						title="{{::translate.load('sbi.scheduler.parameters')}}" ng-if="!isParameterRolePanelDisabled.status">
 					<md-icon md-font-icon="fa fa-filter"></md-icon> 
 					<!-- ng-if="!isParameterRolePanelDisabled.status" -->
 				</md-button>

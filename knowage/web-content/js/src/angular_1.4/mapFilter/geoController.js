@@ -17,14 +17,19 @@
  */
 
 
+/**
+ * @author Benedetto Milazzo (benedetto.milazzo@eng.it)
+ */
+
 var app = angular.module('geoManager', [ 'ngMaterial', 'geoModule', 'sbiModule' ]);
 
-app.controller('mapCtrl', [ '$scope', '$map', 'geoModule_layerServices', 'sbiModule_logger', 
-                            'sbiModule_translate', 'geo_interaction',
-                            'geoModule_templateLayerData', 'sbiModule_restServices', 
-                            mapCtrlFunction ]);
+app.controller('mapCtrl', 
+		[ '$scope', '$window', '$map', 'geoModule_layerServices', 'sbiModule_logger', 
+	        'sbiModule_translate', 'geo_interaction',
+	        'geoModule_templateLayerData', 'sbiModule_restServices', 
+            mapCtrlFunction ]);
 
-function mapCtrlFunction($scope, $map, geoModule_layerServices, 
+function mapCtrlFunction($scope, $window, $map, geoModule_layerServices, 
 		sbiModule_logger, sbiModule_translate, geo_interaction, geoModule_templateLayerData, 
 		sbiModule_restServices){
 	$scope.layerConf = null;
@@ -62,7 +67,17 @@ function mapCtrlFunction($scope, $map, geoModule_layerServices,
 			}
 		}
 		
-		parent.parent.mapFilterSelectedProp(dataToReturn);
+		// reaching ExtJs parent function
+		if(parent && parent.parent && parent.parent.mapFilterSelectedProp) {
+			parent.parent.mapFilterSelectedProp(dataToReturn);
+
+		// reaching Angular parent function
+		} else if($window && $window.parent && $window.parent.angular && $window.parent.angular.element
+				&& $window.parent.angular.element($window.frameElement).scope()) {
+			
+			var angularMapParamScope = $window.parent.angular.element($window.frameElement).scope();
+			angularMapParamScope.updateSelectedFeatures(dataToReturn);
+		}
 		
 //		$scope.isFilterSelectionSaved = true;
 	};
@@ -70,7 +85,7 @@ function mapCtrlFunction($scope, $map, geoModule_layerServices,
 	// Workaround for forcing the angular bind, since the click event 
 	// on the selected features depends by a non-angular component
 	$scope.geo_interaction.addSelectedFeaturesCallbackFunction(function(){
-		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase!='$digest') {
+		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
 //			$scope.isFilterSelectionSaved = false;
 			$scope.$apply();
 		}

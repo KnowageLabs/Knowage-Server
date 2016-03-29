@@ -33,10 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/geoController.js"></script>
 	<title><spagobi:message key="SBIDev.mapFilter.pagetitle"/></title>
-
-	<script type="text/javascript" id="selectedFeatures">
-		
-	</script>
 </head>
 
 <%
