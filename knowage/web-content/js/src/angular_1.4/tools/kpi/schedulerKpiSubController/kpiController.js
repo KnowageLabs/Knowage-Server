@@ -1,0 +1,136 @@
+var app = angular.module('schedulerKpi').controller('kpiController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIControllerFunction ]);
+
+function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
+	$scope.translate=sbiModule_translate;
+
+	$scope.tableFunction={
+
+			loadListKPI: function(item,evt){
+				$scope.loadListKPI();
+			},
+
+	}
+
+	$scope.measureMenuOption= [{
+		label : sbiModule_translate.load('sbi.generic.delete'),
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',	
+		action : function(item,event) {
+			$scope.removeKpi(item);
+		}
+
+	}];
+
+	
+	
+
+	
+	$scope.removeKpi = function(item){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
+		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
+		.ariaLabel('delete kpi') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm).then(function() {
+			if($scope.exists(item)){
+				var index = $scope.indexInList(item, $scope.selectedScheduler.kpi);
+				$scope.selectedScheduler.kpi.splice(index,1);
+			}
+
+		}, function() {
+		});
+		
+	}
+
+	$scope.loadListKPI = function(){
+		console.log("Load...",$scope.kpiAllList);
+		var deferred = $q.defer();
+		$mdDialog.show({
+			controller: DialogControllerKPI,
+			templateUrl: 'templatesaveKPI.html',
+			clickOutsideToClose:true,
+			preserveScope:true,
+			locals: {items: deferred,kpi:$scope.kpi,kpiAllList:$scope.kpiAllList,engine:$scope.selectedScheduler}
+		})
+		.then(function(answer) {
+			$scope.status = 'You said the information was "' + answer + '".';
+			return deferred.resolve($scope.selectedFunctionalities);
+		}, function() {
+			$scope.status = 'You cancelled the dialog.';
+		});
+		return deferred.promise;
+	}
+	$scope.exists = function (item) {
+		if($scope.selectedScheduler.kpi==undefined)return false;
+		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)!=-1;
+
+	};
+	
+
+	$scope.indexInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.id==item.id){
+				return i;
+			}
+		}
+		return -1;
+	};
+
+}
+
+function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine){
+	//controller mdDialog to select kpi 
+	$scope.tableFunction={
+
+			addKpi: function(item,evt){
+				$scope.addKPIToCheck(item);
+			},
+			exists: function(item,evt){
+				return $scope.exists(item);
+			}
+	}
+	$scope.kpi=kpi;
+	$scope.kpiAllList = kpiAllList;
+	$scope.selectedScheduler = engine;
+
+
+
+	$scope.exists = function (item) {
+
+		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)==-1;
+
+	};
+
+
+	$scope.indexInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.id==item.id){
+				return i;
+			}
+		}
+		return -1;
+	};
+	$scope.close = function(){
+		$mdDialog.cancel();
+	}
+	$scope.apply = function(){
+		$mdDialog.cancel();
+		items.resolve($scope.kpi);
+	}
+
+	$scope.addKPIToCheck = function(item){
+		console.log(item)
+		$scope.selectedScheduler.kpi.push(item);
+	}
+
+
+}
+
+
+
+

@@ -73,7 +73,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-item-template>
           <span md-highlight-text="searchText">{{item.valueCd}}</span>
         </md-item-template> 
-      </md-autocomplete>    
+      </md-autocomplete>  
+
+	<md-checkbox ng-model="kpi.enableVersioning">Enable Versioning</md-checkbox>  
      </div>
     
 	<div class="footer">
@@ -109,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<angular-table 
 		id='kpiListTable' ng-model=kpiList
 		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
-		columnsSearch='["name"]' show-search-bar=true
+		columns-search='["name"]' show-search-bar=true
 		speed-menu-option=measureMenuOption 
 		scope-functions=tableFunction 
 		click-function="loadKPI(item);"> </angular-table>
