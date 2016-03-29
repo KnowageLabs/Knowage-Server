@@ -1,5 +1,5 @@
-<md-dialog md-theme="{{::paramDialogCtrl.theme}}"
-		aria-label="{{::paramDialogCtrl.dialogTitle}}" ng-class="dialog.css">
+<md-dialog md-theme="{{::paramDialogCtrl.theme}}" style="height:95%; width:95%; max-width: 100%; max-height: 100%;" ng-cloak
+		aria-label="{{::paramDialogCtrl.dialogTitle}}" ng-class="dialog.css" layout="column">
 	<md-toolbar>
 		<div class="md-title" layout-fill>
 			<h2 class="md-title" layout-margin>
@@ -12,7 +12,7 @@
 	<md-content style="font-size:8px;">{{paramDialogCtrl.tempParameter|json}}</md-content>
 	-->
 	
-	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1">
+	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" flex>
 		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
 		
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 

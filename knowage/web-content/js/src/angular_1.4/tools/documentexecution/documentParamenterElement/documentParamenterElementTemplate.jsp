@@ -1,4 +1,4 @@
-<md-button aria-label="Clear parameter" class="md-button md-fab md-mini"
+<md-button aria-label="Clear parameter" class="md-button md-icon-button"
 		ng-click="documentExecuteServices.resetParameter(parameter)">
 	<i class="fa fa-eraser"></i>
 </md-button>
@@ -121,3 +121,4 @@
 	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.parameterRequired")}}</div>
 	</div>
 </div>
+<md-divider></md-divider>
