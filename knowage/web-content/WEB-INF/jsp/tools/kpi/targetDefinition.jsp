@@ -41,7 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/targetDefinition.css", currTheme)%>">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/targetDefinitionController.js"></script>
 
-
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
@@ -55,52 +54,74 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
 
-
-
-
 </head>
 <body>
-	<angular-list-detail ng-controller="kpiTargetController" full-screen=true >
-		<list  ng-controller="listController"   new-function="addTarget" >
-		<angular-table 
-		id='targetListTable' ng-model=targets
-		columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Data Start Validation","name":"startValidation"},{"label":"Data End Validation","name":"endValidation"}]'
-		columnsSearch='["name"]' show-search-bar=true
-		scope-functions=tableFunction 
-		click-function="loadTarget(item);"> </angular-table>
+	<angular-list-detail ng-controller="targetDefinitionController" full-screen="true">
+		<list ng-controller="listController" new-function="addTarget">
+			<angular-table 
+				id='targetListTable' ng-model=targets
+				columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Start Validity Date","name":"startValidity"},{"label":"Data End Validation","name":"endValidity"}]'
+				columnsSearch='["name"]'
+				show-search-bar="true"
+				speed-menu-option="targetsActions"
+				click-function="loadTarget(item);"> </angular-table>
 		</list>
-		<detail >
-		<div id="contentWhiteFrame" class="overflow" flex layout="column">
-					 <md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin >
-			   					<div>
-						           <div  >
-						           <md-input-container class="small counter" class="small counter">
-									<label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
-									<input class="input_class" ng-model="target.name" required
-										maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
-						           </div>
-						           <div ><label>{{translate.load("sbi.target.startvalidity")}}</label>
-							           <md-datepicker ng-model="target.startValidation" name="Select Data"
-											ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
-							           <label>{{translate.load("sbi.target.endvalidity")}}</label>
-							           <md-datepicker ng-model="target.endValidation" name="Select Data"
-										ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
-						           </div>
-						          	</div>
-					          	
-	 				 </md-whiteframe>
-	 				  <md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin >
-			   					
-						           <md-toolbar>
-								     <div class="md-toolbar-tools" layout="row" class="headerNote">
-							    		<h5>{{translate.load("sbi.target.headerkpi")}}</h5>
-							    	</div>
-								   </md-toolbar>
-								   
-						          	
-	 				 </md-whiteframe>
-	 				 </div>
-		</detail>
+		<detail save-function="saveTarget" cancel-function="cancel">
+			<div id="contentWhiteFrame" class="overflow" flex layout="column">
+				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
+					<div>
+						<div>
+							<md-input-container class="small counter" class="small counter">
+							<label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
+							<input class="input_class" ng-model="target.name" required
+								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+						</div>
+						<div>
+							<label>{{translate.load("sbi.target.startvalidity")}}</label>
+							<md-datepicker ng-model="target.startValidity" name="Select Data"
+								ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+							<label>{{translate.load("sbi.target.endvalidity")}}</label>
+							<md-datepicker ng-model="target.endValidity" name="Select Data"
+								ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+						</div>
+					</div>
+				</md-whiteframe>
+				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin layout="column" flex>
+					<md-toolbar>
+						<div class="md-toolbar-tools" layout="row" class="headerNote">
+							<h5>{{translate.load("sbi.target.headerkpi")}}</h5>
+						</div>
+					</md-toolbar>
+					<angular-table flex 
+						id="kpisTable" ng-model="kpis"
+						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value"}]'
+						columnsSearch='["name"]'
+						speed-menu-option="kpisActions"
+						show-search-bar="false"
+						no-pagination="true"
+						scope-functions="kpisFunctions"
+						click-function="alert(item);">
+						<queue-table>
+							<div layout="row"> 
+								<span flex></span>
+								<md-button type="button" id="add-kpi" ng-click="scopeFunctions.openShowDialog($event);">Add KPI association</md-button>
+							</div>
+						</queue-table> 
+					</angular-table>
+					
+				</md-whiteframe>
+				<!-- md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
+					This is a test
+					<angular-table 
+						id="foundKpisTable" ng-model="foundKpis"
+						columns='[{"label":"KPI name","name":"name"},{"label":"Category","name":"category"},{"label":"Date","name":"date"},{"label":"Author","name":"author"},{"label":"Target value","name":"value"}]'
+						columnsSearch='["name"]' show-search-bar=true
+						scope-functions=tableFunction 
+						speed-menu-option="foundActions"
+						click-function="alert(item);"> </angular-table>
+				</md-whiteframe -->
+			</div>
+			</detail>
 		</angular-list-detail>
 </body>
 </html>
