@@ -90,7 +90,6 @@
 #end
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
-
 #set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction, $seriePrefix, $seriePostfix, $seriePrecision))
 
 #if ($colorsPallete.COLOR.value && $colorCounter == 0)

@@ -1,12 +1,12 @@
 /**
-	 * The rendering function for the PARALLEL chart.
-	 * 
-	 * @param data JSON containing data (parameters) about the chart 
-	 */
+ * The rendering function for the PARALLEL chart.
+ * 
+ * @param data JSON containing data (parameters) about the chart 
+ */
 function renderParallelChart(data){
    
 	var records = data.data[0];
-	//console.log(records);
+	
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){
@@ -36,9 +36,9 @@ function renderParallelChart(data){
 		}}
 
 		var groupcolumn = data.chart.group;
-
-		var group = Ext.decode(data.chart.groups);
-		var column = Ext.decode(data.chart.serie);
+				
+		var group = JSON.parse(data.chart.groups);
+		var column = JSON.parse(data.chart.serie);
 
 		var groups = [];
 
@@ -79,11 +79,10 @@ function renderParallelChart(data){
         var colors = [];
 
 		var colorsResponse=data.chart.colors;
-		
-	
-	 var colorsResponseDec = Ext.decode(colorsResponse);
+				
+		var colorsResponseDec = JSON.parse(colorsResponse);
      
-     for (var i = 0; i< colorsResponseDec.length; i++){
+		for (var i = 0; i< colorsResponseDec.length; i++){
 
 			colors.push(colorsResponseDec[i][i]);
 		

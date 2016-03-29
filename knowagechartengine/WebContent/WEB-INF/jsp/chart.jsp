@@ -5,7 +5,7 @@ Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 Knowage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+(at your option) any later version.
 
 Knowage is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -204,16 +204,6 @@ author:
 		
 		var isChartHeightEmpty = null;
 		var isChartWidthEmpty= null;
-		
-		var isChartParallel = false;
-		var parallelLegendWidth = 0;
-		var parallelTableRowHeight = 0;
-		var parallelTableRowElements = 0;
-		var parallelTablePaginationHeight = 0;
-		var parallelTablePaddingTop = 0;
-		var parallelTablePaddingBottom = 0;
-		var parallelTitleHeight = "";
-		var parallelSubtitleHeight = "";
 				
 		function exportChart(exportType) {
 		
@@ -223,8 +213,7 @@ author:
 			
 			if (!isD3Chart) {
 				document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
-			}
-			
+			}			
 			
 			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
 			thisContextName.replace('/','');
@@ -241,20 +230,96 @@ author:
 				its code (skipping of some parts of the initial (standard) implementation). This additional
 				property (data) is "exportWebApp".
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/			 
+			
+			/*
+				When we need to export charts when they are rendered, we need to send a proper information
+				about the dimensions of that chart, i.e. the dimensions and dimension types that user has
+				set for the chart. If the type of the dimension is "percentage", we need to convert numeric
+				values that are set for this/these dimension(s), because they represent a percentage, not 
+				the absolute value (in pixels).
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/					
+			var jsonObj = JSON.parse(Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate);
+			
+			var jsonObjHeight = jsonObj.CHART.height;
+			var jsonObjWidth = jsonObj.CHART.width;
+			
+			var jsonObjHeightEmpty = false;
+			var jsonObjWidthEmpty = false;
+			
+			/*
+				CONVERSION OF DIMENSION(S) EXPRESSED IN PERCENTAGES INTO THE ABSOLUTE ONE,
+				EXPRESSED IN PIXELS (SO WE CAN GIVE ACCURATE DATA TO THE PHANTOM JS).
 			*/
+			
+			if (jsonObjHeight!=undefined && jsonObjHeight!="")
+			{
+				jsonObjHeight = Number(jsonObjHeight);					
+			}
+			else
+			{
+				jsonObjHeight = window.innerHeight
+				jsonObjHeightEmpty = true;
+			}
+			
+			if (jsonObjWidth!=undefined && jsonObjWidth!="")
+			{
+				jsonObjWidth = Number(jsonObjWidth);				
+			}
+			else
+			{
+				jsonObjWidth = window.innerWidth;
+				jsonObjWidthEmpty = true;
+			}
+			
+			if (jsonObj.CHART.heightDimType=="percentage" && !jsonObjHeightEmpty)
+			{
+				jsonObjHeight = jsonObjHeight*window.innerHeight/100;
+			}
+			
+			if (jsonObj.CHART.widthDimType=="percentage" && !jsonObjWidthEmpty)
+			{
+				jsonObjWidth = jsonObjWidth*window.innerWidth/100;
+			}
+			
+			jsonObj.CHART.height = jsonObjHeight;
+			jsonObj.CHART.width = jsonObjWidth;
+			
 			var parameters = {
-				jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+				//jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+				jsonTemplate: JSON.stringify(jsonObj),
 				exportWebApp: true,
 				driverParams: '<%=driverParams%>'
- 			};
+ 			};	
 			
-							
 			if (isD3Chart) {
 				exportD3Chart(protocol, hostName,serverPort,exportType);
 			}else{
 				chartServiceManager.run('jsonChartTemplate', parameters, [], 
 						function (response) {
 							var chartConf = response.responseText;
+							
+							/*
+								If the chart is of the type that relies on the Highcharts library, check
+								if the type is of HEATMAP or TREEMAP, since they need preparation of the
+								data provided for such a chart. This preparation is done locally, inside
+								this ('KnowageChartEngine') project and we do not have access to it from 
+								the	one that uses the Phantom JS ('highcharts-export' project).
+								@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							*/
+							if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
+							{
+								var jsonChartConf = Ext.JSON.decode(chartConf);
+								
+								if(chartType == 'TREEMAP' && typeof(prepareChartConfForTreemap) == "function") {
+									chartConf = Ext.JSON.encode(prepareChartConfForTreemap(jsonChartConf));
+								}
+								else if(chartType == 'HEATMAP' && typeof(prepareChartConfForHeatmap) == "function") {
+									chartConf = Ext.JSON.encode(prepareChartConfForHeatmap(jsonChartConf));
+								}
+							}	
+							
 							Ext.DomHelper.useDom = true; 
 							// need to use dom because otherwise an html string is composed as a string concatenation,
 					        // but, if a value contains a " character, then the html produced is not correct!!!
@@ -307,7 +372,8 @@ author:
 									, name: 'async'
 									, value: ''
 								});
-				          	}              				       	
+				          	}              	
+					        
 				         	form.elements[0].value = chartConf;
 		         			form.elements[1].value = 'options';
 				         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
@@ -320,15 +386,16 @@ author:
 				         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
 						}					
 					);
-			}
-			
+			}			
 			
 		};
 		
 		/*  
-			Needed for the PARALLEL chart
+			Needed for the PARALLEL chart.
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		*/		
 		function removePixelsFromFontSize(fontSize) {
+				
 			var indexOfPx = fontSize.indexOf('px');
 			
 			if (indexOfPx > 0) {
@@ -336,6 +403,7 @@ author:
 			} else {
 				return fontSize;
 			}
+			
 		};	
 		
 		function exportD3Chart(protocol, hostName,serverPort,exportType){
@@ -496,6 +564,10 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
  				
+ 	 			console.log("CHART.JS line 499");
+ 	 			console.log("jsonTemplate: ");
+ 	 			console.log(Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate);
+ 	 			
 				parameters = {
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
 					driverParams: '<%=driverParams%>',
@@ -518,11 +590,9 @@ author:
  			}
  			
  			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-				 			 					
-				var chartConf = Ext.JSON.decode(response.responseText, true);	
-				
-				//	chartConf.colors = {}; // TODO: remove this when the VM model 'colors' property is redefined
-				
+ 				
+ 				var chartConf = Ext.JSON.decode(response.responseText, true);	
+								
 				var typeChart = chartConf.chart.type.toUpperCase();		 				
 				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 				
@@ -541,8 +611,7 @@ author:
 				
 				var mainPanelTemp = Ext.getCmp("mainPanel");
 				
-				mainPanelTemp.setStyle("overflow","auto");
-				// Ext.getBody()		
+				mainPanelTemp.setStyle("overflow","auto");	
 				
 				if (!heightChart)
 				{
@@ -572,25 +641,7 @@ author:
 					{
 						chartConf.chart.width = undefined;
 					}
-				} 	
-				
-				//var highchartsContainer = Ext.query(".highcharts-container")[0];
-				
-				/*console.log(mainPanelTemp.el);
-				console.log(mainPanelTemp.getEl());
-				mainPanelTemp.getEl().scrollIntoView(Ext.getBody(), null, true)*/
-				/*var ttt = Ext.create('Ext.dom.Element',mainPanelTemp);
-				
-				ttt.getEl().scrollIntoView(Ext.getBody(), null, true);*/		
-				 						
-				/* 
-				if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!="")) {
-					Ext.getBody().setStyle("position","absolute");
-					Ext.getBody().setStyle("top","50%");
-					Ext.getBody().setStyle("left","50%");
-					Ext.getBody().setStyle("transform","translate(-50%, -50%)");
-				}
-				*/										
+				} 										
 				
 				/*
 					If type of the chart is one of those that rely on the D3 library

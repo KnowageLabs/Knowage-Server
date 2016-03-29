@@ -12,7 +12,7 @@ Ext.define
 		id : "wordcloudConfiguration",
 		
 		columnWidth: 1,
-		height:320,
+		height: 270,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding : 10,
@@ -30,24 +30,27 @@ Ext.define
 //		},
 
 		constructor : function(config) {
-			
 			this.callParent(config);
 			this.viewModel = config.viewModel;
-
+            
 			var globalScope = this;
-			
-			var item = [
 
+			var item = [
+                      /**
+                       * combobox for size criteria is not used any more 
+                       */
 					{
 						xtype : 'combo',
 						queryMode : 'local',
 						forceSelection : true,
 						editable : false,
+						hidden:true, // no more option to chose size criteria
 						width: Sbi.settings.chart.configurationStep.widthOfFields,
 	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
 						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.sizeCriteria") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 						bind : '{configModel.sizeCriteria}',
 						displayField : 'name',
+						value: 'serie', // serie will be always used 
 						valueField : 'value',					
 						emptyText: LN("sbi.chartengine.configuration.wordcloudSizeCriteria.emptyText"),
 						
@@ -104,7 +107,7 @@ Ext.define
 								allowBlank: true,
 								fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 								width: Sbi.settings.chart.configurationStep.widthOfFields,
-			        			padding: Sbi.settings.chart.configurationStep.paddingOfInnerFields,
+			        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields,
 								maxValue : '300',
 								minValue : '10',
 								emptyText: LN("sbi.chartengine.configuration.wordcloudMaxNumWords.emptyText"),
@@ -124,6 +127,45 @@ Ext.define
 									}
 								}
     	         			}
+    	         		]
+                	 },
+                	 {            
+	                	 xtype : 'fieldcontainer',
+	                	 layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+	     		        
+	     		        defaults : 
+	     		        {	   
+	     					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,						
+	     		        },
+		                    	 
+	                	 items: 
+	            		 [	
+	    	         		{
+								xtype : 'checkboxfield',
+								bind : '{configModel.preventOverlap}',
+								id: "wordcloudPreventOverlap", 
+								//allowBlank: true,
+								fieldLabel : LN("sbi.chartengine.configuration.wordcloud.preventOverlap"),
+								width: Sbi.settings.chart.configurationStep.widthOfFields,
+			        			padding:Sbi.settings.chart.configurationStep.paddingOfInnerFields
+    	         			},{
+    	         				xtype:'button',
+    	         				iconCls: 'icon-info',
+    	         				iconMask: true,
+    	         			    handler: function()
+    	 			            {
+    	         			    	Ext.Msg.show({
+  		            					title : LN('sbi.chartengine.designer.wordcloud.info.title'),
+  		            					message : LN('sbi.chartengine.designer.wordcloud.info.message'),
+  		            					icon : Ext.Msg.INFO,
+  		            					closable : false,
+  		            					buttons : Ext.Msg.OK,
+  		            					
+    	 			            });
+    	         				
+    	         			}
+    	         			}
+    	         		
     	         		]
                 	 },
                 	 
@@ -220,7 +262,7 @@ Ext.define
 				 										globalScope.ownerCt.update();
 		 											}
 			 									   break;
-			 									case 'vartical':
+			 									case 'vertical':
 			 										Ext.getCmp("wordcloudMaxAngle").setValue(90);
 			 										Ext.getCmp("wordcloudMinAngle").setValue(90);
 			 										
@@ -399,8 +441,8 @@ Ext.define
 	    						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 	    						width: Sbi.settings.chart.configurationStep.widthOfFields,
 	    	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-	    						maxValue : '500',
-	    						minValue : '30',
+	    						maxValue : '200',
+	    						minValue : '10',
 	    						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxFontSize.emptyText"),
 	    						
 	    						listeners:
@@ -440,7 +482,7 @@ Ext.define
 	    						fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 	    						width: Sbi.settings.chart.configurationStep.widthOfFields,
 	    	        			padding:Sbi.settings.chart.configurationStep.paddingOfTopFields,
-	    						maxValue : '200',
+	    						maxValue : '50',
 	    						minValue : '5',
 	    						emptyText: LN("sbi.chartengine.configuration.wordcloudMinFontSize.emptyText"),
 	    						

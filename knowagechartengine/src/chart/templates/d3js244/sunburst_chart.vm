@@ -24,8 +24,17 @@
 	#set($columnCounter = $columnCounter + 1)
 #end
 
-#set($serie = $chart.VALUES.SERIE.name)
+#* 
+	Convert an array list with the single element into the HashMap so we can 
+	use it in a general way, even if we are calling the VM for purpose of
+	previewing the SUNBURST chart.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+*#
+#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+#end
 
+#set($serieName = $chart.VALUES.SERIE.name)
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 
 #set($crossNavigation = '')
@@ -37,8 +46,9 @@
 		type: '$chart.type',
 		opacMouseOver: '$chart.opacMouseOver',	
 		isCockpit: $chart.isCockpitEngine, 
+		
 		#if($chart.isCockpitEngine=='true')
-  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
 		
 		#if($chart.height != '')
@@ -80,8 +90,10 @@
     		#end
 		}
 	},
+	
 	categories: $datasettransformer.getColumnNames($columnsNeeded),
-	    colors: [
+	
+	colors: [
     	    
 			#*
 	 			If user specified more than one color from the color palette
@@ -213,8 +225,6 @@
 		}
 	},
 		
-	
-		
 	#* 	Something completely new that define through XML template
 		that we would like to have for the SUNBURST chart.  *# 	
 	toolbar:
@@ -222,8 +232,8 @@
 		style:
 		{	
 			position: '$chart.TOOLBAR.style.position',
-			height: '$chart.TOOLBAR.style.height',
-			width: '$chart.TOOLBAR.style.width',
+			##height: '$chart.TOOLBAR.style.height',
+			##width: '$chart.TOOLBAR.style.width',
 			spacing: '$chart.TOOLBAR.style.spacing',
 			tail: '$chart.TOOLBAR.style.tail',				
 			percFontColor: '$chart.TOOLBAR.style.percFontColor',		
@@ -239,6 +249,7 @@
     		#end
 		}
 	},
+	
 	crossNavigation:
 	{
 	    #if($crossNavigation != '') 
@@ -258,8 +269,9 @@
 						],
 						#end
 	},	
+	
 	data:
 	[
-	 	$datasettransformer.toTree($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction)
+	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction)
 	]
 }

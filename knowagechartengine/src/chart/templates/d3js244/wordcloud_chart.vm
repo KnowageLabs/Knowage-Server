@@ -29,7 +29,18 @@
 #end
 
 #if($!chart.VALUES.SERIE)
-#set($serieName = $chart.VALUES.SERIE.name)
+
+	#* 
+		Convert an array list with the single element into the HashMap so we can 
+		use it in a general way, even if we are calling the VM for purpose of
+		previewing the CHORD chart.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	*#
+	#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+		#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+	#end
+
+	#set($serieName = $chart.VALUES.SERIE.name)
 #end
 
 #if($!chart.VALUES.SERIE)
@@ -37,7 +48,6 @@
 #end
 
 #set($sizeCriteria = $chart.sizeCriteria)
-
 #set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction))
 
 #set($crossNavigation = '')
@@ -47,7 +57,7 @@
  	chart: 
  	{
   		type: '$chart.type',
-  		
+		
   		#if($chart.height != '')
         	height: $chart.height,
         #end
@@ -74,6 +84,7 @@
 		
   		sizeCriteria: '$chart.sizeCriteria',
   		wordLayout: '$chart.wordLayout',
+  		preventOverlap: $chart.preventOverlap,
   		maxAngle: $chart.maxAngle,
   		minAngle: $chart.minAngle,
   		maxFontSize: $chart.maxFontSize,
@@ -186,7 +197,7 @@
 	
     crossNavigation:
     {
-    #if($crossNavigation != '') 
+    	#if($crossNavigation != '') 
 						crossNavigationDocumentName: '$crossNavigation.document',
 						crossNavigationDocumentParams: [
 							## if single PARAM node, not array
@@ -201,8 +212,9 @@
 								#end
 							#end
 						],
-						#end
+		#end
     },
+    
  	data:
  	[
   		$result

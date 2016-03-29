@@ -1,15 +1,24 @@
 #set($results = $data.rows)
 #set($dataFields = $data.metaData.fields)
 
+#* 
+	Convert an array list with the single element into the HashMap so we can 
+	use it in a general way, even if we are calling the VM for purpose of
+	previewing the CHORD chart.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+*#
+#if($chart.VALUES.SERIE.class.name == 'java.util.ArrayList')
+	#set($chart.VALUES.SERIE = $chart.VALUES.SERIE[0])
+#end
+
 #set($categories = $chart.VALUES.CATEGORY)
 #set($serieName = $chart.VALUES.SERIE.name)
-
+	
 #set($serie = $chart.VALUES.SERIE)
 
 #*
 	Get the grouping function (aggregation type) of the serie item user
-	specified for the CHORD chart.
-	
+	specified for the CHORD chart.	
 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 *#
 #set($groupingFunction = $serie.groupingFunction)
@@ -44,7 +53,7 @@
     	#end
 		
 		#if($chart.width != '')
-    		width: '$chart.width',
+    		width: $chart.width,
     	#end		
         
         #*
@@ -66,7 +75,7 @@
 		isCockpit: $chart.isCockpitEngine,
 		
 		#if($chart.isCockpitEngine=='true')
-  		outcomingEventsEnabled: $chart.outcomingEventsEnabled,
+  			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
   		
 		style:
@@ -298,7 +307,7 @@
 		#end
     ],	
     
-    tooltip:
+   	tooltip:
  	{
  	    backgroundColor:'$serie.TOOLTIP.backgroundColor',
 		fontFamily: '$serie.TOOLTIP.style.fontFamily',
@@ -318,6 +327,7 @@
 	 	precision:'$serie.precision',
 	 	postfix:'$serie.postfixChar',
  	},
+	
 	crossNavigation:
 	{
 	   #if($crossNavigation != '') 
@@ -337,10 +347,11 @@
 						],
 						#end
 	},
+	
 	categories: $datasettransformer.getColumnNames($columnsNeeded),
+	
 	data:
 	[
 		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction)
 	]
-
 }

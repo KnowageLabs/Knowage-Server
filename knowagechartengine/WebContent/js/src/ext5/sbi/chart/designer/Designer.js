@@ -476,6 +476,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			);
 			
 			var stringCockpitEngine="false";
+			
 			if(Sbi.chart.designer.ChartUtils.isCockpitEngine){
 				stringCockpitEngine="true";
 			}
@@ -488,9 +489,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 				   method : 'GET',
 				   url : 'types',
+				   
 				   params: {
 					   isCockpitEngine: stringCockpitEngine,
 				   },
+				   
 				   success: function(response) 
 				   {
 				        var obj = Ext.decode(response.responseText);
@@ -1780,7 +1783,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 								 */
 								var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
-								
+																
 								if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
 								{
 									var jsonChartConf = Ext.JSON.decode(chartConf);
@@ -1989,7 +1992,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		            	click: {
 		            		element: 'el',
 		            		fn: function(){			
-		            			
+		            					            			
 	  							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true); 
 								  							
 	  							/**
@@ -2018,7 +2021,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  								}
 	  								else
 									{
-	  									sbiJson.CHART.height = window.innerHeight*(Number(heightChartJson)/100);
+	  									sbiJson.CHART.height = window.innerHeight*Number(heightChartJson)/100;
 									}
 								}
 	  							else
@@ -2034,13 +2037,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  								}
 	  								else
 									{
-	  									sbiJson.CHART.width = window.innerWidth*(Number(widthChartJson)/100);
+	  									sbiJson.CHART.width = window.innerWidth*Number(widthChartJson)/100;
 									}
 								}
 	  							else
 								{
 	  								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-								}  							
+								}  		
 	  							
 	  							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
 	  							
@@ -2095,6 +2098,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  							}
 	  							
 								chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+									
 									var chartConf = response.responseText;
 									
 									/**
@@ -2114,7 +2118,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									 * 
 									 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 									 */
-									var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+									var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();									
 									
 									if (chartType == 'TREEMAP' || chartType == 'HEATMAP')
 									{
@@ -2130,8 +2134,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									
 									/**
 						  			 * The height and width of the chart are set inside the 'chartConf'
-						  			 * parameter.
-						  			 * 
+						  			 * parameter.						  			 
 						  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						  			 */
 									var parameters = {
@@ -2145,7 +2148,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      									callback: undefined,
 	      									async: 'true'
 	      							};
-									
+//									
 	      							chartExportWebServiceManager.run('exportPng', parameters, [], 
 	  									function (response) {
 		      								var src = '/highcharts-export-web/'+response.responseText;
@@ -2158,10 +2161,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 		      								srcImg = src;
 		      								setPreviewImage(src,heightImg,widthImg);	      								
 		      							},
+		      							
 		      							function (response) {
 		      									      								
 		      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
-		      								setPreviewImage(src,previewPanel.getHeight(),widthImg.getWidth());		      								
+		      										      								
+		      								setPreviewImage(src,previewPanel.getHeight(),widthImg);		      								
 		      								srcImg = src;
 		      								
 		      								if (response.status == 0)
@@ -3156,8 +3161,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Mozilla Firefox, provide a tab listener for 'focus' event on it for
 					 * every tab that is present in the panel. This event will fire whenever
 					 * user clicks once on particular tab and it will consequesntly set the
-					 * tab as the active one.
-					 * 
+					 * tab as the active one.					 
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					render: function () 
