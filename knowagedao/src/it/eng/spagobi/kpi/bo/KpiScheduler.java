@@ -1,7 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.utilities.StringUtils;
-
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +12,10 @@ public class KpiScheduler {
 	private final List<SchedulerFilter> filters = new ArrayList<>();
 	private Boolean delta;
 	private final List<Kpi> kpis = new ArrayList<>();
-
-	private String getKpiNames() {
-		return StringUtils.join(kpis.toArray(new String[0]), ", ");
-	}
+	private Date startDate;
+	private Date endDate;
+	private String kpiNames;
+	private String author;
 
 	/**
 	 * @return the id
@@ -75,6 +74,38 @@ public class KpiScheduler {
 	 */
 	public List<Kpi> getKpis() {
 		return kpis;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getKpiNames() {
+		return kpiNames;
+	}
+
+	public void setKpiNames(String kpiNames) {
+		this.kpiNames = kpiNames;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 }
