@@ -14,9 +14,9 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	private Date endTime;
 	private Character delta;
 
-	private final Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
+	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
 
-	private final Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
+	private Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
 
 	/**
 	 * @return the id
@@ -105,6 +105,22 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	 */
 	public Set<SbiKpiExecutionFilter> getSbiKpiExecutionFilters() {
 		return sbiKpiExecutionFilters;
+	}
+
+	/**
+	 * @param sbiKpiKpis
+	 *            the sbiKpiKpis to set
+	 */
+	public void setSbiKpiKpis(Set<SbiKpiKpi> sbiKpiKpis) {
+		this.sbiKpiKpis = sbiKpiKpis;
+	}
+
+	/**
+	 * @param sbiKpiExecutionFilters
+	 *            the sbiKpiExecutionFilters to set
+	 */
+	public void setSbiKpiExecutionFilters(Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters) {
+		this.sbiKpiExecutionFilters = sbiKpiExecutionFilters;
 	}
 
 }
