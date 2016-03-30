@@ -20,7 +20,6 @@ package it.eng.spagobi.pivot4j.ui.html;
 import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -83,8 +82,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			// need the name of the measure to check if it's editable
 			String measureName = getMeasureName(context);
-			Member m = getContextMember(context, "[Product]");
-			System.out.println(m);
+
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
@@ -420,21 +418,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		}
 
 		return false;
-	}
-
-	private Member getContextMember(TableRenderContext context, String hierarchyUniqeName) {
-
-		Hierarchy h = null;
-		try {
-			h = CubeUtilities.getHierarchy(context.getModel().getCube(), hierarchyUniqeName);
-		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Member m = ((SpagoBICellWrapper) context.getCell()).getContextMember(h);
-
-		return m;
-
 	}
 
 	private String getMeasureName(TableRenderContext context) { // (RenderContext
