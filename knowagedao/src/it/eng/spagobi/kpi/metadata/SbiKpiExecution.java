@@ -2,7 +2,7 @@ package it.eng.spagobi.kpi.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +15,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	private Character delta;
 
 	private final Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
+
+	private final Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
 
 	/**
 	 * @return the id
@@ -96,6 +98,13 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	 */
 	public Set<SbiKpiKpi> getSbiKpiKpis() {
 		return sbiKpiKpis;
+	}
+
+	/**
+	 * @return the sbiKpiExecutionFilters
+	 */
+	public Set<SbiKpiExecutionFilter> getSbiKpiExecutionFilters() {
+		return sbiKpiExecutionFilters;
 	}
 
 }

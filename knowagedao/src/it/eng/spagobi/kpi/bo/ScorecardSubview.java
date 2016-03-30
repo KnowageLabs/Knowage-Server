@@ -1,12 +1,15 @@
 package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.kpi.bo.Scorecard.STATUS;
+import it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScorecardSubview {
+	public enum STATUS {
+		RED, YELLOW, GREEN
+	};
 
 	private Integer id;
 	private String name;
@@ -83,4 +86,9 @@ public class ScorecardSubview {
 		return groupedKpis;
 	}
 
+}
+
+class CountByStatus {
+	STATUS status;
+	int count;
 }

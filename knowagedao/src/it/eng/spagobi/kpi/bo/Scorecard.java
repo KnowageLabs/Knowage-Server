@@ -1,15 +1,9 @@
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.kpi.bo.Scorecard.STATUS;
-
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public class Scorecard {
-	public enum STATUS {
-		RED, YELLOW, GREEN
-	};
-
 	private Integer id;
 	private String name;
 	private Date creationDate;
@@ -92,9 +86,4 @@ public class Scorecard {
 		this.perspectives = perspectives;
 	}
 
-}
-
-class CountByStatus {
-	STATUS status;
-	int count;
 }

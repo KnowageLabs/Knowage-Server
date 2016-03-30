@@ -18,18 +18,20 @@
         </id>
         
         <property name="parentId" column="PARENT_ID" type="integer" />
-        <property name="name" column="NAME" type="string" length="40" not-null="true"/>
+        <property name="name" column="NAME" type="string" length="40" not-null="true" />
         
-        <property name="typeId" column="TYPE_ID" type="integer"  />
-        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
-            <column name="TYPE_ID" not-null="true" />
-        </many-to-one>
+        <property name="internalType" column="INTERNAL_TYPE" type="char" not-null="true" />
         
         <property name="criterionId" column="CRITERION_ID" type="integer" />
         <many-to-one name="criterion" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
             <column name="CRITERION_ID" />
         </many-to-one>
 
+		<set name="subviews" cascade="all,delete-orphan" lazy="true" >
+            <key column="PARENT_ID" />
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiScorecard" />
+        </set>
+        
 		<!-- 
         <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="save-update" lazy="true">
 			<key >

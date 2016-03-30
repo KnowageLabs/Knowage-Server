@@ -12,11 +12,15 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	private Integer parentId;
 	private String name;
 
-	private Integer typeId;
-	private SbiDomains type;
+	/**
+	 * S = scorecard, P = perspective, T = target
+	 */
+	private Character internalType;
 
 	private Integer criterionId;
 	private SbiDomains criterion;
+
+	private Set<SbiKpiScorecard> subviews = new HashSet<>();
 
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
 
@@ -66,33 +70,18 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @return the typeId
+	 * @return the internalType
 	 */
-	public Integer getTypeId() {
-		return typeId;
+	public Character getInternalType() {
+		return internalType;
 	}
 
 	/**
-	 * @param typeId
-	 *            the typeId to set
+	 * @param internalType
+	 *            the internalType to set
 	 */
-	public void setTypeId(Integer typeId) {
-		this.typeId = typeId;
-	}
-
-	/**
-	 * @return the type
-	 */
-	public SbiDomains getType() {
-		return type;
-	}
-
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(SbiDomains type) {
-		this.type = type;
+	public void setInternalType(Character internalType) {
+		this.internalType = internalType;
 	}
 
 	/**
@@ -138,6 +127,21 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	 */
 	public void setSbiKpiKpis(Set<SbiKpiKpi> sbiKpiKpis) {
 		this.sbiKpiKpis = sbiKpiKpis;
+	}
+
+	/**
+	 * @return the subviews
+	 */
+	public Set<SbiKpiScorecard> getSubviews() {
+		return subviews;
+	}
+
+	/**
+	 * @param subviews
+	 *            the subviews to set
+	 */
+	public void setSubviews(Set<SbiKpiScorecard> subviews) {
+		this.subviews = subviews;
 	}
 
 }

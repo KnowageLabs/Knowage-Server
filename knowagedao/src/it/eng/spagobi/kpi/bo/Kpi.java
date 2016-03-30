@@ -57,10 +57,6 @@ public class Kpi implements Serializable {
 	public Kpi() {
 	}
 
-	public Kpi(Integer id) {
-		this.id = id;
-	}
-
 	/**
 	 * @return the id
 	 */

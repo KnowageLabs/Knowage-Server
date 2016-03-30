@@ -22,6 +22,11 @@
         <property name="endTime" column="END_TIME" type="date" />
         <property name="delta" column="DELTA" type="char" />
         
+         <set name="sbiKpiExecutionFilters" cascade="all,delete-orphan" lazy="true" inverse="true">
+            <key column="EXECUTION_ID" />
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter" />
+        </set>
+        
         <!-- 
         <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="save-update" lazy="true">
 			<key >

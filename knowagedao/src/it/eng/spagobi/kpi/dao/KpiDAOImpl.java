@@ -17,6 +17,50 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import it.eng.qbe.InExpressionIgnoringCase;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
+import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.Placeholder;
+import it.eng.spagobi.kpi.bo.Rule;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.SchedulerFilter;
+import it.eng.spagobi.kpi.bo.Scorecard;
+import it.eng.spagobi.kpi.bo.ScorecardPerspective;
+import it.eng.spagobi.kpi.bo.ScorecardSubview;
+import it.eng.spagobi.kpi.bo.ScorecardTarget;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.kpi.bo.TargetValue;
+import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.kpi.bo.ThresholdValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
+import it.eng.spagobi.kpi.metadata.SbiKpiExecution;
+import it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter;
+import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
+import it.eng.spagobi.kpi.metadata.SbiKpiKpiId;
+import it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder;
+import it.eng.spagobi.kpi.metadata.SbiKpiRule;
+import it.eng.spagobi.kpi.metadata.SbiKpiRuleId;
+import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
+import it.eng.spagobi.kpi.metadata.SbiKpiScorecard;
+import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
+import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId;
+import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
+import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,43 +81,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinFragment;
 import org.hibernate.transform.Transformers;
 
-import it.eng.qbe.InExpressionIgnoringCase;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.bo.Alias;
-import it.eng.spagobi.kpi.bo.Cardinality;
-import it.eng.spagobi.kpi.bo.Kpi;
-import it.eng.spagobi.kpi.bo.KpiScheduler;
-import it.eng.spagobi.kpi.bo.Placeholder;
-import it.eng.spagobi.kpi.bo.Rule;
-import it.eng.spagobi.kpi.bo.RuleOutput;
-import it.eng.spagobi.kpi.bo.Target;
-import it.eng.spagobi.kpi.bo.TargetValue;
-import it.eng.spagobi.kpi.bo.Threshold;
-import it.eng.spagobi.kpi.bo.ThresholdValue;
-import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
-import it.eng.spagobi.kpi.metadata.SbiKpiExecution;
-import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
-import it.eng.spagobi.kpi.metadata.SbiKpiKpiId;
-import it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder;
-import it.eng.spagobi.kpi.metadata.SbiKpiRule;
-import it.eng.spagobi.kpi.metadata.SbiKpiRuleId;
-import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
-import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
-import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
-import it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId;
-import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
-import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private static final String NEW_KPI_RULEOUTPUT_ALIAS_MANDATORY = "newKpi.ruleoutput.alias.mandatory";
@@ -89,6 +96,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
 	private static final String MEASURE = "MEASURE";
+
+	char SCORECARD_INTERNAL_TYPE_SCORECARD = 'S';
+	char SCORECARD_INTERNAL_TYPE_PERSPECTIVE = 'P';
+	char SCORECARD_INTERNAL_TYPE_TARGET = 'T';
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
@@ -507,7 +518,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 *
+	 * 
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -729,8 +740,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Criteria evaluate(Session session) {
 				return session
-						.createCriteria(SbiKpiThreshold.class).setProjection(Projections.projectionList().add(Projections.property("id"), "id")
-								.add(Projections.property("name"), "name").add(Projections.property("description"), "description"))
+						.createCriteria(SbiKpiThreshold.class)
+						.setProjection(
+								Projections.projectionList().add(Projections.property("id"), "id").add(Projections.property("name"), "name")
+										.add(Projections.property("description"), "description"))
 						.setResultTransformer(Transformers.aliasToBean(SbiKpiThreshold.class));
 			}
 		});
@@ -796,7 +809,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 *
+	 * 
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -860,8 +873,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Map<String, List<String>> execute(Session session) throws Exception {
 				Map<String, List<String>> invalidAlias = new HashMap<>();
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()), rule.getId(),
-							invalidAlias);
+					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()),
+							rule.getId(), invalidAlias);
 				}
 				return invalidAlias;
 			}
@@ -1201,18 +1214,103 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<KpiScheduler> listKpiScheduler() {
-		List<SbiKpiExecution> lst = list(SbiKpiExecution.class);
-		List ret = new ArrayList<>();
-		for (SbiKpiExecution sbi : lst) {
-			KpiScheduler ks = new KpiScheduler();
-
-		}
-		return ret;
+		return executeOnTransaction(new IExecuteOnTransaction<List<KpiScheduler>>() {
+			@Override
+			public List<KpiScheduler> execute(Session session) throws Exception {
+				List<KpiScheduler> ret = new ArrayList<>();
+				List<SbiKpiExecution> lst = session.createCriteria(SbiKpiExecution.class).list();
+				if (lst != null) {
+					for (SbiKpiExecution sbiKpiExecution : lst) {
+						ret.add(from(sbiKpiExecution, false));
+					}
+				}
+				return ret;
+			}
+		});
 	}
 
 	@Override
-	public KpiScheduler loadKpiScheduler(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public KpiScheduler loadKpiScheduler(final Integer id) {
+		return executeOnTransaction(new IExecuteOnTransaction<KpiScheduler>() {
+			@Override
+			public KpiScheduler execute(Session session) throws Exception {
+				SbiKpiExecution sbi = (SbiKpiExecution) session.load(SbiKpiExecution.class, id);
+				return from(sbi, true);
+			}
+		});
+	}
+
+	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) {
+		Scorecard scorecard = new Scorecard();
+		scorecard.setId(sbiScorecard.getId());
+		scorecard.setName(sbiScorecard.getName());
+		scorecard.setCreationDate(sbiScorecard.getCommonInfo().getTimeIn());
+		scorecard.setAuthor(sbiScorecard.getCommonInfo().getUserIn());
+		if (full) {
+			for (SbiKpiScorecard sbiPerspective : sbiScorecard.getSubviews()) {
+				ScorecardPerspective perspective = new ScorecardPerspective();
+				perspective = (ScorecardPerspective) from(perspective, sbiPerspective);
+				scorecard.getPerspectives().add(perspective);
+				for (SbiKpiScorecard sbiTarget : sbiPerspective.getSubviews()) {
+					ScorecardTarget target = new ScorecardTarget();
+					target = (ScorecardTarget) from(target, sbiTarget);
+					perspective.getTargets().add(target);
+					for (SbiKpiKpi sbiKpi : sbiTarget.getSbiKpiKpis()) {
+						Kpi kpi = new Kpi();
+						kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
+						kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
+						kpi.setCategory(from(sbiKpi.getCategory()));
+						target.getKpis().add(kpi);
+					}
+				}
+			}
+		}
+		return scorecard;
+	}
+
+	private KpiScheduler from(SbiKpiExecution sbi, boolean full) {
+		KpiScheduler scd = new KpiScheduler();
+		scd.setId(sbi.getId());
+		scd.setName(sbi.getName());
+		scd.setStartDate(sbi.getStartTime());
+		scd.setEndDate(sbi.getEndTime());
+		scd.setDelta(Boolean.TRUE.equals(sbi.getDelta()));
+		if (full) {
+			for (SbiKpiExecutionFilter sbiFilter : sbi.getSbiKpiExecutionFilters()) {
+				SchedulerFilter filter = new SchedulerFilter();
+				filter.setExecutionId(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId());
+				filter.setPlaceholderId(sbiFilter.getSbiKpiExecutionFilterId().getPlaceholderId());
+				filter.setName(sbiFilter.getSbiKpiPlaceholder().getName());
+				filter.setType(from(sbiFilter.getType()));
+				filter.setValue(sbiFilter.getValue());
+				scd.getFilters().add(filter);
+			}
+			for (SbiKpiKpi sbiKpi : sbi.getSbiKpiKpis()) {
+				Kpi kpi = new Kpi();
+				kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
+				kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
+				kpi.setCategory(from(sbiKpi.getCategory()));
+				scd.getKpis().add(kpi);
+			}
+		} else {
+			StringBuilder kpiNames = new StringBuilder();
+			for (SbiKpiKpi kpi : sbi.getSbiKpiKpis()) {
+				if (kpiNames.length() != 0) {
+					kpiNames.append(", ");
+				}
+				kpiNames.append(kpi.getName());
+			}
+			scd.setKpiNames(kpiNames.toString());
+		}
+		return scd;
+	}
+
+	private ScorecardSubview from(ScorecardSubview subview, SbiKpiScorecard sbi) {
+		subview.setId(sbi.getId());
+		subview.setName(sbi.getName());
+		subview.setCriterion(from(sbi.getCriterion()));
+		// TODO define how to get status (ie kpi result color)
+		// subview.setStatus(status);
+		return subview;
 	}
 }
