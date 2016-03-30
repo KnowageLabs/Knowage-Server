@@ -121,7 +121,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
 
-		System.out.println("SBI EXECUTION ID " + sbiExecutionId);
 		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
 			// create execution id
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
