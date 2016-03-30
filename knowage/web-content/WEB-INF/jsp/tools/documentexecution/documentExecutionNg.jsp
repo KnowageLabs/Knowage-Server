@@ -235,7 +235,8 @@ try{
 					'OBJECT_ID' : '<%= request.getParameter("OBJECT_ID") %>', 
 					'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
 					'isFromCross' : false, 
-					'isPossibleToComeBackToRolePage' : false
+					'isPossibleToComeBackToRolePage' : false,
+					'SBI_EXECUTION_ID' : ''
 				},
 				parametersData: {
 					documentParameters: []

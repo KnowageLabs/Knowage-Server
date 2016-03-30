@@ -267,7 +267,8 @@
 			var params = 
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role
-				+ "&parameters=" + paramsStr;				
+				+ "&parameters=" + paramsStr
+				+ "&SBI_EXECUTION_ID=" + execProperties.executionInstance.SBI_EXECUTION_ID;				
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
 				function(data, status, headers, config) {					
@@ -294,6 +295,13 @@
 							//angular.copy(data.url, serviceScope.documentUrl);
 						}	
 					}	
+					//SETTING URL SBI EXECUTION ID
+					if(data['sbiExecutionId'] && data['sbiExecutionId'].length>0){
+						execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId'];
+						console.log('sbiExecutionId ... ' + data['sbiExecutionId']);
+					}
+					
+					
 					
 				}).error(function(data, status, headers, config) {
 					console.log("TargetLayer non Ottenuto " + status);
@@ -373,8 +381,8 @@
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParametersForSave(execProperties.parametersData.documentParameters);
-						//vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						//vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParametersForSave(execProperties.parametersData.documentParameters);
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)

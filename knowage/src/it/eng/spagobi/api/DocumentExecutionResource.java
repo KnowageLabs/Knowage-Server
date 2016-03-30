@@ -63,6 +63,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -111,13 +113,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionURL(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("modality") String modality,
 			@QueryParam("displayToolbar") String displayToolbar, @QueryParam("parameters") String jsonParameters, @QueryParam("snapshotId") String snapshotId,
-			@QueryParam("subObjectID") String subObjectID, @Context HttpServletRequest req) {
+			@QueryParam("subObjectID") String subObjectID, @Context HttpServletRequest req, @QueryParam("SBI_EXECUTION_ID") String sbiExecutionId) {
 
 		logger.debug("IN");
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List errorList = new ArrayList<>();
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
+
+		System.out.println("SBI EXECUTION ID " + sbiExecutionId);
+		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
+			// create execution id
+			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			sbiExecutionId = uuidObj.toString();
+			sbiExecutionId = sbiExecutionId.replaceAll("-", "");
+		}
+		resultAsMap.put("sbiExecutionId", sbiExecutionId);
+
 		try {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
@@ -184,8 +197,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visible", ((objParameter.isVisible())));
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
-			
-			parameterAsMap.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+
+			parameterAsMap
+					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (objParameter.getValueSelection().equalsIgnoreCase("lov") && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
