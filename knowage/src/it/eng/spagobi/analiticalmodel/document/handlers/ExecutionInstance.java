@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -165,7 +165,7 @@ public class ExecutionInstance implements Serializable {
 
 	/**
 	 * Used by Kpi Engine for detail documents
-	 * 
+	 *
 	 * @param userProfile
 	 * @param flowId
 	 * @param executionId
@@ -306,7 +306,7 @@ public class ExecutionInstance implements Serializable {
 			/*
 			 * The following lines were commented because there should be not need to check if the parameter is single-value, since if it is single-value then
 			 * it is transient (see initBIParameters method)
-			 * 
+			 *
 			 * if (biParameter.getLovResult() == null) continue; LovResultHandler lovResultHandler; try { lovResultHandler = new
 			 * LovResultHandler(biParameter.getLovResult()); if(lovResultHandler.isSingleValue()) countHidePar ++; } catch (SourceBeanException e) { continue; }
 			 */
@@ -794,7 +794,7 @@ public class ExecutionInstance implements Serializable {
 			return new ArrayList();
 		}
 
-		// we need to process default values and non-default values separately: default values do not require validation, 
+		// we need to process default values and non-default values separately: default values do not require validation,
 		// non-default values instead require validation
 
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
@@ -811,7 +811,7 @@ public class ExecutionInstance implements Serializable {
 		} else {
 			nonDefaultValues = this.getNonDefaultValues(biparam, allDefaultValues);
 		}
-		
+
 		if (nonDefaultValues.isEmpty()) {
 			logger.debug("All selected values are default values; no need to validate them");
 			return new ArrayList();
@@ -853,7 +853,8 @@ public class ExecutionInstance implements Serializable {
 				} else {
 					// this means that the value IS a default value
 					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
-					parameterDescriptions.add(defaultValue.getDescription());
+
+					parameterDescriptions.add((defaultValue != null) ? defaultValue.getDescription() : "");
 				}
 			}
 		}
@@ -876,7 +877,7 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	private List<String> getNonDefaultQueryValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		List<String> toReturn = new ArrayList<String>();
@@ -887,10 +888,10 @@ public class ExecutionInstance implements Serializable {
 				String value = values.get(i).toString().replaceAll("^'(.*)'$", "$1");
 				if (!defaultValues.contains(value)) {
 					// if is multivalue the values come as a single string value
-					if(analyticalDocumentParameter.isMultivalue()) {
+					if (analyticalDocumentParameter.isMultivalue()) {
 						String[] singleLineValues = value.split("','");
-						
-						for(String singleValue : singleLineValues) {
+
+						for (String singleValue : singleLineValues) {
 							if (!defaultValues.contains(singleValue)) {
 								logger.debug("Value [" + value + "] is not a default value.");
 								toReturn.add(value);
@@ -1381,7 +1382,7 @@ public class ExecutionInstance implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
