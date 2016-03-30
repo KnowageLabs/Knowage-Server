@@ -13,21 +13,21 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		{
 			'name':'Target1',
 			'category':'Categoria 1',
-			'startValidity':"2/03/2016",
-			'endValidity':"3/03/2016"
+			'startValidity': new Date("2/03/2016"),
+			'endValidity': new Date("3/03/2016")
 		},
 		{
 			id: 2,
 			'name':'Target2',
 			'category':'Categoria 2',
-			'startValidity':"5/03/2016",
-			'endValidity':"10/04/2016"
+			'startValidity': new Date("5/03/2016"),
+			'endValidity': new Date("10/04/2016")
 		},
 		{
 			'name':'Target3',
 			'category':'Categoria 3',
-			'startValidity':"1/03/2016",
-			'endValidity':"1/03/2017"
+			'startValidity': new Date("1/03/2016"),
+			'endValidity': new Date("1/03/2017")
 		},
 	]; // TODO: replace with an empty array after debug
 
@@ -103,6 +103,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			hasBackdrop: true,
 			clickOutsideToClose: false,
 			controller: ['$scope', function($scope) {
+				$scope.selectedKpis = [];
 				$scope.foundActions = [
 					{
 						label: sbiModule_translate.load('sbi.generic.edit'),
@@ -138,7 +139,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$mdDialog.cancel();
 				};
 				$scope.ok = function ok() {
-					$mdDialog.hide($scope.foundKpis);
+					$mdDialog.hide($scope.selectedKpis);
 				};
 				$scope.findKpis = function() {
 					sbiModule_restServices.get("1.0/kpi", "listKpi")
@@ -182,14 +183,11 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			focusOnOpen: false,
 			onRemoving: function() {
 			}
-		}).then(function(dialogKpis) {
-			//alert(JSON.stringify(dialogKpis));
-			for (var i = 0; i < dialogKpis.length; i++) {
-				//if (typeof dialogKpis[i].value != 'undefined' && dialogKpis[i].value !== null && dialogKpis[i].value !== '') {
-					var idx = typeof(kpiIdToIdx['' + dialogKpis[i].id]) == 'undefined'
-						? $scope.kpis.length : kpiIdToIdx['' + dialogKpis[i].id];
-					$scope.kpis[idx] = dialogKpis[i];
-				//}
+		}).then(function(selectedKpis) {
+			for (var i = 0; i < selectedKpis.length; i++) {
+				var idx = typeof(kpiIdToIdx['' + selectedKpis[i].id]) == 'undefined'
+					? $scope.kpis.length : kpiIdToIdx['' + selectedKpis[i].id];
+				$scope.kpis[idx] = selectedKpis[i];
 			}
 			
 		}, function() { });
@@ -213,8 +211,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 						$scope.targets[$scope.targets.length] = {
 							id: data[i].id,
 							name: data[i].name,
-							startValidity: this.formatDate(data[i].startValidity),
-							endValidity: this.formatDate(data[i].endValidity),
+							startValidity: new Date(data[i].startValidity), //this.formatDate(data[i].startValidity),
+							endValidity: new Date(data[i].endValidity), //this.formatDate(data[i].endValidity),
 							author: data[i].author,
 							values: [], // Not needed yet
 							category:

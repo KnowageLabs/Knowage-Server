@@ -13,15 +13,15 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.target.id = item.id;
 		$scope.target.name = item.name;
 		$scope.target.category = item.category;
-		$scope.target.startValidity = new Date(item.startValidity);
-		$scope.target.endValidity = new Date(item.endValidity);
-		
+		$scope.target.startValidity = item.startValidity; //new Date(item.startValidity);
+		$scope.target.endValidity = item.endValidity; // new Date(item.endValidity);
+		var scopeDbg = $scope;
 		sbiModule_restServices.get("1.0/kpi", $scope.target.id + "/listKpiWithTarget")
 		.success(
 			function(data, status, headers, config) {
-				var newKpis = [];
+				$scope.kpis.length = 0;
 				for (var i = 0; i < data.length; i++) {
-					newKpis[newKpis.length] = {
+					$scope.kpis.push({
 						id: data[i].kpiId,
 						version: data[i].kpiVersion,
 						name: data[i].kpi.name,
@@ -29,9 +29,8 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 						date: this.formatDate(data[i].kpi.dateCreation),
 						author: data[i].kpi.author,
 						value: data[i].value
-					}
+					});
 				}
-				$scope.kpis = newKpis;
 			}
 		).error(
 			function(data, status, headers, config) {
