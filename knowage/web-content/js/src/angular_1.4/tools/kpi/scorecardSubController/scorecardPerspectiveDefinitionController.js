@@ -4,5 +4,6 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 	$scope.addTarget=function(){ 
 		$scope.stepControl.insertBread({name: 'definizione obiettivo'});
 	};
-	$scope.test="nikabot";
+	$scope.criterionTypeList = ['aa','bb'];
+	
 }

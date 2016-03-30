@@ -14,12 +14,13 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.emptyPerspective={name:"",criterion:{},status:"",groupedKpis:[],targets:[]};
 	$scope.emptyTarget={name:"",criterion:{},status:"",groupedKpis:[],kpis:[]};
 	$scope.currentScorecard={};
+	$scope.currentPerspective ={};
 }
 
 function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout){
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);  
-		for(var i=0;i<10;i++){
+		for(var i=0;i<2;i++){
 			var tmp=angular.extend({}, $scope.emptyPerspective);
 			tmp.name="Prospettiva"+1;
 			tmp.groupedKpis=[{status:"RED",count:2},{status:"YELLOW",count:1},{status:"GREEN",count:3}];

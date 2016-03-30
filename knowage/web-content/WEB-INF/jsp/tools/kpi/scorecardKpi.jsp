@@ -67,8 +67,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>
 			</div>
 		
-			<div ng-switch-when="1" layout="row" flex ng-controller="scorecardPerspectiveDefinitionController">
-				<md-button class="md-raised" ng-click="addTarget();">Aggiungi obiettivo</md-button>	
+			<div ng-switch-when="1" layout="column" flex ng-controller="scorecardPerspectiveDefinitionController">
+		<!-- 		<md-button class="md-raised" ng-click="addTarget();">Aggiungi obiettivo</md-button>   -->	
 				<%@include	file="./scorecardTemplate/scorecardPerspectiveDefinitionTemplate.jsp"%>
 			</div>
 			

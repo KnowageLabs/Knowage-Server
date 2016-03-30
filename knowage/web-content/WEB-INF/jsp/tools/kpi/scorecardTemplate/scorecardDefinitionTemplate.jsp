@@ -1,5 +1,3 @@
-<!-- inserisci il codice qui -->
-
 	<md-input-container> 
 		<label>Nome	Scorecard</label> <input ng-model="currentScorecard.name"> 
 	</md-input-container> 

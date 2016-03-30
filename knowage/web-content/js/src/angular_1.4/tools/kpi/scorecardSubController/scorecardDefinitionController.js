@@ -2,11 +2,10 @@ angular.module('scorecardManager').controller('scorecardDefinitionController', [
 
 function scorecardDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	$scope.addPerspective=function(){ 
+		angular.copy($scope.emptyPerspective,$scope.currentPerspective);
 		$scope.stepControl.insertBread({name: 'definizione prospettiva'});
 	};
-	$scope.test="test";
+
 	$scope.scorecardName = undefined;
-	$scope.name1 = "ciao";
-	$scope.name2 = "ciaaaaaa";
-	$scope.name3 = "ciaoooooooooo";
+	
 }
