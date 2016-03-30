@@ -112,8 +112,30 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
 		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
+	
+	this.postMultiPart = function(endP_path, req_Path, fd, conf){
+		var conf = (conf == undefined || conf==null) ?  {} : conf ;
+        sbiModule_logger.trace("UPLOAD FILE: "+endP_path+"/"+ req_Path, fd,conf);
+        conf.transformRequest = angular.identity;
+        if (conf.headers == undefined || conf.headers == null ){
+        	conf.headers = {} ;
+        }
+        conf.headers['Content-Type'] = undefined;
+        return $http.post(getBaseUrl(endP_path) + "" + req_Path, fd, conf);
+    }
+		
+	this.putMultiPart = function(endP_path, req_Path, fd, conf){
+		var conf = (conf == undefined || conf==null) ?  {} : conf ;
+        sbiModule_logger.trace("UPLOAD FILE: "+endP_path+"/"+ req_Path,file,conf);
+        conf.transformRequest = angular.identity;
+        if (conf.headers == undefined || conf.headers == null ){
+        	conf.headers = {} ;
+        }
+        conf.headers['Content-Type'] = undefined;
+        return $http.put(getBaseUrl(endP_path) + "" + req_Path, fd, conf);
+    }
 
-
+	
 	
 	/*
 	NEW METHODS
