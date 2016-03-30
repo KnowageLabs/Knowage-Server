@@ -35,8 +35,14 @@ angular.module('member_directive',[])
 			            }
 			            
 			            if(!contains){
-			            	scope.members.push(angular.copy(scope.selectedMember));
-			            	element[0].className = 'x-pivot-header-column-selected';
+			            	if(scope.members.length>0&&scope.members[scope.members.length-1].level===scope.selectedMember.level&&scope.members[scope.members.length-1].parentMember===scope.selectedMember.parentMember){
+			            		scope.members.push(angular.copy(scope.selectedMember));
+				            	element[0].className = 'x-pivot-header-column-selected';
+			            	}else if(scope.members.length===0){
+			            		scope.members.push(angular.copy(scope.selectedMember));
+				            	element[0].className = 'x-pivot-header-column-selected';
+			            	}
+			            	
 			            	
 			            }
 			            
