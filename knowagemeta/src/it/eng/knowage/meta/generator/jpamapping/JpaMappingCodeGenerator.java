@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.meta.generator.jpamapping;
 
-import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.IGenerator;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
@@ -259,12 +258,12 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		}
 
 		boolean fileDeletionResult = file.delete();
-		if (!fileDeletionResult) {
-			logger.error("Can't delete the file [{}] the file is writtable? [{}]", file.getAbsolutePath(), file.canWrite());
-			throw new KnowageMetaException("Can't delete the file " + file.getAbsolutePath() + " the file is writtable? " + file.canWrite() + " "
-					+ file.canExecute());
-
-		}
+		// if (!fileDeletionResult) {
+		// logger.error("Can't delete the file [{}] the file is writtable? [{}]", file.getAbsolutePath(), file.canWrite());
+		// throw new KnowageMetaException("Can't delete the file " + file.getAbsolutePath() + " the file is writable? " + file.canWrite() + " "
+		// + file.canExecute());
+		//
+		// }
 	}
 
 	/**

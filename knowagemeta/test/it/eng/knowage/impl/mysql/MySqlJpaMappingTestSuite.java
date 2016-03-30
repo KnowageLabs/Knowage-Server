@@ -32,7 +32,7 @@ public class MySqlJpaMappingTestSuite extends TestCase {
 		suite.addTestSuite(MySqlJpaModelTest.class);
 		suite.addTestSuite(MySqlJpaMappingCodeGenerationTest.class);
 		suite.addTestSuite(MySqlJpaMappingClassesGenerationTest.class);
-		// suite.addTestSuite(MySqlJpaMappingJarGenerationTest.class);
+		suite.addTestSuite(MySqlJpaMappingJarGenerationTest.class);
 		return suite;
 	}
 }

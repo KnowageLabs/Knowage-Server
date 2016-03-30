@@ -44,7 +44,7 @@ public class TestGeneratorFactory {
 	public static JpaMappingClassesGenerator createClassesGenerator() {
 		File generatorProjectRootFolder = new File(TestConstants.workspaceFolder, "it.eng.knowage.meta.generator");
 		File generatorProjectTemplateFolder = new File(generatorProjectRootFolder, "templates");
-		File generatorProjectLibFolder = new File(generatorProjectRootFolder, "libs/eclipselink");
+		File generatorProjectLibFolder = new File(TestConstants.libFolder, "eclipselink");
 
 		JpaMappingClassesGenerator jpaMappingClassesGenerator;
 		JpaMappingClassesGenerator.defaultTemplateFolderPath = generatorProjectTemplateFolder.toString();
