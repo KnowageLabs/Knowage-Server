@@ -17,6 +17,43 @@
  */
 package it.eng.spagobi.kpi;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.Placeholder;
+import it.eng.spagobi.kpi.bo.Rule;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Scorecard;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.kpi.bo.TargetValue;
+import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,42 +81,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.bo.Alias;
-import it.eng.spagobi.kpi.bo.Cardinality;
-import it.eng.spagobi.kpi.bo.Kpi;
-import it.eng.spagobi.kpi.bo.KpiScheduler;
-import it.eng.spagobi.kpi.bo.Placeholder;
-import it.eng.spagobi.kpi.bo.Rule;
-import it.eng.spagobi.kpi.bo.RuleOutput;
-import it.eng.spagobi.kpi.bo.Target;
-import it.eng.spagobi.kpi.bo.TargetValue;
-import it.eng.spagobi.kpi.bo.Threshold;
-import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
@@ -268,8 +269,8 @@ public class KpiService {
 			if (!aliasErrorMap.isEmpty()) {
 				JSONArray errors = new JSONArray();
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					errors.put(
-							new JSONObject().put("message", getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
+					errors.put(new JSONObject().put("message",
+							getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
 				}
 				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
 			}
@@ -507,6 +508,67 @@ public class KpiService {
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 	}
+
+	@GET
+	@Path("/listScorecard")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listScorecard(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<Scorecard> scorecards = dao.listScorecard();
+		return Response.ok(JsonConverter.objectToJson(scorecards, scorecards.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadScorecard")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response loadScorecard(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		Scorecard scorecard = dao.loadScorecard(id);
+		return Response.ok(JsonConverter.objectToJson(scorecard, scorecard.getClass())).build();
+	}
+
+	@POST
+	@Path("/saveScorecard")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response saveScorecard(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			Scorecard scorecard = (Scorecard) JsonConverter.jsonToObject(requestVal, Scorecard.class);
+			check(scorecard);
+			IKpiDAO dao = getKpiDAO(req);
+			Integer id = scorecard.getId();
+			if (id == null) {
+				id = dao.insertScorecard(scorecard);
+			} else {
+				dao.updateScorecard(scorecard);
+			}
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (IOException | JSONException | SpagoBIException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		try {
+			return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
+		} catch (JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
+	private void check(Scorecard scorecard) throws SpagoBIException {
+		if (scorecard.getName() == null) {
+			throw new SpagoBIException("Service [/saveScorecard]: Some fields are mandatory");
+		}
+	}
+
+	@DELETE
+	@Path("/{id}/deleteScorecard")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response deleteScorecard(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeScorecard(id);
+		return Response.ok().build();
+	}
+
 	/*
 	 * *** Private methods ***
 	 */

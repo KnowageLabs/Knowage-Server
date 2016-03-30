@@ -28,6 +28,7 @@ import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Scorecard;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -188,5 +189,15 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<KpiScheduler> listKpiScheduler();
 
 	public KpiScheduler loadKpiScheduler(Integer id);
+	
+	public List<Scorecard> listScorecard();
+
+	public Scorecard loadScorecard(Integer id);
+
+	public Integer insertScorecard(Scorecard scorecard);
+
+	public void updateScorecard(Scorecard scorecard);
+
+	public void removeScorecard(Integer id);
 
 }

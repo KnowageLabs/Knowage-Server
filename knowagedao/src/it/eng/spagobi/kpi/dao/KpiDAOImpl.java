@@ -518,7 +518,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -809,7 +809,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1312,5 +1312,35 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		// TODO define how to get status (ie kpi result color)
 		// subview.setStatus(status);
 		return subview;
+	}
+
+	@Override
+	public List<Scorecard> listScorecard() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Scorecard loadScorecard(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer insertScorecard(Scorecard scorecard) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateScorecard(Scorecard scorecard) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeScorecard(Integer id) {
+		// TODO Auto-generated method stub
+
 	}
 }
