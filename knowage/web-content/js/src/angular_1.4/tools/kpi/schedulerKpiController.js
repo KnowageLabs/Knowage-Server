@@ -57,8 +57,6 @@ function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restSe
 				obj["id"]=response.data[i].id;
 
 				$scope.kpiAllList.push(obj);
-				console.log("ALLKPI",$scope.kpiAllList);
-
 				if(i!=2){
 					arr.push(obj);
 					arr_name.push(response.data[i].name);

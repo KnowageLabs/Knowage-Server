@@ -11,7 +11,6 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 					angular.copy(result,$scope.selectedScheduler.kpi);
 				});
 			},
-
 	}
 
 	$scope.measureMenuOption= [{
@@ -24,10 +23,6 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 	}];
 
-	
-	
-
-	
 	$scope.removeKpi = function(item){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
@@ -50,8 +45,6 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 		var deferred = $q.defer();
 		
 		angular.copy($scope.selectedScheduler.kpi,$scope.kpiSelected);
-
-		
 		$mdDialog.show({
 			controller: DialogControllerKPI,
 			templateUrl: 'templatesaveKPI.html',
@@ -66,7 +59,8 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 			$scope.status = 'You cancelled the dialog.';
 		});
 		return deferred.promise;
-	}
+	};
+	
 	$scope.exists = function (item) {
 		if($scope.selectedScheduler.kpi==undefined)return false;
 		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)!=-1;
@@ -75,7 +69,6 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	
 
 	$scope.indexInList=function(item, list) {
-
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
@@ -90,7 +83,6 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSelected){
 	//controller mdDialog to select kpi 
 	$scope.tableFunction={
-
 			exists: function(item,evt){
 				return $scope.exists(item);
 			}
@@ -100,16 +92,13 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSel
 	$scope.selectedScheduler = engine;
 	$scope.kpiSelected = kpiSelected;
 
-
 	$scope.exists = function (item) {
-
 		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)==-1;
 
 	};
 
 
 	$scope.indexInList=function(item, list) {
-
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
@@ -127,14 +116,6 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSel
 	}
 
 	$scope.addKPIToCheck = function(){
-		//console.log(item)
-		/*for(var i=0;i<$scope.kpiSelected.length;i++){
-			var index = $scope.indexInList($scope.kpiSelected[i],$scope.selectedScheduler.kpi);
-			if(index == -1){
-				$scope.selectedScheduler.kpi.push($scope.kpiSelected[i]);
-			}
-		}
-		*/
 		items.resolve($scope.kpiSelected);
 		$mdDialog.cancel();
 	}
