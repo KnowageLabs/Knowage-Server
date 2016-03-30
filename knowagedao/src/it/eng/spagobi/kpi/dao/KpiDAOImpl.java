@@ -1316,14 +1316,27 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<Scorecard> listScorecard() {
-		// TODO Auto-generated method stub
-		return null;
+		List<SbiKpiScorecard> lst = list(new ICriterion<SbiKpiScorecard>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiKpiScorecard.class).addOrder(Order.desc("startValidity"));
+			}
+		});
+		List<Scorecard> scorecardList = new ArrayList<>();
+		for (SbiKpiScorecard sbiKpiScorecard : lst) {
+			scorecardList.add(from(sbiKpiScorecard, false));
+		}
+		return scorecardList;
 	}
 
 	@Override
-	public Scorecard loadScorecard(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Scorecard loadScorecard(final Integer id) {
+		return executeOnTransaction(new IExecuteOnTransaction<Scorecard>() {
+			@Override
+			public Scorecard execute(Session session) throws Exception {
+				return from((SbiKpiScorecard) session.load(SbiKpiScorecard.class, id), true);
+			}
+		});
 	}
 
 	@Override
@@ -1340,7 +1353,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public void removeScorecard(Integer id) {
-		// TODO Auto-generated method stub
-
+		delete(SbiKpiScorecard.class, id);
 	}
 }
