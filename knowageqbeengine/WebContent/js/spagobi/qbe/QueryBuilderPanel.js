@@ -1069,9 +1069,8 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 			
 	};
 
-	this.selectedCalendar={"fields":fields,"filters":filters};
-//	this.selectGridPanel.addField(field);
-//	this.filterGridPanel.addFilter(filter);
+//	this.selectedCalendar={"fields":fields,"filters":filters};
+	this.selectedCalendar={"filters":filters};
 
 }
 , onNodeClick : function (node) {
