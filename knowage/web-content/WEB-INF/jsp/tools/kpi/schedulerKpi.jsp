@@ -47,6 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/schedulerKpiSubController/listSchedulerController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/schedulerKpiSubController/kpiController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/schedulerKpiSubController/frequencyController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/schedulerKpiSubController/filterController.js
+"></script>
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
@@ -66,6 +68,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="md-toolbar-tools">
         <h1>Save new KPI</h1>
         <span flex></span>
+		<md-button class="md-icon-button" ng-click="addKPIToCheck()">
+          Save
+        </md-button>
         <md-button class="md-icon-button" ng-click="close()">
           <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
         </md-button>
@@ -78,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		id='targetListTable' ng-model=kpiAllList
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
 		columns-search='["name"]' show-search-bar=true
+		multi-select= true selected-item=kpiSelected
 		scope-functions=tableFunction 
 		> </angular-table>
 		</div>
@@ -100,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		click-function="loadEngine(item);"> </angular-table>
 		</list>
 		<detail cancel-function="cancel">
-		<div layout="row" class="absolute" layout-fill>
+		
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.generic.kpi")}}</md-tab-label>
@@ -108,13 +114,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         			<%@include	file="./schedulerKpiTemplate/kpi.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="tab2" md-on-select="setCardinality()">
+				<md-tab id="tab2">
        				<md-tab-label >{{translate.load("sbi.kpi.filters")}}</md-tab-label>
         			<md-tab-body >
+        			<%@include	file="./schedulerKpiTemplate/filterTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab3"  md-on-select="setFilters()">
+				<md-tab id="tab3">
        				<md-tab-label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./schedulerKpiTemplate/frequencyTemplate.jsp"%>
@@ -129,7 +136,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-tabs>
 		
 
-	</div>
 		</detail>
 		</angular-list-detail>
 </body>

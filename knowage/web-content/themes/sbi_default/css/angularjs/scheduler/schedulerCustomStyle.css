@@ -180,4 +180,12 @@ md-tooltip .md-background {
 .validation-messages {
     font-size: 11px;
     color: darkred;
-    margin: 20px 0 0 10px; }
+    margin: 20px 0 0 10px; 
+    }
+    
+.headerNote {
+		height: 40px;
+}
+.filterWhiteFrame{
+	background-color: white;
+}

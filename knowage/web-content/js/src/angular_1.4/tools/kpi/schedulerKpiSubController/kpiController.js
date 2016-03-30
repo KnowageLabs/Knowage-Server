@@ -6,7 +6,10 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	$scope.tableFunction={
 
 			loadListKPI: function(item,evt){
-				$scope.loadListKPI();
+				var promise = $scope.loadListKPI();
+				promise.then(function(result){
+					angular.copy(result,$scope.selectedScheduler.kpi);
+				});
 			},
 
 	}
@@ -44,18 +47,21 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	}
 
 	$scope.loadListKPI = function(){
-		console.log("Load...",$scope.kpiAllList);
 		var deferred = $q.defer();
+		
+		angular.copy($scope.selectedScheduler.kpi,$scope.kpiSelected);
+
+		
 		$mdDialog.show({
 			controller: DialogControllerKPI,
 			templateUrl: 'templatesaveKPI.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
-			locals: {items: deferred,kpi:$scope.kpi,kpiAllList:$scope.kpiAllList,engine:$scope.selectedScheduler}
+			locals: {items: deferred,kpi:$scope.kpi,kpiAllList:$scope.kpiAllList,engine:$scope.selectedScheduler, kpiSelected: $scope.kpiSelected}
 		})
 		.then(function(answer) {
 			$scope.status = 'You said the information was "' + answer + '".';
-			return deferred.resolve($scope.selectedFunctionalities);
+			return deferred.promise;
 		}, function() {
 			$scope.status = 'You cancelled the dialog.';
 		});
@@ -81,13 +87,10 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 }
 
-function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine){
+function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSelected){
 	//controller mdDialog to select kpi 
 	$scope.tableFunction={
 
-			addKpi: function(item,evt){
-				$scope.addKPIToCheck(item);
-			},
 			exists: function(item,evt){
 				return $scope.exists(item);
 			}
@@ -95,7 +98,7 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine){
 	$scope.kpi=kpi;
 	$scope.kpiAllList = kpiAllList;
 	$scope.selectedScheduler = engine;
-
+	$scope.kpiSelected = kpiSelected;
 
 
 	$scope.exists = function (item) {
@@ -120,12 +123,20 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine){
 	}
 	$scope.apply = function(){
 		$mdDialog.cancel();
-		items.resolve($scope.kpi);
+		items.resolve($scope.kpiSelected);
 	}
 
-	$scope.addKPIToCheck = function(item){
-		console.log(item)
-		$scope.selectedScheduler.kpi.push(item);
+	$scope.addKPIToCheck = function(){
+		//console.log(item)
+		/*for(var i=0;i<$scope.kpiSelected.length;i++){
+			var index = $scope.indexInList($scope.kpiSelected[i],$scope.selectedScheduler.kpi);
+			if(index == -1){
+				$scope.selectedScheduler.kpi.push($scope.kpiSelected[i]);
+			}
+		}
+		*/
+		items.resolve($scope.kpiSelected);
+		$mdDialog.cancel();
 	}
 
 

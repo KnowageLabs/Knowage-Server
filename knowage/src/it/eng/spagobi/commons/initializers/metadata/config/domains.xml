@@ -472,5 +472,30 @@
 		
 	<DOMAIN valueCd="TEMPORAL_ATTRIBUTE" valueNm="sbidomains.nm.temporalattribute"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
-
+		
+		
+	<DOMAIN valueCd="FIXED_VALUE" valueNm="sbidomains.kpi.fixedvalue"
+		domainCd="KPI_PLACEHOLDER_VALUE_TYPE" domainNm="KPI placeholder value type" valueDs="sbidomains.kpi.fixedvalue" />
+		
+	<DOMAIN valueCd="LOV" valueNm="sbidomains.kpi.lov"
+		domainCd="KPI_PLACEHOLDER_VALUE_TYPE" domainNm="KPI placeholder value type" valueDs="sbidomains.kpi.lov" />
+		
+	<DOMAIN valueCd="TEMPORAL_FUNCTIONS" valueNm="sbidomains.kpi.temporalfunction"
+		domainCd="KPI_PLACEHOLDER_VALUE_TYPE" domainNm="KPI placeholder value type" valueDs="sbidomains.kpi.temporalfunction" />
+		
+	<DOMAIN valueCd="EXECUTION_DAY" valueNm="sbidomains.temporalfunction.day"
+		domainCd="KPI_PLACEHOLDER_VALUE_FUNCTIONS" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.day" />
+		
+	<DOMAIN valueCd="EXECUTION_MONTH" valueNm="sbidomains.temporalfunction.month"
+		domainCd="KPI_PLACEHOLDER_VALUE_FUNCTIONS" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.month" />
+		
+	<DOMAIN valueCd="EXECUTION_WEEK" valueNm="sbidomains.temporalfunction.week"
+		domainCd="KPI_PLACEHOLDER_VALUE_FUNCTIONS" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.week" />
+	
+	<DOMAIN valueCd="EXECUTION_QUARTER" valueNm="sbidomains.temporalfunction.quarter"
+		domainCd="KPI_PLACEHOLDER_VALUE_FUNCTIONS" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.quarter" />
+	
+	<DOMAIN valueCd="EXECUTION_YEAR" valueNm="sbidomains.temporalfunction.year"
+		domainCd="KPI_PLACEHOLDER_VALUE_FUNCTIONS" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.year" />
+	
 </DOMAINS>

@@ -12,6 +12,7 @@ function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restSe
 	$scope.selectedScheduler={};
 	$scope.kpi = [];
 	$scope.kpiAllList = [];
+	$scope.kpiSelected = [];
 	//retry it after with a service rest
 
 	$scope.engines = [
@@ -64,11 +65,6 @@ function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restSe
 				}
 			}
 
-			for(var i=0; i<$scope.kpiAllList.length;i++){
-
-				$scope.kpiAllList[i].icon = '<md-button ng-if="scopeFunctions.exists(row)" class="md-icon-button" > <md-icon md-font-icon="fa fa-check" ng-click="scopeFunctions.addKpi(row,$event)" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
-
-			}
 			angular.copy(arr,$scope.engines[0].kpi );
 			angular.copy(arr,$scope.engines[1].kpi );
 			angular.copy(arr,$scope.engines[2].kpi );

@@ -1,6 +1,6 @@
-var app = angular.module('kpiDefinitionManager').controller('listController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIDefinitionListControllerFunction ]);
+var app = angular.module('kpiDefinitionManager').controller('listController', ['$scope','$filter','sbiModule_config','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIDefinitionListControllerFunction ]);
 
-function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
+function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.measureFormula="";
 	$scope.currentKPI ={
@@ -51,6 +51,7 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.getListKPI();
 		$angularListDetail.goToList();
 	});
+	
 	$scope.getListKPI = function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
 		.then(function(response){ 
@@ -63,15 +64,29 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}
 				obj["author"]=response.data[i].author;
-				obj["datacreation"]=new Date(response.data[i].dateCreation);
+				var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
+				//parse date based on language selected
+				obj["datacreation"]=$filter('date')(response.data[i].dateCreation, dateFormat);
 				obj["id"]=response.data[i].id;
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
 		});
-	}
+	};
 	$scope.getListKPI();
 
+	
+	$scope.parseDate = function(date){
+		result = "";
+		if(date == "d/m/Y"){
+			result = "dd/MM/yyyy";
+		}
+		if(date =="m/d/Y"){
+			result = "MM/dd/yyyy"
+		}
+		return result;
+	};
+	
 	$scope.indexInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
