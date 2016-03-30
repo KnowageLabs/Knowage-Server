@@ -4,30 +4,50 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbiModule_translate', 'sbiModule_restServices', '$mdDialog', '$q', '$mdToast', '$angularListDetail', '$timeout', targetDefinitionControllerFunction]);
+app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbiModule_translate', 'sbiModule_restServices', '$mdDialog', '$filter', '$q', '$mdToast', '$angularListDetail', '$timeout', targetDefinitionControllerFunction]);
 
-function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog, $q, $mdToast, $angularListDetail, $timeout) {
+function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog, $filter, $q, $mdToast, $angularListDetail, $timeout) {
+	this.formatDate = function(dts) {
+		this.convertDateFormat = function(date) {
+			result = "";
+			if (date == "d/m/Y") {
+				result = "dd/MM/yyyy";
+			} else if (date == "m/d/Y") {
+				result = "MM/dd/yyyy"
+			}
+			return result;
+		};
+		date = typeof dts == 'number' ? new Date(dts) : dts;
+		var dateFormat = this.convertDateFormat(sbiModule_config.localizedDateFormat);
+		return $filter('date')(date, dateFormat);
+	};
 	$scope.translate = sbiModule_translate;
 	$scope.target = {};
 	$scope.targets = [
 		{
 			'name':'Target1',
 			'category':'Categoria 1',
-			'startValidity': new Date("2/03/2016"),
-			'endValidity': new Date("3/03/2016")
+			'startValidityDate': new Date("2/03/2016"),
+			'startValidity': this.formatDate(new Date("2/03/2016")),
+			'endValidityDate': new Date("3/03/2016"),
+			'endValidity': this.formatDate(new Date("3/03/2016"))
 		},
 		{
 			id: 2,
 			'name':'Target2',
 			'category':'Categoria 2',
-			'startValidity': new Date("5/03/2016"),
-			'endValidity': new Date("10/04/2016")
+			'startValidityDate': new Date("5/03/2016"),
+			'startValidity': this.formatDate(new Date("5/03/2016")),
+			'endValidityDate': new Date("10/04/2016"),
+			'endValidity': this.formatDate(new Date("10/04/2016"))
 		},
 		{
 			'name':'Target3',
 			'category':'Categoria 3',
-			'startValidity': new Date("1/03/2016"),
-			'endValidity': new Date("1/03/2017")
+			'startValidityDate': new Date("1/03/2016"),
+			'startValidity': this.formatDate(new Date("1/03/2016")),
+			'endValidityDate': new Date("1/03/2017"),
+			'endValidity': this.formatDate(new Date("1/03/2017"))
 		},
 	]; // TODO: replace with an empty array after debug
 
@@ -39,7 +59,20 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				for (var i = 0; i < $scope.targets.length; i++) {
 					if (typeof $scope.targets[i].id == 'undefined' || $scope.targets[i].id == null) continue;
 					if ($scope.targets[i].id == removedTarget.id) {
-						$scope.targets.splice(i, 1);
+						sbiModule_restServices
+							.delete("1.0/kpi", removedTarget.id + "/deleteTarget")
+							.success(
+								function(data, status, headers, config) {
+									$scope.targets.splice(i, 1);
+									$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
+											.action('OK').highlightAction(false).hideDelay(3000));
+								}
+							).error(
+								function(data, status, headers, config) {
+									$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
+											.action('OK').highlightAction(false).hideDelay(5000));
+								}
+							);
 						return;
 					}
 				}
@@ -146,13 +179,19 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 						.success(
 							function(data, status, headers, config) {
 								//alert(JSON.stringify(data));
-								this.formatDate = function(ts) {
-									date = new Date(ts);
-									var day = "00" + date.getDate(); day = day.substr(day.length - 2);
-									var month = "00" + (1 + date.getMonth()); month = month.substr(month.length - 2);
-									var year = 1900 + date.getYear();
-									var s = day + "/" + month + "/" + year; // =  + "/" + (1 + date.getMonth()) + "/" (1900 + date.getYear());
-									return s;
+								this.formatDate = function(dts) {
+									this.convertDateFormat = function(date) {
+										result = "";
+										if (date == "d/m/Y") {
+											result = "dd/MM/yyyy";
+										} else if (date == "m/d/Y") {
+											result = "MM/dd/yyyy"
+										}
+										return result;
+									};
+									date = typeof dts == 'number' ? new Date(dts) : dts;
+									var dateFormat = this.convertDateFormat(sbiModule_config.localizedDateFormat);
+									return $filter('date')(date, dateFormat);
 								};
 								var newKpis = [];
 								for (var i = 0; i < data.length; i++) {
@@ -172,7 +211,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							}
 						).error(
 							function(data, status, headers, config) {
-								showToast(sbiModule_translate.load('sbi.generic.errorLoading'), 3000);
+								$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.errorLoading')).position('top')
+									.action('OK').highlightAction(false).hideDelay(3000));
 							}
 						);
 				};
@@ -199,20 +239,28 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				function(data, status, headers, config) {
 					// $scope.targets = []; // TODO: uncomment after debug
 					// alert(JSON.stringify(data));
-					this.formatDate = function(ts) {
-						date = new Date(ts);
-						var day = "00" + date.getDate(); day = day.substr(day.length - 2);
-						var month = "00" + (1 + date.getMonth()); month = month.substr(month.length - 2);
-						var year = 1900 + date.getYear();
-						var s = day + "/" + month + "/" + year; // =  + "/" + (1 + date.getMonth()) + "/" (1900 + date.getYear());
-						return s;
+					this.formatDate = function(dts) {
+						this.convertDateFormat = function(date) {
+							result = "";
+							if (date == "d/m/Y") {
+								result = "dd/MM/yyyy";
+							} else if (date == "m/d/Y") {
+								result = "MM/dd/yyyy"
+							}
+							return result;
+						};
+						date = typeof dts == 'number' ? new Date(dts) : dts;
+						var dateFormat = this.convertDateFormat(sbiModule_config.localizedDateFormat);
+						return $filter('date')(date, dateFormat);
 					};
 					for (var i = 0; i < data.length; i++) {
 						$scope.targets[$scope.targets.length] = {
 							id: data[i].id,
 							name: data[i].name,
-							startValidity: new Date(data[i].startValidity), //this.formatDate(data[i].startValidity),
-							endValidity: new Date(data[i].endValidity), //this.formatDate(data[i].endValidity),
+							startValidityDate: new Date(data[i].startValidity),
+							startValidity: this.formatDate(data[i].startValidity),
+							endValidityDate: new Date(data[i].endValidity),
+							endValidity: this.formatDate(data[i].endValidity),
 							author: data[i].author,
 							values: [], // Not needed yet
 							category:
@@ -223,7 +271,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			).error(
 				function(data, status, headers, config) {
-					showToast(sbiModule_translate.load('sbi.generic.errorLoading'), 3000);
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.errorLoading')).position('top')
+							.action('OK').highlightAction(false).hideDelay(3000));
 				}
 			);
 	};
@@ -235,10 +284,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 
 	$scope.saveTarget= function() {
 		newTarget = {
-			id: null,
+			id: typeof $scope.target.id == 'undefined' ? null : $scope.target.id,
 			name: $scope.target.name,
-			startValidity: $scope.target.startValidity,
-			endValidity: $scope.target.endValidity,
+			startValidity: $scope.target.startValidityDate,
+			endValidity: $scope.target.endValidityDate,
 			author: $scope.target.author,
 			values: [],
 			category: null
@@ -258,11 +307,14 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			.success(
 				function(data, status, headers, config) {
 					$angularListDetail.goToDetail();
-					showToast(sbiModule_translate.load('sbi.generic.resultMsg'), 3000);
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
+							.action('OK').highlightAction(false).hideDelay(3000));
+					$angularListDetail.goToList();
 				}
 			).error(
 				function(data, status, headers, config) {
-					showToast(sbiModule_translate.load('sbi.generic.savingItemError'), 5000);
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
+							.action('OK').highlightAction(false).hideDelay(5000));
 				}
 			);
 	}

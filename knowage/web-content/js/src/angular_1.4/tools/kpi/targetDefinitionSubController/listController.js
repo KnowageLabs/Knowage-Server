@@ -13,8 +13,8 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.target.id = item.id;
 		$scope.target.name = item.name;
 		$scope.target.category = item.category;
-		$scope.target.startValidity = item.startValidity; //new Date(item.startValidity);
-		$scope.target.endValidity = item.endValidity; // new Date(item.endValidity);
+		$scope.target.startValidityDate = item.startValidityDate; //new Date(item.startValidity);
+		$scope.target.endValidityDate = item.endValidityDate; // new Date(item.endValidity);
 		var scopeDbg = $scope;
 		sbiModule_restServices.get("1.0/kpi", $scope.target.id + "/listKpiWithTarget")
 		.success(
