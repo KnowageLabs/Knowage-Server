@@ -212,7 +212,8 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
-			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters)));			
+			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
+					JSON.stringify(documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 				$mdSidenav('parametersPanelSideNav').close();
 				execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();

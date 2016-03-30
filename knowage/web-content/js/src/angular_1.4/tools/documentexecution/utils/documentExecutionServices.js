@@ -80,6 +80,72 @@
 				return jsonDatum;
 			},
 			
+						
+			
+			buildStringParametersForSave : function (documentParameters) {
+				//console.log('buildStringParameters ' , documentParameters);
+				var jsonDatum =  {};
+				if(documentParameters.length > 0) {
+					for(var i = 0; i < documentParameters.length; i++ ) {
+						var parameter = documentParameters[i];
+						var valueKey = parameter.urlName;
+						var descriptionKey = parameter.urlName + "_field_visible_description";					
+						var jsonDatumValue = null;
+						var jsonDatumDesc = null;
+						//LOV PARAMETER
+						if(parameter.valueSelection.toLowerCase() == 'lov') {
+							if(parameter.selectionType.toLowerCase() == 'tree'){
+								var paramArrayTree=[];
+								var paramStrTree ="";
+								for(var z=0; z<parameter.parameterValue.length; z++){
+									paramArrayTree[z]=parameter.parameterValue[z].value;
+									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
+									if(z<parameter.parameterValue.length-1){
+										paramStrTree = paramStrTree +";";
+									}
+								}
+								jsonDatumValue = paramStrTree; //Value STR
+								jsonDatumDesc=paramStrTree;
+							}else{
+								parameter.parameterValue = parameter.parameterValue || [];
+								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+//									parameter.parameterValue = parameter.parameterValue || [];
+//									jsonDatumValue = parameter.parameterValue;
+//									jsonDatumDesc = jsonDatumValue;
+									var paramArrayLov=[];
+									var paramStrLov ="";
+									var paramStrLovDesc ="";
+									for(var z=0; z<parameter.parameterValue.length; z++){
+										paramArrayLov[z]=parameter.parameterValue[z];
+										paramStrLov = paramStrLov + parameter.parameterValue[z];
+										paramStrLovDesc = paramStrLovDesc + parameter.parameterValue[z];
+										if(z<parameter.parameterValue.length-1){
+											paramStrLov = paramStrLov +";";
+											paramStrLovDesc = paramStrLovDesc + ",";
+										}
+									}
+									jsonDatumValue = paramStrLov;
+									jsonDatumDesc=paramStrLovDesc;
+								} else {
+									//jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : '';
+									jsonDatumDesc = jsonDatumValue;
+								}
+							}
+						} 
+						// NO LOV PARAMETER
+						else {
+							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+							jsonDatumDesc = jsonDatumValue;
+						}
+						jsonDatum[valueKey] = jsonDatumValue;
+						jsonDatum[descriptionKey] = jsonDatumDesc;
+					}
+				}
+				console.log('jsonDatum ' , jsonDatum);
+				return jsonDatum;
+			},
+					
 			recursiveChildrenChecks : function(parameterValue, childrenArray) {
 				childrenArray = childrenArray || [];
 				
@@ -135,13 +201,13 @@
 				}
 			},
 			
-			showParameterHtml: function(parameter) {
+			showParameterHtml: function(parameter) {	
 				if(parameter.selectionType.toLowerCase() == 'tree') {
 					if(parameter.multivalue) {
 						
 						var toReturn = '';
 						
-						parameter.parameterValue = [];
+						parameter.parameterValue =  [];
 						
 						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue, parameter.children);
 						
@@ -307,7 +373,8 @@
 					vpctl.submit = function() {
 						vpctl.newViewpoint.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						vpctl.newViewpoint.ROLE = execProperties.selectedRole.name;
-						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+						vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParametersForSave(execProperties.parametersData.documentParameters);
+						//vpctl.newViewpoint.VIEWPOINT = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 						sbiModule_restServices.post(
 								"1.0/documentviewpoint",
 								"addViewpoint", vpctl.newViewpoint)
@@ -385,7 +452,7 @@
 		 * BUILD DATA DEPENDENCIES 
 		 */
 			this.buildDataDependenciesMap = function(parameters){
-			console.log('parameters ' , parameters);
+			//console.log('parameters ' , parameters);
 			for(var i=0; i<parameters.length ; i++){
 				if(parameters[i].dataDependencies && parameters[i].dataDependencies.length>0){						
 					for(var k=0; k<parameters[i].dataDependencies.length; k++){ 
@@ -417,6 +484,7 @@
 		
 		
 			 this.dataDependenciesCorrelationWatch = function(value){
+				
 				 //console.log('modify dependency : ' , value);
 				//console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
@@ -443,6 +511,7 @@
 											  if(execProperties.parametersData.documentParameters[z].defaultValues &&
 													  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
 												  for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+													  execProperties.parametersData.documentParameters[z].parameterValue = [];
 													  execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=false; 
 												  } 
 											  }
@@ -479,7 +548,7 @@
 						console.log('IS TREE .... CLEAR PARAM ID ' + dataDependenciesElementMap.parameterToChangeUrlName);
 						for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 							if(execProperties.parametersData.documentParameters[z].urlName==dataDependenciesElementMap.parameterToChangeUrlName){
-								console.log('azzeriamo ' + execProperties.parametersData.documentParameters[z].urlName);
+								//console.log('reset ... ' + execProperties.parametersData.documentParameters[z].urlName);
 								execProperties.parametersData.documentParameters[z].children = [];
 								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);
 								break;

@@ -23,7 +23,7 @@
 				 color:'#222222',
 				 action : function(item) { 
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 
+					 //console.log('item ' , item);
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
@@ -87,6 +87,7 @@
 		 * Fill Parameters Panel 
 		 */
 		function fillParametersPanel(params){
+			console.log('Load filter params : ' , params);
 			if(execProperties.parametersData.documentParameters.length > 0){
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
 					var parameter = execProperties.parametersData.documentParameters[i];
@@ -95,32 +96,33 @@
 						documentExecuteServices.resetParameter(parameter);
 					} else {
 						//Type params
-						
 						if(parameter.selectionType.toLowerCase() == 'tree'){
 							//TREE
 							console.log('Param ' , parameter.parameterValue);
-							console.log('param fill tree ' , params[parameter.urlName]); 
-							parameter.parameterValue = params[parameter.urlName];
-							console.log('Copy !!! ');
+							console.log('param to set ' , execProperties.parametersData.documentParameters[i]); 
+							//parameter.parameterValue = params[parameter.urlName];
+							//TODO FOR Benedetto 											
+//							execProperties.parametersData.documentParameters[i].parameterValue = toReturn;							
 						}else{	
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='STRING'){
 								parameter.parameterValue = params[parameter.urlName];
-								
 								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
 									var parameterValues = parameter.parameterValue;
-
+									//console.log('param to set .... ' , parameterValues);
+									var parArr = parameterValues.split(';');
+									//console.log('parArr ' , parArr);
 									for(var j = 0; j < parameter.defaultValues.length; j++) {
 										var defaultValue = parameter.defaultValues[j];
-
-										for(var k = 0; k < parameterValues.length; k++) {
-											if(defaultValue.value == parameterValues[k]) {
+										for(var k = 0; k < parArr.length; k++) {
+											if(defaultValue.value == parArr[k]) {
+												//TODO SET PARAMETERS !!
 												defaultValue.isSelected = true;
 												break;
 											} else {
 												defaultValue.isSelected = false;
-											}
+											}											
 										}
 									}
 								}
