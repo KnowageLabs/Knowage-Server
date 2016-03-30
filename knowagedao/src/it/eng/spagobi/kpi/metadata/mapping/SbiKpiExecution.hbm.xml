@@ -27,7 +27,6 @@
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter" />
         </set>
         
-        <!-- 
         <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="save-update" lazy="true">
 			<key >
 				<column name="EXECUTION_ID"/>
@@ -37,7 +36,6 @@
 				<column name="KPI_ID" />
 			</many-to-many>
 		</set> 
-         -->
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">

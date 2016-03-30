@@ -1272,6 +1272,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		KpiScheduler scd = new KpiScheduler();
 		scd.setId(sbi.getId());
 		scd.setName(sbi.getName());
+		scd.setAuthor(sbi.getCommonInfo().getUserIn());
 		scd.setStartDate(sbi.getStartTime());
 		scd.setEndDate(sbi.getEndTime());
 		scd.setDelta(Boolean.TRUE.equals(sbi.getDelta()));
@@ -1289,7 +1290,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Kpi kpi = new Kpi();
 				kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
 				kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
-				kpi.setCategory(from(sbiKpi.getCategory()));
+				if (sbiKpi.getCategory() != null) {
+					kpi.setCategory(from(sbiKpi.getCategory()));
+				}
 				scd.getKpis().add(kpi);
 			}
 		} else {
