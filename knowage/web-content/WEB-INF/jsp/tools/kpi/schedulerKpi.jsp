@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 	<angular-list-detail ng-controller="schedulerKpiController" full-screen=true >
 		<list label="translate.load('sbi.kpi.list')"  ng-controller="listSchedulerController" new-function="addScheduler" >
-		<angular-table 
+		<angular-table flex
 		id='targetListTable' ng-model=engines
 		columns='[{"label":"Name","name":"name"},{"label":"KPI","name":"kpiName"},{"label":"Start Date","name":"startDate"},{"label":"End Date","name":"endDate"},{"label":"Author","name":"author"}]'
 		columns-search='["name"]' show-search-bar=true

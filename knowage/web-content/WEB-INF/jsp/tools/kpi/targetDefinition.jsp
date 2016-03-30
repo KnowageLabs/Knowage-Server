@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 	<angular-list-detail ng-controller="targetDefinitionController" full-screen="true">
 		<list ng-controller="listController" new-function="addTarget">
-			<angular-table 
+			<angular-table  flex
 				id='targetListTable' ng-model=targets
 				columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Start Validity Date","name":"startValidity"},{"label":"Data End Validation","name":"endValidity"}]'
 				columnsSearch='["name"]'

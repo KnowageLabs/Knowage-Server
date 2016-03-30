@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail ng-controller="Controller"
 		 show-detail="showme">
 	<list label='translate.load("sbi.layercatalogue")' new-function="loadLayerList"> 
-	<angular-table
+	<angular-table flex
 		id='layerlist' ng-model=layerList
 		columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
 		columnsSearch='["name","type", "layerURL"]' show-search-bar=true

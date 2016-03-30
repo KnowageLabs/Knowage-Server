@@ -38,6 +38,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardKpiController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardDefinitionController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardPerspectiveDefinitionController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardTargetDefinitionController.js"></script>
+
+<!-- 	breadCrumb -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+
 
 </head>
 <body>
@@ -52,12 +59,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 				 click-function="measureClickFunction(item);" > </angular-table> -->
 		</list>
 				
-		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" disable-save-button=""  >
-		
-			<div layout="row" flex ng-controller="scorecardDefinitionController">
-					<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>
+		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" disable-save-button="" ng-switch="selectedStep" layout="column" >
+		 <md-whiteframe class="md-whiteframe-1dp" >
+			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'> </bread-crumb>
+		 </md-whiteframe>
+			<div ng-switch-when="0" layout="column" flex ng-controller="scorecardDefinitionController">
+				<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>
 			</div>
 		
+			<div ng-switch-when="1" layout="row" flex ng-controller="scorecardPerspectiveDefinitionController">
+				<md-button class="md-raised" ng-click="addTarget();">Aggiungi obiettivo</md-button>	
+				<%@include	file="./scorecardTemplate/scorecardPerspectiveDefinitionTemplate.jsp"%>
+			</div>
+			
+			<div ng-switch-when="2" layout="row" flex ng-controller="scorecardTargetDefinitionController">	
+				<%@include	file="./scorecardTemplate/scorecardTargetDefinitionTemplate.jsp"%>
+			</div>
 		</detail>
 		
 	</angular-list-detail>

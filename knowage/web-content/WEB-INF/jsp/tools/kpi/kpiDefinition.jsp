@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body>
 	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true >
 		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
-		<angular-table 
+		<angular-table flex
 		id='kpiListTable' ng-model=kpiList
 		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
 		columns-search='["name"]' show-search-bar=true

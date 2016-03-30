@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail ng-controller="measureRuleMasterController"  full-screen="true">
 		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="measureListController" new-function="newMeasureFunction" layout-column>
-	 	<angular-table id='measureListTable' ng-model=measureRuleList
+	 	<angular-table flex id='measureListTable' ng-model=measureRuleList
 				columns='measureRuleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption

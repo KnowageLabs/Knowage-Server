@@ -66,7 +66,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'	</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-list-content" layout-margin layout flex>'+
+		'<md-content class="kn-list-content" layout-margin  flex>'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -74,6 +74,23 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		controllerAs:"AWD_listController",
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
+			var layoutClass=""
+				if(attrs.layout){
+					switch(attrs.layout){
+						case 'row':
+							layoutClass = "layout-row";
+					        break;
+					    case 'column':
+					    	layoutClass = "layout-column";
+					        break;
+					    default:
+					    	layoutClass = "layout-column";
+					    	break;
+					}
+				} 
+				angular.element(element.children()[1]).addClass(layoutClass)
+				 
+				
 			transclude(scope,function(clone,scope) {
 				var contElem=element[0].querySelector("div.md-container>md-content ")
 				angular.element(contElem).append(clone);
@@ -121,7 +138,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'		<md-button aria-label="cancel" ng-disabled="AWD_detailController.disableCancelButton" ng-if="cancelFuncName!=undefined && AWD_detailController.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.federationdefinition.template.button.close")}}</md-button>'+
 		'</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-detail-content" layout layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
+		'<md-content class="kn-detail-content"  layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -130,6 +147,22 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
 		
+			var layoutClass=""
+				if(attrs.layout){
+					switch(attrs.layout){
+						case 'row':
+							layoutClass = "layout-row";
+					        break;
+					    case 'column':
+					    	layoutClass = "layout-column";
+					        break;
+					    default:
+					    	layoutClass = "layout-column";
+					    	break;
+					}
+				} 
+				angular.element(element.children()[1]).addClass(layoutClass)
+				 
 			scope.saveFuncName=scope.$eval(attrs.saveFunction);
 			ctrl.disableSaveButton=scope.$eval(attrs.disableSaveButton);
 			ctrl.showSaveButton=scope.$eval(attrs.showSaveButton);
