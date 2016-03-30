@@ -202,6 +202,7 @@
 			<ITEM	title="#menu.kpi.measureRuleDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" />	
 			<ITEM	title="#menu.kpi.targetDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp" />
 			<ITEM	title="#menu.kpi.schedulerKpi" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp" />
+			<ITEM	title="#menu.kpi.scorecard" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp" />
 			
 <!-- 			<ITEM	title="#menu.KpiDefinition" -->
 <!-- 					functionality="KpiManagement" -->
