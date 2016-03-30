@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.pivot4j.ui.html;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
@@ -44,13 +51,6 @@ import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
 	private HashMap<Member, Integer> memberPositions;
@@ -71,7 +71,12 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		StringWriter sw = new StringWriter();
 		CssWriter cssw = new CssWriter(sw);
 		Map<String, String> attributes = super.getCellAttributes(context);
-		if (context.getCellType() == CellTypes.VALUE) {
+		// initializeInternal(context);
+		if (context.getCellType() == CellTypes.AGG_VALUE) {
+			System.out.println(context.getCell());
+		}
+
+		if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
 
 			initializeInternal(context);
 
@@ -81,6 +86,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
+
 			// String memberUniqueName = context.getMember().getUniqueName();
 
 			double dd = Double.parseDouble(context.getCell().getValue().toString());
@@ -107,10 +113,25 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			attributes.put("measureName", measureName);
 			attributes.put("ordinal", String.valueOf(positionId));
 			attributes.put("cell", null);
-		} else if (context.getCellType() == CellTypes.VALUE) {
+		} else if (context.getCellType() == CellTypes.LABEL) {
 			String uniqueName = context.getMember().getUniqueName();
-			int axis = context.getAxis().axisOrdinal();
-			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" + uniqueName + "','" + axis + "')");
+			String level = context.getMember().getLevel().getUniqueName();
+			String parentMember = null;
+
+			if (context.getMember().getParentMember() != null) {
+				parentMember = context.getMember().getParentMember().getUniqueName();
+			}
+
+			int axisOrdinal = context.getAxis().axisOrdinal();
+			// attributes.put("ondblclick",
+			// "javascript:Sbi.olap.eventManager.setCalculatedFieldParent('" +
+			// uniqueName + "','" + axis + "')");
+
+			attributes.put("axisOrdinal", String.valueOf(axisOrdinal));
+			attributes.put("parentMember", parentMember);
+			attributes.put("uniqueName", uniqueName);
+			attributes.put("level", level);
+			attributes.put("member", null);
 
 		}
 		return attributes;
@@ -121,25 +142,25 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		String drillMode = context.getRenderer().getDrillDownMode();
 		if (!isEmptyNonPropertyCell(context)) {
-			if (context.getCellType() == CellTypes.VALUE && !context.getCell().isEmpty()) {
+			if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
 				int ordinal = context.getCell().getOrdinal();
 				if (context.getRenderer().getEnableDrillThrough()) {
 
-					Map<String, String> attributes = new TreeMap<String, String>();
-					attributes.put("src", "../img/ico_search.gif");
-					attributes.put("id", "drillt");
-
-					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
-					startElement("img", attributes);
-					endElement("img");
-					attributes = null;
-
+					// Map<String, String> attributes = new TreeMap<String,
+					// String>();
+					// attributes.put("src", "../img/ico_search.gif");
+					// attributes.put("id", "drillt");
+					// attributes.put("ng-click", "drillThrough(" + ordinal +
+					// ")");
+					// startElement("img", attributes);
+					// endElement("img");
 				}
 			}
 
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 				Map<String, String> attributes = new TreeMap<String, String>();
+
 				if (commands != null && !commands.isEmpty()) {
 					for (UICommand<?> command : commands) {
 						String cmd = command.getName();
@@ -168,16 +189,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("ng-click",
-										"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + " ')");
+								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ " '); $event.stopPropagation();");
 								startElement("img", attributes);
 								endElement("img");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("ng-click",
-										"drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
+								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
+										+ "' ); $event.stopPropagation();");
 
 								startElement("img", attributes);
 								endElement("img");
@@ -321,6 +342,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					writeContent(label);
 				} else {
 					// TODO: OSMOSIT create member clickable
+
 					List<TargetClickable> targetsClickable = sbiModel.getTargetsClickable();
 					if (targetsClickable != null && targetsClickable.size() > 0) {
 						Member member = context.getMember();
@@ -362,7 +384,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean isPropertyCell(TableRenderContext context) {
 
 		if (showProperties && context.getLevel() != null && isEmptyNonPropertyCell(context) && context.getRenderer().getPropertyCollector() != null) {
-			List<org.olap4j.metadata.Property> propertieds = context.getRenderer().getPropertyCollector().getProperties(context.getLevel());
+			List<Property> propertieds = context.getRenderer().getPropertyCollector().getProperties(context.getLevel());
 			return (propertieds != null && propertieds.size() > 0);
 		}
 		return false;
