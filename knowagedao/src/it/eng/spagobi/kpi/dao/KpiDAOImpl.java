@@ -518,7 +518,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 *
+	 * 
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -809,7 +809,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 *
+	 * 
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1277,6 +1277,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		scd.setEndDate(sbi.getEndTime());
 		scd.setDelta(Boolean.TRUE.equals(sbi.getDelta()));
 		if (full) {
+			// TODO all placeholders must join scd.getFilters() list
 			for (SbiKpiExecutionFilter sbiFilter : sbi.getSbiKpiExecutionFilters()) {
 				SchedulerFilter filter = new SchedulerFilter();
 				filter.setExecutionId(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId());
@@ -1287,13 +1288,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				scd.getFilters().add(filter);
 			}
 			for (SbiKpiKpi sbiKpi : sbi.getSbiKpiKpis()) {
-				Kpi kpi = new Kpi();
-				kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
-				kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
-				if (sbiKpi.getCategory() != null) {
-					kpi.setCategory(from(sbiKpi.getCategory()));
-				}
-				scd.getKpis().add(kpi);
+				scd.getKpis().add(from(sbiKpi, null, false));
 			}
 		} else {
 			StringBuilder kpiNames = new StringBuilder();
