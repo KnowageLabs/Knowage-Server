@@ -1,4 +1,9 @@
-var app = angular.module("RolesManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col"]);
+var app = angular.module("RolesManagementModule", ["ngMaterial", "angular_list", "angular_table", "sbiModule", "angular_2_col","angular-list-detail"]);
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
+
 app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", RolesManagementFunction]);
 
 function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging) {
@@ -18,8 +23,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.category = [];
     $scope.rmSpeedMenu = [{
         label: sbiModule_translate.load("sbi.generic.delete"),
-        icon: 'fa fa-trash-o fa-lg',
-        color: '#153E7E',
+        icon: 'fa fa-trash',
+        //icon: 'fa fa-trash-o fa-lg',
+        //color: '#153E7E',
         action: function (item, event) {
 
             $scope.confirmDelete(item,event);

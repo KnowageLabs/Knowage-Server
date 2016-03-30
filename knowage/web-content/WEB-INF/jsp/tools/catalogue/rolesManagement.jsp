@@ -31,10 +31,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/catalogue/css/catalogue.css">
+<!-- <link rel="stylesheet" type="text/css" -->
+<!-- 	href="/knowage/themes/glossary/css/generalStyle.css"> -->
+<!-- <link rel="stylesheet" type="text/css" -->
+<!-- 	href="/knowage/themes/catalogue/css/catalogue.css"> -->
+	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+	
 <!-- Styles -->
 <script type="text/javascript" src=" "></script>
 <script type="text/javascript"
@@ -43,62 +46,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Roles Management</title>
 </head>
-<body class="bodyStyle"
+<body class="bodyStyle kn-layerCatalogue"
 	ng-controller="RolesManagementController as ctrl">
 
-	<angular_2_col> <left-col>
-	<div class="leftBox">
-		<md-toolbar class="header">
-		<div class="md-toolbar-tools">
-			<div style="font-size: 24px;">{{translate.load("sbi.roles.rolesList");}}</div>
+	<angular-list-detail show-detail="showme">
+	<list label='translate.load("sbi.roles.rolesList");' new-function="createRole"> 
+	
+<!-- 		<md-toolbar class="header"> -->
+<!-- 		<div class="md-toolbar-tools"> -->
+<!-- 			<div style="font-size: 24px;">{{translate.load("sbi.roles.rolesList");}}</div> -->
 
-			<md-button class="md-fab md-ExtraMini addButton" aria-label="create"
-				style="position:absolute; right:11px; top:0px;"
-				ng-click="createRole()"> <md-icon
-				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
-			</md-icon> </md-button>
-		</div>
-		</md-toolbar>
-		<md-content layout-padding
-			style="background-color: rgb(236, 236, 236);"
-			class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
-			layout-fill id="rolesList_id" ng-model="rolesList"
+<!-- 			<md-button class="md-fab md-ExtraMini addButton" aria-label="create" -->
+<!-- 				style="position:absolute; right:11px; top:0px;" -->
+<!-- 				ng-click="createRole()"> <md-icon -->
+<!-- 				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;"> -->
+<!-- 			</md-icon> </md-button> -->
+<!-- 		</div> -->
+<!-- 		</md-toolbar> -->
+		 <angular-table
+			 id="rolesList_id" ng-model="rolesList"
 			columns='[
 						         {"label":"Name","name":"name"},
 						         {"label":"Description","name":"description"}
 						         ]'
 			show-search-bar=true highlights-selected-item=true
 			speed-menu-option="rmSpeedMenu" click-function="loadRole(item)">
-		</angular-table> </md-content>
-	</div>
-	</left-col> <right-col>
+		</angular-table> 
+	
+	</list>
+	 <detail label='selectedRole.name==undefined? "" : selectedRole.name'  save-function="saveRole"
+		cancel-function="cancel"
+		disable-save-button="!attributeForm.$valid"
+		show-save-button="showme" show-cancel-button="showme">
+	<div layout-fill class="containerDiv">	
 	<form name="attributeForm" layout-fill
 		ng-submit="attributeForm.$valid && saveRole()"
 		class="detailBody md-whiteframe-z1">
-
-		<div ng-show="showme">
-			<md-toolbar class="header">
-			<div class="md-toolbar-tools h100">
-				<div style="text-align: center; font-size: 24px;"></div>
-				<div style="position: absolute; right: 0px" class="h100">
-					<md-button type="button" tabindex="-1" aria-label="cancel"
-						class="md-raised md-ExtraMini rightHeaderButtonBackground"
-						style=" margin-top: 2px;" ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-					</md-button>
-					<md-button type="submit" aria-label="save_role"
-						class="md-raised md-ExtraMini rightHeaderButtonBackground"
-						style=" margin-top: 2px;" ng-disabled="!attributeForm.$valid">
-					{{translate.load("sbi.browser.defaultRole.save")}} </md-button>
-				</div>
-			</div>
-			</md-toolbar>
-			<md-content flex style="margin-left:20px;"
-				class="ToolbarBox miniToolbar noBorder"> <md-tabs
+<!-- 			<md-toolbar class="header"> -->
+<!-- 			<div class="md-toolbar-tools h100"> -->
+<!-- 				<div style="text-align: center; font-size: 24px;"></div> -->
+<!-- 				<div style="position: absolute; right: 0px" class="h100"> -->
+<!-- 					<md-button type="button" tabindex="-1" aria-label="cancel" -->
+<!-- 						class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
+<!-- 						style=" margin-top: 2px;" ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}} -->
+<!-- 					</md-button> -->
+<!-- 					<md-button type="submit" aria-label="save_role" -->
+<!-- 						class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
+<!-- 						style=" margin-top: 2px;" ng-disabled="!attributeForm.$valid"> -->
+<!-- 					{{translate.load("sbi.browser.defaultRole.save")}} </md-button> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 			</md-toolbar> -->
+		
+			 <md-tabs
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
-			<md-content flex style="margin-left:20px; overflow:hidden"
+			<md-content flex 
 				class="md-padding ToolbarBox noBorder">
-
+            <md-card>
 			<div layout="row" layout-wrap>
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{translate.load("sbi.roles.headerName")}}</label>
@@ -150,9 +155,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        </md-input-container>
 				   </div>
 			</div>
-			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.roles.authorizations");}}'> <md-content
-				flex style="margin-left:20px;"
+			</md-card>
+			</md-content>
+			 </md-tab> 
+			 <md-tab label='{{translate.load("sbi.roles.authorizations");}}'>
+			  <md-content
+				flex 
 				class="md-padding ToolbarBox noBorder">
+				<md-card>
 				<div style="display: flex;">
 				<div style="width: 50%; margin-right:5px;">
 
@@ -483,12 +493,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				</div>
 				</div>
+				</md-card>
 				 </md-content> </md-tab> 
 				<md-tab
-				label='{{translate.load("sbi.roles.businessModels");}}'> <md-content
-				flex style="margin-left:20px; overflow:hidden"
+				label='{{translate.load("sbi.roles.businessModels");}}'> 
+				<md-content
+				flex  
 				class="md-padding ToolbarBox noBorder">
-				
+				 <md-card>
 				<md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >
 										{{translate.load("sbi.roles.businessModels.categories");}}
@@ -501,10 +513,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 ]'
 				selected-item="category" highlights-selected-item=true
 				multi-select="true"> </angular-table>
-				
-			</md-content> </md-tab> </md-tabs> </md-content>
-		</div>
+		    </md-card>		
+			</md-content> </md-tab> </md-tabs> 
+		
 	</form>
-	</right-col> </angular_2_col>
+	</div>
+	</detail>
+	</angular-list-detail>
 </body>
 </html>
