@@ -37,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardKpiController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/scorecardSubController/scorecardDefinitionController.js"></script>
+
 </head>
 <body>
 
@@ -52,7 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" disable-save-button=""  >
 		
-			<div layout="row" flex>
+			<div layout="row" flex ng-controller="scorecardDefinitionController">
+					<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>
 			</div>
 		
 		</detail>
