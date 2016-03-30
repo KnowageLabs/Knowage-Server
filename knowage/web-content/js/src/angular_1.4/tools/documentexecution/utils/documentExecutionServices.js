@@ -80,7 +80,8 @@
 						jsonDatum[valueKey] = jsonDatumValue;
 						jsonDatum[descriptionKey] = jsonDatumDesc;
 					}
-				}			
+				}		
+				//console.log('jsonDAtum ' , jsonDatum);
 				return jsonDatum;
 			},
 			
@@ -144,7 +145,7 @@
 						jsonDatum[descriptionKey] = jsonDatumDesc;
 					}
 				}
-				console.log('jsonDatum ' , jsonDatum);
+				///console.log('jsonDatum ' , jsonDatum);
 				return jsonDatum;
 			},
 					

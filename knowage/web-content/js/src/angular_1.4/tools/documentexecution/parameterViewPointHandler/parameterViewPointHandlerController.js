@@ -23,7 +23,7 @@
 				 color:'#222222',
 				 action : function(item) { 
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 //console.log('item ' , item);
+					 //console.log('item ' , item); 
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
@@ -38,7 +38,7 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 fillParametersPanel(params);
-					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, JSON.stringify(params));
+					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
 			 }
@@ -83,6 +83,27 @@
 		 ];
 		
 		
+		function stringfyFromGetUrlParameters(params){
+			 var prm = {};
+			 for (key in params) {
+				    if (params.hasOwnProperty(key)) {
+				        try {
+				        	prm[key]=JSON.parse(params[key]);
+				        } catch (e) {
+				        	prm[key]=params[key];
+				        }
+				       
+				    }
+				}   
+			
+			 return JSON.stringify(prm);
+			
+		}
+		
+		
+		
+		
+		
 		/*
 		 * Fill Parameters Panel 
 		 */
@@ -95,29 +116,23 @@
 					if(!params[parameter.urlName]) {
 						documentExecuteServices.resetParameter(parameter);
 					} else {
-						//Type params
-						if(parameter.selectionType.toLowerCase() == 'tree'){
-							//TREE
-							console.log('Param ' , parameter.parameterValue);
-							console.log('param to set ' , execProperties.parametersData.documentParameters[i]); 
-							//parameter.parameterValue = params[parameter.urlName];
-							//TODO FOR Benedetto 											
-//							execProperties.parametersData.documentParameters[i].parameterValue = toReturn;							
-						}else{	
+						//console.log('parametro ' , parameter);
+						if(parameter.valueSelection=='lov' && parameter.multivalue==true){
+							parameter.parameterValue = JSON.parse(params[parameter.urlName]);
+							console.log('lov ' , parameter );
+							console.log('parameter.parameterValue ' , parameter.parameterValue );
+						}else{
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='STRING'){
 								parameter.parameterValue = params[parameter.urlName];
 								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
 									var parameterValues = parameter.parameterValue;
-									//console.log('param to set .... ' , parameterValues);
 									var parArr = parameterValues.split(';');
-									//console.log('parArr ' , parArr);
 									for(var j = 0; j < parameter.defaultValues.length; j++) {
 										var defaultValue = parameter.defaultValues[j];
 										for(var k = 0; k < parArr.length; k++) {
 											if(defaultValue.value == parArr[k]) {
-												//TODO SET PARAMETERS !!
 												defaultValue.isSelected = true;
 												break;
 											} else {
@@ -126,8 +141,12 @@
 										}
 									}
 								}
-							}	
-						}						
+							}
+							
+							
+							
+							
+						}												
 					}
 				}
 			}			
