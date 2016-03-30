@@ -435,7 +435,7 @@ public class DocumentUrlManager {
 				} else {
 					// this means that the value IS a default value
 					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
-					parameterDescriptions.add(defaultValue.getDescription());
+					parameterDescriptions.add((defaultValue != null) ? defaultValue.getDescription() : "");
 				}
 			}
 		}
