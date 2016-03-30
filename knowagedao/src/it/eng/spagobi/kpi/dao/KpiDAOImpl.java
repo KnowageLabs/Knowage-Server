@@ -31,6 +31,7 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
@@ -39,6 +40,7 @@ import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
+import it.eng.spagobi.kpi.metadata.SbiKpiExecution;
 import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
 import it.eng.spagobi.kpi.metadata.SbiKpiKpiId;
 import it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder;
@@ -1197,5 +1199,22 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			ret.add(from(sbiTarget));
 		}
 		return ret;
+	}
+
+	@Override
+	public List<KpiScheduler> listKpiScheduler() {
+		List<SbiKpiExecution> lst = list(SbiKpiExecution.class);
+		List ret = new ArrayList<>();
+		for (SbiKpiExecution sbi : lst) {
+			KpiScheduler ks = new KpiScheduler();
+
+		}
+		return ret;
+	}
+
+	@Override
+	public KpiScheduler loadKpiScheduler() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

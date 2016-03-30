@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
@@ -183,4 +184,9 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public void removeTarget(Integer id);
 
 	public List<TargetValue> listKpiWithTarget(Integer targetId);
+
+	public List<KpiScheduler> listKpiScheduler();
+
+	public KpiScheduler loadKpiScheduler();
+
 }
