@@ -6,49 +6,22 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.kpi.metadata.SbiKpiKpi" table="SBI_KPI_KPI">
-    	<composite-id name="sbiKpiKpiId" class="it.eng.spagobi.kpi.metadata.SbiKpiKpiId" >
-			<key-property name="version" column="VERSION" type="int" />
-			<key-property name="id" column="ID" type="int"  />
-		   	<generator class="it.eng.spagobi.kpi.metadata.generator.SbiKpiKpiIdGenerator">
-		   		<param name="object_id_column">ID</param>
-		   		<param name="object_version_column">VERSION</param>
-		   		<param name="object_table_name">SBI_KPI_RULE</param>
-				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_KPI_KPI</param>	
-				<param name="initial_value">1</param>
-		   </generator>
-		</composite-id>
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter" table="SBI_KPI_EXECUTION_FILTER">
+        <composite-id name="sbiKpiExecutionFilterId" class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilterId" >
+        	<key-property name="placeholderId" column="PLACEHOLDER_ID" />
+        	<key-property name="executionId" column="EXECUTION_ID" />
+        </composite-id>
         
-        <property name="name" column="NAME" type="string" length="40" not-null="true"/>
-        <property name="definition" column="DEFINITION" type="string" length="1000" not-null="true"/>
-        <property name="cardinality" column="CARDINALITY" type="string" length="4000" not-null="true"/>
-        <property name="placeholder" column="PLACEHOLDER" type="string" length="1024" not-null="true"/>
-        <property name="thresholdId" column="THRESHOLD_ID" type="int" length="11" not-null="true"/>
-        <property name="active" column="ACTIVE" type="char" />
-		      
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" cascade="save-update">
-            <column name="CATEGORY_ID"  />
+        <many-to-one name="sbiKpiPlaceholder" class="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder" column="PLACEHOLDER_ID" insert="false" update="false" />
+        <many-to-one name="sbiKpiExecution" class="it.eng.spagobi.kpi.metadata.SbiKpiExecution" column="EXECUTION_ID" insert="false" update="false" />
+        
+        <property name="typeId" column="TYPE" type="integer" />
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
+            <column name="TYPE_ID" />
         </many-to-one>
         
-        <set name="sbiKpiRuleOutputs" table="SBI_KPI_KPI_RULE_OUTPUT" cascade="save-update" lazy="true">
-			<key >
-				<column name="KPI_VERSION" />
-				<column name="KPI_ID" />
-			</key>
-			<many-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput">
-				<column name="RULE_OUTPUT_ID"/>
-			</many-to-many>
-		</set> 
-		
-		<set name="sbiKpiTargetValues" cascade="none" lazy="true" >
-            <key>
-                <column name="KPI_VERSION" />
-                <column name="KPI_ID" />
-            </key>
-            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiTargetValue" />
-        </set>
-		
+        <property name="value" column="VALUE" type="string" length="40" />
+        
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />
