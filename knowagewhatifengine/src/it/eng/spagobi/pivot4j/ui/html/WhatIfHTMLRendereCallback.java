@@ -88,23 +88,24 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			int positionId = context.getCell().getOrdinal();
 
 			// String memberUniqueName = context.getMember().getUniqueName();
+			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
+				double dd = Double.parseDouble(context.getCell().getValue().toString());
 
-			double dd = Double.parseDouble(context.getCell().getValue().toString());
+				String formatedValue = context.getCell().getFormattedValue();
+				// if (formatedValue.contains("style")) {
+				String style;
+				ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\"
+				// | =*\\s*\'");
 
-			String formatedValue = context.getCell().getFormattedValue();
-			// if (formatedValue.contains("style")) {
-			String style;
-			ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\"
-			// | =*\\s*\'");
-
-			for (int i = 0; i < fv.size(); i++) {
-				String styles[] = fv.get(i).split("\\s*=\\s*");
-				if (styles.length == 2) {
-					cssw.writeStyle(styles[0], styles[1] + "!important");
+				for (int i = 0; i < fv.size(); i++) {
+					String styles[] = fv.get(i).split("\\s*=\\s*");
+					if (styles.length == 2) {
+						cssw.writeStyle(styles[0], styles[1] + "!important");
+					}
 				}
+				style = sw.toString();
+				attributes.put("style", style);
 			}
-			style = sw.toString();
-			attributes.put("style", style);
 			// }
 
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
