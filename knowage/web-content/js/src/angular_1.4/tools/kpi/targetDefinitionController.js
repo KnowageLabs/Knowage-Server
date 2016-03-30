@@ -203,7 +203,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 											category: data[i].category,
 											date: this.formatDate(data[i].dateCreation),
 											author: data[i].author,
-											value: Math.round(10 + 989 * Math.random()) / 10 // TODO: remove after debug
+											value: 0
 										}
 									}
 								}
@@ -306,6 +306,43 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			.post("1.0/kpi", "saveTarget", newTarget)
 			.success(
 				function(data, status, headers, config) {
+					this.formatDate = function(dts) {
+						this.convertDateFormat = function(date) {
+							result = "";
+							if (date == "d/m/Y") {
+								result = "dd/MM/yyyy";
+							} else if (date == "m/d/Y") {
+								result = "MM/dd/yyyy"
+							}
+							return result;
+						};
+						date = typeof dts == 'number' ? new Date(dts) : dts;
+						var dateFormat = this.convertDateFormat(sbiModule_config.localizedDateFormat);
+						return $filter('date')(date, dateFormat);
+					};
+					if (typeof data.errors != 'undefined' && data.errors.length > 0) {
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
+								.action('OK').highlightAction(false).hideDelay(5000));
+						return;
+					}
+					var idx = $scope.targets.length;
+					if (newTarget.id != null) {
+						for (var i = 0; i < $scope.targets.length; i++) {
+							if ($scope.targets[i].id == newTarget.id) {
+								idx = i; // The target already exists
+								break;
+							}
+						}
+					} else {
+						$scope.targets[idx] = {}; // New target
+					}
+					$scope.targets[idx].name = $scope.target.name;
+					$scope.targets[idx].startValidityDate = $scope.target.startValidityDate;
+					$scope.targets[idx].startValidity = this.formatDate($scope.target.startValidityDate);
+					$scope.targets[idx].endValidityDate = $scope.target.endValidityDate;
+					$scope.targets[idx].endValidity = this.formatDate($scope.target.endValidityDate);
+					$scope.target = {};
+					$scope.kpis = [];
 					$angularListDetail.goToDetail();
 					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
 							.action('OK').highlightAction(false).hideDelay(3000));

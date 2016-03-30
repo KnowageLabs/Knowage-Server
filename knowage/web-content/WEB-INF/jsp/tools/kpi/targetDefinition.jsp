@@ -94,11 +94,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-toolbar>
 					<angular-table flex 
 						id="kpisTable" ng-model="kpis"
-						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value"}]'
+						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value", "editable": "true"}]'
 						columnsSearch='["name"]'
 						speed-menu-option="kpisActions"
 						show-search-bar="false"
 						no-pagination="true"
+						allow-edit="true"
 						scope-functions="kpisFunctions"
 						click-function="alert(item);">
 						<queue-table>
@@ -108,18 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</queue-table> 
 					</angular-table>
-					
 				</md-whiteframe>
-				<!-- md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
-					This is a test
-					<angular-table 
-						id="foundKpisTable" ng-model="foundKpis"
-						columns='[{"label":"KPI name","name":"name"},{"label":"Category","name":"category"},{"label":"Date","name":"date"},{"label":"Author","name":"author"},{"label":"Target value","name":"value"}]'
-						columnsSearch='["name"]' show-search-bar=true
-						scope-functions=tableFunction 
-						speed-menu-option="foundActions"
-						click-function="alert(item);"> </angular-table>
-				</md-whiteframe -->
 			</div>
 			</detail>
 		</angular-list-detail>
