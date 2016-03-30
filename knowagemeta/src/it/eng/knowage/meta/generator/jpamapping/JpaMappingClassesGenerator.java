@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -85,7 +85,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 			if (!compiled) {
 				throw new GenerationException(
-						"Impossible to compile mapping code. Please check compilation errors in file [/log/spagobi/metacompiler_errors.log]");
+						"Impossible to compile mapping code. Please check compilation errors in file [/log/knowage/metacompiler_errors.log]");
 			}
 
 			FileUtilities.copyFile(new File(srcDir, "views.json"), binDir);

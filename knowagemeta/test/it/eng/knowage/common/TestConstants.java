@@ -27,7 +27,7 @@ public class TestConstants {
 
 	// public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
 	public static File workspaceFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata");
-	public static File outputFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test");
+	public static File outputFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/unit-test");
 
 	public enum DatabaseType {
 		MYSQL, POSTGRES, ORACLE, SQLSERVER

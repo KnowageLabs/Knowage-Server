@@ -39,69 +39,68 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  *
  */
 public class EmfXmiSerializer implements IModelSerializer {
-	
-	public static final String SPAGOBI_MODEL_URI = "it.eng.knowage";
 
-	
-	public void serialize(Model model, File file)  {
+	public static final String KNOWAGE_MODEL_URI = "it.eng.knowage";
+
+	@Override
+	public void serialize(Model model, File file) {
 		FileOutputStream outputStream;
-		
+
 		try {
 			outputStream = new FileOutputStream(file);
-	        serialize(model, outputStream);
-	        outputStream.flush();
-	        outputStream.close();
-		} catch(Throwable t) {
+			serialize(model, outputStream);
+			outputStream.flush();
+			outputStream.close();
+		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to serialize model [" + model.getName() + "] to file [" + file.getName() + "]", t);
 		}
 	}
-	
+
 	@Override
 	public void serialize(Model model, OutputStream outputStream) {
-		
+
 		// Create a resource set.
 		ResourceSet resourceSet = new ResourceSetImpl();
 
 		// Register the default resource factory -- only needed for stand-alone!
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-			  Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl()
-		);
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 
 		// Get the URI of the model file.
-		//URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
-		URI uri = URI.createURI(SPAGOBI_MODEL_URI);
-		  
+		// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
+		URI uri = URI.createURI(KNOWAGE_MODEL_URI);
+
 		// Create a resource for this file.
 		Resource resource = resourceSet.createResource(uri);
-		  
+
 		// Add the book and writer objects to the contents.
 		resource.getContents().add(model);
-	
+
 		// Save the contents of the resource to the file system.
 		try {
-			//resource.save(Collections.EMPTY_MAP);
+			// resource.save(Collections.EMPTY_MAP);
 			resource.save(outputStream, Collections.EMPTY_MAP);
 		} catch (IOException e) {
-		  throw new RuntimeException("Impossible to serialize model [" + model.getName() + "]", e);
-		}	
+			throw new RuntimeException("Impossible to serialize model [" + model.getName() + "]", e);
+		}
 	}
 
+	@Override
 	public Model deserialize(File file) {
 		Model model;
 		FileInputStream inputStream;
-		
+
 		model = null;
 		try {
 			inputStream = new FileInputStream(file);
-	        model = deserialize(inputStream);
-	        inputStream.close();
-		} catch(Throwable t) {
+			model = deserialize(inputStream);
+			inputStream.close();
+		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to deserialize model [" + model.getName() + "] to file [" + file.getName() + "]", t);
 		}
-		
+
 		return model;
 	}
-	
+
 	@Override
 	public Model deserialize(InputStream inputStream) {
 		Model model;
@@ -109,31 +108,29 @@ public class EmfXmiSerializer implements IModelSerializer {
 		ResourceSet resourceSet = new ResourceSetImpl();
 
 		// Register the default resource factory -- only needed for stand-alone!
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-				Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl()
-		);
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 
 		// Register the package -- only needed for stand-alone!
 		ModelPackage libraryPackage = ModelPackage.eINSTANCE;
 
 		// Get the URI of the model file.
-		//URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
-		URI uri = URI.createURI(SPAGOBI_MODEL_URI);
-		  
+		// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
+		URI uri = URI.createURI(KNOWAGE_MODEL_URI);
+
 		// Demand load the resource for this file.
 		Resource resource = resourceSet.createResource(uri);
-		
+
 		model = null;
 		try {
 			resource.load(inputStream, Collections.EMPTY_MAP);
-			//resource.load(Collections.EMPTY_MAP);
-			model = (Model)resource.getContents().get(0);
-			
-			//resource.save(System.out, Collections.EMPTY_MAP);
+			// resource.load(Collections.EMPTY_MAP);
+			model = (Model) resource.getContents().get(0);
+
+			// resource.save(System.out, Collections.EMPTY_MAP);
 		} catch (Throwable e) {
 			throw new RuntimeException("Impossible to deserialize model [" + model.getName() + "]", e);
 		}
-		
+
 		return model;
 	}
 }

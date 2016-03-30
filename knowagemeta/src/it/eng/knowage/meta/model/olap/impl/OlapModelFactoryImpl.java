@@ -17,7 +17,19 @@
  */
 package it.eng.knowage.meta.model.olap.impl;
 
-import it.eng.knowage.meta.model.olap.*;
+import it.eng.knowage.meta.model.olap.CalculatedMember;
+import it.eng.knowage.meta.model.olap.Cube;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.Hierarchy;
+import it.eng.knowage.meta.model.olap.Level;
+import it.eng.knowage.meta.model.olap.Measure;
+import it.eng.knowage.meta.model.olap.NamedSet;
+import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.olap.OlapModelFactory;
+import it.eng.knowage.meta.model.olap.OlapModelPackage;
+import it.eng.knowage.meta.model.olap.VirtualCube;
+import it.eng.knowage.meta.model.olap.VirtualCubeDimension;
+import it.eng.knowage.meta.model.olap.VirtualCubeMeasure;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -26,35 +38,31 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!-- end-user-doc -->
+ * 
  * @generated
  */
 public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates the default factory implementation. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static OlapModelFactory init() {
 		try {
-			OlapModelFactory theOlapModelFactory = (OlapModelFactory)EPackage.Registry.INSTANCE.getEFactory("http:///it/eng/spagobi/meta/model/olapl.ecore"); 
+			OlapModelFactory theOlapModelFactory = (OlapModelFactory) EPackage.Registry.INSTANCE.getEFactory("http:///it/eng/knowage/meta/model/olapl.ecore");
 			if (theOlapModelFactory != null) {
 				return theOlapModelFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new OlapModelFactoryImpl();
 	}
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates an instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public OlapModelFactoryImpl() {
@@ -62,151 +70,174 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case OlapModelPackage.OLAP_MODEL: return createOlapModel();
-			case OlapModelPackage.CUBE: return createCube();
-			case OlapModelPackage.DIMENSION: return createDimension();
-			case OlapModelPackage.HIERARCHY: return createHierarchy();
-			case OlapModelPackage.LEVEL: return createLevel();
-			case OlapModelPackage.MEASURE: return createMeasure();
-			case OlapModelPackage.CALCULATED_MEMBER: return createCalculatedMember();
-			case OlapModelPackage.NAMED_SET: return createNamedSet();
-			case OlapModelPackage.VIRTUAL_CUBE: return createVirtualCube();
-			case OlapModelPackage.VIRTUAL_CUBE_DIMENSION: return createVirtualCubeDimension();
-			case OlapModelPackage.VIRTUAL_CUBE_MEASURE: return createVirtualCubeMeasure();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case OlapModelPackage.OLAP_MODEL:
+			return createOlapModel();
+		case OlapModelPackage.CUBE:
+			return createCube();
+		case OlapModelPackage.DIMENSION:
+			return createDimension();
+		case OlapModelPackage.HIERARCHY:
+			return createHierarchy();
+		case OlapModelPackage.LEVEL:
+			return createLevel();
+		case OlapModelPackage.MEASURE:
+			return createMeasure();
+		case OlapModelPackage.CALCULATED_MEMBER:
+			return createCalculatedMember();
+		case OlapModelPackage.NAMED_SET:
+			return createNamedSet();
+		case OlapModelPackage.VIRTUAL_CUBE:
+			return createVirtualCube();
+		case OlapModelPackage.VIRTUAL_CUBE_DIMENSION:
+			return createVirtualCubeDimension();
+		case OlapModelPackage.VIRTUAL_CUBE_MEASURE:
+			return createVirtualCubeMeasure();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public OlapModel createOlapModel() {
 		OlapModelImpl olapModel = new OlapModelImpl();
 		return olapModel;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Cube createCube() {
 		CubeImpl cube = new CubeImpl();
 		return cube;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Dimension createDimension() {
 		DimensionImpl dimension = new DimensionImpl();
 		return dimension;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Hierarchy createHierarchy() {
 		HierarchyImpl hierarchy = new HierarchyImpl();
 		return hierarchy;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Level createLevel() {
 		LevelImpl level = new LevelImpl();
 		return level;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Measure createMeasure() {
 		MeasureImpl measure = new MeasureImpl();
 		return measure;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public CalculatedMember createCalculatedMember() {
 		CalculatedMemberImpl calculatedMember = new CalculatedMemberImpl();
 		return calculatedMember;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public NamedSet createNamedSet() {
 		NamedSetImpl namedSet = new NamedSetImpl();
 		return namedSet;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public VirtualCube createVirtualCube() {
 		VirtualCubeImpl virtualCube = new VirtualCubeImpl();
 		return virtualCube;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public VirtualCubeDimension createVirtualCubeDimension() {
 		VirtualCubeDimensionImpl virtualCubeDimension = new VirtualCubeDimensionImpl();
 		return virtualCubeDimension;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public VirtualCubeMeasure createVirtualCubeMeasure() {
 		VirtualCubeMeasureImpl virtualCubeMeasure = new VirtualCubeMeasureImpl();
 		return virtualCubeMeasure;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public OlapModelPackage getOlapModelPackage() {
-		return (OlapModelPackage)getEPackage();
+		return (OlapModelPackage) getEPackage();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @deprecated
 	 * @generated
 	 */
@@ -215,4 +246,4 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 		return OlapModelPackage.eINSTANCE;
 	}
 
-} //OlapModelFactoryImpl
+} // OlapModelFactoryImpl

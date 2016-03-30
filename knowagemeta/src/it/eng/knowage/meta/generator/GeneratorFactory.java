@@ -17,8 +17,6 @@
  */
 package it.eng.knowage.meta.generator;
 
-
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,46 +28,45 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class GeneratorFactory {
-	private static List<GeneratorDescriptor> generatorDescriptorsCache = null;	
-	
+	private static List<GeneratorDescriptor> generatorDescriptorsCache = null;
+
 	public static Collection<GeneratorDescriptor> getGeneratorDescriptors() {
-		if(generatorDescriptorsCache == null) {
+		if (generatorDescriptorsCache == null) {
 			initGeneratorDescriptorsCache();
 		}
-		
+
 		return new ArrayList<GeneratorDescriptor>(generatorDescriptorsCache);
 	}
-	
-	public static GeneratorDescriptor getGeneratorDescriptorById(String id){
-		if(generatorDescriptorsCache == null) {
+
+	public static GeneratorDescriptor getGeneratorDescriptorById(String id) {
+		if (generatorDescriptorsCache == null) {
 			initGeneratorDescriptorsCache();
 		}
-		
-		for(GeneratorDescriptor descriptor : generatorDescriptorsCache) {
-			if(descriptor.getId().equals(id)) return descriptor;
+
+		for (GeneratorDescriptor descriptor : generatorDescriptorsCache) {
+			if (descriptor.getId().equals(id))
+				return descriptor;
 		}
 		return null;
 	}
-	
+
 	private static void initGeneratorDescriptorsCache() {
 		generatorDescriptorsCache = new ArrayList<GeneratorDescriptor>();
-		
-		IExtension[] extensions = Platform.getExtensionRegistry()
-		.getExtensionPoint(SpagoBIMetaGeneratorPlugin.PLUGIN_ID, "generator")
-		.getExtensions();
-		
+
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("it.eng.knowage.meta.generator", "generator").getExtensions();
+
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++) {
-				if (!configElements[j].getName().equals("generator")) continue;
+				if (!configElements[j].getName().equals("generator"))
+					continue;
 				GeneratorDescriptor generatorDescriptor = buildGeneratorDescriptor(configElements[j]);
-				if(generatorDescriptor != null) {
+				if (generatorDescriptor != null) {
 					generatorDescriptorsCache.add(generatorDescriptor);
 				}
 			}
@@ -81,15 +78,12 @@ public class GeneratorFactory {
 			return new GeneratorDescriptor(configElement);
 		} catch (Exception e) {
 			String name = configElement.getAttribute("name");
-			if (name == null) name = "[missing name attribute]";
-			String msg =
-				"Failed to load generator named "
-				+ name
-				+ " in "
-				+ configElement.getDeclaringExtension().getNamespaceIdentifier();
-				
-			IStatus status = new Status(IStatus.ERROR, SpagoBIMetaGeneratorPlugin.PLUGIN_ID, IStatus.OK, msg, e);
-			Bundle plugin = Platform.getBundle(SpagoBIMetaGeneratorPlugin.PLUGIN_ID);
+			if (name == null)
+				name = "[missing name attribute]";
+			String msg = "Failed to load generator named " + name + " in " + configElement.getDeclaringExtension().getNamespaceIdentifier();
+
+			IStatus status = new Status(IStatus.ERROR, "it.eng.knowage.meta.generator", IStatus.OK, msg, e);
+			Bundle plugin = Platform.getBundle("it.eng.knowage.meta.generator");
 			Platform.getLog(plugin).log(status);
 			return null;
 		}

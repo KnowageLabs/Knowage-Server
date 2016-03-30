@@ -50,7 +50,7 @@ public class MySqlJpaMappingClassesGenerationTest extends AbstractKnowageMetaTes
 			}
 
 			if (jpaMappingClassesGenerator == null) {
-				jpaMappingClassesGenerator = TestGeneratorFactory.createClassesGeneraor();
+				jpaMappingClassesGenerator = TestGeneratorFactory.createClassesGenerator();
 				generator = jpaMappingClassesGenerator;
 			}
 		} catch (Exception t) {

@@ -17,7 +17,12 @@
  */
 package it.eng.knowage.meta.model.impl;
 
-import it.eng.knowage.meta.model.*;
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelPackage;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.ModelPropertyCategory;
+import it.eng.knowage.meta.model.ModelPropertyType;
 
 import java.util.Map;
 
@@ -28,35 +33,31 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!-- end-user-doc -->
+ * 
  * @generated
  */
 public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates the default factory implementation. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static ModelFactory init() {
 		try {
-			ModelFactory theModelFactory = (ModelFactory)EPackage.Registry.INSTANCE.getEFactory("http:///it/eng/spagobi/meta/model.ecore"); 
+			ModelFactory theModelFactory = (ModelFactory) EPackage.Registry.INSTANCE.getEFactory("http:///it/eng/knowage/meta/model.ecore");
 			if (theModelFactory != null) {
 				return theModelFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new ModelFactoryImpl();
 	}
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates an instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public ModelFactoryImpl() {
@@ -64,56 +65,64 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case ModelPackage.MODEL_PROPERTY_CATEGORY: return createModelPropertyCategory();
-			case ModelPackage.MODEL_PROPERTY_TYPE: return createModelPropertyType();
-			case ModelPackage.MODEL_PROPERTY: return createModelProperty();
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY: return (EObject)createModelPropertyMapEntry();
-			case ModelPackage.MODEL: return createModel();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case ModelPackage.MODEL_PROPERTY_CATEGORY:
+			return createModelPropertyCategory();
+		case ModelPackage.MODEL_PROPERTY_TYPE:
+			return createModelPropertyType();
+		case ModelPackage.MODEL_PROPERTY:
+			return createModelProperty();
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY:
+			return (EObject) createModelPropertyMapEntry();
+		case ModelPackage.MODEL:
+			return createModel();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelPropertyType createModelPropertyType() {
 		ModelPropertyTypeImpl modelPropertyType = new ModelPropertyTypeImpl();
 		return modelPropertyType;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelPropertyCategory createModelPropertyCategory() {
 		ModelPropertyCategoryImpl modelPropertyCategory = new ModelPropertyCategoryImpl();
 		return modelPropertyCategory;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelProperty createModelProperty() {
 		ModelPropertyImpl modelProperty = new ModelPropertyImpl();
 		return modelProperty;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public Map.Entry<String, ModelProperty> createModelPropertyMapEntry() {
@@ -122,27 +131,29 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public Model createModel() {
 		ModelImpl model = new ModelImpl();
 		return model;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelPackage getModelPackage() {
-		return (ModelPackage)getEPackage();
+		return (ModelPackage) getEPackage();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @deprecated
 	 * @generated
 	 */
@@ -151,4 +162,4 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 		return ModelPackage.eINSTANCE;
 	}
 
-} //ModelFactoryImpl
+} // ModelFactoryImpl

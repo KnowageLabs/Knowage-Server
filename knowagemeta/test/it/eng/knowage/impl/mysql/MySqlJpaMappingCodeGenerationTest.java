@@ -67,7 +67,7 @@ public class MySqlJpaMappingCodeGenerationTest extends AbstractKnowageMetaTest {
 			}
 
 			if (jpaMappingCodeGenerator == null) {
-				jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGeneraor();
+				jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGenerator();
 				jpaModel = new JpaModel(businessModel);
 				generator = jpaMappingCodeGenerator;
 			}
@@ -201,7 +201,7 @@ public class MySqlJpaMappingCodeGenerationTest extends AbstractKnowageMetaTest {
 		BusinessView businessView = modelManager.createView(businessTable, innerJoinRelationshipDescriptor);
 		modelManager.addBusinessColumn(destination.getColumn("product_family"), businessView);
 
-		jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGeneraor();
+		jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGenerator();
 		generator = jpaMappingCodeGenerator;
 		jpaMappingCodeGenerator.generate(filteredBusinessModel, TestConstants.outputFolder.toString());
 	}

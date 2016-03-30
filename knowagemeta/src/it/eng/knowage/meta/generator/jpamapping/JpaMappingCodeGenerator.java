@@ -150,11 +150,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			// templateDir = RL.getFile(templatesDirRelativePath);
 			templateDir = new File(getClass().getResource("/it/eng/knowage/meta/generator/templates").getFile());
 
-			// DEBUG
-			System.out.println("templateDir.getAbsolutePath(): " + templateDir.getAbsolutePath());
-			System.out.println("templateDir.getCanonicalPath(): " + templateDir.getCanonicalPath());
-			// FINE DEBUG
-
 			logger.debug("Template dir is equal to [{}]", templateDir);
 			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
 

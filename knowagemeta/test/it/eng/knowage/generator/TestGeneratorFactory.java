@@ -29,15 +29,19 @@ import java.io.File;
  *
  */
 public class TestGeneratorFactory {
-	public static JpaMappingCodeGenerator createCodeGeneraor() {
+	public static JpaMappingCodeGenerator createCodeGenerator() {
 		File generatorProjectRootFolder = new File(TestConstants.workspaceFolder, "it.eng.knowage.meta.generator");
 		File generatorProjectTemplateFolder = new File(generatorProjectRootFolder, "templates");
 		JpaMappingCodeGenerator.defaultTemplateFolderPath = generatorProjectTemplateFolder.toString();
 		JpaMappingCodeGenerator jpaMappingCodeGenerator = new JpaMappingCodeGenerator();
+		File generatorProjectSrcFolder = new File(TestConstants.workspaceFolder, "src");
+		jpaMappingCodeGenerator.setSrcDir(generatorProjectSrcFolder);
+		File generatorProjectDistFolder = new File(TestConstants.workspaceFolder, "dist");
+		jpaMappingCodeGenerator.setDistDir(generatorProjectDistFolder);
 		return jpaMappingCodeGenerator;
 	}
 
-	public static JpaMappingClassesGenerator createClassesGeneraor() {
+	public static JpaMappingClassesGenerator createClassesGenerator() {
 		File generatorProjectRootFolder = new File(TestConstants.workspaceFolder, "it.eng.knowage.meta.generator");
 		File generatorProjectTemplateFolder = new File(generatorProjectRootFolder, "templates");
 		File generatorProjectLibFolder = new File(generatorProjectRootFolder, "libs/eclipselink");
@@ -51,11 +55,11 @@ public class TestGeneratorFactory {
 		return jpaMappingClassesGenerator;
 	}
 
-	public static JpaMappingJarGenerator createJarGeneraor() {
+	public static JpaMappingJarGenerator createJarGenerator() {
 		JpaMappingJarGenerator jpaMappingJarGenerator;
-		JpaMappingJarGenerator.defaultTemplateFolderPath = "D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.spagobi.meta.generator/templates";
+		JpaMappingJarGenerator.defaultTemplateFolderPath = "D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator/templates";
 		jpaMappingJarGenerator = new JpaMappingJarGenerator();
-		File projectRootFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.spagobi.meta.generator");
+		File projectRootFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator");
 		jpaMappingJarGenerator.setLibDir(new File(projectRootFolder, "libs/eclipselink"));
 		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence_2.0.1.jar" });
 		return jpaMappingJarGenerator;

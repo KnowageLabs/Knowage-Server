@@ -60,7 +60,7 @@ public class MySqlJpaModelTest extends AbstractKnowageMetaTest {
 
 			if (jpaModel == null) {
 				jpaModel = new JpaModel(businessModel);
-				jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGeneraor();
+				jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGenerator();
 				generator = jpaMappingCodeGenerator;
 			}
 		} catch (Exception t) {

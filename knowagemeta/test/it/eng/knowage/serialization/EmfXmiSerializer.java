@@ -50,8 +50,9 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  */
 public class EmfXmiSerializer implements IModelSerializer {
 
-	public static final String SPAGOBI_MODEL_URI = "it.eng.spagobi";
+	public static final String KNOWAGE_MODEL_URI = "it.eng.knowage";
 
+	@Override
 	public void serialize(Model model, File file) {
 		FileOutputStream outputStream;
 
@@ -65,6 +66,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 		}
 	}
 
+	@Override
 	public void serialize(Model model, OutputStream outputStream) {
 
 		// Create a resource set.
@@ -75,7 +77,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 
 		// Get the URI of the model file.
 		// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
-		URI uri = URI.createURI(SPAGOBI_MODEL_URI);
+		URI uri = URI.createURI(KNOWAGE_MODEL_URI);
 
 		// Create a resource for this file.
 		Resource resource = resourceSet.createResource(uri);
@@ -123,7 +125,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 
 		// Get the URI of the model file.
 		// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
-		URI uri = URI.createURI(SPAGOBI_MODEL_URI);
+		URI uri = URI.createURI(KNOWAGE_MODEL_URI);
 
 		// Demand load the resource for this file.
 		Resource resource = resourceSet.createResource(uri);
@@ -152,13 +154,13 @@ public class EmfXmiSerializer implements IModelSerializer {
 		PhysicalModelFactory PFACTORY = PhysicalModelFactory.eINSTANCE;
 		BusinessModelFactory BFACTORY = BusinessModelFactory.eINSTANCE;
 
-		Model spagobiModel = FACTORY.createModel();
-		spagobiModel.setName("testModel");
+		Model knowageModel = FACTORY.createModel();
+		knowageModel.setName("testModel");
 
 		// physical model
 		PhysicalModel physicalModel = PFACTORY.createPhysicalModel();
 		physicalModel.setName("physicalModel");
-		spagobiModel.getPhysicalModels().add(physicalModel);
+		knowageModel.getPhysicalModels().add(physicalModel);
 		System.out.println(physicalModel.getParentModel());
 
 		for (int i = 0; i < 300; i++) {
@@ -196,12 +198,12 @@ public class EmfXmiSerializer implements IModelSerializer {
 		BusinessModelInitializer modelInitializer = new BusinessModelInitializer();
 		BusinessModel businessModel = modelInitializer.initialize("businessModel", physicalModel);
 
-		System.out.println(spagobiModel.getPropertyTypes().size());
+		System.out.println(knowageModel.getPropertyTypes().size());
 
-		spagobiModel.getBusinessModels().add(businessModel);
+		knowageModel.getBusinessModels().add(businessModel);
 
 		EmfXmiSerializer serializer = new EmfXmiSerializer();
-		serializer.serialize(spagobiModel, new File("bigemfmodel.xmi"));
+		serializer.serialize(knowageModel, new File("bigemfmodel.xmi"));
 	}
 
 }

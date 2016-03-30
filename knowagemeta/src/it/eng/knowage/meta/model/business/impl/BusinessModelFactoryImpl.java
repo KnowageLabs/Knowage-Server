@@ -17,7 +17,19 @@
  */
 package it.eng.knowage.meta.model.business.impl;
 
-import it.eng.knowage.meta.model.business.*;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessDomain;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessModelFactory;
+import it.eng.knowage.meta.model.business.BusinessModelPackage;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -26,35 +38,32 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!-- end-user-doc -->
+ * 
  * @generated
  */
 public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessModelFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates the default factory implementation. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static BusinessModelFactory init() {
 		try {
-			BusinessModelFactory theBusinessModelFactory = (BusinessModelFactory)EPackage.Registry.INSTANCE.getEFactory("http:///it/eng/spagobi/meta/model/businessl.ecore"); 
+			BusinessModelFactory theBusinessModelFactory = (BusinessModelFactory) EPackage.Registry.INSTANCE
+					.getEFactory("http:///it/eng/knowage/meta/model/businessl.ecore");
 			if (theBusinessModelFactory != null) {
 				return theBusinessModelFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new BusinessModelFactoryImpl();
 	}
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates an instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public BusinessModelFactoryImpl() {
@@ -62,151 +71,174 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case BusinessModelPackage.BUSINESS_MODEL: return createBusinessModel();
-			case BusinessModelPackage.BUSINESS_COLUMN: return createBusinessColumn();
-			case BusinessModelPackage.BUSINESS_COLUMN_SET: return createBusinessColumnSet();
-			case BusinessModelPackage.BUSINESS_TABLE: return createBusinessTable();
-			case BusinessModelPackage.BUSINESS_VIEW: return createBusinessView();
-			case BusinessModelPackage.BUSINESS_RELATIONSHIP: return createBusinessRelationship();
-			case BusinessModelPackage.BUSINESS_DOMAIN: return createBusinessDomain();
-			case BusinessModelPackage.BUSINESS_IDENTIFIER: return createBusinessIdentifier();
-			case BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP: return createBusinessViewInnerJoinRelationship();
-			case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN: return createSimpleBusinessColumn();
-			case BusinessModelPackage.CALCULATED_BUSINESS_COLUMN: return createCalculatedBusinessColumn();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case BusinessModelPackage.BUSINESS_MODEL:
+			return createBusinessModel();
+		case BusinessModelPackage.BUSINESS_COLUMN:
+			return createBusinessColumn();
+		case BusinessModelPackage.BUSINESS_COLUMN_SET:
+			return createBusinessColumnSet();
+		case BusinessModelPackage.BUSINESS_TABLE:
+			return createBusinessTable();
+		case BusinessModelPackage.BUSINESS_VIEW:
+			return createBusinessView();
+		case BusinessModelPackage.BUSINESS_RELATIONSHIP:
+			return createBusinessRelationship();
+		case BusinessModelPackage.BUSINESS_DOMAIN:
+			return createBusinessDomain();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER:
+			return createBusinessIdentifier();
+		case BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP:
+			return createBusinessViewInnerJoinRelationship();
+		case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN:
+			return createSimpleBusinessColumn();
+		case BusinessModelPackage.CALCULATED_BUSINESS_COLUMN:
+			return createCalculatedBusinessColumn();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessModel createBusinessModel() {
 		BusinessModelImpl businessModel = new BusinessModelImpl();
 		return businessModel;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessTable createBusinessTable() {
 		BusinessTableImpl businessTable = new BusinessTableImpl();
 		return businessTable;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessColumn createBusinessColumn() {
 		BusinessColumnImpl businessColumn = new BusinessColumnImpl();
 		return businessColumn;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet createBusinessColumnSet() {
 		BusinessColumnSetImpl businessColumnSet = new BusinessColumnSetImpl();
 		return businessColumnSet;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessRelationship createBusinessRelationship() {
 		BusinessRelationshipImpl businessRelationship = new BusinessRelationshipImpl();
 		return businessRelationship;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessView createBusinessView() {
 		BusinessViewImpl businessView = new BusinessViewImpl();
 		return businessView;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessDomain createBusinessDomain() {
 		BusinessDomainImpl businessDomain = new BusinessDomainImpl();
 		return businessDomain;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessIdentifier createBusinessIdentifier() {
 		BusinessIdentifierImpl businessIdentifier = new BusinessIdentifierImpl();
 		return businessIdentifier;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessViewInnerJoinRelationship createBusinessViewInnerJoinRelationship() {
 		BusinessViewInnerJoinRelationshipImpl businessViewInnerJoinRelationship = new BusinessViewInnerJoinRelationshipImpl();
 		return businessViewInnerJoinRelationship;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public SimpleBusinessColumn createSimpleBusinessColumn() {
 		SimpleBusinessColumnImpl simpleBusinessColumn = new SimpleBusinessColumnImpl();
 		return simpleBusinessColumn;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public CalculatedBusinessColumn createCalculatedBusinessColumn() {
 		CalculatedBusinessColumnImpl calculatedBusinessColumn = new CalculatedBusinessColumnImpl();
 		return calculatedBusinessColumn;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessModelPackage getBusinessModelPackage() {
-		return (BusinessModelPackage)getEPackage();
+		return (BusinessModelPackage) getEPackage();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @deprecated
 	 * @generated
 	 */
@@ -215,4 +247,4 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 		return BusinessModelPackage.eINSTANCE;
 	}
 
-} //BusinessModelFactoryImpl
+} // BusinessModelFactoryImpl

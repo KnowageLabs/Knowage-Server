@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Singleton class for passing object references
- * 
+ *
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 public class ModelSingleton {
 
@@ -101,7 +101,7 @@ public class ModelSingleton {
 		logger.debug("IN");
 		Properties properties = new Properties();
 		try {
-			properties.load(this.getClass().getResourceAsStream("/it/eng/spagobi/meta/initializer/config/config.properties"));
+			properties.load(this.getClass().getResourceAsStream("/it/eng/knowage/meta/initializer/config/config.properties"));
 		} catch (IOException e) {
 			logger.error("Error in reading properties file; using Meta settings as default");
 		}
