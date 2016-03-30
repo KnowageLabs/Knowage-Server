@@ -22,34 +22,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		return $filter('date')(date, dateFormat);
 	};
 	$scope.translate = sbiModule_translate;
+	
 	$scope.target = {};
-	$scope.targets = [
-		{
-			'name':'Target1',
-			'category':'Categoria 1',
-			'startValidityDate': new Date("2/03/2016"),
-			'startValidity': this.formatDate(new Date("2/03/2016")),
-			'endValidityDate': new Date("3/03/2016"),
-			'endValidity': this.formatDate(new Date("3/03/2016"))
-		},
-		{
-			id: 2,
-			'name':'Target2',
-			'category':'Categoria 2',
-			'startValidityDate': new Date("5/03/2016"),
-			'startValidity': this.formatDate(new Date("5/03/2016")),
-			'endValidityDate': new Date("10/04/2016"),
-			'endValidity': this.formatDate(new Date("10/04/2016"))
-		},
-		{
-			'name':'Target3',
-			'category':'Categoria 3',
-			'startValidityDate': new Date("1/03/2016"),
-			'startValidity': this.formatDate(new Date("1/03/2016")),
-			'endValidityDate': new Date("1/03/2017"),
-			'endValidity': this.formatDate(new Date("1/03/2017"))
-		},
-	]; // TODO: replace with an empty array after debug
+	
+	$scope.targets = [];
 
 	$scope.targetsActions = [
 		{
@@ -77,13 +53,14 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					}
 				}
 			}
-		},
+		} /*,
 		{
 			label: sbiModule_translate.load('sbi.generic.edit'),
 			icon: 'fa fa-pencil',
 			action: function() {}
-		}
+		} */
 	];
+	
 	$scope.kpisActions = [
 		{
 			label: sbiModule_translate.load('sbi.generic.delete'),
@@ -97,34 +74,24 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					}
 				}
 			}
-		},
+		} /*,
 		{
 			label: sbiModule_translate.load('sbi.generic.edit'),
 			icon: 'fa fa-pencil',
 			action: function() {}
-		}
+		} */
 	];
+	
 	$scope.kpi = {};
-	$scope.kpis = [
-		{
-			name:'Kpi1',
-			value: 100
-		},
-		{
-			name:'Kpi2',
-			value: 50
-		},
-		{
-			name:'Kpi3',
-			value: 25
-		}
-	]; // TODO: replace with an empty array after debug
+	
+	$scope.kpis = [];
 	
 	$scope.kpisFunctions = {
 		openShowDialog: function($event) {
 			$scope.showDialog($event);
 		}
 	};
+	
 	$scope.showDialog = function($event) {
 		var kpiIdToIdx = {};
 		for (var i = 0; i < $scope.kpis.length; i++) {
@@ -145,29 +112,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					}
 				];
 				$scope.foundKpi = {};
-				$scope.foundKpis = [
-					{
-						name: 'KPI A',
-						category: 'Categoria A',
-						date: '1/03/2016',
-						author: "John Alpha",
-						value: "3000"
-					},
-					{
-						name: 'KPI B',
-						category: 'Categoria B',
-						date: '2/03/2016',
-						author: "John Bravo",
-						value: "50%"
-					},
-					{
-						name: 'KPI C',
-						category: 'Categoria C',
-						date: '3/03/2016',
-						author: "John Charlie",
-						value: "365"
-					}
-				]; // TODO: replace with an empty array after debug
+				$scope.foundKpis = [];
 				$scope.close = function close() {
 					$mdDialog.cancel();
 				};
@@ -178,7 +123,6 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					sbiModule_restServices.get("1.0/kpi", "listKpi")
 						.success(
 							function(data, status, headers, config) {
-								//alert(JSON.stringify(data));
 								this.formatDate = function(dts) {
 									this.convertDateFormat = function(date) {
 										result = "";
@@ -237,8 +181,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		sbiModule_restServices.get("1.0/kpi", "listTarget")
 			.success(
 				function(data, status, headers, config) {
-					// $scope.targets = []; // TODO: uncomment after debug
-					// alert(JSON.stringify(data));
+					$scope.targets = [];
 					this.formatDate = function(dts) {
 						this.convertDateFormat = function(date) {
 							result = "";
@@ -276,7 +219,6 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			);
 	};
-	$scope.fetchTargets();
 	
 	$scope.cancel = function() {
 		$angularListDetail.goToList();
@@ -293,7 +235,6 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			category: null
 		}
 		for (var i = 0; i < $scope.kpis.length; i++) {
-			if (typeof $scope.kpis[i].id == 'undefined' || $scope.kpis[i].id == null) continue; // TODO: remove after debug
 			newTarget.values[newTarget.values.length] = {
 				kpiId: $scope.kpis[i].id,
 				kpiVersion: $scope.kpis[i].version,
@@ -301,7 +242,6 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				value: $scope.kpis[i].value
 			}
 		}
-		//alert(JSON.stringify(newTarget));
 		sbiModule_restServices
 			.post("1.0/kpi", "saveTarget", newTarget)
 			.success(
@@ -355,4 +295,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			);
 	}
+	
+	// =====================
+	// === FETCH TARGETS ===
+	// =====================
+	$scope.fetchTargets();
+	
 }
