@@ -19,7 +19,7 @@
 			[ 			 		               	
 			 { // Fill Form
 				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-				 icon:"fa fa-pencil",
+				 icon:"fa fa-check",
 				 color:'#222222',
 				 action : function(item) { 
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));

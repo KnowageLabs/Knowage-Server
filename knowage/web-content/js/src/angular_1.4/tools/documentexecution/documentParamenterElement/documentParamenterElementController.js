@@ -166,7 +166,11 @@
 					
 					paramDialogCtrl.save = function() {
 						angular.copy(paramDialogCtrl.tempParameter, paramDialogCtrl.initialParameterState);
-//						paramDialogCtrl.initialParameterState = paramDialogCtrl.tempParameter;
+						
+						if(paramDialogCtrl.initialParameterState.selectionType == 'TREE'){
+							documentExecuteServices.setParameterValueResult(paramDialogCtrl.initialParameterState);
+						}
+						
 						$mdDialog.hide();
 					};
 					
@@ -211,7 +215,12 @@
 			var valueData = '';
 			
 			if(parameter.parameterValue && parameter.parameterValue.length > 0) {
-				var parameterValue = parameter.parameterValue.join("','");
+				var parameterValue;
+				if(parameter.multivalue) {
+					parameterValue = parameter.parameterValue.join("','");
+				} else {
+					parameterValue = parameter.parameterValue;
+				}
 				valueData = '&SELECTEDPROPDATA=' + "'" + parameterValue + "'";
 			}
 			
@@ -257,7 +266,8 @@
 					$scope.close = function() {
 						$mdDialog.hide();
 						
-						$scope.parameter.parameterValue = $scope.selectedFeatures;
+						$scope.parameter.parameterValue = ($scope.parameter.multivalue)?
+								$scope.selectedFeatures : $scope.selectedFeatures[0] ;
 					};
 					
 					$scope.updateSelectedFeatures = function(dataToReturn) {

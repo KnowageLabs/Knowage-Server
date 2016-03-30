@@ -15,11 +15,41 @@
 					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
-			
-			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
-				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
-						ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
-			</md-whiteframe>
+			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
+					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
+				<md-chips>
+					<md-chip ng-repeat="paramVal in parameter.parameterValue">
+						{{paramVal}}
+					</md-chip>
+				</md-chips>
+			</span>
+			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
+					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
+				<md-chips><md-chip>{{parameter.parameterValue}}</md-chip></md-chips>
+			</span>
+		</section>
+	
+		<!-- lov LOOKUP single and multiple input -->
+		<section ng-if="parameter.selectionType=='LOOKUP'">
+			<div layout="row" layout-align="start">
+				<md-button class="" id="{{::parameter.urlName}}"
+						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
+					<label>{{parameter.label}}</label>
+					<i class="fa fa-external-link"></i>
+				</md-button>
+			</div>
+			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
+					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
+				<md-chips>
+					<md-chip ng-repeat="paramVal in parameter.parameterValue">
+						{{paramVal}}
+					</md-chip>
+				</md-chips>
+			</span>
+			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
+					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
+				<md-chips><md-chip>{{parameter.parameterValue}}</md-chip></md-chips>
+			</span>
 		</section>
 		
 		<!-- Tree input -->
@@ -33,10 +63,18 @@
 				</md-button>
 			</div>
 			
-			<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
-				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
-						ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
-			</md-whiteframe>
+			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
+					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
+				<md-chips>
+					<md-chip ng-repeat="paramVal in parameter.parameterValue">
+						{{paramVal.value}}
+					</md-chip>
+				</md-chips>
+			</span>
+			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
+					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
+				<md-chips><md-chip>{{parameter.parameterValue.value}}</md-chip></md-chips>
+			</span>
 		</section>
 				
 		<!-- manual number input -->
@@ -92,26 +130,10 @@
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
-	
-	
-		<!-- lov LOOKUP single and multiple input -->
-		<section ng-if="parameter.selectionType=='LOOKUP'">
-			<div layout="row" layout-align="start">
-				<md-button class="" id="{{::parameter.urlName}}"
-						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
-					<label>{{parameter.label}}</label>
-					<i class="fa fa-external-link"></i>
-				</md-button>
-			</div>
-		 	<md-whiteframe class="md-whiteframe-1dp" layout layout-align="start center">
-				<span ng-class="{'layout-padding': (parameter.parameterValue.length > 0)}"
-					ng-bind-html="documentExecuteServices.showParameterHtml(parameter)"></span>
-			</md-whiteframe>
-		</section>
 		
 		<%--
 		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
-		<md-content style="font-size:8px;">{{parameter|json}}</md-content>
+		<md-content style="font-size:8px;" ng-cloak>{{parameter|json}}</md-content>
 		--%>
 		
 	</md-input-container>

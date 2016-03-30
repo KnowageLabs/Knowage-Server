@@ -75,7 +75,7 @@
 						scope.seeTree = false;
 
 						scope.createTreeStructure = function (folders) {
-							if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =='true')) {
+							if (attrs.createTree !== undefined  && (attrs.createTree == true || attrs.createTree == 'true')) {
 								if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined) {
 									var mapFolder = {};	
 
@@ -110,7 +110,7 @@
 								folder.expanded = folder.expanded === undefined ? false : folder.expanded;
 								folder.type = folder.type === undefined ? 'folder' : folder.type;
 								folder.visible = folder.visible === undefined ? true : folder.visible;
-								folder.$parent = parent;
+//								folder.$parent = parent;
 
 								if (folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0) {
 									scope.initializeFolders(folder[subfoldersId], folder);
@@ -124,7 +124,7 @@
 									folderBiObject.type = folderBiObject.type == undefined ?  'biObject' : folderBiObject.type;
 									folderBiObject.checked = folderBiObject.checked == undefined ? false : folderBiObject.checked;
 									folderBiObject.visible = folderBiObject.visible == undefined ?  true : folderBiObject.visible;
-									folderBiObject.$parent = parent;
+//									folderBiObject.$parent = parent;
 								}
 							}
 						};
@@ -262,7 +262,7 @@
 
 			//if present a click function, use it
 			if (typeof $scope.clickFunction == 'function') {
-				$scope.clickFunction({item : item});
+				$scope.clickFunction({node : item});
 			}
 		};
 
@@ -355,16 +355,15 @@
 		
 		var watchedNgModel = function() { return $scope.ngModel;};
 		
-		var updateWatchedItem = function(newValue, oldValue) {
+		var updateWatchedItemFn = function(newValue, oldValue) {
 			if(checkIgnoreDeepObjectChange(newValue, oldValue)) {
 				return;
-				
 			} else {
 				$scope.seeTree = false;
 				
 				$scope.initializeFolders($scope.ngModel, null);
 				$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
-				$scope.folders = $scope.ngModel;
+//				$scope.folders = $scope.ngModel;
 				
 				$timeout(function() {
 					$scope.seeTree = true;
@@ -373,10 +372,10 @@
 		};
 		
 		if($scope.dynamicTree) {
-			$scope.$watch( watchedNgModel, updateWatchedItem, true);
-//			$scope.$watch( watchedNgModel, updateWatchedItem);
+			$scope.$watch( watchedNgModel, updateWatchedItemFn, true);
+//			$scope.$watch( watchedNgModel, updateWatchedItemFn);
 		} else {
-			$scope.$watchCollection( watchedNgModel, updateWatchedItem, true);
+			$scope.$watchCollection( watchedNgModel, updateWatchedItemFn, true);
 		}
 		
 		$scope.resetVisible = function(element) {

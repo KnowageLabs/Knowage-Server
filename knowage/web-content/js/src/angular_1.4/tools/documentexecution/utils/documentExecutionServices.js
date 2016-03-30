@@ -43,21 +43,25 @@
 						var descriptionKey = parameter.urlName + "_field_visible_description";					
 						var jsonDatumValue = null;
 						var jsonDatumDesc = null;
+						
 						if(parameter.valueSelection.toLowerCase() == 'lov') {
 							//TREE MODIFY (see with benedetto)
 							if(parameter.selectionType.toLowerCase() == 'tree'){
-								var paramArrayTree=[];
-								var paramStrTree ="";
-								for(var z=0; z<parameter.parameterValue.length; z++){
-									paramArrayTree[z]=parameter.parameterValue[z].value;
-									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
-									if(z<parameter.parameterValue.length-1){
-										paramStrTree = paramStrTree +";";
+								var paramArrayTree = [];
+								var paramStrTree = "";
+								
+								for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+									if(z > 0) {
+										paramStrTree += ";";
 									}
+									
+									paramArrayTree[z] = parameter.parameterValue[z].value;
+									paramStrTree += parameter.parameterValue[z].value;
 								}
+								
 								jsonDatumValue = paramArrayTree;
 								jsonDatumDesc=paramStrTree;
-							}else{
+							} else {
 								parameter.parameterValue = parameter.parameterValue || [];
 								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
 									parameter.parameterValue = parameter.parameterValue || [];
@@ -79,8 +83,6 @@
 				}			
 				return jsonDatum;
 			},
-			
-						
 			
 			buildStringParametersForSave : function (documentParameters) {
 				//console.log('buildStringParameters ' , documentParameters);
@@ -200,8 +202,9 @@
 					parameter.parameterValue = '';
 				}
 			},
-			
-			showParameterHtml: function(parameter) {	
+						
+//			showParameterHtml: function(parameter) {	
+			setParameterValueResult: function(parameter) {	
 				if(parameter.selectionType.toLowerCase() == 'tree') {
 					if(parameter.multivalue) {
 						
@@ -238,6 +241,7 @@
 				}
 			}
 		};
+		
 		return documentExecuteServicesObj;
 	});
 	
@@ -299,10 +303,7 @@
 					if(data['sbiExecutionId'] && data['sbiExecutionId'].length>0){
 						execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId'];
 						console.log('sbiExecutionId ... ' + data['sbiExecutionId']);
-					}
-					
-					
-					
+					}					
 				}).error(function(data, status, headers, config) {
 					console.log("TargetLayer non Ottenuto " + status);
 				});
@@ -643,18 +644,3 @@
 	
 	
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
