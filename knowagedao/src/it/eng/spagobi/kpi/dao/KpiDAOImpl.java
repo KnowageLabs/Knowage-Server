@@ -1358,4 +1358,64 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	public void removeScorecard(Integer id) {
 		delete(SbiKpiScorecard.class, id);
 	}
+
+	@Override
+	public List<ScorecardPerspective> listScorecardPerspective() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ScorecardPerspective loadScorecardPerspective(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer insertScorecardPerspective(ScorecardPerspective scorecardPerspective) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateScorecardPerspective(ScorecardPerspective scorecardPerspective) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeScorecardPerspective(Integer id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<ScorecardTarget> listScorecardTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ScorecardTarget loadScorecardTarget(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer insertScorecardTarget(ScorecardTarget scorecardTarget) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateScorecardTarget(ScorecardTarget scorecardTarget) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeScorecardTarget(Integer id) {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -33,6 +33,8 @@ import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Scorecard;
+import it.eng.spagobi.kpi.bo.ScorecardPerspective;
+import it.eng.spagobi.kpi.bo.ScorecardTarget;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -566,6 +568,126 @@ public class KpiService {
 	public Response deleteScorecard(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		dao.removeScorecard(id);
+		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/listScorecardPerspective")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listScorecardPerspective(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<ScorecardPerspective> scorecardsPerspective = dao.listScorecardPerspective();
+		return Response.ok(JsonConverter.objectToJson(scorecardsPerspective, scorecardsPerspective.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadScorecardPerspective")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response loadScorecardPerspective(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		ScorecardPerspective scorecardPerspective = dao.loadScorecardPerspective(id);
+		return Response.ok(JsonConverter.objectToJson(scorecardPerspective, scorecardPerspective.getClass())).build();
+	}
+
+	@POST
+	@Path("/saveScorecardPerspective")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response saveScorecardPerspective(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			ScorecardPerspective scorecardPerspective = (ScorecardPerspective) JsonConverter.jsonToObject(requestVal, ScorecardPerspective.class);
+			check(scorecardPerspective);
+			IKpiDAO dao = getKpiDAO(req);
+			Integer id = scorecardPerspective.getId();
+			if (id == null) {
+				id = dao.insertScorecardPerspective(scorecardPerspective);
+			} else {
+				dao.updateScorecardPerspective(scorecardPerspective);
+			}
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (IOException | JSONException | SpagoBIException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		try {
+			return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
+		} catch (JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
+	private void check(ScorecardPerspective scorecardPerspective) throws SpagoBIException {
+		if (scorecardPerspective.getName() == null) {
+			throw new SpagoBIException("Service [/saveScorecardPerspective]: Some fields are mandatory");
+		}
+	}
+
+	@DELETE
+	@Path("/{id}/deleteScorecardPerspective")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response deleteScorecardPerspective(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeScorecardPerspective(id);
+		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/listScorecardTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listScorecardTarget(@Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		List<ScorecardTarget> scorecardsTarget = dao.listScorecardTarget();
+		return Response.ok(JsonConverter.objectToJson(scorecardsTarget, scorecardsTarget.getClass())).build();
+	}
+
+	@GET
+	@Path("/{id}/loadScorecardTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response loadScorecardTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		ScorecardTarget scorecardTarget = dao.loadScorecardTarget(id);
+		return Response.ok(JsonConverter.objectToJson(scorecardTarget, scorecardTarget.getClass())).build();
+	}
+
+	@POST
+	@Path("/saveScorecardTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response saveScorecardTarget(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			ScorecardTarget scorecardTarget = (ScorecardTarget) JsonConverter.jsonToObject(requestVal, ScorecardTarget.class);
+			check(scorecardTarget);
+			IKpiDAO dao = getKpiDAO(req);
+			Integer id = scorecardTarget.getId();
+			if (id == null) {
+				id = dao.insertScorecardTarget(scorecardTarget);
+			} else {
+				dao.updateScorecardTarget(scorecardTarget);
+			}
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (IOException | JSONException | SpagoBIException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		try {
+			return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
+		} catch (JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
+	private void check(ScorecardTarget scorecardTarget) throws SpagoBIException {
+		if (scorecardTarget.getName() == null) {
+			throw new SpagoBIException("Service [/saveScorecardTarget]: Some fields are mandatory");
+		}
+	}
+
+	@DELETE
+	@Path("/{id}/deleteScorecardTarget")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response deleteScorecardTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		dao.removeScorecardTarget(id);
 		return Response.ok().build();
 	}
 
