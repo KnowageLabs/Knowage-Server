@@ -97,13 +97,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 				</div> -->
 <!-- 			</div> -->
 <!-- 			</md-toolbar> -->
-			<md-content flex>
-			 <md-tabs
+			
+			 <md-tabs  class="mozScroll hideTabs h100"
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
-			<md-content overflow:hidden"
-				class="md-padding ToolbarBox noBorder">
-
+			<md-content 
+				class=" ToolbarBox miniToolbar noBorder mozTable ">
+            <md-card>
 			<div layout="row" layout-wrap>
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.userId")}}</label>
@@ -160,10 +160,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-input-container>
 				</div>
 			</div>
-			
-			</md-content> </md-tab> <md-tab label='{{translate.load("sbi.users.roles");}}'> <md-content
+			</md-card>
+			</md-content> 
+			</md-tab> 
+			<md-tab label='{{translate.load("sbi.users.roles");}}'> 
+			<md-content
 				flex style="margin-left:20px; overflow:hidden;"
 				class="md-padding ToolbarBox noBorder">
+				<md-card>
 				 <md-input-container class="small counter" >
 				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="role.length== 0">
 					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
@@ -179,11 +183,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				selected-item="role" highlights-selected-item=true
 				multi-select="true">
 				 </angular-table>
-				 </md-content> </md-tab> <md-tab
-				label='{{translate.load("sbi.users.attributes");}}'> <md-content
+				 </md-card>
+				 </md-content> 
+				 </md-tab> 
+				 <md-tab
+				label='{{translate.load("sbi.users.attributes");}}'> 
+				<md-content
 				flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">
-
+                <md-card>
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{attribute.name}}</label>
@@ -193,8 +201,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 			</div>
-
-			</md-content> </md-tab> </md-tabs> </md-content>
+           </md-card>
+			</md-content> </md-tab> </md-tabs> 
 		
 	</form>
 	</div>
