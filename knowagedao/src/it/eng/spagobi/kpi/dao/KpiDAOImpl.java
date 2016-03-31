@@ -532,7 +532,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -823,7 +823,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1336,7 +1336,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		List<SbiKpiScorecard> lst = list(new ICriterion<SbiKpiScorecard>() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiScorecard.class).addOrder(Order.desc("startValidity"));
+				return session.createCriteria(SbiKpiScorecard.class);
 			}
 		});
 		List<Scorecard> scorecardList = new ArrayList<>();
@@ -1357,15 +1357,133 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Integer insertScorecard(Scorecard scorecard) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer insertScorecard(final Scorecard scorecard) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				SbiKpiScorecard sbiScorecard = from(scorecard, null);
+				updateSbiCommonInfo4Insert(sbiScorecard);
+				Integer id = (Integer) session.save(sbiScorecard);
+				saveScorecard(scorecard, session, sbiScorecard);
+				return id;
+			}
+		});
+	}
+
+	private void saveScorecard(Scorecard scorecard, Session session, SbiKpiScorecard sbiScorecard) {
+		// Perspective
+		for (ScorecardPerspective scorecardPerspective : scorecard.getPerspectives()) {
+			SbiKpiScorecard sbiPerspective = from(scorecardPerspective, sbiScorecard, session);
+			sbiScorecard.getSubviews().add(sbiPerspective);
+			// ScorecardTarget
+			sbiPerspective.getSubviews().clear();
+			for (ScorecardTarget scorecardTarget : scorecardPerspective.getTargets()) {
+				SbiKpiScorecard sbiScorecardTarget = from(scorecardTarget, sbiPerspective, session);
+				sbiPerspective.getSubviews().add(sbiScorecardTarget);
+				// KPI
+				sbiScorecardTarget.getSbiKpiKpis().clear();
+				for (Kpi kpi : scorecardTarget.getKpis()) {
+					SbiKpiKpi oldKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(kpi.getId(), kpi.getVersion()));
+					SbiKpiKpi sbiKpiKpi;
+					try {
+						sbiKpiKpi = from(session, oldKpi, kpi);
+						sbiScorecardTarget.getSbiKpiKpis().add(sbiKpiKpi);
+					} catch (JSONException e) {
+						throw new SpagoBIDOAException(e);
+					}
+					// session.save(sbiKpiKpi);
+				}
+				session.save(sbiScorecardTarget);
+			}
+			session.save(sbiPerspective);
+		}
+	}
+
+	private SbiKpiScorecard from(ScorecardSubview scorecardSubview, SbiKpiScorecard sbiScorecardView, Session session) {
+		SbiKpiScorecard sbiKpiScorecard = null;
+		if (sbiScorecardView.getId() != null) {
+			sbiKpiScorecard = new SbiKpiScorecard();
+			sbiKpiScorecard.setParentId(sbiScorecardView.getId());
+			sbiKpiScorecard.setName(scorecardSubview.getName());
+		}
+		updateSbiCommonInfo4Insert(sbiKpiScorecard);
+		return sbiKpiScorecard;
+	}
+
+	private SbiKpiScorecard from(Scorecard scorecard, SbiKpiScorecard sbiScorecard) {
+		if (sbiScorecard == null) {
+			sbiScorecard = new SbiKpiScorecard();
+		}
+		sbiScorecard.setName(scorecard.getName());
+		return sbiScorecard;
 	}
 
 	@Override
-	public void updateScorecard(Scorecard scorecard) {
-		// TODO Auto-generated method stub
+	public void updateScorecard(final Scorecard scorecard) {
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+			@Override
+			public Boolean execute(Session session) throws Exception {
+				SbiKpiScorecard sbiScorecard = (SbiKpiScorecard) session.load(SbiKpiScorecard.class, scorecard.getId());
+				sbiScorecard = from(scorecard, sbiScorecard);
+				updateSbiCommonInfo4Update(sbiScorecard);
+				session.save(sbiScorecard);
+				// Removing old values
+				Iterator<SbiKpiScorecard> scorecardPerspectiveIterator = sbiScorecard.getSubviews().iterator();
+				while (scorecardPerspectiveIterator.hasNext()) {
+					SbiKpiScorecard sbiKpiScorecardPerspective = scorecardPerspectiveIterator.next();
+					boolean found = false;
+					ScorecardPerspective perspective = null;
+					for (ScorecardPerspective scorecardPerspective : scorecard.getPerspectives()) {
+						if (sbiKpiScorecardPerspective.getId().equals(scorecardPerspective.getId())) {
+							found = true;
+							perspective = scorecardPerspective;
+							break;
+						}
+					}
+					if (!found) {
+						scorecardPerspectiveIterator.remove();
+					} else {
+						// Target
+						Iterator<SbiKpiScorecard> scorecardPerspectiveTargetIterator = sbiKpiScorecardPerspective.getSubviews().iterator();
+						while (scorecardPerspectiveTargetIterator.hasNext()) {
+							SbiKpiScorecard sbiKpiScorecardTarget = scorecardPerspectiveTargetIterator.next();
+							boolean foundScorecardTarget = false;
+							ScorecardTarget target = null;
+							for (ScorecardTarget scorecardTarget : perspective.getTargets()) {
+								if (sbiKpiScorecardTarget.getId().equals(scorecardTarget.getId())) {
+									foundScorecardTarget = true;
+									target = scorecardTarget;
+									break;
+								}
+							}
+							if (!foundScorecardTarget) {
+								scorecardPerspectiveTargetIterator.remove();
+							} else {
+								// KPI
+								Iterator<SbiKpiKpi> scorecardPerspectiveTargetKpiIterator = sbiKpiScorecardTarget.getSbiKpiKpis().iterator();
+								while (scorecardPerspectiveTargetKpiIterator.hasNext()) {
+									SbiKpiKpi sbiKpiKpi = scorecardPerspectiveTargetKpiIterator.next();
+									boolean foundKpi = false;
+									for (Kpi kpi : target.getKpis()) {
+										if (sbiKpiKpi.getSbiKpiKpiId().equals(kpi.getId())) {
+											foundKpi = true;
+											break;
+										}
+									}
+									if (!foundKpi) {
+										scorecardPerspectiveTargetKpiIterator.remove();
+									}
+								}
+							}
+						}
+					}
+				}
+				// Adding new values
+				saveScorecard(scorecard, session, sbiScorecard);
+				return Boolean.TRUE;
+			}
 
+		});
 	}
 
 	@Override
