@@ -52,6 +52,9 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.services.rest.SchedulerService;
+import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -104,6 +107,8 @@ public class KpiService {
 	private static final String NEW_KPI_CARDINALITY_ERROR = "newKpi.cardinality.error";
 	private static final String NEW_KPI_KPI_NAME_NOT_AVAILABLE = "newKpi.kpiNameNotAvailable";
 
+	private static final String JOB_GROUP = "KPI_SCHEDULER_GROUP";
+
 	private static Logger logger = Logger.getLogger(KpiService.class);
 
 	private static final String MEASURE = "MEASURE";
@@ -141,18 +146,22 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	@GET
+	@POST
 	@Path("/listPlaceholderByKpi")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listPlaceholderByKpi(@QueryParam("kpiId") Integer kpiId, @QueryParam("kpiVersion") Integer kpiVersion, @Context HttpServletRequest req)
-			throws EMFUserError {
-		IKpiDAO dao = getKpiDAO(req);
-		if (kpiId != null && kpiVersion != null) {
-			List<String> lst = dao.listPlaceholderByKpi(kpiId, kpiVersion);
-			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
-		} else {
-			return Response.ok().build();
+	public Response listPlaceholderByKpi(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String arrayOfMeasures = RestUtilities.readBody(req);
+			List<String> kpiNames = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			IKpiDAO dao = getKpiDAO(req);
+			if (kpiNames != null && !kpiNames.isEmpty()) {
+				List<String> lst = dao.listPlaceholderByKpiList(kpiNames);
+				return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
+			}
+		} catch (IOException e) {
+			logger.error(req.getPathInfo(), e);
 		}
+		return Response.ok().build();
 	}
 
 	@GET
@@ -522,6 +531,10 @@ public class KpiService {
 	public Response loadSchedulerKPI(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		KpiScheduler t = dao.loadKpiScheduler(id);
+		// loading trigger
+		TriggerInfo triggerInfo = SchedulerService.getTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
+		Trigger trigger = new Trigger();
+		// trigger.setStartTime(triggerInfo.getStartTime());
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 	}
 
