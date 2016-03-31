@@ -473,13 +473,13 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	                           {"label":$scope.translate.load("sbi.kpi.measureName"),"name":"alias"},
 	                           {"label":$scope.translate.load("sbi.kpi.rulesName"),"name":"rule"},
 	                           {"label":$scope.translate.load("sbi.generic.category"),"name":"categoryName"},                           
+//	                           {"label":$scope.translate.load("sbi.generic.category"),"name":"category.translatedValueName"},                           
 	                          {"label":$scope.translate.load("sbi.generic.author"),"name":"author"},
 	                           ];
 	
 	$scope.loadmeasureRuleList=function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listMeasure")
 		.then(function(response){
-			
 			for(var i=0;i<response.data.length;i++){
 				if(response.data[i].category!=null){
 					response.data[i].categoryName=response.data[i].category.translatedValueName;

@@ -5,7 +5,7 @@
 
 		<md-input-container class="md-block"> 
 			<label>Criterio di Valutazione</label> 
-				<md-select ng-model="currentPerspective.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
+				<md-select ng-model="currentTarget.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
 				<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
 			</md-select> 
 		</md-input-container>
@@ -17,20 +17,52 @@
 					<span>Elenco KPI</span>
 				</h2>
 				<span flex></span>
-				<md-button class="md-raised" ng-click="saveTarget()" aria-label="Salva Target">
+				<md-button class="md-raised" ng-click="addKpiToTarget();" aria-label="load kpi">
 					Salva
 				</md-button>
 			</div>
 		</md-toolbar>
 		
-<!-- 		 	<angular-table id='targetList' ng-model=kpisList -->
-<!-- 				columns='[  {"label":"Name","name":"Nome"}, {"label":"category","name":"Categoria"}]' -->
-<!-- 			 	 show-search-bar=true -->
-<!-- 			 	 speed-menu-option=measureMenuOption -->
-<!-- 				 click-function="measureClickFunction(item);" >  -->
-<!-- 			</angular-table> -->
+		 	<angular-table 
+		 		id='targetList' 
+		 		ng-model=currentTarget.kpis
+				columns='[  {"label":"Name","name":"name"}, {"label":"category","name":"category.translatedValueName"}]'
+			 	 show-search-bar=true
+				  > 
+			</angular-table>
 
 
 
 
 		</md-content>
+		
+<script type="text/ng-template" id="templatesaveKPI.html">
+<md-dialog aria-label="Select Function"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Save new KPI</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-click="saveKpiToTarget()">
+          	Save
+        </md-button>
+		<md-button class="md-primary" ng-click="close()">
+			Close    
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content >
+     <div class="md-dialog-content">
+		<angular-table class="cssTable"
+		id='targetListTable' ng-model=kpiAllList
+		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
+		columns-search='["name"]' show-search-bar=true
+		multi-select= true selected-item=kpiSelected comparison-column="'id'"
+		scope-functions=tableFunction 
+		> </angular-table>
+		</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>
+</script>

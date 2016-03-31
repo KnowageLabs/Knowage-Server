@@ -109,6 +109,13 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	$scope.cancel = function(){
 		$angularListDetail.goToList();
 	}
+
+	$scope.tableColumn=[
+	                    {label:"Name",name:"name"},
+	                    {label:"KPI",name:"kpiName"},
+	                    {label:"Start Date",name:"startDate"},
+	                    {label:"End Date",name:"endDate",comparatorFunction:function(a,b){return 1}},
+	                    {label:"Author",name:"author"}]
 }
 
 

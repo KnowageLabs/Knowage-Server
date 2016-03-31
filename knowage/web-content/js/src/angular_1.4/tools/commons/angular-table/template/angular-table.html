@@ -61,13 +61,13 @@
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow">
 
-<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)" ng-dblclick="startEdit(row,column,row[column.name],$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
-		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="row[column.name]"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
-		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,row[column.name],$event)" autofocus />
+<td ng-repeat="column in tableColumns" ng-click="clickItem(row,getColumnValue(row,column.name),$event)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="getColumnValue(row,column.name)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
+		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		
 		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>
 
-		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,row[column.name],$event)" aria-label="selected item checked"> </md-checkbox>
+		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,getColumnValue(row,column.name),$event)" aria-label="selected item checked"> </md-checkbox>
 		
 		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length<=3" ng-repeat="menuItem in speedMenuOption"  ng-click='$event.stopPropagation();menuItem.action(row,$event);' class="md-icon-button actionButton" aria-label="More" 
 		action-background-color={{menuItem.backgroundColor}}>
@@ -91,7 +91,7 @@
 
 		<div class="dropdown_menu_list " style="z-index: 999; " id='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' )>
 			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined && column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'"> 
-				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(row,row[column.name],$event);$event.stopPropagation();' tabindex='{{$index}}' >
+				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(row,getColumnValue(row,column.name),$event);$event.stopPropagation();' tabindex='{{$index}}' >
 					<p >{{menuItem.label}}</p>
 				</md-list-item>
 			</md-list>

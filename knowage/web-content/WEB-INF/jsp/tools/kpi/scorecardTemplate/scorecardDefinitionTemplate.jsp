@@ -27,24 +27,7 @@
 		    		
 		    			<b layout-padding class="lh30">KPI</b>
 		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in prespective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
-<!-- 		    			<span flex ng-repeat="groupedKpi in prespective.groupedKpis"> -->
-<!-- 		    				<span  ng-if="groupedKpi.status=='RED'" class="fa-stack"> -->
-<!-- 		    					<i class="fa fa-square-o fa-stack-1x scorecardSemaphoreBackIcon"></i> -->
-<!-- 		    					<i class="fa fa-square fa-stack-1x scorecardSemaphoreFrontIcon" style="color : {{groupedKpi.status}}"></i> -->
-<!-- 		    				</span> -->
-		    				
-<!-- 		    				<span  ng-if="groupedKpi.status=='YELLOW'" class="fa-stack fa-rotate-45"> -->
-<!-- 		    					<i class="fa fa-square-o fa-stack-1x  scorecardSemaphoreBackIcon"></i> -->
-<!-- 		    					<i class="fa fa-square fa-stack-1x  scorecardSemaphoreFrontIcon" style="color : {{groupedKpi.status}}"></i> -->
-<!-- 		    				</span> -->
-		    				
-<!-- 		    				<span  ng-if="groupedKpi.status=='GREEN'" class="fa-stack"> -->
-<!-- 		    					<i class="fa fa-circle-o fa-stack-1x scorecardSemaphoreBackIcon"></i> -->
-<!-- 		    					<i class="fa fa-circle fa-stack-1x scorecardSemaphoreFrontIcon" style="color : {{groupedKpi.status}}"></i> -->
-<!-- 		    				</span> -->
-<!-- 		    				<span>{{groupedKpi.count}}</span> -->
-<!-- 		    			</span> -->
-		    		
+
 		    	</md-content>
 			</md-whiteframe> 
 			

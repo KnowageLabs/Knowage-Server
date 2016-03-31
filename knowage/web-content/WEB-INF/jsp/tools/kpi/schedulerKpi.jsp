@@ -100,10 +100,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="translate.load('sbi.kpi.list')"  ng-controller="listSchedulerController" new-function="addScheduler" >
 		<angular-table flex
 		id='targetListTable' ng-model=engines
-		columns='[{"label":"Name","name":"name"},{"label":"KPI","name":"kpiNames"},{"label":"Start Date","name":"startDate"},{"label":"End Date","name":"endDate"},{"label":"Author","name":"author"}]'
+		columns='tableColumn'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions=tableFunction 
-		click-function="loadEngine(item);"> </angular-table>
+		click-function="loadEngine(item);"
+		initial-sorting="'name'"> </angular-table>
 		</list>
 		<detail cancel-function="cancel">
 		

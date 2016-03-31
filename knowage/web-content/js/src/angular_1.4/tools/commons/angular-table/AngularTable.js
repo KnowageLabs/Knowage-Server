@@ -542,7 +542,6 @@ $scope.loadTheadColumn=function(width){
 
 function TableBodyControllerFunction($scope) {
 	
-	
     $scope.clickItem = function (row, cell, evt) {
         if ($scope.multiSelect) {
             $scope.toggleMultiSelect(row, evt);
@@ -699,4 +698,22 @@ function TableHeaderControllerFunction($scope, $timeout) {
             });
         }
     };
+    
+    $scope.getColumnValue=function(row,columnName){
+    	
+    	var splname=columnName.split(".");
+    	
+    	if(splname.length>1){
+    		var tmpVal=row[splname[0]];
+    		for(var i=1;i<splname.length;i++){
+    			if(tmpVal!=null && tmpVal!=undefined){
+    				 tmpVal=tmpVal[splname[i]]
+    			}else{return "";}
+    			
+    		}
+    		return tmpVal;
+    	}else{
+    		return row[columnName];
+    	}
+    }
 }
