@@ -116,10 +116,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div>
 							<label>{{translate.load("sbi.target.startvalidity")}}</label>
 							<md-datepicker ng-model="target.startValidityDate" name="Select Data"
-								ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+								ng-change="parseDate()" md-placeholder={{translate.load("sbi.target.selectdate");}} ></md-datepicker>
 							<label>{{translate.load("sbi.target.endvalidity")}}</label>
 							<md-datepicker ng-model="target.endValidityDate" name="Select Data"
-								ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+								ng-change="parseDate()" md-placeholder={{translate.load("sbi.target.selectdate");}} ></md-datepicker>
 						</div>
 					</div>
 				</md-whiteframe>
