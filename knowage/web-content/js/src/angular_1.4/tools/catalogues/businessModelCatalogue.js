@@ -2,8 +2,11 @@
  * 
  */
 
-var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload']);
-
+var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging",businessModelCatalogueFunction]);
 
 function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging){
@@ -51,6 +54,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.isNew = true;
 		$scope.showMe = true;
 		$scope.fileClicked = false;
+		
+		$scope.isDirty=false;
 	}
 	
 	
@@ -111,8 +116,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 $scope.bmSpeedMenu= [
 		                      {
 		                    	  label:sbiModule_translate.load("sbi.generic.delete"),
-		                    	  icon:'fa fa-trash-o fa-lg',
-		                    	  color:'#153E7E',
+		                    	  icon:'fa fa-trash',
+		                    	  //icon:'fa fa-trash-o fa-lg',
+		                    	  //color:'#153E7E',
 		                    	  action:function(item,event){
 		                    		  $scope.deleteItem(item,event);
 		                    	  }
@@ -123,7 +129,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       {
 	                    	   label:sbiModule_translate.load("sbi.generic.download"),
 		                       icon:'fa fa-download',
-		                       color:'#153E7E',
+		                       //color:'#153E7E',
 		                       action:function(item,event){
 		                    	   $scope.downloadFile(item,event);
 		                       }
@@ -131,8 +137,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       
 	                       {
 	                    	   label:sbiModule_translate.load("sbi.generic.delete"),
-	                    	   icon:'fa fa-trash-o fa-lg',
-	                    	   color:'#153E7E',
+	                    	   icon:'fa fa-trash',
+	                    	   //icon:'fa fa-trash-o fa-lg',
+	                    	   //color:'#153E7E',
 	                    	   action:function(item,event){
 		                    		  $scope.deleteItemVersion(item,event);
 		                       }
@@ -453,7 +460,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			else{
 				$scope.isDirty = true;
 			}
-
+			$scope.isDirty = true;
 		}
 		
 		//get item by id

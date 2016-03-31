@@ -37,9 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
+<!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
 
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+<!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css"> -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
@@ -62,37 +63,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Insert title here</title>
 </head>
 <body  class="bodyStyle" ng-controller="businessModelCatalogueController as ctrl">
-	<angular_2_col>
-		<left-col>
-			<div class="leftBox">
-				<md-toolbar class="header">
-					<div class="md-toolbar-tools">
-						<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
+	<angular-list-detail show-detail="showMe">
+		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
+			
+<!-- 				<md-toolbar class="header"> -->
+<!-- 					<div class="md-toolbar-tools"> -->
+<!-- 						<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div> -->
 						
-						<!--<md-button 
-    						ng-disabled=false
-    						class="md-fab md-ExtraMini"
-    						style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-    						ng-click="deleteBusinessModels()"> 
+<!-- 						<md-button  -->
+<!--     						ng-disabled=false -->
+<!--     						class="md-fab md-ExtraMini" -->
+<!--     						style="position:absolute; right:26px; top:0px; background-color:#E91E63" -->
+<!--     						ng-click="deleteBusinessModels()">  -->
     						
-    						<md-icon
-        						md-font-icon="fa fa-trash" 
-        						style=" margin-top: 6px ; color: white;" >
-       						</md-icon> 
-						</md-button>-->
+<!--     						<md-icon -->
+<!--         						md-font-icon="fa fa-trash"  -->
+<!--         						style=" margin-top: 6px ; color: white;" > -->
+<!--        						</md-icon>  -->
+<!-- 						</md-button> -->
 						
-						<md-button 
-							class="md-fab md-ExtraMini addButton"
-							style="position:absolute; right:11px; top:0px;"
-							ng-click="createBusinessModel()"
-							aria-label="create">
-							<md-icon
-								md-font-icon="fa fa-plus" 
-								style=" margin-top: 6px ; color: white;">
-							</md-icon> 
-						</md-button>
-					</div>
-				</md-toolbar>
+<!-- 						<md-button  -->
+<!-- 							class="md-fab md-ExtraMini addButton" -->
+<!-- 							style="position:absolute; right:11px; top:0px;" -->
+<!-- 							ng-click="createBusinessModel()" -->
+<!-- 							aria-label="create"> -->
+<!-- 							<md-icon -->
+<!-- 								md-font-icon="fa fa-plus"  -->
+<!-- 								style=" margin-top: 6px ; color: white;"> -->
+<!-- 							</md-icon>  -->
+<!-- 						</md-button> -->
+<!-- 					</div> -->
+<!-- 				</md-toolbar> -->
 				<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmLoadingShow">
      				<md-progress-circular 
         	 			class=" md-hue-4"
@@ -100,11 +101,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         				md-diameter="70"       
         				style="height:100%;">
       				</md-progress-circular>
-      			</div>
-				<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
+      			</div> 
+				
 
 					<angular-table 
-						layout-fill
+						
 						id="businessModelList_id"
 						ng-show="!bmLoadingShow"
 						ng-model="businessModelList"
@@ -119,44 +120,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</angular-table>
 
 
-				</md-content>
-			</div>
-		</left-col>
+				
 		
-		<right-col>
-			<div ng-show = "showMe" style="overflow:hidden">
-				<form layout-fill class="detailBody md-whiteframe-z1">
-					<md-toolbar class="header">
-						<div class="md-toolbar-tools h100">
-							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
-								<div style="position: absolute; right: 0px" class="h100">
+		</list>
+		
+		<detail label='selectedBusinessModel.name==undefined? "" : selectedBusinessModel.name'  save-function="saveBusinessModel"
+		cancel-function="cancel"
+		disable-save-button="!isDirty"
+		show-save-button="showMe" show-cancel-button="showMe">
+
+			
+				<form  class="detailBody md-whiteframe-z1">
+					<div layout-fill class="containerDiv">
+<!-- 					<md-toolbar class="header">
+<!-- 						<div class="md-toolbar-tools h100"> -->
+<!-- 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div> -->
+<!-- 								<div style="position: absolute; right: 0px" class="h100"> -->
 									
-								<md-button id="cancel" type="button"
-								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-								style=" margin-top: 2px;"
-								ng-click="cancel()">
-								{{translate.load("sbi.generic.cancel");}} 
-								</md-button>
+<!-- 								<md-button id="cancel" type="button" -->
+<!-- 								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
+<!-- 								style=" margin-top: 2px;" -->
+<!-- 								ng-click="cancel()"> -->
+<!-- 								{{translate.load("sbi.generic.cancel");}}  -->
+<!-- 								</md-button> -->
 									
-									<md-button  type="submit" ng-disabled="!isDirty"
-										aria-label="save layer" class="md-raised md-ExtraMini "
-										style=" margin-top: 2px;" ng-click="saveBusinessModel()"
-									>
-										{{translate.load("sbi.browser.defaultRole.save");}} 
-									</md-button>
+<!-- 									<md-button  type="submit" ng-disabled="!isDirty" -->
+<!-- 										aria-label="save layer" class="md-raised md-ExtraMini " -->
+<!-- 										style=" margin-top: 2px;" ng-click="saveBusinessModel()" -->
+<!-- 									> -->
+<!-- 										{{translate.load("sbi.browser.defaultRole.save");}}  -->
+<!-- 									</md-button> -->
 									
-									<!-- <md-button  type="submit" ng-disabled="!isDirty"
-										aria-label="save layer" class="md-raised md-ExtraMini "
-										style=" margin-top: 2px;" ng-click="saveBusinessModelFile()"
-									>
-										test
-									</md-button> -->
+<!-- 									<md-button  type="submit" ng-disabled="!isDirty" -->
+<!-- 										aria-label="save layer" class="md-raised md-ExtraMini " -->
+<!-- 										style=" margin-top: 2px;" ng-click="saveBusinessModelFile()" -->
+<!-- 									> -->
+<!-- 										test -->
+<!-- 									</md-button> -->
 									
-								</div>
-						</div>
-					</md-toolbar>
+<!-- 								</div> -->
+<!-- 						</div> -->
+<!-- 					</md-toolbar> -->
 					
-					<md-content flex style="margin-left:20px;margin-right:20px;overflow:hidden" class="ToolbarBox miniToolbar noBorder" >
+					<md-content flex class="ToolbarBox miniToolbar noBorder" >
 					
 						<div layout="row" layout-wrap>
       						<div flex=100>
@@ -297,7 +303,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       						</div>
      					</div> -->
      					 
-     					<div style="height:55%; padding-top:20px;">     						
+     					<div style="height:50%; padding-top:20px;">     						
      						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"
      						class="ToolbarBox miniToolbar noBorder leftListbox"  >
 			
@@ -326,8 +332,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      							<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
      							<angular-table
      								ng-show="!versionLoadingShow"
-	     							style="background-color:red" 
-									layout-fill
+	     							
+									
 									id="bmVersions_id"
 									ng-model="bmVersions"
 									columns='[
@@ -351,9 +357,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      					</div>
      					
 					</md-content>
+				 </div>	
 				</form>
-			</div>
-		</right-col>
-	</angular_2_col>
+			
+		</detail>
+	</angular-list-detail>
 </body>
 </html>
