@@ -41,6 +41,16 @@
             <column name="HIERARCHY_ID"  />
         </many-to-one>
         
+        <set name="sbiKpiKpis" table="SBI_KPI_KPI_RULE_OUTPUT" cascade="save-update" lazy="true">
+			<key >
+				<column name="RULE_OUTPUT_ID"/>
+			</key>
+			<many-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiKpi">
+				<column name="KPI_VERSION" />
+				<column name="KPI_ID" />
+			</many-to-many>
+		</set> 
+        
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />
