@@ -13,8 +13,9 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.emptyScorecard={name:"",perspectives:[]};
 	$scope.emptyPerspective={name:"",criterion:{},status:"",groupedKpis:[],targets:[]};
 	$scope.emptyTarget={name:"",criterion:{},status:"",groupedKpis:[],kpis:[]};
-	$scope.currentScorecard={};
-	$scope.currentPerspective ={};
+	$scope.currentScorecard= {};
+	$scope.currentPerspective = {};
+	$scope.currentTarget = {};
 }
 
 function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout){
@@ -36,4 +37,12 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.stepItem=[{name:'scorecard definition'}];
 	$scope.selectedStep=0;
 	$scope.stepControl; 
+	$scope.criterionTypeList = [];
+	
+	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_SCORECARD_CRITE")
+	.then(function(response){ 
+		angular.copy(response.data,$scope.criterionTypeList); 
+	},function(response){
+		sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->KPI_SCORECARD_CRITE"); 
+	});
 }

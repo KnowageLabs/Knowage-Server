@@ -3,7 +3,7 @@ angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionCon
 function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	$scope.addTarget=function(){ 
 		$scope.stepControl.insertBread({name: 'definizione obiettivo'});
+		angular.copy($scope.emptyTarget,$scope.currentTarget);
 	};
-	$scope.criterionTypeList = ['aa','bb'];
-	
 }
+

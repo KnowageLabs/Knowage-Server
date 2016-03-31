@@ -6,8 +6,8 @@
 
 		<md-input-container class="md-block"> 
 			<label>Criterio	di Valutazione</label> 
-				<md-select ng-model="currentPerspective.criterion"> 
-				<md-option	ng-repeat="crit in criterionTypeList" value="{{sublist.abb}}">	{{sublist.abb}} </md-option> 
+				<md-select ng-model="currentPerspective.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
+				<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
 			</md-select> 
 		</md-input-container>
 

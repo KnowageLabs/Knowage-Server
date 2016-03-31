@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<%@include	file="./scorecardTemplate/scorecardPerspectiveDefinitionTemplate.jsp"%>
 			</div>
 			
-			<div ng-switch-when="2" layout="row" flex ng-controller="scorecardTargetDefinitionController">	
+			<div ng-switch-when="2" layout="column" flex ng-controller="scorecardTargetDefinitionController">	
 				<%@include	file="./scorecardTemplate/scorecardTargetDefinitionTemplate.jsp"%>
 			</div>
 		</detail>
