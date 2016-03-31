@@ -23,11 +23,21 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	};
 	$scope.translate = sbiModule_translate;
 	
+	$scope.compareStartValidityDates = function(row1, row2) {
+		return row1.startValidityDate.getTime() - row2.startValidityDate.getTime();
+	}
+	
+	$scope.compareEndValidityDates = function(row1, row2) {
+		return row1.endValidityDate.getTime() - row2.endValidityDate.getTime();
+	}
+	
 	$scope.targetCategories = [];
 	
 	$scope.target = {};
 	
 	$scope.targets = [];
+	
+	$scope.targetsColumns = [{"label":"Name","name":"name"},{"label":"Category","name":"category.valueCd"},{"label":"Start Validity Date","name":"startValidity", "comparatorFunction": $scope.compareStartValidityDates},{"label":"Data End Validation","name":"endValidity", "comparatorFunction": $scope.compareEndValidityDates}];
 
 	$scope.targetsActions = [
 		{
@@ -345,7 +355,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			
 		});
 	}
-
+	
 	$scope.fetchTargetCategories = function() {
 		sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_TARGET_CATEGORY")
 			.then(
@@ -357,7 +367,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			);
 	}
-
+	
 	
 	// ==================
 	// === FETCH DATA ===
