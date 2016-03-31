@@ -81,7 +81,7 @@ import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- *
+ * 
  */
 
 @Path("/scheduler")
@@ -684,7 +684,7 @@ public class SchedulerService {
 	// }
 	// }
 
-	private TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
+	public static TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
 		try {
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String respStr_gt = schedulerService.getJobSchedulationDefinition(triggerName, triggerGroup);
