@@ -10,10 +10,16 @@
         <composite-id name="sbiKpiExecutionFilterId" class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilterId" >
         	<key-property name="placeholderId" column="PLACEHOLDER_ID" />
         	<key-property name="executionId" column="EXECUTION_ID" />
+        	<key-property name="kpiVersion" column="KPI_VERSION" type="int" />
+			<key-property name="kpiId" column="KPI_ID" type="int"  />
         </composite-id>
         
         <many-to-one name="sbiKpiPlaceholder" class="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder" column="PLACEHOLDER_ID" insert="false" update="false" />
         <many-to-one name="sbiKpiExecution" class="it.eng.spagobi.kpi.metadata.SbiKpiExecution" column="EXECUTION_ID" insert="false" update="false" />
+        <many-to-one name="sbiKpiKpi" class="it.eng.spagobi.kpi.metadata.SbiKpiKpi" insert="false" update="false" >
+        	<column name="KPI_VERSION" />
+        	<column name="KPI_ID" />
+        </many-to-one>
         
         <property name="typeId" column="TYPE" type="integer" />
         <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">

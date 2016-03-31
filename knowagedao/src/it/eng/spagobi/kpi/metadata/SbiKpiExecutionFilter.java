@@ -9,6 +9,7 @@ public class SbiKpiExecutionFilter extends SbiHibernateModel {
 
 	private SbiKpiPlaceholder sbiKpiPlaceholder;
 	private SbiKpiExecution sbiKpiExecution;
+	private SbiKpiKpi sbiKpiKpi;
 
 	private SbiDomains type;
 	private Integer typeId;
@@ -102,6 +103,21 @@ public class SbiKpiExecutionFilter extends SbiHibernateModel {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/**
+	 * @return the sbiKpiKpi
+	 */
+	public SbiKpiKpi getSbiKpiKpi() {
+		return sbiKpiKpi;
+	}
+
+	/**
+	 * @param sbiKpiKpi
+	 *            the sbiKpiKpi to set
+	 */
+	public void setSbiKpiKpi(SbiKpiKpi sbiKpiKpi) {
+		this.sbiKpiKpi = sbiKpiKpi;
 	}
 
 }

@@ -97,10 +97,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
 	private static final String MEASURE = "MEASURE";
 
-	char SCORECARD_INTERNAL_TYPE_SCORECARD = 'S';
-	char SCORECARD_INTERNAL_TYPE_PERSPECTIVE = 'P';
-	char SCORECARD_INTERNAL_TYPE_TARGET = 'T';
-
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
 	// Status of Kpi or Rule
@@ -1231,13 +1227,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public KpiScheduler loadKpiScheduler(final Integer id) {
-		return executeOnTransaction(new IExecuteOnTransaction<KpiScheduler>() {
+		KpiScheduler scheduler = executeOnTransaction(new IExecuteOnTransaction<KpiScheduler>() {
 			@Override
 			public KpiScheduler execute(Session session) throws Exception {
 				SbiKpiExecution sbi = (SbiKpiExecution) session.load(SbiKpiExecution.class, id);
 				return from(sbi, true);
 			}
 		});
+		// loading trigger
+		// TODO
+		// DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName)
+		return scheduler;
 	}
 
 	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) {
@@ -1282,7 +1282,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				SchedulerFilter filter = new SchedulerFilter();
 				filter.setExecutionId(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId());
 				filter.setPlaceholderId(sbiFilter.getSbiKpiExecutionFilterId().getPlaceholderId());
-				filter.setName(sbiFilter.getSbiKpiPlaceholder().getName());
+				filter.setPlaceholderName(sbiFilter.getSbiKpiPlaceholder().getName());
+				filter.setKpiName(sbiFilter.getSbiKpiKpi().getName());
 				filter.setType(from(sbiFilter.getType()));
 				filter.setValue(sbiFilter.getValue());
 				scd.getFilters().add(filter);

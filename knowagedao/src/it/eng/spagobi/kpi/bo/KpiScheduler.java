@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +18,8 @@ public class KpiScheduler {
 	private Date endDate;
 	private String kpiNames;
 	private String author;
+
+	private Trigger trigger;
 
 	/**
 	 * @return the id
@@ -106,6 +110,21 @@ public class KpiScheduler {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	/**
+	 * @return the trigger
+	 */
+	public Trigger getTrigger() {
+		return trigger;
+	}
+
+	/**
+	 * @param trigger
+	 *            the trigger to set
+	 */
+	public void setTrigger(Trigger trigger) {
+		this.trigger = trigger;
 	}
 
 }

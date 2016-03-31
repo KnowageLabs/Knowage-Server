@@ -6,6 +6,8 @@ public class SbiKpiExecutionFilterId implements Serializable {
 
 	private Integer placeholderId;
 	private Integer executionId;
+	private Integer kpiId;
+	private Integer kpiVersion;
 
 	/**
 	 * @return the placeholderId
@@ -37,6 +39,36 @@ public class SbiKpiExecutionFilterId implements Serializable {
 		this.executionId = executionId;
 	}
 
+	/**
+	 * @return the kpiId
+	 */
+	public Integer getKpiId() {
+		return kpiId;
+	}
+
+	/**
+	 * @param kpiId
+	 *            the kpiId to set
+	 */
+	public void setKpiId(Integer kpiId) {
+		this.kpiId = kpiId;
+	}
+
+	/**
+	 * @return the kpiVersion
+	 */
+	public Integer getKpiVersion() {
+		return kpiVersion;
+	}
+
+	/**
+	 * @param kpiVersion
+	 *            the kpiVersion to set
+	 */
+	public void setKpiVersion(Integer kpiVersion) {
+		this.kpiVersion = kpiVersion;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,6 +79,8 @@ public class SbiKpiExecutionFilterId implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((executionId == null) ? 0 : executionId.hashCode());
+		result = prime * result + ((kpiId == null) ? 0 : kpiId.hashCode());
+		result = prime * result + ((kpiVersion == null) ? 0 : kpiVersion.hashCode());
 		result = prime * result + ((placeholderId == null) ? 0 : placeholderId.hashCode());
 		return result;
 	}
@@ -69,6 +103,16 @@ public class SbiKpiExecutionFilterId implements Serializable {
 			if (other.executionId != null)
 				return false;
 		} else if (!executionId.equals(other.executionId))
+			return false;
+		if (kpiId == null) {
+			if (other.kpiId != null)
+				return false;
+		} else if (!kpiId.equals(other.kpiId))
+			return false;
+		if (kpiVersion == null) {
+			if (other.kpiVersion != null)
+				return false;
+		} else if (!kpiVersion.equals(other.kpiVersion))
 			return false;
 		if (placeholderId == null) {
 			if (other.placeholderId != null)

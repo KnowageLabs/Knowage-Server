@@ -6,24 +6,10 @@ public class SchedulerFilter {
 
 	private Integer executionId;
 	private Integer placeholderId;
-	private String name;
+	private String placeholderName;
+	private String kpiName;
 	private Domain type;
 	private String value;
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	/**
 	 * @return the type
@@ -83,6 +69,36 @@ public class SchedulerFilter {
 	 */
 	public void setPlaceholderId(Integer placeholderId) {
 		this.placeholderId = placeholderId;
+	}
+
+	/**
+	 * @return the placeholderName
+	 */
+	public String getPlaceholderName() {
+		return placeholderName;
+	}
+
+	/**
+	 * @param placeholderName
+	 *            the placeholderName to set
+	 */
+	public void setPlaceholderName(String placeholderName) {
+		this.placeholderName = placeholderName;
+	}
+
+	/**
+	 * @return the kpiName
+	 */
+	public String getKpiName() {
+		return kpiName;
+	}
+
+	/**
+	 * @param kpiName
+	 *            the kpiName to set
+	 */
+	public void setKpiName(String kpiName) {
+		this.kpiName = kpiName;
 	}
 
 }
