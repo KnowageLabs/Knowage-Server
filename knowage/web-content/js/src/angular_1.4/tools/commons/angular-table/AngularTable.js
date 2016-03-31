@@ -40,7 +40,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             editFunction: "&?",
                             allowEditFunction: "&?",
                             hideTableHead: "=?",
-                            fullWidth:"=?"
+                            fullWidth:"=?",
+                            comparisonColumn:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -519,9 +520,15 @@ function TableBodyControllerFunction($scope) {
 
     $scope.indexInList = function (list, item) {
         for (var i = 0; i < list.length; i++) {
-            if (angular.equals(list[i], item)) {
-                return i;
-            }
+        	if($scope.comparisonColumn==undefined){
+	            if (angular.equals(list[i], item)) {
+	                return i;
+	            }
+        	}else{
+        		 if (angular.equals(list[i][$scope.comparisonColumn], item[$scope.comparisonColumn])) {
+ 	                return i;
+ 	            }
+        	}
         }
         return -1;
     };
