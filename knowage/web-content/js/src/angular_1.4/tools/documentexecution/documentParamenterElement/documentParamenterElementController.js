@@ -149,8 +149,8 @@
 					
 					paramDialogCtrl.setTreeParameterValue = function(node) {			
 						if(!paramDialogCtrl.tempParameter.multivalue) {
-							paramDialogCtrl.tempParameter.parameterValue = node;
-//							angular.copy(node, paramDialogCtrl.tempParameter.parameterValue);
+//							paramDialogCtrl.tempParameter.parameterValue = node;
+							paramDialogCtrl.tempParameter.parameterValue = node.value;
 						}
 						
 						// in case the node is not a leaf the rest service is invoked in order

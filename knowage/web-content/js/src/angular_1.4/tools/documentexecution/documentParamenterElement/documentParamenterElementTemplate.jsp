@@ -63,18 +63,25 @@
 				</md-button>
 			</div>
 			
-			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
+			<!--
+ 			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
 					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
+			-->
+			<span ng-class="{'layout-padding': parameter.parameterValue && parameter.parameterValue.length > 0}"
+					ng-show="parameter.parameterValue && parameter.parameterValue.length > 0)">
 				<md-chips>
 					<md-chip ng-repeat="paramVal in parameter.parameterValue">
-						{{paramVal.value}}
+<!-- 						{{paramVal.value}} -->
+						{{paramVal}}
 					</md-chip>
 				</md-chips>
 			</span>
+			<!--
 			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
 					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
 				<md-chips><md-chip>{{parameter.parameterValue.value}}</md-chip></md-chips>
 			</span>
+			-->
 		</section>
 				
 		<!-- manual number input -->

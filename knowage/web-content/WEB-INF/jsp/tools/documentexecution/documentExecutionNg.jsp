@@ -149,14 +149,14 @@ try{
 			</div>
         </md-toolbar>
         
-        <div  layout="row" flex="grow"  ng-switch on="currentView.status">
+        <div layout="row" flex="grow" ng-switch on="currentView.status">
  		
-	 		<md-content id="documentFrameContainer" layout="row" flex="grow"  ng-switch-when="DOCUMENT"> 
+	 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT"> 
 				<iframe class="noBorder" id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
 					iframe-set-dimensions-onload flex="grow"></iframe>
 			</md-content>
 			
-			<div  flex  ng-switch-when="PARAMETERS"> 
+			<div flex ng-switch-when="PARAMETERS"> 
 				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
 					<parameter-view-point-handler flex/>
 				</div>
@@ -166,7 +166,7 @@ try{
 	</div>
 	
 	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column"
-			ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')" >
+			ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')">
 								
 		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
 			<div layout="row" layout-align="center center">						
@@ -185,7 +185,7 @@ try{
 			</div>
 		</md-toolbar>
 		
-		<md-content ng-show="showSelectRoles">
+		<md-content ng-show="showSelectRoles" ng-cloak>
 			<md-input-container class="small counter" flex>
 				<label>{{::translate.load("sbi.users.roles")}}</label>
 				<md-select aria-label="aria-label" ng-model="selectedRole.name" >

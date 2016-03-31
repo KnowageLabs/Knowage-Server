@@ -47,31 +47,60 @@
 						if(parameter.valueSelection.toLowerCase() == 'lov') {
 							//TREE MODIFY (see with benedetto)
 							if(parameter.selectionType.toLowerCase() == 'tree'){
-								var paramArrayTree = [];
-								var paramStrTree = "";
-								
-								for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
-									if(z > 0) {
-										paramStrTree += ";";
+//								if(parameter.multivalue) {
+									var paramArrayTree = [];
+									var paramStrTree = "";
+									
+									for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+										if(z > 0) {
+											paramStrTree += ";";
+										}
+										
+//										paramArrayTree[z] = parameter.parameterValue[z].value;
+//										paramStrTree += parameter.parameterValue[z].value;
+										paramArrayTree[z] = parameter.parameterValue[z];
+										paramStrTree += parameter.parameterValue[z];
 									}
 									
-									paramArrayTree[z] = parameter.parameterValue[z].value;
-									paramStrTree += parameter.parameterValue[z].value;
-								}
+									jsonDatumValue = paramArrayTree;
+									jsonDatumDesc = paramStrTree;
+//								} else {
+//									jsonDatumValue = parameter.parameterValue? parameter.parameterValue.value : '';
+//									jsonDatumDesc = parameter.parameterValue? parameter.parameterValue.value : '';
+//								}
 								
-								jsonDatumValue = paramArrayTree;
-								jsonDatumDesc=paramStrTree;
+								
 							} else {
-								parameter.parameterValue = parameter.parameterValue || [];
-								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+//								parameter.parameterValue = parameter.parameterValue || [];
+								if(			
+										/*
+										parameter.parameterValue 
+										&& Array.isArray(parameter.parameterValue) 
+										&& */
+										parameter.multivalue) {
+									
 									parameter.parameterValue = parameter.parameterValue || [];
 									
 									jsonDatumValue = parameter.parameterValue;
-									jsonDatumDesc = jsonDatumValue;
+									jsonDatumDesc = jsonDatumValue.join(";");
 								} else {
-									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+									jsonDatumValue = parameter.parameterValue != undefined? parameter.parameterValue : '';
 									jsonDatumDesc = jsonDatumValue;
 								}
+							}
+						} else if(parameter.valueSelection.toLowerCase() == 'map_in'){
+							if(parameter.parameterValue && parameter.multivalue) {
+								parameter.parameterValue = parameter.parameterValue || [];
+								
+//								jsonDatumValue = parameter.parameterValue;
+								jsonDatumValue = parameter.parameterValue.length > 0 ? 
+										("'" + parameter.parameterValue.join("','") + "'") 
+										: "";
+								jsonDatumDesc = jsonDatumValue;
+							} else {
+								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+								jsonDatumDesc = jsonDatumValue;
 							}
 						} else {
 							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
@@ -85,69 +114,69 @@
 				return jsonDatum;
 			},
 			
-			buildStringParametersForSave : function (documentParameters) {
-				//console.log('buildStringParameters ' , documentParameters);
-				var jsonDatum =  {};
-				if(documentParameters.length > 0) {
-					for(var i = 0; i < documentParameters.length; i++ ) {
-						var parameter = documentParameters[i];
-						var valueKey = parameter.urlName;
-						var descriptionKey = parameter.urlName + "_field_visible_description";					
-						var jsonDatumValue = null;
-						var jsonDatumDesc = null;
-						//LOV PARAMETER
-						if(parameter.valueSelection.toLowerCase() == 'lov') {
-							if(parameter.selectionType.toLowerCase() == 'tree'){
-								var paramArrayTree=[];
-								var paramStrTree ="";
-								for(var z=0; z<parameter.parameterValue.length; z++){
-									paramArrayTree[z]=parameter.parameterValue[z].value;
-									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
-									if(z<parameter.parameterValue.length-1){
-										paramStrTree = paramStrTree +";";
-									}
-								}
-								jsonDatumValue = paramStrTree; //Value STR
-								jsonDatumDesc=paramStrTree;
-							}else{
-								parameter.parameterValue = parameter.parameterValue || [];
-								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
-//									parameter.parameterValue = parameter.parameterValue || [];
-//									jsonDatumValue = parameter.parameterValue;
+//			buildStringParametersForSave : function (documentParameters) {
+//				//console.log('buildStringParameters ' , documentParameters);
+//				var jsonDatum =  {};
+//				if(documentParameters.length > 0) {
+//					for(var i = 0; i < documentParameters.length; i++ ) {
+//						var parameter = documentParameters[i];
+//						var valueKey = parameter.urlName;
+//						var descriptionKey = parameter.urlName + "_field_visible_description";					
+//						var jsonDatumValue = null;
+//						var jsonDatumDesc = null;
+//						//LOV PARAMETER
+//						if(parameter.valueSelection.toLowerCase() == 'lov') {
+//							if(parameter.selectionType.toLowerCase() == 'tree'){
+//								var paramArrayTree=[];
+//								var paramStrTree ="";
+//								for(var z=0; z<parameter.parameterValue.length; z++){
+//									paramArrayTree[z]=parameter.parameterValue[z].value;
+//									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
+//									if(z<parameter.parameterValue.length-1){
+//										paramStrTree = paramStrTree +";";
+//									}
+//								}
+//								jsonDatumValue = paramStrTree; //Value STR
+//								jsonDatumDesc=paramStrTree;
+//							}else{
+//								parameter.parameterValue = parameter.parameterValue || [];
+//								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
+////									parameter.parameterValue = parameter.parameterValue || [];
+////									jsonDatumValue = parameter.parameterValue;
+////									jsonDatumDesc = jsonDatumValue;
+//									var paramArrayLov=[];
+//									var paramStrLov ="";
+//									var paramStrLovDesc ="";
+//									for(var z=0; z<parameter.parameterValue.length; z++){
+//										paramArrayLov[z]=parameter.parameterValue[z];
+//										paramStrLov = paramStrLov + parameter.parameterValue[z];
+//										paramStrLovDesc = paramStrLovDesc + parameter.parameterValue[z];
+//										if(z<parameter.parameterValue.length-1){
+//											paramStrLov = paramStrLov +";";
+//											paramStrLovDesc = paramStrLovDesc + ",";
+//										}
+//									}
+//									jsonDatumValue = paramStrLov;
+//									jsonDatumDesc=paramStrLovDesc;
+//								} else {
+//									//jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : '';
 //									jsonDatumDesc = jsonDatumValue;
-									var paramArrayLov=[];
-									var paramStrLov ="";
-									var paramStrLovDesc ="";
-									for(var z=0; z<parameter.parameterValue.length; z++){
-										paramArrayLov[z]=parameter.parameterValue[z];
-										paramStrLov = paramStrLov + parameter.parameterValue[z];
-										paramStrLovDesc = paramStrLovDesc + parameter.parameterValue[z];
-										if(z<parameter.parameterValue.length-1){
-											paramStrLov = paramStrLov +";";
-											paramStrLovDesc = paramStrLovDesc + ",";
-										}
-									}
-									jsonDatumValue = paramStrLov;
-									jsonDatumDesc=paramStrLovDesc;
-								} else {
-									//jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : '';
-									jsonDatumDesc = jsonDatumValue;
-								}
-							}
-						} 
-						// NO LOV PARAMETER
-						else {
-							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-							jsonDatumDesc = jsonDatumValue;
-						}
-						jsonDatum[valueKey] = jsonDatumValue;
-						jsonDatum[descriptionKey] = jsonDatumDesc;
-					}
-				}
-				///console.log('jsonDatum ' , jsonDatum);
-				return jsonDatum;
-			},
+//								}
+//							}
+//						} 
+//						// NO LOV PARAMETER
+//						else {
+//							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+//							jsonDatumDesc = jsonDatumValue;
+//						}
+//						jsonDatum[valueKey] = jsonDatumValue;
+//						jsonDatum[descriptionKey] = jsonDatumDesc;
+//					}
+//				}
+//				///console.log('jsonDatum ' , jsonDatum);
+//				return jsonDatum;
+//			},
 					
 			recursiveChildrenChecks : function(parameterValue, childrenArray) {
 				childrenArray = childrenArray || [];
@@ -155,7 +184,8 @@
 				for(var i = 0; i < childrenArray.length; i++) {
 					var childItem = childrenArray[i];
 					if(childItem.checked && childItem.checked == true) {
-						parameterValue.push(childItem);
+//						parameterValue.push(childItem);
+						parameterValue.push(childItem.value);
 					}
 					
 					if(!childItem.leaf) {
@@ -221,12 +251,16 @@
 							if(i > 0) {
 								toReturn += ",<br/>";
 							}
-							toReturn += parameterValueItem.value;
+//							toReturn += parameterValueItem.value;
+							toReturn += parameterValueItem;
 						}
 						
 						return toReturn;
 						
 					} else {
+						parameter.parameterValue = (parameter.parameterValue)?
+								[parameter.parameterValue] : []
+								
 						return (parameter.parameterValue && parameter.parameterValue.value)?
 								parameter.parameterValue.value : '';
 					}
@@ -265,7 +299,7 @@
 		
 		serviceScope.documentUrl = '';
 		
-		this.executionProcesRestV1 = function(role, paramsStr) {			
+		serviceScope.executionProcesRestV1 = function(role, paramsStr) {			
 			if(typeof paramsStr === 'undefined') {
 				paramsStr='{}';
 			}
@@ -310,7 +344,7 @@
 				});
 		};
 		
-		this.getViewpoints = function() {
+		serviceScope.getViewpoints = function() {
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='FILTER_SAVED';
 			execProperties.isParameterRolePanelDisabled.status = true;
@@ -332,7 +366,7 @@
 		
 		
 		
-		this.getParametersForExecution = function(role, buildCorrelation) {		
+		serviceScope.getParametersForExecution = function(role, buildCorrelation) {		
 			var params = 
 				"label=" + execProperties.executionInstance.OBJECT_LABEL
 				+ "&role=" + role;
@@ -364,7 +398,7 @@
 			});
 		};
 		
-		this.createNewViewpoint = function() {
+		serviceScope.createNewViewpoint = function() {
 			$mdDialog.show({
 				//scope : serviceScope,
 				preserveScope : true,				

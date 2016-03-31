@@ -25,7 +25,7 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 //console.log('item ' , item); 
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
-					 fillParametersPanel(params);
+					 $scope.fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
 			 },
@@ -37,7 +37,7 @@
 					 //decodeURIComponent						 		               		
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
-					 fillParametersPanel(params);
+					 $scope.fillParametersPanel(params);
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
@@ -92,22 +92,17 @@
 				        } catch (e) {
 				        	prm[key]=params[key];
 				        }
-				       
 				    }
 				}   
 			
 			 return JSON.stringify(prm);
-			
-		}
-		
-		
-		
+		};
 		
 		
 		/*
 		 * Fill Parameters Panel 
 		 */
-		function fillParametersPanel(params){
+		$scope.fillParametersPanel = function(params){
 			console.log('Load filter params : ' , params);
 			if(execProperties.parametersData.documentParameters.length > 0){
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
@@ -117,11 +112,25 @@
 						documentExecuteServices.resetParameter(parameter);
 					} else {
 						//console.log('parametro ' , parameter);
-						if(parameter.valueSelection=='lov' && parameter.multivalue==true){
-							parameter.parameterValue = JSON.parse(params[parameter.urlName]);
-							console.log('lov ' , parameter );
-							console.log('parameter.parameterValue ' , parameter.parameterValue );
-						}else{
+//						if(parameter.valueSelection=='lov' 
+////							&& parameter.multivalue==true
+//							&& parameter.selectionType.toLowerCase() == "tree"
+//						) {
+						if(parameter.valueSelection=='lov') {
+							if(parameter.selectionType.toLowerCase() == "tree") {
+								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
+							} else {
+								parameter.parameterValue = parameter.multivalue? 
+									JSON.parse(params[parameter.urlName])
+									: params[parameter.urlName];
+							}
+							
+						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
+							var valueToBeCleanedByQuotes = params[parameter.urlName].replace(/^'(.*)'$/g, '$1');
+							var valueToBeSplitted = valueToBeCleanedByQuotes.split("','");
+							
+							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
+						} else {
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='STRING'){
@@ -141,11 +150,7 @@
 										}
 									}
 								}
-							}
-							
-							
-							
-							
+							}							
 						}												
 					}
 				}
