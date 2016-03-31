@@ -62,8 +62,6 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 				$scope.kpiAllList.push(obj);
 
 			}
-
-
 		},function(response){
 		});
 	}
@@ -72,14 +70,17 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	
 	$scope.loadAllInformationForKpi  = function(){
 	
-		$scope.placeHolder = $scope.selectedScheduler.filters;
+//		$scope.placeHolder = $scope.selectedScheduler.filters;
 		var arr = [];
-		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholder")
-		.then(function(response){ 
-			angular.copy(response.data,arr);
-			console.log(arr,$scope.placeHolder);
-		},function(response){
-		});
+//		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholderByKpi?kpiId=1&kpiVersion=0")
+//		.then(function(response){ 
+//			angular.copy(response.data,arr);
+//			console.log(arr,$scope.placeHolder);
+//		},function(response){
+//		});
+		
+
+		
 
 	}
 	

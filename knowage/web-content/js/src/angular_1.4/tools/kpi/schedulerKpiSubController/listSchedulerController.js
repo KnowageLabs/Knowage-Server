@@ -26,16 +26,6 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 		});
 		
-
-		
-
-//		if(item.kpi==undefined){
-//			$scope.selectedScheduler.kpi = [];
-//		}
-//		$scope.selectedScheduler.kpi = item.kpi;
-//		$scope.selectedScheduler.startDate = item.startDate;
-//		$scope.selectedScheduler.endDate = item.endDate;
-//		$scope.selectedScheduler.author = item.author;
 		$angularListDetail.goToDetail();
 	}
 

@@ -189,3 +189,6 @@ md-tooltip .md-background {
 .filterWhiteFrame{
 	background-color: white;
 }
+.filterHalfSize{
+	width: 700px;
+}
