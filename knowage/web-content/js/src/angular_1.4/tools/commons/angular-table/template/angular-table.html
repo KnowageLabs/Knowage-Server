@@ -44,9 +44,9 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th ng-repeat="val in tableColumns" width="{{val.size}}">
 
-	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
+	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
 		
-		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering ,'fa fa-arrow-down' : (val.name==column_ordering && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering && !reverse_col_ord)}"></md-icon>
+		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
 		<span >{{val.label}}</span>
 	</div>
 
@@ -57,7 +57,7 @@
 
 <script type="text/ng-template" id="bodyTemplate.html">
 
-<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting | itemsPerPage:	itemsPerPage" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow">
 

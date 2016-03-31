@@ -41,7 +41,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             allowEditFunction: "&?",
                             hideTableHead: "=?",
                             fullWidth:"=?",
-                            comparisonColumn:"=?"
+                            comparisonColumn:"=?",
+                            initialSorting:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -124,12 +125,16 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.label = col[i].label || tmpColData.name;
                                                     tmpColData.size = col[i].size || "";
                                                     tmpColData.editable = (col[i].editable && scope.allowEdit) || false;
+                                                    tmpColData.comparatorFunction=col[i].comparatorFunction;
+                                                    tmpColData.comparatorColumn=col[i].comparatorColumn;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
                                                     tmpColData.name = col[i];
                                                     tmpColData.size = "";
                                                     tmpColData.editable = scope.allowEdit || false;
+                                                    tmpColData.comparatorFunction=col[i].comparatorFunction;
+                                                    tmpColData.comparatorColumn=col[i].comparatorColumn;
                                                 }
 
                                                 scope.tableColumns.push(tmpColData);
@@ -360,6 +365,52 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 ;
                 return filtered;
             };
+        })
+        .filter('customOrdering', function ($filter) {
+        
+	        return function(items, column , reverse, tableColumns ,initialSorting) {
+	        	function getfiltered(){
+	        		var tmp=[];
+	        		angular.forEach(items, function(item) {
+			            tmp.push(item);
+			          });
+	        		return tmp;
+	        	}
+	        	
+	        	if(column==undefined && initialSorting!=undefined){
+	        		for(var i=0;i<tableColumns.length;i++){
+	        			if(tableColumns[i].name== initialSorting){
+	        				column=tableColumns[i];
+	        				break;
+	        			}
+	        		}
+	        	}
+		          
+		          
+		          if(column!=undefined && column.comparatorFunction!=undefined ){
+		        	  var filtered = getfiltered();
+			          filtered.sort(function (a, b) {   
+			        	  return column.comparatorFunction(a,b);
+			          });
+			          if(reverse){
+			        	  filtered.reverse();
+			          }
+			          return filtered;
+		        }else if(column!=undefined && column.comparatorColumn!=undefined ){
+		        	return	$filter('orderBy')(items, column.comparatorColumn , reverse)
+		        }else{ 
+		        	if(column!=undefined){
+		        		return	$filter('orderBy')(items, column.name , reverse)
+		        	}else{
+		        		 var filtered = getfiltered();
+		        		 if(reverse){
+				        	  filtered.reverse();
+				          }
+				          return filtered;
+		        	}
+		        	
+		        }
+	        };
         });
 
 
@@ -628,7 +679,7 @@ function TableHeaderControllerFunction($scope, $timeout) {
     };
 
     $scope.orderBy = function (column) {
-        if ($scope.column_ordering == column) {
+        if ($scope.column_ordering!=undefined && $scope.column_ordering.name == column.name) {
             $scope.reverse_col_ord = !$scope.reverse_col_ord;
         } else {
             $scope.column_ordering = column;
