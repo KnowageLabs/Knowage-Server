@@ -18,7 +18,7 @@
 				</h2>
 				<span flex></span>
 				<md-button class="md-raised" ng-click="addKpiToTarget();" aria-label="load kpi">
-					{{translate.load('cache.manager.save')}}
+					{{translate.load('sbi.kpi.scorecard.goal.load.kpi')}}
 				</md-button>
 			</div>
 		</md-toolbar>
