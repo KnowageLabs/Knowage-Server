@@ -40,7 +40,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/targetDefinition.css", currTheme)%>">
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/schedulerKpi.css", currTheme)%>">
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/scheduler/schedulerCustomStyle.css", currTheme)%>">
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/schedulerKpiController.js"></script>
@@ -80,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <md-dialog-content >
      <div class="md-dialog-content">
 		<angular-table class="cssTable"
-		id='targetListTable' ng-model=kpiAllList
+		id='listKpiTable' ng-model=kpiAllList
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
 		columns-search='["name"]' show-search-bar=true
 		multi-select= true selected-item=kpiSelected comparison-column="'id'"
@@ -95,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </head>
-<body>
+<body class="kn-schedulerKpi">
 	<angular-list-detail ng-controller="schedulerKpiController" full-screen=true >
 		<list label="translate.load('sbi.kpi.list')"  ng-controller="listSchedulerController" new-function="addScheduler" >
 		<angular-table flex

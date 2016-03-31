@@ -5,9 +5,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('schedulerKpiController', ['$scope','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter',kpiTargetControllerFunction ]);
+app.controller('schedulerKpiController', ['$scope','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter','$timeout',kpiTargetControllerFunction ]);
 
-function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter){
+function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter,$timeout){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedScheduler={};
 	$scope.kpi = [];
@@ -72,12 +72,15 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	
 //		$scope.placeHolder = $scope.selectedScheduler.filters;
 		var arr = [];
-//		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholderByKpi?kpiId=1&kpiVersion=0")
-//		.then(function(response){ 
-//			angular.copy(response.data,arr);
-//			console.log(arr,$scope.placeHolder);
-//		},function(response){
-//		});
+		
+		for(var k=0;k<$scope.selectedScheduler.kpis.length;k++){
+			var obj = {};
+			obj["id"] = $scope.selectedScheduler.kpis[k].id;
+			obj["version"] = $scope.selectedScheduler.kpis[k].version;
+			arr.push(obj);
+		}
+		console.log(arr);
+		
 		
 
 		
@@ -113,7 +116,7 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 	$scope.tableColumn=[
 	                    {label:"Name",name:"name"},
-	                    {label:"KPI",name:"kpiName"},
+	                    {label:"KPI",name:"kpiNames"},
 	                    {label:"Start Date",name:"startDate"},
 	                    {label:"End Date",name:"endDate",comparatorFunction:function(a,b){return 1}},
 	                    {label:"Author",name:"author"}]

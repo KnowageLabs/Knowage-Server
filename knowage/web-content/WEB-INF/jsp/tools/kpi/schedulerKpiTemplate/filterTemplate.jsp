@@ -11,9 +11,11 @@
 	<div flex=50 ng-repeat="filter in selectedScheduler.filters" ng-if="filter.kpiName == kpi.name">
 		<md-whiteframe class="md-whiteframe-4dp filterWhiteFrame" layout-margin > 
 			<md-card > 
-			<div >
+			<md-toolbar	class="miniheadimportexport colorToolBarFilterKpi">
+			<div class="md-toolbar-tools">
 				<h3>{{filter.placeholderName}}</h3>
 			</div>
+			</md-toolbar>
 			<di layout=rowv>
 			<div flex=50>
 				<md-select aria-label="aria-label" ng-model="filter.type.valueCd">

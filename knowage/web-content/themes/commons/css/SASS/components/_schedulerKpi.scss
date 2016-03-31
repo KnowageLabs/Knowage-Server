@@ -1,3 +1,4 @@
+.kn-schedulerKpi{
 .detailBody md-input-container {
 	padding: 2px 2px 3px 10px !important;
 }
@@ -191,4 +192,13 @@ md-tooltip .md-background {
 }
 .filterHalfSize{
 	width: 700px;
+}
+
+.colorToolBarFilterKpi{
+background-color:#a9c3db !important
+}
+
+md-select span{
+margin-bottom:8px;
+}
 }
