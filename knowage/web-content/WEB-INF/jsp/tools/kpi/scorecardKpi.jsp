@@ -48,21 +48,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/directive/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js"></script>
 
 </head>
-<body class="kn-scorecardKpiDefinition">
+<body class="kn-scorecardKpiDefinition" ng-clock>
 
 	<angular-list-detail ng-controller="scorecardMasterController"  full-screen="true">
 		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="scorecardListController" new-function="newScorecardFunction" layout-column>
-<!-- 		 	<angular-table id='measureListTable' ng-model=measureRuleList -->
-<!-- 				columns='measureRuleColumnsList' -->
-<!-- 			 	 show-search-bar=true -->
-<!-- 			 	 speed-menu-option=measureMenuOption -->
-<!-- 				 click-function="measureClickFunction(item);" > </angular-table> -->
+		 	<angular-table id='scorecardListTable' ng-model=scorecardList
+				columns='scorecardColumnsList'
+			 	 show-search-bar=true
+				 click-function="scorecardClickFunction(item);" > </angular-table>
 		</list>
+		
+		<extra-button>
+		 <md-button ng-click="" ng-if="selectedStep.value==2" >Save Goal</md-button>
+		 <md-button  ng-click="" ng-if="selectedStep.value==2" >Cancel</md-button>
+		 
+		 <md-button  ng-click="" ng-if="selectedStep.value==1" >Save Perspective</md-button>
+		 <md-button  ng-click="" ng-if="selectedStep.value==1" >Cancel</md-button>
+		</extra-button>
+		
 				
-		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" disable-save-button="" ng-switch="selectedStep" layout="column" >
+		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" show-save-button="selectedStep.value==0" ng-switch="selectedStep.value" layout="column" >
 		 <md-whiteframe class="md-whiteframe-1dp" >
-			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl' disable-go-back="true"> </bread-crumb>
+			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep.value' control='stepControl' disable-go-back="true"> </bread-crumb>
 		 </md-whiteframe>
 			<div ng-switch-when="0" layout="column" flex ng-controller="scorecardDefinitionController">
 				<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>
