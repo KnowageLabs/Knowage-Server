@@ -86,7 +86,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -139,6 +139,20 @@ public class KpiService {
 			logger.error(req.getPathInfo(), e);
 		}
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/listPlaceholderByKpi")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response listPlaceholderByKpi(@QueryParam("kpiId") Integer kpiId, @QueryParam("kpiVersion") Integer kpiVersion, @Context HttpServletRequest req)
+			throws EMFUserError {
+		IKpiDAO dao = getKpiDAO(req);
+		if (kpiId != null && kpiVersion != null) {
+			List<String> lst = dao.listPlaceholderByKpi(kpiId, kpiVersion);
+			return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
+		} else {
+			return Response.ok().build();
+		}
 	}
 
 	@GET
@@ -221,7 +235,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -697,7 +711,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 *
+	 * 
 	 * @param servlet
 	 *            request
 	 * @param placeholder
