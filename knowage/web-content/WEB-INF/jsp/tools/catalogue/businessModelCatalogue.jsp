@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 
 					<angular-table 
-						
+						flex
 						id="businessModelList_id"
 						ng-show="!bmLoadingShow"
 						ng-model="businessModelList"
@@ -331,6 +331,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       							</div>
      							<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
      							<angular-table
+     							    flex
      								ng-show="!versionLoadingShow"
 	     							
 									

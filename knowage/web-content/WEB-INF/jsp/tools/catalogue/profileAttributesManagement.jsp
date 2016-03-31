@@ -43,11 +43,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </head>
-<body class="bodyStyle kn-layerCatalogue" ng-controller="profileAttributesManagementController as ctrl" >
-	<angular-list-detail 
-		 show-detail="showMe">
+<body class="bodyStyle" ng-controller="profileAttributesManagementController as ctrl" >
+	<angular-list-detail  show-detail="showMe">
 		 	<list label='translate.load("sbi.attributes.title")' new-function="createProfileAttribute"> 
+			
 				<angular-table  
+				        flex
  						id="profileAttributesList"
  						ng-model="attributeList" 
  						columns='[ 
@@ -61,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  						speed-menu-option="paSpeedMenu" 
 						click-function="loadAttribute(item)">						
  				 </angular-table>
-
+              
 	</list> 
 	<detail label='(selectedAttribute.attributeName==undefined)? "" : selectedAttribute.attributeName'  save-function="saveProfileAttribute"
 		cancel-function="cancel"
@@ -71,6 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody mozSize md-whiteframe-z1">
 
 					<md-content flex layout-fill class=" ToolbarBox miniToolbar noBorder mozTable ">
+						
 						<div layout="row" layout-wrap>
       						<div flex=100>
        							<md-input-container class="small counter">
@@ -91,7 +93,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        								<input ng-model="selectedAttribute.attributeDescription"
         							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
       						</div>
-    					</div>			
+    					</div>	
+    							
 					</md-content>
 				
 				

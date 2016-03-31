@@ -1,3 +1,4 @@
+
 <%--
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
@@ -62,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 		</div> -->
 <!-- 		</md-toolbar> -->
 		 <angular-table
+		    flex
 			id="usersList_id" ng-model="usersList"
 			columns='[
 						         {"label":"User ID","name":"userId"},

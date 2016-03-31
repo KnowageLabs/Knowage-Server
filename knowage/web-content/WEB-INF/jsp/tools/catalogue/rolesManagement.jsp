@@ -64,6 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 		</div> -->
 <!-- 		</md-toolbar> -->
 		 <angular-table
+		     flex
 			 id="rolesList_id" ng-model="rolesList"
 			columns='[
 						         {"label":"Name","name":"name"},
@@ -102,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
 			<md-content flex 
-				class="md-padding ToolbarBox noBorder">
+				class="ToolbarBox miniToolbar noBorder mozTable">
             <md-card>
 			<div layout="row" layout-wrap>
 				<div flex=100>
@@ -161,7 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 <md-tab label='{{translate.load("sbi.roles.authorizations");}}'>
 			  <md-content
 				flex 
-				class="md-padding ToolbarBox noBorder">
+				class="ToolbarBox miniToolbar noBorder mozTable">
 				<md-card>
 				<div style="display: flex;">
 				<div style="width: 50%; margin-right:5px;">
@@ -499,7 +500,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				label='{{translate.load("sbi.roles.businessModels");}}'> 
 				<md-content
 				flex  
-				class="md-padding ToolbarBox noBorder">
+				class="ToolbarBox miniToolbar noBorder mozTable">
 				 <md-card>
 				<md-toolbar class="md-blue minihead md-toolbar-tools" 
 												style="margin-top:15px" >

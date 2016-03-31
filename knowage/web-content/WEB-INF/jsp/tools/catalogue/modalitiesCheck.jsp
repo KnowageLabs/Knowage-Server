@@ -69,6 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
         <md-content>
         <angular-table 
+                        flex
 						layout-fill
 						id="TestItemList_id"
 						ng-model="ItemList"
@@ -91,6 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
         <md-content >
          <angular-table 
+                        flex
 						layout-fill
 						id="predefined_id"
 						ng-model="PredefinedList"
