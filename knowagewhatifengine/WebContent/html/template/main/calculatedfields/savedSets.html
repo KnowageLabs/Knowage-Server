@@ -1,0 +1,19 @@
+
+<md-dialog style='width:50%;'>
+      <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Saved Sets</h2>
+	</md-toolbar>
+	 <div ng-show="cookieArray.length == 0" >
+	 <p>There is no saved sets </p>
+	 </div> 
+  <md-dialog-content  layout-padding ng-cloak>
+    
+     <md-list-item class="secondary-button-padding" ng-click="setIt($index,set)" ng-repeat="set in cookieArray">
+    <p>{{set.name}}</p>
+    <p>{{set.type}}</p>
+    <md-button class="md-secondary" ng-click="deleteSet($index,set)">Delete</md-button>
+  	</md-list-item>
+    
+  </md-dialog-content>
+</md-dialog>
+

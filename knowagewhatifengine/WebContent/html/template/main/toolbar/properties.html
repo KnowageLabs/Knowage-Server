@@ -1,0 +1,30 @@
+
+<md-dialog style='width:40%;'>
+	
+	   <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Properties</h2>
+	</md-toolbar>
+	 <div ng-show="propertiesArray.length == 0" >
+	 <p>There is no properties for this member </p>
+	 </div> 
+	 <div style='margin-top:20px;'>
+	<md-content style="height:60%;" ng-hide="propertiesArray.length == 0">
+			
+					<angular-table 
+					
+						layout-fill
+						id="propertiesData_id"
+						ng-model="propertiesArray"
+						>
+													 					
+					</angular-table>  
+	</md-content>
+	</div>	
+		<md-dialog-actions layout="row">
+			<md-button class="md-raised" ng-click="closeDialog()">
+				Cancel
+			</md-button>
+		</md-dialog-actions>
+	
+	
+</md-dialog>

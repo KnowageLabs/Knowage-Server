@@ -1,5 +1,5 @@
 angular.module('member_directive',[])
-	.directive('member', function () {
+	.directive('member', function (sbiModule_restServices,sbiModule_messaging,$mdDialog) {
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
@@ -51,7 +51,32 @@ angular.module('member_directive',[])
 		        	 console.log(scope.members);
 		        	 console.log($event.target+" event")
 	        		
-	        
+	        if(scope.modelConfig.showCompactProperties == true){
+	        	
+	        	sbiModule_restServices.promiseGet
+	    		("1.0",'/member/properties/'+scope.selectedMember.uniqueName+'?SBI_EXECUTION_ID='+JSsbiExecutionID)
+	    		.then(function(response) {
+	    			console.log(response.data);
+	    			scope.propertiesArray = response.data;
+	    			$mdDialog
+	    			.show({
+	    				scope : scope,
+	    				preserveScope : true,
+	    				parent: angular.element(document.body),
+	    				controllerAs : 'olapCtrl',
+	    				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
+	    				//targetEvent : ev,
+	    				clickOutsideToClose : false,
+	    				hasBackdrop:false
+	    			});
+	    			
+	    			
+	    		}, function(response) {
+	    			sbiModule_messaging.showErrorMessage("An error occured while getting properties for selected member", 'Error');
+	    			
+	    		});
+	        	
+	        }
 	                
 	        	 	
 	        	 	

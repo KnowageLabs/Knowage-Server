@@ -1,5 +1,5 @@
 angular.module('sbi_table_toolbar',[])
-.directive('sbiTableToolbar',function(){
+.directive('sbiTableToolbar',function(sbiModule_messaging){
 	return{
 		restrict:"E",
 		replace: true,
@@ -59,10 +59,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		$scope.sortDisable();
 	}
 	
-//	$scope.enableDisableDrillThrough = function(){
-//		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
-//		$scope.sendModelConfig($scope.modelConfig);
-//	}
+	$scope.enableCompactProperties = function(){
+		if($scope.modelConfig.showProperties != true){
+			$scope.modelConfig.showCompactProperties = !$scope.modelConfig.showCompactProperties;
+			$scope.sendModelConfig($scope.modelConfig);	
+		}else{
+			sbiModule_messaging.showErrorMessage("Table Properties are on..");
+		}
+		
+	}
 	
 	
 	$scope.changeDrillType = function(type){

@@ -13,15 +13,9 @@
           <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'">
        Select from table
       	</md-button>
-   <md-input-container ng-show="argument.expected_value == 'Set_Expression'">
-            <label>Saved Sets</label>
-            <md-select ng-model="argument.text">
-              <md-option ng-repeat="set in cookieArray" value="{{set.value}}">
-                {{set.name}}
-              </md-option>
-            </md-select>
-          </md-input-container>
-      
+      	 <md-button  class="md-raised" ng-click="openSavedSets()" style="float: right;" ng-show="argument.expected_value == 'Set_Expression'">
+        Open Saved Sets
+      </md-button>
           <p class="md-body-1">Description : {{argument.argument_description}}</p>
         </md-input-container> 
  		</div>
@@ -30,9 +24,7 @@
     <md-button  class="md-raised" ng-click="openArgumentsdialog()" >
         Open Editor
       </md-button>
-      <md-button  class="md-raised" ng-click="openArgumentsdialog()" >
-        Open Saved Members
-      </md-button>
+     
       
     	<span flex></span>
       <md-button ng-click="sendCC()" class="md-raised" ng-disabled="checkValidityArgs()" md-autofocus>

@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.Cell;
@@ -248,34 +249,25 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/properties/")
+	@Path("/properties/{uni_name}")
 	@Produces("text/html; charset=UTF-8")
-	public String getProperties() throws OlapException {
+	public String getProperties(@PathParam("uni_name") String name) throws OlapException, JSONException {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		NonInternalPropertyCollector np = new NonInternalPropertyCollector();
 
-		List<Hierarchy> hs = model.getCube().getHierarchies();
-		for (Hierarchy hierarchy : hs) {
-			List<Level> levels = hierarchy.getLevels();
-			for (Level level : levels) {
-				List<Property> properties = np.getProperties(level);
-				List<Member> members = level.getMembers();
-				for (Member member : members) {
-					for (Property property : properties) {
-						System.out.println(member.getName());
-						System.out.println(property.getName());
-						System.out.println(member.getPropertyFormattedValue(property));
-
-					}
-
-				}
-
-			}
+		JSONArray propsArray = new JSONArray();
+		Member m = CubeUtilities.getMember(model.getCube(), name);
+		Level l = m.getLevel();
+		List<Property> properties = np.getProperties(l);
+		for (Property property : properties) {
+			JSONObject obj = new JSONObject();
+			obj.put("name", property.getName());
+			obj.put("value", m.getPropertyFormattedValue(property));
+			propsArray.put(obj);
 		}
-
-		return null;
+		return propsArray.toString();
 	}
 
 	@GET
@@ -335,17 +327,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			e.printStackTrace();
 		}
 		return array.toString();
-	}
-
-	@GET
-	@Path("/export/{table}")
-	public byte[] export(@PathParam("table") String json) {
-
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		System.out.println(json);
-
-		return null;
 	}
 
 	@GET

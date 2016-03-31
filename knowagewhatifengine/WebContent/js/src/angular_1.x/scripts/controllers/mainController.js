@@ -74,6 +74,7 @@ function olapFunction(
 	$scope.valuesArray = [];
 	$scope.selectedMDXFunction = null;
 	$scope.cookieArray = [];
+	$scope.propertiesArray = [];
 	
 	$scope.finalFormula = null;
 	$scope.isFilterSelected = false;
@@ -143,10 +144,7 @@ function olapFunction(
 		}
 		 
 	}
-	
-	$scope.toggleMenu=function(){
-		$scope.openLeftMenu=!$scope.openLeftMenu;
-	};
+
 
 	$scope.startFrom = function(start) {
 		if ($scope.ready) {

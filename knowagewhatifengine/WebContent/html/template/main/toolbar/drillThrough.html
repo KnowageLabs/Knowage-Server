@@ -29,7 +29,7 @@
 		
 		
 		
-	<md-content layout-padding style="height:90%;">
+	<md-content style="height:90%;">
 			
 					<angular-table 
 					
@@ -43,7 +43,7 @@
 	
 	
 	</md-content>	
-		<md-dialog-actions layout="row" style="margin-top:5px;">
+		<md-dialog-actions layout="row">
 		
 			<md-input-container >
 			<label>Maximum rows</label>
@@ -62,7 +62,7 @@
 			<md-button class="md-raised" ng-click="closeDialog()">
 				Cancel
 			</md-button>
-			<md-button class="md-raised" ng-click="exportDrill()">
+			<md-button class="md-raised" ng-click="exportDrill(dtData, 'DrillTrough Table', true)">
 				Export
 			</md-button>
 			<md-button class="md-raised"  ng-click="enableDisableDrillThrough()" md-autofocus>

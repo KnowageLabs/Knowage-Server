@@ -63,7 +63,13 @@
 			</md-tooltip>
     	</md-button>
     </md-grid-tile>
-    
+   <md-grid-tile>
+    	<md-button class="right-toolbar-menu " ng-click="enableCompactProperties()">
+    		<md-tooltip md-direction="bottom">
+				Enable compact Properties
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile> 
     <md-grid-tile>
     	<md-button ng-class=" modelConfig.sortingEnabled ? 'right-toolbar-menu sorting-e-btn' : 'right-toolbar-menu sorting-d-btn'" ng-click="enableDisableSorting()" >
 			<md-tooltip md-direction="bottom">

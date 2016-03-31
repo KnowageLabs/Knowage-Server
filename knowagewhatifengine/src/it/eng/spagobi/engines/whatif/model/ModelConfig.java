@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +28,13 @@ import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
@@ -42,6 +42,7 @@ public class ModelConfig implements Serializable {
 	private Boolean showParentMembers;
 	private Boolean hideSpans;
 	private Boolean showProperties;
+	private Boolean showCompactProperties;
 	private Boolean suppressEmpty;
 	private Boolean enableDrillThrough;
 	private Boolean sortingEnabled;
@@ -133,6 +134,7 @@ public class ModelConfig implements Serializable {
 		hideSpans = false;
 		showProperties = false;
 		enableDrillThrough = false;
+		showCompactProperties = false;
 		sortingEnabled = false;
 		startRow = 0;
 		rowsSet = 10;
@@ -152,6 +154,14 @@ public class ModelConfig implements Serializable {
 
 	public void setEnableDrillThrough(Boolean enableDrillThrough) {
 		this.enableDrillThrough = enableDrillThrough;
+	}
+
+	public Boolean getShowCompactProperties() {
+		return showCompactProperties;
+	}
+
+	public void setShowCompactProperties(Boolean showCompactProperties) {
+		this.showCompactProperties = showCompactProperties;
 	}
 
 	public Boolean getSuppressEmpty() {
