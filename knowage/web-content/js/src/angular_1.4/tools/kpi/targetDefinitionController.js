@@ -185,7 +185,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					? $scope.kpis.length : kpiIdToIdx['' + selectedKpis[i].id];
 				$scope.kpis[idx] = selectedKpis[i];
 			}
-			
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.target.kpiAdded')).position('top')
+					.action('OK').highlightAction(false).hideDelay(5000));
 		}, function() { });
 	};
 
@@ -233,10 +234,12 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	};
 	
 	$scope.cancel = function() {
+		$scope.target = {};
+		$scope.kpis = [];
 		$angularListDetail.goToList();
 	}
-
-	$scope.saveTarget= function() {
+	
+	$scope.saveTarget = function() {
 		newTarget = {
 			id: typeof $scope.target.id == 'undefined' ? null : $scope.target.id,
 			name: $scope.target.name,
@@ -253,6 +256,16 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				targetId: newTarget.id,
 				value: $scope.kpis[i].value
 			}
+		}
+		var errors = "";
+		if (newTarget.name == null) errors += sbiModule_translate.load('sbi.target.errorMissingName') + ". ";
+		if (newTarget.startValidity == null) errors += sbiModule_translate.load('sbi.target.errorMissingStartValidity') + ". ";
+		if (newTarget.endValidity == null) errors += sbiModule_translate.load('sbi.target.errorMissingEndValidity') + ". ";
+		if (newTarget.values.length == 0) errors += sbiModule_translate.load('sbi.target.errorMissingKPI') + ". ";
+		if (errors != "") {
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError') + " - " + errors).position('top')
+					.action('OK').highlightAction(false).hideDelay(10000));
+			return;
 		}
 		sbiModule_restServices
 			.post("1.0/kpi", "saveTarget", newTarget)
