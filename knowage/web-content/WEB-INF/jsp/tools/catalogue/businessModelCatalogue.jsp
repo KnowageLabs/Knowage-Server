@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		show-save-button="showMe" show-cancel-button="showMe">
 
 			
-				<form  class="detailBody md-whiteframe-z1">
+				<form  class="detailBody md-whiteframe-z1" id="businessModelForm">
 					<div layout-fill class="containerDiv">
 <!-- 					<md-toolbar class="header">
 <!-- 						<div class="md-toolbar-tools h100"> -->

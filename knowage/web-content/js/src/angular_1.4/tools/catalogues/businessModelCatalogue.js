@@ -450,9 +450,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		//check if is name dirty 
 		$scope.checkChange = function(){
 
-			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === ""
-				|| $scope.selectedBusinessModel.category === undefined || $scope.selectedBusinessModel.category === "" 
-				|| $scope.selectedBusinessModel.dataSourceLabel === undefined || $scope.selectedBusinessModel.dataSourceLabel === "" 
+			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === "" 
 				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileClicked === false)   // if file is new check also file has been added
 			){
 					$scope.isDirty = false;
@@ -460,7 +458,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			else{
 				$scope.isDirty = true;
 			}
-			$scope.isDirty = true;
+			//$scope.isDirty = true;
 		}
 		
 		//get item by id
