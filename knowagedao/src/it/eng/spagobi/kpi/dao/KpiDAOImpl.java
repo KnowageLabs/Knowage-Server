@@ -470,7 +470,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpi.getSbiKpiRuleOutputs().clear();
 		List<String> measureNames = JSONUtils.asList(new JSONObject(kpi.getDefinition()).getJSONArray("measures"));
 		List<SbiKpiRuleOutput> measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias")
-				.add(Restrictions.in("sbiKpiAlias.name", measureNames)).list();
+				.createAlias("sbiKpiRule", "sbiKpiRule").add(Restrictions.in("sbiKpiAlias.name", measureNames)).add(Restrictions.eq("sbiKpiRule.active", 'T'))
+				.list();
 		sbiKpi.getSbiKpiRuleOutputs().addAll(measures);
 		return sbiKpi;
 	}
