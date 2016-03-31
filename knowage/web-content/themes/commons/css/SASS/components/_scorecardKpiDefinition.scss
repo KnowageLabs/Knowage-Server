@@ -1,0 +1,25 @@
+.kn-scorecardKpiDefinition{
+
+	.fa-rotate-45 {
+	    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+	    -webkit-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	
+	.scorecardSemaphoreBackIcon{
+		font-size: 22px;
+	}
+	
+	.scorecardSemaphoreFrontIcon{
+		font-size: 18px;
+	}
+	
+	.scorecardPrespectiveCard{
+	  width: 250px;
+	}
+	.scorecardPrespectiveCard>md-content>b{
+	  line-height: 30px;
+	}
+
+}
