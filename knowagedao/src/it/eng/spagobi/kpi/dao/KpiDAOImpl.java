@@ -532,7 +532,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 *
+	 * 
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -823,7 +823,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 *
+	 * 
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1252,9 +1252,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return from(sbi, true);
 			}
 		});
-		// loading trigger
-		// TODO
-		// DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName)
 		return scheduler;
 	}
 
@@ -1552,18 +1549,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<String> listPlaceholderByKpi(final Integer kpiId, final Integer kpiVersion) {
+	public List<String> listPlaceholderByKpiList(final List<String> kpiNames) {
 		List<String> measures = executeOnTransaction(new IExecuteOnTransaction<List<String>>() {
 			@Override
 			public List<String> execute(Session session) throws Exception {
-				SbiKpiKpi kpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(kpiId, kpiVersion));
-				List<String> ret = new ArrayList<>();
-				for (SbiKpiRuleOutput ruleoutput : kpi.getSbiKpiRuleOutputs()) {
-					if (ruleoutput.getType().getValueCd().equals(MEASURE)) {
-						ret.add(ruleoutput.getSbiKpiAlias().getName());
-					}
-				}
-				return ret;
+				List measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule").createAlias("sbiKpiKpis", "sbiKpiKpis")
+						.createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.eq("sbiKpiKpis.active", 'T'))
+						.add(Restrictions.eq("sbiKpiRule.active", 'T')).add(Restrictions.in("sbiKpiKpis.name", kpiNames))
+						.setProjection(Property.forName("sbiKpiAlias.name")).list();
+
+				return measures;
 			}
 		});
 		return listPlaceholderByMeasures(measures);
