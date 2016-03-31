@@ -1,6 +1,6 @@
 	
 <md-tabs ng-if="ngModel!=undefined && ngModel.length!=0" >
-	<md-tab ng-repeat="item in ngModel" label="{{itemName==undefined? item : item[itemName]}}" ng-click="moveToItem(item,$index)" md-active="selectedIndex==$index">
+	<md-tab ng-repeat="item in ngModel" label="{{itemName==undefined? item : item[itemName]}}" md-no-select-click="disableGoBack==true" ng-click="moveToItem(item,$index)" md-active="selectedIndex==$index">
 		<md-tab-body>
 		</md-tab-body>
 	</md-tab>

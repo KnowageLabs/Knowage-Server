@@ -23,25 +23,23 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<div layout="row" layout-padding layout-wrap flex ng-cloak >
+		<div layout="row" layout-padding layout-wrap  ng-cloak >
 			
-			<md-whiteframe class="md-whiteframe-2dp" layout-margin layout="column"  layout-align="top center" ng-repeat="prespective in currentScorecard.perspectives">
+			
+			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="prespective in currentScorecard.perspectives">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="column">
-						<i class="fa fa-circle-thin"></i>
+						<kpi-semaphore-indicator indicator-color="'RED'"></kpi-semaphore-indicator>
 			       		<label>{{prespective.name}}</label>
 			    	</div>
 		    	</md-toolbar>
-		    	<div layout="row">
-		    		<div>
-		    			<span>KPI</span>
-		    			<span ng-repeat="groupedKpi in prespective.groupedKpis">
-		    				<i class="fa fa-circle-thin" style="color : {{groupedKpi.status}}"></i>
-		    				<span>{{groupedKpi.count}}</span>
-		    			</span>
-		    		</div>
-		    	</div>
+		    	<md-content layout-padding layout="row" >
+		    		
+		    			<b layout-padding class="lh30">KPI</b>
+		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in prespective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
+
+		    	</md-content>
 			</md-whiteframe> 
-			
+			 
 		</div>
 		</md-content>

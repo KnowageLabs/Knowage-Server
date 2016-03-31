@@ -10,7 +10,8 @@ angular.module('bread_crumb', ['ngMaterial'])
 			selectedIndex:'=?',
 			selectedItem:'=?',
 			moveToCallback:'&?', //function callback to call when change item
-			control:'='
+			control:'=',
+			disableGoBack:"=?"
 		},
 		link: function (scope, elm, attrs) { 
 			console.log("Inizializzo bread_crumb ");
@@ -32,6 +33,9 @@ function breadCrumbControllerFunction($scope){
 
 	s.moveToItem = function(item,index){
 		console.log('breadCrumbControllerFunction-->moveToItem ')
+//		if($scope.disableGoBack==true && s.selectedIndex!=undefined && index<s.selectedIndex){
+//			return;
+//		}
 		if(index!=s.selectedIndex){
 			s.selectedIndex=index;
 			s.selectedItem=item;

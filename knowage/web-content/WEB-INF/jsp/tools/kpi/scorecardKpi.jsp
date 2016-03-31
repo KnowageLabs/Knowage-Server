@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" disable-save-button="" ng-switch="selectedStep" layout="column" >
 		 <md-whiteframe class="md-whiteframe-1dp" >
-			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'> </bread-crumb>
+			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl' disable-go-back="true"> </bread-crumb>
 		 </md-whiteframe>
 			<div ng-switch-when="0" layout="column" flex ng-controller="scorecardDefinitionController">
 				<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>

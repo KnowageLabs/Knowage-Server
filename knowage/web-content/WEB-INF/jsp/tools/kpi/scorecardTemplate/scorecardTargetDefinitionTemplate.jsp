@@ -23,7 +23,7 @@
 			</div>
 		</md-toolbar>
 		
-		 	<angular-table 
+		 	<angular-table flex
 		 		id='targetList' 
 		 		ng-model=currentTarget.kpis
 				columns='[  {"label":"Name","name":"name"}, {"label":"category","name":"category.translatedValueName"}]'
@@ -37,11 +37,11 @@
 		</md-content>
 		
 <script type="text/ng-template" id="templatesaveKPI.html">
-<md-dialog aria-label="Select Function"  ng-cloak>
-  <form>
+<md-dialog aria-label="Select Function" style="height: 90%;" ng-cloak layout="column" >
+  
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Save new KPI</h1>
+        <h1>Select KPI</h1>
         <span flex></span>
 		<md-button class="md-primary" ng-click="saveKpiToTarget()">
           	Save
@@ -52,17 +52,15 @@
       </div>
 	
     </md-toolbar>
-    <md-dialog-content >
-     <div class="md-dialog-content">
-		<angular-table class="cssTable"
+    <md-dialog-content flex layout >
+		<angular-table flex
 		id='targetListTable' ng-model=kpiAllList
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
 		columns-search='["name"]' show-search-bar=true
 		multi-select= true selected-item=kpiSelected comparison-column="'id'"
 		scope-functions=tableFunction 
 		> </angular-table>
-		</div>
    	 </md-dialog-content>
-  </form>
+
 </md-dialog>
 </script>
