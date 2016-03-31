@@ -23,7 +23,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			
 		});		
 	}
-
+	
 	$scope.drillUp = function(axis, position, member, uniqueName,positionUniqueName) {
 		sbiModule_restServices.promiseGet
 		("1.0",'/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
@@ -492,6 +492,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		  $mdDialog.hide();
 		  $scope.dtAssociatedLevels = [];
 		  $scope.selectedMDXFunction = null;
+		  $scope.selectedCrossNavigation = null;
       }; 
      
       $scope.showCCWizard = function(){
@@ -523,6 +524,51 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     		}
     	}
     }
+    
+    $scope.cellClickCreateCrossNavigationMenu = function(id, ordinal){
+    	$scope.ordinal = ordinal;
+		$mdDialog
+		.show({
+			scope : $scope,
+			preserveScope : true,
+			controllerAs : 'olapCtrl',
+			templateUrl : '/knowagewhatifengine/html/template/main/olap/crossNavigationMenu.html',
+			//targetEvent : ev,
+			clickOutsideToClose : false,
+			hasBackdrop:false
+		});
+	}
+    
+    $scope.selectCrossNavigationDocument = function (target) {
+		$scope.selectedCrossNavigationDocument = target;
+	}
+    
+    $scope.openSelectedCrossNavigationDocument = function (targetDocument) {
+    	var targetIndex = $scope.modelConfig.crossNavigation.targets.indexOf(targetDocument);	
+    	sbiModule_restServices.promisePost
+		("1.0",'/crossnavigation/getCrossNavigationUrl/'+targetIndex+'/'+$scope.ordinal+'/'+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		.then(function(response) {
+			$scope.handleResponse(response);
+			eval(response.data)
+		 }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+		});
+		$scope.closeDialog();
+    }
+    
+    $scope.checkValidityCrossNav = function(){
+    	
+    	if($scope.selectedCrossNavigationDocument == null){
+    		return true;
+    	}else{
+    		if($scope.selectedCrossNavigationDocument.title == ""){
+    			return true;
+    		}else{
+    			return false;
+    		}
+    	}
+    }
+    
     $scope.checkValidityArgs = function(){
     	
     	if($scope.selectedMDXFunction != null){
@@ -544,7 +590,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		$scope.selectedMDXFunction.label ="";
 		console.log($scope.selectedMDXFunction);
 	}
-	
+		
 	$scope.openArgumentsdialog = function(){
 		
 		$mdDialog

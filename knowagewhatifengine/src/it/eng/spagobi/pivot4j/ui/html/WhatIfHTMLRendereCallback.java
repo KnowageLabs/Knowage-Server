@@ -326,16 +326,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				// start OSMOSIT cross nav button
 				SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) context.getModel();
 				SpagoBICrossNavigationConfig crossNavigation = sbiModel.getCrossNavigation();
-				if (crossNavigation != null && crossNavigation.isButtonClicked()
-						&& !crossNavigation.getModelStatus().equalsIgnoreCase(new String("locked_by_other"))
-						&& !crossNavigation.getModelStatus().equalsIgnoreCase(new String("locked_by_user")) && context.getCellType() == CellTypes.VALUE) {
+				if (crossNavigation != null && context.getCellType() == CellTypes.VALUE) {
 
 					int colId = context.getColumnIndex();
 					int rowId = context.getRowIndex();
 					int positionId = context.getCell().getOrdinal();
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-					attributes.put("src", "../img/cross-navigation.gif");
-					attributes.put("onload", "javascript:Sbi.olap.eventManager.createCrossNavigationMenu('" + id + "')");
+					attributes.put("src", "../img/cross-navigation.png");
+					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + id + "','" + positionId + "');$event.stopPropagation();");
 					attributes.put("id", id);
 					startElement("img", attributes);
 					endElement("img");

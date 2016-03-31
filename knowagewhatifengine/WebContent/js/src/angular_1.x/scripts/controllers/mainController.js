@@ -73,6 +73,7 @@ function olapFunction(
 	$scope.formulasData = [];
 	$scope.valuesArray = [];
 	$scope.selectedMDXFunction = null;
+	$scope.selectedCrossNavigationDocument = null;
 	$scope.cookieArray = [];
 	$scope.propertiesArray = [];
 	
