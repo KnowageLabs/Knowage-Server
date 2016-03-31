@@ -1,16 +1,16 @@
 	<md-input-container> 
-		<label>Nome	Scorecard</label> <input ng-model="currentScorecard.name"> 
+		<label>{{translate.load('sbi.kpi.scorecard.scorecard.name')}}</label> <input ng-model="currentScorecard.name"> 
 	</md-input-container> 
 
 	<md-content layout="column" class=" md-whiteframe-3dp" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>
-					<span>Elenco Prospettive</span>
+					<span>{{translate.load('sbi.kpi.scorecard.perspective.list')}}</span>
 				</h2>
 				<span flex></span>
 				<md-button class="md-raised" ng-click="addPerspective()" aria-label="Aggiungi Prospettiva">
-					Aggiungi Prospettiva 
+					{{translate.load('sbi.kpi.scorecard.perspective.add')}}
 				</md-button>
 			</div>
 		</md-toolbar>

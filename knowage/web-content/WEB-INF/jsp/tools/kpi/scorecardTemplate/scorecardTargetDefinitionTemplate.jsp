@@ -1,10 +1,10 @@
 		<md-input-container>
-			 <label>Nome Obiettivo</label> 
+			 <label>{{translate.load('sbi.kpi.scorecard.perspective.goal.name')}}</label> 
 			 <input ng-model="currentTarget.name"> 
 		 </md-input-container>
 
 		<md-input-container class="md-block"> 
-			<label>Criterio di Valutazione</label> 
+			<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
 				<md-select ng-model="currentTarget.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
 				<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
 			</md-select> 
@@ -14,11 +14,11 @@
 		<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>
-					<span>Elenco KPI</span>
+					<span>{{translate.load('sbi.kpi.scorecard.perspective.kpi.list')}}</span>
 				</h2>
 				<span flex></span>
 				<md-button class="md-raised" ng-click="addKpiToTarget();" aria-label="load kpi">
-					Salva
+					{{translate.load('cache.manager.save')}}
 				</md-button>
 			</div>
 		</md-toolbar>
