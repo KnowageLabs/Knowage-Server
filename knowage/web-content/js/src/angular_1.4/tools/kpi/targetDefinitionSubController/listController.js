@@ -3,7 +3,7 @@ var app = angular.module('kpiTarget').controller('listController', ['$scope','sb
 function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
 
-	$scope.addTarget= function(){
+	$scope.addTarget= function() {
 		$angularListDetail.goToDetail();
 	}
 	

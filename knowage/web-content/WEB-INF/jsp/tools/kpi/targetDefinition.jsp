@@ -53,6 +53,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
+<script type="text/ng-template" id="templatesaveTarget.html">
+<md-dialog aria-label="Select Function" ng-cloak>
+	<form>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h1>Save Target</h1>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="close()">
+					<md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content>
+			<div class="md-dialog-content">
+				<md-autocomplete 
+						ng-disabled="false" 
+						md-selected-item="targetCategory" 
+						md-search-text="searchText" 
+						md-items="item in querySearchCategory(searchText)"
+						md-item-text="item.valueCd" 
+						md-floating-label="Categoria"
+						md-autoselect="true">
+					<md-item-template>
+						<span md-highlight-text="searchText">{{item.valueCd}}</span>
+					</md-item-template>
+				</md-autocomplete>
+			</div>
+			<div class="footer">
+				<md-button class="dialogButton" ng-click="apply()" md-autofocus>
+					Apply<md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon>
+				</md-button>
+			</div>
+		</md-dialog-content>
+	</form>
+</md-dialog>
+</script>
 
 </head>
 <body>
@@ -60,13 +96,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list ng-controller="listController" new-function="addTarget">
 			<angular-table  flex
 				id='targetListTable' ng-model=targets
-				columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category"},{"label":"Start Validity Date","name":"startValidity"},{"label":"Data End Validation","name":"endValidity"}]'
+				columns='[{"label":"Name","name":"name"},{"label":"Category","name":"category.valueCd"},{"label":"Start Validity Date","name":"startValidity"},{"label":"Data End Validation","name":"endValidity"}]'
 				columnsSearch='["name"]'
 				show-search-bar="true"
 				speed-menu-option="targetsActions"
 				click-function="loadTarget(item);"> </angular-table>
 		</list>
-		<detail save-function="saveTarget" cancel-function="cancel">
+		<detail save-function="showSaveTargetDialog" cancel-function="cancel">
 			<div id="contentWhiteFrame" class="overflow" flex layout="column">
 				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
 					<div>

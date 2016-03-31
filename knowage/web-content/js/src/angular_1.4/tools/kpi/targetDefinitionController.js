@@ -23,6 +23,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	};
 	$scope.translate = sbiModule_translate;
 	
+	$scope.targetCategories = [];
+	
 	$scope.target = {};
 	
 	$scope.targets = [];
@@ -208,7 +210,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							values: [], // Not needed yet
 							category:
 								typeof data[i].category != 'undefined' && data[i].category != null 
-								? data[i].category.valueName : null
+								? data[i].category : null
 						}
 					}
 				}
@@ -232,7 +234,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			endValidity: $scope.target.endValidityDate,
 			author: $scope.target.author,
 			values: [],
-			category: null
+			category: $scope.target.category
 		}
 		for (var i = 0; i < $scope.kpis.length; i++) {
 			newTarget.values[newTarget.values.length] = {
@@ -281,9 +283,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$scope.targets[idx].startValidity = this.formatDate($scope.target.startValidityDate);
 					$scope.targets[idx].endValidityDate = $scope.target.endValidityDate;
 					$scope.targets[idx].endValidity = this.formatDate($scope.target.endValidityDate);
+					$scope.targets[idx].category = $scope.target.category;
 					$scope.target = {};
 					$scope.kpis = [];
-					$angularListDetail.goToDetail();
+					$scope.fetchTargetCategories(); // Reload target categories
 					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
 							.action('OK').highlightAction(false).hideDelay(3000));
 					$angularListDetail.goToList();
@@ -296,9 +299,70 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			);
 	}
 	
-	// =====================
-	// === FETCH TARGETS ===
-	// =====================
-	$scope.fetchTargets();
+	$scope.showSaveTargetDialog = function() {
+		$mdDialog.show({
+			controller:
+				function ($scope, $mdDialog, targetCategories, targetCategory) {
+					$scope.targetCategory = targetCategory;
+					$scope.targetCategories = targetCategories;
+					$scope.close = function() {
+						$mdDialog.cancel();
+					}
+					$scope.apply = function() {
+						$mdDialog.hide($scope.targetCategory);
+					}
+					$scope.querySearchCategory = function(query) {
+						var results = query ? $scope.targetCategories.filter( createFilterFor(query) ) : [];
+						var pushNeeded = true;
+						for (var i = 0; i < results.length; i++) {
+							if (angular.uppercase(results[i].valueCd) == angular.uppercase(query)) {
+								pushNeeded = false;
+								break;
+							}
+						}
+						if (pushNeeded) results.push({valueCd: angular.uppercase(query)});
+						return results;
+					}
+					function createFilterFor(query) {
+						var lowercaseQuery = angular.lowercase(query);
+						return function filterFn(state) {
+							return (angular.lowercase(state.valueCd).indexOf(lowercaseQuery) === 0);
+						};
+					}
+				},
+			templateUrl: 'templatesaveTarget.html',
+			clickOutsideToClose: true,
+			preserveScope: true,
+			locals: {
+				targetCategories: $scope.targetCategories,
+				targetCategory: typeof $scope.target.category != 'undefined' ? $scope.target.category : null
+			}
+		})
+		.then(function(targetCategory) {
+			$scope.target.category = targetCategory;
+			$scope.saveTarget();
+		}, function() {
+			
+		});
+	}
+
+	$scope.fetchTargetCategories = function() {
+		sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_TARGET_CATEGORY")
+			.then(
+				function(response) { 
+					angular.copy(response.data, $scope.targetCategories);
+				},
+				function(response) {
+					
+				}
+			);
+	}
+
 	
+	// ==================
+	// === FETCH DATA ===
+	// ==================
+	
+	$scope.fetchTargetCategories();
+	$scope.fetchTargets();
 }
