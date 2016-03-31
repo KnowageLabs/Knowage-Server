@@ -6,28 +6,30 @@
 
 	<md-content class="dialog-style" flex=90 >
 		<div>
-        		<md-button class="md-icon-button" style="margin-right:-4%;margin-left:-4%;" ng-click="showHideSearchOnFilters()">
+				<!--         		<md-button class="md-icon-button" style="margin-right:-4%;margin-left:-4%;" ng-click="showHideSearchOnFilters()">
 					<md-tooltip md-direction="top">
           				{{showSearchInput ? "Hide search": "Show search"}}
         			</md-tooltip>
 
 					<md-icon ng-class="showSearchInput ? 'fa fa-eye-slash' :'fa fa-eye'" style="padding-top:5px;"></md-icon>
 				</md-button>
-				
+				 -->
+						<!-- showSearchInput -->
         		<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
-        				ng-show="showSearchInput" 
+        				ng-show="true" 
         				ng-model="searchText" 
         				placeholder="Insert text here" 
         				width="70%!important"/>
 				
-				<md-button ng-show="showSearchInput" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
+				<!-- showSearchInput -->
+				<md-button ng-show="true" ng-click="searchFilter()" class="md-icon-button" ng-disabled="minNumOfLetters > searchText.length">
 				<md-tooltip md-direction="top">
           				Search
         			</md-tooltip>
 					<md-icon class="fa fa-search" style="padding-top:5px;"></md-icon>
 				</md-button>
 				
-				<md-checkbox ng-show="showSearchInput" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
+				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
 					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
 				</md-checkbox>
     	</div>

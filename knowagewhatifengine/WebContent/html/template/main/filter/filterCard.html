@@ -20,7 +20,7 @@
 				{{filterSelected[$index].visible ? filterSelected[$index].name : '...'}}
 			</div>
 			<div class="button-area">
-				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)">
+				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)" id="{{filter.name}}-filter">
 					<md-icon md-font-icon="fa fa-filter"></md-icon>
 				</md-button>
 			</div>

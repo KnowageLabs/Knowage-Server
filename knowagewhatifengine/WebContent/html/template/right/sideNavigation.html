@@ -18,18 +18,18 @@
 	Customization
 </md-toolbar>
 <div class="right-menu" layout="row"> 
-	<div style="width:33%;">
-		<md-button ng-class="tableIcon && !chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('table')">
+	<div style="width:33%;" >
+		<md-button id="sidenav-table-btn" ng-class="tableIcon && !chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('table')">
 			<md-icon class="fa fa-table fa-2x"/>
 		</md-button>
 	</div>
-	<div style="width:33%;">
-		<md-button ng-class="!tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('chart')">
+	<div style="width:33%;" >
+		<md-button id="sidenav-chart-btn" ng-class="!tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('chart')">
 			<md-icon class="fa fa-pie-chart fa-2x"/>
 		</md-button> 
 	</div>
 	<div style="width:33%;">
-		<md-button ng-class="tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('both')">
+		<md-button id="sidenav-tablechart-btn" ng-class="tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('both')">
 			<md-icon class="fa fa-table"/>
 			<md-icon class="fa fa-pie-chart"/>			
 		</md-button>
@@ -37,5 +37,5 @@
 </div>
 <md-toolbar class='md-toolbar-tools knowage-blue'>Menu</md-toolbar>
 	<sbi-table-toolbar ng-show="tableIcon && !chartIcon"></sbi-table-toolbar>
-	<sbi-chart-toolbar ng-show="!tableIcon && chartIcon"></sbi-table-toolbar>
+	<sbi-chart-toolbar ng-show="!tableIcon && chartIcon"></sbi-chart-toolbar>
 </md-sidenav>
