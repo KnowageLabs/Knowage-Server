@@ -8,7 +8,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 			loadListKPI: function(item,evt){
 				var promise = $scope.loadListKPI();
 				promise.then(function(result){
-					angular.copy(result,$scope.selectedScheduler.kpi);
+					angular.copy(result,$scope.selectedScheduler.kpis);
 				});
 			},
 	}
@@ -32,8 +32,8 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
 			if($scope.exists(item)){
-				var index = $scope.indexInList(item, $scope.selectedScheduler.kpi);
-				$scope.selectedScheduler.kpi.splice(index,1);
+				var index = $scope.indexInList(item, $scope.selectedScheduler.kpis);
+				$scope.selectedScheduler.kpis.splice(index,1);
 			}
 
 		}, function() {
@@ -43,8 +43,12 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 	$scope.loadListKPI = function(){
 		var deferred = $q.defer();
-		
-		angular.copy($scope.selectedScheduler.kpi,$scope.kpiSelected);
+		if($scope.selectedScheduler.kpis==undefined){
+			$scope.selectedScheduler.kpis = [];
+		} else if($scope.kpiSelected.length==0){
+			angular.copy($scope.selectedScheduler.kpis,$scope.kpiSelected);
+		}
+		angular.copy($scope.selectedScheduler.kpis,$scope.kpiSelected);
 		$mdDialog.show({
 			controller: DialogControllerKPI,
 			templateUrl: 'templatesaveKPI.html',
@@ -62,8 +66,8 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	};
 	
 	$scope.exists = function (item) {
-		if($scope.selectedScheduler.kpi==undefined)return false;
-		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)!=-1;
+		if($scope.selectedScheduler.kpis==undefined)return false;
+		return  $scope.indexInList(item, $scope.selectedScheduler.kpis)!=-1;
 
 	};
 	
@@ -93,7 +97,7 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSel
 	$scope.kpiSelected = kpiSelected;
 
 	$scope.exists = function (item) {
-		return  $scope.indexInList(item, $scope.selectedScheduler.kpi)==-1;
+		return  $scope.indexInList(item, $scope.selectedScheduler.kpis)==-1;
 
 	};
 

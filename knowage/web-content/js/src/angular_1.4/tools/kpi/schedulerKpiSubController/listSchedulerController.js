@@ -11,27 +11,31 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 	}
 	$scope.loadEngine = function(item){
-		$scope.selectedScheduler.name = item.name;
-		//rest service to load kpis
-
-		sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_KPI_CATEGORY")
+//		$scope.selectedScheduler.name = item.name;
+		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadSchedulerKPI")
 		.then(function(response){ 
-			angular.copy(response.data,$scope.AttributeCategoryList);
+			angular.copy(response.data,$scope.selectedScheduler);
+			angular.copy(response.data.kpis,$scope.selectedScheduler.kpis);
+			if($scope.selectedScheduler.kpis!=undefined){
+				for(var i=0;i<$scope.selectedScheduler.kpis.length;i++){
+					$scope.selectedScheduler.kpis[i]["valueCd"] = $scope.selectedScheduler.kpis[i].category.valueCd;
+				}
+			}
+			
 		},function(response){
 
 		});
-		sbiModule_restServices.promiseGet("1.0/kpi", 'listMeasure')
-		.then(function(response){ 
+		
 
-			$scope.measures=response.data;
-		},function(response){
-			$scope.errorHandler(response.data,"");
-		});
+		
 
-		$scope.selectedScheduler.kpi = item.kpi;
-		$scope.selectedScheduler.startDate = item.startDate;
-		$scope.selectedScheduler.endDate = item.endDate;
-		$scope.selectedScheduler.author = item.author;
+//		if(item.kpi==undefined){
+//			$scope.selectedScheduler.kpi = [];
+//		}
+//		$scope.selectedScheduler.kpi = item.kpi;
+//		$scope.selectedScheduler.startDate = item.startDate;
+//		$scope.selectedScheduler.endDate = item.endDate;
+//		$scope.selectedScheduler.author = item.author;
 		$angularListDetail.goToDetail();
 	}
 

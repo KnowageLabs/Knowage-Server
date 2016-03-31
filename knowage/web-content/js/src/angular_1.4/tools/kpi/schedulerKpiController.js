@@ -5,42 +5,45 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('schedulerKpiController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail',kpiTargetControllerFunction ]);
+app.controller('schedulerKpiController', ['$scope','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter',kpiTargetControllerFunction ]);
 
-function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail){
+function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedScheduler={};
 	$scope.kpi = [];
 	$scope.kpiAllList = [];
 	$scope.kpiSelected = [];
+	$scope.placeHolder = [];
 	//retry it after with a service rest
 
-	$scope.engines = [
-	                  {"name":"kpi1_Calcolo",
-	                	  "kpi":[],
-	                	  "startDate": "03/03/2015",
-	                	  "endDate": "03/03/2015",
-	                	  "author":"biadmin"
-	                  },
-	                  {"name":"kpi1_Calcolo2",
-	                	  "kpi":[],
-	                	  "startDate": "03/03/2015",
-	                	  "endDate": "03/03/2015",
-	                	  "author":"biadmin"
-	                  },
-	                  {"name":"kpi1_Calcolo3",
-	                	  "kpi":[],
-	                	  "startDate": "03/03/2015",
-	                	  "endDate": "03/03/2015",
-	                	  "author":"biadmin"
-	                  }
-	                  ];
+	$scope.engines = [];
 
 
 
+	$scope.loadEngineKpi = function(){
+		sbiModule_restServices.promiseGet("1.0/kpi","listSchedulerKPI")
+		.then(function(response){ 
+			angular.copy(response.data,$scope.engines);
+			for(var i=0;i<$scope.engines.length;i++){
+				if($scope.engines[i].endDate!=null && $scope.engines[i].endDate!=undefined){
+					var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
+					//parse date based on language selected
+					 $scope.engines[i].endDate=$filter('date')( $scope.engines[i].endDate, dateFormat);
+				}
+				if($scope.engines[i].startDate!=null && $scope.engines[i].startDate!=undefined){
+					var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
+					//parse date based on language selected
+					 $scope.engines[i].startDate=$filter('date')( $scope.engines[i].startDate, dateFormat);
+				}
+			}
+		},function(response){
+		});
 
+	}
+	
+	$scope.loadEngineKpi();
+	
 	$scope.getListKPI = function(){
-		var arr = [];
 		var arr_name = [];
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
 		.then(function(response){ 
@@ -57,28 +60,51 @@ function kpiTargetControllerFunction($scope,sbiModule_translate,sbiModule_restSe
 				obj["id"]=response.data[i].id;
 
 				$scope.kpiAllList.push(obj);
-				if(i!=2){
-					arr.push(obj);
-					arr_name.push(response.data[i].name);
-				}
+
 			}
 
-			angular.copy(arr,$scope.engines[0].kpi );
-			angular.copy(arr,$scope.engines[1].kpi );
-			angular.copy(arr,$scope.engines[2].kpi );
-			console.log("enginesKPI",$scope.engines);
-			//angular.copy(response.data,$scope.kpiAllList);
-			$scope.engines[0].kpiName = arr_name;
-			$scope.engines[1].kpiName = arr_name;
-			$scope.engines[2].kpiName = arr_name;
-			console.log($scope.engines);
 
 		},function(response){
 		});
 	}
 	$scope.getListKPI();
 
+	
+	$scope.loadAllInformationForKpi  = function(){
+	
+		$scope.placeHolder = $scope.selectedScheduler.filters;
+		var arr = [];
+		sbiModule_restServices.promiseGet("1.0/kpi","listPlaceholder")
+		.then(function(response){ 
+			angular.copy(response.data,arr);
+			console.log(arr,$scope.placeHolder);
+		},function(response){
+		});
 
+	}
+	
+	
+	$scope.indexInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.id==item.id){
+				return i;
+			}
+		}
+
+		return -1;
+	};
+	$scope.parseDate = function(date){
+		result = "";
+		if(date == "d/m/Y"){
+			result = "dd/MM/yyyy";
+		}
+		if(date =="m/d/Y"){
+			result = "MM/dd/yyyy"
+		}
+		return result;
+	};
 
 	$scope.cancel = function(){
 		$angularListDetail.goToList();

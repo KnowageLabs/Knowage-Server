@@ -68,11 +68,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="md-toolbar-tools">
         <h1>Save new KPI</h1>
         <span flex></span>
-		<md-button class="md-icon-button" ng-click="addKPIToCheck()">
-          Save
+		<md-button class="md-primary" ng-click="addKPIToCheck()">
+          	Save
         </md-button>
-        <md-button class="md-icon-button" ng-click="close()">
-          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+		<md-button class="md-primary" ng-click="close()">
+			Close    
         </md-button>
       </div>
 	
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		id='targetListTable' ng-model=kpiAllList
 		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
 		columns-search='["name"]' show-search-bar=true
-		multi-select= true selected-item=kpiSelected
+		multi-select= true selected-item=kpiSelected comparison-column="'id'"
 		scope-functions=tableFunction 
 		> </angular-table>
 		</div>
@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="translate.load('sbi.kpi.list')"  ng-controller="listSchedulerController" new-function="addScheduler" >
 		<angular-table flex
 		id='targetListTable' ng-model=engines
-		columns='[{"label":"Name","name":"name"},{"label":"KPI","name":"kpiName"},{"label":"Start Date","name":"startDate"},{"label":"End Date","name":"endDate"},{"label":"Author","name":"author"}]'
+		columns='[{"label":"Name","name":"name"},{"label":"KPI","name":"kpiNames"},{"label":"Start Date","name":"startDate"},{"label":"End Date","name":"endDate"},{"label":"Author","name":"author"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions=tableFunction 
 		click-function="loadEngine(item);"> </angular-table>
@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         			<%@include	file="./schedulerKpiTemplate/kpi.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="tab2">
+				<md-tab id="tab2" md-on-select='loadAllInformationForKpi()'>
        				<md-tab-label >{{translate.load("sbi.kpi.filters")}}</md-tab-label>
         			<md-tab-body >
         			<%@include	file="./schedulerKpiTemplate/filterTemplate.jsp"%>
@@ -131,6 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab id="tab4" md-on-select="loadThreshold()" >
        				<md-tab-label>{{translate.load("sbi.execution.parametersselection.executionbutton.message")}}</md-tab-label>
         			<md-tab-body>
+        			<%@include	file="./schedulerKpiTemplate/executeTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
 			</md-tabs>
