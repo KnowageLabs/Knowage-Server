@@ -2,7 +2,9 @@ package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
 
-public class SchedulerFilter {
+import java.io.Serializable;
+
+public class SchedulerFilter implements Serializable {
 
 	private Integer executionId;
 	private Integer placeholderId;
@@ -10,6 +12,15 @@ public class SchedulerFilter {
 	private String kpiName;
 	private Domain type;
 	private String value;
+
+	public SchedulerFilter() {
+	}
+
+	public SchedulerFilter(Integer executionId, String placeholderName, String kpiName) {
+		this.executionId = executionId;
+		this.placeholderName = placeholderName;
+		this.kpiName = kpiName;
+	}
 
 	/**
 	 * @return the type
@@ -99,6 +110,53 @@ public class SchedulerFilter {
 	 */
 	public void setKpiName(String kpiName) {
 		this.kpiName = kpiName;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((executionId == null) ? 0 : executionId.hashCode());
+		result = prime * result + ((kpiName == null) ? 0 : kpiName.hashCode());
+		result = prime * result + ((placeholderName == null) ? 0 : placeholderName.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SchedulerFilter other = (SchedulerFilter) obj;
+		if (executionId == null) {
+			if (other.executionId != null)
+				return false;
+		} else if (!executionId.equals(other.executionId))
+			return false;
+		if (kpiName == null) {
+			if (other.kpiName != null)
+				return false;
+		} else if (!kpiName.equals(other.kpiName))
+			return false;
+		if (placeholderName == null) {
+			if (other.placeholderName != null)
+				return false;
+		} else if (!placeholderName.equals(other.placeholderName))
+			return false;
+		return true;
 	}
 
 }

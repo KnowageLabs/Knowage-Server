@@ -900,6 +900,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		// Looking for a RuleOutput with same alias name or alias id
 		Criteria c = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiAlias", "sbiKpiAlias").createAlias("sbiKpiRule", "sbiKpiRule")
 				.setMaxResults(1);
+		c.add(Restrictions.eq("sbiKpiRule.active", 'T'));
 		if (ruleId != null) {
 			c.add(Restrictions.ne("sbiKpiRule.sbiKpiRuleId.id", ruleId));
 		}
@@ -1252,6 +1253,21 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return from(sbi, true);
 			}
 		});
+		// TODO all placeholders must join scd.getFilters() list
+		List<String> kpiNames = new ArrayList<>();
+		for (Kpi kpi : scheduler.getKpis()) {
+			kpiNames.add(kpi.getName());
+		}
+		Map<String, List<String>> placeholders = listPlaceholderByKpiList(kpiNames);
+		for (String kpiName : placeholders.keySet()) {
+			for (String placeholderName : placeholders.get(kpiName)) {
+				SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpiName);
+				if (!scheduler.getFilters().contains(filter)) {
+					scheduler.getFilters().add(filter);
+				}
+			}
+		}
+
 		return scheduler;
 	}
 
@@ -1294,7 +1310,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		scd.setEndDate(sbi.getEndTime());
 		scd.setDelta(Boolean.TRUE.equals(sbi.getDelta()));
 		if (full) {
-			// TODO all placeholders must join scd.getFilters() list
 			for (SbiKpiExecutionFilter sbiFilter : sbi.getSbiKpiExecutionFilters()) {
 				SchedulerFilter filter = new SchedulerFilter();
 				filter.setExecutionId(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId());
