@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScorecardSubview {
-	public enum STATUS {
+	public static enum STATUS {
 		RED, YELLOW, GREEN, GRAY
 	};
 
@@ -16,7 +16,7 @@ public class ScorecardSubview {
 	private Domain criterion;
 
 	// TODO status will be rendered as a color (green/yellow/red)
-	private STATUS status = STATUS.GRAY;
+	private List<STATUS> status = new ArrayList<>();
 	private final List<CountByStatus> groupedKpis = new ArrayList<>();
 
 	/**
@@ -67,7 +67,7 @@ public class ScorecardSubview {
 	/**
 	 * @return the status
 	 */
-	public STATUS getStatus() {
+	public List<STATUS> getStatus() {
 		return status;
 	}
 
@@ -75,7 +75,7 @@ public class ScorecardSubview {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(STATUS status) {
+	public void setStatus(List<STATUS> status) {
 		this.status = status;
 	}
 

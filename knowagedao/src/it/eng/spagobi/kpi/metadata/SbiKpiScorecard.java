@@ -11,12 +11,6 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	private Integer id;
 	private Integer parentId;
 	private String name;
-
-	/**
-	 * S = scorecard, P = perspective, T = target
-	 */
-	// private Character internalType;
-
 	private Integer criterionId;
 	private SbiDomains criterion;
 
@@ -68,21 +62,6 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	/**
-	 * @return the internalType
-	 */
-	// public Character getInternalType() {
-	// return internalType;
-	// }
-
-	/**
-	 * @param internalType
-	 *            the internalType to set
-	 */
-	// public void setInternalType(Character internalType) {
-	// this.internalType = internalType;
-	// }
 
 	/**
 	 * @return the criterionId

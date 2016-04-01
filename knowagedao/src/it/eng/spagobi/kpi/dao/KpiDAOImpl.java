@@ -31,6 +31,7 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
@@ -64,12 +65,15 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -801,7 +805,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private Kpi from(SbiKpiKpi sbi, SbiKpiThreshold sbiKpiThreshold, boolean full) {
-		Kpi kpi = new Kpi();
+		return from(new Kpi(), sbi, sbiKpiThreshold, full);
+	}
+
+	private <T extends Kpi> T from(T kpi, SbiKpiKpi sbi, SbiKpiThreshold sbiKpiThreshold, boolean full) {
 		kpi.setId(sbi.getSbiKpiKpiId().getId());
 		kpi.setVersion(sbi.getSbiKpiKpiId().getVersion());
 		kpi.setName(sbi.getName());
@@ -1607,5 +1614,33 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			ret.put(key, listPlaceholderByMeasures(ret.get(key)));
 		}
 		return ret;
+	}
+
+	@Override
+	public List<KpiExecution> listKpiWithResult() {
+		// TODO load last status of each kpi
+		return mockListKpiWithResult();
+	}
+
+	private static final List<it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS> statusValues = Collections.unmodifiableList(Arrays
+			.asList(it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS.values()));
+	private static final int SIZE = statusValues.size();
+	private static final Random RANDOM = new Random();
+
+	public List<KpiExecution> mockListKpiWithResult() {
+		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiKpiKpi.class).add(Restrictions.eq("active", 'T'));
+			}
+		});
+		List<KpiExecution> kpis = new ArrayList<>();
+		for (SbiKpiKpi sbi : lst) {
+			KpiExecution kpi = new KpiExecution();
+			from(kpi, sbi, null, false);
+			kpi.setStatus(statusValues.get(RANDOM.nextInt(SIZE)));
+			kpis.add(kpi);
+		}
+		return kpis;
 	}
 }

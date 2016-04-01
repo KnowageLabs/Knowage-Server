@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
@@ -120,6 +121,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return
 	 */
 	public List<Kpi> listKpi(STATUS status);
+
+	public List<KpiExecution> listKpiWithResult();
 
 	/**
 	 * Insert a new kpi
