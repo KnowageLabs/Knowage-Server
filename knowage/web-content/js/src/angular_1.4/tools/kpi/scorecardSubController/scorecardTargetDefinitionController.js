@@ -3,7 +3,8 @@ angular.module('scorecardManager').controller('scorecardTargetDefinitionControll
 
 angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
 	this.getTargetStatus=function(target){
-	if(angular.equals(target.criterion.valueId,228)){
+		debugger
+	if(angular.equals(target.criterion.valueCd,"MAJORITY")){
 			return loadTargetByMajority(target);
 		}else{
 			//load by priority
