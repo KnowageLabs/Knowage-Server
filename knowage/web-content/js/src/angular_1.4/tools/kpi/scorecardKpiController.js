@@ -131,6 +131,16 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		console.log($scope.currentScorecard);
 		console.log($scope.currentPerspective);
 		console.log($scope.currentTarget);
+		
+		
+		sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",$scope.currentScorecard)
+		.then(function(response) {
+			alert("Salvato");
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});	
+		
+		
 	}
 	
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_SCORECARD_CRITE")
