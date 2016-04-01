@@ -532,7 +532,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -823,7 +823,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1274,7 +1274,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						Kpi kpi = new Kpi();
 						kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
 						kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
-						kpi.setCategory(from(sbiKpi.getCategory()));
+						if (sbiKpi.getCategory() != null) {
+							kpi.setCategory(from(sbiKpi.getCategory()));
+						}
 						target.getKpis().add(kpi);
 					}
 				}
@@ -1322,7 +1324,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private ScorecardSubview from(ScorecardSubview subview, SbiKpiScorecard sbi) {
 		subview.setId(sbi.getId());
 		subview.setName(sbi.getName());
-		subview.setCriterion(from(sbi.getCriterion()));
+		if (sbi.getCriterion() != null) {
+			subview.setCriterion(from(sbi.getCriterion()));
+		}
+
 		// TODO define how to get status (ie kpi result color)
 		// subview.setStatus(status);
 		return subview;
@@ -1392,14 +1397,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 	}
 
-	private SbiKpiScorecard from(ScorecardSubview scorecardSubview, SbiKpiScorecard sbiScorecardView, Session session) {
+	private SbiKpiScorecard from(ScorecardSubview scorecardSubview, SbiKpiScorecard sbiScorecard, Session session) {
 		SbiKpiScorecard sbiKpiScorecard = null;
-		if (sbiScorecardView.getId() != null) {
-			sbiKpiScorecard = new SbiKpiScorecard();
-			sbiKpiScorecard.setParentId(sbiScorecardView.getId());
-			sbiKpiScorecard.setName(scorecardSubview.getName());
+		if (scorecardSubview.getId() == null) {
+			if (sbiScorecard.getId() != null) {
+				sbiKpiScorecard = new SbiKpiScorecard();
+				sbiKpiScorecard.setParentId(sbiScorecard.getId());
+			}
+			updateSbiCommonInfo4Insert(sbiKpiScorecard);
+		} else {
+			sbiKpiScorecard = (SbiKpiScorecard) session.load(SbiKpiScorecard.class, scorecardSubview.getId());
+			updateSbiCommonInfo4Update(sbiKpiScorecard);
 		}
-		updateSbiCommonInfo4Insert(sbiKpiScorecard);
+		sbiKpiScorecard.setName(scorecardSubview.getName());
 		return sbiKpiScorecard;
 	}
 

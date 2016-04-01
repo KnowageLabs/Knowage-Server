@@ -1,5 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class Scorecard {
 	private Date creationDate;
 	private String author;
 
-	private List<ScorecardPerspective> perspectives;
+	private List<ScorecardPerspective> perspectives = new ArrayList<ScorecardPerspective>();
 
 	/**
 	 * @return the id
