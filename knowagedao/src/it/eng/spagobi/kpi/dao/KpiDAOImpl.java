@@ -1260,16 +1260,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		for (Kpi kpi : scheduler.getKpis()) {
 			kpiNames.add(kpi.getName());
 		}
-		Map<String, List<String>> placeholders = listPlaceholderByKpiList(kpiNames);
-		for (String kpiName : placeholders.keySet()) {
-			for (String placeholderName : placeholders.get(kpiName)) {
-				SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpiName);
-				if (!scheduler.getFilters().contains(filter)) {
-					scheduler.getFilters().add(filter);
+		if (!kpiNames.isEmpty()) {
+			Map<String, List<String>> placeholders = listPlaceholderByKpiList(kpiNames);
+			for (String kpiName : placeholders.keySet()) {
+				for (String placeholderName : placeholders.get(kpiName)) {
+					SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpiName);
+					if (!scheduler.getFilters().contains(filter)) {
+						scheduler.getFilters().add(filter);
+					}
 				}
 			}
 		}
-
 		return scheduler;
 	}
 
