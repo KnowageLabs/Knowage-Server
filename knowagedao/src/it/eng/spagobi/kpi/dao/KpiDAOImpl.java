@@ -1549,18 +1549,39 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<String> listPlaceholderByKpiList(final List<String> kpiNames) {
-		List<String> measures = executeOnTransaction(new IExecuteOnTransaction<List<String>>() {
+	public Map<String, List<String>> listPlaceholderByKpiList(final List<String> kpiNames) {
+		List<Map<String, String>> measures = executeOnTransaction(new IExecuteOnTransaction<List<Map<String, String>>>() {
 			@Override
-			public List<String> execute(Session session) throws Exception {
-				List measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule").createAlias("sbiKpiKpis", "sbiKpiKpis")
-						.createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.eq("sbiKpiKpis.active", 'T'))
-						.add(Restrictions.eq("sbiKpiRule.active", 'T')).add(Restrictions.in("sbiKpiKpis.name", kpiNames))
-						.setProjection(Property.forName("sbiKpiAlias.name")).list();
-
+			public List<Map<String, String>> execute(Session session) throws Exception {
+				List<Map<String, String>> measures = session
+						.createCriteria(SbiKpiRuleOutput.class)
+						.createAlias("sbiKpiRule", "sbiKpiRule")
+						.createAlias("sbiKpiKpis", "sbiKpiKpis")
+						.createAlias("sbiKpiAlias", "sbiKpiAlias")
+						.add(Restrictions.eq("sbiKpiKpis.active", 'T'))
+						.add(Restrictions.eq("sbiKpiRule.active", 'T'))
+						.add(Restrictions.in("sbiKpiKpis.name", kpiNames))
+						.setProjection(
+								Projections.projectionList().add(Property.forName("sbiKpiKpis.name").as("kpi"))
+										.add(Property.forName("sbiKpiAlias.name").as("measure"))).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 				return measures;
 			}
 		});
-		return listPlaceholderByMeasures(measures);
+		/**
+		 * Initially this is a map of {kpi name: list of measure names}, then it will contain a map of {kpi name: list of placeholder names}
+		 */
+		Map<String, List<String>> ret = new HashMap<>();
+		for (Map<String, String> o : measures) {
+			String kpi = o.get("kpi");
+			String measure = o.get("measure");
+			if (!ret.containsKey(kpi)) {
+				ret.put(kpi, new ArrayList<String>());
+			}
+			ret.get(kpi).add(measure);
+		}
+		for (String key : ret.keySet()) {
+			ret.put(key, listPlaceholderByMeasures(ret.get(key)));
+		}
+		return ret;
 	}
 }

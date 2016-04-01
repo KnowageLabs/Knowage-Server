@@ -185,7 +185,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 *            version
 	 * @return a list of placeholder name
 	 */
-	public List<String> listPlaceholderByKpiList(List<String> kpiNames);
+	public Map<String, List<String>> listPlaceholderByKpiList(List<String> kpiNames);
 
 	public List<Target> listTarget();
 
