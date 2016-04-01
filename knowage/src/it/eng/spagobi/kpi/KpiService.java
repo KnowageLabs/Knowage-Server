@@ -152,7 +152,7 @@ public class KpiService {
 			List<String> kpiNames = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
 			IKpiDAO dao = getKpiDAO(req);
 			if (kpiNames != null && !kpiNames.isEmpty()) {
-				List<String> lst = dao.listPlaceholderByKpiList(kpiNames);
+				Map<String, List<String>> lst = dao.listPlaceholderByKpiList(kpiNames);
 				return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
 			}
 		} catch (IOException e) {
