@@ -71,18 +71,16 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	$scope.loadAllInformationForKpi  = function(){
 	
 		var arr = [];
-		
 		for(var k=0;k<$scope.selectedScheduler.kpis.length;k++){
 			arr.push($scope.selectedScheduler.kpis[k].name);
 		}
-		console.log(arr);
-		
 		sbiModule_restServices.promisePost("1.0/kpi", 'listPlaceholderByKpi',arr).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
 						$scope.showAction(response.data);
 					} else {
-					console.log("wow",response.data);
+					angular.copy(response.data,$scope.placeHolder);
+					$scope.addPlaceHolderMissing();
 					}
 
 				},function(response) {
@@ -94,12 +92,52 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 	}
 	
+	$scope.addPlaceHolderMissing = function(){
+		
+		//	for(var k=0;k<$scope.selectedScheduler.filters.length;k++){
+		//		if($scope.placeHolder[$scope.selectedScheduler.filters[k].kpiName]!=undefined){
+		//			for(var t=0;t<$scope.placeHolder[$scope.selectedScheduler.filters[k].kpiName].length;t++){
+		var keys = Object.keys($scope.placeHolder);
+		for(var i=0;i<keys.length;i++){
+						var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
+						if(index ==-1){
+							
+							var objType = {"domainCode": "KPI_PLACEHOLDER_TYPE",
+											"domainName": "KPI placeholder value type",
+											"translatedValueDescription": "Fixed Value",
+											"translatedValueName": "Fixed Value",
+											"valueCd": "FIXED_VALUE",
+											"valueDescription": "sbidomains.kpi.fixedvalue",
+											"valueId": 355,
+											"valueName": "sbidomains.kpi.fixedvalue"
+							}
+
+							var obj = {};
+							obj.kpiName = keys[i];
+							
+							if($scope.placeHolder[keys[i]].length==1){
+								obj.placeholderName = $scope.placeHolder[keys[i]][0];
+							}	
+							
+						
+							
+							obj.value="";
+							obj.type = objType;
+							$scope.selectedScheduler.filters.push(obj);
+						}
+					}
+					
+		//		}
+				
+		//	}
+	}
 	
-	$scope.indexInList=function(item, list) {
+	
+	$scope.indexInList=function(item, list,param) {
 
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
-			if(object.id==item.id){
+			if(object[param]==item){
 				return i;
 			}
 		}
