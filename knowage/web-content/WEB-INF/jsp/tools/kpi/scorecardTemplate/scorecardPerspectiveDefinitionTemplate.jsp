@@ -1,16 +1,23 @@
 
 		<md-input-container>
 			 <label>{{translate.load('sbi.kpi.scorecard.perspective.name')}}</label> 
-			 <input ng-model="currentPerspective.name"> 
+			 <input ng-model="currentPerspective.name" > 
 		 </md-input-container>
 
-		<md-input-container class="md-block"> 
-			<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
-				<md-select ng-model="currentPerspective.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
-				<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
-			</md-select> 
-		</md-input-container>
-
+		<div layout="row"> 
+			<md-input-container class="md-block" flex> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+				<md-select ng-model="currentPerspective.criterion" ng-model-options="{trackBy: '$value.valueId'}"> 
+					<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
+				</md-select> 
+			</md-input-container> 
+			<md-input-container flex='50' class="md-block" ng-if="currentPerspective.criterion.valueId==229"> 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label> 
+				<md-select ng-model="currentPerspective.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="targ in currentPerspective.targets" ng-value="{{targ}}">	{{targ.name}} </md-option> 
+				</md-select> 
+			</md-input-container>
+		</div>
 	<md-content layout="column" class=" md-whiteframe-3dp" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -26,17 +33,17 @@
 		<div layout="row" layout-padding layout-wrap  ng-cloak >
 			
 			
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="prespective in currentScorecard.perspectives">
+			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="target in currentPerspective.targets">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="column">
-						<kpi-semaphore-indicator indicator-color="'RED'"></kpi-semaphore-indicator>
-			       		<label>{{prespective.name}}</label>
+						<kpi-semaphore-indicator indicator-color="target.status"  ></kpi-semaphore-indicator>
+			       		<label>{{target.name}}</label>
 			    	</div>
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >
 		    		
 		    			<b layout-padding class="lh30">KPI</b>
-		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in prespective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
+		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in target.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
 		    	</md-content>
 			</md-whiteframe> 

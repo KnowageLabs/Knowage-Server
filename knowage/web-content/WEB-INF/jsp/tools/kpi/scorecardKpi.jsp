@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/kpi/directive/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js"></script>
 
 </head>
-<body class="kn-scorecardKpiDefinition" ng-clock>
+<body class="kn-scorecardKpiDefinition" ng-cloak>
 
 	<angular-list-detail ng-controller="scorecardMasterController"  full-screen="true">
 		
@@ -60,11 +60,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		
 		<extra-button>
-		 <md-button ng-click="" ng-if="selectedStep.value==2" >Save Goal</md-button>
-		 <md-button  ng-click="" ng-if="selectedStep.value==2" >Cancel</md-button>
+		 <md-button ng-click="broadcastCall('saveTarget')" ng-if="selectedStep.value==2" >Save Goal</md-button>
+		 <md-button  ng-click="broadcastCall('cancelTarget')" ng-if="selectedStep.value==2" >Cancel</md-button>
 		 
-		 <md-button  ng-click="" ng-if="selectedStep.value==1" >Save Perspective</md-button>
-		 <md-button  ng-click="" ng-if="selectedStep.value==1" >Cancel</md-button>
+		 <md-button  ng-click="broadcastCall('savePerspective')" ng-if="selectedStep.value==1" >Save Perspective</md-button>
+		 <md-button  ng-click="broadcastCall('cancelPerspective')" ng-if="selectedStep.value==1" >Cancel</md-button>
 		</extra-button>
 		
 				

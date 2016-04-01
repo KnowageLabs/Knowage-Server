@@ -24,6 +24,11 @@ angular.module('bread_crumb', ['ngMaterial'])
 			scope.control.resetBreadCrumb = function(){
 				angular.copy([],scope.ngModel);
 			};
+			scope.control.prevBread = function(){
+				if(scope.selectedIndex!=undefined && scope.selectedIndex!=0){
+					scope.moveToItem(scope.ngModel[scope.selectedIndex-1],scope.selectedIndex-1);
+				}
+			};
 		}
 	}
 });

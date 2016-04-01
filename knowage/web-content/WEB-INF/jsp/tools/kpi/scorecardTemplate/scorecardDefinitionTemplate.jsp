@@ -19,7 +19,7 @@
 			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="prespective in currentScorecard.perspectives">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="column">
-						<kpi-semaphore-indicator indicator-color="'RED'"></kpi-semaphore-indicator>
+						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
 			       		<label>{{prespective.name}}</label>
 			    	</div>
 		    	</md-toolbar>

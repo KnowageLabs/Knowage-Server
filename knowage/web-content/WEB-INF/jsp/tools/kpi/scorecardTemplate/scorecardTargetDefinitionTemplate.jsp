@@ -2,13 +2,21 @@
 			 <label>{{translate.load('sbi.kpi.scorecard.perspective.goal.name')}}</label> 
 			 <input ng-model="currentTarget.name"> 
 		 </md-input-container>
-
-		<md-input-container class="md-block"> 
-			<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
-				<md-select ng-model="currentTarget.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
-				<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
-			</md-select> 
-		</md-input-container>
+		
+		<div layout="row">
+			<md-input-container flex class="md-block"> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+					<md-select ng-model="currentTarget.criterion" ng-model-options="{trackBy: '$value.valueId'}" > 
+					<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
+				</md-select> 
+			</md-input-container>
+			<md-input-container flex='50' class="md-block" ng-if="currentTarget.criterion.valueId==229"> 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
+				<md-select ng-model="currentTarget.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="kpi in currentTarget.kpis" ng-value="{{kpi}}">	{{kpi.name}} </md-option> 
+				</md-select> 
+			</md-input-container>
+		</div>
 		
 		<md-content layout="column" class=" md-whiteframe-3dp" flex>
 		<md-toolbar>

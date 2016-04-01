@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ScorecardSubview {
 	public enum STATUS {
-		RED, YELLOW, GREEN
+		RED, YELLOW, GREEN, GRAY
 	};
 
 	private Integer id;
@@ -16,7 +16,7 @@ public class ScorecardSubview {
 	private Domain criterion;
 
 	// TODO status will be rendered as a color (green/yellow/red)
-	private STATUS status;
+	private STATUS status = STATUS.GRAY;
 	private final List<CountByStatus> groupedKpis = new ArrayList<>();
 
 	/**
