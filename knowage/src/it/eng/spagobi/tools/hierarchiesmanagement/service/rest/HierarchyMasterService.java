@@ -165,28 +165,38 @@ public class HierarchyMasterService {
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
-			// force the name of hierarchy as first level
-			// String hierCd = requestVal.getString(HierarchyConstants.HIER_CD); // used as cd in level 1
-			String hierNm = requestVal.getString(HierarchyConstants.HIER_NM); // used as name in level 1
-
-			// add the hierarchy nm as first level
-			JSONArray origLvls = requestVal.getJSONArray("levels");
-			JSONArray lvls = new JSONArray();
-			JSONObject firstLevel = new JSONObject();
-			firstLevel.put("CD", hierNm); // put the name into the code
-			firstLevel.put("NM", hierNm);
-			lvls.put(0, firstLevel);
-			for (int li = 0; li < origLvls.length(); li++) {
-				JSONObject origLev = origLvls.getJSONObject(li);
-				lvls.put(li + 1, origLev);
-			}
-			requestVal.put("levels", lvls);
-
-			dbConnection = dataSource.getConnection();
-			dbConnection.setAutoCommit(false);
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
+
+			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
+			boolean forceNameAsLevel = Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.FORCE_NAME_AS_LEVEL));
+
+			if (forceNameAsLevel) {
+				// WORKAROUND: if code and name of hierarchy are equals put a prefix to make them different!
+				// force the name of hierarchy as first level
+				String hierCd = requestVal.getString(HierarchyConstants.HIER_CD); // used as name in level 1
+				String hierNm = requestVal.getString(HierarchyConstants.HIER_NM); // used as name in level 1
+				if (hierCd.equalsIgnoreCase(hierNm)) {
+					requestVal.put(HierarchyConstants.HIER_CD, "M_" + hierCd);
+				}
+
+				// add the hierarchy nm as first level
+				JSONArray origLvls = requestVal.getJSONArray("levels");
+				JSONArray lvls = new JSONArray();
+				JSONObject firstLevel = new JSONObject();
+				firstLevel.put("CD", hierNm); // put the name into the code
+				firstLevel.put("NM", hierNm);
+				lvls.put(0, firstLevel);
+				for (int li = 0; li < origLvls.length(); li++) {
+					JSONObject origLev = origLvls.getJSONObject(li);
+					lvls.put(li + 1, origLev);
+				}
+				requestVal.put("levels", lvls);
+			}
+
+			dbConnection = dataSource.getConnection();
+			dbConnection.setAutoCommit(false);
 
 			Dimension dimension = hierarchies.getDimension(dimensionLabel);
 			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
@@ -197,8 +207,6 @@ public class HierarchyMasterService {
 			String dimensionName = dimension.getName();
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
 			String prefix = hierarchies.getPrefix(dimensionLabel);
-
-			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
 
 			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);

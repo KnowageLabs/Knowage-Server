@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,6 +38,7 @@ public class HierarchyConstants {
 	public final static String NUM_LEVELS = "NUM_LEVELS";
 	public final static String ALLOW_DUPLICATE = "ALLOW_DUPLICATE";
 	public final static String UNIQUE_NODE = "UNIQUE_NODE";
+	public final static String FORCE_NAME_AS_LEVEL = "FORCE_NAME_AS_LEVEL";
 	public final static String NODE = "NODE";
 	public final static String LEAF = "LEAF";
 	public final static String ORIG_NODE = "ORIG_NODE";
