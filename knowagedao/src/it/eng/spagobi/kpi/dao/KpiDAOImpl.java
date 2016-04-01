@@ -453,7 +453,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpi.setCardinality(kpi.getCardinality());
 		sbiKpi.setPlaceholder(kpi.getPlaceholder());
 
-		if (kpi.getThreshold().getId() == null) {
+		if (kpi.getThreshold() == null || kpi.getThreshold().getId() == null) {
 			SbiKpiThreshold sbiKpiThreshold = from(session, null, kpi.getThreshold());
 			updateSbiCommonInfo4Insert(sbiKpiThreshold);
 			sbiKpi.setThresholdId((Integer) session.save(sbiKpiThreshold));
@@ -1374,25 +1374,21 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiScorecard.getSubviews().add(sbiPerspective);
 			// ScorecardTarget
 			sbiPerspective.getSubviews().clear();
+			session.save(sbiPerspective);
 			for (ScorecardTarget scorecardTarget : scorecardPerspective.getTargets()) {
 				SbiKpiScorecard sbiScorecardTarget = from(scorecardTarget, sbiPerspective, session);
 				sbiPerspective.getSubviews().add(sbiScorecardTarget);
 				// KPI
 				sbiScorecardTarget.getSbiKpiKpis().clear();
+				session.save(sbiScorecardTarget);
 				for (Kpi kpi : scorecardTarget.getKpis()) {
-					SbiKpiKpi oldKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(kpi.getId(), kpi.getVersion()));
-					SbiKpiKpi sbiKpiKpi;
-					try {
-						sbiKpiKpi = from(session, oldKpi, kpi);
-						sbiScorecardTarget.getSbiKpiKpis().add(sbiKpiKpi);
-					} catch (JSONException e) {
-						throw new SpagoBIDOAException(e);
-					}
+					SbiKpiKpi sbiKpiKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(kpi.getId(), kpi.getVersion()));
+					sbiScorecardTarget.getSbiKpiKpis().add(sbiKpiKpi);
 					// session.save(sbiKpiKpi);
 				}
-				session.save(sbiScorecardTarget);
+
 			}
-			session.save(sbiPerspective);
+
 		}
 	}
 

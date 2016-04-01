@@ -20,7 +20,7 @@
         <property name="parentId" column="PARENT_ID" type="integer" />
         <property name="name" column="NAME" type="string" length="40" not-null="true" />
         
-        <property name="internalType" column="INTERNAL_TYPE" type="char" not-null="true" />
+<!--         <property name="internalType" column="INTERNAL_TYPE" type="char" not-null="true" /> -->
         
         <property name="criterionId" column="CRITERION_ID" type="integer" />
         <many-to-one name="criterion" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
@@ -32,8 +32,8 @@
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiScorecard" />
         </set>
         
-		<!-- 
-        <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="save-update" lazy="true">
+		 
+        <set name="sbiKpiKpis" table="SBI_KPI_SCORECARD_KPI" cascade="save-update" lazy="true">
 			<key >
 				<column name="SCORECARD_ID"/>
 			</key>
@@ -42,7 +42,7 @@
 				<column name="KPI_ID" />
 			</many-to-many>
 		</set> 
-		 -->
+		 
         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
