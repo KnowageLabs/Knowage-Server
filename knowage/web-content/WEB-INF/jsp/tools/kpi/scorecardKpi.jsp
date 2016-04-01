@@ -56,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 	<angular-table id='scorecardListTable' ng-model=scorecardList
 				columns='scorecardColumnsList'
 			 	 show-search-bar=true
+			 	 speed-menu-option = scorecardListAction
 				 click-function="scorecardClickFunction(item);" > </angular-table>
 		</list>
 		

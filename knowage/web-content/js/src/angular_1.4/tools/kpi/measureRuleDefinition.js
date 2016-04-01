@@ -15,21 +15,6 @@ function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.originalRule={};
 	$scope.selectedTab={'tab':0};
 	
-	/*Da aggiustare la comparazione per torvare l'elemento da eliminare,
-	 *  aggiungere codice gestire l'eliminazione facendo la chiamata rest 
-	 *  e in caso di successo, fare lo splice */
-	$scope.MeasureListAction =  [{  label : 'Remove',
-							        icon:'fa fa-times' , 
-							        backgroundColor:'#ffcccc',
-							        action : function(item,event) {
-							      	  pos = 0;
-	/*Modificare questa che non sono sicuro che name sia l'elemento da confrontare*/
-							      	  while ($scope.measureRuleList[pos].name != item.name)
-							      		  pos++;
-	/*Aggiungere chiamata REST per eliminazione, e in caso OK, fare lo splice */
-							      	  $scope.measureRuleList.splice(pos,1);
-	         			           }];
-	
 	$scope.updateListRule=function(){
 		$scope.$broadcast("updateListRule");
 	}

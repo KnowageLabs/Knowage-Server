@@ -94,6 +94,31 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 		
 		$angularListDetail.goToDetail();
 	};
+	
+	$scope.loadScorecardList=function(){
+		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
+		.then(function(response){
+			$scope.scorecardList=response.data;
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
+		});
+	};
+	
+	$scope.loadScorecardList();
+	
+	
+	/*Da aggiustare la comparazione per torvare l'elemento da eliminare,
+	 *  aggiungere codice gestire l'eliminazione facendo la chiamata rest 
+	 *  e in caso di successo, fare lo splice */
+	$scope.scorecardListAction =  [{  label : 'Remove',
+							        icon:'fa fa-trash' , 
+							        backgroundColor:'trasparent',
+							        action : function(item,event) {
+							      	  pos = 0;
+							      	  while ($scope.scorecardList[pos].name != item.name)
+							      		  pos++;
+							      	  $scope.scorecardList.splice(pos,1);
+	         			           }}];
 }
 
 function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout){

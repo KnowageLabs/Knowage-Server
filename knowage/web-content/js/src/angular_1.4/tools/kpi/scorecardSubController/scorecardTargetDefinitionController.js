@@ -3,18 +3,10 @@ angular.module('scorecardManager').controller('scorecardTargetDefinitionControll
 function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdDialog,$mdToast,scorecardManager_targetUtility,scorecardManager_semaphoreUtility){
 	$scope.kpiList=[];
 	$scope.targetListAction =  [
-		           {
-			              label : 'Modify',
-			              icon:'fa fa-pencil' , 
-			              backgroundColor:'#ffcccc',
-			              action : function(item,event) {
-			            	  
-			              }
-			           },
 			           {
 				              label : 'Remove',
-				              icon:'fa fa-times' , 
-				              backgroundColor:'#ffcccc',
+				              icon:'fa fa-trash' , 
+				              backgroundColor:'#trasparent',
 				              action : function(item,event) {
 				            	  pos = 0;
 				            	  while ($scope.currentTarget.kpis[pos].name != item.name)
