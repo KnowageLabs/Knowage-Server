@@ -6,9 +6,11 @@
 			<CONFIGS>
 				<CONFIG NUM_LEVELS="15" />
 				<CONFIG ALLOW_DUPLICATE="false" />
-				<CONFIG TREE_NODE_CD="CDC_CD_LEV" /> 	<!-- alias of the id used by the tree for the node -->
-				<CONFIG TREE_NODE_NM="CDC_NM_LEV" /> 	<!-- alias of the name used by the tree for the node -->
-				<CONFIG TREE_LEAF_ID="CDC_LEAF_ID" /> 	<!-- alias of the id used by the tree for the leaf -->
+				<CONFIG UNIQUE_NODE="true" />
+				<CONFIG FORCE_NAME_AS_LEVEL="true" /> <!-- if true force the name of the hierarchy as first level in master creation -->
+				<CONFIG TREE_NODE_CD="CDC_OCD_LEV" /> <!-- alias of the id used by the tree for the node -->
+				<CONFIG TREE_NODE_NM="CDC_NM_LEV" />  <!-- alias of the name used by the tree for the node -->
+				<CONFIG TREE_LEAF_ID="CDC_LEAF_ID" /> <!-- alias of the id used by the tree for the leaf -->
 				<CONFIG TREE_LEAF_CD="CDC_CD_LEAF" /> <!-- alias of the cd used by the tree for the leaf -->
 				<CONFIG TREE_LEAF_NM="CDC_NM_LEAF" /> <!-- alias of the name used by the tree for the leaf -->
 				<CONFIG DIMENSION_ID="CDC_ID" />
@@ -17,14 +19,14 @@
 				<CONFIG NODE="CDC_CD_LEV*|CDC_NM_LEV*|FORM_LIV*|ORDER_LEV*" />
 				<CONFIG LEAF="CDC_CD_LEAF|CDC_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
-				<CONFIG FILL_EMPTY="YES" /> <!-- YES/NO -->
+				<CONFIG FILL_EMPTY="NO" />  <!-- YES/NO -->
 				<CONFIG FILL_VALUE="OTHER" />
-			</CONFIGS>		
+			</CONFIGS>	
 			<DIM_FILTERS>
 				<!-- all fields references into the FORMULAS must be valid FIELD ID of the DIM_FIELDS  section. The number of FORMULAS properties is open. -->
-				<FILTER TYPE="Date" NAME="Validity Hierarchy Date" CONDITION1=" BEGIN_HIER_DT &gt; " CONDITION2=" END_HIER_DT &lt; " DEFAULT=""/>
-				<FILTER TYPE="Date" NAME="Validity After Date" CONDITION1=" BEGIN_DT &gt; " DEFAULT="" />				
-			</DIM_FILTERS>
+				<FILTER TYPE="Date" NAME="Hierarchy Date" CONDITION1=" BEGIN_HIER_DT &lt;= " CONDITION2=" END_HIER_DT &gt;= " DEFAULT=""/>
+				<FILTER TYPE="Date" NAME="After Date"  CONDITION1=" BEGIN_DT &gt;= " DEFAULT="" />		
+			</DIM_FILTERS>		
 			<DIM_FIELDS>
 				<FIELD ID="CDC_ID" NAME="Identifier" VISIBLE="false" EDITABLE="false" TYPE="Number" />
 				<FIELD ID="CDC_CD" NAME="Code" VISIBLE="true" EDITABLE="false" TYPE="String" />
@@ -34,7 +36,9 @@
 				<FIELD ID="CDC_CD_TYPE"  NAME="M/P/S" VISIBLE="false" EDITABLE="false" TYPE="String" />
 				<FIELD ID="TYPE_CDC"  NAME="Type" VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="DEN_COMPANY_NM" NAME="Company Name" VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="FL_PATR"  NAME="Flag Patr." VISIBLE="false" EDITABLE="false" TYPE="String"/>							
+				<FIELD ID="FL_PATR"  NAME="Flag Patr." VISIBLE="false" EDITABLE="false" TYPE="String"/>				
+				<FIELD ID="BEGIN_DT" NAME="Begin Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="END_DT"  NAME="End Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
 				<FIELD ID="CONS_SEG_ENG" NAME="Consolidation Segment"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="SEGMENTS_CD_ENG" NAME="Segment"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="BUSINESS_UNIT_CD_ENG" NAME="Business unit"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
@@ -45,10 +49,8 @@
 				<FIELD ID="DEPARTMENT_4_ENG" NAME="Sub Department i.i.i"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="CDC_PARENT_CD" PARENT="true" NAME="Cdc Parent Code"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
 				<FIELD ID="CDC_PARENT_NM"  PARENT="true" NAME="Cdc Parent Name"  VISIBLE="false" EDITABLE="false" TYPE="String"/>
-				<FIELD ID="BEGIN_DT" NAME="Begin Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
-				<FIELD ID="END_DT"  NAME="End Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
-				<FIELD ID="BEGIN_HIER_DT" NAME="Begin Hier Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
-				<FIELD ID="END_HIER_DT"  NAME="End Hier Date" VISIBLE="true" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="BEGIN_HIER_DT" NAME="Begin Hier Date" VISIBLE="false" EDITABLE="false" TYPE="Date"/>
+				<FIELD ID="END_HIER_DT"  NAME="End Hier Date" VISIBLE="false" EDITABLE="false" TYPE="Date"/>
 			</DIM_FIELDS>
 			
 			<HIER_FIELDS>
@@ -64,7 +66,8 @@
 					<FIELD ID="SOURCE_SYSTEM"  NAME="Source System" VISIBLE="false" EDITABLE="false" REQUIRED="true" FIX_VALUE="Hierarchy editor" TYPE="String"/>
 				</GENERAL_FIELDS>
 				<NODE_FIELDS> <!-- dovrebbero essere sempre e multivalue (moltiplicati per gli X livelli) tutti e solo i nodi -->
-					<FIELD ID="CDC_CD_LEV" SINGLE_VALUE="false" NAME="Code" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String" />
+					<FIELD ID="CDC_CD_LEV" SINGLE_VALUE="false" UNIQUE_CODE="true" NAME="Unique code" VISIBLE="true" EDITABLE="false" REQUIRED="true" TYPE="String" />
+					<FIELD ID="CDC_OCD_LEV" SINGLE_VALUE="false" NAME="Code" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String" />
 					<FIELD ID="CDC_NM_LEV" SINGLE_VALUE="false" NAME="Name" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>
 					<FIELD ID="ORDER_LEV" SINGLE_VALUE="false"  NAME="Order" VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="Number"/>
 					<FIELD ID="FORM_LIV" SINGLE_VALUE="false"  NAME="Form Liv." VISIBLE="true" EDITABLE="true" REQUIRED="true" TYPE="String"/>	
@@ -99,9 +102,13 @@
 				<CONFIG NODE="ACCOUNT_CD_LEV*|ACCOUNT_NM_LEV*|SIGN_LIV*|G_SIGN_LIV*" />
 				<CONFIG LEAF="ACCOUNT_CD_LEAF|ACCOUNT_NM_LEAF|LEAF_PARENT_CD|LEAF_PARENT_NM" />
 				<CONFIG ORIG_NODE="ORIG_HIER_CD|ORIG_HIER_NM|ORIG_NODE_CD|ORIG_NODE_NM|ORIG_HIER_LEV" />
-				<CONFIG FILL_EMPTY="YES" /> <!-- YES/NO -->
+				<CONFIG FILL_EMPTY="YES" />  <!-- YES/NO -->
 				<CONFIG FILL_VALUE="OTHER" />
-			</CONFIGS>			
+			</CONFIGS>		
+			<DIM_FILTERS>
+				<!-- all fields references into the FORMULAS must be valid FIELD ID of the DIM_FIELDS  section. The number of FORMULAS properties is open. -->
+				<FILTER TYPE="Date" NAME="After Date"  CONDITION1=" BEGIN_DT &gt;= " DEFAULT="" />		
+			</DIM_FILTERS>		
 			<DIM_FIELDS>
 				<FIELD ID="ACCOUNT_ID" NAME="Identifier" VISIBLE="false" EDITABLE="false" TYPE="Number" />
 				<FIELD ID="ACCOUNT_CD" NAME="Code" VISIBLE="true" EDITABLE="false" TYPE="String" />
