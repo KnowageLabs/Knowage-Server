@@ -1353,7 +1353,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		List<SbiKpiScorecard> lst = list(new ICriterion<SbiKpiScorecard>() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiScorecard.class);
+				return session.createCriteria(SbiKpiScorecard.class).add(Restrictions.isNull("parentId"));
 			}
 		});
 		List<Scorecard> scorecardList = new ArrayList<>();
