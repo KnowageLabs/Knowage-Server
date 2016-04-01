@@ -11,48 +11,6 @@ scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 	}
 });
 
-scorecardApp.service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
-	this.getTargetStatus=function(target){
-		 
-		if(angular.equals(target.criterion.valueId,228)){
-			return loadTargetByMajority(target);
-		}else{
-			//load by priority
-			if(target.criterionPriority.length==0){
-				return loadTargetByMajority(target);
-			}else{
-				return loadTargetByMajorityWithPriority(target);
-			}
-		}
-		
-	};
-	
-	function loadTargetByMajorityWithPriority(target){
-//		TO-DO
-		return ["PINK"];
-	};
-	
-	function loadTargetByMajority(target){ 
-		var maxTargetCount=target.groupedKpis[0].count;
-		var maxTarget=target.groupedKpis[0].status;
-		for(var i=1;i<target.groupedKpis.length;i++){
-			if(!angular.equals("GRAY",target.groupedKpis[i].status)){
-				if(target.groupedKpis[i].count>maxTargetCount){
-					maxTargetCount=target.groupedKpis[i].count;
-					maxTarget=target.groupedKpis[i].status;
-				}else if(target.groupedKpis[i].count==maxTargetCount){
-					maxTargetCount=target.groupedKpis[i].count;
-					maxTarget=scorecardManager_semaphoreUtility.getPriorityStatus(target.groupedKpis[i].status,maxTarget);
-				}
-			}
-		} 
-		
-		 
-		
-		return maxTarget ;
-	}
-	
-});
 
 scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout',scorecardMasterControllerFunction ]);
 scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout',scorecardListControllerFunction ]);

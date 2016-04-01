@@ -1,5 +1,63 @@
 angular.module('scorecardManager').controller('scorecardTargetDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_config','$filter','$mdDialog','$mdToast','scorecardManager_targetUtility','scorecardManager_semaphoreUtility',scorecardTargetDefinitionControllerFunction ]);
 
+
+angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
+	this.getTargetStatus=function(target){
+	if(angular.equals(target.criterion.valueId,228)){
+			return loadTargetByMajority(target);
+		}else{
+			//load by priority
+			if(target.criterionPriority.length==0){
+				//if no priority kpi are selected return the global value 
+				return loadTargetByMajority(target);
+			}else if(target.criterionPriority.length==1){ 
+				// if there is only one kpi selected, and theyr status in different of GRAY return his status, else the global status
+				return (target.criterionPriority[0].status=="GRAY" || target.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.criterionPriority[0].status;
+			}
+			else{
+				return loadTargetByMajorityWithPriority(target);
+			}
+		}
+		
+	};
+	
+	function loadTargetByMajorityWithPriority(target){
+		 var masterPriorityStatus=target.criterionPriority[0].status
+		 for(var i=1;i<target.criterionPriority.length;i++){
+			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(target.criterionPriority[i].status,masterPriorityStatus);
+		 }
+		
+		if(angular.equals("GREEN",masterPriorityStatus)){
+			return loadTargetByMajority(target);
+		}else{
+			return masterPriorityStatus
+		}
+		 
+	};
+	
+	function loadTargetByMajority(target){ 
+		var maxTargetCount=target.groupedKpis[0].count;
+		var maxTarget=target.groupedKpis[0].status;
+		for(var i=1;i<target.groupedKpis.length;i++){
+			if(!angular.equals("GRAY",target.groupedKpis[i].status)){
+				if(target.groupedKpis[i].count>maxTargetCount){
+					maxTargetCount=target.groupedKpis[i].count;
+					maxTarget=target.groupedKpis[i].status;
+				}else if(target.groupedKpis[i].count==maxTargetCount){
+					maxTargetCount=target.groupedKpis[i].count;
+					maxTarget=scorecardManager_semaphoreUtility.getPriorityStatus(target.groupedKpis[i].status,maxTarget);
+				}
+			}
+		} 
+		
+		 
+		
+		return maxTarget ;
+	}
+	
+});
+
+
 function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdDialog,$mdToast,scorecardManager_targetUtility,scorecardManager_semaphoreUtility){
 	$scope.kpiList=[];
 	$scope.targetListAction =  [
@@ -35,6 +93,8 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
 				//parse date based on language selected
 				obj["datacreation"]=$filter('date')(response.data[i].dateCreation, dateFormat);
+				obj.status=scorecardManager_semaphoreUtility.typeColor[Math.floor(Math.random() * 4)];
+				obj.kpiSemaphore="<kpi-semaphore-indicator indicator-color=\"'"+obj.status+"'\"></kpi-semaphore-indicator>";
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
@@ -90,10 +150,10 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 	 
 	
 	$scope.loadGroupedKpis=function(){
-		for(var i=0;i<$scope.currentTarget.kpis.length;i++){
-			$scope.addGroupedKpisItem(scorecardManager_semaphoreUtility.typeColor[Math.floor(Math.random() * 4)]);
-		}
-		$scope.currentTarget.status=scorecardManager_targetUtility.getTargetStatus($scope.currentTarget);
+			for(var i=0;i<$scope.currentTarget.kpis.length;i++){
+				$scope.addGroupedKpisItem($scope.currentTarget.kpis[i].status);
+			}
+			$scope.currentTarget.status=scorecardManager_targetUtility.getTargetStatus($scope.currentTarget);
 		}
 	
 	$scope.$on('saveTarget', function(event, args) {

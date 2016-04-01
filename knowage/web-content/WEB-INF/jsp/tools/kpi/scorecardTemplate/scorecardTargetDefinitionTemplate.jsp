@@ -34,7 +34,7 @@
 		 	<angular-table flex
 		 		id='targetList' 
 		 		ng-model=currentTarget.kpis
-				columns='[  {"label":"Name","name":"name"}, {"label":"category","name":"category.translatedValueName"}]'
+				columns='[ {"label":"Name","name":"name"}, {"label":"category","name":"category.translatedValueName"}]'
 			 	show-search-bar=true
 			 	speed-menu-option = targetListAction
 		> 
@@ -64,7 +64,7 @@
     <md-dialog-content flex layout >
 		<angular-table flex
 		id='targetListTable' ng-model=kpiAllList
-		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"}]'
+		columns='[{"label":"Status","name":"kpiSemaphore","size":"60px"}, {"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"}]'
 		columns-search='["name"]' show-search-bar=true
 		multi-select = true selected-item=kpiSelected comparison-column="'id'"
 		scope-functions = tableFunction 
