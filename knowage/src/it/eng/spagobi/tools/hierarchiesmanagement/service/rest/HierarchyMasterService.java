@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -165,6 +165,22 @@ public class HierarchyMasterService {
 			if (dataSource == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
 			}
+			// force the name of hierarchy as first level
+			// String hierCd = requestVal.getString(HierarchyConstants.HIER_CD); // used as cd in level 1
+			String hierNm = requestVal.getString(HierarchyConstants.HIER_NM); // used as name in level 1
+
+			// add the hierarchy nm as first level
+			JSONArray origLvls = requestVal.getJSONArray("levels");
+			JSONArray lvls = new JSONArray();
+			JSONObject firstLevel = new JSONObject();
+			firstLevel.put("CD", hierNm); // put the name into the code
+			firstLevel.put("NM", hierNm);
+			lvls.put(0, firstLevel);
+			for (int li = 0; li < origLvls.length(); li++) {
+				JSONObject origLev = origLvls.getJSONObject(li);
+				lvls.put(li + 1, origLev);
+			}
+			requestVal.put("levels", lvls);
 
 			dbConnection = dataSource.getConnection();
 			dbConnection.setAutoCommit(false);
@@ -589,6 +605,9 @@ public class HierarchyMasterService {
 			return;
 		}
 
+		String hierNm = requestVal.getString(HierarchyConstants.HIER_NM);
+		String concatNmValues = hierNm; // will be converted in hashcode if requested
+		// // add the hierarchy nm as first level
 		JSONArray lvls = requestVal.getJSONArray("levels");
 
 		int index = fieldsMap.size();
@@ -597,7 +616,6 @@ public class HierarchyMasterService {
 		int lvlsLength = lvls.length();
 		logger.debug("The user has specified [" + lvlsLength + "] levels");
 
-		String concatNmValues = requestVal.getString(HierarchyConstants.HIER_NM);
 		for (int k = 0; k < lvlsLength; k++) {
 			// a level found, increment the index level counter
 			lvlIndex++;
@@ -616,18 +634,26 @@ public class HierarchyMasterService {
 
 			logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
 
-			// retrieve record fields looking at metafield position in the dimension
-			IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
-			IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
+			Object cdValue = null;
+			Object nmValue = null;
 
-			// Filling logic: if the user has enabled the filling option, null values in a level are replaced by values from the previous level
+			if (lvlIndex == 1) {
+				// only for the first level put the values already present into the input json (because are hierarchy values)
+				cdValue = cdLvl;
+				nmValue = nmLvl;
+			} else {
+				// retrieve record fields looking at metafield position in the dimension
+				IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
+				IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
 
-			Object cdValue = ((cdTmpField.getValue()) != null) ? cdTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
-					HierarchyConstants.CD_VALUE_POSITION);
+				// Filling logic: if the user has enabled the filling option, null values in a level are replaced by values from the previous level
 
-			Object nmValue = ((nmTmpField.getValue()) != null) ? nmTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
-					HierarchyConstants.NM_VALUE_POSITION);
+				cdValue = ((cdTmpField.getValue()) != null) ? cdTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
+						HierarchyConstants.CD_VALUE_POSITION);
 
+				nmValue = ((nmTmpField.getValue()) != null) ? nmTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
+						HierarchyConstants.NM_VALUE_POSITION);
+			}
 			concatNmValues += (nmValue == null) ? "" : nmValue;
 
 			logger.debug("For the level [" + lvlIndex + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
@@ -731,7 +757,9 @@ public class HierarchyMasterService {
 			}
 
 			int recursiveValuesSize = recursiveValuesList.size();
-			String concatNmValues = requestVal.getString(HierarchyConstants.HIER_NM);
+			String hierCd = requestVal.getString(HierarchyConstants.HIER_CD); // used as cd in level 1
+			String hierNm = requestVal.getString(HierarchyConstants.HIER_NM); // used as name in level 1
+			String concatNmValues = hierNm; // will be converted as hashcode
 
 			// we use i+2 because we need CD and NM
 			for (int i = 0; i < recursiveValuesSize; i = i + 2) {
