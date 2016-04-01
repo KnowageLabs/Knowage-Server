@@ -3,11 +3,11 @@ angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionCon
 function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast){
 	
 	$scope.loadGroupedKpisOfTargets=function(){
-		debugger;
-		for(var i=0;i<$scope.currentPerspective.kpis.length;i++){
-			$scope.addGroupedKpisItem(scorecardManager_semaphoreUtility.typeColor[Math.floor(Math.random() * 4)]);
-		}
-		$scope.currentTarget.status=scorecardManager_targetUtility.getTargetStatus($scope.currentTarget);
+//		debugger;
+//		for(var i=0;i<$scope.currentPerspective.kpis.length;i++){
+//			$scope.addGroupedKpisItem(scorecardManager_semaphoreUtility.typeColor[Math.floor(Math.random() * 4)]);
+//		}
+//		$scope.currentTarget.status=scorecardManager_targetUtility.getTargetStatus($scope.currentTarget);
 	};
 	
 	
