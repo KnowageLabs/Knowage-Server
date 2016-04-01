@@ -28,6 +28,7 @@
 <div class="menu-text">OLAP functions</div>
 <md-grid-list
         md-cols="3" md-row-height="50px">
+
     <md-grid-tile ng-repeat="obtn in olapToolbarButtons">
     	<md-button class="right-toolbar-menu {{obtn.img}}" ng-click="btnFunctions(obtn.img)">
     		<md-tooltip md-direction="bottom">
@@ -43,7 +44,7 @@
 			</md-tooltip>
 		</md-button>
     </md-grid-tile>
-    
+        
     <md-grid-tile>
     	<md-button class="right-toolbar-menu BUTTON_EDIT_MDX" ng-click="showDialog(e,sendMdxDial)">
 			<md-tooltip md-direction="bottom">
@@ -51,6 +52,15 @@
 			</md-tooltip>
 		</md-button>
     </md-grid-tile>
+    
+     <md-grid-tile>
+    	<md-button ng-show="modelConfig.crossNavigation" ng-click="enableCrossNavigation()" class="right-toolbar-menu BUTTON_CROSS_NAVIGATION">
+			<md-tooltip md-direction="bottom">
+				{{crossNavigationEnabled?'Disable cross navigation' : 'Enable crossnavigation'}}
+			</md-tooltip>
+		</md-button>
+    </md-grid-tile>
+    
 </md-grid-list>
 
 <div class="menu-text">Table functions</div>

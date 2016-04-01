@@ -525,18 +525,25 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     	}
     }
     
+    
+    
     $scope.cellClickCreateCrossNavigationMenu = function(id, ordinal){
     	$scope.ordinal = ordinal;
-		$mdDialog
-		.show({
-			scope : $scope,
-			preserveScope : true,
-			controllerAs : 'olapCtrl',
-			templateUrl : '/knowagewhatifengine/html/template/main/olap/crossNavigationMenu.html',
-			//targetEvent : ev,
-			clickOutsideToClose : false,
-			hasBackdrop:false
-		});
+    	var targets = $scope.modelConfig.crossNavigation.targets;
+    	if(targets.length==1){
+    		 $scope.openSelectedCrossNavigationDocument(targets[0]);
+    	}else{
+    		$mdDialog
+    		.show({
+    			scope : $scope,
+    			preserveScope : true,
+    			controllerAs : 'olapCtrl',
+    			templateUrl : '/knowagewhatifengine/html/template/main/olap/crossNavigationMenu.html',
+    			//targetEvent : ev,
+    			clickOutsideToClose : false,
+    			hasBackdrop:false
+    		});
+    	}
 	}
     
     $scope.selectCrossNavigationDocument = function (target) {

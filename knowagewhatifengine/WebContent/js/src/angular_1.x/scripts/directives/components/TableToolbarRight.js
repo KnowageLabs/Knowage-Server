@@ -50,15 +50,12 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		case "BUTTON_HIDE_EMPTY":
 			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
 			break;
-		case "BUTTON_CROSS_NAVIGATION":
-			$scope.modelConfig.crossNavigation.buttonClicked = !$scope.modelConfig.crossNavigation.buttonClicked;
-			break;	
 		default:
 			console.log("something else clicked");
 		}
 		$scope.sendModelConfig($scope.modelConfig);
 	}
-	
+
 	$scope.enableDisableSorting = function(){
 		
 		$scope.sortDisable();
@@ -71,7 +68,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}else{
 			sbiModule_messaging.showErrorMessage("Table Properties are on..");
 		}
-		
 	}
 	
 	
@@ -88,6 +84,17 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				return false;
 		}
 	}
+	
+	$scope.enableCrossNavigation = function() {
+    	sbiModule_restServices.promiseGet
+		("1.0",'/crossnavigation/initialize/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		.then(function(response) {
+			$scope.handleResponse(response);
+			$scope.crossNavigationEnabled = !$scope.crossNavigationEnabled;
+		 }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+		});
+    }
 	 
 	 $scope.sortDisable = function(){
 		 

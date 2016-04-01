@@ -326,7 +326,11 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				// start OSMOSIT cross nav button
 				SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) context.getModel();
 				SpagoBICrossNavigationConfig crossNavigation = sbiModel.getCrossNavigation();
-				if (crossNavigation != null && context.getCellType() == CellTypes.VALUE) {
+
+				if (crossNavigation != null
+						&& crossNavigation.isButtonClicked()
+						&& (crossNavigation.getModelStatus().equalsIgnoreCase(new String("locked_by_other")) || crossNavigation.getModelStatus()
+								.equalsIgnoreCase(new String("locked_by_user"))) && context.getCellType() == CellTypes.VALUE) {
 
 					int colId = context.getColumnIndex();
 					int rowId = context.getRowIndex();

@@ -100,6 +100,7 @@ function olapFunction(
 	$scope.sortingSetting;
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
+	$scope.crossNavigationEnabled = false;
 	$scope.sortingModes = [{'label':'basic','value':'basic'},{'label':'breaking','value':'breaking'},{'label':'count','value':'count'}];
 	$scope.selectedSortingMode = 'basic';
 	$scope.sortingCount = 10;
@@ -126,7 +127,10 @@ function olapFunction(
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
+		
 	}
+	
+
 	
 	$scope.sendModelConfig = function(modelConfig){
 		if($scope.ready){
