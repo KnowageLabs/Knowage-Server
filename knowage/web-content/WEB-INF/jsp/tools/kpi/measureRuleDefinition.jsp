@@ -61,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns='measureRuleColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option=measureMenuOption
+			 	 speed-menu-option = MeasureListAction
 				 click-function="measureClickFunction(item);" > </angular-table>
 		</list>
 		<extra-button>

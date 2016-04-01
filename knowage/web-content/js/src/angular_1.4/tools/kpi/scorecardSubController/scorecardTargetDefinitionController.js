@@ -2,6 +2,27 @@ angular.module('scorecardManager').controller('scorecardTargetDefinitionControll
 
 function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdDialog){
 	$scope.kpiList=[];
+	$scope.targetListAction =  [
+		           {
+			              label : 'Modify',
+			              icon:'fa fa-pencil' , 
+			              backgroundColor:'#ffcccc',
+			              action : function(item,event) {
+			            	  
+			              }
+			           },
+			           {
+				              label : 'Remove',
+				              icon:'fa fa-times' , 
+				              backgroundColor:'#ffcccc',
+				              action : function(item,event) {
+				            	  pos = 0;
+				            	  while ($scope.currentTarget.kpis[pos].name != item.name)
+				            		  pos++;
+				            	  $scope.currentTarget.kpis.splice(pos,1);
+				              }
+				           }
+					];
 	
 	$scope.parseDate = function(date){
 		result = "";
