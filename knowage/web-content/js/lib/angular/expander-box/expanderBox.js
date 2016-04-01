@@ -9,7 +9,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 .directive('expanderBox',function() {
 	return {
 		transclude : true,
-		template:"<md-toolbar ng-click=\"toggle()\">" +
+		template:"<md-toolbar ng-click=\"toggle()\" ng-class=\"toolbarClass\">" +
 		"<span class=\"md-toolbar-tools\">" +
 		"{{title}}" +
 		"</span>" +
@@ -21,6 +21,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			id : "@",
 			color:"@?",
 			backgroundColor:"@?",
+			toolbarClass:"@?",
 			title:"=",
 			expanded:"=?"
 		},

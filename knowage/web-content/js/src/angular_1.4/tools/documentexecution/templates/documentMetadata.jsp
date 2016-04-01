@@ -20,14 +20,14 @@
 	  	</md-toolbar>
  
 		<md-dialog-content flex layout-margin>
-			<expander-box id="generalMetadata" expanded="true" title="metadataDlgCtrl.lblGeneralMeta"> 
+			<expander-box id="generalMetadata" expanded="true" title="metadataDlgCtrl.lblGeneralMeta" toolbar-class="secondaryToolbar"> 
 				<md-list flex>
 		     		<md-list-item ng-repeat="item in metadataDlgCtrl.generalMetadata">
 		        		<span flex="20"><b>{{ ::item.name }}</b></span><span flex>{{ ::item.value }}</span>
 		        	</md-list-item>
 		     	</md-list>
 			</expander-box>
-			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblShortMeta"> 
+			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblShortMeta" toolbar-class="secondaryToolbar"> 
 				<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
 					<div flex>
 		     			<md-input-container>
@@ -36,7 +36,7 @@
 					</div>
 	        	</md-list-item>
 			</expander-box>
-			<expander-box id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta"> 
+			<expander-box id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta" toolbar-class="secondaryToolbar"> 
 				<md-tabs md-border-bottom md-dynamic-height >
 					<md-tab ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}">
 					 <md-tab-body>
