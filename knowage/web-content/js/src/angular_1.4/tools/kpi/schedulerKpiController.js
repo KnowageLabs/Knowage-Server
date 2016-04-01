@@ -70,17 +70,24 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	
 	$scope.loadAllInformationForKpi  = function(){
 	
-//		$scope.placeHolder = $scope.selectedScheduler.filters;
 		var arr = [];
 		
 		for(var k=0;k<$scope.selectedScheduler.kpis.length;k++){
-			var obj = {};
-			obj["id"] = $scope.selectedScheduler.kpis[k].id;
-			obj["version"] = $scope.selectedScheduler.kpis[k].version;
-			arr.push(obj);
+			arr.push($scope.selectedScheduler.kpis[k].name);
 		}
 		console.log(arr);
 		
+		sbiModule_restServices.promisePost("1.0/kpi", 'listPlaceholderByKpi',arr).then(
+				function(response) {
+					if (response.data.hasOwnProperty("errors")) {
+						$scope.showAction(response.data);
+					} else {
+					console.log("wow",response.data);
+					}
+
+				},function(response) {
+					$scope.errorHandler(response.data,"");
+				})
 		
 
 		

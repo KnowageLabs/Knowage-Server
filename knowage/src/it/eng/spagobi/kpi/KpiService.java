@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.kpi;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -52,44 +80,13 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.services.rest.SchedulerService;
-import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -244,7 +241,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -294,8 +291,8 @@ public class KpiService {
 			if (!aliasErrorMap.isEmpty()) {
 				JSONArray errors = new JSONArray();
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					errors.put(new JSONObject().put("message",
-							getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
+					errors.put(
+							new JSONObject().put("message", getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
 				}
 				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
 			}
@@ -532,8 +529,8 @@ public class KpiService {
 		IKpiDAO dao = getKpiDAO(req);
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		// loading trigger
-		TriggerInfo triggerInfo = SchedulerService.getTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
-		Trigger trigger = new Trigger();
+		// TriggerInfo triggerInfo = SchedulerService.getTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
+		// Trigger trigger = new Trigger();
 		// trigger.setStartTime(triggerInfo.getStartTime());
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 	}
@@ -724,7 +721,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 * 
+	 *
 	 * @param servlet
 	 *            request
 	 * @param placeholder

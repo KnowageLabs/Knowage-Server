@@ -1,7 +1,7 @@
 <div layout-fill ng-controller="filterController" class="overflow" layout="column">
 	<md-whiteframe class="md-whiteframe-4dp filterWhiteFrame " layout-margin
 		ng-repeat="kpi in selectedScheduler.kpis"> 
-		<md-toolbar	class="miniheadimportexport">
+		<md-toolbar	class="miniheadimportexport ">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex">{{kpi.name}}</h2>
 			</div>
@@ -11,7 +11,7 @@
 	<div flex=50 ng-repeat="filter in selectedScheduler.filters" ng-if="filter.kpiName == kpi.name">
 		<md-whiteframe class="md-whiteframe-4dp filterWhiteFrame" layout-margin > 
 			<md-card > 
-			<md-toolbar	class="miniheadimportexport colorToolBarFilterKpi">
+			<md-toolbar	class="miniheadimportexport secondaryToolbar">
 			<div class="md-toolbar-tools">
 				<h3>{{filter.placeholderName}}</h3>
 			</div>
