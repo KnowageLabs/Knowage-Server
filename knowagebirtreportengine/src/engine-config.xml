@@ -25,11 +25,10 @@
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 
-<!--  DEFAULt emitter -->
-<!-- 		<XLS_EMITTER>org.eclipse.birt.report.engine.emitter.prototype.excel</XLS_EMITTER>  -->
-<!--  tribix  emitter -->
- <XLS_EMITTER>org.uguess.birt.report.engine.emitter.xls</XLS_EMITTER>  
- <!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
+	<!--  DEFAULt emitter -->
+	<XLS_EMITTER>org.eclipse.birt.report.engine.emitter.prototype.excel</XLS_EMITTER>
+	
+ 	<!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
  
 	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
  
