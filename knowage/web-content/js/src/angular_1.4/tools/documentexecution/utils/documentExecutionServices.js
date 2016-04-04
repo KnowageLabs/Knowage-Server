@@ -555,7 +555,7 @@
 											  if(execProperties.parametersData.documentParameters[z].defaultValues &&
 													  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
 												  for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
-													  execProperties.parametersData.documentParameters[z].parameterValue = [];
+													  //execProperties.parametersData.documentParameters[z].parameterValue = [];
 													  execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=false; 
 												  } 
 											  }
