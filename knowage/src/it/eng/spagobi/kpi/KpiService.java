@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.kpi;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -53,6 +54,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -224,18 +226,10 @@ public class KpiService {
 	@GET
 	@Path("/listAvailableAlias")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listAvailableAlias(@Context HttpServletRequest req) throws EMFUserError {
+	public Response listAvailableAlias(@QueryParam("ruleId") Integer ruleId, @QueryParam("ruleVersion") Integer ruleVersion, @Context HttpServletRequest req)
+			throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<Alias> aliases = dao.listAliasNotInMeasure(null);
-		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
-	}
-
-	@GET
-	@Path("/listAvailableAlias/{ruleId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listAvailableAliasIncludingId(@PathParam("ruleId") Integer ruleId, @Context HttpServletRequest req) throws EMFUserError {
-		IKpiDAO dao = getKpiDAO(req);
-		List<Alias> aliases = dao.listAliasNotInMeasure(ruleId);
+		List<Alias> aliases = dao.listAliasNotInMeasure(ruleId, ruleVersion);
 		return Response.ok(JsonConverter.objectToJson(aliases, aliases.getClass())).build();
 	}
 
@@ -540,7 +534,7 @@ public class KpiService {
 		IKpiDAO dao = getKpiDAO(req);
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		// loading trigger
-		// TriggerInfo triggerInfo = SchedulerService.getTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
+		JobTrigger triggerInfo = getJobTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
 		// Trigger trigger = new Trigger();
 		// trigger.setStartTime(triggerInfo.getStartTime());
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
