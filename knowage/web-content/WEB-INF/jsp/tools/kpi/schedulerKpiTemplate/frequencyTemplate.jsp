@@ -9,36 +9,49 @@
 		class="md-block"> <label>{{translate.load("scheduler.scheddescription","component_scheduler_messages")}}:</label>
 	<textarea ng-model="frequency.descr" columns="1" maxlength="500"
 		ng-maxlength="500" md-maxlength="500"></textarea> </md-input-container>
-
-	<div layout="row" class="checkboxRow">
+<table style="border-size:0">
+	<tr>
+	<td>
 		<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
+	</td>
+	<td>
 		<md-datepicker ng-model="frequency.startDate" name="startDateField"
 			required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+	</td>
+	<td>
 		<div class="validation-messages" ng-messages="startDateField.$error">
 			<div ng-message="valid">{{translate.load("scheduler.invalidDate","component_scheduler_messages")}}</div>
 			<div ng-message="required">{{translate.load("scheduler.requiredDate","component_scheduler_messages")}}</div>
 		</div>
 		<label style="margin: 0 20px;">{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
+	</td>
+	<td>
 		<angular-time-picker id="myTimePicker1" required
 			ng-model="frequency.startTime"></angular-time-picker>
 	</div>
+	</td>
+	</tr>
 
-	<div layout="row" class="checkboxRow">
+	<tr>
+	<td>
 		<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
+	</td>
+	<td>
 		<md-datepicker ng-model="frequency.endDate" name="endDateField"
 			md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
-
+	</td>
+	<td>
 		<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("scheduler.endtime","component_scheduler_messages")}}:
 		</label>
+	</td>
+	<td>
 		<angular-time-picker id="myTimePicker2" ng-model="frequency.endTime"></angular-time-picker>
-	</div>
+	</td>
+	</tr>
 
-	<md-card> 
-	<md-toolbar	class="miniheadimportexport secondaryToolbar">
-	<div class="md-toolbar-tools">
-		<h3>{{translate.load("scheduler.schedulerExec","component_scheduler_messages")}}</h3>
-	</div>
-	</md-toolbar>
+
+	<tr>
+	<td colspan="4">
 	<!--md-toolbar class="unselectedItem"
 		ng-class="frequency.type != 'single'? 'selectedItem' : 'unselectedItem'"
 		style="height: 50px;  min-height: 30px;">
@@ -52,13 +65,13 @@
 
 	<div ng-if="frequency.type=='scheduler'">
 		<div layout="row" style="margin-bottom: 15px;">
-			<span class="textspan">{{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}</span>
+			<span class="textspan" style="margin-left:0px">{{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}</span>
 			<md-select aria-label="aria-label"
 				ng-model="frequency.selectInterval" style="margin:0px">
 			<md-option ng-repeat="interval in intervals "
 				value="{{interval.value}}">{{interval.label}}</md-option> </md-select>
 		</div>
-
+<md-card ng-if="frequency.selectInterval">
 		<!-- type of interval -->
 		<div ng-if="frequency.selectInterval=='minute'" layout="row"
 			ng-init="1">
@@ -164,9 +177,12 @@
 				</div>
 			</div>
 		</div>
+</md-card>
 	</div>
 
-	</md-card> 
+	</td>
+	</tr>
+	</table>
 	</md-content>
 	</md-whiteframe>
 </div>

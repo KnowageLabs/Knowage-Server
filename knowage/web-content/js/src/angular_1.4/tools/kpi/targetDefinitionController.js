@@ -117,11 +117,11 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			controller: ['$scope', function($scope) {
 				$scope.selectedKpis = [];
 				$scope.foundActions = [
-					{
-						label: sbiModule_translate.load('sbi.generic.edit'),
-						icon: 'fa fa-pencil',
-						action: function() {}
-					}
+				//	{
+				//		label: sbiModule_translate.load('sbi.generic.edit'),
+				//		icon: 'fa fa-pencil',
+				//		action: function() {}
+				//	}
 				];
 				$scope.foundKpi = {};
 				$scope.foundKpis = [];
@@ -299,7 +299,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							}
 						}
 					} else {
-						$scope.targets[idx] = {}; // New target
+						$scope.targets[idx] = {id: data.id}; // New target
 					}
 					$scope.targets[idx].name = $scope.target.name;
 					$scope.targets[idx].startValidityDate = $scope.target.startValidityDate;

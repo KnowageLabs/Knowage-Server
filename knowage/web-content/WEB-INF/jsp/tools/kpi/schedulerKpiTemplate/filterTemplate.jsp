@@ -16,7 +16,7 @@
 				<h3>{{filter.placeholderName}}</h3>
 			</div>
 			</md-toolbar>
-			<di layout=rowv>
+			<div layout=row>
 			<div flex=50>
 				<md-select aria-label="aria-label" ng-model="filter.type.valueCd">
 						<md-option ng-repeat="type in listType" value="{{type.VALUE_CD}}">{{type.VALUE_CD}}</md-option>
@@ -33,6 +33,7 @@
 				<md-select aria-label="aria-label" ng-model="filter.value" ng-if="filter.type.valueCd=='LOV'">
 						<md-option ng-repeat="type in lov" value="{{type.name}}">{{type.name}}</md-option>
 				</md-select> 
+			</div>
 			</div>
 			</md-card>
 		</md-whiteframe>
