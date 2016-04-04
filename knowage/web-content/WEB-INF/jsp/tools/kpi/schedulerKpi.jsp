@@ -103,6 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		columns-search='["name"]' show-search-bar=true
 		scope-functions=tableFunction 
 		click-function="loadEngine(item);"
+		speed-menu-option=engineMenuOptionList 
 		initial-sorting="'name'"> </angular-table>
 		</list>
 		<detail cancel-function="cancel">

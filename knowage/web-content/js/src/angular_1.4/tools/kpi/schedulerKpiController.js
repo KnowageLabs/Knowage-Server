@@ -14,10 +14,17 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	$scope.kpiAllList = [];
 	$scope.kpiSelected = [];
 	$scope.placeHolder = [];
-	//retry it after with a service rest
-
 	$scope.engines = [];
+	$scope.selectedTab={'tab':0};
+	$scope.engineMenuOptionList = [{
+		label : sbiModule_translate.load('sbi.generic.delete'),
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',	
+		action : function(item,event) {
+			$scope.removeEngine(item);
+		}
 
+	}];
 
 
 	$scope.loadEngineKpi = function(){
@@ -82,7 +89,6 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 					angular.copy(response.data,$scope.placeHolder);
 					$scope.addPlaceHolderMissing();
 					}
-
 				},function(response) {
 					$scope.errorHandler(response.data,"");
 				})
@@ -92,11 +98,11 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 	}
 	
+	$scope.removeEngine = function(item){
+
+	}
+	
 	$scope.addPlaceHolderMissing = function(){
-		
-		//	for(var k=0;k<$scope.selectedScheduler.filters.length;k++){
-		//		if($scope.placeHolder[$scope.selectedScheduler.filters[k].kpiName]!=undefined){
-		//			for(var t=0;t<$scope.placeHolder[$scope.selectedScheduler.filters[k].kpiName].length;t++){
 		var keys = Object.keys($scope.placeHolder);
 		for(var i=0;i<keys.length;i++){
 						var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
@@ -111,27 +117,40 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 											"valueId": 355,
 											"valueName": "sbidomains.kpi.fixedvalue"
 							}
-
-							var obj = {};
-							obj.kpiName = keys[i];
-							
-							if($scope.placeHolder[keys[i]].length==1){
-								obj.placeholderName = $scope.placeHolder[keys[i]][0];
-							}	
-							
 						
-							
-							obj.value="";
-							obj.type = objType;
-							$scope.selectedScheduler.filters.push(obj);
+							for(var v=0;v<$scope.placeHolder[keys[i]].length;v++){
+								var obj = {};
+								obj.kpiName = keys[i];
+								obj.placeholderName = $scope.placeHolder[keys[i]][v];
+								obj.value="";
+								obj.type = objType;
+								
+								$scope.selectedScheduler.filters.push(obj);
+							}
+							/*if($scope.placeHolder[keys[i]].length==1){
+								obj.placeholderName = $scope.placeHolder[keys[i]][0];
+							}	*/
 						}
 					}
-					
-		//		}
-				
-		//	}
+					$scope.checkMissingType();
 	}
 	
+	$scope.checkMissingType = function(){
+		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+			if($scope.selectedScheduler.filters[i].type==null){
+				var objType = {"domainCode": "KPI_PLACEHOLDER_TYPE",
+						"domainName": "KPI placeholder value type",
+						"translatedValueDescription": "Fixed Value",
+						"translatedValueName": "Fixed Value",
+						"valueCd": "FIXED_VALUE",
+						"valueDescription": "sbidomains.kpi.fixedvalue",
+						"valueId": 355,
+						"valueName": "sbidomains.kpi.fixedvalue"
+						}
+				$scope.selectedScheduler.filters[i].type = objType;
+			}
+		}
+	}
 	
 	$scope.indexInList=function(item, list,param) {
 
@@ -156,6 +175,9 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	};
 
 	$scope.cancel = function(){
+		$timeout(function(){
+			$scope.selectedTab.tab=0;
+		},0)
 		$angularListDetail.goToList();
 	}
 
