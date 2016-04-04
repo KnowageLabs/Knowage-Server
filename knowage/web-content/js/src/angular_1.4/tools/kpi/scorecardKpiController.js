@@ -12,15 +12,15 @@ scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 });
 
 
-scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout',scorecardMasterControllerFunction ]);
+scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdToast',scorecardMasterControllerFunction ]);
 scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout',scorecardListControllerFunction ]);
 scorecardApp.controller('scorecardDetailController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout',scorecardDetailControllerFunction ]);
 
-function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout){
+function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdToast){
 	$scope.translate=sbiModule_translate;
 	$scope.emptyScorecard={name:"",perspectives:[]};
-	$scope.emptyPerspective={name:"",criterion:{},status:"",groupedKpis:[],targets:[]};
-	$scope.emptyTarget={name:"",criterion:{},status:"",groupedKpis:[],kpis:[]};
+	$scope.emptyPerspective={name:"",criterion:{},status:"",groupedKpis:[],targets:[],options:{}};
+	$scope.emptyTarget={name:"",criterion:{},status:"",groupedKpis:[],kpis:[],options:{}};
 	$scope.currentScorecard= {};
 	$scope.currentPerspective = {};
 	$scope.currentTarget = {};
@@ -29,6 +29,16 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	
 	$scope.broadcastCall=function(type){
 		$scope.$broadcast(type);
+	}
+	
+	$scope.showToast=function(text,times){
+		var mills=times | 3000;
+		$mdToast.show(
+			      $mdToast.simple()
+			        .content(text)
+			        .position("TOP")
+			        .hideDelay(mills)
+			    );
 	}
 	
 	
@@ -43,14 +53,6 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 	
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);  
-//		for(var i=0;i<2;i++){
-//			var tmp=angular.extend({}, $scope.emptyPerspective);
-//			tmp.name="Prospettiva"+1;
-//			tmp.groupedKpis=[{status:"RED",count:2},{status:"YELLOW",count:1},{status:"GREEN",count:3}];
-//			$scope.currentScorecard.perspectives.push(tmp);
-//		}
-//		
-		
 		$angularListDetail.goToDetail();
 	};
 	
@@ -94,7 +96,19 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.criterionTypeList = [];
 	
 	$scope.saveScorecardFunction=function(){
-		sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",$scope.currentScorecard)
+		
+		
+		if($scope.currentScorecard.name.trim()==""){
+			$scope.showToast('Name is required'); 
+			 return;
+		}
+		if($scope.currentScorecard.perspectives==undefined || $scope.currentScorecard.perspectives.length==0){
+			$scope.showToast('Add at least one perspective'); 
+			 return;
+		}
+		
+		
+	sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",$scope.currentScorecard)
 			.then(function(response) {
 				alert("Salvato");
 			}, function(response) {

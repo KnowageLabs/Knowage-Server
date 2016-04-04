@@ -69,7 +69,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</extra-button>
 		
 				
-		<detail ng-controller="scorecardDetailController" save-function="saveScorecardFunction" show-save-button="selectedStep.value==0" ng-switch="selectedStep.value" layout="column" >
+		<detail ng-controller="scorecardDetailController"
+		 save-function="saveScorecardFunction"
+		 show-save-button="selectedStep.value==0"
+		 ng-switch="selectedStep.value"
+		 layout="column" >
 		 <md-whiteframe class="md-whiteframe-1dp" >
 			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep.value' control='stepControl' disable-go-back="true"> </bread-crumb>
 		 </md-whiteframe>

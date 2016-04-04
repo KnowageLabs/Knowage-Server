@@ -3,17 +3,17 @@ angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionCon
 
 angular.module('scorecardManager').service('scorecardManager_perspectiveUtility',function(scorecardManager_semaphoreUtility){
 	this.getPerspectiveStatus=function(perspective){ 
-		debugger;
+	
 	if(angular.equals(perspective.criterion.valueCd,"MAJORITY")){
 			return loadPerspectiveByMajority(perspective);
 		}else{
 			//load by priority
-			if(perspective.criterionPriority.length==0){
+			if(perspective.options.criterionPriority.length==0){
 				//if no priority target are selected return the global value 
 				return loadPerspectiveByMajority(perspective);
-			}else if(perspective.criterionPriority.length==1){ 
+			}else if(perspective.options.criterionPriority.length==1){ 
 				// if there is only one target selected, and theyr status in different of GRAY return his status, else the global status
-				return (perspective.criterionPriority[0].status=="GRAY" || perspective.criterionPriority[0].status=="GREEN")  ?   loadPerspectiveByMajority(perspective) : perspective.criterionPriority[0].status;
+				return (perspective.options.criterionPriority[0].status=="GRAY" || perspective.options.criterionPriority[0].status=="GREEN")  ?   loadPerspectiveByMajority(perspective) : perspective.options.criterionPriority[0].status;
 			}
 			else{
 				return loadPerspectiveByMajorityWithPriority(perspective);
@@ -23,9 +23,9 @@ angular.module('scorecardManager').service('scorecardManager_perspectiveUtility'
 	};
 	
 	function loadPerspectiveByMajorityWithPriority(perspective){
-		 var masterPriorityStatus=perspective.criterionPriority[0].status
-		 for(var i=1;i<perspective.criterionPriority.length;i++){
-			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(perspective.criterionPriority[i].status,masterPriorityStatus);
+		 var masterPriorityStatus=perspective.options.criterionPriority[0].status
+		 for(var i=1;i<perspective.options.criterionPriority.length;i++){
+			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(perspective.options.criterionPriority[i].status,masterPriorityStatus);
 		 }
 		
 		if(angular.equals("GREEN",masterPriorityStatus)){
@@ -61,7 +61,6 @@ angular.module('scorecardManager').service('scorecardManager_perspectiveUtility'
 function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility){
 	
 	$scope.addGroupedTargetsItem=function(type){
-		
 		for(var i=0;i<$scope.currentPerspective.groupedTargets.length;i++){
 			if(angular.equals($scope.currentPerspective.groupedTargets[i].status,type)){
 				$scope.currentPerspective.groupedTargets[i].count++;
@@ -71,13 +70,32 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 		 $scope.currentPerspective.groupedTargets.push({status:type,count:1});
 	}
 	
+	$scope.addTotalGroupedKpisItem=function(target){
+		
+		for(var i=0;i<target.groupedKpis.length;i++){
+			var tmpGroupedKpis=target.groupedKpis[i];
+			var find=false;
+			for(var j=0;j<$scope.currentPerspective.groupedKpis.length;j++){
+				if(angular.equals( $scope.currentPerspective.groupedKpis[j].status,tmpGroupedKpis.status)){
+					$scope.currentPerspective.groupedKpis[j].count+=tmpGroupedKpis.count;
+					find=true;
+					break;
+				}
+			}
+			if(!find){
+				 $scope.currentPerspective.groupedKpis.push({status:tmpGroupedKpis.status,count:tmpGroupedKpis.count});
+			}
+		}
+		
+	}
+	
 	$scope.loadGroupedTarget=function(){
 		if($scope.currentPerspective.groupedTargets==undefined){
 			 $scope.currentPerspective.groupedTargets=[];
-		}
-		
+		} 
 		for(var i=0;i<$scope.currentPerspective.targets.length;i++){
 			$scope.addGroupedTargetsItem($scope.currentPerspective.targets[i].status);
+			$scope.addTotalGroupedKpisItem($scope.currentPerspective.targets[i]);
 		}
 		$scope.currentPerspective.status=scorecardManager_perspectiveUtility.getPerspectiveStatus($scope.currentPerspective);
 		
@@ -87,21 +105,11 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 	
 	$scope.$on('savePerspective', function(event, args) {
 		 if($scope.currentPerspective.name.trim()==""){
-			 $mdToast.show(
-				      $mdToast.simple()
-				        .content('Name is required')
-				        .position("TOP")
-				        .hideDelay(3000)
-				    );
+				$scope.showToast('Name is required');
 			 return;
 		}
 		if($scope.currentPerspective.targets==undefined || $scope.currentPerspective.targets.length==0){
-			 $mdToast.show(
-				      $mdToast.simple()
-				        .content('Add at least one targets ')
-				        .position("TOP")
-				        .hideDelay(3000)
-				    );
+			$scope.showToast('Add at least one target');
 			 return;
 		}
 		

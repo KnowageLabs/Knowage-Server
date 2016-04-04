@@ -1397,7 +1397,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 	}
 
-	private void saveScorecard(Scorecard scorecard, Session session, SbiKpiScorecard sbiScorecard) {
+	private void saveScorecard(Scorecard scorecard, Session session, SbiKpiScorecard sbiScorecard) throws JSONException {
 		// Perspective
 		for (ScorecardPerspective scorecardPerspective : scorecard.getPerspectives()) {
 			SbiKpiScorecard sbiPerspective = from(scorecardPerspective, sbiScorecard, session);
@@ -1422,7 +1422,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 	}
 
-	private SbiKpiScorecard from(ScorecardSubview scorecardSubview, SbiKpiScorecard sbiScorecard, Session session) {
+	private SbiKpiScorecard from(ScorecardSubview scorecardSubview, SbiKpiScorecard sbiScorecard, Session session) throws JSONException {
 		SbiKpiScorecard sbiKpiScorecard = null;
 		if (scorecardSubview.getId() == null) {
 			if (sbiScorecard.getId() != null) {
@@ -1435,7 +1435,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			updateSbiCommonInfo4Update(sbiKpiScorecard);
 		}
 		sbiKpiScorecard.setName(scorecardSubview.getName());
-		sbiKpiScorecard.setOptions(scorecardSubview.getOptions());
+		sbiKpiScorecard.setOptions(scorecardSubview.getOptions().toString());
 		return sbiKpiScorecard;
 	}
 

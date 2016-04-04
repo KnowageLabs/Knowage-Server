@@ -7,12 +7,12 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 			return loadTargetByMajority(target);
 		}else{
 			//load by priority
-			if(target.criterionPriority.length==0){
+			if(target.options.criterionPriority.length==0){
 				//if no priority kpi are selected return the global value 
 				return loadTargetByMajority(target);
-			}else if(target.criterionPriority.length==1){ 
+			}else if(target.options.criterionPriority.length==1){ 
 				// if there is only one kpi selected, and theyr status in different of GRAY return his status, else the global status
-				return (target.criterionPriority[0].status=="GRAY" || target.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.criterionPriority[0].status;
+				return (target.options.criterionPriority[0].status=="GRAY" || target.options.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.options.criterionPriority[0].status;
 			}
 			else{
 				return loadTargetByMajorityWithPriority(target);
@@ -22,9 +22,9 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 	};
 	
 	function loadTargetByMajorityWithPriority(target){
-		 var masterPriorityStatus=target.criterionPriority[0].status
-		 for(var i=1;i<target.criterionPriority.length;i++){
-			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(target.criterionPriority[i].status,masterPriorityStatus);
+		 var masterPriorityStatus=target.options.criterionPriority[0].status
+		 for(var i=1;i<target.options.criterionPriority.length;i++){
+			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(target.options.criterionPriority[i].status,masterPriorityStatus);
 		 }
 		
 		if(angular.equals("GREEN",masterPriorityStatus)){
@@ -86,14 +86,13 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 	};
 	
 	$scope.getListKPI = function(){
-		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
+		sbiModule_restServices.promiseGet("1.0/kpi","listKpiWithResult")
 		.then(function(response){ 
 			for(var i=0;i<response.data.length;i++){
 				var obj = angular.extend({},response.data[i]);
 				var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
 				//parse date based on language selected
 				obj["datacreation"]=$filter('date')(response.data[i].dateCreation, dateFormat);
-				obj.status=scorecardManager_semaphoreUtility.typeColor[Math.floor(Math.random() * 4)];
 				obj.kpiSemaphore="<kpi-semaphore-indicator indicator-color=\"'"+obj.status+"'\"></kpi-semaphore-indicator>";
 				$scope.kpiList.push(obj);
 			}
@@ -158,22 +157,12 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 	
 	$scope.$on('saveTarget', function(event, args) {
 		if($scope.currentTarget.name.trim()==""){
-			 $mdToast.show(
-				      $mdToast.simple()
-				        .content('Name is required')
-				        .position("TOP")
-				        .hideDelay(3000)
-				    );
+			$scope.showToast('Name is required');
 			 return;
 		}
 		if($scope.currentTarget.kpis==undefined || $scope.currentTarget.kpis.length==0){
-			 $mdToast.show(
-				      $mdToast.simple()
-				        .content('Select at least one kpi ')
-				        .position("TOP")
-				        .hideDelay(3000)
-				    );
-			 return;
+			$scope.showToast('Select at least one kpi'); 
+			return;
 		}
 		
 		
