@@ -2,17 +2,24 @@ var app = angular.module('schedulerKpi');
 app.controller('frequencyController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIControllerFunction ]);
 	
 function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
-	$scope.frequency = {};
+	$scope.frequency = {type: 'scheduler'};
 	$scope.selectedWeek = [];
 
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	$scope.translate = sbiModule_translate;
 	$scope.intervalsFrequency = {};
 	$scope.typeToolbar = [
-        {value: 'single', label: sbiModule_translate.load("scheduler.singleExec", "component_scheduler_messages")},
-        {value: 'scheduler', label: sbiModule_translate.load("scheduler.schedulerExec", "component_scheduler_messages")},
-    ];
+//		{value: 'single', label: sbiModule_translate.load("scheduler.singleExec", "component_scheduler_messages")},
+		{value: 'scheduler', label: sbiModule_translate.load("scheduler.schedulerExec", "component_scheduler_messages")} //,
+//		{value: 'event', label: sbiModule_translate.load("scheduler.eventExec", "component_scheduler_messages")}
+	];
 	
+	$scope.EVENT_TYPES = [
+		{value: 'rest', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
+		{value: 'jms', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
+		{value: 'contextbroker', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
+		{value: 'dataset', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
+	];
 	
 	
 	$scope.intervals = [
