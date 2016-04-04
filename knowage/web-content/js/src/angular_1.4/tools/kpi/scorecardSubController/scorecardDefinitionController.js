@@ -15,6 +15,5 @@ function scorecardDefinitionControllerFunction($scope,sbiModule_translate,sbiMod
 
 		$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.perspective.definition.name')});
 	};
-
-	
+	 
 }

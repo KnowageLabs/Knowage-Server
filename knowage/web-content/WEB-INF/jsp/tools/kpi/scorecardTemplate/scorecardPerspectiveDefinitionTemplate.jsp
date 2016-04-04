@@ -14,6 +14,7 @@
 			<md-input-container flex='50' class="md-block" ng-if="currentPerspective.criterion.valueId==229"> 
 				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label> 
 				<md-select ng-model="currentPerspective.options.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="targ in currentPerspective.targets" ng-value="{{targ}}">	{{targ.name}} </md-option> 
 				</md-select> 
 			</md-input-container>
 		</div>

@@ -53,11 +53,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail ng-controller="scorecardMasterController"  full-screen="true">
 		
 		<list label="translate.load('sbi.kpi.measure.list')" ng-controller="scorecardListController" new-function="newScorecardFunction" layout-column>
-		 	<angular-table id='scorecardListTable' ng-model=scorecardList
+		 	<angular-table flex id='scorecardListTable' ng-model=scorecardList
 				columns='scorecardColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option = scorecardListAction
-				 click-function="scorecardClickFunction(item);" > </angular-table>
+				 click-function="scorecardClickEditFunction(item);" > </angular-table>
 		</list>
 		
 		<extra-button>
@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 		<detail ng-controller="scorecardDetailController"
 		 save-function="saveScorecardFunction"
+		 cancel-function="cancelScorecardFunction"
 		 show-save-button="selectedStep.value==0"
 		 ng-switch="selectedStep.value"
 		 layout="column" >
