@@ -18,6 +18,8 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
 
+	private String options = null;
+
 	/**
 	 * @return the id
 	 */
@@ -121,6 +123,21 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	 */
 	public void setSubviews(Set<SbiKpiScorecard> subviews) {
 		this.subviews = subviews;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public String getOptions() {
+		return options;
+	}
+
+	/**
+	 * @param options
+	 *            the options to set
+	 */
+	public void setOptions(String options) {
+		this.options = options;
 	}
 
 }

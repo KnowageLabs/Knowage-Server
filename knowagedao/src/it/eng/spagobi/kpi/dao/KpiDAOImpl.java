@@ -536,7 +536,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -830,7 +830,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1435,6 +1435,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			updateSbiCommonInfo4Update(sbiKpiScorecard);
 		}
 		sbiKpiScorecard.setName(scorecardSubview.getName());
+		sbiKpiScorecard.setOptions(scorecardSubview.getOptions());
 		return sbiKpiScorecard;
 	}
 

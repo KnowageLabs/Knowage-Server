@@ -19,7 +19,7 @@
         
         <property name="parentId" column="PARENT_ID" type="integer" />
         <property name="name" column="NAME" type="string" length="40" not-null="true" />
-        
+        <property name="options" column="OPTIONS" type="string" length="1000" not-null="true" />
 <!--         <property name="internalType" column="INTERNAL_TYPE" type="char" not-null="true" /> -->
         
         <property name="criterionId" column="CRITERION_ID" type="integer" />
@@ -74,7 +74,8 @@
 	        </property>                 
 	        <property name="organization" type="string">
 	            <column name="ORGANIZATION" length="20" not-null="false" />
-	        </property>  			 
+	        </property> 
+	         			 
 		</component>
 		<filter name="tenantFilter" condition="organization=:tenant"/> 
 	</class>

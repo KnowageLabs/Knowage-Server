@@ -16,6 +16,7 @@ public class ScorecardSubview {
 	private Integer id;
 	private String name;
 	private Domain criterion;
+	private String options;
 
 	// TODO status will be rendered as a color (green/yellow/red)
 	private List<STATUS> status = new ArrayList<>();
@@ -88,6 +89,21 @@ public class ScorecardSubview {
 	@JsonIgnore
 	public List<CountByStatus> getGroupedKpis() {
 		return groupedKpis;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public String getOptions() {
+		return options;
+	}
+
+	/**
+	 * @param options
+	 *            the options to set
+	 */
+	public void setOptions(String options) {
+		this.options = options;
 	}
 
 }
