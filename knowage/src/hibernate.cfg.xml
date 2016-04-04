@@ -303,12 +303,12 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiTargetValue.hbm.xml" />
         
         <!-- Don't commit these -->
-        
+        <!-- 
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiScorecard.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecution.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecutionFilter.hbm.xml" />
          
-        
+         -->
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
