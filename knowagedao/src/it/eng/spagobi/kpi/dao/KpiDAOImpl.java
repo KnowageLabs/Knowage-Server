@@ -69,11 +69,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -83,6 +85,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinFragment;
 import org.hibernate.transform.Transformers;
 import org.json.JSONException;
@@ -595,21 +598,37 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<Alias> listAliasNotInMeasure(final Integer ruleId) {
-		List<SbiKpiAlias> sbiAlias = list(new ICriterion<SbiKpiAlias>() {
+	public List<Alias> listAliasNotInMeasure() {
+		return listAliasNotInMeasure(null, null);
+	}
+
+	@Override
+	public List<Alias> listAliasNotInMeasure(final Integer ruleId, final Integer ruleVersion) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Alias>>() {
 			@Override
-			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiAlias.class).createAlias("sbiKpiRuleOutputs", "sbiKpiRuleOutputs")
-						.createAlias("sbiKpiRuleOutputs.type", "sbiKpiRuleOutputs_type").createAlias("sbiKpiRuleOutputs.sbiKpiRule", "_sbiKpiRule")
-						.add(Restrictions.eq("sbiKpiRuleOutputs_type.valueCd", MEASURE)).add(Restrictions.eq("_sbiKpiRule.active", 'T'))
-						.add(Restrictions.ne("_sbiKpiRule.sbiKpiRuleId.id", ruleId));
+			public List<Alias> execute(Session session) throws Exception {
+				DetachedCriteria dc = DetachedCriteria.forClass(SbiKpiRuleOutput.class).createAlias("type", "_type").createAlias("sbiKpiRule", "_sbiKpiRule")
+						.createAlias("sbiKpiAlias", "_sbiKpiAlias").add(Restrictions.eq("_type.valueCd", MEASURE))
+						.add(Restrictions.eq("_sbiKpiRule.active", 'T')).setProjection(Property.forName("_sbiKpiAlias.id"));
+
+				// Retriving all aliases not used as measure
+				List<SbiKpiAlias> alias = session.createCriteria(SbiKpiAlias.class).add(Subqueries.propertyNotIn("id", dc)).list();
+				Set<SbiKpiAlias> sbiAlias = new HashSet<>(alias);
+				if (ruleId != null && ruleVersion != null) {
+					List<SbiKpiAlias> aliasesUsedByCurrentRule = session.createCriteria(SbiKpiAlias.class)
+							.createAlias("sbiKpiRuleOutputs", "_sbiKpiRuleOutputs").createAlias("_sbiKpiRuleOutputs.sbiKpiRule", "_sbiKpiRule")
+							.add(Restrictions.eq("_sbiKpiRule.sbiKpiRuleId.id", ruleId)).add(Restrictions.eq("_sbiKpiRule.sbiKpiRuleId.version", ruleVersion))
+							.list();
+					sbiAlias.addAll(aliasesUsedByCurrentRule);
+				}
+
+				List<Alias> ret = new ArrayList<>();
+				for (SbiKpiAlias sbiKpiAlias : sbiAlias) {
+					ret.add(new Alias(sbiKpiAlias.getId(), sbiKpiAlias.getName()));
+				}
+				return ret;
 			}
 		});
-		List<Alias> ret = new ArrayList<>();
-		for (SbiKpiAlias sbiKpiAlias : sbiAlias) {
-			ret.add(new Alias(sbiKpiAlias.getId(), sbiKpiAlias.getName()));
-		}
-		return ret;
 	}
 
 	// @Override

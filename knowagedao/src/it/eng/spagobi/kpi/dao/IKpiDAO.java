@@ -156,12 +156,20 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Alias> listAlias();
 
 	/**
-	 * Retrieve all aliases not currently used as measure in all rules excluding the one with id=ruleId (optional)
+	 * Retrieve all aliases not currently used as measure in all rules excluding the one with specific id and version
 	 * 
 	 * @param ruleId
+	 * @param ruleVersion
 	 * @return a list of Alias
 	 */
-	public List<Alias> listAliasNotInMeasure(Integer ruleId);
+	public List<Alias> listAliasNotInMeasure(Integer ruleId, Integer ruleVersion);
+
+	/**
+	 * Retrieve all aliases not currently used as measure in all rules
+	 * 
+	 * @return a list of Alias
+	 */
+	public List<Alias> listAliasNotInMeasure();
 
 	public Alias loadAlias(String name);
 
