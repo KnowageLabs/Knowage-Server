@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -85,6 +86,9 @@ public class SQLDBCache implements ICache {
 	private WorkManager spagoBIWorkManager;
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
+
+	private static final long DEFAULT_HAZELCAST_TIMEOUT = 120;
+	private static final long DEFAULT_HAZELCAST_LEASETIME = 240;
 
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
 
@@ -213,44 +217,49 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 
 		IDataStore dataStore = null;
-
 		String hashedSignature = Helper.sha256(resultsetSignature);
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
-		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
-			if (getMetadata().containsCacheItem(resultsetSignature)) {
-				logger.debug("Resultset with signature [" + resultsetSignature + "] found");
-				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
-				cacheItem.setLastUsedDate(new Date());
-				// update DB information about this cacheItem
-				getMetadata().updateCacheItem(cacheItem);
-				String tableName = cacheItem.getTable();
-				logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
-				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
+					if (getMetadata().containsCacheItem(resultsetSignature)) {
+						logger.debug("Resultset with signature [" + resultsetSignature + "] found");
+						CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+						cacheItem.setLastUsedDate(new Date());
+						// update DB information about this cacheItem
+						getMetadata().updateCacheItem(cacheItem);
+						String tableName = cacheItem.getTable();
+						logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
+						dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
 
-				/*
-				 * StringBuffer selectBuffer = new StringBuffer(); IDataSetTableDescriptor descriptor = TemporaryTableManager.getTableDescriptor(null,
-				 * tableName, dataSource); Set<String> columns = descriptor.getColumnNames(); Iterator<String> it = columns.iterator(); while (it.hasNext()) {
-				 * String column = it.next(); if (column.equalsIgnoreCase("sbicache_row_id")) { continue; }
-				 * selectBuffer.append(AbstractJDBCDataset.encapsulateColumnAlaias (column, dataSource)); if (it.hasNext()) { selectBuffer.append(", "); } }
-				 * String selectClause = selectBuffer.toString(); if (selectClause.endsWith(", ")) { selectClause = selectClause.substring(0,
-				 * selectClause.length() - 2); } String sql = "SELECT " + selectClause + " FROM " + tableName; dataStore = dataSource.executeStatement(sql, 0,
-				 * 0);
-				 */
+						/*
+						 * StringBuffer selectBuffer = new StringBuffer(); IDataSetTableDescriptor descriptor = TemporaryTableManager.getTableDescriptor(null,
+						 * tableName, dataSource); Set<String> columns = descriptor.getColumnNames(); Iterator<String> it = columns.iterator(); while
+						 * (it.hasNext()) { String column = it.next(); if (column.equalsIgnoreCase("sbicache_row_id")) { continue; }
+						 * selectBuffer.append(AbstractJDBCDataset.encapsulateColumnAlaias (column, dataSource)); if (it.hasNext()) { selectBuffer.append(", ");
+						 * } } String selectClause = selectBuffer.toString(); if (selectClause.endsWith(", ")) { selectClause = selectClause.substring(0,
+						 * selectClause.length() - 2); } String sql = "SELECT " + selectClause + " FROM " + tableName; dataStore =
+						 * dataSource.executeStatement(sql, 0, 0);
+						 */
+					} else {
+						logger.debug("Resultset with signature [" + resultsetSignature + "] not found");
+					}
+				} catch (Throwable t) {
+					if (t instanceof CacheException)
+						throw (CacheException) t;
+					else
+						throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+				} finally {
+					mapLocks.unlock(hashedSignature);
+				}
 			} else {
-				logger.debug("Resultset with signature [" + resultsetSignature + "] not found");
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning a null datastore.");
 			}
-		} catch (Throwable t) {
-			if (t instanceof CacheException)
-				throw (CacheException) t;
-			else
-				throw new CacheException("An unexpected error occure while getting dataset from cache", t);
-		} finally {
-			mapLocks.unlock(hashedSignature);
-			logger.debug("OUT");
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
-
+		logger.debug("OUT");
 		return dataStore;
 	}
 
@@ -416,294 +425,302 @@ public class SQLDBCache implements ICache {
 		String hashedSignature = Helper.sha256(resultsetSignature);
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
-		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
-			if (getMetadata().containsCacheItem(resultsetSignature)) {
-				logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
-				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
-				cacheItem.setLastUsedDate(new Date());
-				// update DB information about this cacheItem
-				getMetadata().updateCacheItem(cacheItem);
-				String tableName = cacheItem.getTable();
-				logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
+					if (getMetadata().containsCacheItem(resultsetSignature)) {
+						logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
+						CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+						cacheItem.setLastUsedDate(new Date());
+						// update DB information about this cacheItem
+						getMetadata().updateCacheItem(cacheItem);
+						String tableName = cacheItem.getTable();
+						logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
-				// https://production.eng.it/jira/browse/KNOWAGE-149
-				// This list is used to create the order by clause
-				List<String> orderColumns = new ArrayList<String>();
+						// https://production.eng.it/jira/browse/KNOWAGE-149
+						// This list is used to create the order by clause
+						List<String> orderColumns = new ArrayList<String>();
 
-				SelectBuilder sqlBuilder = new SelectBuilder();
-				sqlBuilder.from(tableName);
-
-				/**
-				 * orderColumn - the column of the table through which the table will be ordered for the first category.
-				 *
-				 * appendColumnForCategories - the string that will be used for the ORDER BY clause of the query that we are going to construct. The ordering by
-				 * potential column and the category for it comes after the ordering by the series item(s).
-				 *
-				 * arrayCategoriesForOrdering - an array list that contains category, its potential ordering column and their ordering type attached to them.
-				 * When the clause for the order by is going to be created, we will take all items from this array list in order to create a final order by SQL
-				 * string.
-				 *
-				 * keepCategoryForOrdering - the part of the ORDER BY clause that is associated to the first category of the document.
-				 *
-				 * columnAndCategoryAreTheSame - indicator if the column that is set as an ordering one for the first category is of the same value (name) as
-				 * the category. In that case we will skip duplicating of columns of the table that the query should specify in the SELECT, GROUP BY and ORDER
-				 * BY clause.
-				 *
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				String orderColumn = "";
-				String appendColumnForCategories = "";
-				ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
-				String keepCategoryForOrdering = "";
-				boolean columnAndCategoryAreTheSame = false;
-
-				// Columns to SELECT
-				if (projections != null) {
-
-					for (ProjectionCriteria projection : projections) {
-
-						String aggregateFunction = projection.getAggregateFunction();
-
-						Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-						String columnName = projection.getColumnName();
-
-						if (datasetAlias != null) {
-							columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
-						}
-
-						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+						SelectBuilder sqlBuilder = new SelectBuilder();
+						sqlBuilder.from(tableName);
 
 						/**
-						 * Aggregation function is possible only for series, hence this is the part for handling them and their ordering criteria for the final
-						 * query.
+						 * orderColumn - the column of the table through which the table will be ordered for the first category.
 						 *
-						 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						 */
-						if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-
-							String aliasName = projection.getAliasName();
-							aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-
-							if (aliasName != null && !aliasName.isEmpty()) {
-
-								// https://production.eng.it/jira/browse/KNOWAGE-149
-								// This variable is used for the order clause
-								String tmpColumn = aggregateFunction + "(" + columnName + ") ";
-								String orderType = projection.getOrderType();
-
-								if (orderType != null && !orderType.equals("")) {
-									orderColumns.add(tmpColumn + " " + orderType);
-								}
-
-								columnName = tmpColumn + " AS " + aliasName;
-							}
-
-						}
-						/**
-						 * Handling of the ordering criteria set for the first category.
+						 * appendColumnForCategories - the string that will be used for the ORDER BY clause of the query that we are going to construct. The
+						 * ordering by potential column and the category for it comes after the ordering by the series item(s).
+						 *
+						 * arrayCategoriesForOrdering - an array list that contains category, its potential ordering column and their ordering type attached to
+						 * them. When the clause for the order by is going to be created, we will take all items from this array list in order to create a final
+						 * order by SQL string.
+						 *
+						 * keepCategoryForOrdering - the part of the ORDER BY clause that is associated to the first category of the document.
+						 *
+						 * columnAndCategoryAreTheSame - indicator if the column that is set as an ordering one for the first category is of the same value
+						 * (name) as the category. In that case we will skip duplicating of columns of the table that the query should specify in the SELECT,
+						 * GROUP BY and ORDER BY clause.
 						 *
 						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
-						else {
-							String orderType = projection.getOrderType();
-							orderColumn = projection.getOrderColumn();
+						String orderColumn = "";
+						String appendColumnForCategories = "";
+						ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
+						String keepCategoryForOrdering = "";
+						boolean columnAndCategoryAreTheSame = false;
 
-							/**
-							 * If the order type is not defined for current item, consider it as it is of an empty value (empty string).
-							 */
-							if (orderType == null) {
-								orderType = "";
-							}
+						// Columns to SELECT
+						if (projections != null) {
 
-							/**
-							 * If the order column is defined and is not an empty string the column (attribute) through which the first category should be
-							 * ordered is set.
-							 */
-							if (orderColumn != null && !orderColumn.equals("")) {
-								orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
+							for (ProjectionCriteria projection : projections) {
+
+								String aggregateFunction = projection.getAggregateFunction();
+
+								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+								String columnName = projection.getColumnName();
+
+								if (datasetAlias != null) {
+									columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+								}
+
+								columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 
 								/**
-								 * If the ordering column is the same as the category for which is set.
+								 * Aggregation function is possible only for series, hence this is the part for handling them and their ordering criteria for
+								 * the final query.
+								 *
+								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
-								if (orderColumn.equals(columnName)) {
-									columnAndCategoryAreTheSame = true;
+								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 
-									if (orderType.equals(""))
-										arrayCategoriesForOrdering.add(columnName + " ASC");
-									else
-										arrayCategoriesForOrdering.add(columnName + " " + orderType);
-								} else {
-									if (orderType.equals(""))
-										arrayCategoriesForOrdering.add(orderColumn + " ASC");
-									else
-										arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+									String aliasName = projection.getAliasName();
+									aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 
-									sqlBuilder.column(orderColumn);
-								}
-							}
+									if (aliasName != null && !aliasName.isEmpty()) {
 
-							/**
-							 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
-							 */
-							keepCategoryForOrdering = columnName + " ASC";
-						}
+										// https://production.eng.it/jira/browse/KNOWAGE-149
+										// This variable is used for the order clause
+										String tmpColumn = aggregateFunction + "(" + columnName + ") ";
+										String orderType = projection.getOrderType();
 
-						sqlBuilder.column(columnName);
-					}
-
-					/**
-					 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append the part
-					 * for ordering that category to the end of the ORDER BY clause.
-					 *
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.equals(""))
-						arrayCategoriesForOrdering.add(keepCategoryForOrdering);
-
-					/**
-					 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of particular
-					 * ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we will keep the same
-					 * approach.
-					 *
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
-						if (i < arrayCategoriesForOrdering.size() - 1)
-							appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i) + ", ";
-						else
-							appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i);
-					}
-
-					if (!appendColumnForCategories.equals("")) {
-						orderColumns.add(appendColumnForCategories);
-					}
-				}
-
-				// WHERE conditions
-				if (filters != null) {
-					for (FilterCriteria filter : filters) {
-						String operator = filter.getOperator();
-
-						String leftOperand = null;
-						if (operator.equalsIgnoreCase("IN")) {
-							String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-							leftOperand = "(1,";
-							String separator = "";
-							for (String value : columns) {
-								leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
-								separator = ",";
-							}
-							leftOperand += ")";
-						} else {
-							if (filter.getLeftOperand().isCostant()) {
-								// why? warning!
-								leftOperand = filter.getLeftOperand().getOperandValueAsString();
-							} else { // it's a column
-								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-								String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-								leftOperand = filter.getLeftOperand().getOperandValueAsString();
-								if (datasetAlias != null) {
-									leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-								}
-								leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-							}
-						}
-
-						String rightOperand = null;
-						if (filter.getRightOperand().isCostant()) {
-							if (filter.getRightOperand().isMultivalue()) {
-								rightOperand = "(";
-								String separator = "";
-								String stringDelimiter = "'";
-								List<String> values = filter.getRightOperand().getOperandValueAsList();
-								for (String value : values) {
-									if (operator.equalsIgnoreCase("IN")) {
-										if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
-											rightOperand += separator + "(1," + value + ")";
-										} else if (value.startsWith("(") && value.endsWith(")")) {
-											rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
-										} else {
-											rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+										if (orderType != null && !orderType.equals("")) {
+											orderColumns.add(tmpColumn + " " + orderType);
 										}
-									} else {
-										rightOperand += separator + stringDelimiter + value + stringDelimiter;
+
+										columnName = tmpColumn + " AS " + aliasName;
 									}
-									separator = ",";
+
 								}
-								rightOperand += ")";
-							} else {
-								rightOperand = filter.getRightOperand().getOperandValueAsString();
+								/**
+								 * Handling of the ordering criteria set for the first category.
+								 *
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								else {
+									String orderType = projection.getOrderType();
+									orderColumn = projection.getOrderColumn();
+
+									/**
+									 * If the order type is not defined for current item, consider it as it is of an empty value (empty string).
+									 */
+									if (orderType == null) {
+										orderType = "";
+									}
+
+									/**
+									 * If the order column is defined and is not an empty string the column (attribute) through which the first category should
+									 * be ordered is set.
+									 */
+									if (orderColumn != null && !orderColumn.equals("")) {
+										orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
+
+										/**
+										 * If the ordering column is the same as the category for which is set.
+										 */
+										if (orderColumn.equals(columnName)) {
+											columnAndCategoryAreTheSame = true;
+
+											if (orderType.equals(""))
+												arrayCategoriesForOrdering.add(columnName + " ASC");
+											else
+												arrayCategoriesForOrdering.add(columnName + " " + orderType);
+										} else {
+											if (orderType.equals(""))
+												arrayCategoriesForOrdering.add(orderColumn + " ASC");
+											else
+												arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+
+											sqlBuilder.column(orderColumn);
+										}
+									}
+
+									/**
+									 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
+									 */
+									keepCategoryForOrdering = columnName + " ASC";
+								}
+
+								sqlBuilder.column(columnName);
 							}
-						} else { // it's a column
-							rightOperand = filter.getRightOperand().getOperandValueAsString();
-							rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
-						}
 
-						sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
-					}
-				}
-
-				// GROUP BY conditions
-				if (groups != null) {
-					for (GroupCriteria group : groups) {
-
-						String aggregateFunction = group.getAggregateFunction();
-
-						Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
-						String columnName = group.getColumnName();
-
-						if (datasetAlias != null) {
-							columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
-						}
-
-						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-
-						if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-							columnName = aggregateFunction + "(" + columnName + ")";
-						}
-						/**
-						 * If there is an ordering columns set to the first category and if the one is not the same value as the category, append its name to
-						 * the GROUP BY clause, just before the first category name.
-						 *
-						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-						 */
-						else {
 							/**
-							 * The last expression serves for skipping the duplication of the same column in the GROUP BY clause.
+							 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append
+							 * the part for ordering that category to the end of the ORDER BY clause.
+							 *
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
-							if (orderColumn != null && !orderColumn.equals("") && !orderColumn.equals(columnName)) {
-								sqlBuilder.groupBy(orderColumn);
+							if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.equals(""))
+								arrayCategoriesForOrdering.add(keepCategoryForOrdering);
+
+							/**
+							 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of
+							 * particular ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we
+							 * will keep the same approach.
+							 *
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
+								if (i < arrayCategoriesForOrdering.size() - 1)
+									appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i) + ", ";
+								else
+									appendColumnForCategories = appendColumnForCategories + arrayCategoriesForOrdering.get(i);
+							}
+
+							if (!appendColumnForCategories.equals("")) {
+								orderColumns.add(appendColumnForCategories);
 							}
 						}
 
-						sqlBuilder.groupBy(columnName);
+						// WHERE conditions
+						if (filters != null) {
+							for (FilterCriteria filter : filters) {
+								String operator = filter.getOperator();
+
+								String leftOperand = null;
+								if (operator.equalsIgnoreCase("IN")) {
+									String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
+									leftOperand = "(1,";
+									String separator = "";
+									for (String value : columns) {
+										leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
+										separator = ",";
+									}
+									leftOperand += ")";
+								} else {
+									if (filter.getLeftOperand().isCostant()) {
+										// why? warning!
+										leftOperand = filter.getLeftOperand().getOperandValueAsString();
+									} else { // it's a column
+										Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+										String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+										leftOperand = filter.getLeftOperand().getOperandValueAsString();
+										if (datasetAlias != null) {
+											leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
+										}
+										leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+									}
+								}
+
+								String rightOperand = null;
+								if (filter.getRightOperand().isCostant()) {
+									if (filter.getRightOperand().isMultivalue()) {
+										rightOperand = "(";
+										String separator = "";
+										String stringDelimiter = "'";
+										List<String> values = filter.getRightOperand().getOperandValueAsList();
+										for (String value : values) {
+											if (operator.equalsIgnoreCase("IN")) {
+												if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
+													rightOperand += separator + "(1," + value + ")";
+												} else if (value.startsWith("(") && value.endsWith(")")) {
+													rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
+												} else {
+													rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+												}
+											} else {
+												rightOperand += separator + stringDelimiter + value + stringDelimiter;
+											}
+											separator = ",";
+										}
+										rightOperand += ")";
+									} else {
+										rightOperand = filter.getRightOperand().getOperandValueAsString();
+									}
+								} else { // it's a column
+									rightOperand = filter.getRightOperand().getOperandValueAsString();
+									rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+								}
+
+								sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+							}
+						}
+
+						// GROUP BY conditions
+						if (groups != null) {
+							for (GroupCriteria group : groups) {
+
+								String aggregateFunction = group.getAggregateFunction();
+
+								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
+								String columnName = group.getColumnName();
+
+								if (datasetAlias != null) {
+									columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
+								}
+
+								columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+									columnName = aggregateFunction + "(" + columnName + ")";
+								}
+								/**
+								 * If there is an ordering columns set to the first category and if the one is not the same value as the category, append its
+								 * name to the GROUP BY clause, just before the first category name.
+								 *
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
+								else {
+									/**
+									 * The last expression serves for skipping the duplication of the same column in the GROUP BY clause.
+									 */
+									if (orderColumn != null && !orderColumn.equals("") && !orderColumn.equals(columnName)) {
+										sqlBuilder.groupBy(orderColumn);
+									}
+								}
+
+								sqlBuilder.groupBy(columnName);
+							}
+						}
+
+						// ORDER BY conditions
+						// https://production.eng.it/jira/browse/KNOWAGE-149
+						for (String orderColumnTemp : orderColumns) {
+							sqlBuilder.orderBy(orderColumnTemp);
+						}
+
+						String queryText = sqlBuilder.toString();
+
+						logger.debug("Cached dataset access query is equal to [" + queryText + "]");
+
+						IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+						toReturn = (DataStore) dataStore;
+
+						List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");
+						if (breakIndexes != null) {
+							dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
+						}
+					} else {
+						logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 					}
-				}
-
-				// ORDER BY conditions
-				// https://production.eng.it/jira/browse/KNOWAGE-149
-				for (String orderColumnTemp : orderColumns) {
-					sqlBuilder.orderBy(orderColumnTemp);
-				}
-
-				String queryText = sqlBuilder.toString();
-
-				logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-
-				IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
-				toReturn = (DataStore) dataStore;
-
-				List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");
-				if (breakIndexes != null) {
-					dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
+				} finally {
+					mapLocks.unlock(hashedSignature);
 				}
 			} else {
-				logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning a null datastore.");
 			}
-		} finally {
-			mapLocks.unlock(hashedSignature);
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -876,70 +893,75 @@ public class SQLDBCache implements ICache {
 		String hashedSignature = Helper.sha256(dataSet.getSignature());
 		long timeSpent = 0;
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
-		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
 
-			if (forceUpdate) {
-				logger.debug("Update the dataset in cache if its old enought");
-				updateAlreadyPresent();
-			}
-			// check again it is not already inserted
-			if (getMetadata().containsCacheItem(signature)) {
-				logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
-				return 0;
-			}
-
-			BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
-			BigDecimal maxUsableMemory = getMetadata().getTotalMemory().multiply(new BigDecimal(getMetadata().getCachePercentageToStore()))
-					.divide(new BigDecimal(100), RoundingMode.FLOOR);
-
-			if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
-
-				if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
-					deleteToQuota();
-				}
-
-				// check again if the cleaning mechanism is on and if there is enough space for the resultset
-				if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
-					long start = System.currentTimeMillis();
-					String tableName = persistStoreInCache(dataSet, signature, dataStore);
-					timeSpent = System.currentTimeMillis() - start;
-					Map<String, Object> properties = new HashMap<String, Object>();
-					List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
-					if (breakIndexes != null) {
-						properties.put("BREAK_INDEXES", breakIndexes);
+					if (forceUpdate) {
+						logger.debug("Update the dataset in cache if its old enought");
+						updateAlreadyPresent();
 					}
-					Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
-					if (columnNames != null) {
-						properties.put("COLUMN_NAMES", columnNames);
-					}
-					// a
-					Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
-					if (datasetAlias != null) {
-						properties.put("DATASET_ALIAS", datasetAlias);
+					// check again it is not already inserted
+					if (getMetadata().containsCacheItem(signature)) {
+						logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
 					}
 
-					getMetadata().addCacheItem(signature, properties, tableName, dataStore);
+					BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
+					BigDecimal maxUsableMemory = getMetadata().getTotalMemory().multiply(new BigDecimal(getMetadata().getCachePercentageToStore()))
+							.divide(new BigDecimal(100), RoundingMode.FLOOR);
 
-				} else {
-					throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
-							+ " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
-							+ " Incrase cache size or execute the dataset disabling cache.");
+					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
+
+						if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+							deleteToQuota();
+						}
+
+						// check again if the cleaning mechanism is on and if there is enough space for the resultset
+						if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+							long start = System.currentTimeMillis();
+							String tableName = persistStoreInCache(dataSet, signature, dataStore);
+							timeSpent = System.currentTimeMillis() - start;
+							Map<String, Object> properties = new HashMap<String, Object>();
+							List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
+							if (breakIndexes != null) {
+								properties.put("BREAK_INDEXES", breakIndexes);
+							}
+							Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
+							if (columnNames != null) {
+								properties.put("COLUMN_NAMES", columnNames);
+							}
+							// a
+							Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
+							if (datasetAlias != null) {
+								properties.put("DATASET_ALIAS", datasetAlias);
+							}
+
+							getMetadata().addCacheItem(signature, properties, tableName, dataStore);
+
+						} else {
+							throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
+									+ " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
+									+ " Incrase cache size or execute the dataset disabling cache.");
+						}
+					} else {
+						throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
+								+ " while the maximum dimension allowed is [" + maxUsableMemory + "]."
+								+ " Incrase cache size or execute the dataset disabling cache.");
+					}
+				} catch (Throwable t) {
+					if (t instanceof CacheException)
+						throw (CacheException) t;
+					else
+						throw new CacheException("An unexpected error occured while adding store into cache", t);
+				} finally {
+					mapLocks.unlock(hashedSignature);
 				}
 			} else {
-				throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
-						+ " while the maximum dimension allowed is [" + maxUsableMemory + "]." + " Incrase cache size or execute the dataset disabling cache.");
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
-		} catch (Throwable t) {
-			if (t instanceof CacheException)
-				throw (CacheException) t;
-			else
-				throw new CacheException("An unexpected error occured while adding store into cache", t);
-		} finally {
-			mapLocks.unlock(hashedSignature);
-			logger.trace("OUT");
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
 		}
-
 		logger.debug("OUT");
 		return timeSpent;
 	}
@@ -1058,25 +1080,33 @@ public class SQLDBCache implements ICache {
 			logger.debug("Delete dataset with signature [" + signature + "] and hash [" + hashedSignature + "]");
 		}
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
-		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
-			if (getMetadata().containsCacheItem(signature, isHash)) {
-				PersistedTableManager persistedTableManager = new PersistedTableManager();
-				String tableName = getMetadata().getCacheItem(signature, isHash).getTable();
-				persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-				getMetadata().removeCacheItem(signature, isHash);
-				logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
-				logger.debug("Deleted");
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
+					if (getMetadata().containsCacheItem(signature, isHash)) {
+						PersistedTableManager persistedTableManager = new PersistedTableManager();
+						String tableName = getMetadata().getCacheItem(signature, isHash).getTable();
+						persistedTableManager.dropTableIfExists(getDataSource(), tableName);
+						getMetadata().removeCacheItem(signature, isHash);
+						logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
+						logger.debug("Deleted");
 
-				return true;
+						return true;
+					} else {
+						logger.debug("Not deleted, dataset not in cache");
+						return false;
+					}
+				} finally {
+					mapLocks.unlock(hashedSignature);
+				}
 			} else {
-				logger.debug("Not deleted, dataset not in cache");
-				return false;
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning false.");
 			}
-		} finally {
-			mapLocks.unlock(hashedSignature);
-			logger.debug("OUT");
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
+		logger.debug("OUT");
+		return false;
 	}
 
 	/*
@@ -1355,4 +1385,27 @@ public class SQLDBCache implements ICache {
 		return null;
 	}
 
+	private static long getTimeout() {
+		long lockTimeout;
+		try {
+			lockTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.TIMEOUT"));
+		} catch (NumberFormatException nfe) {
+			logger.debug("The value of SPAGOBI.CACHE.HAZELCAST.TIMEOUT config must be an integer");
+			logger.debug("Setting lock timeout to default value [" + DEFAULT_HAZELCAST_TIMEOUT + "]");
+			lockTimeout = DEFAULT_HAZELCAST_TIMEOUT;
+		}
+		return lockTimeout;
+	}
+
+	private static long getLeaseTime() {
+		long lockLeaseTime;
+		try {
+			lockLeaseTime = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.LEASETIME"));
+		} catch (NumberFormatException nfe) {
+			logger.debug("The value of SPAGOBI.CACHE.HAZELCAST.LEASETIME config must be an integer");
+			logger.debug("Setting lock timeout to default value [" + DEFAULT_HAZELCAST_LEASETIME + "]");
+			lockLeaseTime = DEFAULT_HAZELCAST_LEASETIME;
+		}
+		return lockLeaseTime;
+	}
 }

@@ -1,21 +1,59 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.crosstab.Measure;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,51 +74,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import commonj.work.Work;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
-import it.eng.spagobi.tools.dataset.crosstab.Measure;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 /**
- * DataLayer facade class. It manage the access to SpagoBI's datasets. It is
- * built on top of the dao. It manages all complex operations that involve more
- * than a simple CRUD operations over the dataset. It also manages user's
- * profilation and autorization. Other class must access dataset through this
- * class and not calling directly the DAO.
+ * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
+ * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
+ * calling directly the DAO.
  *
  * @author gavardi, gioia
  *
@@ -310,8 +308,7 @@ public class DatasetManagementAPI {
 	// }
 	//
 	// if (ds instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new
-	// SpagoBICoreDatamartRetriever();
+	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 	// Map parameters = ds.getParamsMap();
 	// if (parameters == null) {
 	// parameters = new HashMap();
@@ -348,73 +345,56 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults,
-			Map<String, String> parametersValues, List<GroupCriteria> groupCriteria,
-			List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
+			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
 
 		try {
-
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
-
-			dataSet.setParamsMap(parametersValues);
-			List<JSONObject> parameters = getDataSetParameters(label);
-			if (parameters.size() > parametersValues.size()) {
-				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
-				throw new ParametersNotValorizedException(
-						"The following parameters have no value [" + parameterNotValorizedStr + "]");
-			}
-
-			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-			cache.setUserProfile(userProfile);
-
-			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) userProfile));
-
-			// //////////// OLD WAY ////////////////////
-			//
-			// if (cache.contains(dataSet) == false) {
-			// dataSet.loadData();
-			// IDataStore baseDataStore = dataSet.getDataStore();
-			// cache.put(dataSet, baseDataStore);
-			// }
-			//
-			// // just get without storing...ok?
-			// dataStore = cache.get(dataSet, groupCriteria, filterCriteria,
-			// projectionCriteria);
-			// /////////////////////////////////////////
-
 			IDataStore dataStore = null;
 
-			IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			if (!dataSet.isPersisted()) {
+				dataSet.setParamsMap(parametersValues);
+				List<JSONObject> parameters = getDataSetParameters(label);
+				if (parameters.size() > parametersValues.size()) {
+					String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+					throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+				}
 
-			if (cachedResultSet == null) {
-				dataSet.loadData();
-				IDataStore baseDataStore = dataSet.getDataStore();
-				if (baseDataStore.getRecordsCount() > 10000) {
-					cache.put(dataSet, baseDataStore);
-					dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
-					if (dataStore == null) {
-						throw new CacheException("An unexpected error occured while executing method");
+				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+				cache.setUserProfile(userProfile);
+
+				IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+
+				if (cachedResultSet == null) {
+					dataSet.loadData();
+					IDataStore baseDataStore = dataSet.getDataStore();
+					if (baseDataStore.getRecordsCount() > 10000) {
+						cache.put(dataSet, baseDataStore);
+						dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+						if (dataStore == null) {
+							throw new CacheException("An unexpected error occured while executing method");
+						}
+						adjustMetadata((DataStore) dataStore, dataSet, null);
+						dataSet.decode(dataStore);
+					} else {
+						dataStore = cache.refresh(dataSet, false);
+						// if result was not cached put refresh date as now
+						dataStore.setCacheDate(new Date());
+						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
 					}
+				} else {
+					dataStore = cachedResultSet;
+					addLastCacheDate(cache, dataStore, dataSet);
+					/*
+					 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
+					 * alias... therefore we adjust its metadata
+					 */
 					adjustMetadata((DataStore) dataStore, dataSet, null);
 					dataSet.decode(dataStore);
-				} else {
-					dataStore = cache.refresh(dataSet, false);
-					// if result was not cached put refresh date as now
-					dataStore.setCacheDate(new Date());
-					dataStore = dataStore.aggregateAndFilterRecords(
-							generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
 				}
 			} else {
-				dataStore = cachedResultSet;
-				addLastCacheDate(cache, dataStore, dataSet);
-				/*
-				 * since the datastore, at this point, is a JDBC datastore, it
-				 * does not contain information about measures/attributes,
-				 * fields' name and alias... therefore we adjust its metadata
-				 */
-				adjustMetadata((DataStore) dataStore, dataSet, null);
-				dataSet.decode(dataStore);
+				dataStore = queryPersistedDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet);
 			}
 			limitDataStoreRecords((DataStore) dataStore, maxResults);
 			return dataStore;
@@ -434,8 +414,26 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues,
-			boolean wait) {
+	protected void pageDataStoreRecords(DataStore dataStore, int offset, int fetchSize) {
+		List records = dataStore.getRecords();
+		int size = records.size();
+		if (offset > size) {
+			logger.debug("Offset [" + offset + "] is greater than records size [" + size + "]");
+			logger.debug("Returning an  empty list of records");
+			records.clear();
+		} else {
+			if (fetchSize > (size - offset)) {
+				logger.debug("Fetch size [" + fetchSize + "] is greater than records size [" + size + "]");
+				logger.debug("Returning an list of records from offset to size");
+				records = records.subList(offset, size);
+			} else {
+				logger.debug("Returning an list of records from offset to fetch size");
+				records = records.subList(offset, fetchSize);
+			}
+		}
+	}
+
+	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
 
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 
@@ -535,8 +533,7 @@ public class DatasetManagementAPI {
 	/**
 	 * @deprectade
 	 */
-	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults,
-			CrosstabDefinition crosstabDefinition) {
+	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
@@ -565,9 +562,8 @@ public class DatasetManagementAPI {
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does
-			 * not contain information about measures/attributes, fields' name
-			 * and alias... therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
+			 * therefore we adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) dataStore, dataSet, null);
 
@@ -614,8 +610,7 @@ public class DatasetManagementAPI {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException(
-					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -755,8 +750,7 @@ public class DatasetManagementAPI {
 			}
 
 		} catch (ValidationException e) {
-			logger.error(
-					"Failed validation of dataset " + dataSet.getLabel() + " with cause: " + e.getValidationMessage());
+			logger.error("Failed validation of dataset " + dataSet.getLabel() + " with cause: " + e.getValidationMessage());
 			throw new RuntimeException(e.getValidationMessage(), e);
 		} catch (EMFUserError e) {
 			logger.error("EmfUserError ", e);
@@ -849,23 +843,17 @@ public class DatasetManagementAPI {
 				// entity id is not found on base query selected fields
 
 				/*
-				 * columnName = "Count"; if
-				 * (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
-				 * toReturn
-				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); }
-				 * else { logger.error("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); throw new
-				 * RuntimeException("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); }
+				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
+				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+				 * }
 				 */
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,
-							function.getName(), columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				} else {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null,
-							columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				}
 			}
@@ -965,8 +953,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * The association is valid if number of records froma ssociation is less
-	 * than Maximum of single datasets
+	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
 	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
@@ -982,8 +969,7 @@ public class DatasetManagementAPI {
 		logger.debug("Check join");
 		boolean toReturn = false;
 
-		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q",
-				"r", "s", "t", "u", "v", "z" };
+		String[] synonims = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "z" };
 		String where = "";
 
 		SelectBuilder joinSqlBuilder = new SelectBuilder();
@@ -1021,8 +1007,7 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-						// Datasets related to documents are not on DB so
-						// 'dataset' can be null
+						// Datasets related to documents are not on DB so 'dataset' can be null
 						if (dataset == null) {
 							// assFieldsJSONArray.get(assFieldsJSONArray.size()-1).remove(z);
 							fieldsAss.remove(z);
@@ -1035,8 +1020,7 @@ public class DatasetManagementAPI {
 						// if (cachedResultSet == null) {
 						if (!cache.getMetadata().containsCacheItem(dataset.getSignature())) {
 							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-							// IDataStore dataStore = dataStore =
-							// cache.refresh(dataset, false);
+							// IDataStore dataStore = dataStore = cache.refresh(dataset, false);
 							cache.refresh(dataset, true);
 						}
 
@@ -1056,8 +1040,7 @@ public class DatasetManagementAPI {
 						logger.debug("execute " + queryText1);
 						IDataStore dataStore = dataSource.executeStatement(queryText1, 0, 0);
 						Object countO = ((DataStore) dataStore).getRecordAt(0).getFieldAt(0).getValue();
-						Long count1 = (countO instanceof Long) ? (Long) countO
-								: Long.valueOf(((Number) countO).longValue());
+						Long count1 = (countO instanceof Long) ? (Long) countO : Long.valueOf(((Number) countO).longValue());
 
 						logger.debug("On query on table " + table + " counted " + count1 + " records");
 
@@ -1110,8 +1093,7 @@ public class DatasetManagementAPI {
 						String previousSynonim = tableSynonimMap.get(previousTable);
 
 						// add where conditions
-						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "="
-								+ previousSynonim + "."
+						where += synonim + "." + AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + "=" + previousSynonim + "."
 								+ AbstractJDBCDataset.encapsulateColumnName(previousColumn, dataSource);
 					}
 				}
@@ -1128,8 +1110,7 @@ public class DatasetManagementAPI {
 				logger.debug("Join query is equal to [" + joinQueryText + "]");
 				IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
 				Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
-				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO
-						: Long.valueOf(((Number) joinCountO).longValue());
+				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
 
 				if (joinCount > maxSingleCount) {
 					logger.warn("Chosen join among tables return too many rows");
@@ -1148,8 +1129,7 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, int maxResults) {
+	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int maxResults) {
 		SelectBuilder sqlBuilder = new SelectBuilder();
 		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
 
@@ -1251,12 +1231,10 @@ public class DatasetManagementAPI {
 						stmt = conn.createStatement();
 						stmt.executeUpdate(query);
 					} else {
-						logger.debug(
-								"Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
 					}
 				} catch (ClassNotFoundException | NamingException | SQLException e) {
-					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]",
-							e);
+					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]", e);
 				} finally {
 					if (stmt != null) {
 						try {
@@ -1276,8 +1254,7 @@ public class DatasetManagementAPI {
 			}
 		} else {
 			if (signature != null && !signature.isEmpty()) {
-				logger.error("Table name could not be found for signature [" + signature + "] and hash ["
-						+ Helper.sha256(signature) + "]");
+				logger.error("Table name could not be found for signature [" + signature + "] and hash [" + Helper.sha256(signature) + "]");
 			} else {
 				logger.error("Table name could not be found for signature [" + signature + "]");
 
@@ -1294,7 +1271,6 @@ public class DatasetManagementAPI {
 			sb.append("CREATE INDEX");
 			sb.append(" ");
 			sb.append(tableName.toUpperCase());
-			sb.append(".");
 			sb.append(column.toUpperCase());
 			sb.append(" ");
 			sb.append("ON");
@@ -1306,5 +1282,161 @@ public class DatasetManagementAPI {
 			statement = sb.toString();
 		}
 		return statement;
+	}
+
+	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet) {
+
+		logger.debug("IN");
+
+		DataStore toReturn = null;
+		String label = dataSet.getLabel();
+		String tableName = dataSet.getPersistTableName();
+		IDataSource dataSource = dataSet.getDataSourceForWriting();
+		logger.debug("Loading data from [" + label + "] to gather its metadata...");
+		dataSet.loadData(0, 1, 1);
+		IDataStore limitedDataStore = dataSet.getDataStore();
+
+		if (tableName != null && !tableName.isEmpty() && dataSource != null && limitedDataStore != null) {
+			logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "] stored in datasource [" + dataSource.getLabel()
+					+ "]");
+
+			Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
+
+			// https://production.eng.it/jira/browse/KNOWAGE-149
+			// This list is used to create the order by clause
+			List<String> orderColumns = new ArrayList<String>();
+
+			SelectBuilder sqlBuilder = new SelectBuilder();
+			sqlBuilder.from(tableName);
+
+			// Columns to SELECT
+			if (projections != null) {
+				for (ProjectionCriteria projection : projections) {
+					String aggregateFunction = projection.getAggregateFunction();
+
+					String columnName = projection.getColumnName();
+					if (datasetAlias != null) {
+						columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+					}
+					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+						String aliasName = projection.getAliasName();
+						aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+						if (aliasName != null && !aliasName.isEmpty()) {
+
+							// https://production.eng.it/jira/browse/KNOWAGE-149
+							// This variable is used for the order clause
+							String tmpColumn = aggregateFunction + "(" + columnName + ") ";
+							String orderType = projection.getOrderType();
+							if (orderType != null && !orderType.equals("")) {
+								orderColumns.add(tmpColumn + " " + orderType);
+							}
+
+							columnName = tmpColumn + " AS " + aliasName;
+						}
+					}
+					sqlBuilder.column(columnName);
+
+				}
+			}
+
+			// WHERE conditions
+			if (filters != null) {
+				for (FilterCriteria filter : filters) {
+					String operator = filter.getOperator();
+
+					String leftOperand = null;
+					if (operator.equalsIgnoreCase("IN")) {
+						String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
+						leftOperand = "(1,";
+						String separator = "";
+						for (String value : columns) {
+							leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
+							separator = ",";
+						}
+						leftOperand += ")";
+					} else {
+						if (filter.getLeftOperand().isCostant()) {
+							// why? warning!
+							leftOperand = filter.getLeftOperand().getOperandValueAsString();
+						} else { // it's a column
+							String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+							leftOperand = filter.getLeftOperand().getOperandValueAsString();
+							if (datasetAlias != null) {
+								leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
+							}
+							leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+						}
+					}
+
+					String rightOperand = null;
+					if (filter.getRightOperand().isCostant()) {
+						if (filter.getRightOperand().isMultivalue()) {
+							rightOperand = "(";
+							String separator = "";
+							String stringDelimiter = "'";
+							List<String> values = filter.getRightOperand().getOperandValueAsList();
+							for (String value : values) {
+								if (operator.equalsIgnoreCase("IN")) {
+									if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
+										rightOperand += separator + "(1," + value + ")";
+									} else if (value.startsWith("(") && value.endsWith(")")) {
+										rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
+									} else {
+										rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+									}
+								} else {
+									rightOperand += separator + stringDelimiter + value + stringDelimiter;
+								}
+								separator = ",";
+							}
+							rightOperand += ")";
+						} else {
+							rightOperand = filter.getRightOperand().getOperandValueAsString();
+						}
+					} else { // it's a column
+						rightOperand = filter.getRightOperand().getOperandValueAsString();
+						rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+					}
+
+					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+				}
+			}
+
+			// GROUP BY conditions
+			if (groups != null) {
+				for (GroupCriteria group : groups) {
+					String aggregateFunction = group.getAggregateFunction();
+
+					String columnName = group.getColumnName();
+					if (datasetAlias != null) {
+						columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
+					}
+					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+						columnName = aggregateFunction + "(" + columnName + ")";
+					}
+					sqlBuilder.groupBy(columnName);
+				}
+			}
+
+			// ORDER BY conditions
+			// https://production.eng.it/jira/browse/KNOWAGE-149
+			for (String orderColumn : orderColumns) {
+				sqlBuilder.orderBy(orderColumn);
+			}
+
+			String queryText = sqlBuilder.toString();
+			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
+
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+			toReturn = (DataStore) dataStore;
+
+		} else {
+			logger.debug("Impossible to build query for persisted dataset [" + label + "] with table name [" + tableName + "] stored in datasource ["
+					+ dataSource.getLabel() + "]");
+		}
+		return toReturn;
 	}
 }

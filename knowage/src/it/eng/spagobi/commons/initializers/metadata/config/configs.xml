@@ -456,11 +456,13 @@
 	<CONFIG label="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" name="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" description="Time To Live (from the last access) for a cached datasets" isActive="true" valueCheck="600" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.DATABASE_SCHEMA" name="SPAGOBI.CACHE.DATABASE_SCHEMA" description="name of the schema where the cache tables are created" isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT" name="SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT" description="Allowed time (in seconds) to create temporary table for the dataset" isActive="true" valueCheck="120" valueType="NUM" category="GENERIC_CONFIGURATION"/>
-	<CONFIG label="SPAGOBI.CACHE.EXECUTE_STATEMENT.TIMEOUT" name="SPAGOBI.CACHE.EXECUTE_STATEMENT.TIMEOUT" description="Allowed time (in seconds) to execute a generic statement for temporary tables" isActive="true" valueCheck="60" valueType="NUM" category="GENERIC_CONFIGURATION"/>
-	<CONFIG label="SPAGOBI.CACHE.JOINED_DATASET.CHECK.TIMEOUT" name="SPAGOBI.CACHE.JOINED_DATASET.CHECK.TIMEOUT" description="Allowed time (in seconds) to check if the defined associations for the join dataset are (hopefully) correct" isActive="true" valueCheck="120" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.LIMIT_FOR_STORE" name="SPAGOBI.CACHE.LIMIT_FOR_STORE" description="% of dimension of cache usable to store a single dataset" isActive="true" valueCheck="10" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
 	<CONFIG label="SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT" name="SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT" description="Allowed time (in milliseconds) to wait untile the work manager will stop the execution of works" isActive="true" valueCheck="180000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	
+	<CONFIG label="SPAGOBI.CACHE.HAZELCAST.TIMEOUT" name="SPAGOBI.CACHE.HAZELCAST.TIMEOUT" description="Timeout value (in seconds) to acquire a lock." isActive="true" valueCheck="120" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.CACHE.HAZELCAST.LEASETIME" name="SPAGOBI.CACHE.HAZELCAST.LEASETIME" description="Timeout value (in seconds) to release a lock." isActive="true" valueCheck="240" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	
 	
 
 	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size"

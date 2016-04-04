@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -64,9 +65,11 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -381,30 +384,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String aliasName = categoryObject.getString("alias");
 
-			/**
-			 * The ordering column and its ordering type for the first category of the document.
-			 * 
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			String orderColumn = (categoryObject.has("orderColumn") && categoryObject.opt("orderColumn") != null) ? categoryObject.getString("orderColumn")
-					: null;
-			String orderType = (categoryObject.has("orderColumn") && categoryObject.opt("orderType") != null) ? categoryObject.opt("orderType").toString()
-					.toUpperCase() : null;
-
-			ProjectionCriteria aProjectionCriteria = null;
-
-			if (orderColumn == null) {
-				aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
-			} else {
-				/**
-				 * Create a new projection object that through the new constructor that handles additional parameter - the ordering column for the category of
-				 * the document. Set the associated ordering type (of the first category's column).
-				 * 
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderType, orderColumn);
-			}
-
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for (int i = 0; i < measuresObject.length(); i++) {
@@ -966,7 +946,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Persist a dataset list
+	 * Persist a dataset list in cache, or use a persisted dataset if its datasource match with the cache datasource
 	 *
 	 * @param labels
 	 */
@@ -983,15 +963,36 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		while (keys.hasNext()) {
 			String label = keys.next();
 			try {
-				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
-				dataSetManagementAPI.setUserProfile(getUserProfile());
-				String tableName = dataSetManagementAPI.persistDataset(label);
-				// dataSetManagementAPI.createIndexes(label, new HashSet<String>());
-				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
-				if (tableName != null) {
-					labelsJSON.put(label, tableName);
+				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+				dataSetDao.setUserProfile(getUserProfile());
+				IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
+				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+				String tableName = null;
+				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
+					tableName = dataSet.getTableNameForReading();
+				} else {
+					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+					dataSetManagementAPI.setUserProfile(getUserProfile());
+					tableName = dataSetManagementAPI.persistDataset(label);
+					if (tableName != null) {
+						JSONArray columnsArray = labels.getJSONArray(label);
+						Set<String> columns = new HashSet<String>(columnsArray.length());
+						for (int i = 0; i < columnsArray.length(); i++) {
+							String column = columnsArray.getString(i);
+							columns.add(column);
+						}
+						if (columns.size() > 0) {
+							dataSetManagementAPI.createIndexes(label, columns);
+						}
+					}
 				}
-			} catch (JSONException e) {
+				if (tableName != null) {
+					logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
+					labelsJSON.put(label, tableName);
+				} else {
+					logger.debug("Impossible to get dataset with label [" + label + "]");
+				}
+			} catch (JSONException | EMFUserError e) {
 				logger.error("error in persisting dataset with label: " + label, e);
 				throw new RuntimeException("error in persisting dataset with label " + label);
 			}

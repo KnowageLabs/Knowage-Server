@@ -2,9 +2,9 @@
 <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.5.xsd"
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <management-center enabled="true">http://localhost:8080/mancenter</management-center>
+    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
     <network>
-        <port auto-increment="true" port-count="100">5701</port>
+        <port auto-increment="false" port-count="100">5701</port>
         <join>
             <multicast enabled="false"></multicast>
             <tcp-ip enabled="true">

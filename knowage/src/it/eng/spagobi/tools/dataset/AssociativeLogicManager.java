@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,11 +19,14 @@
 package it.eng.spagobi.tools.dataset;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -64,7 +67,10 @@ public class AssociativeLogicManager {
 	private Map<EdgeGroup, Set<String>> edgeGroupToDataset;
 	private final Pseudograph<String, LabeledEdge<String>> graph;
 	private final Map<String, String> datasetToCachedTable;
+	private final Map<String, IDataSource> datasetToDataSource;
 	private final Map<String, String> selections;
+
+	private UserProfile userProfile;
 
 	static private Logger logger = Logger.getLogger(AssociativeLogicManager.class);
 
@@ -75,8 +81,11 @@ public class AssociativeLogicManager {
 		this.selections = selections;
 
 		this.datasetToCachedTable = new HashMap<String, String>();
+		this.datasetToDataSource = new HashMap<String, IDataSource>();
 		this.dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		this.cache = SpagoBICacheManager.getCache();
+
+		this.userProfile = null;
 	}
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
@@ -87,10 +96,13 @@ public class AssociativeLogicManager {
 			throw new SpagoBIException("Unable to get cache, the value of [cache] is [null]");
 		}
 
-		// (0) generate the starting set of values for each associations
-		init();
+		// (0) generate the dataset mappings
+		initDatasetMappings();
 
-		// (1) user click on widget -> selection!
+		// (1) generate the starting set of values for each associations
+		initProcess();
+
+		// (2) user click on widget -> selection!
 		for (String datasetSelected : selections.keySet()) {
 			String filterSelected = selections.get(datasetSelected);
 			calculateDatasets(datasetSelected, null, filterSelected);
@@ -99,7 +111,29 @@ public class AssociativeLogicManager {
 		return edgeGroupValues;
 	}
 
-	private void init() {
+	private void initDatasetMappings() throws EMFUserError {
+		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+		if (getUserProfile() != null) {
+			dataSetDao.setUserProfile(userProfile);
+		}
+
+		for (String v1 : graph.vertexSet()) {
+			// the vertex is the dataset label
+			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
+			if (dataSet.isPersisted()) {
+				datasetToCachedTable.put(v1, dataSet.getPersistTableName());
+				datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
+			} else {
+				String signature = DAOFactory.getDataSetDAO().loadDataSetByLabel(v1).getSignature();
+				CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+				String tableName = cacheItem.getTable();
+				datasetToCachedTable.put(v1, tableName);
+				datasetToDataSource.put(v1, dataSource);
+			}
+		}
+	}
+
+	private void initProcess() {
 		edgeGroupValues = new HashMap<EdgeGroup, Set<String>>();
 		datasetToEdgeGroup = new HashMap<String, Set<EdgeGroup>>();
 		edgeGroupToDataset = new HashMap<EdgeGroup, Set<String>>();
@@ -123,7 +157,7 @@ public class AssociativeLogicManager {
 							ResultSet rs = null;
 							Set<String> tuple = null;
 							try {
-								connection = dataSource.getConnection();
+								connection = getDataSource(v1).getConnection();
 								stmt = connection.createStatement();
 								rs = stmt.executeQuery(query);
 								tuple = getTupleOfValues(rs);
@@ -172,23 +206,20 @@ public class AssociativeLogicManager {
 		}
 	}
 
-	private String getCachedTableName(String datasetLabel) throws EMFUserError {
-		if (datasetToCachedTable.containsKey(datasetLabel)) {
-			return datasetToCachedTable.get(datasetLabel);
-		} else {
-			String signature = DAOFactory.getDataSetDAO().loadDataSetByLabel(datasetLabel).getSignature();
-			CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-			String tableName = cacheItem.getTable();
-			datasetToCachedTable.put(datasetLabel, tableName);
-			return tableName;
-		}
+	private String getCachedTableName(String datasetLabel) {
+		return datasetToCachedTable.get(datasetLabel);
+	}
+
+	private IDataSource getDataSource(String datasetLabel) {
+		return datasetToDataSource.get(datasetLabel);
 	}
 
 	private String getColumnNames(String associationNamesString, String datasetName) {
 		String[] associationNames = associationNamesString.split(",");
 		List<String> columnNames = new ArrayList<String>();
 		for (String associationName : associationNames) {
-			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
+			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName),
+					getDataSource(datasetName));
 			columnNames.add(columnName);
 		}
 		return StringUtils.join(columnNames.iterator(), ",");
@@ -209,7 +240,7 @@ public class AssociativeLogicManager {
 			ResultSet rs = null;
 			Set<String> distinctValues = null;
 			try {
-				connection = dataSource.getConnection();
+				connection = getDataSource(dataset).getConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(query);
 				distinctValues = getTupleOfValues(rs);
@@ -314,4 +345,12 @@ public class AssociativeLogicManager {
 	// sb.append(tableName);
 	// return connection.prepareStatement(sb.toString());
 	// }
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
 }
