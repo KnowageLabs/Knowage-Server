@@ -6,9 +6,6 @@ import it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ScorecardSubview {
@@ -96,22 +93,17 @@ public class ScorecardSubview {
 
 	/**
 	 * @return the options
-	 * @throws JSONException
 	 */
-	public JSONObject getOptions() throws JSONException {
-		return new JSONObject(options);
+	public String getOptions() {
+		return options;
 	}
 
 	/**
 	 * @param options
 	 *            the options to set
 	 */
-	// public void setOptions(String options) {
-	// this.options = options;
-	// }
-
-	public void setOptions(JSONObject options) {
-		this.options = options.toString();
+	public void setOptions(String options) {
+		this.options = options;
 	}
 
 }

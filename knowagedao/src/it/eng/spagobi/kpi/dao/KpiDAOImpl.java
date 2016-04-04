@@ -1302,7 +1302,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return scheduler;
 	}
 
-	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) {
+	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) throws JSONException {
 		Scorecard scorecard = new Scorecard();
 		scorecard.setId(sbiScorecard.getId());
 		scorecard.setName(sbiScorecard.getName());
@@ -1367,9 +1367,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return scd;
 	}
 
-	private ScorecardSubview from(ScorecardSubview subview, SbiKpiScorecard sbi) {
+	private ScorecardSubview from(ScorecardSubview subview, SbiKpiScorecard sbi) throws JSONException {
 		subview.setId(sbi.getId());
 		subview.setName(sbi.getName());
+		subview.setOptions(sbi.getOptions());
 		if (sbi.getCriterion() != null) {
 			subview.setCriterion(from(sbi.getCriterion()));
 		}
@@ -1389,7 +1390,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 		List<Scorecard> scorecardList = new ArrayList<>();
 		for (SbiKpiScorecard sbiKpiScorecard : lst) {
-			scorecardList.add(from(sbiKpiScorecard, false));
+			try {
+				scorecardList.add(from(sbiKpiScorecard, false));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return scorecardList;
 	}
