@@ -129,9 +129,19 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
  		} 
  	});
 	
-	$scope.addTarget=function(){ 
+	$scope.addTarget=function(editTarget, index){ 
 		$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.goal.definition.name')});
-		angular.copy($scope.emptyTarget,$scope.currentTarget);
+		if(editTarget == undefined)
+		{
+			angular.copy($scope.emptyTarget,$scope.currentTarget);
+			$scope.editProperty.target.index = undefined;
+		}
+		else
+			{
+				$scope.editProperty.target.index = index;
+				angular.copy(editTarget,$scope.currentTarget);
+			}
+		
 	};
 }
 

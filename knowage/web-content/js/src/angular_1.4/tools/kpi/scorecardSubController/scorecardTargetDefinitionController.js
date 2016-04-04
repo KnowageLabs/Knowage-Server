@@ -176,10 +176,18 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 			 return;
 		}
 		
-		$scope.loadGroupedKpis();
 		
-		$scope.currentPerspective.targets.push(angular.extend({},$scope.currentTarget));
+		if ($scope.editProperty.target.index != undefined){
+			$scope.currentTarget.groupedKpis = [];
+			$scope.loadGroupedKpis();
+			angular.copy($scope.currentTarget,$scope.currentPerspective.targets[$scope.editProperty.target.index]);
+		}
+		else{
+			$scope.loadGroupedKpis();
+			$scope.currentPerspective.targets.push(angular.extend({},$scope.currentTarget));	
+		}
 		angular.copy($scope.emptyTarget,$scope.currentTarget);
+
 		$scope.stepControl.prevBread();
  	});
 	

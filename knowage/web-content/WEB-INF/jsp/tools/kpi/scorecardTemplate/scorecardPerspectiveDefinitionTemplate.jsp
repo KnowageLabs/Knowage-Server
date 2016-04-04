@@ -14,7 +14,6 @@
 			<md-input-container flex='50' class="md-block" ng-if="currentPerspective.criterion.valueId==229"> 
 				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label> 
 				<md-select ng-model="currentPerspective.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
-					<md-option	ng-repeat="targ in currentPerspective.targets" ng-value="{{targ}}">	{{targ.name}} </md-option> 
 				</md-select> 
 			</md-input-container>
 		</div>
@@ -38,6 +37,11 @@
 					<div class="md-toolbar-tools" layout-fill layout="column">
 						<kpi-semaphore-indicator indicator-color="target.status"  ></kpi-semaphore-indicator>
 			       		<label>{{target.name}}</label>
+			       		<span flex></span>
+			       		 <md-button class="md-icon-button"  ng-click="addTarget(target, $index)">
+				          <md-icon md-font-icon="fa fa-pencil-square-o fa-2x" aria-hidden="true"></md-icon>
+				        </md-button>
+			       		
 			    	</div>
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >

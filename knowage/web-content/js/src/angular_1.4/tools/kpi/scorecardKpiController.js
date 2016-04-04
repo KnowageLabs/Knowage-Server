@@ -25,6 +25,7 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.currentPerspective = {};
 	$scope.currentTarget = {};
 	$scope.selectedStep={value:0};
+	$scope.editProperty = {target:{}, perspective:{}};
 	
 	$scope.broadcastCall=function(type){
 		$scope.$broadcast(type);
@@ -75,7 +76,14 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 							      	  pos = 0;
 							      	  while ($scope.scorecardList[pos].name != item.name)
 							      		  pos++;
-							      	  $scope.scorecardList.splice(pos,1);
+							      	  
+							      	sbiModule_restServices.promiseDelete("1.0/kpi",$scope.scorecardList[pos].id + "/deleteScorecard")
+									.then(function(response) {
+										  $scope.scorecardList.splice(pos,1);
+									}, function(response) {
+										sbiModule_restServices.errorHandler(response.data.errors[0].message, 'Error');
+										});	
+							      	
 	         			           }}];
 }
 
@@ -86,19 +94,12 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.criterionTypeList = [];
 	
 	$scope.saveScorecardFunction=function(){
-		console.log($scope.currentScorecard);
-		console.log($scope.currentPerspective);
-		console.log($scope.currentTarget);
-		
-		
 		sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",$scope.currentScorecard)
-		.then(function(response) {
-			alert("Salvato");
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});	
-		
-		
+			.then(function(response) {
+				alert("Salvato");
+			}, function(response) {
+				sbiModule_restServices.errorHandler(response.data.errors[0].message, 'Error');
+				});	
 	}
 	
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_SCORECARD_CRITE")
