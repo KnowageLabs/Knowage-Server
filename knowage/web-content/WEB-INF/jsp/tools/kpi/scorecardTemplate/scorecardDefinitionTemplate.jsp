@@ -21,7 +21,11 @@
 					<div class="md-toolbar-tools" layout-fill layout="column">
 						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
 			       		<label>{{perspective.name}}</label>
-			    	</div>
+			       		<span flex></span>
+			       		 <md-button class="md-icon-button"  ng-click="addPerspective(perspective, $index)">
+				      	    <md-icon md-font-icon="fa fa-pencil-square-o fa-2x" aria-hidden="true"></md-icon>
+				        </md-button>
+			    	</div>	
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >
 		    		

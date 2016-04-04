@@ -112,10 +112,18 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 			$scope.showToast('Add at least one target');
 			 return;
 		}
-		
-		$scope.loadGroupedTarget();
-		$scope.currentScorecard.perspectives.push(angular.extend({},$scope.currentPerspective));
+
+		if ($scope.editProperty.perspective.index != undefined){
+			$scope.currentPerspective.groupedTargets=[];
+			$scope.loadGroupedTarget();
+			angular.copy($scope.emptyPerspective,$scope.currentPerspective[$scope.editProperty.perspective.index]);
+		}
+		else{
+			$scope.loadGroupedTarget();
+			$scope.currentScorecard.perspectives.push(angular.extend({},$scope.currentPerspective));
+		}
 		angular.copy($scope.emptyPerspective,$scope.currentPerspective);
+
 		$scope.stepControl.prevBread();
  	});
 	
