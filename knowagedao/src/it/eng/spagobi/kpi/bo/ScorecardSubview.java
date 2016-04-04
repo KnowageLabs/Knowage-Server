@@ -6,6 +6,8 @@ import it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ScorecardSubview {
 	public static enum STATUS {
 		RED, YELLOW, GREEN, GRAY
@@ -75,6 +77,7 @@ public class ScorecardSubview {
 	 * @param status
 	 *            the status to set
 	 */
+	@JsonIgnore
 	public void setStatus(List<STATUS> status) {
 		this.status = status;
 	}
@@ -82,6 +85,7 @@ public class ScorecardSubview {
 	/**
 	 * @return the groupedKpis
 	 */
+	@JsonIgnore
 	public List<CountByStatus> getGroupedKpis() {
 		return groupedKpis;
 	}

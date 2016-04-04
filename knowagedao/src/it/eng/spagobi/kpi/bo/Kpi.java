@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,11 +22,13 @@ import it.eng.spagobi.commons.bo.Domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Kpi implements Serializable {
 
 	private static final long serialVersionUID = -3696035077361936505L;
 	/**
-	 * 
+	 *
 	 */
 	private Integer id;
 	private Integer version;
@@ -213,6 +215,7 @@ public class Kpi implements Serializable {
 	 * @param dateCreation
 	 *            the dateCreation to set
 	 */
+	@JsonIgnore
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}
