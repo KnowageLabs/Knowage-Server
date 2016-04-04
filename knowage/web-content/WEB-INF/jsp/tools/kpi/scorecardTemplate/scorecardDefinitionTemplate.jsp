@@ -16,17 +16,17 @@
 		</md-toolbar>
 		<div layout="row" layout-padding layout-wrap  ng-cloak >
 			
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="prespective in currentScorecard.perspectives">
+			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="perspective in currentScorecard.perspectives">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="column">
 						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
-			       		<label>{{prespective.name}}</label>
+			       		<label>{{perspective.name}}</label>
 			    	</div>
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >
 		    		
 		    			<b layout-padding class="lh30">KPI</b>
-		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in prespective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
+		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in perspective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
 		    	</md-content>
 			</md-whiteframe> 

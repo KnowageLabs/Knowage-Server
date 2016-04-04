@@ -40,7 +40,7 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 		var maxTarget=target.groupedKpis[0].status;
 		for(var i=1;i<target.groupedKpis.length;i++){
 			if(!angular.equals("GRAY",target.groupedKpis[i].status)){
-				if(target.groupedKpis[i].count>maxTargetCount){
+				if(target.groupedKpis[i].count>maxTargetCount || angular.equals("GRAY",maxTarget)){
 					maxTargetCount=target.groupedKpis[i].count;
 					maxTarget=target.groupedKpis[i].status;
 				}else if(target.groupedKpis[i].count==maxTargetCount){
@@ -141,7 +141,7 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 	$scope.addGroupedKpisItem=function(type){
 		for(var i=0;i<$scope.currentTarget.groupedKpis.length;i++){
 			if(angular.equals($scope.currentTarget.groupedKpis[i].status,type)){
-				findedStatus=$scope.currentTarget.groupedKpis[i].count++;
+				$scope.currentTarget.groupedKpis[i].count++;
 				return;
 			}
 		}
