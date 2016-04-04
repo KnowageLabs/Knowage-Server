@@ -182,6 +182,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		'REPORT': {
 			  'PDF' : function() { this.exportReportTo('PDF'); }
 			, 'XLS' : function() { this.exportReportTo('XLS'); }	
+			, 'XLSX' : function() { this.exportReportTo('XLSX'); }
 			, 'RTF' : function() { this.exportReportTo('RTF'); }
 			, 'DOC' : function() { this.exportReportTo('DOC'); }
 			, 'CSV' : function() { this.exportReportTo('CSV'); }
