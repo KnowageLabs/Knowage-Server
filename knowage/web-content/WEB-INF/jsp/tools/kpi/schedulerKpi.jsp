@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body>
 				</md-tab>
 				
-				<md-tab id="tab4" md-on-select="loadThreshold()" >
+				<md-tab id="tab4" md-on-select="checkFilterParams()" >
        				<md-tab-label>{{translate.load("sbi.execution.parametersselection.executionbutton.message")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./schedulerKpiTemplate/executeTemplate.jsp"%>

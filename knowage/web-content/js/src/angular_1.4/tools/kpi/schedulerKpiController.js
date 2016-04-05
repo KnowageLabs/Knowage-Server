@@ -98,6 +98,17 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 	}
 	
+	$scope.checkFilterParams = function(){
+		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+			if($scope.selectedScheduler.filters[i].value=="" || $scope.selectedScheduler.filters[i].value==null){
+				$scope.showAction("first insert all filters values");
+				$timeout(function(){
+					$scope.selectedTab.tab=1;
+				},0)
+			}
+		}
+	}
+	
 	$scope.removeEngine = function(item) {
 		sbiModule_restServices.promiseDelete("1.0/kpi", item.id + "/deleteKpiScheduler")
 		.then(function(response) {
@@ -220,6 +231,22 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 			$scope.selectedTab.tab=0;
 		},0)
 		$angularListDetail.goToList();
+	}
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
 	}
 
 	$scope.tableColumn=[
