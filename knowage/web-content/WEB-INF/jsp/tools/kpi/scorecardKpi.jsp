@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns='scorecardColumnsList'
 			 	 show-search-bar=true
 			 	 speed-menu-option = scorecardListAction
-				 click-function="scorecardClickEditFunction(item);" > </angular-table>
+				 click-function="scorecardClickEditFunction(item, index);" > </angular-table>
 		</list>
 		
 		<extra-button>
