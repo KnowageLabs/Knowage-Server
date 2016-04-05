@@ -539,7 +539,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -849,7 +849,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1318,12 +1318,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					target = (ScorecardTarget) from(target, sbiTarget);
 					perspective.getTargets().add(target);
 					for (SbiKpiKpi sbiKpi : sbiTarget.getSbiKpiKpis()) {
-						Kpi kpi = new Kpi();
-						kpi.setId(sbiKpi.getSbiKpiKpiId().getId());
-						kpi.setVersion(sbiKpi.getSbiKpiKpiId().getVersion());
-						if (sbiKpi.getCategory() != null) {
-							kpi.setCategory(from(sbiKpi.getCategory()));
-						}
+						KpiExecution kpi = from(new KpiExecution(), sbiKpi, null, false);
+						kpi.setStatus(statusValues.get(kpi.getId() % SIZE));
 						target.getKpis().add(kpi);
 					}
 				}
@@ -1666,7 +1662,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		for (SbiKpiKpi sbi : lst) {
 			KpiExecution kpi = new KpiExecution();
 			from(kpi, sbi, null, false);
-			kpi.setStatus(statusValues.get(RANDOM.nextInt(SIZE)));
+			kpi.setStatus(statusValues.get(kpi.getId() % SIZE));
+			// kpi.setStatus(statusValues.get(RANDOM.nextInt(SIZE)));
 			kpis.add(kpi);
 		}
 		return kpis;

@@ -14,9 +14,4 @@ public class ScorecardTarget extends ScorecardSubview {
 		return kpis;
 	}
 
-	// @JsonIgnore
-	// public void setKpis(List<Kpi> kpis) {
-	// this.kpis = kpis;
-	// }
-
 }
