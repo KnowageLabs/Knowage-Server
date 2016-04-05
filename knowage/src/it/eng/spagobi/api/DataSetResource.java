@@ -973,7 +973,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 					dataSetManagementAPI.setUserProfile(getUserProfile());
-					tableName = dataSetManagementAPI.persistDataset(label);
+					tableName = dataSetManagementAPI.persistDataset(label, true);
 					if (tableName != null) {
 						JSONArray columnsArray = labels.getJSONArray(label);
 						Set<String> columns = new HashSet<String>(columnsArray.length());

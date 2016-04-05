@@ -273,15 +273,19 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	public String persistDataset(String label) {
+		return persistDataset(label, false);
+	}
+
 	/*
 	 * Refresh cache for a specific dataset
 	 */
-	public String persistDataset(String label) {
+	public String persistDataset(String label, boolean forceRefresh) {
 		logger.debug("IN dataset label " + label);
 		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 		cache.setUserProfile(userProfile);
 		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		cache.refresh(dataSet, true);
+		cache.refresh(dataSet, true, forceRefresh);
 
 		String signature = dataSet.getSignature();
 		logger.debug("Retrieve table name for signature " + signature);
