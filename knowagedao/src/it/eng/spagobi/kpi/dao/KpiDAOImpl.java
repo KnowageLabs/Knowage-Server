@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinFragment;
+import org.hibernate.transform.Transformers;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.InExpressionIgnoringCase;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.Domain;
@@ -62,34 +90,6 @@ import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinFragment;
-import org.hibernate.transform.Transformers;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
@@ -777,10 +777,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Criteria evaluate(Session session) {
 				return session
-						.createCriteria(SbiKpiThreshold.class)
-						.setProjection(
-								Projections.projectionList().add(Projections.property("id"), "id").add(Projections.property("name"), "name")
-										.add(Projections.property("description"), "description"))
+						.createCriteria(SbiKpiThreshold.class).setProjection(Projections.projectionList().add(Projections.property("id"), "id")
+								.add(Projections.property("name"), "name").add(Projections.property("description"), "description"))
 						.setResultTransformer(Transformers.aliasToBean(SbiKpiThreshold.class));
 			}
 		});
@@ -913,8 +911,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Map<String, List<String>> execute(Session session) throws Exception {
 				Map<String, List<String>> invalidAlias = new HashMap<>();
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()),
-							rule.getId(), rule.getVersion(), invalidAlias);
+					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()), rule.getId(),
+							rule.getVersion(), invalidAlias);
 				}
 				return invalidAlias;
 			}
@@ -1273,6 +1271,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
+	public void removeKpiScheduler(Integer id) {
+		delete(SbiKpiExecution.class, id);
+	}
+
+	@Override
 	public KpiScheduler loadKpiScheduler(final Integer id) {
 		KpiScheduler scheduler = executeOnTransaction(new IExecuteOnTransaction<KpiScheduler>() {
 			@Override
@@ -1608,17 +1611,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		List<Map<String, String>> measures = executeOnTransaction(new IExecuteOnTransaction<List<Map<String, String>>>() {
 			@Override
 			public List<Map<String, String>> execute(Session session) throws Exception {
-				List<Map<String, String>> measures = session
-						.createCriteria(SbiKpiRuleOutput.class)
-						.createAlias("sbiKpiRule", "sbiKpiRule")
-						.createAlias("sbiKpiKpis", "sbiKpiKpis")
-						.createAlias("sbiKpiAlias", "sbiKpiAlias")
-						.add(Restrictions.eq("sbiKpiKpis.active", 'T'))
+				List<Map<String, String>> measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
+						.createAlias("sbiKpiKpis", "sbiKpiKpis").createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.eq("sbiKpiKpis.active", 'T'))
 						.add(Restrictions.eq("sbiKpiRule.active", 'T'))
-						.add(Restrictions.in("sbiKpiKpis.name", kpiNames))
-						.setProjection(
-								Projections.projectionList().add(Property.forName("sbiKpiKpis.name").as("kpi"))
-										.add(Property.forName("sbiKpiAlias.name").as("measure"))).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+						.add(Restrictions.in("sbiKpiKpis.name", kpiNames)).setProjection(Projections.projectionList()
+								.add(Property.forName("sbiKpiKpis.name").as("kpi")).add(Property.forName("sbiKpiAlias.name").as("measure")))
+						.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 				return measures;
 			}
 		});
@@ -1646,8 +1644,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return mockListKpiWithResult();
 	}
 
-	private static final List<it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS> statusValues = Collections.unmodifiableList(Arrays
-			.asList(it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS.values()));
+	private static final List<it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS> statusValues = Collections
+			.unmodifiableList(Arrays.asList(it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS.values()));
 	private static final int SIZE = statusValues.size();
 	private static final Random RANDOM = new Random();
 

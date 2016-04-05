@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
@@ -35,14 +38,11 @@ import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
-import java.util.List;
-import java.util.Map;
-
 public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Given a list of measures it builds a cardinality matrix (measures/attributes)
-	 * 
+	 *
 	 * @param measures
 	 * @return a list of Cardinality
 	 */
@@ -50,7 +50,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Validate a Rule returning errors if any
-	 * 
+	 *
 	 * @param rule
 	 * @return a map of {error key: list of alias}
 	 */
@@ -58,7 +58,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieves all rule output filtered by type (MEASURE, ATTRIBUTE, TEMPORAL_ATTRIBUTE) and status (only active / only not active / all records)
-	 * 
+	 *
 	 * @param type
 	 *            (see SbiDomains)
 	 * @param status
@@ -68,7 +68,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Checks if given measure names are really existing on db
-	 * 
+	 *
 	 * @param measure
 	 *            names
 	 * @return true if all measures are existing false otherwise
@@ -77,7 +77,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieves all kpi that are using a threshold
-	 * 
+	 *
 	 * @param threshold
 	 *            id
 	 * @return a list of kpi id
@@ -86,7 +86,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Return 'true' if a threshold is used by kpi other then the one with id = kpiId
-	 * 
+	 *
 	 * @param kpiId
 	 * @param thresholdId
 	 * @return
@@ -95,7 +95,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Saves a new Rule and returns its id
-	 * 
+	 *
 	 * @param rule
 	 * @return rule id
 	 * @throws SpagoBIException
@@ -116,7 +116,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieves all kpi filtered by status (only active / only not active / all records)
-	 * 
+	 *
 	 * @param status
 	 * @return
 	 */
@@ -126,7 +126,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Insert a new kpi
-	 * 
+	 *
 	 * @param kpi
 	 * @return new generated kpi id
 	 */
@@ -134,7 +134,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Update an existing kpi
-	 * 
+	 *
 	 * @param kpi
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieves a kpi id by searching for its name
-	 * 
+	 *
 	 * @param kpi
 	 *            name
 	 * @return kpi id
@@ -157,7 +157,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieve all aliases not currently used as measure in all rules excluding the one with specific id and version
-	 * 
+	 *
 	 * @param ruleId
 	 * @param ruleVersion
 	 * @return a list of Alias
@@ -166,7 +166,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Retrieve all aliases not currently used as measure in all rules
-	 * 
+	 *
 	 * @return a list of Alias
 	 */
 	public List<Alias> listAliasNotInMeasure();
@@ -181,7 +181,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Given a list of measures it retrieves a list of placeholder related to that measures
-	 * 
+	 *
 	 * @param measureList
 	 * @return a list of placeholder name
 	 */
@@ -189,7 +189,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
 	 * Given a kpi id and version, it retrieves a list of placeholder related to its measures
-	 * 
+	 *
 	 * @param kpi
 	 *            id
 	 * @param kpi
@@ -211,6 +211,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<TargetValue> listKpiWithTarget(Integer targetId);
 
 	public List<KpiScheduler> listKpiScheduler();
+
+	public void removeKpiScheduler(Integer id);
 
 	public KpiScheduler loadKpiScheduler(Integer id);
 

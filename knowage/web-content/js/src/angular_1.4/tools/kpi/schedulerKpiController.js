@@ -98,8 +98,19 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 	}
 	
-	$scope.removeEngine = function(item){
-
+	$scope.removeEngine = function(item) {
+		sbiModule_restServices.promiseDelete("1.0/kpi", item.id + "/deleteKpiScheduler")
+		.then(function(response) {
+			for (var i = 0; i < $scope.engines.length; i++) {
+				if ($scope.engines[i].id == item.id) {
+					$scope.engines.splice(i, 1);
+					break;
+				}
+			}
+			alert("Item ID " + item.id + " removal sucess.");
+		}, function(response) {
+			alert("Removal failed. Item: " + JSON.stringify(item));
+		});
 	}
 	
 	$scope.addPlaceHolderMissing = function(){
