@@ -376,23 +376,32 @@ public final class CKANClient {
 				}
 
 				logger.debug("Getting not searchable private datasets for the user " + userId);
-				for (Dataset ds : getUser(userId).getDatasets()) {
-					if (ds.isPrivate() && !(Boolean.parseBoolean(ds.isSearchable()))) {
-						accessibleDatasets.add(ds);
+				User user = getUser(userId);
+				if (user != null) {
+					List<Dataset> datasets = user.getDatasets();
+					if (datasets != null) {
+						for (Dataset ds : datasets) {
+							if (ds.isPrivate() && !(Boolean.parseBoolean(ds.isSearchable()))) {
+								accessibleDatasets.add(ds);
+							}
+						}
+						logger.debug("Not searchable private datasets for the user " + userId + "obtained");
 					}
 				}
-				logger.debug("Not searchable private datasets for the user " + userId + "obtained");
 
 				logger.debug("Getting private organization datasets for user " + userId);
 				// Organization datasets result is limited to 1000
-				for (OrganizationSummary orgSummary : getOrganizationListForUser(userId)) {
-					for (Dataset ds : getOrganization(orgSummary.getName()).getPackages()) {
-						if (ds.isPrivate()) {
-							accessibleDatasets.add(ds);
+				List<OrganizationSummary> orgs = getOrganizationListForUser(userId);
+				if (orgs != null) {
+					for (OrganizationSummary orgSummary : getOrganizationListForUser(userId)) {
+						for (Dataset ds : getOrganization(orgSummary.getName()).getPackages()) {
+							if (ds.isPrivate()) {
+								accessibleDatasets.add(ds);
+							}
 						}
 					}
+					logger.debug("Private organization datasets for user " + userId + " obtained");
 				}
-				logger.debug("Private organization datasets for user " + userId + " obtained");
 			}
 			logger.debug("Getting public and searchable private datasets for the user " + userId);
 			int start = Integer.parseInt(offset);
@@ -569,7 +578,7 @@ public final class CKANClient {
 			int facetMinCount, int facetLimit, List<String> facetField) throws CKANException {
 		/*
 		 * ,\"qf\":\""+qf+"\" -> removed from JSON
-		 *
+		 * 
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
