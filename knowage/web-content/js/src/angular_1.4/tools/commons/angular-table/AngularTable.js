@@ -542,7 +542,7 @@ $scope.loadTheadColumn=function(width){
 
 function TableBodyControllerFunction($scope) {
 	
-    $scope.clickItem = function (row, cell, evt) {
+    $scope.clickItem = function (row, cell, evt,index) {
         if ($scope.multiSelect) {
             $scope.toggleMultiSelect(row, evt);
         } else {
@@ -554,7 +554,9 @@ function TableBodyControllerFunction($scope) {
             cell: cell,
             listId: $scope.id,
             row: row,
-            column: cell
+            column: cell,
+            index:index,
+            evt:evt
         });
     };
 
