@@ -1462,6 +1462,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		sbiKpiScorecard.setName(scorecardSubview.getName());
 		sbiKpiScorecard.setOptions(scorecardSubview.getOptions().toString());
+		sbiKpiScorecard.setCriterionId(scorecardSubview.getCriterion().getValueId());
+
 		return sbiKpiScorecard;
 	}
 
