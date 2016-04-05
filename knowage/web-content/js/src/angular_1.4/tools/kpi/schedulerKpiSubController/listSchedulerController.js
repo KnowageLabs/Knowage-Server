@@ -5,7 +5,9 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 
 
 	$scope.addScheduler= function(){
-
+		angular.copy({},$scope.selectedScheduler);
+		angular.copy([],$scope.kpi);
+		angular.copy([],$scope.kpiSelected);
 		$angularListDetail.goToDetail();
 
 

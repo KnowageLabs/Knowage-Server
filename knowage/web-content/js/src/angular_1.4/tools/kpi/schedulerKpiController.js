@@ -116,6 +116,8 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 	$scope.addPlaceHolderMissing = function(){
 		var keys = Object.keys($scope.placeHolder);
 		for(var i=0;i<keys.length;i++){
+			if($scope.selectedScheduler.filters!=undefined){
+				
 						var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
 						var flag = false;
 						if(index !=-1 && ($scope.selectedScheduler.filters[index].value=="" || $scope.selectedScheduler.filters[index].value==null) ){
@@ -144,12 +146,34 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 								
 								$scope.selectedScheduler.filters.push(obj);
 							}
-							/*if($scope.placeHolder[keys[i]].length==1){
-								obj.placeholderName = $scope.placeHolder[keys[i]][0];
-							}	*/
+
 							}	
-					}
+					
+			
 					$scope.checkMissingType();
+		}else{
+			$scope.selectedScheduler["filters"]=[];
+			var objType = {"domainCode": "KPI_PLACEHOLDER_TYPE",
+							"domainName": "KPI placeholder value type",
+							"translatedValueDescription": "Fixed Value",
+							"translatedValueName": "Fixed Value",
+							"valueCd": "FIXED_VALUE",
+							"valueDescription": "sbidomains.kpi.fixedvalue",
+							"valueId": 355,
+							"valueName": "sbidomains.kpi.fixedvalue"
+			}
+			var array = JSON.parse($scope.placeHolder[keys[i]])
+			for(var v=0;v<array.length;v++){
+				var obj = {};
+				obj.kpiName = keys[i];
+				obj.placeholderName = Object.keys(array[v])[0];
+				obj.value=array[v][obj.placeholderName];
+				obj.type = objType;
+				
+				$scope.selectedScheduler.filters.push(obj);
+			}
+		}
+		}
 	}
 	
 	$scope.checkMissingType = function(){

@@ -1,6 +1,6 @@
 <div layout-fill ng-controller="filterController" class="overflow" layout="column">
 	<md-whiteframe class="md-whiteframe-4dp filterWhiteFrame " layout-margin
-		ng-repeat="kpi in selectedScheduler.kpis"> 
+		ng-repeat="kpi in selectedScheduler.kpis" ng-if="isVisible(kpi)"> 
 		<md-toolbar	class="miniheadimportexport ">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex">{{kpi.name}}</h2>
@@ -16,7 +16,7 @@
 				<h3>{{filter.placeholderName}}</h3>
 			</div>
 			</md-toolbar>
-			<div layout=row>
+			<di layout=rowv>
 			<div flex=50>
 				<md-select aria-label="aria-label" ng-model="filter.type.valueCd">
 						<md-option ng-repeat="type in listType" value="{{type.VALUE_CD}}">{{type.VALUE_CD}}</md-option>
@@ -33,7 +33,6 @@
 				<md-select aria-label="aria-label" ng-model="filter.value" ng-if="filter.type.valueCd=='LOV'">
 						<md-option ng-repeat="type in lov" value="{{type.name}}">{{type.name}}</md-option>
 				</md-select> 
-			</div>
 			</div>
 			</md-card>
 		</md-whiteframe>

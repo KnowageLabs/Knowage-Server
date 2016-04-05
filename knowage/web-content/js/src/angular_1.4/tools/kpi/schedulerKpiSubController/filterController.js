@@ -30,4 +30,43 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	}
 
 	$scope.loadKpiType();
+	
+	$scope.isVisible = function(kpi){
+		var index = -1;
+		var index2 = -1;
+		if($scope.selectedScheduler.filters!=undefined){
+			index = $scope.indexInList(kpi.name,$scope.selectedScheduler.filters,"kpiName");
+		}else{
+			index = -1;
+		}
+		var keys = Object.keys($scope.placeHolder);
+		index2 = $scope.indexInList(kpi.name,keys,null);
+		if($scope.placeHolder[keys[index2]]=="[]"){
+			index2=-1;
+		}
+		if(index==-1 && index2==-1){
+			return false;
+		}
+		
+		return true;
+	}
+	
+	$scope.indexInList=function(item, list,param) {
+		
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(param!=null){
+				if(object[param]==item){
+					return i;
+				}
+			}else{
+				if(object==item){
+					return i;
+				}
+			}
+			
+		}
+
+		return -1;
+	};
 }
