@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -92,56 +92,57 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 			String userFunctionalityProductType = (String) aUSerFunctionalitySB.getAttribute("productType");
 			// retrieve productType for his id
 			SbiProductType productType = findProductType(aSession, userFunctionalityProductType);
+			if (productType != null) {
+				String hql = "from SbiUserFunctionality f where f.name=? and f.productType = ?";
+				Query hqlQuery = aSession.createQuery(hql);
+				hqlQuery.setParameter(0, userFunctionalityName);
+				hqlQuery.setParameter(1, productType.getProductTypeId(), Hibernate.INTEGER);
+				SbiUserFunctionality aUserFunctionality = (SbiUserFunctionality) hqlQuery.uniqueResult();
+				if (aUserFunctionality == null) {
+					aUserFunctionality = new SbiUserFunctionality();
+					aUserFunctionality.setName(userFunctionalityName);
+					aUserFunctionality.setProductType(productType);
+					aUserFunctionality.setDescription((String) aUSerFunctionalitySB.getAttribute("description"));
+				}
 
-			String hql = "from SbiUserFunctionality f where f.name=? and f.productType = ?";
-			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setParameter(0, userFunctionalityName);
-			hqlQuery.setParameter(1, productType.getProductTypeId(), Hibernate.INTEGER);
-			SbiUserFunctionality aUserFunctionality = (SbiUserFunctionality) hqlQuery.uniqueResult();
-			if (aUserFunctionality == null) {
-				aUserFunctionality = new SbiUserFunctionality();
-				aUserFunctionality.setName(userFunctionalityName);
-				aUserFunctionality.setProductType(productType);
-				aUserFunctionality.setDescription((String) aUSerFunctionalitySB.getAttribute("description"));
-			}
-
-			Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality",
-					userFunctionalityName);
-			if (roleTypesObject == null) {
-				throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type [" + productType.getLabel()
-						+ "]!!!");
-			}
-			StringBuffer roleTypesStrBuffer = new StringBuffer();
-			Set roleTypes = new HashSet();
-			if (aUserFunctionality.getRoleType() != null) {
-				roleTypes.addAll(aUserFunctionality.getRoleType());
-			}
-			if (roleTypesObject instanceof SourceBean) {
-				SourceBean roleTypeSB = (SourceBean) roleTypesObject;
-				String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
-				roleTypesStrBuffer.append(roleTypeCd);
-				SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
-				roleTypes.add(domainRoleType);
-			} else if (roleTypesObject instanceof List) {
-				List roleTypesSB = (List) roleTypesObject;
-				Iterator roleTypesIt = roleTypesSB.iterator();
-				while (roleTypesIt.hasNext()) {
-					SourceBean roleTypeSB = (SourceBean) roleTypesIt.next();
+				Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality",
+						userFunctionalityName);
+				if (roleTypesObject == null) {
+					throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type [" + productType.getLabel()
+							+ "]!!!");
+				}
+				StringBuffer roleTypesStrBuffer = new StringBuffer();
+				Set roleTypes = new HashSet();
+				if (aUserFunctionality.getRoleType() != null) {
+					roleTypes.addAll(aUserFunctionality.getRoleType());
+				}
+				if (roleTypesObject instanceof SourceBean) {
+					SourceBean roleTypeSB = (SourceBean) roleTypesObject;
 					String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
 					roleTypesStrBuffer.append(roleTypeCd);
-					if (roleTypesIt.hasNext()) {
-						roleTypesStrBuffer.append(";");
-					}
 					SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
 					roleTypes.add(domainRoleType);
+				} else if (roleTypesObject instanceof List) {
+					List roleTypesSB = (List) roleTypesObject;
+					Iterator roleTypesIt = roleTypesSB.iterator();
+					while (roleTypesIt.hasNext()) {
+						SourceBean roleTypeSB = (SourceBean) roleTypesIt.next();
+						String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
+						roleTypesStrBuffer.append(roleTypeCd);
+						if (roleTypesIt.hasNext()) {
+							roleTypesStrBuffer.append(";");
+						}
+						SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
+						roleTypes.add(domainRoleType);
+					}
 				}
+				aUserFunctionality.setRoleType(roleTypes);
+
+				logger.debug("Inserting UserFunctionality with name = [" + aUSerFunctionalitySB.getAttribute("name") + "] associated to role types ["
+						+ roleTypesStrBuffer.toString() + "]...");
+
+				aSession.save(aUserFunctionality);
 			}
-			aUserFunctionality.setRoleType(roleTypes);
-
-			logger.debug("Inserting UserFunctionality with name = [" + aUSerFunctionalitySB.getAttribute("name") + "] associated to role types ["
-					+ roleTypesStrBuffer.toString() + "]...");
-
-			aSession.save(aUserFunctionality);
 		}
 		logger.debug("OUT");
 	}

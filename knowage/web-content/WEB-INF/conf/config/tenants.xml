@@ -2,6 +2,12 @@
 <TENANTS>
 	<TENANT name="DEFAULT_TENANT">
 		<PRODUCT name="KnowageBD"/>
-		<PRODUCT name="KnowageFake"/>	
+		<PRODUCT name="KnowageSI"/>
+		<PRODUCT name="KnowageER"/>
+		<PRODUCT name="KnowagePA"/>
+		<PRODUCT name="KnowageLI"/>
+		<PRODUCT name="KnowagePM"/>
+		<PRODUCT name="KnowageEI"/>
+		<PRODUCT name="KnowageOD"/>
 	</TENANT>
 </TENANTS>

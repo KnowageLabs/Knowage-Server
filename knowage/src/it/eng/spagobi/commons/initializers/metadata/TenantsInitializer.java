@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -141,23 +141,24 @@ public class TenantsInitializer extends SpagoBIInitializer {
 				// /create association tenant to product type
 				SbiTenant aTenant = findTenant(hibernateSession, tenantName);
 				SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
-				SbiOrganizationProductType association = new SbiOrganizationProductType();
-				association.setSbiProductType(aProductType);
-				association.setSbiOrganizations(aTenant);
-				SbiCommonInfo commonInfo = new SbiCommonInfo();
-				commonInfo.setUserIn("server");
-				commonInfo.setTimeIn(new Date());
-				commonInfo.setOrganization(tenantName);
+				if (aProductType != null) {
+					SbiOrganizationProductType association = new SbiOrganizationProductType();
+					association.setSbiProductType(aProductType);
+					association.setSbiOrganizations(aTenant);
+					SbiCommonInfo commonInfo = new SbiCommonInfo();
+					commonInfo.setUserIn("server");
+					commonInfo.setTimeIn(new Date());
+					commonInfo.setOrganization(tenantName);
 
-				association.setCommonInfo(commonInfo);
+					association.setCommonInfo(commonInfo);
 
-				SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
-				id.setProductTypeId(aProductType.getProductTypeId());
-				id.setOrganizationId(aTenant.getId());
-				association.setId(id);
+					SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
+					id.setProductTypeId(aProductType.getProductTypeId());
+					id.setOrganizationId(aTenant.getId());
+					association.setId(id);
 
-				hibernateSession.save(association);
-
+					hibernateSession.save(association);
+				}
 			}
 		}
 	}

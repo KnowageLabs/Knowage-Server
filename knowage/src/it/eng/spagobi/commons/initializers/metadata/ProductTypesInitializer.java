@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -82,12 +82,15 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 		while (it.hasNext()) {
 			SourceBean aProductTypeSB = (SourceBean) it.next();
 			SbiProductType aProductType = new SbiProductType();
-			aProductType.setLabel((String) aProductTypeSB.getAttribute("label"));
+			String isActive = (String) aProductTypeSB.getAttribute("active");
+			if (isActive != null && isActive.equalsIgnoreCase("true")) {
+				aProductType.setLabel((String) aProductTypeSB.getAttribute("label"));
 
-			logger.debug("Inserting Product Type with label = [" + aProductTypeSB.getAttribute("label") + "] ...");
-			aSession.save(aProductType);
+				logger.debug("Inserting Product Type with label = [" + aProductTypeSB.getAttribute("label") + "] ...");
+				aSession.save(aProductType);
 
-			writeEngineAssociations(aSession, aProductTypeSB);
+				writeEngineAssociations(aSession, aProductTypeSB);
+			}
 		}
 		logger.debug("OUT");
 	}
@@ -115,7 +118,7 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 					throw new Exception("No predefined product type label found!!!");
 				}
 				// Retrieving all the product types in the DB with the specified label
-				logger.debug("Retrieving all the product types in the DB with the specified labek");
+				logger.debug("Retrieving all the product types in the DB with the specified label");
 				String hql = "from SbiProductType where label = '" + label + "'";
 				Query hqlQuery = aSession.createQuery(hql);
 				List result = hqlQuery.list();
@@ -148,28 +151,31 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 			String labelXml = (String) aProductTypeSB.getAttribute("label");
 			logger.debug("Retrieved label of XML Product Type: " + labelXml);
 
-			Iterator it = dbProductTypes.iterator();
-			while (it.hasNext()) {
-				SbiProductType d = (SbiProductType) it.next();
-				String label = d.getLabel();
-				logger.debug("Retrieved label of DB Product Type: " + label);
+			String isActive = (String) aProductTypeSB.getAttribute("active");
+			if (isActive != null && isActive.equalsIgnoreCase("true")) {
+				Iterator it = dbProductTypes.iterator();
+				while (it.hasNext()) {
+					SbiProductType d = (SbiProductType) it.next();
+					String label = d.getLabel();
+					logger.debug("Retrieved label of DB Product Type: " + label);
 
-				if (labelXml.equalsIgnoreCase(label)) {
-					existsInDb = true;
-					logger.debug("Product Type already exists in the DB");
-					break;
+					if (labelXml.equalsIgnoreCase(label)) {
+						existsInDb = true;
+						logger.debug("Product Type already exists in the DB");
+						break;
+					}
 				}
-			}
-			if (!existsInDb) {
-				logger.debug("Product Type doesn't exist in the DB");
-				SbiProductType aProductType = new SbiProductType();
-				aProductType.setLabel((String) aProductTypeSB.getAttribute("label"));
-				logger.debug("New Product Type ready to be inserted in the DB");
-				logger.debug("Inserting Product Type with label = [" + aProductTypeSB.getAttribute("label") + "] ...");
-				aSession.save(aProductType);
-				logger.debug("New Product Type inserted in the DB");
+				if (!existsInDb) {
+					logger.debug("Product Type doesn't exist in the DB");
+					SbiProductType aProductType = new SbiProductType();
+					aProductType.setLabel((String) aProductTypeSB.getAttribute("label"));
+					logger.debug("New Product Type ready to be inserted in the DB");
+					logger.debug("Inserting Product Type with label = [" + aProductTypeSB.getAttribute("label") + "] ...");
+					aSession.save(aProductType);
+					logger.debug("New Product Type inserted in the DB");
 
-				writeEngineAssociations(aSession, aProductTypeSB);
+					writeEngineAssociations(aSession, aProductTypeSB);
+				}
 			}
 		}
 		logger.debug("OUT");
