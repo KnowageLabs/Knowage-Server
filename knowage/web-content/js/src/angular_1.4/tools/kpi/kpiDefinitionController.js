@@ -47,8 +47,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	},function(response){
 		$scope.errorHandler(response.data,"");
 	});
-	
-	
+
+
 	$scope.parseFormula = function(){
 		$scope.$broadcast ('parseEvent');
 
@@ -69,7 +69,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	}
-	
+
 	$scope.flagActivateBrother= function(event){
 		$scope.$broadcast (event);
 	}
@@ -119,7 +119,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
 				angular.copy({"measureList":[],"checkedAttribute":{}},$scope.kpi.cardinality);
 			}
-			
+
 			$scope.$broadcast('clearAllEvent');
 			$scope.$broadcast ('cancelEvent');
 		}
@@ -163,7 +163,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}
 		});
 	}
-	
+
 	$scope.errorHandler=function(text,title){
 		var titleFin=title || "";
 		var textFin=text;
@@ -177,7 +177,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				textFin=JSON.stringify(text)
 			}
 		}
-		
+
 		var confirm = $mdDialog.confirm()
 		.title(titleFin)
 		.content(textFin)
@@ -196,7 +196,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	$scope.saveKPI = function(){
-		
+
 		var tmpKpiToSave={};
 		angular.copy($scope.kpi,tmpKpiToSave);
 		//save formula
@@ -222,7 +222,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}else{
 				obj2=JSON.parse($scope.kpi.definition).measures;
 			}
-		
+
 			For1:for(var i=0;i<obj.length;i++){
 				if(obj.measureList[i].measureName!=obj2[i]){
 					break For1;
@@ -232,7 +232,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				$scope.kpi.cardinality={"measureList":[],"checkedAttribute":{}};
 				tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 			}
-		
+
 		}
 		//update placeholder
 		if(Object.keys(tmpKpiToSave.placeholder)==0){
@@ -352,10 +352,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}
 	//methods cardinality
 	$scope.setCardinality = function(){
-		
+
 
 		$scope.$broadcast ('parseEvent');
-		
+
 		if($scope.countAccessCardinality==0 && $scope.formulaModified.value ){
 			var emptyobj={measureList:[],checkedAttribute:{"attributeUnion":{},"attributeIntersection":{}}}
 			if(!angular.isObject($scope.kpi.cardinality)){ 
@@ -401,7 +401,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 	}
 
-	
+
 	$scope.resetMatrix = function(){
 		$scope.kpi.cardinality.measureList=[];
 		if(Object.keys($scope.kpi.definition).length!=0){
@@ -494,7 +494,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				+' </md-option>'
 				+'</md-select>';
 		}
-		
+
 		$scope.checkIfIsUsedByAnotherKpi();
 	};
 
@@ -528,7 +528,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$scope.isUsedByAnotherKpi.value=false;
 		}
 	}
-	
+
 };
 function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi){
 

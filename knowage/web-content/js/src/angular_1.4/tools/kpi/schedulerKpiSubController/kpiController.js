@@ -38,7 +38,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 		}, function() {
 		});
-		
+
 	}
 
 	$scope.loadListKPI = function(){
@@ -64,13 +64,13 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 		});
 		return deferred.promise;
 	};
-	
+
 	$scope.exists = function (item) {
 		if($scope.selectedScheduler.kpis==undefined)return false;
 		return  $scope.indexInList(item, $scope.selectedScheduler.kpis)!=-1;
 
 	};
-	
+
 
 	$scope.indexInList=function(item, list) {
 		for (var i = 0; i < list.length; i++) {

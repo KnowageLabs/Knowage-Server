@@ -5,7 +5,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	$scope.listType = [];
 	$scope.funcTemporal = [];
 	$scope.lov = [];
-	
+
 	$scope.loadKpiType = function(){
 		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=KPI_PLACEHOLDER_TYPE")
 		.then(function(response){ 
@@ -13,14 +13,14 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 			console.log("type",$scope.listType);
 		},function(response){
 		});
-		
+
 		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=KPI_PLACEHOLDER_FUNC")
 		.then(function(response){ 
 			angular.copy(response.data,$scope.funcTemporal);
 			console.log("typefunc",$scope.funcTemporal);
 		},function(response){
 		});
-		
+
 		sbiModule_restServices.promiseGet("2.0/lovs","")
 		.then(function(response){ 
 			angular.copy(response.data,$scope.lov);
@@ -30,7 +30,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	}
 
 	$scope.loadKpiType();
-	
+
 	$scope.isVisible = function(kpi){
 		var index = -1;
 		var index2 = -1;
@@ -47,12 +47,12 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 		if(index==-1 && index2==-1){
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	$scope.indexInList=function(item, list,param) {
-		
+
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(param!=null){
@@ -64,7 +64,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 					return i;
 				}
 			}
-			
+
 		}
 
 		return -1;

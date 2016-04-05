@@ -23,11 +23,11 @@ function KPIDefinitionListControllerFunction($scope,sbiModule_translate,$mdDialo
 					$scope.selectedScheduler.kpis[i]["valueCd"] = $scope.selectedScheduler.kpis[i].category.valueCd;
 				}
 			}
-			
+
 		},function(response){
 
 		});
-		
+
 		$angularListDetail.goToDetail();
 	}
 
