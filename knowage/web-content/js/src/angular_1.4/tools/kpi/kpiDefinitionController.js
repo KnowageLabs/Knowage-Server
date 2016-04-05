@@ -163,6 +163,28 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}
 		});
 	}
+	
+	$scope.errorHandler=function(text,title){
+		var titleFin=title || "";
+		var textFin=text;
+		if(angular.isObject(text)){
+			if(text.hasOwnProperty("errors")){
+				textFin="";
+				for(var i=0;i<text.errors.length;i++){
+					textFin+=text.errors[i].message+" <br> ";
+				}
+			}else{
+				textFin=JSON.stringify(text)
+			}
+		}
+		
+		var confirm = $mdDialog.confirm()
+		.title(titleFin)
+		.content(textFin)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(confirm);
+	}
 	$scope.parsePlaceholder = function(placeholder){
 		for(var key in Object.keys( placeholder)){
 			if( placeholder[Object.keys( placeholder)[key]]==""){
