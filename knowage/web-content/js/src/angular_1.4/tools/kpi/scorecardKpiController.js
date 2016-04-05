@@ -180,12 +180,12 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	
 	$scope.saveScorecardFunction=function(){
 		if($scope.currentScorecard.name.trim()==""){
-			$scope.showToast('Name is required'); 
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing")); 
 			 return;
 		}
 		
 		if($scope.currentScorecard.perspectives==undefined || $scope.currentScorecard.perspectives.length==0){
-			$scope.showToast('Add at least one perspective'); 
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.perspective.missing")); 
 			 return;
 		}
 		var tmpPreSaveScorecard=$scope.parseScorecardForBackend($scope.currentScorecard);
@@ -203,7 +203,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 						}
 					$scope.showToast(sbiModule_translate.load("sbi.glossary.success.save")); 
 				}, function(response) {
-					sbiModule_restServices.errorHandler(response.data.errors[0].message, 'Error');
+					sbiModule_restServices.errorHandler(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.error"));
 					});	
 		
 	}

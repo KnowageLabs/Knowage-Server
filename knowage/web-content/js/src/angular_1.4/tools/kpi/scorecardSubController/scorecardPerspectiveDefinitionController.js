@@ -105,11 +105,11 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 	 
 	$scope.$on('savePerspective', function(event, args) {
 		 if($scope.currentPerspective.name.trim()==""){
-				$scope.showToast('Name is required');
+				$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing"));
 			 return;
 		}
 		if($scope.currentPerspective.targets==undefined || $scope.currentPerspective.targets.length==0){
-			$scope.showToast('Add at least one target');
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.target.missing"));
 			 return;
 		}
 

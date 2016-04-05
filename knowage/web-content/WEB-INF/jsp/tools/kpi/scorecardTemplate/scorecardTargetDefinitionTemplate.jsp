@@ -35,8 +35,7 @@
 		 		ng-model=currentTarget.kpis
 				columns='[ {"label":"Name","name":"name"}, {"label":"category","name":"category.translatedValueName"}]'
 			 	show-search-bar=true
-			 	speed-menu-option = targetListAction
-		> 
+			 	speed-menu-option = targetListAction> 
 			</angular-table>
 
 

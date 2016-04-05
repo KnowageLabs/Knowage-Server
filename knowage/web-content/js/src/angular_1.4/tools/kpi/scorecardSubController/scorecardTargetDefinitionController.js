@@ -157,11 +157,11 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 	
 	$scope.$on('saveTarget', function(event, args) {
 		if($scope.currentTarget.name.trim()==""){
-			$scope.showToast('Name is required');
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing"));
 			 return;
 		}
 		if($scope.currentTarget.kpis==undefined || $scope.currentTarget.kpis.length==0){
-			$scope.showToast('Select at least one kpi'); 
+			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.kpi.missing")); 
 			return;
 		}
 		
