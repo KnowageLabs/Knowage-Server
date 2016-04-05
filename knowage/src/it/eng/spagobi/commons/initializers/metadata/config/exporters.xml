@@ -17,8 +17,6 @@
 		defaultValue="false" />
 	<EXPORTER domain="RTF" engine="knowagebirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="JPG" engine="knowagebirtreporteng"
-		defaultValue="false" />
 	<EXPORTER domain="CSV" engine="knowagebirtreporteng"
 		defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagejpivotengine"
