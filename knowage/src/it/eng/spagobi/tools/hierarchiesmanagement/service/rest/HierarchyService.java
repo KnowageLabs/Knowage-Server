@@ -1260,8 +1260,16 @@ public class HierarchyService {
 
 			String nodeName = node.getString(HierarchyConstants.TREE_NAME);
 			String nodeCode = node.getString(HierarchyConstants.ID);
-
 			HashMap mapAttrs = new HashMap();
+
+			// current node is a root?
+			boolean isRoot = (node.isNull("root")) ? false : node.getBoolean("root");
+			mapAttrs.put("isRoot", isRoot);
+
+			// current node is a leaf?
+			boolean isLeaf = node.getBoolean("leaf");
+			mapAttrs.put("isLeaf", isLeaf);
+
 			if (!node.isNull(HierarchyConstants.LEVEL)) {
 				mapAttrs.put(HierarchyConstants.LEVEL, node.getString(HierarchyConstants.LEVEL));
 			}
@@ -1283,17 +1291,20 @@ public class HierarchyService {
 			}
 			// add other node attributes if they are valorized
 			ArrayList<Field> nodeFields = hierarchies.getHierarchy(dimension).getMetadataNodeFields();
-			for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
-				Field fld = nodeFields.get(f);
-				String idFld = fld.getId();
-				// if the column must be unique, get the MD5 value otherwise set value if it isn't null
-				if (Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE)) && fld.isUniqueCode()) {
-					// generate hashcode
-					// uniqueCode += String.valueOf(Math.random());
-					String hashCode = Helper.sha256(uniqueCode);
-					mapAttrs.put(idFld, hashCode);
-				} else if (!node.isNull(idFld)) {
-					mapAttrs.put(idFld, node.getString(idFld));
+			if (!isRoot) {
+				for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
+					Field fld = nodeFields.get(f);
+					String idFld = fld.getId();
+					// if the column must be unique, get the MD5 value otherwise set value if it isn't null
+					if (Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE)) && fld.isUniqueCode()) {
+						// generate hashcode
+						uniqueCodeLocal = uniqueCodeLocal + nodeName;
+						// String hashCode = Helper.sha256(uniqueCode);
+						String hashCode = Helper.sha256(uniqueCodeLocal);
+						mapAttrs.put(idFld, hashCode);
+					} else if (!node.isNull(idFld)) {
+						mapAttrs.put(idFld, node.getString(idFld));
+					}
 				}
 			}
 			// add other leaf attributes if they are valorized
@@ -1305,13 +1316,6 @@ public class HierarchyService {
 					mapAttrs.put(idFld, node.getString(idFld));
 				}
 			}
-			// current node is a root?
-			boolean isRoot = (node.isNull("root")) ? false : node.getBoolean("root");
-			mapAttrs.put("isRoot", isRoot);
-
-			// current node is a leaf?
-			boolean isLeaf = node.getBoolean("leaf");
-			mapAttrs.put("isLeaf", isLeaf);
 
 			// adds as attributes properties about MASTER references (propagation management)
 			if (!node.isNull(HierarchyConstants.HIER_CD_M))
@@ -1368,14 +1372,16 @@ public class HierarchyService {
 				JSONArray childs = node.getJSONArray("children");
 				for (int i = 0; i < childs.length(); i++) {
 					JSONObject child = childs.getJSONObject(i);
-					if (!isRoot)
-						uniqueCodeLocal = uniqueCodeLocal + nodeName;
+					String parentUniqueCode = "";
+					if (!isRoot) {
+						parentUniqueCode = uniqueCodeLocal;
+					}
 					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName);
 					for (List<HierarchyTreeNodeData> path : childPaths) {
 						// add this node to start of the path
 						path.add(0, nodeData);
 						collectionOfPaths.add(path);
-						uniqueCodeLocal = hierName;
+						uniqueCodeLocal = parentUniqueCode;
 					}
 				}
 			}
