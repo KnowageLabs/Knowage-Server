@@ -24,6 +24,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.isUsedByAnotherKpi={value:false};
 	$scope.measures=[];
 	//variables placeholder
+	$scope.flagLoaded = false;
 	$scope.placeHolderObjectList = {};
 	$scope.placeHolderList=[];
 	$scope.placeholder={};

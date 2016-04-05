@@ -19,7 +19,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.formulaForDB = {};
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
-	$scope.flagLoaded = false;
+	
 
 	CodeMirror.registerHelper(
 			"hint", "measures",

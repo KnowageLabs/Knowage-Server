@@ -8,6 +8,7 @@ function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbi
 	}
 
 	$scope.addKpi= function(){
+		$scope.flagLoaded = true;
 		angular.copy($scope.emptyKpi,$scope.kpi);
 		$scope.kpi.threshold.typeId=$scope.thresholdTypeList[0].valueId;
 		$timeout(function(){

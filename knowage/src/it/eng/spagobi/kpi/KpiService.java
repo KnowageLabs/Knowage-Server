@@ -152,13 +152,57 @@ public class KpiService {
 		try {
 			String arrayOfMeasures = RestUtilities.readBody(req);
 			List<String> kpiNames = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			Map<String, String> result = new HashMap<>();
+
 			IKpiDAO dao = getKpiDAO(req);
 			if (kpiNames != null && !kpiNames.isEmpty()) {
 				Map<String, List<String>> lst = dao.listPlaceholderByKpiList(kpiNames);
-				return Response.ok(JsonConverter.objectToJson(lst, lst.getClass())).build();
+
+				List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
+				java.util.Set<String> keys = lst.keySet();
+
+				for (String key : keys) {
+					JSONArray array = new JSONArray();
+					for (Kpi kpi : kpis) {
+						if (kpi.getName().equals(key)) {
+							Kpi kpiSelected = dao.loadKpi(kpi.getId(), kpi.getVersion());
+							JSONObject obj = new JSONObject();
+							if (!kpiSelected.getPlaceholder().isEmpty()) {
+								obj = new JSONObject(kpiSelected.getPlaceholder());
+								array.put(obj);
+							}
+							JSONObject obj2 = new JSONObject();
+							for (int j = 0; j < lst.get(key).size(); j++) {
+								Iterator it = obj.keys();
+								// there is one and unique result
+								if (it.hasNext()) {
+									Object keyvalue = it.next();
+									if (lst.get(key).get(j).equals(keyvalue)) {
+
+									} else {
+										obj2.put(lst.get(key).get(j), "");
+										array.put(obj2);
+									}
+								} else {
+									obj2.put(lst.get(key).get(j), "");
+									array.put(obj2);
+								}
+
+							}
+
+							result.put(kpi.getName(), array.toString());
+						}
+
+					}
+				}
+
+				return Response.ok(JsonConverter.objectToJson(result, result.getClass())).build();
 			}
 		} catch (IOException e) {
 			logger.error(req.getPathInfo(), e);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return Response.ok().build();
 	}
