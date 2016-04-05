@@ -13,7 +13,7 @@ scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 
 
 scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdToast',scorecardMasterControllerFunction ]);
-scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog',scorecardListControllerFunction ]);
+scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog','scorecardManager_targetUtility','scorecardManager_perspectiveUtility',scorecardListControllerFunction ]);
 scorecardApp.controller('scorecardDetailController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog',scorecardDetailControllerFunction ]);
 
 function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdToast){
@@ -44,7 +44,7 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	
 }
 
-function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog){
+function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog,scorecardManager_targetUtility,scorecardManager_perspectiveUtility){
 	$scope.scorecardList=[];
 	$scope.scorecardColumnsList=[
 	                             {label:"Name",name:"name"},
@@ -86,6 +86,7 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 					tmpOption.criterionPriority=tmpCritPri;
 				}
 				tmpTarg.options=tmpOption;
+				scorecardManager_targetUtility.loadGroupedKpis(tmpTarg);
 			}
 			
 			//convert the target to frontend object
@@ -103,6 +104,7 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 					tmpPerspOption.criterionPriority=tmpPerspCritPri;
 			}
 			tmpPersp.options=tmpPerspOption;
+			scorecardManager_perspectiveUtility.loadGroupedTarget(tmpPersp);
 
 		}
 		return tmpScorecard;
@@ -182,8 +184,8 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			$scope.showToast('Add at least one perspective'); 
 			 return;
 		}
-		
-		sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",$scope.parseScorecardForBackend($scope.currentScorecard))
+		var tmpPreSaveScorecard=$scope.parseScorecardForBackend($scope.currentScorecard);
+		sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard)
 			.then(function(response) {
 				$scope.showToast(sbiModule_translate.load("sbi.glossary.success.save")); 
 			}, function(response) {

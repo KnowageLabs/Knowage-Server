@@ -3,22 +3,21 @@ angular.module('scorecardManager').controller('scorecardTargetDefinitionControll
 
 angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
 	this.getTargetStatus=function(target){ 
-	if(angular.equals(target.criterion.valueCd,"MAJORITY")){
-			return loadTargetByMajority(target);
-		}else{
-			//load by priority
-			if(target.options.criterionPriority.length==0){
-				//if no priority kpi are selected return the global value 
+		if(angular.equals(target.criterion.valueCd,"MAJORITY")){
 				return loadTargetByMajority(target);
-			}else if(target.options.criterionPriority.length==1){ 
-				// if there is only one kpi selected, and theyr status in different of GRAY return his status, else the global status
-				return (target.options.criterionPriority[0].status=="GRAY" || target.options.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.options.criterionPriority[0].status;
+			}else{
+				//load by priority
+				if(target.options.criterionPriority.length==0){
+					//if no priority kpi are selected return the global value 
+					return loadTargetByMajority(target);
+				}else if(target.options.criterionPriority.length==1){ 
+					// if there is only one kpi selected, and theyr status in different of GRAY return his status, else the global status
+					return (target.options.criterionPriority[0].status=="GRAY" || target.options.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.options.criterionPriority[0].status;
+				}
+				else{
+					return loadTargetByMajorityWithPriority(target);
+				}
 			}
-			else{
-				return loadTargetByMajorityWithPriority(target);
-			}
-		}
-		
 	};
 	
 	function loadTargetByMajorityWithPriority(target){
@@ -48,12 +47,30 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 					maxTarget=scorecardManager_semaphoreUtility.getPriorityStatus(target.groupedKpis[i].status,maxTarget);
 				}
 			}
-		} 
-		
-		 
-		
+		}  
 		return maxTarget ;
 	}
+	
+	this.addGroupedKpisItem=function(target,type){
+		for(var i=0;i<target.groupedKpis.length;i++){
+			if(angular.equals(target.groupedKpis[i].status,type)){
+				target.groupedKpis[i].count++;
+				return;
+			}
+		}
+			target.groupedKpis.push({status:type,count:1});
+	}
+	 
+	this.loadGroupedKpis=function(selTarget){
+		if(!selTarget.hasOwnProperty("groupedKpis")){
+			selTarget.groupedKpis = [];
+		}
+		
+		for(var i=0;i<selTarget.kpis.length;i++){
+			this.addGroupedKpisItem(selTarget,selTarget.kpis[i].status);
+		}
+		selTarget.status=this.getTargetStatus(selTarget);
+		}
 	
 });
 
@@ -119,7 +136,6 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				tmpTargetKpis: tmpTargetKpis}
 		})
 		.then(function(data) {
-		console.log(data);
 		angular.copy(data,$scope.currentTarget.kpis);
 		});
 		
@@ -137,23 +153,7 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		}
 	}
 		
-	$scope.addGroupedKpisItem=function(type){
-		for(var i=0;i<$scope.currentTarget.groupedKpis.length;i++){
-			if(angular.equals($scope.currentTarget.groupedKpis[i].status,type)){
-				$scope.currentTarget.groupedKpis[i].count++;
-				return;
-			}
-		}
-		 $scope.currentTarget.groupedKpis.push({status:type,count:1});
-	}
-	 
 	
-	$scope.loadGroupedKpis=function(){
-			for(var i=0;i<$scope.currentTarget.kpis.length;i++){
-				$scope.addGroupedKpisItem($scope.currentTarget.kpis[i].status);
-			}
-			$scope.currentTarget.status=scorecardManager_targetUtility.getTargetStatus($scope.currentTarget);
-		}
 	
 	$scope.$on('saveTarget', function(event, args) {
 		if($scope.currentTarget.name.trim()==""){
@@ -168,11 +168,11 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		
 		if ($scope.editProperty.target.index != undefined){
 			$scope.currentTarget.groupedKpis = [];
-			$scope.loadGroupedKpis();
+			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget);
 			angular.copy($scope.currentTarget,$scope.currentPerspective.targets[$scope.editProperty.target.index]);
 		}
 		else{
-			$scope.loadGroupedKpis();
+			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget);
 			$scope.currentPerspective.targets.push(angular.extend({},$scope.currentTarget));	
 		}
 		angular.copy($scope.emptyTarget,$scope.currentTarget);

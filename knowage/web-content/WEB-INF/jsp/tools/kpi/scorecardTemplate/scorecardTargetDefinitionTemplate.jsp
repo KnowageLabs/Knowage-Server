@@ -12,13 +12,11 @@
 			</md-input-container>
 			<md-input-container flex='50' class="md-block" ng-if="currentTarget.criterion.valueId==229"> 
 				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
-				<md-select ng-model="currentTarget.options.criterionPriority"  multiple=true> 
+				<md-select ng-model="currentTarget.options.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
 					<md-option	ng-repeat="kpi in currentTarget.kpis" ng-value="{{kpi}}">	{{kpi.name}} </md-option> 
 				</md-select> 
 			</md-input-container>
-		</div>
-		 
-		
+		</div> 
 		<md-content layout="column" class=" md-whiteframe-3dp" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">

@@ -53,56 +53,56 @@ angular.module('scorecardManager').service('scorecardManager_perspectiveUtility'
 		return maxPerspetive ;
 	}
 	
+	this.addGroupedTargetsItem=function(perspective,type){
+		for(var i=0;i<perspective.groupedTargets.length;i++){
+			if(angular.equals(perspective.groupedTargets[i].status,type)){
+				perspective.groupedTargets[i].count++;
+				return;
+			}
+		}
+		 perspective.groupedTargets.push({status:type,count:1});
+	}
+	
+	this.addTotalGroupedKpisItem=function(perspective,target){
+		
+		for(var i=0;i<target.groupedKpis.length;i++){
+			var tmpGroupedKpis=target.groupedKpis[i];
+			var find=false;
+			for(var j=0;j<perspective.groupedKpis.length;j++){
+				if(angular.equals( perspective.groupedKpis[j].status,tmpGroupedKpis.status)){
+					perspective.groupedKpis[j].count+=tmpGroupedKpis.count;
+					find=true;
+					break;
+				}
+			}
+			if(!find){
+				perspective.groupedKpis.push({status:tmpGroupedKpis.status,count:tmpGroupedKpis.count});
+			}
+		}
+		
+	}
+	
+	
+	this.loadGroupedTarget=function(selPerspective){
+		if(!selPerspective.hasOwnProperty("groupedTargets")){
+			selPerspective.groupedTargets=[];
+		} 
+		if(!selPerspective.hasOwnProperty("groupedKpis")){
+			selPerspective.groupedKpis = [];
+		}
+		for(var i=0;i<selPerspective.targets.length;i++){
+			this.addGroupedTargetsItem(selPerspective,selPerspective.targets[i].status);
+			this.addTotalGroupedKpisItem(selPerspective,selPerspective.targets[i]);
+		}
+		selPerspective.status=this.getPerspectiveStatus(selPerspective);
+	};
 });
 
 
 
 
 function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility){
-	
-	$scope.addGroupedTargetsItem=function(type){
-		for(var i=0;i<$scope.currentPerspective.groupedTargets.length;i++){
-			if(angular.equals($scope.currentPerspective.groupedTargets[i].status,type)){
-				$scope.currentPerspective.groupedTargets[i].count++;
-				return;
-			}
-		}
-		 $scope.currentPerspective.groupedTargets.push({status:type,count:1});
-	}
-	
-	$scope.addTotalGroupedKpisItem=function(target){
-		
-		for(var i=0;i<target.groupedKpis.length;i++){
-			var tmpGroupedKpis=target.groupedKpis[i];
-			var find=false;
-			for(var j=0;j<$scope.currentPerspective.groupedKpis.length;j++){
-				if(angular.equals( $scope.currentPerspective.groupedKpis[j].status,tmpGroupedKpis.status)){
-					$scope.currentPerspective.groupedKpis[j].count+=tmpGroupedKpis.count;
-					find=true;
-					break;
-				}
-			}
-			if(!find){
-				 $scope.currentPerspective.groupedKpis.push({status:tmpGroupedKpis.status,count:tmpGroupedKpis.count});
-			}
-		}
-		
-	}
-	
-	$scope.loadGroupedTarget=function(){
-		if($scope.currentPerspective.groupedTargets==undefined){
-			 $scope.currentPerspective.groupedTargets=[];
-		} 
-		for(var i=0;i<$scope.currentPerspective.targets.length;i++){
-			$scope.addGroupedTargetsItem($scope.currentPerspective.targets[i].status);
-			$scope.addTotalGroupedKpisItem($scope.currentPerspective.targets[i]);
-		}
-		$scope.currentPerspective.status=scorecardManager_perspectiveUtility.getPerspectiveStatus($scope.currentPerspective);
-		
-	};
-	
-	
-	
+	 
 	$scope.$on('savePerspective', function(event, args) {
 		 if($scope.currentPerspective.name.trim()==""){
 				$scope.showToast('Name is required');
@@ -116,11 +116,11 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 		if ($scope.editProperty.perspective.index != undefined){
 			$scope.currentPerspective.groupedTargets=[];
 			$scope.currentPerspective.groupedKpis=[];
-			$scope.loadGroupedTarget();
+			scorecardManager_perspectiveUtility.loadGroupedTarget($scope.currentPerspective);
 			angular.copy($scope.currentPerspective,$scope.currentScorecard.perspectives[$scope.editProperty.perspective.index]);
 		}
 		else{
-			$scope.loadGroupedTarget();
+			scorecardManager_perspectiveUtility.loadGroupedTarget($scope.currentPerspective);
 			$scope.currentScorecard.perspectives.push(angular.extend({},$scope.currentPerspective));
 		}
 		angular.copy($scope.emptyPerspective,$scope.currentPerspective);
@@ -172,8 +172,20 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 	      $mdDialog.show(confirm).then(
 	    		  function() {
 	    	    	  $scope.currentPerspective.targets.splice($index,1);
+	    	    	  $scope.updateCriterionPriority();
 	    		  });
 	};
+	
+	$scope.updateCriterionPriority=function(){
+		if( $scope.currentPerspective.options.hasOwnProperty("criterionPriority") && $scope.currentPerspective.options.criterionPriority.length>0){
+			for(var cp=0;cp<$scope.currentPerspective.options.criterionPriority.length;cp++){
+				if($scope.currentPerspective.targets.indexOf($scope.currentPerspective.options.criterionPriority[cp])==-1){
+					$scope.currentPerspective.options.criterionPriority.splice(cp,1);
+					cp--;
+				}
+			}
+		}
+	}
 
 }
 
