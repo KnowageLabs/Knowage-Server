@@ -119,7 +119,7 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				tmpTargetKpis: tmpTargetKpis}
 		})
 		.then(function(data) {
-		console.log(data)
+		console.log(data);
 		angular.copy(data,$scope.currentTarget.kpis);
 		});
 		

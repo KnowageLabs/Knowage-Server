@@ -79,17 +79,12 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 	
 	$scope.loadScorecardList();
 	
-	
-	/*Da aggiustare la comparazione per torvare l'elemento da eliminare,
-	 *  aggiungere codice gestire l'eliminazione facendo la chiamata rest 
-	 *  e in caso di successo, fare lo splice */
 	$scope.scorecardListAction =  [{  label : 'Remove',
 							        icon:'fa fa-trash' , 
 							        backgroundColor:'trasparent',
 							        action : function(item,event) {
 							      	  pos = 0;
-							      	  while ($scope.scorecardList[pos].name != item.name)
-							      		  pos++;
+							      	  pos = $scope.scorecardList.indexOf( item );
 							      	  
 							      	sbiModule_restServices.promiseDelete("1.0/kpi",$scope.scorecardList[pos].id + "/deleteScorecard")
 									.then(function(response) {

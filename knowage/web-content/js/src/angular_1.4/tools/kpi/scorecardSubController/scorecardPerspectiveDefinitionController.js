@@ -115,8 +115,9 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 
 		if ($scope.editProperty.perspective.index != undefined){
 			$scope.currentPerspective.groupedTargets=[];
+			$scope.currentPerspective.groupedKpis=[];
 			$scope.loadGroupedTarget();
-			angular.copy($scope.emptyPerspective,$scope.currentPerspective[$scope.editProperty.perspective.index]);
+			angular.copy($scope.currentPerspective,$scope.currentScorecard.perspectives[$scope.editProperty.perspective.index]);
 		}
 		else{
 			$scope.loadGroupedTarget();

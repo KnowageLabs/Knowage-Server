@@ -16,15 +16,33 @@
 		</md-toolbar>
 		<div layout="row" layout-padding layout-wrap  ng-cloak >
 			
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="perspective in currentScorecard.perspectives">
+			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column" ng-repeat="perspective in currentScorecard.perspectives">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="column">
 						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
 			       		<label>{{perspective.name}}</label>
 			       		<span flex></span>
-			       		 <md-button class="md-icon-button"  ng-click="addPerspective(perspective, $index)">
-				      	    <md-icon md-font-icon="fa fa-pencil-square-o fa-2x" aria-hidden="true"></md-icon>
-				        </md-button>
+			       		
+			       	<md-menu>
+				      <md-button aria-label="Menu List" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+				        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+				      </md-button>
+				      <md-menu-content width="4">
+				        <md-menu-item>
+				          <md-button ng-click="addPerspective(perspective, $index)">
+				            <md-icon md-font-icon="fa fa-pencil-square-o" md-menu-align-target></md-icon>
+				            {{translate.load('sbi.generic.modify')}}
+				          </md-button>
+				        </md-menu-item>
+				        <md-menu-item>
+				          <md-button ng-click="deletePerspective(perspective, $index)">
+				            <md-icon md-font-icon="fa fa-trash"></md-icon>
+				            {{translate.load('cache.manager.delete')}}
+				          </md-button>
+				        </md-menu-item>
+				   </md-menu-content>
+				    </md-menu>
+
 			    	</div>	
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >
