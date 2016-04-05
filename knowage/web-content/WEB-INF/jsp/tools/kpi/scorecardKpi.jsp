@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 save-function="saveScorecardFunction"
 		 cancel-function="cancelScorecardFunction"
 		 show-save-button="selectedStep.value==0"
+		 show-cancel-button="selectedStep.value==0"
 		 ng-switch="selectedStep.value"
 		 layout="column" >
 		 <md-whiteframe class="md-whiteframe-1dp" >

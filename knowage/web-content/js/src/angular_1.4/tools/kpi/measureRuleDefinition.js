@@ -28,9 +28,9 @@ function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 		$scope.$broadcast("alterDatasource",{datasourceId:dataSourceId});
 	}
 	
-	$scope.broadcastLoadAliasList=function(ruleId){
+	$scope.broadcastLoadAliasList=function(ruleId,ruleVersion){
 		var deferred = $q.defer();
-		$scope.$broadcast("loadAliasList",{ruleId:ruleId,deferred:deferred});
+		$scope.$broadcast("loadAliasList",{ruleId:ruleId,ruleVersion:ruleVersion,deferred:deferred});
 		return deferred.promise;
 	}
 	
@@ -283,13 +283,16 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  		return deferred.promise; 
  	}
  	 
- 	$scope.loadAliasList=function(ruleId,deferred){
- 		
- 		var currentRuleId=""
+ 	$scope.loadAliasList=function(ruleId,ruleVersion,deferred){
+ 		var dataGet=""
  		if(ruleId){
- 			currentRuleId="/"+ruleId;
+ 			dataGet+="ruleId="+ruleId;
+	 		if(ruleVersion){
+	 			dataGet+="&ruleVersion="+ruleVersion;
+	 		}
  		}
- 		sbiModule_restServices.promiseGet("1.0/kpi","listAvailableAlias"+currentRuleId)
+ 		
+ 		sbiModule_restServices.promiseGet("1.0/kpi","listAvailableAlias",dataGet)
 		.then(function(response){ 
 			angular.copy(response.data,$scope.aliasList);
 			if(deferred){
@@ -305,7 +308,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  	};
  	
  	$scope.$on('loadAliasList', function(event, args) {
- 		$scope.loadAliasList(args.ruleId,args.deferred);
+ 		$scope.loadAliasList(args.ruleId,args.ruleVersion,args.deferred);
  	});
  	
 	$scope.loadPlaceholderList=function(){
@@ -435,11 +438,11 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
  	});
 	
 	$scope.loadRuleById=function(ruleId,ruleVersion,clone){ 
-		var rid;
+		var rid; 
 		if(clone!=true){
 			rid=ruleId;
 		}
-		$scope.broadcastLoadAliasList(rid).then(
+		$scope.broadcastLoadAliasList(rid,ruleVersion,ruleVersion).then(
 				function(){
 					sbiModule_restServices.promiseGet("1.0/kpi",ruleId+"/"+ruleVersion+"/loadRule")
 					.then(function(response){ 

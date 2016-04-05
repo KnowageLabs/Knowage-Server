@@ -21,5 +21,10 @@
 	.scorecardPrespectiveCard>md-content>b{
 	  line-height: 30px;
 	}
+	
+	.scorecardPrespectiveCard>md-toolbar>.md-toolbar-tools>md-menu{
+	  padding: 0;
+  	  height: 100%;
+	}
 
 }
