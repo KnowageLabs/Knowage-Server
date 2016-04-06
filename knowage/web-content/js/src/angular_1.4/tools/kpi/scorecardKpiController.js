@@ -49,7 +49,7 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 
 $scope.scorecardColumnsList=[
 	                             {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
-	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"date",transformer:function(data){return $filter('date')(data, "dd/MM/yyyy")}},
+	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"creationDate",transformer:function(data){return $filter('date')(data, "dd/MM/yyyy")}},
 	                             {label:sbiModule_translate.load("sbi.generic.author"),name:"author"}];
 	
 	
@@ -198,10 +198,12 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		
 
 			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard)
-				.then(function(response) {debugger
+				.then(function(response) {
 					if ($scope.editProperty.scorecard.index == undefined){
 							$scope.currentScorecard.id = response.data.id;
 							tmpPreSaveScorecard.id = response.data.id;
+							tmpPreSaveScorecard.creationDate = response.data.date;
+							tmpPreSaveScorecard.author = response.data.author;
 							$scope.scorecardList.push(tmpPreSaveScorecard);
 							$scope.editProperty.scorecard.editedItem=$scope.currentScorecard;
 							$scope.editProperty.scorecard.index=$scope.scorecardList.length-1;

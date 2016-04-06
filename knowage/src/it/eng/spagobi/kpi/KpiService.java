@@ -625,7 +625,12 @@ public class KpiService {
 			} else {
 				dao.updateScorecard(scorecard);
 			}
-			return Response.ok(new JSONObject().put("id", id).toString()).build();
+			JSONObject ret = new JSONObject();
+			ret.put("id", id);
+			ret.put("date", scorecard.getCreationDate().getTime());
+			ret.put("author", getProfile(req).getUserUniqueIdentifier());
+			return Response.ok(ret.toString()).build();
+
 		} catch (IOException | JSONException | SpagoBIException e) {
 			logger.error(req.getPathInfo(), e);
 		}
