@@ -56,7 +56,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	};
  
 	$scope.loadFolderDocuments=function(folderId){
-		sbiModule_restServices.promiseGet("2.0","documents?folderId=" +folderId)
+		sbiModule_restServices.promiseGet("2.0","documents/getDocumentsByFolder?folderId=" +folderId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
 		},function(response){
