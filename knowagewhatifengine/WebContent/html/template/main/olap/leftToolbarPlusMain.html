@@ -8,7 +8,7 @@
 		
 		<div style="height:calc(100% - 64px);">
 		<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
-		<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)">
+		<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)" id="left-{{row.name}}">
 			<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
 				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
 			</md-button>

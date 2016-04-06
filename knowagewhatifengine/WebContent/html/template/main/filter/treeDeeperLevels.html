@@ -8,7 +8,7 @@
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
 		</md-icon>
-		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
+		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1" id="tdl-value-{{item.name}}">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
 			</span>

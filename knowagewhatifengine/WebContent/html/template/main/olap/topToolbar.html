@@ -13,7 +13,7 @@
 		</div >
 		<div class="top-axis-container" layout="row">
 		<div ng-repeat="column in columns | limitTo:maxCols:topStart" layout="row" style="height:80%;margin-right: 10px;">
-		<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)">
+		<div class="filter-toolbar-element" ng-drag="true" layout="row" ng-drag-data="column"  ng-drag-success="dragSuccess('top',$index)" id="top-{{column.name}}">
 			
 			<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,column)" ng-show="column.hierarchies.length > 1">
 				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>

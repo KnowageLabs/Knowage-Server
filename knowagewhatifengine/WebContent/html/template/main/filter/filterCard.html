@@ -4,6 +4,7 @@
 			ng-repeat="filter in filterCardList|limitTo:numVisibleFilters" 
 			ng-drag="true" ng-drag-data="filter" 
 			ng-drag-success="dragSuccess('filter',$index)"
+			id="filter-{{filter.name}}"
 			>
 			
 		<div layout="row" class="top">
@@ -16,8 +17,10 @@
 		</div>
 	
 	 	<div layout="row" class="bottom">
-			<div class="name-area">
-				{{filterSelected[$index].visible ? filterSelected[$index].name : '...'}}
+			<div class="name-area"  title="{{filterSelected[$index].visible ? filterSelected[$index].name : 'Filter not selected'}}">
+				<span style="white-space:nowrap;">
+					{{filterSelected[$index].visible ? cutName(filterSelected[$index].name) : '...'}}
+				</span>
 			</div>
 			<div class="button-area">
 				<md-button class="md-icon-button" style="right:15px; " aria-label="Favorite" ng-click="openFiltersDialogAsync(e, filter, null)" id="{{filter.name}}-filter">

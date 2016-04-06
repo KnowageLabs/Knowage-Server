@@ -11,6 +11,7 @@ angular.module('filter_panel',[])
 function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
 	
 	var visibleSelected = [];
+	var visibleSelectedTracker = [];
 	var filterFather;
 	var h;
 	var m;
@@ -37,7 +38,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				exist = true;
 				$scope.data= $scope.loadedData[i];
 				if($scope.activeaxis >= 0){
-					getVisible($scope.data);
+					var existsInTracker = false;
+					for(var i=0; i<visibleSelectedTracker.length;i++){
+						if(visibleSelectedTracker[i].id == filter.uniqueName){
+							visibleSelected = visibleSelectedTracker[i].selected;
+							existsInTracker = true;
+						}						
+					}
+					if(!existsInTracker)
+						getVisible($scope.data, h);
 				}
 			}
 		}
@@ -53,6 +62,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	$scope.expandTreeAsync = function(item){
 		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
+		console.log($scope.data);
 		
 	}
 	
@@ -112,7 +122,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					$scope.loadedData[i] = data
 					$scope.data= $scope.loadedData[i];
 					if($scope.activeaxis >= 0){
-						getVisible($scope.data);
+						getVisible($scope.data,h);
+						//console.log(visibleSelected);
 				}
 			}
 		}
@@ -136,7 +147,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	//Called to get visible elements row/column
-	getVisible = function(data){
+	getVisible = function(data, un){
 		for(var i=0;i<data.length;i++){
 			if(data[i].visible){
 				visibleSelected.push(data[i]);
@@ -145,6 +156,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				getVisible(data[i].children);
 			}
 		}
+		var element={id:un,selected:visibleSelected};
+		visibleSelectedTracker.push(element);
 	};
 	
 	//Called if row/column dimension is unselected
@@ -212,7 +225,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	filterPlaceMemberOnAxis = function(){
 		removeChildren();
-		console.log(visibleSelected);
+		console.log("from pmona"+visibleSelected);
 		sbiModule_restServices.promisePost
 		("1.0",'/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID,visibleSelected)
 		.then(function(response) {
@@ -591,6 +604,22 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			return false;
 		else	
 			return true;
+	};
+	
+	$scope.cutName = function(name){
+		var result = name.split(" ");
+		
+		if(name.length < 12)
+			return name;
+		if(result[0].length>13){
+			return result[0].substring(0,13)
+		}
+		else if(result[1]!=undefined){
+			if(result[1].length > 3){
+				var res = result[1].substring(0,3);
+				return result[0]+" "+res+"...";
+			}
+		}
 	};
 		
 };

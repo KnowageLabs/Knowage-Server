@@ -12,13 +12,15 @@
 	</md-grid-tile>
 	 
 	<md-grid-tile>
-		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')">Replace</md-button>
+		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')" id = "drill-replace-btn">Replace</md-button>
 	</md-grid-tile>
 	 <md-grid-tile>
 		<span>&nbsp;</span>
 	</md-grid-tile>
 	<md-grid-tile>
-		<md-button class="drill-buttons down" 
+		<md-button 
+			id="drill-trough-btn"
+			class="drill-buttons down" 
 			style="min-width:130%!important;margin-top:10px!important;border-radius:0%!important" 
 			ng-click="enableDisableDrillThrough()">
 			Drill trough
@@ -28,7 +30,6 @@
 <div class="menu-text">OLAP functions</div>
 <md-grid-list
         md-cols="3" md-row-height="50px">
-
     <md-grid-tile ng-repeat="obtn in olapToolbarButtons">
     	<md-button class="right-toolbar-menu {{obtn.img}}" ng-click="btnFunctions(obtn.img)">
     		<md-tooltip md-direction="bottom">
@@ -44,7 +45,7 @@
 			</md-tooltip>
 		</md-button>
     </md-grid-tile>
-        
+    
     <md-grid-tile>
     	<md-button class="right-toolbar-menu BUTTON_EDIT_MDX" ng-click="showDialog(e,sendMdxDial)">
 			<md-tooltip md-direction="bottom">
@@ -81,7 +82,10 @@
     	</md-button>
     </md-grid-tile> 
     <md-grid-tile>
-    	<md-button ng-class=" modelConfig.sortingEnabled ? 'right-toolbar-menu sorting-e-btn' : 'right-toolbar-menu sorting-d-btn'" ng-click="enableDisableSorting()" >
+    	<md-button 
+    		ng-class=" modelConfig.sortingEnabled ? 'right-toolbar-menu sorting-e-btn' : 'right-toolbar-menu sorting-d-btn'" 
+    		ng-click="enableDisableSorting()"
+    		id="ena-dis-sorting-btn" >
 			<md-tooltip md-direction="bottom">
 				{{sortingEnabled?'Disable sorting' : 'Enable sorting'}}
 			</md-tooltip>
@@ -89,7 +93,10 @@
     </md-grid-tile>
     
     <md-grid-tile>
-    	<md-button class="right-toolbar-menu sorting-settings" ng-click="showDialog(e,sortSetDial)" >
+    	<md-button 
+    		class="right-toolbar-menu sorting-settings" 
+    		ng-click="showDialog(e,sortSetDial)" 
+    		id="sort-set-btn">
 			<md-tooltip md-direction="bottom">
 				Sorting settings
 			</md-tooltip>
@@ -97,7 +104,7 @@
     </md-grid-tile>
     
     <md-grid-tile>
-    	<md-button class="right-toolbar-menu cc-w-btn" ng-click="showCCWizard()" >
+    	<md-button class="right-toolbar-menu cc-w-btn" ng-click="showCCWizard()" id="calc-field-btn">
 			<md-tooltip md-direction="bottom">
 				Calculated Field Wizard
 			</md-tooltip>
