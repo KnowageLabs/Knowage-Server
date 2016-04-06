@@ -11,7 +11,7 @@
 					<md-option	ng-repeat="crit in criterionTypeList" ng-value="{{crit}}">	{{crit.translatedValueName}} </md-option> 
 				</md-select> 
 			</md-input-container> 
-			<md-input-container flex='50' class="md-block" ng-if="currentPerspective.criterion.valueId==229"> 
+			<md-input-container flex='50' class="md-block" ng-if="currentPerspective.criterion.valueCd!='MAJORITY'"> 
 				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label> 
 				<md-select ng-model="currentPerspective.options.criterionPriority" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
 					<md-option	ng-repeat="targ in currentPerspective.targets" ng-value="{{targ}}">	{{targ.name}} </md-option> 
