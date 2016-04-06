@@ -53,7 +53,6 @@
 		$scope.profile="";
 		$scope.selectedTab={'tab':0};
 		$scope.contentNotes = "";
-		
 		$scope.dependenciesService = docExecute_dependencyService;
 		
 		$scope.openInfoMetadata = function() {
@@ -69,13 +68,18 @@
 					//loads parameters if role is selected
 					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation);
 					execProperties.isParameterRolePanelDisabled.status = true;
+					
 				}
+				docExecute_urlViewPointService.frameLoaded=false;
 				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name);
 			}
 			
 			console.log("initSelectedRole OUT ");
 		};
 				
+		
+		
+		
 		/*
 		 * DEPENDENCIES
 		 */
@@ -93,7 +97,7 @@
 			docExecute_dependencyService.buildDataDependenciesMap(parameters);
 		};
 				
-
+		
 		
 		
 		
@@ -212,6 +216,8 @@
 		 */
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
+			
+			docExecute_urlViewPointService.frameLoaded=false;
 			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
 					JSON.stringify(documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters)));			
 			if($mdSidenav('parametersPanelSideNav').isOpen()) {
@@ -224,6 +230,7 @@
 		$scope.changeRole = function(role) {
 			console.log("changeRole IN ");
 			if(role != execProperties.selectedRole.name) {  
+				docExecute_urlViewPointService.frameLoaded=false;
 				docExecute_urlViewPointService.executionProcesRestV1(role);
 				docExecute_urlViewPointService.getParametersForExecution(role,$scope.buildCorrelation);
 			}
@@ -270,17 +277,31 @@
 			$documentNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		};
 
+		$scope.iframeOnload = function(){
+			docExecute_urlViewPointService.frameLoaded = true;
+			if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+				$scope.$apply();
+			}
+		};
+		
+		 
+		
 		console.log("documentExecutionControllerFn OUT ");
 	};
 
-	documentExecutionApp.directive('iframeSetDimensionsOnload', [function() {
+	documentExecutionApp.directive('iframeSetDimensionsOnload', ['docExecute_urlViewPointService',function(docExecute_urlViewPointService) {
 		return {
+			scope: {
+		        iframeOnload: '&?'
+		    },
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				element.on('load', function() {
 					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
 					element.css('height', iFrameHeight);				
 					element.css('width', '100%');
+					if(scope.iframeOnload)
+						 scope.iframeOnload();
 				});
 			}
 		};

@@ -62,7 +62,7 @@ try{
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
                 <h2 class="md-flex">
-                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %> - ({{::translate.load("sbi.browser.defaultRole.role")}} {{selectedRole.name}})
+                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %>
                 </h2>
                 <span flex=""></span>
                 
@@ -114,6 +114,7 @@ try{
 				                </md-button> 
 				            </md-menu-item>
 				            <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
+				           <!--  
 				            <md-menu-item class="md-indent">
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}" class="toolbar-button-custom"
                                 	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}
@@ -134,6 +135,14 @@ try{
                                 	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}
 				                </md-button> 
 				            </md-menu-item>
+				            -->
+				            
+				            <md-menu-item class="md-indent">
+				            	<md-button ng-disabled="true" aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}" class="toolbar-button-custom"
+                                	>{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
+				                </md-button> 
+				            </md-menu-item>
+				            
 				            <md-menu-item class="md-indent">
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}" class="toolbar-button-custom"
                                 	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
@@ -151,11 +160,20 @@ try{
         
         <div layout="row" flex="grow" ng-switch on="currentView.status">
  		
-	 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT"> 
+	 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT">  
+			      
+			      <div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
+			      <md-progress-circular 
+        				md-mode="indeterminate" 
+        				md-diameter="70"       
+        				>
+      				</md-progress-circular>
+      				</div>
 				<iframe class="noBorder" id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
-					iframe-set-dimensions-onload flex="grow"></iframe>
+					iframe-set-dimensions-onload flex="grow" ng-show="urlViewPointService.frameLoaded">
+				</iframe>
 			</md-content>
-			
+										
 			<div flex ng-switch-when="PARAMETERS"> 
 				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
 					<parameter-view-point-handler flex/>
@@ -246,6 +264,7 @@ try{
  				parameterView : {status : ""},
  				isParameterRolePanelDisabled : {status : false},
  				showParametersPanel : {status : true}
+ 				
 			};
 			return obj;
 		});

@@ -296,10 +296,14 @@
 			) {
 		
 		var serviceScope = this;	
-		
 		serviceScope.documentUrl = '';
+		serviceScope.frameLoaded = true;
+		
+	
+		
 		
 		serviceScope.executionProcesRestV1 = function(role, paramsStr) {			
+			
 			if(typeof paramsStr === 'undefined') {
 				paramsStr='{}';
 			}
@@ -311,13 +315,13 @@
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
 				function(data, status, headers, config) {					
-					//console.log(data);
 					if(data['documentError'] && data['documentError'].length > 0 ) {
 						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
 						var alertDialog = $mdDialog.alert()
 						.title(sbiModule_translate.load("sbi.generic.warning"))
 						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));						
 						$mdDialog.show( alertDialog );
+						serviceScope.frameLoaded = true;
 					}else{
 						if(data['errors'].length > 0 ) {
 							var strErros='';
@@ -329,16 +333,18 @@
 							.title(sbiModule_translate.load("sbi.generic.warning"))
 							.content(strErros).ok(sbiModule_translate.load("sbi.general.ok"));
 							$mdDialog.show( alertDialog );
+							serviceScope.frameLoaded = true;
 						}else{
-							serviceScope.documentUrl = data.url;
-							//angular.copy(data.url, serviceScope.documentUrl);
+							serviceScope.documentUrl = data.url+'&timereloadurl=' + new Date().getTime();
+							
 						}	
 					}	
 					//SETTING URL SBI EXECUTION ID
 					if(data['sbiExecutionId'] && data['sbiExecutionId'].length>0){
 						execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId'];
 						console.log('sbiExecutionId ... ' + data['sbiExecutionId']);
-					}					
+					}
+					//execProperties.currentView.status = 'DOCUMENT';
 				}).error(function(data, status, headers, config) {
 					console.log("TargetLayer non Ottenuto " + status);
 				});
