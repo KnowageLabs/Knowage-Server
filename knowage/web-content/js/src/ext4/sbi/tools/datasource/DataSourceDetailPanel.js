@@ -211,6 +211,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 
 			 this.dataSourceTypeJndi.disable();
 			 this.dataSourceJndiName.disable();
+			 this.dataSourceWriteDefault.disable();
 		 } 
 		
 		this.dataSourceJdbcUser = Ext.create("Ext.form.field.Text",{
