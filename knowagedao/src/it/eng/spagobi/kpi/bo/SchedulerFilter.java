@@ -7,19 +7,37 @@ import java.io.Serializable;
 public class SchedulerFilter implements Serializable {
 
 	private Integer executionId;
-	private Integer placeholderId;
 	private String placeholderName;
+	private Integer placeholderId;
 	private String kpiName;
+	private Integer kpiId;
+	private Integer kpiVersion;
 	private Domain type;
 	private String value;
 
 	public SchedulerFilter() {
 	}
 
-	public SchedulerFilter(Integer executionId, String placeholderName, String kpiName) {
+	public SchedulerFilter(Integer executionId, String placeholderName, Integer kpiId, Integer kpiVersion) {
 		this.executionId = executionId;
 		this.placeholderName = placeholderName;
-		this.kpiName = kpiName;
+		this.kpiId = kpiId;
+		this.kpiVersion = kpiVersion;
+	}
+
+	/**
+	 * @return the placeholderId
+	 */
+	public Integer getPlaceholderId() {
+		return placeholderId;
+	}
+
+	/**
+	 * @param placeholderId
+	 *            the placeholderId to set
+	 */
+	public void setPlaceholderId(Integer placeholderId) {
+		this.placeholderId = placeholderId;
 	}
 
 	/**
@@ -68,21 +86,6 @@ public class SchedulerFilter implements Serializable {
 	}
 
 	/**
-	 * @return the placeholderId
-	 */
-	public Integer getPlaceholderId() {
-		return placeholderId;
-	}
-
-	/**
-	 * @param placeholderId
-	 *            the placeholderId to set
-	 */
-	public void setPlaceholderId(Integer placeholderId) {
-		this.placeholderId = placeholderId;
-	}
-
-	/**
 	 * @return the placeholderName
 	 */
 	public String getPlaceholderName() {
@@ -112,6 +115,36 @@ public class SchedulerFilter implements Serializable {
 		this.kpiName = kpiName;
 	}
 
+	/**
+	 * @return the kpiId
+	 */
+	public Integer getKpiId() {
+		return kpiId;
+	}
+
+	/**
+	 * @param kpiId
+	 *            the kpiId to set
+	 */
+	public void setKpiId(Integer kpiId) {
+		this.kpiId = kpiId;
+	}
+
+	/**
+	 * @return the kpiVersion
+	 */
+	public Integer getKpiVersion() {
+		return kpiVersion;
+	}
+
+	/**
+	 * @param kpiVersion
+	 *            the kpiVersion to set
+	 */
+	public void setKpiVersion(Integer kpiVersion) {
+		this.kpiVersion = kpiVersion;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -122,7 +155,8 @@ public class SchedulerFilter implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((executionId == null) ? 0 : executionId.hashCode());
-		result = prime * result + ((kpiName == null) ? 0 : kpiName.hashCode());
+		result = prime * result + ((kpiId == null) ? 0 : kpiId.hashCode());
+		result = prime * result + ((kpiVersion == null) ? 0 : kpiVersion.hashCode());
 		result = prime * result + ((placeholderName == null) ? 0 : placeholderName.hashCode());
 		return result;
 	}
@@ -146,10 +180,15 @@ public class SchedulerFilter implements Serializable {
 				return false;
 		} else if (!executionId.equals(other.executionId))
 			return false;
-		if (kpiName == null) {
-			if (other.kpiName != null)
+		if (kpiId == null) {
+			if (other.kpiId != null)
 				return false;
-		} else if (!kpiName.equals(other.kpiName))
+		} else if (!kpiId.equals(other.kpiId))
+			return false;
+		if (kpiVersion == null) {
+			if (other.kpiVersion != null)
+				return false;
+		} else if (!kpiVersion.equals(other.kpiVersion))
 			return false;
 		if (placeholderName == null) {
 			if (other.placeholderName != null)

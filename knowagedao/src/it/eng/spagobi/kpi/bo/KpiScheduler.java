@@ -1,9 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class KpiScheduler {
@@ -11,15 +8,19 @@ public class KpiScheduler {
 	private Integer id;
 	private String name;
 
-	private final List<SchedulerFilter> filters = new ArrayList<>();
+	private List<SchedulerFilter> filters = new ArrayList<>();
 	private Boolean delta;
-	private final List<Kpi> kpis = new ArrayList<>();
-	private Date startDate;
-	private Date endDate;
+	private List<Kpi> kpis = new ArrayList<>();
+	private Long startDate;
+	private Long endDate;
 	private String kpiNames;
 	private String author;
 
-	private Trigger trigger;
+	private String chron;
+	private boolean runImmediately;
+
+	private String startTime;
+	private String endTime;
 
 	/**
 	 * @return the id
@@ -80,51 +81,140 @@ public class KpiScheduler {
 		return kpis;
 	}
 
-	public Date getStartDate() {
+	/**
+	 * @return the startDate
+	 */
+	public Long getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	/**
+	 * @param startDate
+	 *            the startDate to set
+	 */
+	public void setStartDate(Long startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	/**
+	 * @return the endDate
+	 */
+	public Long getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	/**
+	 * @param endDate
+	 *            the endDate to set
+	 */
+	public void setEndDate(Long endDate) {
 		this.endDate = endDate;
 	}
 
+	/**
+	 * @return the kpiNames
+	 */
 	public String getKpiNames() {
 		return kpiNames;
 	}
 
+	/**
+	 * @param kpiNames
+	 *            the kpiNames to set
+	 */
 	public void setKpiNames(String kpiNames) {
 		this.kpiNames = kpiNames;
 	}
 
+	/**
+	 * @return the author
+	 */
 	public String getAuthor() {
 		return author;
 	}
 
+	/**
+	 * @param author
+	 *            the author to set
+	 */
 	public void setAuthor(String author) {
 		this.author = author;
 	}
 
 	/**
-	 * @return the trigger
+	 * @return the chron
 	 */
-	public Trigger getTrigger() {
-		return trigger;
+	public String getChron() {
+		return chron;
 	}
 
 	/**
-	 * @param trigger
-	 *            the trigger to set
+	 * @param chron
+	 *            the chron to set
 	 */
-	public void setTrigger(Trigger trigger) {
-		this.trigger = trigger;
+	public void setChron(String chron) {
+		this.chron = chron;
+	}
+
+	/**
+	 * @return the runImmediately
+	 */
+	public boolean isRunImmediately() {
+		return runImmediately;
+	}
+
+	/**
+	 * @param runImmediately
+	 *            the runImmediately to set
+	 */
+	public void setRunImmediately(boolean runImmediately) {
+		this.runImmediately = runImmediately;
+	}
+
+	/**
+	 * @return the startTime
+	 */
+	public String getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * @param startTime
+	 *            the startTime to set
+	 */
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	/**
+	 * @return the endTime
+	 */
+	public String getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * @param endTime
+	 *            the endTime to set
+	 */
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * @param kpis
+	 *            the kpis to set
+	 */
+	public void setKpis(List<Kpi> kpis) {
+		this.kpis = kpis;
+	}
+
+	/**
+	 * @param filters
+	 *            the filters to set
+	 */
+	public void setFilters(List<SchedulerFilter> filters) {
+		this.filters = filters;
 	}
 
 }

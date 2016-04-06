@@ -17,38 +17,12 @@
  */
 package it.eng.spagobi.kpi.dao;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinFragment;
-import org.hibernate.transform.Transformers;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.qbe.InExpressionIgnoringCase;
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
@@ -73,6 +47,7 @@ import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
+import it.eng.spagobi.kpi.job.ProcessKpiJob;
 import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
 import it.eng.spagobi.kpi.metadata.SbiKpiExecution;
 import it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter;
@@ -88,8 +63,44 @@ import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId;
 import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinFragment;
+import org.hibernate.transform.Transformers;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
@@ -106,6 +117,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
 	private static final String MEASURE = "MEASURE";
+
+	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
@@ -539,7 +552,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 *
+	 * 
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -777,8 +790,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Criteria evaluate(Session session) {
 				return session
-						.createCriteria(SbiKpiThreshold.class).setProjection(Projections.projectionList().add(Projections.property("id"), "id")
-								.add(Projections.property("name"), "name").add(Projections.property("description"), "description"))
+						.createCriteria(SbiKpiThreshold.class)
+						.setProjection(
+								Projections.projectionList().add(Projections.property("id"), "id").add(Projections.property("name"), "name")
+										.add(Projections.property("description"), "description"))
 						.setResultTransformer(Transformers.aliasToBean(SbiKpiThreshold.class));
 			}
 		});
@@ -847,7 +862,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 *
+	 * 
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -911,8 +926,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Map<String, List<String>> execute(Session session) throws Exception {
 				Map<String, List<String>> invalidAlias = new HashMap<>();
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()), rule.getId(),
-							rule.getVersion(), invalidAlias);
+					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()),
+							rule.getId(), rule.getVersion(), invalidAlias);
 				}
 				return invalidAlias;
 			}
@@ -1287,15 +1302,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		/**
 		 * Loading all placeholders owned by selected kpis
 		 */
-		List<String> kpiNames = new ArrayList<>();
-		for (Kpi kpi : scheduler.getKpis()) {
-			kpiNames.add(kpi.getName());
-		}
-		if (!kpiNames.isEmpty()) {
-			Map<String, List<String>> placeholders = listPlaceholderByKpiList(kpiNames);
-			for (String kpiName : placeholders.keySet()) {
-				for (String placeholderName : placeholders.get(kpiName)) {
-					SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpiName);
+		if (!scheduler.getKpis().isEmpty()) {
+			Map<Kpi, List<String>> placeholders = listPlaceholderByKpiList(scheduler.getKpis());
+			for (Kpi kpi : placeholders.keySet()) {
+				for (String placeholderName : placeholders.get(kpi)) {
+					SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpi.getId(), kpi.getVersion());
 					if (!scheduler.getFilters().contains(filter)) {
 						scheduler.getFilters().add(filter);
 					}
@@ -1336,16 +1347,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		scd.setId(sbi.getId());
 		scd.setName(sbi.getName());
 		scd.setAuthor(sbi.getCommonInfo().getUserIn());
-		scd.setStartDate(sbi.getStartTime());
-		scd.setEndDate(sbi.getEndTime());
+		scd.setStartDate(sbi.getStartDate().getTime());
+		if (sbi.getEndDate() != null)
+			scd.setEndDate(sbi.getEndDate().getTime());
 		scd.setDelta(Character.valueOf('T').equals(sbi.getDelta()));
 		if (full) {
 			for (SbiKpiExecutionFilter sbiFilter : sbi.getSbiKpiExecutionFilters()) {
 				SchedulerFilter filter = new SchedulerFilter();
 				filter.setExecutionId(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId());
-				filter.setPlaceholderId(sbiFilter.getSbiKpiExecutionFilterId().getPlaceholderId());
+				// filter.setPlaceholderId(sbiFilter.getSbiKpiExecutionFilterId().getPlaceholderId());
 				filter.setPlaceholderName(sbiFilter.getSbiKpiPlaceholder().getName());
 				filter.setKpiName(sbiFilter.getSbiKpiKpi().getName());
+				filter.setKpiId(sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getId());
+				filter.setKpiVersion(sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getVersion());
 				filter.setType(from(sbiFilter.getType()));
 				filter.setValue(sbiFilter.getValue());
 				scd.getFilters().add(filter);
@@ -1609,33 +1623,47 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Map<String, List<String>> listPlaceholderByKpiList(final List<String> kpiNames) {
-		List<Map<String, String>> measures = executeOnTransaction(new IExecuteOnTransaction<List<Map<String, String>>>() {
+	public Map<Kpi, List<String>> listPlaceholderByKpiList(final List<Kpi> kpis) {
+		List<Map<String, Object>> measures = executeOnTransaction(new IExecuteOnTransaction<List<Map<String, Object>>>() {
 			@Override
-			public List<Map<String, String>> execute(Session session) throws Exception {
-				List<Map<String, String>> measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
-						.createAlias("sbiKpiKpis", "sbiKpiKpis").createAlias("sbiKpiAlias", "sbiKpiAlias").add(Restrictions.eq("sbiKpiKpis.active", 'T'))
-						.add(Restrictions.eq("sbiKpiRule.active", 'T'))
-						.add(Restrictions.in("sbiKpiKpis.name", kpiNames)).setProjection(Projections.projectionList()
-								.add(Property.forName("sbiKpiKpis.name").as("kpi")).add(Property.forName("sbiKpiAlias.name").as("measure")))
-						.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+			public List<Map<String, Object>> execute(Session session) throws Exception {
+				Disjunction disjunction = Restrictions.disjunction();
+				for (Kpi kpi : kpis) {
+					disjunction.add(Restrictions.conjunction().add(Restrictions.eq("sbiKpiKpis.sbiKpiKpiId.id", kpi.getId()))
+							.add(Restrictions.eq("sbiKpiKpis.sbiKpiKpiId.version", kpi.getVersion())));
+				}
+
+				List<Map<String, Object>> measures = session.createCriteria(SbiKpiRuleOutput.class)
+						.createAlias("sbiKpiRule", "sbiKpiRule")
+						.createAlias("sbiKpiKpis", "sbiKpiKpis")
+						.createAlias("sbiKpiAlias", "sbiKpiAlias")
+						// .add(Restrictions.eq("sbiKpiKpis.active", 'T'))
+						// .add(Restrictions.eq("sbiKpiRule.active", 'T'))
+						// .add(Restrictions.in("sbiKpiKpis.name", kpiNames))
+						.add(disjunction)
+						.setProjection(
+								Projections.projectionList().add(Property.forName("sbiKpiKpis.sbiKpiKpiId.id").as("id"))
+										.add(Property.forName("sbiKpiKpis.sbiKpiKpiId.version").as("version"))
+										.add(Property.forName("sbiKpiAlias.name").as("measure"))).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 				return measures;
 			}
 		});
 		/**
 		 * Initially this is a map of {kpi name: list of measure names}, then it will contain a map of {kpi name: list of placeholder names}
 		 */
-		Map<String, List<String>> ret = new HashMap<>();
-		for (Map<String, String> o : measures) {
-			String kpi = o.get("kpi");
-			String measure = o.get("measure");
+		Map<Kpi, List<String>> ret = new HashMap<>();
+		for (Map<String, Object> o : measures) {
+			String measure = (String) o.get("measure");
+			Integer kpiId = (Integer) o.get("id");
+			Integer kpiVersion = (Integer) o.get("version");
+			Kpi kpi = new Kpi(kpiId, kpiVersion);
 			if (!ret.containsKey(kpi)) {
 				ret.put(kpi, new ArrayList<String>());
 			}
 			ret.get(kpi).add(measure);
 		}
-		for (String key : ret.keySet()) {
-			ret.put(key, listPlaceholderByMeasures(ret.get(key)));
+		for (Kpi kpi : ret.keySet()) {
+			ret.put(kpi, listPlaceholderByMeasures(ret.get(kpi)));
 		}
 		return ret;
 	}
@@ -1646,8 +1674,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return mockListKpiWithResult();
 	}
 
-	private static final List<it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS> statusValues = Collections
-			.unmodifiableList(Arrays.asList(it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS.values()));
+	private static final List<it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS> statusValues = Collections.unmodifiableList(Arrays
+			.asList(it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS.values()));
 	private static final int SIZE = statusValues.size();
 	private static final Random RANDOM = new Random();
 
@@ -1667,5 +1695,147 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpis.add(kpi);
 		}
 		return kpis;
+	}
+
+	@Override
+	public Integer insertScheduler(final KpiScheduler scheduler) {
+		Integer id = 2;/*
+						 * executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+						 * 
+						 * @Override public Integer execute(Session session) throws Exception { SbiKpiExecution sbiKpiExecution = from(scheduler, null,
+						 * session); return sbiKpiExecution.getId(); } });
+						 */
+		try {
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			String name = "" + id;
+			Job job = new Job();
+			job.setName(name);
+			job.setGroupName(KPI_SCHEDULER_GROUP);
+			job.setJobClass(ProcessKpiJob.class);
+			job.setDurable(false);
+			job.setVolatile(false);
+			job.setRequestsRecovery(true);
+
+			addKpiToJobParameter(job, scheduler);
+			if (scheduler.getDelta() != null)
+				job.addParameter("delta", scheduler.getDelta().toString());
+
+			if (!schedulerDAO.jobExists(KPI_SCHEDULER_GROUP, name)) {
+				schedulerDAO.insertJob(job);
+			}
+
+			Calendar startTime = Calendar.getInstance();
+			startTime.setTimeInMillis(scheduler.getStartDate());
+
+			String[] sp = scheduler.getStartTime().split(":");
+			String startHour = sp[0];
+			String startMinute = sp[1];
+			startTime.set(Calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
+			startTime.set(Calendar.MINUTE, new Integer(startMinute).intValue());
+
+			Trigger trigger = new Trigger();
+			trigger.setGroupName(KPI_SCHEDULER_GROUP);// DEFAULT ?
+			trigger.setStartTime(startTime.getTime());
+			trigger.setChronType(scheduler.getChron());
+			if (scheduler.getChron() != null) {
+				trigger.setCronExpression(new CronExpression(scheduler.getChron()));
+			} else {
+				trigger.setCronExpression(new CronExpression());
+			}
+			trigger.setName(name);
+			trigger.setJob(job);
+
+			schedulerDAO.saveTrigger(trigger);
+
+		} catch (EMFUserError e) {
+			throw new SpagoBIDOAException(e);
+		}
+		// TODO
+		return id;
+	}
+
+	private SbiKpiExecution from(KpiScheduler scheduler, SbiKpiExecution sbiKpiExecution, Session session) {
+		if (sbiKpiExecution == null) {
+			sbiKpiExecution = new SbiKpiExecution();
+			updateSbiCommonInfo4Insert(sbiKpiExecution);
+		} else {
+			updateSbiCommonInfo4Update(sbiKpiExecution);
+		}
+		sbiKpiExecution.setName(scheduler.getName());
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTimeInMillis(scheduler.getStartDate());
+		sbiKpiExecution.setStartDate(startDate.getTime());
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTimeInMillis(scheduler.getStartDate());
+		sbiKpiExecution.setStartDate(endDate.getTime());
+		sbiKpiExecution.setEndDate(endDate.getTime());
+		Integer id = (Integer) session.save(sbiKpiExecution);
+		// Removing old filters / updating existing one
+		Iterator<SbiKpiExecutionFilter> persistentFilters = sbiKpiExecution.getSbiKpiExecutionFilters().iterator();
+		while (persistentFilters.hasNext()) {
+			SbiKpiExecutionFilter sbiFilter = persistentFilters.next();
+			int i = scheduler.getFilters().indexOf(
+					new SchedulerFilter(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId(), sbiFilter.getSbiKpiPlaceholder().getName(), sbiFilter
+							.getSbiKpiKpi().getSbiKpiKpiId().getId(), sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getVersion()));
+			if (i == -1) {
+				persistentFilters.remove();
+			} else {
+				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(scheduler.getFilters().get(i), sbiFilter));
+			}
+
+		}
+		// Adding new filters
+		for (SchedulerFilter sf : scheduler.getFilters()) {
+			if (sf.getExecutionId() == null) {
+				sf.setExecutionId(id);
+				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(sf, null));
+			}
+
+		}
+		return sbiKpiExecution;
+	}
+
+	private SbiKpiExecutionFilter from(SchedulerFilter schedulerFilter, SbiKpiExecutionFilter sbiFilter) {
+		if (sbiFilter == null) {
+			sbiFilter = new SbiKpiExecutionFilter();
+			updateSbiCommonInfo4Insert(sbiFilter);
+		} else {
+			updateSbiCommonInfo4Update(sbiFilter);
+		}
+		// sbiFilter.setTypeId(schedulerFilter.getType().getValueId());
+		sbiFilter.setValue(schedulerFilter.getValue());
+		return sbiFilter;
+	}
+
+	/**
+	 * Add kpi/placeholders to job parameter map in this form ["kpiId|kpiVersion":[{"placeholderName":"placeholderValue"}]]
+	 * 
+	 * @param job
+	 * @param scheduler
+	 */
+	private void addKpiToJobParameter(Job job, KpiScheduler scheduler) {
+		Map<String, Map<String, String>> kpis = new HashMap<>();
+		for (SchedulerFilter sf : scheduler.getFilters()) {
+			String kpiKey = sf.getKpiId() + "|" + sf.getKpiVersion();
+			if (!kpis.containsKey(kpiKey)) {
+				kpis.put(kpiKey, new HashMap<String, String>());
+			}
+			kpis.get(kpiKey).put(sf.getPlaceholderName(), sf.getValue());
+		}
+		for (Kpi kpi : scheduler.getKpis()) {
+			String kpiKey = kpi.getId() + "|" + kpi.getVersion();
+			if (!kpis.containsKey(kpiKey)) {
+				kpis.put(kpiKey, new HashMap<String, String>());
+			}
+		}
+		if (!kpis.isEmpty()) {
+			job.addParameter("kpis", JsonConverter.objectToJson(kpis, kpis.getClass()));
+		}
+	}
+
+	@Override
+	public Integer updateScheduler(KpiScheduler scheduler) {
+		// TODO Auto-generated method stub
+		throw new NotImplementedException();
 	}
 }

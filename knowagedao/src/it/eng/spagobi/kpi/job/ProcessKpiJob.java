@@ -15,7 +15,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		// TODO
 		System.out.println(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
-
+		arg0.getJobDetail().getJobDataMap().getString("kpis");
 	}
 
 }

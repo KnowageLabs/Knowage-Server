@@ -10,8 +10,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 
 	private Integer id;
 	private String name;
-	private Date startTime;
-	private Date endTime;
+	private Date startDate;
+	private Date endDate;
 	private Character delta;
 
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
@@ -49,48 +49,33 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @return the startTime
+	 * @return the startDate
 	 */
-	public Date getStartTime() {
-		return startTime;
+	public Date getStartDate() {
+		return startDate;
 	}
 
 	/**
-	 * @param startTime
-	 *            the startTime to set
+	 * @param startDate
+	 *            the startDate to set
 	 */
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
 	/**
-	 * @return the endTime
+	 * @return the endDate
 	 */
-	public Date getEndTime() {
-		return endTime;
+	public Date getEndDate() {
+		return endDate;
 	}
 
 	/**
-	 * @param endTime
-	 *            the endTime to set
+	 * @param endDate
+	 *            the endDate to set
 	 */
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-
-	/**
-	 * @return the delta
-	 */
-	public Character getDelta() {
-		return delta;
-	}
-
-	/**
-	 * @param delta
-	 *            the delta to set
-	 */
-	public void setDelta(Character delta) {
-		this.delta = delta;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	/**
@@ -121,6 +106,21 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	 */
 	public void setSbiKpiExecutionFilters(Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters) {
 		this.sbiKpiExecutionFilters = sbiKpiExecutionFilters;
+	}
+
+	/**
+	 * @return the delta
+	 */
+	public Character getDelta() {
+		return delta;
+	}
+
+	/**
+	 * @param delta
+	 *            the delta to set
+	 */
+	public void setDelta(Character delta) {
+		this.delta = delta;
 	}
 
 }

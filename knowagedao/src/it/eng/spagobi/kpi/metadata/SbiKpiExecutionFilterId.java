@@ -9,6 +9,16 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	private Integer kpiId;
 	private Integer kpiVersion;
 
+	public SbiKpiExecutionFilterId() {
+	}
+
+	public SbiKpiExecutionFilterId(Integer placeholderId, Integer executionId, Integer kpiId, Integer kpiVersion) {
+		this.placeholderId = placeholderId;
+		this.executionId = executionId;
+		this.kpiId = kpiId;
+		this.kpiVersion = kpiVersion;
+	}
+
 	/**
 	 * @return the placeholderId
 	 */
