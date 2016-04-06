@@ -7,134 +7,53 @@
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowageqbeengine" />
+		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowagedataminingengine" />
 		<ENGINE label="knowagetalendengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
-		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagekpiengine" />
 		<ENGINE label="knowagebirtreporteng" />
-		<ENGINE label="knowagegeoengine" />
 		<ENGINE label="knowagejpivotengine" />
-		<ENGINE label="knowagejasperreporte" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
-		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowageaccessibleeng" />
 		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagesmartfilteren" />
-		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagetablemobileen" />
 		<ENGINE label="knowagechartmobileen" />
 		<ENGINE label="knowagecockpitmobile" />
-		<ENGINE label="knowagenetworkengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowagewhatifengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageER" active="true">
 		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagekpiengine" />
 		<ENGINE label="knowagebirtreporteng" />
-		<ENGINE label="knowagegeoengine" />
-		<ENGINE label="knowagejpivotengine" />
 		<ENGINE label="knowagejasperreporte" />
-		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagetalendengine" />
-		<ENGINE label="knowagedataminingengine" />
 		<ENGINE label="knowageaccessibleeng" />
-		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagesmartfilteren" />
-		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
-		<ENGINE label="knowagechartengine" />
-		<ENGINE label="knowagetablemobileen" />
-		<ENGINE label="knowagechartmobileen" />
-		<ENGINE label="knowagecockpitmobile" />
-		<ENGINE label="knowagenetworkengine" />
-		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagewhatifengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">
-		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagekpiengine" />
-		<ENGINE label="knowagebirtreporteng" />
-		<ENGINE label="knowagegeoengine" />
 		<ENGINE label="knowagejpivotengine" />
-		<ENGINE label="knowagejasperreporte" />
-		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowageaccessibleeng" />
-		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagesmartfilteren" />
-		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
-		<ENGINE label="knowagechartengine" />
-		<ENGINE label="knowagetablemobileen" />
-		<ENGINE label="knowagechartmobileen" />
-		<ENGINE label="knowagecockpitmobile" />
-		<ENGINE label="knowagenetworkengine" />
-		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowagewhatifengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageLI" active="true">
-		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagekpiengine" />
-		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowagegeoengine" />
-		<ENGINE label="knowagejpivotengine" />
-		<ENGINE label="knowagejasperreporte" />
 		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagetalendengine" />
-		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowageaccessibleeng" />
-		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagesmartfilteren" />
 		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
-		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagetablemobileen" />
 		<ENGINE label="knowagechartmobileen" />
 		<ENGINE label="knowagecockpitmobile" />
-		<ENGINE label="knowagenetworkengine" />
 		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagewhatifengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePM" active="true">
-		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowagecompositedoce" />
 		<ENGINE label="knowagekpiengine" />
-		<ENGINE label="knowagebirtreporteng" />
-		<ENGINE label="knowagegeoengine" />
-		<ENGINE label="knowagejpivotengine" />
-		<ENGINE label="knowagejasperreporte" />
-		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowageaccessibleeng" />
-		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagesmartfilteren" />
-		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagetablemobileen" />
 		<ENGINE label="knowagechartmobileen" />
 		<ENGINE label="knowagecockpitmobile" />
-		<ENGINE label="knowagenetworkengine" />
 		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagewhatifengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageEI" active="true">
 		<ENGINE label="knowageofficeengine" />
