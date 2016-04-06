@@ -40,6 +40,7 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -440,8 +442,10 @@ public class UserUtilities {
 		List<String> functionalities = new ArrayList<String>();
 		List<String> roleFunct = readFunctionalityByRole(user);
 		List<String> userFunct = readFunctionalityByUser(user);
+		List<String> licenseFunct = readFunctionalityByLicense(user);
 		functionalities.addAll(roleFunct);
 		functionalities.addAll(userFunct);
+		functionalities.addAll(licenseFunct);
 		String[] a = new String[] { "" };
 		logger.debug("OUT");
 
@@ -453,7 +457,6 @@ public class UserUtilities {
 		List<String> superadminFunctionalities = new ArrayList<String>();
 		Boolean isSuperAdm = user.getIsSuperadmin();
 		if (isSuperAdm != null && isSuperAdm) {
-			superadminFunctionalities.add(SpagoBIConstants.TENANT_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
 			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
@@ -591,6 +594,25 @@ public class UserUtilities {
 			logger.debug("OUT");
 		}
 
+	}
+
+	public static List<String> readFunctionalityByLicense(SpagoBIUserProfile user) {
+		logger.debug("IN");
+		List<String> licenseFunctionalities = new ArrayList<String>();
+		try {
+			Class<?> c = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseSingleton");
+			Method getInstanceMethod = c.getMethod("getInstance", null);
+			Object licenseManager = getInstanceMethod.invoke(null, null);
+			Method readFunctionalitiesMethod = licenseManager.getClass().getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
+			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(licenseManager, user);
+			if (functionalities != null) {
+				licenseFunctionalities.addAll(functionalities);
+			}
+		} catch (Exception e) {
+			logger.debug("Server Manager not installed or not installer correctly.", e);
+		}
+		logger.debug("OUT");
+		return licenseFunctionalities;
 	}
 
 	public static String getUserId(HttpServletRequest req) {
