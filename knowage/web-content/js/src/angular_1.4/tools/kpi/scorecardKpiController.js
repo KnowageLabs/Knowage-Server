@@ -27,7 +27,7 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	$scope.currentTarget = {};
 	$scope.selectedStep={value:0};
 	$scope.editProperty = {target:{}, perspective:{}, scorecard:{}};
-	
+	$scope.steps={stepControl:{},stepItem:[]};
 	$scope.broadcastCall=function(type){
 		$scope.$broadcast(type);
 	}
@@ -53,17 +53,21 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 	                             {label:"Author",name:"author"}];
 	
 	$scope.newScorecardFunction=function(){
-		angular.copy($scope.emptyScorecard,$scope.currentScorecard);  
+		angular.copy($scope.emptyScorecard,$scope.currentScorecard);
+		$scope.steps.stepControl.resetBreadCrumb();
+		$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.perspective.definition.name')});
 		$angularListDetail.goToDetail();
-		if ($scope.editProperty.scorecard)
-			$scope.editProperty.scorecard = undefined;
+		if ($scope.editProperty.scorecard.index)
+			angular.copy({},$scope.editProperty.scorecard);
 	};
 	
 	$scope.scorecardClickEditFunction=function(item, index){
 		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadScorecard")
-		.then(function(response){
-			$scope.editProperty.scorecard = index;
+		.then(function(response){ 
 			angular.copy($scope.parseScorecardForFrontend(response.data),$scope.currentScorecard); 
+			angular.extend($scope.editProperty.scorecard,{editedItem:angular.extend({},$scope.currentScorecard),index:index});
+			$scope.steps.stepControl.resetBreadCrumb();
+			$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.perspective.definition.name')});
 			$angularListDetail.goToDetail();
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
@@ -148,13 +152,12 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 }
 
 function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog){
-	$scope.stepItem=[{name:'scorecard definition'}];
-	
-	$scope.stepControl; 
+ 
 	$scope.criterionTypeList = [];
 	
 	$scope.cancelScorecardFunction=function(){
-		 if(true){
+		 if(($scope.editProperty.scorecard.editedItem!=undefined && !angular.equals($scope.editProperty.scorecard.editedItem,$scope.currentScorecard))
+				 || ($scope.editProperty.scorecard.editedItem==undefined && !angular.equals($scope.emptyScorecard,$scope.currentScorecard))){
 	 		var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.layer.modify.progress"))
 	        .content(sbiModule_translate.load("sbi.layer.modify.progress.message.modify"))
@@ -163,14 +166,16 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			  $mdDialog.show(confirm).then(function() {
 				  $angularListDetail.goToList();
-				  $scope.stepControl.resetBreadCrumb();
+				  $scope.steps.stepControl.resetBreadCrumb();
 				  angular.copy({},$scope.currentScorecard);
+				  angular.copy({},$scope.editProperty.scorecard);
 				  
 			  }, function() {
 			   return;
 			  });
  		}else{
  			$angularListDetail.goToList();
+ 			angular.copy({},$scope.currentScorecard);
  		} 
  	
 		
@@ -192,14 +197,18 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		
 
 			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard)
-				.then(function(response) {
-					if ($scope.editProperty.scorecard == undefined){
+				.then(function(response) {debugger
+					if ($scope.editProperty.scorecard.index == undefined){
 							$scope.currentScorecard.id = response.data.id;
 							tmpPreSaveScorecard.id = response.data.id;
 							$scope.scorecardList.push(tmpPreSaveScorecard);
+							$scope.editProperty.scorecard.editedItem=$scope.currentScorecard;
+							$scope.editProperty.scorecard.index=$scope.scorecardList.length-1;
 						}
 					else{
-							angular.copy(tmpPreSaveScorecard, $scope.scorecardList[$scope.editProperty.scorecard]);
+							angular.copy(tmpPreSaveScorecard, $scope.scorecardList[$scope.editProperty.scorecard.index]);
+							$scope.editProperty.scorecard.editedItem=$scope.currentScorecard;
+						
 						}
 					$scope.showToast(sbiModule_translate.load("sbi.glossary.success.save")); 
 				}, function(response) {
@@ -246,5 +255,12 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 		sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.generic.error")+" domains->KPI_SCORECARD_CRITE"); 
 	});
 	
-	
+	$scope.itemNameInList=function(list,item){
+		for(var i=0;i<list.length;i++){
+			if(angular.equals(list[i].name,item.name)){
+				return i;
+			}
+		}
+		return -1;
+	};
 }

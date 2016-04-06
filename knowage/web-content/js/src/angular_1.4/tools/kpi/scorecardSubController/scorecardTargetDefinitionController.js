@@ -1,4 +1,4 @@
-angular.module('scorecardManager').controller('scorecardTargetDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_config','$filter','$mdDialog','$mdToast','scorecardManager_targetUtility','scorecardManager_semaphoreUtility',scorecardTargetDefinitionControllerFunction ]);
+angular.module('scorecardManager').controller('scorecardTargetDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_config','$filter','$mdDialog','$mdToast','scorecardManager_targetUtility','scorecardManager_semaphoreUtility','$timeout',scorecardTargetDefinitionControllerFunction ]);
 
 
 angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
@@ -75,7 +75,7 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 });
 
 
-function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdDialog,$mdToast,scorecardManager_targetUtility,scorecardManager_semaphoreUtility){
+function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdDialog,$mdToast,scorecardManager_targetUtility,scorecardManager_semaphoreUtility,$timeout){
 	$scope.kpiList=[];
 	$scope.targetListAction =  [
 			           {
@@ -83,13 +83,22 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				              icon:'fa fa-trash' , 
 				              backgroundColor:'#trasparent',
 				              action : function(item,event) {
-				            	  pos = 0;
-				            	  while ($scope.currentTarget.kpis[pos].name != item.name)
-				            		  pos++;
-				            	  $scope.currentTarget.kpis.splice(pos,1);
+				            	  $scope.currentTarget.kpis.splice( $scope.currentTarget.kpis.indexOf(item),1);
+				            	  $scope.updateCriterionPriority();
 				              }
 				           }
 					];
+	
+	$scope.updateCriterionPriority=function(){
+		if( $scope.currentTarget.options.hasOwnProperty("criterionPriority") && $scope.currentTarget.options.criterionPriority.length>0){
+			for(var cp=0;cp<$scope.currentTarget.options.criterionPriority.length;cp++){
+				if($scope.itemNameInList($scope.currentTarget.kpis,$scope.currentTarget.options.criterionPriority[cp])==-1){
+					$scope.currentTarget.options.criterionPriority.splice(cp,1);
+					cp--;
+				}
+			}
+		}
+	}
 	
 	$scope.parseDate = function(date){
 		result = "";
@@ -137,6 +146,9 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		})
 		.then(function(data) {
 		angular.copy(data,$scope.currentTarget.kpis);
+		$timeout(function(){
+				$scope.updateCriterionPriority();
+		},0);
 		});
 		
 	};
@@ -169,6 +181,12 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		if ($scope.editProperty.target.index != undefined){
 			$scope.currentTarget.groupedKpis = [];
 			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget);
+			//update the perspective option criterionPriority if present
+			var critPriIndex= $scope.itemNameInList($scope.currentPerspective.options.criterionPriority,$scope.currentPerspective.targets[$scope.editProperty.target.index])
+			if(critPriIndex!=-1){
+				angular.copy($scope.currentTarget,$scope.currentPerspective.options.criterionPriority[critPriIndex]);
+			}
+			
 			angular.copy($scope.currentTarget,$scope.currentPerspective.targets[$scope.editProperty.target.index]);
 		}
 		else{
@@ -177,7 +195,7 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		}
 		angular.copy($scope.emptyTarget,$scope.currentTarget);
 
-		$scope.stepControl.prevBread();
+		$scope.steps.stepControl.prevBread();
  	});
 	
 	$scope.$on('cancelTarget', function(event, args) {
@@ -189,12 +207,12 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 			.ok(sbiModule_translate.load("sbi.general.yes"))
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			  $mdDialog.show(confirm).then(function() {
-					$scope.stepControl.prevBread();
+					$scope.steps.stepControl.prevBread();
 			  }, function() {
 			   return;
 			  });
  		}else{
- 			$scope.stepControl.prevBread();
+ 			$scope.steps.stepControl.prevBread();
  		} 
  	});
 	

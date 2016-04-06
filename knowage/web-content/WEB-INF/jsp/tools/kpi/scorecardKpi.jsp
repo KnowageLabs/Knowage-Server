@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 ng-switch="selectedStep.value"
 		 layout="column" >
 		 <md-whiteframe class="md-whiteframe-1dp" >
-			<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep.value' control='stepControl' disable-go-back="true"> </bread-crumb>
+			<bread-crumb ng-model=steps.stepItem item-name='name' selected-index='selectedStep.value' control='steps.stepControl' disable-go-back="true"> </bread-crumb>
 		 </md-whiteframe>
 			<div ng-switch-when="0" layout="column" flex ng-controller="scorecardDefinitionController">
 				<%@include	file="./scorecardTemplate/scorecardDefinitionTemplate.jsp"%>

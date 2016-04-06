@@ -16,7 +16,8 @@
 					<md-option	ng-repeat="kpi in currentTarget.kpis" ng-value="{{kpi}}">	{{kpi.name}} </md-option> 
 				</md-select> 
 			</md-input-container>
-		</div> 
+		</div>  
+		
 		<md-content layout="column" class=" md-whiteframe-3dp" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">

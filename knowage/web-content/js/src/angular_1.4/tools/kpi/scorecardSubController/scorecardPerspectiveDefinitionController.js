@@ -125,7 +125,7 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 		}
 		angular.copy($scope.emptyPerspective,$scope.currentPerspective);
 
-		$scope.stepControl.prevBread();
+		$scope.steps.stepControl.prevBread();
  	});
 	
 	$scope.$on('cancelPerspective', function(event, args) {
@@ -137,17 +137,17 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 			.ok(sbiModule_translate.load("sbi.general.yes"))
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			  $mdDialog.show(confirm).then(function() {
-					$scope.stepControl.prevBread();
+					$scope.steps.stepControl.prevBread();
 			  }, function() {
 			   return;
 			  });
  		}else{
- 			$scope.stepControl.prevBread();
+ 			$scope.steps.stepControl.prevBread();
  		} 
  	});
 	
 	$scope.addTarget=function(editTarget, index){ 
-		$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.goal.definition.name')});
+		$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.goal.definition.name')});
 		if(editTarget == undefined)
 		{
 			angular.copy($scope.emptyTarget,$scope.currentTarget);
@@ -179,7 +179,7 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 	$scope.updateCriterionPriority=function(){
 		if( $scope.currentPerspective.options.hasOwnProperty("criterionPriority") && $scope.currentPerspective.options.criterionPriority.length>0){
 			for(var cp=0;cp<$scope.currentPerspective.options.criterionPriority.length;cp++){
-				if($scope.currentPerspective.targets.indexOf($scope.currentPerspective.options.criterionPriority[cp])==-1){
+				if($scope.itemNameInList($scope.currentPerspective.targets,$scope.currentPerspective.options.criterionPriority[cp])==-1){
 					$scope.currentPerspective.options.criterionPriority.splice(cp,1);
 					cp--;
 				}
@@ -187,5 +187,6 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 		}
 	}
 
+	
 }
 

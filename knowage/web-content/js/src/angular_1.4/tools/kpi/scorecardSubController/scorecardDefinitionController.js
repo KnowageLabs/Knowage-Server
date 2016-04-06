@@ -13,7 +13,7 @@ function scorecardDefinitionControllerFunction($scope,$mdDialog, sbiModule_trans
 				angular.copy(editPerspective,$scope.currentPerspective);
 			}
 
-		$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.perspective.definition.name')});
+		$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.perspective.definition.name')});
 	};
 	 
 	
