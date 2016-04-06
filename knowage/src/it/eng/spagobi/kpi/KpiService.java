@@ -17,35 +17,7 @@
  */
 package it.eng.spagobi.kpi;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -82,13 +54,43 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -105,8 +107,6 @@ public class KpiService {
 	private static final String NEW_KPI_NAME_MANDATORY = "newKpi.name.mandatory";
 	private static final String NEW_KPI_CARDINALITY_ERROR = "newKpi.cardinality.error";
 	private static final String NEW_KPI_KPI_NAME_NOT_AVAILABLE = "newKpi.kpiNameNotAvailable";
-
-	private static final String JOB_GROUP = "KPI_SCHEDULER_GROUP";
 
 	private static Logger logger = Logger.getLogger(KpiService.class);
 
@@ -151,58 +151,51 @@ public class KpiService {
 	public Response listPlaceholderByKpi(@Context HttpServletRequest req) throws EMFUserError {
 		try {
 			String arrayOfMeasures = RestUtilities.readBody(req);
-			List<String> kpiNames = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			List<Kpi> kpiLst = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
 			Map<String, String> result = new HashMap<>();
 
 			IKpiDAO dao = getKpiDAO(req);
-			if (kpiNames != null && !kpiNames.isEmpty()) {
-				Map<String, List<String>> lst = dao.listPlaceholderByKpiList(kpiNames);
+			if (kpiLst != null && !kpiLst.isEmpty()) {
+				Map<Kpi, List<String>> lst = dao.listPlaceholderByKpiList(kpiLst);
 
-				List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
-				java.util.Set<String> keys = lst.keySet();
+				// List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
+				java.util.Set<Kpi> kpis = lst.keySet();
 
-				for (String key : keys) {
+				for (Kpi kpi : kpis) {
 					JSONArray array = new JSONArray();
-					for (Kpi kpi : kpis) {
-						if (kpi.getName().equals(key)) {
-							Kpi kpiSelected = dao.loadKpi(kpi.getId(), kpi.getVersion());
-							JSONObject obj = new JSONObject();
-							if (!kpiSelected.getPlaceholder().isEmpty()) {
-								obj = new JSONObject(kpiSelected.getPlaceholder());
-								array.put(obj);
+					Kpi kpiSelected = dao.loadKpi(kpi.getId(), kpi.getVersion());
+					JSONObject obj = new JSONObject();
+					if (!kpiSelected.getPlaceholder().isEmpty()) {
+						obj = new JSONObject(kpiSelected.getPlaceholder());
+						array.put(obj);
+					}
+					JSONObject obj2 = new JSONObject();
+					List<String> placeholderList = lst.get(kpi);
+					for (int j = 0; j < placeholderList.size(); j++) {
+						Iterator it = obj.keys();
+						// there is one and unique result
+						if (it.hasNext()) {
+							Object keyvalue = it.next();
+							if (placeholderList.get(j).equals(keyvalue)) {
+
+							} else {
+								obj2.put(placeholderList.get(j), "");
+								array.put(obj2);
 							}
-							JSONObject obj2 = new JSONObject();
-							for (int j = 0; j < lst.get(key).size(); j++) {
-								Iterator it = obj.keys();
-								// there is one and unique result
-								if (it.hasNext()) {
-									Object keyvalue = it.next();
-									if (lst.get(key).get(j).equals(keyvalue)) {
-
-									} else {
-										obj2.put(lst.get(key).get(j), "");
-										array.put(obj2);
-									}
-								} else {
-									obj2.put(lst.get(key).get(j), "");
-									array.put(obj2);
-								}
-
-							}
-
-							result.put(kpi.getName(), array.toString());
+						} else {
+							obj2.put(placeholderList.get(j), "");
+							array.put(obj2);
 						}
 
 					}
+
+					result.put(kpi.getName(), array.toString());
 				}
 
 				return Response.ok(JsonConverter.objectToJson(result, result.getClass())).build();
 			}
-		} catch (IOException e) {
+		} catch (IOException | JSONException e) {
 			logger.error(req.getPathInfo(), e);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return Response.ok().build();
 	}
@@ -279,7 +272,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -329,8 +322,8 @@ public class KpiService {
 			if (!aliasErrorMap.isEmpty()) {
 				JSONArray errors = new JSONArray();
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					errors.put(
-							new JSONObject().put("message", getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
+					errors.put(new JSONObject().put("message",
+							getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
 				}
 				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
 			}
@@ -578,6 +571,26 @@ public class KpiService {
 		return Response.ok(JsonConverter.objectToJson(schedulerList, schedulerList.getClass()).toString()).build();
 	}
 
+	@POST
+	@Path("/saveSchedulerKPI")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response saveSchedulerKPI(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String requestVal = RestUtilities.readBody(req);
+			KpiScheduler scheduler = (KpiScheduler) JsonConverter.jsonToObject(requestVal, KpiScheduler.class);
+			IKpiDAO dao = getKpiDAO(req);
+			Integer id = scheduler.getId();
+			if (id == null) {
+				id = dao.insertScheduler(scheduler);
+			} else {
+				dao.updateScheduler(scheduler);
+			}
+		} catch (Exception e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
+	}
+
 	@GET
 	@Path("/{id}/loadSchedulerKPI")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
@@ -585,9 +598,14 @@ public class KpiService {
 		IKpiDAO dao = getKpiDAO(req);
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		// loading trigger
-		// JobTrigger triggerInfo = getJobTriggerInfo(JOB_GROUP + "_" + id, JOB_GROUP, JOB_GROUP + "_" + id, "");
-		// Trigger trigger = new Trigger();
-		// trigger.setStartTime(triggerInfo.getStartTime());
+		try {
+			JobTrigger triggerInfo = getJobTriggerInfo("" + id, "KPI_SCHEDULER_GROUP", "" + id, "KPI_SCHEDULER_GROUP");
+			t.setStartTime(triggerInfo.getStartTime());
+			t.setEndTime(triggerInfo.getEndTime());
+			t.setChron(triggerInfo.getChrono() != null ? triggerInfo.getChrono().replace("'", "\"") : null);
+		} catch (Throwable e) {
+			logger.error(req.getPathInfo(), e);
+		}
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 	}
 
@@ -783,7 +801,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 *
+	 * 
 	 * @param servlet
 	 *            request
 	 * @param placeholder
