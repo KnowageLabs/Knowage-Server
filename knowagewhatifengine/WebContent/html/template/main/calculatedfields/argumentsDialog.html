@@ -9,12 +9,12 @@
     <div style="padding: 5px;">
    <md-input-container class="md-block" ng-repeat="argument in selectedMDXFunction.argument">
           <label>{{argument.expected_value}}</label>
-          <input ng-model="argument.text"> 
+          <input ng-model="argument.default_value"> 
           <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'">
        Select from table
       	</md-button>
       	 <md-button  class="md-raised" ng-click="openSavedSets()" style="float: right;" ng-show="argument.expected_value == 'Set_Expression'">
-        Open Saved Sets
+        Open Saved
       </md-button>
           <p class="md-body-1">Description : {{argument.argument_description}}</p>
         </md-input-container> 
@@ -27,7 +27,7 @@
      
       
     	<span flex></span>
-      <md-button ng-click="sendCC()" class="md-raised" ng-disabled="checkValidityArgs()" md-autofocus>
+    	<md-button ng-click="sendCC()" class="md-raised" ng-disabled="checkValidityArgs()" md-autofocus>
         OK
       </md-button>
       <md-button ng-click="closeDialog()" class="md-raised" style="margin-right:20px;" >

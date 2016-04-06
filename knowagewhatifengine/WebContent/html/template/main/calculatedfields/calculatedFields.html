@@ -59,11 +59,19 @@
         </md-list-item>
     </md-content>      
       </md-tab>
-      <md-tab label="Recent">
+     <md-tab label="Recent">
     <md-content class="md-padding">
       <md-list flex>
-        <md-list-item class="md-3-line"
-         
+        <md-list-item class="md-2-line"
+         ng-repeat="item in cookieArray"
+         ng-class="{selected:(selectedMDXFunction.name == item.name)}"
+          ng-click="selectMDXFunction(item);">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ item.name }}</h3>
+            <h4>{{  item.type }}</h4>
+             
+             <md-button class="md-secondary" ng-click="deleteSet($index,set)">Delete</md-button>
+          </div>
         </md-list-item>
     </md-content>      
       </md-tab>
