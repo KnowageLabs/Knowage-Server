@@ -61,11 +61,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		
 		<extra-button>
-		 <md-button ng-click="broadcastCall('saveTarget')" ng-if="selectedStep.value==2" >Save Goal</md-button>
-		 <md-button  ng-click="broadcastCall('cancelTarget')" ng-if="selectedStep.value==2" >Cancel</md-button>
+		 <md-button ng-click="broadcastCall('saveTarget')" ng-if="selectedStep.value==2" >{{translate.load('sbi.kbi.scorecard.goal.save')}}</md-button>
+		 <md-button  ng-click="broadcastCall('cancelTarget')" ng-if="selectedStep.value==2" >{{translate.load('sbi.browser.defaultRole.cancel')}}</md-button>
 		 
-		 <md-button  ng-click="broadcastCall('savePerspective')" ng-if="selectedStep.value==1" >Save Perspective</md-button>
-		 <md-button  ng-click="broadcastCall('cancelPerspective')" ng-if="selectedStep.value==1" >Cancel</md-button>
+		 <md-button  ng-click="broadcastCall('savePerspective')" ng-if="selectedStep.value==1" >{{translate.load('sbi.kbi.scorecard.perspective.save')}}</md-button>
+		 <md-button  ng-click="broadcastCall('cancelPerspective')" ng-if="selectedStep.value==1" >{{translate.load('sbi.browser.defaultRole.cancel')}}</md-button>
 		</extra-button>
 		
 				

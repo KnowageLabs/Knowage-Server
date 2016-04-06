@@ -37,7 +37,7 @@
 				        <md-menu-item>
 				          <md-button ng-click="deletePerspective(perspective, $index)">
 				            <md-icon md-font-icon="fa fa-trash"></md-icon>
-				            {{translate.load('cache.manager.delete')}}
+				            {{translate.load('sbi.generic.delete')}}
 				          </md-button>
 				        </md-menu-item>
 				   </md-menu-content>

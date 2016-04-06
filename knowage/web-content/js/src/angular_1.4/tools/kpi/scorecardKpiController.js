@@ -48,9 +48,9 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog,scorecardManager_targetUtility,scorecardManager_perspectiveUtility){
 
 	$scope.scorecardColumnsList=[
-	                             {label:"Name",name:"name"},
-	                             {label:"Data",name:"date"},
-	                             {label:"Author",name:"author"}];
+	                             {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
+	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"date"},
+	                             {label:sbiModule_translate.load("sbi.generic.author"),name:"author"}];
 	
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);
