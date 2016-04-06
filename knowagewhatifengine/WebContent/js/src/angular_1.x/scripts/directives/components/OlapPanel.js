@@ -580,7 +580,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     	
     	if($scope.selectedMDXFunction != null){
     		for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
-        		if($scope.selectedMDXFunction.argument[i].text == undefined || $scope.selectedMDXFunction.argument[i].text =="" ){
+        		if($scope.selectedMDXFunction.argument[i].default_value == undefined || $scope.selectedMDXFunction.argument[i].default_value =="" ){
         			return true;
         		}else{
             		return false;
@@ -643,20 +643,20 @@ $scope.openSavedSets = function(){
         value +=  ","+ $scope.members[i].uniqueName ;	
         }
 		value +="}"
-		$scope.selectedMDXFunction.argument[index].text = value;
+		$scope.selectedMDXFunction.argument[index].default_value = value;
 		
 		}else if(obj.expected_value == "Level_Expression"){
 			for(var i =0;i< $scope.members.length;i++){
 		        value = $scope.members[i].level ;	
 		        }
-			$scope.selectedMDXFunction.argument[index].text = value;
+			$scope.selectedMDXFunction.argument[index].default_value = value;
 			
 		}
 		else{
 			for(var i =0;i< $scope.members.length;i++){
 		        value = $scope.members[i].uniqueName ;	
 		        }
-			$scope.selectedMDXFunction.argument[index].text = value;
+			$scope.selectedMDXFunction.argument[index].default_value = value;
 		}
 		$scope.members = [];
 		$scope.sendModelConfig($scope.modelConfig);
@@ -686,33 +686,51 @@ $scope.openSavedSets = function(){
 		
 	}
 	
+
+	
+	
 $scope.sendCC = function() {
 	var value = $scope.selectedMDXFunction.name + "(";
 	
 	if ($scope.selectedMDXFunction.argument.length>=1) {
-		value+=$scope.selectedMDXFunction.argument[0].text;
+		value+=$scope.selectedMDXFunction.argument[0].default_value;
 	}
 	for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
-		if($scope.selectedMDXFunction.argument[i].text != undefined){
-			value+=","+$scope.selectedMDXFunction.argument[i].text;
+		if($scope.selectedMDXFunction.argument[i].default_value != undefined){
+			value+=","+$scope.selectedMDXFunction.argument[i].default_value;
 		}
 	}
 	value +=")";
 	$scope.finalFormula = value;
 	if($scope.selectedMDXFunction.output != "Set"){
-		console.log("NAMED MEMBER");
-		
-		var namedMember = {
+	$scope.addCC();
+	toastr.info('Click ok to save also<br /><br /><md-button class="md-raised">OK</md-button>' , { 
+		  allowHtml: true,
+		  timeOut: 10000,
+		  extendedTimeOut: 3000,
+		  
+		  onTap: function() {
+			 
+			  
+			  console.log("NAMED MEMBER");
+				var namedMember = {
+						
+						'name':$scope.selectedMDXFunction.label,
+					    'value': $scope.finalFormula,
+					    'type': 'Member'
+					}
 				
-				'name':$scope.selectedMDXFunction.label,
-			    'value': $scope.finalFormula,
-			    'type': 'Member'
-			}
+				$scope.cookieArray.push(namedMember);
+				$cookies.putObject('data',$scope.cookieArray);
+				sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
+				toastr.clear();
+			  
+		  }
+		  
+		});
 		
-		$scope.cookieArray.push(namedMember);
-		$cookies.putObject('data',$scope.cookieArray);
 		
-		//$scope.addCC();
+			
 		
 	}else{
 		console.log("NAMED SET");
@@ -727,8 +745,9 @@ $scope.sendCC = function() {
 		
 		$scope.cookieArray.push(namedSet);
 		$cookies.putObject('data',$scope.cookieArray);
+		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
 	}
-	$scope.selectedMDXFunction = null;
+	//$scope.selectedMDXFunction = null;
 	$mdDialog.hide();
 	}
 	
@@ -745,8 +764,7 @@ $scope.sendCC = function() {
 	}
 	
 	$scope.setIt = function(index,set) {
-		
-		$scope.selectedMDXFunction.argument[0].text=set.value;
+		$scope.selectedMDXFunction.argument[0].default_value=set.value;
 		$scope.openArgumentsdialog();
 		
 		}
@@ -757,7 +775,7 @@ $scope.sendCC = function() {
 		$scope.cookieArray.splice(index,1);
 		$cookies.putObject('data',$scope.cookieArray);
 		$scope.cookieArray = $cookies.getObject('data');
-		$scope.openSavedSets();
+		
 		}
 
 
