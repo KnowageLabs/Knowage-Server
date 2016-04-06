@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			alert("[homeBase.execCrossNavigation]: function execCrossNavigation is not defined in page [" + iframeDocElement.src + "] contained in iframe [iframeDoc]");
 			return;
 		}
-			
+		
 		//alert("[homeBase.execCrossNavigation]: execCrossNavigation is equal to [" + iframeDocElementWindow.execCrossNavigation + "]");
 		iframeDocElementWindow.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
 	};

@@ -60,9 +60,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/cross-definition.css">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css"> --%>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/crossnavigation/cross-definition.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cross/outpars/ManageOutputParameters.js"></script>
 <script>
 var objectId = <%=objectId%>;
@@ -71,15 +71,13 @@ var objectId = <%=objectId%>;
 
 <body class="bodyStyle" ng-app="crossOutPars" id="ng-app" >
 	<div layout="row" layout-align="end center">
-		<a href='<%=backUrl%>'>
-			<md-icon md-font-icon="fa fa-times fa-2x" ></md-icon>
-		</a>
+		
 	</div>
-	<angular-list-detail ng-controller="outputParametersController as ctrl" new-function="ctrl.newFunc" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc" >
-       <list label="translate.load('sbi.outputparameter.lst')"  > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
+	<angular-list-detail ng-controller="outputParametersController as ctrl"   >
+       <list label="translate.load('sbi.outputparameter.lst')" new-function="ctrl.newFunc" > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
 			<!-- parameters list -->
 			<angular-table 
-				layout-fill
+				flex
 				id="dataSourceList"
 				ng-model="ctrl.list"
 				columns="config.list.columns"
@@ -93,7 +91,13 @@ var objectId = <%=objectId%>;
 			</div>
 		</list>
 		
-        <detail label="ctrl.detail.title || ''" > <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+		<extra-button>
+			  <a href='<%=backUrl%>'>
+				<md-icon md-font-icon="fa fa-arrow-left" ></md-icon>
+			</a>	
+		</extra-button>
+		
+        <detail label="ctrl.detail.title || ''" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc"> <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			
 				<div layout="column" layout-wrap>
 					<md-input-container > <label>{{translate.load("sbi.crossnavigation.parname.lbl");}}</label>

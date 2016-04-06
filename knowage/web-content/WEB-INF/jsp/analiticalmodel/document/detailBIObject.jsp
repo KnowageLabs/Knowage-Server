@@ -1066,12 +1066,11 @@ function saveDocument(goBack) {
 				<!-- ${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=ManageCrossOutParamsPage -->
 					<%
 					Map editOutputParametersMap = new HashMap();
-					editOutputParametersMap.put(SpagoBIConstants.PAGE,
-							SpagoBIConstants.MANAGE_CROSS_OUT_PARAMS_PAGE);
+					editOutputParametersMap.put(SpagoBIConstants.PAGE, SpagoBIConstants.MANAGE_CROSS_OUT_PARAMS_PAGE);
 					editOutputParametersMap.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
 					String editOutputParameters = urlBuilder.getUrl(request, editOutputParametersMap);
 					%>
-					<a href="<%=editOutputParameters%>">
+					<a href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/outPars/manageOutputParameters.jsp?OBJECT_ID=<%=obj.getId().toString()%>">
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "sbi.detailbiobj.editOutputParameters" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/copytree.gif", currTheme)%>' 

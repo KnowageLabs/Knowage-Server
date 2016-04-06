@@ -2,8 +2,14 @@
 
 
 angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','sbiModule','angular-list-detail','angular_list'])
-.controller('outputParametersController'
-		,['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast','$location',function($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast, $location){
+.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}])
+.controller('outputParametersController',['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast','$location',outputParametersControllerFunction]);
+		
+		
+		function outputParametersControllerFunction($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast, $location){
 			var ctr = this;
 			var s = $scope;
 			s.translate = sbiModule_translate;
@@ -130,4 +136,4 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 					}
 				});
 			};
-		}]);
+		};

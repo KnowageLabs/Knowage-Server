@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/cross-definition.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/crossnavigation/cross-definition.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/cross/definition/CrossDefinition.js"></script>
 
 </head>
@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <list label="translate.load('sbi.crossnavigation.lst')" new-function="ctrl.newNavigation" > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
 			<!-- navigations list -->
 			<angular-table 
-					layout-fill
+					flex
 					id="dataSourceList"
 					ng-model="ctrl.list"
 					columns="ctrl.navigationList.columns"
