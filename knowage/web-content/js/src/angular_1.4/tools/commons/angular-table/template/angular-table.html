@@ -62,7 +62,7 @@
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow">
 
 <td ng-repeat="column in tableColumns" ng-click="clickItem(row,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
-		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="getColumnValue(row,column.name)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
 		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		
 		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>

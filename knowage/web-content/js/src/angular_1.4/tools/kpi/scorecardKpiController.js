@@ -13,7 +13,7 @@ scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 
 
 scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdToast',scorecardMasterControllerFunction ]);
-scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog','scorecardManager_targetUtility','scorecardManager_perspectiveUtility',scorecardListControllerFunction ]);
+scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog','scorecardManager_targetUtility','scorecardManager_perspectiveUtility','$filter',scorecardListControllerFunction ]);
 scorecardApp.controller('scorecardDetailController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog',scorecardDetailControllerFunction ]);
 
 function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdToast){
@@ -45,12 +45,13 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	
 }
 
-function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog,scorecardManager_targetUtility,scorecardManager_perspectiveUtility){
+function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdDialog,scorecardManager_targetUtility,scorecardManager_perspectiveUtility,$filter){
 
-	$scope.scorecardColumnsList=[
+$scope.scorecardColumnsList=[
 	                             {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
-	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"date"},
+	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"date",transformer:function(data){return $filter('date')(data, "dd/MM/yyyy")}},
 	                             {label:sbiModule_translate.load("sbi.generic.author"),name:"author"}];
+	
 	
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);

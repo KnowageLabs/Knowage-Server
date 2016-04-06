@@ -127,6 +127,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.editable = (col[i].editable && scope.allowEdit) || false;
                                                     tmpColData.comparatorFunction=col[i].comparatorFunction;
                                                     tmpColData.comparatorColumn=col[i].comparatorColumn;
+                                                    tmpColData.transformer=col[i].transformer;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
@@ -134,7 +135,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.size = "";
                                                     tmpColData.editable = scope.allowEdit || false;
                                                     tmpColData.comparatorFunction=col[i].comparatorFunction;
-                                                    tmpColData.comparatorColumn=col[i].comparatorColumn;
+                                                    tmpColData.transformer=col[i].transformer;
                                                 }
 
                                                 scope.tableColumns.push(tmpColData);
@@ -701,21 +702,31 @@ function TableHeaderControllerFunction($scope, $timeout) {
         }
     };
     
-    $scope.getColumnValue=function(row,columnName){
+    $scope.getColumnValue=function(row,columnName,columnTransformationText){
     	
     	var splname=columnName.split(".");
-    	
+    	var toReturn="";
     	if(splname.length>1){
     		var tmpVal=row[splname[0]];
     		for(var i=1;i<splname.length;i++){
     			if(tmpVal!=null && tmpVal!=undefined){
-    				 tmpVal=tmpVal[splname[i]]
-    			}else{return "";}
+    				 tmpVal=tmpVal[splname[i]];
+    			}
+//    			else{
+//    				return "";
+//    				}
     			
     		}
-    		return tmpVal;
+    		toReturn= tmpVal;
     	}else{
-    		return row[columnName];
+    		toReturn= row[columnName];
+    	}
+    	
+    	if(columnTransformationText==undefined){
+    		return toReturn;
+    	}else{
+    		//apply filter
+    		return columnTransformationText(toReturn);
     	}
     }
 }
