@@ -23,14 +23,15 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class CronExpression {
+	private static final String DEFAULT_EXPRESSION = "{'type':'single'}";
 	String expression;
 
 	public CronExpression() {
 		// setExpression("single{}");
-		setExpression("{'type': 'single'}");
+		setExpression(DEFAULT_EXPRESSION);
 	}
 
 	public CronExpression(String expression) {
@@ -47,7 +48,7 @@ public class CronExpression {
 	}
 
 	public boolean isSimpleExpression() {
-		if (expression.indexOf("'type':'single'") != -1 || "single{}".equalsIgnoreCase(expression)) {
+		if (expression.indexOf(DEFAULT_EXPRESSION) != -1 || "single{}".equalsIgnoreCase(expression)) {
 			return true;
 		}
 		return false;
