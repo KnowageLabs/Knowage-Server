@@ -62,6 +62,9 @@ public class ResultResource extends AbstractDataMiningEngineService {
 
 		// Instantiate an R or a Python executor depending on LANGUAGE tag in xml file
 		IDataMiningExecutor executor = null;
+		if (dataMiningEngineInstance.getLanguage() == null) {
+			dataMiningEngineInstance.setLanguage("R");
+		}
 		if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("Python")) {
 			executor = new DataMiningPythonExecutor(dataMiningEngineInstance, getUserProfile());
 		} else if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("R")) {
