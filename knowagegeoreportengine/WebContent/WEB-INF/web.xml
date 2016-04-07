@@ -34,6 +34,12 @@
     <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
   </listener>
   <servlet>
+		<servlet-name>EngineTestServlet</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.utilities.engines.EngineTestServlet
+		</servlet-class>
+	</servlet>
+  <servlet>
     <servlet-name>ConfigServlet</servlet-name>
     <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
     <init-param>
@@ -59,6 +65,10 @@
   <servlet-mapping>
     <servlet-name>Resteasy</servlet-name>
     <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+		<servlet-name>EngineTestServlet</servlet-name>
+		<url-pattern>/Test</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>

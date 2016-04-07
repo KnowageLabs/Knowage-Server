@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,6 @@ import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +34,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -55,7 +53,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 	/**
 	 * TODO Tutte le pagine dell'engine
-	 * 
+	 *
 	 * */
 	static {
 		pages = new HashMap<String, JSONObject>();
@@ -127,26 +125,28 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 	}
 
-	@GET
-	@Path("/executeTest")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String testAction(@Context HttpServletResponse response) {
-
-		logger.debug("IN");
-
-		try {
-			JSONObject obj = new JSONObject();
-			try {
-				obj.put("result", "ok");
-			} catch (JSONException e) {
-				logger.error("Error building the success string");
-				throw new SpagoBIRuntimeException("Error building the success string");
-			}
-			String successString = obj.toString();
-			return successString;
-		} finally {
-			logger.debug("OUT");
-		}
-	}
+	// executeTest is substituted from the servelet Test like all External Engines (creates a new session for the engine)
+	// @GET
+	// @Path("/executeTest")
+	// @Produces(MediaType.APPLICATION_JSON)
+	// // @UserConstraint(functionalities = { "publicFunctionality" })
+	// public String testAction(@Context HttpServletResponse response) {
+	//
+	// logger.debug("IN");
+	//
+	// try {
+	// JSONObject obj = new JSONObject();
+	// try {
+	// obj.put("result", "ok");
+	// } catch (JSONException e) {
+	// logger.error("Error building the success string");
+	// throw new SpagoBIRuntimeException("Error building the success string");
+	// }
+	// String successString = obj.toString();
+	// return successString;
+	// } finally {
+	// logger.debug("OUT");
+	// }
+	// }
 
 }
