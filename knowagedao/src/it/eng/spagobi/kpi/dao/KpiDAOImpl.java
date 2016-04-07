@@ -1644,6 +1644,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						.setProjection(
 								Projections.projectionList().add(Property.forName("sbiKpiKpis.sbiKpiKpiId.id").as("id"))
 										.add(Property.forName("sbiKpiKpis.sbiKpiKpiId.version").as("version"))
+										.add(Property.forName("sbiKpiKpis.placeholder").as("placeholder")).add(Property.forName("sbiKpiKpis.name").as("name"))
 										.add(Property.forName("sbiKpiAlias.name").as("measure"))).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 				return measures;
 			}
@@ -1654,10 +1655,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Map<Kpi, List<String>> ret = new HashMap<>();
 		for (Map<String, Object> o : measures) {
 			String measure = (String) o.get("measure");
+			String name = (String) o.get("name");
+			String placeholder = (String) o.get("placeholder");
 			Integer kpiId = (Integer) o.get("id");
 			Integer kpiVersion = (Integer) o.get("version");
 			Kpi kpi = new Kpi(kpiId, kpiVersion);
 			if (!ret.containsKey(kpi)) {
+				kpi.setName(name);
+				kpi.setPlaceholder(placeholder);
 				ret.put(kpi, new ArrayList<String>());
 			}
 			ret.get(kpi).add(measure);
