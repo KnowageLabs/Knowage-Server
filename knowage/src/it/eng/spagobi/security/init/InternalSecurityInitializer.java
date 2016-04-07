@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,10 +57,12 @@ public class InternalSecurityInitializer implements InitializerIFace {
 
 	static private Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
 
+	@Override
 	public SourceBean getConfig() {
 		return _config;
 	}
 
+	@Override
 	public void init(SourceBean config) {
 
 		logger.debug("IN");
@@ -497,6 +499,8 @@ public class InternalSecurityInitializer implements InitializerIFace {
 
 			if (authorizations == null || authorizations.isEmpty()) {
 				logger.debug("Initializer inserts default authorization");
+
+				Set<String> productTypes = loadProductTypes();
 				for (SourceBean defaultAuthSB : defaultAuthorizationsSB) {
 					String authName = (String) defaultAuthSB.getAttribute("authorizationName");
 					logger.debug("insert " + authName);
@@ -510,12 +514,16 @@ public class InternalSecurityInitializer implements InitializerIFace {
 						throw new SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no product type set.");
 					}
 
-					if (!authorizationsFound.contains(authName + "-" + productType)) {
-						DAOFactory.getRoleDAO().insertAuthorization(authName, productType);
-						logger.debug("Succesfully inserted authorization [" + authName + "] for product Type [" + productType + "]");
-					} else {
-						logger.debug("Not inserted authorization [" + authName + "] for product Type [" + productType + "] because already present.");
+					if (productTypes.contains(productType)) {
+						if (!authorizationsFound.contains(authName + "-" + productType)) {
+							DAOFactory.getRoleDAO().insertAuthorization(authName, productType);
+							logger.debug("Succesfully inserted authorization [" + authName + "] for product Type [" + productType + "]");
+						} else {
+							logger.debug("Not inserted authorization [" + authName + "] for product Type [" + productType + "] because already present.");
 
+						}
+					} else {
+						logger.debug("Not inserted authorization [" + authName + "]. Product Type [" + productType + "] is not registered.");
 					}
 				}
 			}
@@ -529,4 +537,16 @@ public class InternalSecurityInitializer implements InitializerIFace {
 		return;
 	}
 
+	private Set<String> loadProductTypes() {
+		List<SbiProductType> sbiProductTypes = DAOFactory.getProductTypeDAO().loadAllProductType();
+		if (sbiProductTypes != null && !sbiProductTypes.isEmpty()) {
+			Set<String> productTypes = new HashSet<String>(sbiProductTypes.size());
+			for (SbiProductType sbiProductType : sbiProductTypes) {
+				productTypes.add(sbiProductType.getLabel());
+			}
+			return productTypes;
+		} else {
+			return new HashSet<String>(0);
+		}
+	}
 }
