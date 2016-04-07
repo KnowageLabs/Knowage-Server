@@ -26,12 +26,12 @@ import org.json.JSONObject;
  * 
  */
 public class CronExpression {
-	private static final String DEFAULT_EXPRESSION = "{'type':'single'}";
+	private static final String TYPE_SINGLE = "{'type':'single'}";
 	String expression;
 
 	public CronExpression() {
 		// setExpression("single{}");
-		setExpression(DEFAULT_EXPRESSION);
+		setExpression(TYPE_SINGLE);
 	}
 
 	public CronExpression(String expression) {
@@ -48,7 +48,7 @@ public class CronExpression {
 	}
 
 	public boolean isSimpleExpression() {
-		if (expression.indexOf(DEFAULT_EXPRESSION) != -1 || "single{}".equalsIgnoreCase(expression)) {
+		if (expression.indexOf(TYPE_SINGLE) != -1 || "single{}".equalsIgnoreCase(expression)) {
 			return true;
 		}
 		return false;
