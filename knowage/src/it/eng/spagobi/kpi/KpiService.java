@@ -150,46 +150,31 @@ public class KpiService {
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listPlaceholderByKpi(@Context HttpServletRequest req) throws EMFUserError {
 		try {
-			String arrayOfMeasures = RestUtilities.readBody(req);
-			List<Kpi> kpiLst = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
+			JSONArray arrayOfKpi = RestUtilities.readBodyAsJSONArray(req);
+			List<Kpi> kpiLst = new ArrayList<>();
+			for (int i = 0; i < arrayOfKpi.length(); i++) {
+				JSONObject kpiKey = arrayOfKpi.getJSONObject(i);
+				kpiLst.add(new Kpi(kpiKey.getInt("id"), kpiKey.getInt("version")));
+			}
 			Map<String, String> result = new HashMap<>();
 
 			IKpiDAO dao = getKpiDAO(req);
 			if (kpiLst != null && !kpiLst.isEmpty()) {
 				Map<Kpi, List<String>> lst = dao.listPlaceholderByKpiList(kpiLst);
 
-				// List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
-				java.util.Set<Kpi> kpis = lst.keySet();
-
-				for (Kpi kpi : kpis) {
-					JSONArray array = new JSONArray();
-					Kpi kpiSelected = dao.loadKpi(kpi.getId(), kpi.getVersion());
-					JSONObject obj = new JSONObject();
-					if (!kpiSelected.getPlaceholder().isEmpty()) {
-						obj = new JSONObject(kpiSelected.getPlaceholder());
-						array.put(obj);
+				for (Entry<Kpi, List<String>> keyValue : lst.entrySet()) {
+					JSONArray jsonPlaceholdersWithValue = new JSONArray();
+					Kpi kpi = keyValue.getKey();
+					List<String> placeholders = keyValue.getValue();
+					JSONObject placeholderValues = new JSONObject();
+					if (!kpi.getPlaceholder().isEmpty()) {
+						placeholderValues = new JSONObject(kpi.getPlaceholder());
 					}
-					JSONObject obj2 = new JSONObject();
-					List<String> placeholderList = lst.get(kpi);
-					for (int j = 0; j < placeholderList.size(); j++) {
-						Iterator it = obj.keys();
-						// there is one and unique result
-						if (it.hasNext()) {
-							Object keyvalue = it.next();
-							if (placeholderList.get(j).equals(keyvalue)) {
-
-							} else {
-								obj2.put(placeholderList.get(j), "");
-								array.put(obj2);
-							}
-						} else {
-							obj2.put(placeholderList.get(j), "");
-							array.put(obj2);
-						}
-
+					for (String placeholder : placeholders) {
+						String value = placeholderValues.optString(placeholder);
+						jsonPlaceholdersWithValue.put(new JSONObject().put(placeholder, value));
 					}
-
-					result.put(kpi.getName(), array.toString());
+					result.put(kpi.getName(), jsonPlaceholdersWithValue.toString());
 				}
 
 				return Response.ok(JsonConverter.objectToJson(result, result.getClass())).build();
