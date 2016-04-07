@@ -910,10 +910,18 @@ Ext
 										}
 										else {
 											if (values.url !== "" && values.url !== null && values.url !== undefined){
+												// external engine: if url contains /api/.... (ie: /knowagegeoreportengine/api/1.0/pages/execute)
+												// clean the url to call the specific Test servlet (ie: /knowagegeoreportengine/Test)
+												var baseUrlReturn = values.url;
+												var restURLPos = baseUrlReturn.indexOf("/api/");
+												if (restURLPos >= 0)
+													baseUrlReturn = baseUrlReturn.substring(0, restURLPos + 1);
+												baseUrlReturn += "Test?";
 												//call url for testing correct webapp presence
 												Ext.Ajax.request({
-													url : values.url +"Test",
+//													url : values.url +"Test",
 //													url : values.url,
+													url : baseUrlReturn,
 													params : params,
 													method : 'GET',
 													success : function(response, options) {
