@@ -504,7 +504,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 	function updateChoroplethLegendGradient(numberGradient){
 		var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
-		var gradienti= grad.rgb(numberGradient);
+		var gradienti= grad.rgb(numberGradient==1?2:numberGradient); // ternary operator required to handle single line dataset
 		tmtz.legendItem.choroplet.length=0;
 		for(var i=0;i<gradienti.length;i++){
 			var  tmpGrad={};
