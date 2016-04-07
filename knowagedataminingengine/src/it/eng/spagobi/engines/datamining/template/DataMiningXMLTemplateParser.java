@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,6 +45,9 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String TAG_OUTPUT = "OUTPUT";
 	public static String TAG_COMMANDS = "COMMANDS";
 	public static String TAG_COMMAND = "COMMAND";
+	public static String TAG_LANGUAGE = "LANGUAGE";
+
+	public static String LANGUAGE_ATTRIBUTE_NAME = "name";
 
 	public static String SCRIPT_ATTRIBUTE_MODE = "mode";
 	public static String SCRIPT_ATTRIBUTE_NAME = "name";
@@ -83,7 +86,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String PROP_PARAMETER_ALIAS = "as";
 	public static String TAG_PARAMETERS = "PARAMETERS";
 	public static String TAG_PARAMETER = "PARAMETER";
-	
+
 	public static String TAG_VARIABLES = "VARIABLES";
 	public static String TAG_VARIABLE = "VARIABLE";
 	public static String VARIABLE_ATTRIBUTE_NAME = "name";
@@ -106,6 +109,16 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 			logger.debug("Starting template parsing....");
 
 			toReturn = new DataMiningTemplate();
+
+			SourceBean languageSB = (SourceBean) template.getAttribute(TAG_LANGUAGE);
+			if (languageSB != null) {
+				String language = (String) languageSB.getAttribute(LANGUAGE_ATTRIBUTE_NAME);
+				if (!(language.equals("R") || language.equals("Python"))) {
+					logger.debug("language not set or set to a not valid value, forced to default (R)");
+					language = "R";
+				}
+				toReturn.setLanguage(language);
+			}
 
 			SourceBean scriptsSB = (SourceBean) template.getAttribute(TAG_SCRIPTS);
 			if (scriptsSB != null) {
@@ -184,7 +197,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 								String canUpload = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_CANUPLOAD);
 								if (canUpload != null && canUpload.equals("true")) {
 									ftds.setCanUpload(true);
-								}else{
+								} else {
 									ftds.setCanUpload(false);
 								}
 							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS)) {
@@ -251,7 +264,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 									out.setOuputLabel(outputLabel);
 									String outputFunction = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_FUNCTION);
 									out.setOutputFunction(outputFunction);
-									
+
 									SourceBean varSB = (SourceBean) outputSB.getAttribute(TAG_VARIABLES);
 									if (varSB != null) {
 
@@ -260,7 +273,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 										if (variablesListSB != null && variablesListSB.size() != 0) {
 											for (Iterator iterator3 = variablesListSB.iterator(); iterator3.hasNext();) {
 												SourceBean variableSB = (SourceBean) iterator3.next();
-												Variable var= new Variable();
+												Variable var = new Variable();
 												String name = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_NAME);
 												var.setName(name);
 												String def = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_DEFAULT);
@@ -285,7 +298,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 							if (variablesListSB != null && variablesListSB.size() != 0) {
 								for (Iterator iterator2 = variablesListSB.iterator(); iterator2.hasNext();) {
 									SourceBean variableSB = (SourceBean) iterator2.next();
-									Variable var= new Variable();
+									Variable var = new Variable();
 									String name = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_NAME);
 									var.setName(name);
 									String def = (String) variableSB.getAttribute(VARIABLE_ATTRIBUTE_DEFAULT);
@@ -338,19 +351,12 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	}
 
 	/*
-	 * private void setProfilingUserAttributes(SourceBean template,
-	 * DataMiningTemplate toReturn) { SourceBean dataAccessSB = (SourceBean)
-	 * template.getAttribute( TAG_DATA_ACCESS ); logger.debug(TAG_DATA_ACCESS +
-	 * ": " + dataAccessSB); List<String> attributes = new ArrayList<String>();
-	 * if (dataAccessSB != null) { List attributesSB =
-	 * dataAccessSB.getAttributeAsList(TAG_USER_ATTRIBUTE); Iterator it =
-	 * attributesSB.iterator(); while (it.hasNext()) { SourceBean attributeSB =
-	 * (SourceBean) it.next(); logger.debug("Found " + TAG_USER_ATTRIBUTE +
-	 * " definition :" + attributeSB); String name = (String)
-	 * attributeSB.getAttribute(PROP_USER_ATTRIBUTE_NAME);
-	 * Assert.assertNotNull(name, "Missing [" + PROP_PARAMETER_NAME +
-	 * "] attribute in user profile attribute"); attributes.add(name); } }
-	 * toReturn.setProfilingUserAttributes(attributes); }
+	 * private void setProfilingUserAttributes(SourceBean template, DataMiningTemplate toReturn) { SourceBean dataAccessSB = (SourceBean) template.getAttribute(
+	 * TAG_DATA_ACCESS ); logger.debug(TAG_DATA_ACCESS + ": " + dataAccessSB); List<String> attributes = new ArrayList<String>(); if (dataAccessSB != null) {
+	 * List attributesSB = dataAccessSB.getAttributeAsList(TAG_USER_ATTRIBUTE); Iterator it = attributesSB.iterator(); while (it.hasNext()) { SourceBean
+	 * attributeSB = (SourceBean) it.next(); logger.debug("Found " + TAG_USER_ATTRIBUTE + " definition :" + attributeSB); String name = (String)
+	 * attributeSB.getAttribute(PROP_USER_ATTRIBUTE_NAME); Assert.assertNotNull(name, "Missing [" + PROP_PARAMETER_NAME +
+	 * "] attribute in user profile attribute"); attributes.add(name); } } toReturn.setProfilingUserAttributes(attributes); }
 	 */
 
 	private static String getBeanValue(String tag, SourceBean bean) {

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,23 +47,23 @@ import org.rosuda.REngine.REngineException;
 import commonj.work.WorkException;
 import commonj.work.WorkItem;
 
-public class DataMiningExecutor {
-	static private Logger logger = Logger.getLogger(DataMiningExecutor.class);
+public class DataMiningRExecutor implements IDataMiningExecutor {
+	static private Logger logger = Logger.getLogger(DataMiningRExecutor.class);
 
 	private REngine re;
 	private IEngUserProfile profile;
 
-	private final CommandsExecutor commandsExecutor;
-	private final DatasetsExecutor datasetsExecutor;
-	private final OutputExecutor outputExecutor;
-	private final ScriptExecutor scriptExecutor;
+	private final RCommandsExecutor commandsExecutor;
+	private final RDatasetsExecutor datasetsExecutor;
+	private final ROutputExecutor outputExecutor;
+	private final RScriptExecutor scriptExecutor;
 
-	public DataMiningExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
+	public DataMiningRExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		super();
-		commandsExecutor = new CommandsExecutor(dataminingInstance, profile);
-		datasetsExecutor = new DatasetsExecutor(dataminingInstance, profile);
-		outputExecutor = new OutputExecutor(dataminingInstance, profile);
-		scriptExecutor = new ScriptExecutor(dataminingInstance, profile);
+		commandsExecutor = new RCommandsExecutor(dataminingInstance, profile);
+		datasetsExecutor = new RDatasetsExecutor(dataminingInstance, profile);
+		outputExecutor = new ROutputExecutor(dataminingInstance, profile);
+		scriptExecutor = new RScriptExecutor(dataminingInstance, profile);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class DataMiningExecutor {
 			logger.error("Cannot load R");
 			return;
 		}
-		commandsExecutor.setRe(re);
+		// commandsExecutor.setRe(re);
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
@@ -116,7 +116,7 @@ public class DataMiningExecutor {
 		}
 		re.parseAndEval("setwd(\"" + DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH + "\")");
 		logger.debug("Set working directory");
-		commandsExecutor.setRe(re);
+		// commandsExecutor.setRe(re);
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
@@ -234,12 +234,12 @@ public class DataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 *
-	 *
+	 * 
+	 * 
 	 * protected void loadUserWorkSpace() throws IOException {
-	 *
+	 * 
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 *
+	 * 
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

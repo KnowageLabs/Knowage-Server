@@ -20,7 +20,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
-import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +77,7 @@ public class ExternalResource extends AbstractDataMiningEngineService {
 		}
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 
-		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
+		DataMiningRExecutor executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
 		try {
 			UserProfile profile = getUserProfile();
 			logger.debug("Got user profile");

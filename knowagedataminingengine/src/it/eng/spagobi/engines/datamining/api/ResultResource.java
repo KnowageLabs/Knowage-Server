@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,8 +20,10 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.compute.DataMiningPythonExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
-import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.compute.IDataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
@@ -45,9 +47,9 @@ public class ResultResource extends AbstractDataMiningEngineService {
 
 	/**
 	 * Service to get Result
-	 * 
+	 *
 	 * @return
-	 * 
+	 *
 	 */
 	@GET
 	@Path("/{command}/{output}/{rerun}")
@@ -58,7 +60,17 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
 
-		DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
+		// Instantiate an R or a Python executor depending on LANGUAGE tag in xml file
+		IDataMiningExecutor executor = null;
+		if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("Python")) {
+			executor = new DataMiningPythonExecutor(dataMiningEngineInstance, getUserProfile());
+		} else if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("R")) {
+			executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
+		} else {
+			logger.debug("Unknown language specified, setting to default: R");
+			executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
+
+		}
 
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
@@ -102,15 +114,16 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		}
 
 		logger.debug("OUT");
+		// System.out.println("OUTPUTOFEXECUTION=" + outputOfExecution);
 		return outputOfExecution;
 
 	}
 
 	/**
 	 * Checks whether the result panel has to be displayed ad first execution
-	 * 
+	 *
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@GET
 	@Path("/needsResultAtForstExec")

@@ -39,8 +39,8 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 
-public class OutputExecutor {
-	static private Logger logger = Logger.getLogger(OutputExecutor.class);
+public class ROutputExecutor {
+	static private Logger logger = Logger.getLogger(ROutputExecutor.class);
 
 	private static final String OUTPUT_PLOT_EXTENSION = "png";
 	private static final String OUTPUT_PLOT_IMG = "png";
@@ -49,7 +49,7 @@ public class OutputExecutor {
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 
-	public OutputExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
+	public ROutputExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}
@@ -62,7 +62,7 @@ public class OutputExecutor {
 		this.re = re;
 	}
 
-	protected DataMiningResult evalOutput(Output out, ScriptExecutor scriptExecutor) throws Exception {
+	protected DataMiningResult evalOutput(Output out, RScriptExecutor scriptExecutor) throws Exception {
 		logger.debug("IN");
 		// output -->if image and function --> execute function then prepare
 		// output

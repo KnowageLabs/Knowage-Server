@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -78,7 +78,7 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
-			if(commands != null){
+			if (commands != null) {
 				for (Iterator it = commands.iterator(); it.hasNext();) {
 					DataMiningCommand cmd = (DataMiningCommand) it.next();
 					if (cmd.getName().equals(commandName)) {
@@ -108,7 +108,7 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 	@GET
 	@Path("/getVariables/{command}")
 	@Produces("text/html; charset=UTF-8")
-	public String getVariables( @PathParam("command") String commandName) {
+	public String getVariables(@PathParam("command") String commandName) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
@@ -116,10 +116,10 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
-			if(commands != null){
+			if (commands != null) {
 				for (Iterator it = commands.iterator(); it.hasNext();) {
 					DataMiningCommand cmd = (DataMiningCommand) it.next();
-					if(cmd.getName().equals(commandName)){
+					if (cmd.getName().equals(commandName)) {
 						List variables = cmd.getVariables();
 						variablesJson = serializeList(variables);
 					}
@@ -136,39 +136,40 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 		logger.debug("OUT");
 		return variablesJson;
 	}
+
 	@POST
 	@Path("/setVariables/{command}")
 	@Produces("text/html; charset=UTF-8")
 	public String setVariables(@Context HttpServletRequest request, @PathParam("command") String commandName) {
 		logger.debug("IN");
 		Map parameters = request.getParameterMap();
-		if(parameters != null && !parameters.isEmpty()){
+		if (parameters != null && !parameters.isEmpty()) {
 			DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 			List<DataMiningCommand> commands = null;
 			if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 				commands = dataMiningEngineInstance.getCommands();
-				if(commands != null){
+				if (commands != null) {
 					for (Iterator it = commands.iterator(); it.hasNext();) {
 						DataMiningCommand cmd = (DataMiningCommand) it.next();
-						if(cmd.getName().equals(commandName)){
+						if (cmd.getName().equals(commandName)) {
 							List variables = cmd.getVariables();
-							if(variables != null){
-								for(int i =0; i <variables.size(); i++){
-									Variable var = (Variable)variables.get(i);
-									//get the value from parameters
-									if(request.getParameterMap().containsKey(var.getName())){
-										String paramVal = (String)request.getParameter(var.getName());
-										if(paramVal != null){
+							if (variables != null) {
+								for (int i = 0; i < variables.size(); i++) {
+									Variable var = (Variable) variables.get(i);
+									// get the value from parameters
+									if (request.getParameterMap().containsKey(var.getName())) {
+										String paramVal = request.getParameter(var.getName());
+										if (paramVal != null) {
 											var.setValue(paramVal);
 										}
 									}
 								}
-	
+
 							}
 						}
 					}
 				}
-	
+
 			}
 		}
 		logger.debug("OUT");

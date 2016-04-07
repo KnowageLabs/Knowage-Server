@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,26 +26,23 @@ import it.eng.spagobi.engines.datamining.model.Output;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.rosuda.REngine.*;
 
-public class CommandsExecutor {
-	private REngine re;
+public class RCommandsExecutor {
+	// private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
-	static private Logger logger = Logger.getLogger(CommandsExecutor.class);
+	static private Logger logger = Logger.getLogger(RCommandsExecutor.class);
 
-	public CommandsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
+	public RCommandsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}
 
-	public REngine getRe() {
-		return re;
-	}
-
-	public void setRe(REngine re) {
-		this.re = re;
-	}
+	/*
+	 * public REngine getRe() { return re; }
+	 * 
+	 * public void setRe(REngine re) { this.re = re; }
+	 */
 
 	/**
 	 * Method called to evaluate all the command prepare the result based on the script each command needs, for the output with mode = auto. Both command and

@@ -40,15 +40,15 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 
-public class ScriptExecutor {
+public class RScriptExecutor {
 
-	static private Logger logger = Logger.getLogger(ScriptExecutor.class);
+	static private Logger logger = Logger.getLogger(RScriptExecutor.class);
 
 	private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 
-	public ScriptExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
+	public RScriptExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}

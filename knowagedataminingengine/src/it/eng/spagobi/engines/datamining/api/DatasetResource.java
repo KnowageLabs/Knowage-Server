@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
@@ -128,13 +128,13 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 					ds.setFileName(fileName);
 
 					logger.debug("and update its content in R workspace!");
-					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
+					DataMiningRExecutor executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
 
 					setCommandExecutable(dataMiningEngineInstance);
 					/*
 					 * try { //executor.updateDatasetInWorkspace(ds, getUserProfile());
-					 * 
-					 * 
+					 *
+					 *
 					 * } catch (IOException e) { throw new SpagoBIEngineRuntimeException("Error updating file dataset", e); }
 					 */
 				}

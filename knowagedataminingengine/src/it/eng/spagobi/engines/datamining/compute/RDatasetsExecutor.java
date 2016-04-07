@@ -33,16 +33,16 @@ import org.rosuda.REngine.REXPUnknown;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 
-public class DatasetsExecutor {
+public class RDatasetsExecutor {
 
-	static private Logger logger = Logger.getLogger(DatasetsExecutor.class);
+	static private Logger logger = Logger.getLogger(RDatasetsExecutor.class);
 
 	private REngine re;
 
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 
-	public DatasetsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
+	public RDatasetsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}
