@@ -79,7 +79,11 @@ function kpiTargetControllerFunction($scope,sbiModule_config,sbiModule_translate
 
 		var arr = [];
 		for(var k=0;k<$scope.selectedScheduler.kpis.length;k++){
-			arr.push($scope.selectedScheduler.kpis[k].name);
+			var obj = {};
+			obj["id"] = $scope.selectedScheduler.kpis[k].id;
+			obj["version"] = $scope.selectedScheduler.kpis[k].version;
+			arr.push(obj);
+			//arr.push($scope.selectedScheduler.kpis[k].name);
 		}
 		sbiModule_restServices.promisePost("1.0/kpi", 'listPlaceholderByKpi',arr).then(
 				function(response) {

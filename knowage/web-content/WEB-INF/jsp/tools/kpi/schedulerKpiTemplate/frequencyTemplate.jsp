@@ -85,7 +85,7 @@
 			</div>
 		</div>
 		<div ng-if="frequency.selectInterval=='month'" layout="row">
-			<div layout="column" flex=30 layout-wrap layout-align="center center">
+			<div layout="column" flex layout-wrap layout-align="center center">
 				<div layout="row" flex>
 					<h5>{{translate.load("sbi.generic.advanced")}}</h5>
 					<md-switch
@@ -116,7 +116,7 @@
 				</div>
 			</div>
 
-			<div layout="column" flex=30 layout-wrap layout-align="center center">
+			<div layout="column" flex layout-wrap layout-align="center center">
 				<div layout="row" >
 					<h5>{{translate.load("sbi.generic.advanced")}}</h5>
 					<md-switch 

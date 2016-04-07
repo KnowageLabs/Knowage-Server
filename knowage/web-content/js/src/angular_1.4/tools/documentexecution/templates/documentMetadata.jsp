@@ -2,20 +2,11 @@
 
 <md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" style="width: 80%; height: 90%; overflow-y: visible;" layout="column">
 	
-		<md-toolbar>
+		<md-toolbar class="secondaryToolbar">
 			<div class="md-toolbar-tools">
 		    	<h2 style="    font-size: 20px;    text-align: center;    width: 100%;">{{::metadataDlgCtrl.lblTitle}}</h2>
 		      	<span flex></span>
-		      	<md-button aria-label="{{::metadataDlgCtrl.lblCancel}}" class="toolbar-button-custom" 
-					ng-click="metadataDlgCtrl.close()">
-					{{metadataDlgCtrl.lblCancel}}
-			 	</md-button>
-			 	 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
-		      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="toolbar-button-custom" 
-					ng-click="metadataDlgCtrl.save()">
-					{{::metadataDlgCtrl.lblSave}}
-			 	</md-button>
-			 	<%} %>
+		    
 	       	</div>
 	  	</md-toolbar>
  
@@ -46,8 +37,21 @@
 					</md-tab>
 				</md-tabs>
 			</expander-box>
+			  	<div class="footer" layout="row">
+			  	<span flex></span>
+				<md-button aria-label="{{::metadataDlgCtrl.lblCancel}}" class="md-raised" 
+							ng-click="metadataDlgCtrl.close()">
+							{{metadataDlgCtrl.lblCancel}}
+					 	</md-button>
+					 	 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
+				      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-raised" 
+							ng-click="metadataDlgCtrl.save()">
+							{{::metadataDlgCtrl.lblSave}}
+					 	</md-button>
+					 	<%} %>
+	</div>
 	  	</md-dialog-content>
-	
+
 </md-dialog>
 			<!-- 
 			<md-tabs md-dynamic-height md-border-bottom>
