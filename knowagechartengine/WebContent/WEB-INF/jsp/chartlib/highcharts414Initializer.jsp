@@ -57,6 +57,81 @@
 			drilledCategories:[] //array used to save category names when drilling
 			
 		});
+		// function wraps library method that controls series order
+		  (function(HC) {
+			  
+			  	function defined(obj) {
+			        return obj !== UNDEFINED && obj !== null;
+			    }
+			  
+			  	var each = HC.each,
+			    		pick = HC.pick,
+			        mathMin = Math.min,
+			        mathMax = Math.max,
+			        mathAbs = Math.abs,
+			        UNDEFINED;
+			  
+			    HC.wrap(HC.seriesTypes.column.prototype, 'getColumnMetrics', function(proceed) {
+			      var series = this,
+			        options = series.options,
+			        xAxis = series.xAxis,
+			        yAxis = series.yAxis,
+			        reversedXAxis = xAxis.reversed,
+			        stackKey,
+			        stackGroups = {},
+			        columnIndex,
+			        columnCount = 0;
+
+			      // Get the total number of column type series.
+			      // This is called on every series. Consider moving this logic to a
+			      // chart.orderStacks() function and call it on init, addSeries and removeSeries
+			      if (options.grouping === false) {
+			        columnCount = 1;
+			      } else {
+			        each(series.chart.series, function(otherSeries) {
+			          var otherOptions = otherSeries.options,
+			            otherYAxis = otherSeries.yAxis;
+			          if (otherSeries.type === series.type && otherSeries.visible &&
+			            yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) { // #642, #2086
+			            if (otherOptions.stacking) {
+			              stackKey = otherSeries.stackKey;
+			              if (stackGroups[stackKey] === UNDEFINED) {
+			                stackGroups[stackKey] = columnCount++;
+			              }
+			              columnIndex = stackGroups[stackKey];
+			            } else if (otherOptions.grouping !== false) { // #1162
+			              columnIndex = columnCount++;
+			            }
+			            otherSeries.columnIndex = columnIndex;
+			          }
+			        });
+			      }
+
+			      var categoryWidth = mathMin(
+			          mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
+			          xAxis.len // #1535
+			        ),
+			        groupPadding = categoryWidth * options.groupPadding,
+			        groupWidth = categoryWidth - 2 * groupPadding,
+			        pointOffsetWidth = groupWidth / columnCount,
+			        optionPointWidth = options.pointWidth,
+			        pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
+			        pointOffsetWidth * options.pointPadding,
+			        pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			        colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
+			        pointXOffset = pointPadding + (groupPadding + colIndex *
+			          pointOffsetWidth - (categoryWidth / 2)) *
+			        (reversedXAxis ? -1 : 1);
+
+			      // Save it for reading in linked series (Error bars particularly)
+			      return (series.columnMetrics = {
+			        width: pointWidth,
+			        offset: pointXOffset
+			      });
+			    });
+			  })(Highcharts);
+		
+		
 	};
 
 	function renderChart(chartConf) {
@@ -95,6 +170,9 @@
 		    	}
 			); */
 		    
+			
+			
+			
 			new Highcharts.Chart(chartConf);
 		}
 	};
@@ -168,9 +246,8 @@
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-1];
 		var backText=chart.options.drilledCategories[chart.options.drilledCategories.length-2];
-	
-	chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
-    chart.reflow();
+		chart.drillUpButton.textSetter("Back to: <b>"+backText+"</b>");
+        //  chart.redraw();
 		var xAxisTitle={
             	text:titleText	
             };
@@ -262,4 +339,5 @@
 	function handleCrossNavigationFrom() {
 		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
+	
 </script>
