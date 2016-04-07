@@ -561,6 +561,7 @@ public class KpiService {
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response saveSchedulerKPI(@Context HttpServletRequest req) throws EMFUserError {
 		try {
+			// TODO validate mandatory fields
 			String requestVal = RestUtilities.readBody(req);
 			KpiScheduler scheduler = (KpiScheduler) JsonConverter.jsonToObject(requestVal, KpiScheduler.class);
 			IKpiDAO dao = getKpiDAO(req);
