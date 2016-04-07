@@ -86,7 +86,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -1361,7 +1360,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				filter.setKpiName(sbiFilter.getSbiKpiKpi().getName());
 				filter.setKpiId(sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getId());
 				filter.setKpiVersion(sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getVersion());
-				filter.setType(from(sbiFilter.getType()));
+				if (sbiFilter.getType() != null)
+					filter.setType(from(sbiFilter.getType()));
 				filter.setValue(sbiFilter.getValue());
 				scd.getFilters().add(filter);
 			}
@@ -1705,12 +1705,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Integer insertScheduler(final KpiScheduler scheduler) {
-		Integer id = 2;/*
-						 * executeOnTransaction(new IExecuteOnTransaction<Integer>() {
-						 * 
-						 * @Override public Integer execute(Session session) throws Exception { SbiKpiExecution sbiKpiExecution = from(scheduler, null,
-						 * session); return sbiKpiExecution.getId(); } });
-						 */
+		Integer id = executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				SbiKpiExecution sbiKpiExecution = from(scheduler, null, session);
+				return sbiKpiExecution.getId();
+			}
+		});
+
 		try {
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			String name = "" + id;
@@ -1756,7 +1758,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		} catch (EMFUserError e) {
 			throw new SpagoBIDOAException(e);
 		}
-		// TODO
 		return id;
 	}
 
@@ -1786,29 +1787,34 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (i == -1) {
 				persistentFilters.remove();
 			} else {
-				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(scheduler.getFilters().get(i), sbiFilter));
+				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(scheduler.getFilters().get(i), sbiFilter, session));
 			}
 
 		}
 		// Adding new filters
 		for (SchedulerFilter sf : scheduler.getFilters()) {
 			if (sf.getExecutionId() == null) {
-				sf.setExecutionId(id);
-				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(sf, null));
+				sf.setExecutionId(sbiKpiExecution.getId());
+				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(sf, null, session));
 			}
 
 		}
 		return sbiKpiExecution;
 	}
 
-	private SbiKpiExecutionFilter from(SchedulerFilter schedulerFilter, SbiKpiExecutionFilter sbiFilter) {
+	private SbiKpiExecutionFilter from(SchedulerFilter schedulerFilter, SbiKpiExecutionFilter sbiFilter, Session session) {
 		if (sbiFilter == null) {
 			sbiFilter = new SbiKpiExecutionFilter();
+			sbiFilter.getSbiKpiExecutionFilterId().setExecutionId(schedulerFilter.getExecutionId());
+			sbiFilter.getSbiKpiExecutionFilterId().setKpiId(schedulerFilter.getKpiId());
+			sbiFilter.getSbiKpiExecutionFilterId().setKpiVersion(schedulerFilter.getKpiVersion());
+			Integer placeholderId = (Integer) session.createCriteria(SbiKpiPlaceholder.class)
+					.add(Restrictions.eq("name", schedulerFilter.getPlaceholderName())).setProjection(Property.forName("id")).setMaxResults(1).uniqueResult();
+			sbiFilter.getSbiKpiExecutionFilterId().setPlaceholderId(placeholderId);
 			updateSbiCommonInfo4Insert(sbiFilter);
 		} else {
 			updateSbiCommonInfo4Update(sbiFilter);
 		}
-		// sbiFilter.setTypeId(schedulerFilter.getType().getValueId());
 		sbiFilter.setValue(schedulerFilter.getValue());
 		return sbiFilter;
 	}
@@ -1840,8 +1846,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Integer updateScheduler(KpiScheduler scheduler) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+	public Integer updateScheduler(final KpiScheduler scheduler) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				SbiKpiExecution sbiKpiExecution = (SbiKpiExecution) session.load(SbiKpiExecution.class, scheduler.getId());
+				sbiKpiExecution = from(scheduler, sbiKpiExecution, session);
+				return sbiKpiExecution.getId();
+			}
+		});
+		// TODO update job and trigger
 	}
 }
