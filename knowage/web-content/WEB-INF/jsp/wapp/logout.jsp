@@ -94,6 +94,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  height='0'
                  width='0'
                  frameborder='0' >
+</iframe>
+
+<iframe id='invalidSessionGis'
+                 name='invalidSessionGis'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagegeoreportengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
 </iframe> 
 <%
 
