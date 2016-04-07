@@ -245,7 +245,7 @@ author:...
 										</div>
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'text' ">
 											<h3 class="md-subhead">	
-												{{results[cmd.name][out.outputName].variablename}} = {{results[cmd.name][out.outputName].result}}
+												{{out.outputName}} = {{results[cmd.name][out.outputName].result}}
 											</h3>
 										</div>
 									</md-content>
