@@ -213,12 +213,19 @@ public class RScriptExecutor {
 	private void loadLibrariesFromRLocal(String libraryNames) throws REngineException, REXPMismatchException {
 		logger.debug("IN");
 		if (this.re != null) {
+			re.parseAndEval("installed_packages = rownames(installed.packages())");
 			REXP rHome = re.parseAndEval("try(libdir<-paste(R.home(),\"library\", sep=\"/\"))");
 			if (!rHome.inherits("try-error") && !rHome.isNull()) {
 				if (libraryNames != null) {
+					setRProxy();
 					String[] libs = libraryNames.split(",");
 					for (int i = 0; i < libs.length; i++) {
 						String lib = libs[i].trim();
+						// check if the library is present in the workspace, if not try to install tha package
+						REXP libIsPresent = re.parseAndEval("\"" + lib + "\" %in% installed_packages");
+						if (libIsPresent.isNull() || libIsPresent.asString().equalsIgnoreCase("false")) {
+							re.parseAndEval("try(install.packages(\"" + lib + "\",destdir=libdir))");
+						}
 						REXP rLibrary = re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
 						if (rLibrary.inherits("try-error")) {
 							logger.error("Impossible to load library: " + lib);
@@ -228,6 +235,29 @@ public class RScriptExecutor {
 			}
 		}
 		logger.debug("OUT");
+	}
+	
+	private void setRProxy() {
+		String proxyHost = null;
+		String proxyPort = null;
+		String proxyAdress = null;
+		try {
+			proxyHost = System.getProperty("http.proxyHost");
+			proxyPort = System.getProperty("http.proxyPort");
+			if (proxyHost != null && proxyHost.length() > 0) {
+				proxyAdress = "://" + proxyHost;
+				proxyAdress = proxyPort != null && proxyPort.length() > 0 ? proxyAdress + ":" + proxyPort + "/" : proxyAdress + "/";
+				re.parseAndEval("Sys.setenv(\"http_proxy\"=\"http" + proxyAdress + "\")");
+				re.parseAndEval("Sys.setenv(\"https_proxy\"=\"https" + proxyAdress + "\")");
+			}
+		} catch (SecurityException e) {
+			logger.warn("Proxy can't be retrieved from java configuration", e);
+		} catch (REngineException e) {
+			logger.error("Impossible to set proxy in R" + e);
+		} catch (REXPMismatchException e) {
+			logger.error("Impossible to set proxy in R" + e);
+		}
+
 	}
 
 	private DataMiningScript getScript(DataMiningCommand command) {
