@@ -261,14 +261,15 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Member m = CubeUtilities.getMember(model.getCube(), name);
 		Level l = m.getLevel();
 		List<Property> properties = np.getProperties(l);
-		for (Property property : properties) {
+
+					for (Property property : properties) {
 			JSONObject obj = new JSONObject();
 			obj.put("name", property.getName());
 			obj.put("value", m.getPropertyFormattedValue(property));
 			propsArray.put(obj);
-		}
+					}
 		return propsArray.toString();
-	}
+				}
 
 	@GET
 	@Path("/drilltrough/{ordinal}")

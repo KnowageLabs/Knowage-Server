@@ -67,6 +67,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	expandAsyncTree = function(d,dput,id){
+		
 		for(var i = 0; i< d.length; i++){
 			if(d[i].id == id){
 				d[i]["children"] = dput;
@@ -82,6 +83,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				
 			} 
 		}
+
 	};
 	
 	 /*service for placing member on axis**/
@@ -135,12 +137,22 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promiseGet
 		("1.0",'/hierarchy/'+ hierarchy+ '/filtertree/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node)
 		.then(function(response) {
-			  
-			  if(node!=null)
+
+			  if(node!=null){
+				  var shouldSearchVisible = true;
 				  expandAsyncTree($scope.data,response.data, id);
+					
+				  for(var j = 0; j< visibleSelectedTracker.length;j++){
+					if(visibleSelectedTracker[j].id == h && visibleSelectedTracker[j].selected.length > 0)
+						shouldSearchVisible= false;
+					}
+				  if(shouldSearchVisible)
+						getVisible($scope.data, h);
+			  }				  
 			  else{
 				  checkIfExists(response.data);
 			  }
+			  
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while getting hierarchy members", 'Error');	
 		});	

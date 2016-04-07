@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.common;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.whatif.WhatIfEngine;
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -36,6 +29,13 @@ import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 @Path("/start-standalone")
 public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
@@ -55,7 +55,7 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
 
-	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
+	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 
 	@GET
 	@Produces("text/html")
@@ -70,37 +70,28 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			logger.debug("Creating engine instance ...");
 
 			try {
+				logger.debug(WhatIfEngineConfig.getInstance().getTemplateFilePath());
 				SourceBean template = SourceBean.fromXMLFile(WhatIfEngineConfig.getInstance().getTemplateFilePath());
 				whatIfEngineInstance = WhatIfEngine.createInstance(template, getEnv());
 			} catch (Exception e) {
-				logger.error(
-						"Error starting the What-If engine: error while generating the engine instance.",
-						e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while generating the engine instance.",
-						e);
+				logger.error("Error starting the What-If engine: error while generating the engine instance.", e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while generating the engine instance.", e);
 			}
 			logger.debug("Engine instance succesfully created");
 
-			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE,
-					whatIfEngineInstance);
+			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
 			try {
-				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL)
-						.forward(servletRequest, response);
+				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
-				logger.error(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ REQUEST_DISPATCHER_URL, e);
+				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
 				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ REQUEST_DISPATCHER_URL, e);
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
 			}
 
 		} catch (Exception e) {
 			logger.error("Error starting the What-If engine", e);
-			throw new SpagoBIEngineRuntimeException(
-					"Error starting the What-If engine", e);
+			throw new SpagoBIEngineRuntimeException("Error starting the What-If engine", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -125,14 +116,11 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
 				toReturn = new Locale(language, country);
 			} else {
-				logger.error("Language and country not specified in request. Considering default locale that is "
-						+ DEFAULT_LOCALE.toString());
+				logger.error("Language and country not specified in request. Considering default locale that is " + DEFAULT_LOCALE.toString());
 				toReturn = DEFAULT_LOCALE;
 			}
 		} catch (Exception e) {
-			logger.error(
-					"An error occurred while retrieving locale from request, using default locale that is "
-							+ DEFAULT_LOCALE.toString(), e);
+			logger.error("An error occurred while retrieving locale from request, using default locale that is " + DEFAULT_LOCALE.toString(), e);
 			toReturn = DEFAULT_LOCALE;
 		}
 		logger.debug("OUT");

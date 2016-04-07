@@ -17,19 +17,14 @@
  */
 package it.eng.spagobi.pivot4j.ui.html;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,6 +45,13 @@ import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -86,7 +88,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
-
 			// String memberUniqueName = context.getMember().getUniqueName();
 			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
 				double dd = Double.parseDouble(context.getCell().getValue().toString());
@@ -161,7 +162,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 				Map<String, String> attributes = new TreeMap<String, String>();
-
 				if (commands != null && !commands.isEmpty()) {
 					for (UICommand<?> command : commands) {
 						String cmd = command.getName();
@@ -345,7 +345,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					writeContent(label);
 				} else {
 					// TODO: OSMOSIT create member clickable
-
 					List<TargetClickable> targetsClickable = sbiModel.getTargetsClickable();
 					if (targetsClickable != null && targetsClickable.size() > 0) {
 						Member member = context.getMember();
@@ -549,9 +548,11 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		for (int i = 0; i < resArr.length; i++) {
 			if (resArr[i].contains("format")) {
 				String result[] = resArr[i].split("\\s*=\\s*");
-				System.out.println(result[1]);
-				DecimalFormat df = new DecimalFormat(result[1]);
-				System.out.println(df.format(value));
+				String pattern = result[1];
+				NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
+				DecimalFormat df = (DecimalFormat) nf;
+				df.applyPattern(pattern);
+				System.out.println(df.format(value) + "-" + pattern);
 				return df.format(value);
 			}
 		}
