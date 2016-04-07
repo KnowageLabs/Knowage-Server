@@ -1307,6 +1307,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			for (Kpi kpi : placeholders.keySet()) {
 				for (String placeholderName : placeholders.get(kpi)) {
 					SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpi.getId(), kpi.getVersion());
+					filter.setKpiName(kpi.getName());
 					if (!scheduler.getFilters().contains(filter)) {
 						scheduler.getFilters().add(filter);
 					}
