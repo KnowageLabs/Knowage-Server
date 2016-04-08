@@ -76,6 +76,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// GENERAL METADATA NAMES
 	public static final String LABEL = "metadata.docLabel";
 	public static final String NAME = "metadata.docName";
+	public static final String DESCR = "metadata.docDescr";
 	public static final String TYPE = "metadata.docType";
 	public static final String ENG_NAME = "metadata.docEngine";
 	public static final String RATING = "metadata.docRating";
@@ -161,7 +162,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
 	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }],
-	 *
+	 * 
 	 *         errors: [ 'role missing', 'operation not allowed' ] }
 	 * @throws EMFUserError
 	 */
@@ -321,7 +322,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT")
-	 *
+	 * 
 	 * @param id
 	 *            of document
 	 * @param id
@@ -365,6 +366,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// Obj Type
 			String textType = msgBuild.getMessage(TYPE, locale);
 			addMetadata(generalMetadata, textType, obj.getBiObjectTypeCode());
+
+			// Obj Description
+			String description = msgBuild.getMessage(DESCR, locale);
+			addMetadata(generalMetadata, description, obj.getDescription());
 
 			// Obj Engine Name
 			String textEngName = msgBuild.getMessage(ENG_NAME, locale);
