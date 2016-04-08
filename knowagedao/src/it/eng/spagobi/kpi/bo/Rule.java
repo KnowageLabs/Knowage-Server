@@ -39,8 +39,9 @@ public class Rule implements Serializable {
 	public Rule() {
 	}
 
-	public Rule(Integer id) {
+	public Rule(Integer id, Integer version) {
 		this.id = id;
+		this.version = version;
 	}
 
 	/**
@@ -148,13 +149,75 @@ public class Rule implements Serializable {
 		this.placeholders = placeholders;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
-		return id == null ? super.hashCode() : id.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((dataSourceId == null) ? 0 : dataSourceId.hashCode());
+		result = prime * result + ((definition == null) ? 0 : definition.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((placeholders == null) ? 0 : placeholders.hashCode());
+		result = prime * result + ((ruleOutputs == null) ? 0 : ruleOutputs.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(Object o) {
-		return o instanceof Rule && id != null && id.equals(((Rule) o).getId());
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rule other = (Rule) obj;
+		if (dataSourceId == null) {
+			if (other.dataSourceId != null)
+				return false;
+		} else if (!dataSourceId.equals(other.dataSourceId))
+			return false;
+		if (definition == null) {
+			if (other.definition != null)
+				return false;
+		} else if (!definition.equals(other.definition))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (placeholders == null) {
+			if (other.placeholders != null)
+				return false;
+		} else if (!placeholders.equals(other.placeholders))
+			return false;
+		if (ruleOutputs == null) {
+			if (other.ruleOutputs != null)
+				return false;
+		} else if (!ruleOutputs.equals(other.ruleOutputs))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
 	}
+
 }

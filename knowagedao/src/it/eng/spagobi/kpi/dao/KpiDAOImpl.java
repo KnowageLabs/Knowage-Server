@@ -32,6 +32,7 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
+import it.eng.spagobi.kpi.bo.CardinalityBuilder;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
@@ -158,27 +159,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				List<SbiKpiRuleOutput> allRuleOutputs = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
 						.createAlias("sbiKpiRule.sbiKpiRuleOutputs", "sbiKpiRule_sbiKpiRuleOutputs")
 						.createAlias("sbiKpiRule_sbiKpiRuleOutputs.sbiKpiAlias", "parent_sbiKpiAlias").add(Restrictions.eq("sbiKpiRule.active", 'T'))
-						.add(new InExpressionIgnoringCase("parent_sbiKpiAlias.name", measures)).list();
-				Map<SbiKpiRuleId, Cardinality> cardinalityMap = new HashMap<>();
+						.add(new InExpressionIgnoringCase("parent_sbiKpiAlias.name", measures)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+				Map<SbiKpiRuleId, List<Cardinality>> cardinalityMap = new HashMap<>();
+
+				CardinalityBuilder cardinalityBuilder = new CardinalityBuilder();
 
 				for (SbiKpiRuleOutput sbiRuleOutput : allRuleOutputs) {
-					Cardinality cardinality = cardinalityMap.get(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId());
-					if (cardinality == null) {
-						cardinality = new Cardinality();
-						cardinality.setRuleId(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId());
-						cardinality.setRuleVersion(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getVersion());
-						cardinality.setRuleName(sbiRuleOutput.getSbiKpiRule().getName());
-						cardinalityMap.put(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId(), cardinality);
-					}
 					if (MEASURE.equals(sbiRuleOutput.getType().getValueCd())) {
-						cardinality.setMeasureName(sbiRuleOutput.getSbiKpiAlias().getName());
+						cardinalityBuilder.addMeasure(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(), sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId()
+								.getVersion(), sbiRuleOutput.getSbiKpiRule().getName(), sbiRuleOutput.getSbiKpiAlias().getName());
 					} else {
-						cardinality.getAttributes().put(sbiRuleOutput.getSbiKpiAlias().getName(), Boolean.FALSE);
+						cardinalityBuilder.addAttribute(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(), sbiRuleOutput.getSbiKpiRule()
+								.getSbiKpiRuleId().getVersion(), sbiRuleOutput.getSbiKpiAlias().getName());
 					}
 				}
 
 				List<Cardinality> cardinalityOrdered = new ArrayList<>();
-				Collection<Cardinality> cardinality = cardinalityMap.values();
+				Collection<Cardinality> cardinality = cardinalityBuilder.getCardinality();
 				// output order has to be the same one as input measures list
 				for (String measure : measures) {
 					boolean found = false;
