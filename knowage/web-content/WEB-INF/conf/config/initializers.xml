@@ -12,7 +12,9 @@
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
 
 	<!-- Initializer for Alarm Sending-->
+	<!-- 
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
+	 -->
 	
 	<!-- Initializer for Cache Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanCacheQuartzInitializer" config="" />

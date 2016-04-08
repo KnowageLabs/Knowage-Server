@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 public class OAuth2MetadataInitializer extends MetadataInitializer {
 
@@ -39,7 +39,7 @@ public class OAuth2MetadataInitializer extends MetadataInitializer {
 		metadataInitializers.add(new FunctionalitiesInitializer());
 		metadataInitializers.add(new ExportersInitializer());
 		metadataInitializers.add(new ConfigurationsInitializer());
-		metadataInitializers.add(new KpiPeriodicityInitializer());
+		// metadataInitializers.add(new KpiPeriodicityInitializer());
 		metadataInitializers.add(new UnitGrantInitializer());
 	}
 }

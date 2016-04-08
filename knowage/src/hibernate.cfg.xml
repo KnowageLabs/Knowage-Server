@@ -146,7 +146,7 @@
             resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiObjDataSet.hbm.xml" />
             
 		<!-- KPI Engine -->
-		
+		<!-- 
 		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpi.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiDocuments.hbm.xml" />
@@ -180,18 +180,20 @@
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiError.hbm.xml" />
-		 
+		  -->
 
 		<!-- Menu -->
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenu.hbm.xml" />
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenuRole.hbm.xml" />
 
 		<!-- Kpi.alarm -->
+		<!-- 
 		<mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarm.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmEvent.hbm.xml" />
 		<mapping
 			resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmContact.hbm.xml" />
+		 -->
 
 		<!-- Obj Metadata -->
 		<mapping
@@ -235,9 +237,10 @@
 		<mapping
 			resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml" />
 
-
+<!-- 
 		<mapping
 			resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiComments.hbm.xml" />
+ -->
 
 		<!-- tools: Meta-models catalogue -->
 		<mapping
@@ -304,7 +307,7 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiScorecard.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecution.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecutionFilter.hbm.xml" />
-         
+        
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>

@@ -29,7 +29,7 @@ import org.json.JSONObject;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class OrganizationalUnitGrantJSONSerializer implements Serializer {
-	
+
 	public static final String ID = "id";
 	public static final String LABEL = "label";
 	public static final String NAME = "name";
@@ -39,45 +39,41 @@ public class OrganizationalUnitGrantJSONSerializer implements Serializer {
 	public static final String END_DATE = "enddate";
 	public static final String HIERARCHY = "hierarchy";
 	public static final String MODEL_INSTANCE = "modelinstance";
-	
+
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
-		JSONObject  result = null;
-		
-		if( !(o instanceof OrganizationalUnitGrant) ) {
+		JSONObject result = null;
+
+		if (!(o instanceof OrganizationalUnitGrant)) {
 			throw new SerializationException("OrganizationalUnitGrantJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
-		
+
 		try {
 			OrganizationalUnitGrant grant = (OrganizationalUnitGrant) o;
 			result = new JSONObject();
-			result.put(ID, grant.getId() );
-			result.put(LABEL, grant.getLabel() );
-			result.put(NAME, grant.getName() );
-			result.put(DESCRIPTION, grant.getDescription() );
-			if(grant.getIsAvailable() != null){
+			result.put(ID, grant.getId());
+			result.put(LABEL, grant.getLabel());
+			result.put(NAME, grant.getName());
+			result.put(DESCRIPTION, grant.getDescription());
+			if (grant.getIsAvailable() != null) {
 				result.put(IS_AVAILABLE, grant.getIsAvailable());
 			}
 			String df = GeneralUtilities.getServerDateFormat();
 			SimpleDateFormat dateFormat = new SimpleDateFormat();
 			dateFormat.applyPattern(df);
 			dateFormat.setLenient(false);
-			result.put(START_DATE, dateFormat.format(grant.getStartDate()) );
-			result.put(END_DATE, dateFormat.format(grant.getEndDate()) );
-			
+			result.put(START_DATE, dateFormat.format(grant.getStartDate()));
+			result.put(END_DATE, dateFormat.format(grant.getEndDate()));
+
 			OrganizationalUnitHierarchyJSONSerializer hierarchySer = new OrganizationalUnitHierarchyJSONSerializer();
 			JSONObject hierarchyJSON = (JSONObject) hierarchySer.serialize(grant.getHierarchy(), locale);
 			result.put(HIERARCHY, hierarchyJSON);
-			
-			ModelInstanceNodeJSONSerializer modelSer = new ModelInstanceNodeJSONSerializer();
-			JSONObject modelInstanceJSON = (JSONObject) modelSer.serialize(grant.getModelInstance(), locale);
-			result.put(MODEL_INSTANCE, modelInstanceJSON);
-			
+
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		}
-		
+
 		return result;
 	}
-	
-	
+
 }
