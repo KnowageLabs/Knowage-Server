@@ -32,6 +32,12 @@
         </listener-class>
   </listener>
   <servlet>
+	<servlet-name>EngineTestServlet</servlet-name>
+	<servlet-class>
+		it.eng.spagobi.utilities.engines.EngineTestServlet
+	</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>ConfigServlet</servlet-name>
     <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
     <init-param>
@@ -54,6 +60,10 @@
     <servlet-name>Resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
   </servlet>
+  <servlet-mapping>
+		<servlet-name>EngineTestServlet</servlet-name>
+		<url-pattern>/Test</url-pattern>
+  </servlet-mapping>
   <!-- START ProxyTicketReceptor -->
   <servlet-mapping>
     <servlet-name>ProxyTicketReceptor</servlet-name>
