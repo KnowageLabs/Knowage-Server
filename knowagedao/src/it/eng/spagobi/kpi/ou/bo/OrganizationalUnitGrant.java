@@ -17,49 +17,45 @@
  */
 package it.eng.spagobi.kpi.ou.bo;
 
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
-
 import java.util.Date;
-
 
 /**
  * This class represents the grant to an Organizational Unit hierarchy for a KPI model instance
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  */
 public class OrganizationalUnitGrant {
 
+	// Fields
 
-    // Fields    
+	private Integer id;
+	private OrganizationalUnitHierarchy hierarchy;
+	private Date startDate;
+	private Date endDate;
+	private String label;
+	private String name;
+	private String description;
+	private Boolean isAvailable;
 
-     private Integer id;
-     private ModelInstance modelInstance; // the root node of the KPI model instance
-     private OrganizationalUnitHierarchy hierarchy; 
-     private Date startDate;
-     private Date endDate;
-     private String label;
-     private String name;
-     private String description;
-     private Boolean isAvailable;
-    // Constructors
+	// Constructors
 
-    /** default constructor */
-    public OrganizationalUnitGrant() {
-    }
-    
-    /** full constructor */
-    public OrganizationalUnitGrant(Integer id,Boolean isAvailable, ModelInstance modelInstance, OrganizationalUnitHierarchy hierarchy, Date startDate, Date endDate, String label, String name, String description) {
-        this.id = id;
-        this.modelInstance = modelInstance;
-        this.hierarchy = hierarchy;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.label = label;
-        this.name = name;
-        this.description = description;
-        this.isAvailable = isAvailable;
-    }
+	/** default constructor */
+	public OrganizationalUnitGrant() {
+	}
+
+	/** full constructor */
+	public OrganizationalUnitGrant(Integer id, Boolean isAvailable, OrganizationalUnitHierarchy hierarchy, Date startDate, Date endDate, String label,
+			String name, String description) {
+		this.id = id;
+		this.hierarchy = hierarchy;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.label = label;
+		this.name = name;
+		this.description = description;
+		this.isAvailable = isAvailable;
+	}
 
 	public Boolean getIsAvailable() {
 		return isAvailable;
@@ -75,14 +71,6 @@ public class OrganizationalUnitGrant {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public ModelInstance getModelInstance() {
-		return modelInstance;
-	}
-
-	public void setModelInstance(ModelInstance modelInstance) {
-		this.modelInstance = modelInstance;
 	}
 
 	public OrganizationalUnitHierarchy getHierarchy() {
@@ -133,12 +121,10 @@ public class OrganizationalUnitGrant {
 		this.description = description;
 	}
 
-    @Override
+	@Override
 	public String toString() {
-		return "OrganizationalUnitGrant [id=" + id + ", modelInstance="
-				+ modelInstance + ", hierarchy=" + hierarchy + ", startDate="
-				+ startDate + ", endDate=" + endDate + ", label=" + label
+		return "OrganizationalUnitGrant [id=" + id + ", hierarchy=" + hierarchy + ", startDate=" + startDate + ", endDate=" + endDate + ", label=" + label
 				+ ", name=" + name + ", description=" + description + "]";
 	}
-	
+
 }

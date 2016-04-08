@@ -296,7 +296,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 			tx.commit();
 
-			initAlarmForTenant(aTenant);
+			// initAlarmForTenant(aTenant);
 
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the tenant with id " + ((aTenant == null) ? "" : String.valueOf(aTenant.getId())), he);
@@ -712,7 +712,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * Remove not valid association between authorizations and roles after changing product types related to a tenant
-	 *
+	 * 
 	 * @param aTenant
 	 * @param aSession
 	 */

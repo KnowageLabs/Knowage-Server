@@ -154,12 +154,7 @@
    </key>
    <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState"/>
   </set>
-  <set inverse="true" name="sbiKpiDocumentses" sort="unsorted">
-   <key>
-    <column name="BIOBJ_ID" not-null="true"/>
-   </key>
-   <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument"/>
-  </set>
+  
   <filter name="tenantFilter" condition="organization=:tenant"/>  
  </class>
  <filter-def name="tenantFilter">

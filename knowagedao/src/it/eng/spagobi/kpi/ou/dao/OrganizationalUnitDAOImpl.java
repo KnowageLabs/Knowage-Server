@@ -19,7 +19,6 @@ package it.eng.spagobi.kpi.ou.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.dao.ModelInstanceDAOImpl;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
@@ -49,9 +48,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 /**
- *
+ * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  */
 public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements IOrganizationalUnitDAO {
 
@@ -628,12 +627,6 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			SbiOrgUnitHierarchies h = (SbiOrgUnitHierarchies) query.uniqueResult();
 			hibGrant.setSbiOrgUnitHierarchies(h);
 
-			// set kpi model instance
-			Integer kpiModelInstId = grant.getModelInstance().getId();
-			query = aSession.createQuery(" from SbiKpiModelInst s where s.kpiModelInst = ? ");
-			query.setInteger(0, kpiModelInstId);
-			SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
-			hibGrant.setSbiKpiModelInst(s);
 			updateSbiCommonInfo4Insert(hibGrant);
 			aSession.save(hibGrant);
 			tx.commit();
@@ -665,9 +658,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			// if hierarchy and/or kpi model instance have been changed, erase previous defined node grants
 			Integer previousHierachyId = hibGrant.getSbiOrgUnitHierarchies().getId();
 			Integer newHierachyId = grant.getHierarchy().getId();
-			Integer previousKpiModelInstId = hibGrant.getSbiKpiModelInst().getKpiModelInst();
-			Integer newKpiModelInstId = grant.getModelInstance().getId();
-			if (previousHierachyId.intValue() != newHierachyId.intValue() || previousKpiModelInstId.intValue() != newKpiModelInstId.intValue()) {
+			if (previousHierachyId.intValue() != newHierachyId.intValue()) {
 				String hql = "delete from SbiOrgUnitGrantNodes s where s.id.grantId = ?";
 				Query query = aSession.createQuery(hql);
 				query.setInteger(0, hibGrant.getId());
@@ -682,13 +673,6 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				hibGrant.setSbiOrgUnitHierarchies(h);
 			}
 
-			// update kpi model instance
-			if (previousKpiModelInstId.intValue() != newKpiModelInstId.intValue()) {
-				Query query = aSession.createQuery(" from SbiKpiModelInst s where s.kpiModelInst = ? ");
-				query.setInteger(0, newKpiModelInstId);
-				SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
-				hibGrant.setSbiKpiModelInst(s);
-			}
 			updateSbiCommonInfo4Update(hibGrant);
 			aSession.save(hibGrant);
 
@@ -946,9 +930,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 	public OrganizationalUnitGrant toOrganizationalUnitGrant(SbiOrgUnitGrant hibGrant, Session aSession) {
 		OrganizationalUnitHierarchy hierarchy = toOrganizationalUnitHierarchy(hibGrant.getSbiOrgUnitHierarchies());
-		ModelInstance modelInstance = ModelInstanceDAOImpl.toModelInstanceWithoutChildren(hibGrant.getSbiKpiModelInst(), aSession);
-		OrganizationalUnitGrant grant = new OrganizationalUnitGrant(hibGrant.getId(), hibGrant.getIsAvailable(), modelInstance, hierarchy,
-				hibGrant.getStartDate(), hibGrant.getEndDate(), hibGrant.getLabel(), hibGrant.getName(), hibGrant.getDescription());
+		OrganizationalUnitGrant grant = new OrganizationalUnitGrant(hibGrant.getId(), hibGrant.getIsAvailable(), hierarchy, hibGrant.getStartDate(),
+				hibGrant.getEndDate(), hibGrant.getLabel(), hibGrant.getName(), hibGrant.getDescription());
 		return grant;
 	}
 
