@@ -38,7 +38,7 @@ function federationDefinitionFunction
 		sbiModule_restServices,
 		sbiModule_messaging
 ) {
-			
+	
 	//current scope
 	ctr = this;
 	
@@ -47,9 +47,6 @@ function federationDefinitionFunction
 
 	//data from the fields of saveFederateddataset.html
 	$scope.federateddataset = {};
-	$scope.update = {};
-	$scope.update = $scope.federateddataset;
-	angular.toJson($scope.update);
 	
 	//lists that will be filled after the sbiModule_restServices.get call
 	ctr.list = {};
@@ -64,16 +61,15 @@ function federationDefinitionFunction
 	//state is used to show or hide components on the page
 	ctr.state = true;
 	
-	//used for the JSON structure of a relationship
-	ctr.relation = "";
-	ctr.relNew = null;
-	ctr.associationArray = [];
-	ctr.beforeRel = {};
-	ctr.bla = {}
+	//relationships
+	$scope.selectedDatasets = [];
+	$scope.multiRelationships = [];
+	$scope.relationshipsJSON = [];
 	
-	//used for highlighting dataset fields 
-	ctr.item = {};
-
+	//used to compare if all selected datasets are used in relationships
+	$scope.sourceDatasetsUsedInRelations = [];
+	ctr.listaNewDatasets = [];
+	
 	angular.element(document).ready(function () {
         $scope.getDataSets();
     });
@@ -84,10 +80,7 @@ function federationDefinitionFunction
 		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
 			.then(function(response) {
 				ctr.list = response.data;
-				console.log("List:")
-				console.log(ctr.list)
 				angular.forEach(ctr.list, function(dataset){
-					////Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
 					if(dataset.metadata==null){
 						dataset.metadata.fieldsMeta = [];
 					}
@@ -100,8 +93,8 @@ function federationDefinitionFunction
 				ctr.loadedList = true;
 				if(ctr.loadedListAllO==true && ctr.loadedList==true) {
 					if(value!=0) {
-						ctr.loadDatasetsEditMode();
 						ctr.getFederationById();
+						ctr.loadDatasetsEditMode();
 					}						
 				} else {
 					console.log("Only loadedList is loaded")
@@ -114,10 +107,7 @@ function federationDefinitionFunction
 		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
 		.then(function(response) {
 			ctr.listAllO = response.data;
-			console.log("ListALLO:")
-			console.log(ctr.listAllO)
 			angular.forEach(ctr.listAllO, function(dataset){
-				//Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
 				if(dataset.metadata==null){
 					dataset.metadata.fieldsMeta = [];
 				}
@@ -129,8 +119,8 @@ function federationDefinitionFunction
 			ctr.loadedListAllO = true;
 			if(ctr.loadedListAllO==true && ctr.loadedList==true) {
 				if(value!=0) {
-					ctr.loadDatasetsEditMode();
 					ctr.getFederationById();
+					ctr.loadDatasetsEditMode();
 				}
 			} else {
 				console.log("Only loadedListAllO is loaded")
@@ -142,22 +132,16 @@ function federationDefinitionFunction
 	}
 	
 	ctr.getFederationById = function(){
-		sbiModule_restServices.promiseGet("2.0/federateddataset/"+federation_id,"")
+		sbiModule_restServices.promiseGet("federateddataset/"+federation_id,"")
 		  .then(function(response) {
-		   console.log("KALABUNGAAAAAAA")
-		   console.log(response.data);
 		   
 		   $scope.federateddataset.federation_id = response.data.federation_id;
 		   $scope.federateddataset.name = response.data.name;
 		   $scope.federateddataset.label = response.data.label;
 		   $scope.federateddataset.description = response.data.description;
-		   $scope.relationshipsJSON = response.data.relationships;
-		   console.log("relation")
-		   console.log($scope.relationshipsJSON)
-		   $scope.federateddataset.relationships = JSON.parse($scope.relationshipsJSON);
-		   console.log("json formatted")
-		   console.log($scope.federateddataset.relationships);
-		   
+		   $scope.federateddataset.relationships = JSON.parse(response.data.relationships);
+		   $scope.relationshipsJSON = JSON.parse(response.data.relationships);
+
 		   //array of objects
 		   var aoo = $scope.federateddataset.relationships;
 		   
@@ -169,6 +153,10 @@ function federationDefinitionFunction
 			    var eDestinationColumn = aoo[key][obj].destinationColumns;
 				   
 				var editSingleRelation = eSourceTable.name.toUpperCase() + "." + eSourceColumn[0] + " -> " + eDestinationTable.name.toUpperCase() + "." + eDestinationColumn[0];
+				
+				$scope.sourceDatasetsUsedInRelations.push(eSourceTable.name);
+				$scope.sourceDatasetsUsedInRelations.push(eDestinationTable.name);
+				
 				$scope.multiRelationships.push(editSingleRelation);
 			}
 		   }
@@ -184,52 +172,28 @@ function federationDefinitionFunction
 		 $window.location.href = contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation";
 	};
 	
-	ctr.showAdvanced = function(ev){
-		
-		/*if(value){
-			ctr.SaveOrUpdate = "Update";
-		} else {
-			ctr.SaveOrUpdate = "Save";
-		}*/
-		
-		/*ctr.multiArrayDatasets = [];
-		ctr.listaNewDatasets = [];
-		ctr.index = "";
-		for (var i = 0; i < ctr.listaNew.length; i++) {
-			ctr.listaNewDatasets.push(ctr.listaNew[i].label)
-		}
-		console.log(ctr.listaNewDatasets)
-		for (var i = 0; i < ctr.multiArray.length; i++) {
-			for (var j = 0; j < ctr.multiArray[i].length; j++) {
-				if(j==0){
-					ctr.multiArrayDatasets.push(ctr.multiArray[i][j].sourceTable.name)
-					ctr.multiArrayDatasets.push(ctr.multiArray[i][j].destinationTable.name)
-				} else {
-						ctr.multiArrayDatasets.push(ctr.multiArray[i][j].destinationTable.name)					
-				}
+	ctr.areAllSelectedDatasetsUsed = function(lDS, lUDS) {
+		for (var i = 0; i < lDS.length; i++) {
+			if(lUDS.indexOf(lDS[i])==-1) {
+				return false;
 			}
 		}
-		for (var a = 0; a < ctr.listaNewDatasets.length; a++) {
-			ctr.index = ctr.multiArrayDatasets.indexOf(ctr.listaNewDatasets[a])	
-		}				
-		if(ctr.multiArray.length==0){
+		return true;
+	}
+		
+	ctr.showAdvanced = function(ev){
+
+		if(!ctr.areAllSelectedDatasetsUsed(ctr.listaNewDatasets, $scope.sourceDatasetsUsedInRelations)) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content(sbiModule_translate.load("sbi.federationdefinition.no.relation.created"))
-						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
-			);
-		} 
-		else if(ctr.index==-1){
-			$mdDialog.show(
-					$mdDialog.alert()
-						.clickOutsideToClose(true)
+						.title(sbiModule_translate.load("sbi.generic.error"))
 						.content(sbiModule_translate.load("sbi.federationdefinition.contain.all.selected.datasets"))
 						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
+						.targetEvent(ev)
 			);
-		}		
-		else{*/
-			ctr.clearSelections()
+		} else {
+			ctr.clearSelections();
 			$mdDialog
 				.show({
 					scope: $scope,
@@ -239,29 +203,20 @@ function federationDefinitionFunction
 						var fdsctrl = this;
 						fdsctrl.saveFedDataSet = function() {
 							
-							/*var item = {};
-							item.name = $scope.update.name;
-							item.label = $scope.update.label;
-							item.description = $scope.update.description;
-							item.relationships = "";
-							item.relationships = ctr.multiArray;*/
-							
 							if($scope.federateddataset.hasOwnProperty("federation_id")){
 								
-								var myJsonString = JSON.stringify($scope.relationshipsJSON);
-								$scope.federateddataset.relationships = myJsonString;
 								
-								sbiModule_restServices.put("2.0/federateddataset", $scope.federateddataset.federation_id, angular.toJson($scope.federateddataset))
+								$scope.federateddataset.relationships = $scope.relationshipsJSON;
+								
+								sbiModule_restServices.put("federateddataset", $scope.federateddataset.federation_id, $scope.federateddataset)
 								.success(
 										function(data, status, headers, config) {
 											
 											if (data.hasOwnProperty("errors")) {
 												
 												console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
-												
-												console.log(data.errors);
-												
-												ctr.showError();
+																								
+												sbiModule_messaging.showErrorMessage(data.errors[0].message, 'Error');
 												
 											} else {
 												
@@ -280,14 +235,13 @@ function federationDefinitionFunction
 								)
 								.error(
 										function(data, status, headers, config) {
-											console.log("error")
+											sbiModule_messaging.showErrorMessage(data.errors[0].message, 'Error');
 										}
 								)
 							}
 							else {
 								
-								//var myJsonString = JSON.stringify($scope.relationshipsJSON);
-								
+																
 								$scope.federateddataset.relationships = $scope.relationshipsJSON;
 																
 								sbiModule_restServices.post("federateddataset","post",angular.toJson($scope.federateddataset))
@@ -304,7 +258,7 @@ function federationDefinitionFunction
 												
 												console.log("[POST]: SUCCESS!");
 												
-												sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+												sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 												
 												$timeout(function() {
 													$scope.goToFederationCatalogue();
@@ -329,42 +283,22 @@ function federationDefinitionFunction
 					templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
 					targetEvent: ev
 				});
-		//}
-	}
-	
-	ctr.showDSDetails = function(param) {
-		
-		angular.forEach(ctr.list, function(dataset){
-			if(dataset.name==param.name && dataset.label==param.label && dataset.description==param.description){
-				$scope.dsname = dataset.name;
-				$scope.dslabel = dataset.label;
-				$scope.dsdescription = dataset.description;
-			}
-		});
-					
-		$mdDialog
-			.show({
-				scope: $scope,
-				preserveScope: true,				
-				templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
-				targetEvent: param
-			});
+		}
+				
 	}
 	
 	$scope.counter = function() {
 		var count = 0;
 		for (key in ctr.myselectedvariable) {
 			if(ctr.myselectedvariable[key]!=null) {
-				count++
+					count++;
 			}
 		}
 		return count;
 	}
-	
-	$scope.selectedDatasets = [];
-		
-	$scope.isDSCountained= function(label){
-		return $scope.selectedDatasets.indexOf(label) >=0;
+			
+	$scope.isDSCountained= function(name){
+		return $scope.selectedDatasets.indexOf(name) >=0;
 	}
 	
 	$scope.t = {
@@ -384,47 +318,44 @@ function federationDefinitionFunction
 	
 	ctr.additemToRelation = function(item, listId){
 	
-		if($scope.counter()==0 || ($scope.counter()==1 && $scope.t.sourceTable.name=='')){
+		if(($scope.t.sourceTable.name=='' || $scope.t.sourceTable.name==listId)){
 			$scope.t.sourceTable.name = listId;
 			$scope.t.sourceTable.className = listId;
-			$scope.t.sourceColumns.push(item.name);
-			console.log($scope.t);
-		} else if($scope.counter()==1) {
+			$scope.t.sourceColumns = [];
+			$scope.t.sourceColumns.push(item.alias);
+			ctr.colorTheSelectedItem(listId,'sourceItem');
+
+	
+		} else if($scope.t.destinationTable.name=='' || $scope.t.destinationTable.name==listId) {
 			$scope.t.destinationTable.name = listId;
 			$scope.t.destinationTable.className = listId;
-			$scope.t.destinationColumns.push(item.name);
-			console.log($scope.t);
-		} else if($scope.counter()==2){
-			
-			$scope.t.destinationTable.name = '';
-			$scope.t.destinationTable.className = '';
-			$scope.t.destinationColumns.splice(0,1);
-			
-			$scope.t.destinationTable.name = listId;
-			$scope.t.destinationTable.className = listId;
-			$scope.t.destinationColumns.push(item.name);
-			console.log($scope.t);
-		}
-		
+			$scope.t.destinationColumns = [];
+			$scope.t.destinationColumns.push(item.alias);
+			ctr.colorTheSelectedItem(listId, 'destItem');						
+		} 
+	}
+	
+	ctr.colorTheSelectedItem = function(listId, color) {
+		$timeout(function() {
+			var selectedItemStyle = angular.element(document.querySelector('#'+listId+' .selectedRow'));
+			selectedItemStyle.addClass(color)
+	    }, 250);
 	}
 	
 	ctr.removeItemFromRelation = function(item, listId) {
 		if(listId==$scope.t.sourceTable.name) {
 			$scope.t.sourceTable.name = '';
 			$scope.t.sourceTable.className = '';
-			$scope.t.sourceColumns.splice(item.name);
+			$scope.t.sourceColumns.splice(item.alias);
 			
 		} else if(listId==$scope.t.destinationTable.name) {
 			$scope.t.destinationTable.name = '';
 			$scope.t.destinationTable.className = '';
-			$scope.t.destinationColumns.splice(item.name);
+			$scope.t.destinationColumns.splice(item.alias);
 			
 		}
 	}
-	
-	$scope.multiRelationships = [];
-	$scope.relationshipsJSON = [];
-	
+		
 	ctr.deleteRelationship = function(item) {
 		
 		var confirm = $mdDialog
@@ -440,8 +371,17 @@ function federationDefinitionFunction
 		$mdDialog.show(confirm).then(function() {
 
 			var index = $scope.multiRelationships.indexOf(item);
+			
 			if(index!=-1) {
 				$scope.multiRelationships.splice(index,1);
+				
+				var relObj = $scope.relationshipsJSON[index];
+								
+				var destDS = relObj[0].destinationTable.name;
+				var sourceDS = relObj[0].sourceTable.name;
+				
+				ctr.deleteDSFromSourceDS(destDS, sourceDS);
+				
 				$scope.relationshipsJSON.splice(index,1);
 			}
 						
@@ -450,20 +390,22 @@ function federationDefinitionFunction
 		});
 				
 	}
-	
+		
 	$scope.addJSONStructureToRelationshipsJSONAndMultiRelationships = function(t, singleRelation) {
+		
+		var tSourceTable = t.sourceTable;
+		var tDestinationTable = t.destinationTable;
 		
 		var index = $scope.multiRelationships.indexOf(singleRelation);
 
 		if(!(index in $scope.multiRelationships)) {
 			
-			var nesto = [];
-			nesto.push(t);
+			var array = [];
+			array.push(t);
 			
-			$scope.relationshipsJSON.push(nesto);
-			
-
+			$scope.relationshipsJSON.push(array);
 			$scope.multiRelationships.push(singleRelation);
+			ctr.addToUsedDS(tSourceTable.name, tDestinationTable.name);
 			ctr.clearSelections();
 		} else {
 			$mdDialog.show(
@@ -472,6 +414,7 @@ function federationDefinitionFunction
 						.content(sbiModule_translate.load("Relationship already exists"))
 						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
+			ctr.clearSelections();
 		}
 	}
 	
@@ -481,8 +424,16 @@ function federationDefinitionFunction
 		ctr.tDestinationTable = $scope.t.destinationTable;
 		ctr.tSourceColumn = $scope.t.sourceColumns;
 		ctr.tDestinationColumn = $scope.t.destinationColumns;
-
-		if($scope.counter()<2) {
+		
+		if (ctr.tSourceColumn[0]==undefined && ctr.tDestinationColumn[0]==undefined) {
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content(sbiModule_translate.load("sbi.federationdefinition.no.field.selected"))
+						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
+			);
+		}
+		else if (ctr.tSourceColumn[0]==undefined || ctr.tDestinationColumn[0]==undefined) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
@@ -490,9 +441,29 @@ function federationDefinitionFunction
 						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
 		}
-		if($scope.counter()==2) {
+		else if (ctr.tSourceColumn[0]!=undefined && ctr.tDestinationColumn[0]!=undefined) {
 			$scope.oneRelation = ctr.tSourceTable.name.toUpperCase() + "." + ctr.tSourceColumn[0] + " -> " + ctr.tDestinationTable.name.toUpperCase() + "." + ctr.tDestinationColumn[0];
 			$scope.addJSONStructureToRelationshipsJSONAndMultiRelationships($scope.t, $scope.oneRelation);
+		}
+	}
+	
+	ctr.addToUsedDS = function(sourceDS, destDS) {
+		
+		var indexA = $scope.sourceDatasetsUsedInRelations.indexOf(sourceDS);
+		var indexB = $scope.sourceDatasetsUsedInRelations.indexOf(destDS);
+		
+		$scope.sourceDatasetsUsedInRelations.push(sourceDS);
+		$scope.sourceDatasetsUsedInRelations.push(destDS);
+	}
+	
+	ctr.deleteDSFromSourceDS = function(sourceDS, destDS){
+		var indexA = $scope.sourceDatasetsUsedInRelations.indexOf(destDS);
+		if(indexA!=-1) {
+			$scope.sourceDatasetsUsedInRelations.splice(indexA,1);
+		}
+		var indexB = $scope.sourceDatasetsUsedInRelations.indexOf(sourceDS);
+		if (indexB!=-1) {
+			$scope.sourceDatasetsUsedInRelations.splice(indexB,1);
 		}
 	}
 
@@ -500,11 +471,11 @@ function federationDefinitionFunction
 		var index = $scope.selectedDatasets.indexOf(listId);
 		if(!(index in $scope.selectedDatasets)) {
 			$scope.selectedDatasets.push(listId);
-			console.log($scope.selectedDatasets)
 		}
 	}
 	
 	ctr.selectDeselect = function(item, listId){
+		
 		ctr.addDataSetToArrayIfNotAlreadySelected(listId);
 		var index = $scope.selectedDatasets.indexOf(listId);
 		if(index==0||index==1) {
@@ -512,25 +483,26 @@ function federationDefinitionFunction
 			angular.forEach(ctr.listaNew, function(dataset){
 				if(dataset.label==listId){
 					angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-						if(listField.name==item.name){
+						
+						if(listField.alias==item.alias){
 							if(listField.selected==true){
 								var index2 = $scope.selectedDatasets.indexOf(listId);
 								$scope.selectedDatasets.splice(index2,1);
-								console.log($scope.selectedDatasets);
 								listField.selected = false;
 								ctr.myselectedvariable[listId] = null;
-								
-								console.log($scope.selectedDatasets)
-								console.log("Field is unhighlighted.")
+								ctr.removeClassesById(listId);
 								ctr.removeItemFromRelation(item, listId);
-								console.log($scope.t);
+								
+								
 								
 							} else {
 								angular.forEach(dataset.metadata.fieldsMeta, function(att){
 									att.selected = false;
 								});
 								listField.selected = true;
-								ctr.additemToRelation(item, listId);
+								ctr.removeClassesById(listId);
+								ctr.additemToRelation(item, listId);																
+								
 							}
 						} else {
 							//listField.name==item.name
@@ -543,37 +515,44 @@ function federationDefinitionFunction
 			
 			
 		} else {
-			
-			console.log("2 files are already selected")
+
 			$scope.selectedDatasets.splice(index,1);
-			console.log($scope.selectedDatasets)
-			console.log(index);
-			console.log($scope.t);
 		}
 
 		
 	}
 	
-	
+	ctr.removeClassesById = function(listId) {
+		$timeout(function() {
+			
+			var selectedItemStyle = angular.element(document.querySelector('#'+listId+' .sourceItem'));
+			selectedItemStyle.removeClass('sourceItem');
+			
+			var selectedItemStyle = angular.element(document.querySelector('#'+listId+' .destItem'));
+			selectedItemStyle.removeClass('destItem');
+			
+	    }, 250);
+	}
 		
 	ctr.kickOutFromListNew = function(param) {
-		ctr.nizSourceva = [];
-		for (var i = 0; i < ctr.multiArray.length; i++) {
-			for (var j = 0; j < ctr.multiArray[i].length; j++) {
+		ctr.usedDatasets = [];
+		for (var i = 0; i <$scope.relationshipsJSON.length; i++) {
+			for (var j = 0; j < $scope.relationshipsJSON[i].length; j++) {
 				if(j==0){
-					ctr.nizSourceva.push(ctr.multiArray[i][j].sourceTable.name)
-					ctr.nizSourceva.push(ctr.multiArray[i][j].destinationTable.name)
+					ctr.usedDatasets.push($scope.relationshipsJSON[i][j].sourceTable.name)
+					ctr.usedDatasets.push($scope.relationshipsJSON[i][j].destinationTable.name)
 				} else {
-					ctr.nizSourceva.push(ctr.multiArray[i][j].destinationTable.name)
+					ctr.usedDatasets.push($scope.relationshipsJSON[i][j].destinationTable.name)
 				}
 				
 			}
 		}
-			console.log(ctr.nizSourceva.length)
-			if(ctr.nizSourceva==0){
+			if(ctr.usedDatasets==0){
 				var index = ctr.listaNew.indexOf(param);
+				var indexLND = ctr.listaNewDatasets.indexOf(param.label);
 				if (index != -1) {
 					ctr.listaNew.splice(index, 1);
+					ctr.listaNewDatasets.splice(indexLND,1);
 				}
 				if (ctr.list.indexOf(param) === -1) {
 					ctr.list.push(param);
@@ -581,10 +560,8 @@ function federationDefinitionFunction
 					console.log("Parameter is already in the list.");
 				}
 			} else {
-				if (ctr.nizSourceva.indexOf(param.label) >= 0) {
+				if (ctr.usedDatasets.indexOf(param.label) >= 0) {
 					
-					console.log("param leb")
-					console.log(param.label)
 					$mdDialog
 							.show($mdDialog
 									.alert()
@@ -594,10 +571,11 @@ function federationDefinitionFunction
 					return false;
 					
 				} else {
-					console.log("else" + j)
 					var index = ctr.listaNew.indexOf(param);
+					var indexLND = ctr.listaNewDatasets.indexOf(param.label);
 					if (index != -1) {
 						ctr.listaNew.splice(index, 1);
+						ctr.listaNewDatasets.splice(indexLND,1);
 					}
 					if (ctr.list.indexOf(param) === -1) {
 						ctr.list.push(param);
@@ -610,22 +588,19 @@ function federationDefinitionFunction
 	
 	ctr.moveToListNew = function(param) {		
 		var index = ctr.list.indexOf(param);
-		console.log("param");
-		console.log(param)
 		if(index != -1) {
 			ctr.list.splice(index,1);
 		}
 		if(ctr.listaNew.indexOf(param)===-1){
 			ctr.listaNew.push(param);
-			console.log("dodao u novu listu")
+			ctr.listaNewDatasets.push(param.label);
+			
 		} else {
 			console.log("Parametar is already in the list.")
 		}
 	}
 	
 	ctr.toggle = function() {
-		console.log("STATE1")
-		console.log(ctr.state)
 		if(ctr.listaNew.length==0){
 			$mdDialog.show(
 					$mdDialog.alert()
@@ -642,17 +617,11 @@ function federationDefinitionFunction
 			);
 		} else {
 			ctr.state=!ctr.state;
-			console.log("STATE2")
-			console.log(ctr.state)
 		}
 	}
 	
 	ctr.toggleBack = function() {
-		console.log("STATE b 1")
-		console.log(ctr.state)
 		ctr.state=!ctr.state;
-		console.log("STATE b 2")
-		console.log(ctr.state)
 	}
 	
 	ctr.kickOutFromAssociationArray = function(param) {//ispitati
@@ -662,36 +631,13 @@ function federationDefinitionFunction
 		}
 	}
 	
-	ctr.deleteFromMultiArray = function(param) {
-				
-		var confirm = $mdDialog
-		.confirm()
-		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
-		.content(
-				sbiModule_translate
-				.load("sbi.federationdefinition.confirm.delete.content"))
-				.ariaLabel('Lucky day').ok(
-						sbiModule_translate.load("sbi.general.continue")).cancel(
-								sbiModule_translate.load("sbi.general.cancel"));
-
-		$mdDialog.show(confirm).then(function() {
-			var index = ctr.multiArray.indexOf(param);
-			if(index !=-1){
-				ctr.multiArray.splice(index, 1);
-			}	
-
-		}, function() {
-			console.log('Canceled');
-		});
-				
-	}
 	
 	ctr.hide = function(){
 		$mdDialog.hide();
 	}
 	
 	
-	ctr.showAlert = function(ev){ //premesti u saveFedDataSet
+	ctr.showAlert = function(ev){ 
 		$mdDialog.show(
 				$mdDialog.alert()
 					.clickOutsideToClose(true)
@@ -701,7 +647,7 @@ function federationDefinitionFunction
 		);
 	}
 	
-	ctr.showError = function(ev){ //premesti u saveFedDataSet
+	ctr.showError = function(ev){ 
 		$mdDialog.show(
 				$mdDialog.alert()
 					.clickOutsideToClose(true)
@@ -711,78 +657,50 @@ function federationDefinitionFunction
 		);
 	}
 	
-	ctr.fdsSpeedMenuOpt = [ 			 		               	
+	ctr.removeDatasetFromListaNew = [ 			 		               	
 		 		               	{
 		 		               		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
 		 		               		icon:"fa fa-trash-o",
 		 		               		backgroundColor:'red',
 		 		               		action : function(param) {
-		 		               			ctr.kickOutFromListNew(param);
+		 		               				ctr.kickOutFromListNew(param);
 		 		               			}
 		 		               	}
 		 		             ];
 
-	ctr.fdsSpeedMenuOptAD = [ 			 		               	
+	ctr.showDatasetInfo = [ 			 		               	
 		 		               	{
 		 		               		label: sbiModule_translate.load("sbi.federationdefinition.info"),
 		 		               		icon:"fa fa-info-circle",
 		 		               		backgroundColor:'green',
-		 		               		action : function(ev) {
-		 		               				ctr.showDSDetails(ev);
+		 		               		action : function(param) {
+		 		               				ctr.showDSDetails(param);
 		 		               			}
 		 		               	}
 		 		             ];
+	
+	ctr.showDSDetails = function(param) {
+		angular.forEach(ctr.list, function(dataset){
+			if(dataset.name==param.name && dataset.label==param.label && dataset.description==param.description){
+				$scope.dsname = dataset.name;
+				$scope.dslabel = dataset.label;
+				$scope.dsdescription = dataset.description;
+			}
+		});
+					
+		$mdDialog
+			.show({
+				scope: $scope,
+				preserveScope: true,				
+				templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+				$event: param
+			});
+	}
 	
 	//FAB Speed Dial customization for deleting and editing a relationship
 	ctr.selectedDirection = 'left';
     ctr.selectedMode = 'md-scale';
     
-    /*ctr.prepRelForEdit = function(param) {
-    	var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
-		.content(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog.edit.relation"))
-		.targetEvent(param)
-		.ok(sbiModule_translate.load("sbi.federationdefinition.yes"))
-		.cancel(sbiModule_translate.load("sbi.federationdefinition.no"))
-		
-		$mdDialog.show(confirm).then(function(){
-			ctr.isEditState = true;
-	    	ctr.listaNew = [];
-	    	ctr.glupalista = [];
-	    	
-	    	for (var int = 0; int < param.length; int++) {
-				if(int==0){
-					ctr.glupalista.push(param[int].sourceTable.name);
-					ctr.glupalista.push(param[int].destinationTable.name);
-				} else{
-					ctr.glupalista.push(param[int].destinationTable.name);
-				}
-			}
-	    	
-	    	for (var int = 0; int < ctr.glupalista.length; int++) {
-	    		angular.forEach(ctr.listAllO, function(dataset){
-	        		if(dataset.name==ctr.glupalista[int]){
-	        			console.log(dataset)
-	        			ctr.listaNew.push(dataset);
-	        		}
-	        	});
-			}
-	    	
-	    	var index = ctr.multiArray.indexOf(param);
-			if(index !=-1){
-				ctr.multiArray.splice(index, 1);
-			}
-		})
-    }
-    
-    ctr.saveEditedRelation = function() {
-    	ctr.isEditState = false;
-    	ctr.multiArray.push(ctr.createAssociations());
-    }
-    
-    ctr.cancelEdit = function() {
-    	ctr.isEditState = false;
-    }*/
     
 	ctr.loadDatasetsEditMode = function(){
 
@@ -802,16 +720,24 @@ function federationDefinitionFunction
     							}
     						}
         					ctr.listaNew.push(ctr.listAllO[j])
+        					ctr.listaNewDatasets.push(ctr.listAllO[j].label);        					
         				} else {
-        					console.log("no dataset like that in ALL DATASETS")
+        					
         				}
         			}
     			}
         	}
-			ctr.multiArray = JSON.parse(valueRelString);
     }
 	
+	ctr.removeAllClasses = function() {
+		var selectedItemStyle = angular.element(document.querySelector('.sourceItem'));
+		selectedItemStyle.removeClass('sourceItem');
+		var selectedItemStyle = angular.element(document.querySelector('.destItem'));
+		selectedItemStyle.removeClass('destItem');
+	}
+	
 	ctr.clearSelections = function() {
+		ctr.removeAllClasses();
 		$scope.t = {
 				bidirectional: true,
 		        cardinality: 'many-to-one',
@@ -835,18 +761,14 @@ function federationDefinitionFunction
 				}
 			});
 		});
-		
+				
 	}
 	
 	ctr.retrieveSelectionsString = function(k) {
-		console.log(k)
 		var index = $scope.multiRelationships.indexOf(k);
 		if(index!=-1) {
 			var param = $scope.relationshipsJSON[index];
-			console.log(param)
-			var param2 = [];
-			param2.push(param);
-			ctr.retrieveSelections(param2);
+			//ctr.retrieveSelections(param);
 		}
 	}
 	
@@ -872,28 +794,24 @@ function federationDefinitionFunction
 	}
 	
 	ctr.applySelections = function (json) {
+		
 		ctr.myselectedvariable = {};
-		console.log("*********")
-		console.log(json)
-		console.log("*********")
 		
 		for (var i = 0; i < ctr.listaNew.length; i++) {
 			for (var key in json) {
 			  if (json.hasOwnProperty(key)) {
 				
 				if(key==ctr.listaNew[i].label){
-					console.log(json[key])
-					console.log("Pronadjen"+key)
-					
+
 					for (var z = 0; z < ctr.listaNew[i].metadata.fieldsMeta.length; z++) {
 						if(json[key]==ctr.listaNew[i].metadata.fieldsMeta[z].name){
-							console.log("pronadjen i item i dataset")
-							console.log(ctr.listaNew[i].metadata.fieldsMeta[z])
 							ctr.myselectedvariable[ctr.listaNew[i].name] = ctr.listaNew[i].metadata.fieldsMeta[z];
-							ctr.listaNew[i].metadata.fieldsMeta[z].selected=true;
+							var selected = ctr.listaNew[i].metadata.fieldsMeta[z].selected;
+							selected = true;
+							//color and highlight the item
 						}
 					}
-				}
+				 }
 			  }
 		   }			
 		}

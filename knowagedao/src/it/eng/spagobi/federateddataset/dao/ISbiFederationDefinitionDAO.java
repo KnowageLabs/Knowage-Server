@@ -35,10 +35,6 @@ public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
 	public int saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
 
-	public int modifySbiFederationDefinition(FederationDefinition dataset);
-
-	public int modifySbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
-
 	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
 
 	public SbiFederationDefinition loadSbiFederationDefinition(Integer id, Session currSession) throws EMFUserError;
@@ -55,7 +51,7 @@ public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
 	public void deleteFederatedDatasetById(Integer id) throws EMFUserError;
 
-	public Integer modifyFederation(FederationDefinition sfds) throws EMFUserError;
+	public Integer modifyFederation(FederationDefinition fds) throws EMFUserError;
 
 	public List<FederationDefinition> loadNotDegeneratedFederatedDataSets() throws EMFUserError;
 }

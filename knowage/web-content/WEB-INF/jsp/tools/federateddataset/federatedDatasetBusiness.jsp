@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							ng-model="ctrl.list" 
 							item-name="name"
 							show-search-bar=true
-							speed-menu-option=ctrl.fdsSpeedMenuOptAD
+							speed-menu-option=ctrl.showDatasetInfo
 							click-function="ctrl.moveToListNew(item)"
 							style="overflow:hidden"	
 							>					
@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							id="selectedDatasets" 
 							ng-model="ctrl.listaNew" 
 							item-name="name" 
-							speed-menu-option=ctrl.fdsSpeedMenuOpt
+							speed-menu-option=ctrl.removeDatasetFromListaNew
 							>					
 							</angular-list>
 						</md-content>
@@ -159,11 +159,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
 						<div ng-repeat="dataset in ctrl.listaNew track by $index">
 							<div class="datasetInAssociationBox">
-								<md-card style="height:93%">
+								<md-card class="fedAssociationsBoxCard">
 									<!-- Datset name-->
 									<md-toolbar class="miniheadfedsmall">
 									<div class="md-toolbar-tools">
-										<h2 class="md-flex">{{dataset.name | uppercase}}</h2>
+										<md-tooltip  md-direction="top">{{dataset.name | uppercase}}</md-tooltip>
+										<h2 class="md-flex fedAssociationsBoxEllipsis">{{dataset.name | uppercase}}</h2>
+										
 									</div>
 									</md-toolbar>
 									
@@ -172,9 +174,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											layout-fill
 											id='{{dataset.label}}'
 											ng-model="dataset.metadata.fieldsMeta" 
-											item-name="name"
-											highlights-selected-item="isDSCountained(dataset.name)"
-											selected-item="ctrl.myselectedvariable[dataset.name]"
+											item-name="alias"
+											highlights-selected-item="isDSCountained(dataset.label)"
+											selected-item="ctrl.myselectedvariable[dataset.label]"
 											click-function="ctrl.selectDeselect(item, listId)"
 											class="noScrol"									
 										>

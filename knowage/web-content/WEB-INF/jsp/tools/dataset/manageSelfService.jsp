@@ -88,19 +88,23 @@ if (isMyData.equalsIgnoreCase("FALSE")) {
 		  checkCache = true;
 	 	 }
   	 }
+
+  	String getUserId = ((UserProfile)userProfile).getUserId().toString();
 	
 %>
 
 <script type="text/javascript">
 
+
 <% if (checkCache){ %>
 alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
 <% }else{ %>
 
-
 	var selfService = null;
 	
 		var callBackFunction  = "<%=callBackFunction%>";
+		var getUserId = "<%= getUserId %>";
+		console.log(getUserId);
 	
     Ext.onReady(function(){
     	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;

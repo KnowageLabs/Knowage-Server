@@ -29,7 +29,7 @@
 
 Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 	extend : 'Ext.DataView'
-
+		
 		,
 		config : {
 			/**
@@ -108,7 +108,6 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 	
 		// BUILD THE TPL
 		Sbi.debug('DataViewPanel bulding the tpl...');
-	
 		var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 		var title = LN('sbi.ds.listTitle');
 	
@@ -178,19 +177,19 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 	
 		else if(e.target.id == 'deleteFederated')	{
 			var id = record.data.id;
-			
-			Ext.Ajax.request
-			(
-					{ 
-						url: Sbi.config.contextName+"/restful-services/2.0/federateddataset/"+id, 
-						method: 'DELETE', 
-						headers: { 'Content-Type': 'application/json' }
-					}
-			);
-			
-			var urlToCall =   Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation"; 
-			window.location.href = urlToCall;
-	
+
+			Ext.Ajax.request({
+				url: Sbi.config.contextName+"/restful-services/2.0/federateddataset/"+id,
+				method: 'DELETE', 
+				headers: { 'Content-Type': 'application/json' },
+			    success: function() {
+			    	var urlToCall =   Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation"; 
+					window.location.href = urlToCall;
+			    },
+			    failure: function(response, opts) {
+			        console.log('server-side failure with status code ' + response.status);
+			    }
+			});
 	
 		}
 		else {

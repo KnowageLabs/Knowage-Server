@@ -19,9 +19,12 @@
 package it.eng.spagobi.tools.dataset.service.federated;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -34,14 +37,19 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -49,7 +57,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/federateddataset")
-public class RestFederationDefinition {
+public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@Context
 	protected HttpServletRequest request;
@@ -57,6 +65,40 @@ public class RestFederationDefinition {
 	static private Logger logger = Logger.getLogger(RestFederationDefinition.class);
 	public static final String DATASET_ID = "id";
 	public static final String VERSION_NUM = "versionNum";
+	ISbiFederationDefinitionDAO fdsDAO;
+	List<FederationDefinition> listOfFederations;
+
+	@GET
+	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<FederationDefinition> get() {
+		try {
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			listOfFederations = fdsDAO.loadAllFederatedDataSets();
+			// needs serialization
+			return listOfFederations;
+		} catch (EMFUserError e) {
+			logger.error("Error while loading federations", e);
+			throw new SpagoBIRuntimeException("Error while loading federations", e);
+		}
+	}
+
+	@GET
+	@Path("/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON)
+	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
+		try {
+			FederationDefinition federationDefinition;
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			federationDefinition = fdsDAO.loadFederationDefinition(id);
+			return federationDefinition;
+		} catch (EMFUserError e) {
+			logger.error("Error while getting federation by id", e);
+			throw new SpagoBIRuntimeException("Error getting federation by id", e);
+		}
+	}
 
 	/**
 	 * Saves the federation definition in the db. Gets the definition from the
@@ -142,7 +184,8 @@ public class RestFederationDefinition {
 			logger.debug("The federation definition label is " + fdsNew.getLabel());
 			logger.debug("The federation definition ID is " + fdsNew.getFederation_id());
 
-			Integer id = editFederationDefinition(fdsNew, true);
+			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
+			Integer id = federatedDatasetDao.modifyFederation(fdsNew);
 
 			logger.debug("Saving OK");
 			logger.debug("OUT");
@@ -210,18 +253,6 @@ public class RestFederationDefinition {
 
 	}
 
-	public int editFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError {
-		logger.debug("The federation definition label is " + federation.getLabel());
-
-		ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
-		if (duplicated) {
-			return federatedDatasetDao.modifySbiFederationDefinition(federation);
-		} else {
-			return federatedDatasetDao.modifySbiFederationDefinitionNoDuplicated(federation);
-		}
-
-	}
-
 	/**
 	 * Gets a specific federation definition
 	 *
@@ -253,14 +284,17 @@ public class RestFederationDefinition {
 
 		FederationDefinition fds = new FederationDefinition();
 		Integer id = -1;
-		String idStr = (String) requestBodyJSON.opt("FEDERATION_ID");
+		Integer idStr = (Integer) requestBodyJSON.opt("federation_id");
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
 
 		String label = (String) requestBodyJSON.opt("label");
 		String name = (String) requestBodyJSON.opt("name");
-		String description = (String) requestBodyJSON.opt("description");
+		String description = "";
+		if (!requestBodyJSON.isNull("description")) {
+			description = (String) requestBodyJSON.opt("description");
+		}
 		Boolean degenerated = requestBodyJSON.optBoolean("degenerated");
 		JSONArray relationsJa = requestBodyJSON.optJSONArray("relationships");
 		String relationships = null;

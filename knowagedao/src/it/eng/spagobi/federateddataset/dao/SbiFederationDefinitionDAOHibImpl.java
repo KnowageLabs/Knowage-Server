@@ -488,7 +488,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			hibFederation.setName(fds.getName());
 			hibFederation.setDescription(fds.getDescription());
 			hibFederation.setRelationships(fds.getRelationships());
-			// hibFederation.setSourceDatasets(SbiFederationUtils.toSbiDataSet(fds.getSourceDatasets()));
+			hibFederation.setSourceDatasets(SbiFederationUtils.toSbiDataSet(fds.getSourceDatasets()));
 			hibFederation.setDegenerated(fds.isDegenerated());
 
 			updateSbiCommonInfo4Update(hibFederation);
@@ -506,87 +506,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			}
 		}
 		return idToReturn;
-
-	}
-
-	@Override
-	public int modifySbiFederationDefinition(FederationDefinition federationDefinition) {
-		return modifySbiFederationDefinition(federationDefinition, false);
-	}
-
-	@Override
-	public int modifySbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition) {
-		return modifySbiFederationDefinition(federationDefinition, true);
-	}
-
-	private int modifySbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
-		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
-
-		Session session = null;
-		Transaction transaction = null;
-
-		try {
-			session = getSession();
-			Assert.assertNotNull(session, "session cannot be null");
-			transaction = session.beginTransaction();
-			int id = modifySbiFederationDefinition(dataset, duplicated, session, transaction).getFederation_id();
-			transaction.commit();
-			return id;
-		} catch (Throwable t) {
-			logException(t);
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while editing model [" + dataset + "]", t);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-		}
-
-	}
-
-	public SbiFederationDefinition modifySbiFederationDefinition(FederationDefinition dataset, boolean duplicated, Session session, Transaction transaction) {
-		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
-
-		if (dataset == null) {
-			throw new IllegalArgumentException("Input parameter [dataset] cannot be null");
-		}
-
-		try {
-			Assert.assertNotNull(transaction, "transaction cannot be null");
-
-		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-		}
-
-		if (!duplicated) {
-			logger.debug("Checking if the federation already exists");
-			Query hibQuery = session.createQuery(" from SbiFederationDefinition fd where fd.label = ? ");
-			hibQuery.setString(0, dataset.getLabel());
-			SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
-			if (sbiResult != null) {
-				logger.debug("The federation already exisists and the id is " + sbiResult.getFederation_id());
-				dataset.setFederation_id(sbiResult.getFederation_id());
-
-				return sbiResult;
-			}
-			logger.debug("The federation doesn't exist");
-		}
-
-		SbiFederationDefinition hibFederatedDataset = new SbiFederationDefinition();
-
-		// hibFederatedDataset.setFederation_id(dataset.getFederation_id());
-		hibFederatedDataset.setLabel(dataset.getLabel());
-		hibFederatedDataset.setName(dataset.getName());
-		hibFederatedDataset.setDescription(dataset.getDescription());
-		hibFederatedDataset.setRelationships(dataset.getRelationships());
-		hibFederatedDataset.setSourceDatasets(SbiFederationUtils.toSbiDataSet(dataset.getSourceDatasets()));
-		hibFederatedDataset.setDegenerated(dataset.isDegenerated());
-
-		updateSbiCommonInfo4Insert(hibFederatedDataset);
-		session.save(hibFederatedDataset);
-		return hibFederatedDataset;
 
 	}
 

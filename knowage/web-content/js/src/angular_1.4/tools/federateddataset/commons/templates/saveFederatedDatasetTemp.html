@@ -1,9 +1,10 @@
 <md-dialog aria-label="saveFederatedDatasetTemp" style="width: 80%; overflow-y: visible;">
  <div>
 	<md-toolbar class="miniheadfederation">
-	
-		<p class="md-flex"  align="center">{{translate.load("sbi.federationdefinition.template.title.SaveFederation");}}</p>
-	
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.federationdefinition.template.title.SaveFederation");}}</h2>
+			<span flex=""></span>
+		</div>	
 	</md-toolbar>
   			<md-content class="sticky-container">
     			<div style="padding:5px">
@@ -33,10 +34,10 @@
       					
       					<div class="md-actions" layout="row">
     			<span flex></span>
-    			<md-button style="color:grey" ng-click="ctrl.hide();" class="md-primary">
+    			<md-button class="md-raised floatRightFederationButton"  ng-click="ctrl.hide();" class="md-primary">
      				{{translate.load("sbi.federationdefinition.template.button.close");}}
     			</md-button>
-    			<md-button style="color:grey" 
+    			<md-button class="md-raised floatRightFederationButton" 
     			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.clearSelections()" class="md-primary" 
     			ng-disabled="saveFDSForm.$invalid">
       				{{translate.load("sbi.federationdefinition.template.button.save");}}

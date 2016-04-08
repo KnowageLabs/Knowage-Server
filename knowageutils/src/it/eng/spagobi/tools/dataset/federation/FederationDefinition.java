@@ -23,6 +23,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,8 +46,11 @@ public class FederationDefinition {
 	private String relationships;
 
 	private Set<IDataSet> sourceDatasets;
-	
-	private boolean degenerated; //true if the federation is degenerated.. When a user creates a derived dataset the system creates a federation that links the original dataste and the derived one
+
+	private boolean degenerated; // true if the federation is degenerated.. When
+									// a user creates a derived dataset the
+									// system creates a federation that links
+									// the original dataste and the derived one
 
 	public int getFederation_id() {
 		return federation_id;
@@ -102,7 +106,7 @@ public class FederationDefinition {
 	/**
 	 * Flats the relationships and return the single relations between couple
 	 * tables
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
@@ -110,16 +114,18 @@ public class FederationDefinition {
 	public JSONArray getFlatReslationsShips() throws JSONException {
 
 		JSONArray flatJSONArray = new JSONArray();
-		JSONArray array = new JSONArray(getRelationships());
-		if (array != null && array.length() > 0) {
-			for (int i = 0; i < array.length(); i++) {
-				JSONArray temp = array.getJSONArray(i);
-				for (int j = 0; j < temp.length(); j++) {
-					flatJSONArray.put(temp.get(j));
+		if (getRelationships() != null) {
+			JSONArray array = new JSONArray(getRelationships());
+			if (array != null && array.length() > 0) {
+				for (int i = 0; i < array.length(); i++) {
+					JSONArray temp = array.getJSONArray(i);
+					for (int j = 0; j < temp.length(); j++) {
+						flatJSONArray.put(temp.get(j));
+					}
 				}
 			}
 		}
-		
+
 		return flatJSONArray;
 	}
 
@@ -143,44 +149,55 @@ public class FederationDefinition {
 	public void setDegenerated(boolean degenerated) {
 		this.degenerated = degenerated;
 	}
-	
+
 	/**
 	 * Creates a map dataset-->columns involved in at least one relation
+	 * 
 	 * @return
 	 * @throws JSONException
 	 */
+	@JsonIgnore
 	public JSONObject getDataSetRelationKeysMap() throws JSONException {
 		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<String, Set<String>>();
-		JSONArray ja =  getFlatReslationsShips(); 
-		for(int i=0; i<ja.length(); i++){
-			JSONObject jo = ja.getJSONObject(i);
-			String sourceTable = jo.getJSONObject("sourceTable").getString("name");
-			String destTable = jo.getJSONObject("destinationTable").getString("name");
-			JSONArray sourceColumns = jo.getJSONArray("sourceColumns");
-			JSONArray destColumns = jo.getJSONArray("destinationColumns");
-			
-			for(int j=0; j<sourceColumns.length(); j++){
-				Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(sourceTable);
-				if(aDatasetKeyColumnSet==null){
-					aDatasetKeyColumnSet = new HashSet<String>();
-					datasetKeyColumnMap.put(sourceTable, aDatasetKeyColumnSet);
-				}
-				aDatasetKeyColumnSet.add(sourceColumns.getString(j));
+		JSONArray ja = getFlatReslationsShips();
+
+		if (ja.length() == 0) {
+			Iterator<IDataSet> datasetIter = sourceDatasets.iterator();
+			while (datasetIter.hasNext()) {
+				datasetKeyColumnMap.put(datasetIter.next().getLabel(), new HashSet<String>());
 			}
-			
-			for(int j=0; j<destColumns.length(); j++){
-				Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(destTable);
-				if(aDatasetKeyColumnSet==null){
-					aDatasetKeyColumnSet = new HashSet<String>();
-					datasetKeyColumnMap.put(destTable, aDatasetKeyColumnSet);
+
+		} else {
+			for (int i = 0; i < ja.length(); i++) {
+				JSONObject jo = ja.getJSONObject(i);
+				String sourceTable = jo.getJSONObject("sourceTable").getString("name");
+				String destTable = jo.getJSONObject("destinationTable").getString("name");
+				JSONArray sourceColumns = jo.getJSONArray("sourceColumns");
+				JSONArray destColumns = jo.getJSONArray("destinationColumns");
+
+				for (int j = 0; j < sourceColumns.length(); j++) {
+					Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(sourceTable);
+					if (aDatasetKeyColumnSet == null) {
+						aDatasetKeyColumnSet = new HashSet<String>();
+						datasetKeyColumnMap.put(sourceTable, aDatasetKeyColumnSet);
+					}
+					aDatasetKeyColumnSet.add(sourceColumns.getString(j));
 				}
-				aDatasetKeyColumnSet.add(destColumns.getString(j));
+
+				for (int j = 0; j < destColumns.length(); j++) {
+					Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(destTable);
+					if (aDatasetKeyColumnSet == null) {
+						aDatasetKeyColumnSet = new HashSet<String>();
+						datasetKeyColumnMap.put(destTable, aDatasetKeyColumnSet);
+					}
+					aDatasetKeyColumnSet.add(destColumns.getString(j));
+				}
+
 			}
-			
 		}
-		
+
 		return new JSONObject(datasetKeyColumnMap);
-		
+
 	}
 
 }
