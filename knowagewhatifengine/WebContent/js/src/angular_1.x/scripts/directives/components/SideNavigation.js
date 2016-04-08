@@ -15,6 +15,7 @@ function sideNavigationController($scope, $timeout, $window, $mdDialog, $mdSiden
 	$scope.toggleRight = buildToggler('right');
 
 	function buildToggler(navID) {
+
 	      return function() {
 	        $mdSidenav(navID)
 	          .toggle();

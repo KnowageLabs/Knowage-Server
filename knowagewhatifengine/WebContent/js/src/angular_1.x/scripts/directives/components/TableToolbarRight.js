@@ -13,11 +13,14 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
 	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS"]
-	
+	$scope.lockerClass="";
 	
 	filterXMLResult = function(res) {
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
+		
+		console.log(locker+"locked");
+		console.log(status+"status");
 		
 		while (i = regEx.exec(res)){
 			var btn = {};
@@ -32,7 +35,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.tableToolbarButtons.push(btn);
 		}
 			
-	}
+	};
 	
 	filterXMLResult(toolbarVisibleBtns);
 			
@@ -125,5 +128,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				
 			});	
 		  }
-
+	  
+	  checkLock = function(s){
+		  if(s=="locked_by_user"){
+			  $scope.lockerClass="unlock-icon";  
+		  }
+		  if(s=="locked_by_other"){
+			  $scope.lockerClass="lock-other-icon";
+		  }
+		  if(s=="unlocked"){
+			  $scope.lockerClass="lock-icon"; 
+		  }
+	  }
+	  
+	  checkLock(status);
+	  
 };

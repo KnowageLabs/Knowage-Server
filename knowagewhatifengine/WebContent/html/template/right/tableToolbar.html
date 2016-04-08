@@ -116,6 +116,13 @@
 <div class="menu-text">What If</div>
 <md-grid-list
         md-cols="3" md-row-height="50px">
+    <md-grid-tile>
+    	<md-button class="right-toolbar-menu {{lockerClass}}" >
+    		<md-tooltip md-direction="bottom">
+				Tooltip
+			</md-tooltip>
+    	</md-button>
+    </md-grid-tile>
     <md-grid-tile ng-repeat="wbtn in whatifToolbarButtons">
     	<md-button class="right-toolbar-menu {{wbtn.img}}" ng-click="btnFunctions(wbtn.img)">
     		<md-tooltip md-direction="bottom">

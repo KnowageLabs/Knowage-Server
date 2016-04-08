@@ -62,12 +62,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	$scope.expandTreeAsync = function(item){
 		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
-		console.log($scope.data);
-		
+		console.log($scope.data);		
 	}
 	
-	expandAsyncTree = function(d,dput,id){
-		
+	expandAsyncTree = function(d,dput,id){		
 		for(var i = 0; i< d.length; i++){
 			if(d[i].id == id){
 				d[i]["children"] = dput;
@@ -79,11 +77,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					if(!d[i].leaf && d[i].children.length>0){
 						expandAsyncTree(d[i].children,dput,id);
 					}
-				}
-				
+				}				
 			} 
 		}
-
 	};
 	
 	 /*service for placing member on axis**/
@@ -105,12 +101,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promiseGet
 		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 		.then(function(response) {
-			//if(response.data[0].children.length != 0)
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
 				$scope.loadingNodes = false;
-			//else
-				//sbiModule_messaging.showWarningMessage("Sorry. Match not found for '"+$scope.searchText+"'", 'Warning');
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
 		});
@@ -125,7 +118,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					$scope.data= $scope.loadedData[i];
 					if($scope.activeaxis >= 0){
 						getVisible($scope.data,h);
-						//console.log(visibleSelected);
 				}
 			}
 		}
@@ -277,7 +269,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 									"An error occured while movin hierarchy",
 									'Error');
 						});
-	}
+	};
 	
 	$scope.highlight = function(name){
 		if(!hlght)
@@ -333,7 +325,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var exist = false;
 		var position;
 		$scope.data=[];
-
 		$scope.filterDialogToolbarName = filter.name;
 		
 		for(var i = 0; i< $scope.dataPointers.length;i++){
@@ -361,6 +352,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var topLength = $scope.columns.length;
 		var fromAxis;
 		var pa;
+		
 		if(data!=null){
 			pa = data.positionInAxis;
 			fromAxis = data.axis;
@@ -507,12 +499,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.indexInList=function(item, list) {
 		if(item.hasOwnProperty("name")){
-		for (var i = 0; i < list.length; i++) {
-			var object = list[i];
-			if(object.name==item.name){
-				return i;
+			for (var i = 0; i < list.length; i++) {
+				var object = list[i];
+				
+				if(object.name==item.name){
+					return i;
+				}
 			}
-		}
 		}
 		return -1;
 	}
@@ -544,7 +537,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	$scope.filterShift = function(direction) {
 		var length = $scope.filterCardList.length;
-
 		var first = $scope.filterCardList[0];
 		var last = $scope.filterCardList[length - 1];
 
@@ -552,9 +544,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			for (var i = 0; i < length; i++) {
 				$scope.filterCardList[i] = $scope.filterCardList[i + 1];
 			}
-
 			$scope.filterCardList[length - 1] = first;
-		} else {
+		}
+		else{
 			for (var i = length - 2; i >= 0; i--) {
 				$scope.filterCardList[i + 1] = $scope.filterCardList[i];
 			}
@@ -605,6 +597,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			initFilterList();
+
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
