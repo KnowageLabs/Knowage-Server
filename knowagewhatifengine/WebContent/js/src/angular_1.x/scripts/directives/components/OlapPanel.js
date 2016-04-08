@@ -13,9 +13,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
-		
+		var encoded = encodeURI('/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
-		("1.0",'/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
@@ -25,8 +25,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.drillUp = function(axis, position, member, uniqueName,positionUniqueName) {
+		var encoded = encodeURI('/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
-		("1.0",'/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
@@ -36,7 +37,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 
 	$scope.swapAxis = function() {
-		sbiModule_restServices.promisePost("1.0/axis/swap?SBI_EXECUTION_ID="+JSsbiExecutionID,"")
+		var encoded = encodeURI("1.0/axis/swap?SBI_EXECUTION_ID="+JSsbiExecutionID);
+		sbiModule_restServices.promisePost(encoded,"")
 		.then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
@@ -48,9 +50,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	$scope.enableDisableDrillThrough = function() {
 
 		if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
-			
+			var encoded = encodeURI('/member/drilltrough/'+ $scope.selectedCell.ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promiseGet
-			("1.0",'/member/drilltrough/'+ $scope.selectedCell.ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+			("1.0",encoded)
 			.then(function(response,ev) {
 				$scope.dt = response.data;
 				console.log($scope.dt);
@@ -69,8 +71,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		}else {
 			console.log("IZ DIALOGAA");
 			var c = JSON.stringify($scope.dtAssociatedLevels);
+			var encoded = encodeURI('/member/drilltrough/'+ $scope.selectedCell.ordinal+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promiseGet
-			("1.0",'/member/drilltrough/'+ $scope.selectedCell.ordinal+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+			("1.0",encoded)
 			.then(function(response,ev) {
 				$scope.dt = response.data;
 				$scope.dtData = response.data;
@@ -162,8 +165,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.getProps = function() {
+		var encoded = encodeURI('/member/properties/'+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
-		("1.0",'/member/properties/'+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 			console.log(response);
 		}, function(response) {
@@ -214,9 +218,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		};
 		
 	$scope.getCollections = function() {
-		
+		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
-		("1.0",'/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0", encoded)
 		.then(function(response) {
 			console.log(response);
 			$scope.dtTree = response.data;
@@ -551,9 +555,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
     
     $scope.openSelectedCrossNavigationDocument = function (targetDocument) {
-    	var targetIndex = $scope.modelConfig.crossNavigation.targets.indexOf(targetDocument);	
+    	var targetIndex = $scope.modelConfig.crossNavigation.targets.indexOf(targetDocument);
+    	var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
     	sbiModule_restServices.promisePost
-		("1.0",'/crossnavigation/getCrossNavigationUrl/'+targetIndex+'/'+$scope.ordinal+'/'+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 			$scope.handleResponse(response);
 			eval(response.data)
@@ -784,8 +789,9 @@ $scope.sendCC = function() {
 	 * */
 	
 $scope.addCC = function() {
+		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost
-		("1.0",'/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 			console.log(response);
 			$scope.handleResponse(response);

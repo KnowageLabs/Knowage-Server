@@ -84,9 +84,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	 /*service for placing member on axis**/
 	 $scope.putMemberOnAxis = function(fromAxis,member){
-		 
+		 var encoded = encodeURI('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
 		 sbiModule_restServices.promisePost
-		 ('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID,"",member)
+		 (encoded,"",member)
 			.then(function(response) {
 				$scope.handleResponse(response);			
 			}, function(response) {
@@ -98,8 +98,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.searchFilter = function(){
 		$scope.loadingNodes = true;
 		hlght = true;
+		var encoded = encodeURI('/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+		("1.0",encoded)
 		.then(function(response) {
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
@@ -126,8 +127,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.getHierarchyMembersAsynchronus = function(hierarchy,axis,node,id){
+		var encoded = encodeURI('/hierarchy/'+ hierarchy+ '/filtertree/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node);
 		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ hierarchy+ '/filtertree/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node)
+		("1.0",encoded)
 		.then(function(response) {
 
 			  if(node!=null){
@@ -216,8 +218,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	filterSlice = function(){
 		if(h != undefined && m!= undefined){
+			var encoded = encodeURI('/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 			sbiModule_restServices.promiseGet
-			("1.0",'/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			("1.0",encoded)
 			.then(function(response) {
 				  $scope.table = $sce.trustAsHtml(response.data.table);
 				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
@@ -230,8 +233,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	filterPlaceMemberOnAxis = function(){
 		removeChildren();
 		console.log("from pmona"+visibleSelected);
+		var encoded = encodeURI('/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost
-		("1.0",'/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID,visibleSelected)
+		("1.0",encoded,visibleSelected)
 		.then(function(response) {
 			 visibleSelected = [];			
 			 $scope.table = $sce.trustAsHtml(response.data.table);
@@ -255,11 +259,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 /* service for moving hierarchies* */
 	$scope.moveHierarchies = function(axis, hierarchieUniqeName, newPosition,
 			direction, member) {
-
+		var encoded = encodeURI('1.0/axis/' + axis + '/moveHierarchy/' + hierarchieUniqeName
+				+ '/' + newPosition + '/' + direction
+				+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost(
-				'1.0/axis/' + axis + '/moveHierarchy/' + hierarchieUniqeName
-						+ '/' + newPosition + '/' + direction
-						+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID, "", member)
+				encoded, "", member)
 				.then(
 						function(response) {
 							$scope.handleResponse(response);
@@ -590,7 +594,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.sendMdxQuery = function(mdx) {
-		sbiModule_restServices.promisePost("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID,"",mdx)
+		var encoded = encodeURI("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID)
+		sbiModule_restServices.promisePost(encoded,"",mdx)
 		.then(function(response) {
 			$scope.handleResponse(response);
 			checkShift();
