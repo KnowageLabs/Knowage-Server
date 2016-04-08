@@ -239,7 +239,8 @@ public class RScriptExecutor {
 						// check if the library is present in the workspace, if not try to install tha package
 						REXP libIsPresent = re.parseAndEval("\"" + lib + "\" %in% installed_packages");
 						if (libIsPresent.isNull() || libIsPresent.asString().equalsIgnoreCase("false")) {
-							re.parseAndEval("try(install.packages(\"" + lib + "\",destdir=libdir))");
+							// re.parseAndEval("try(install.packages(\"" + lib + "\",destdir=libdir))");
+							logger.error("Libray '" + lib + "' is not present. Please, install the library in R before");
 						}
 						REXP rLibrary = re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
 						if (rLibrary.inherits("try-error")) {
