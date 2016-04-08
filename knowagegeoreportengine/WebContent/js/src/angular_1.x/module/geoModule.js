@@ -156,20 +156,20 @@ geoM.service(
 				$map.addLayer(layerServ.templateLayer);
 				var duration = 2000;
 				var start = +new Date();
-				var pan = ol.animation.pan({
-					duration : duration,
-					source : /** @type {ol.Coordinate} */($map.getView().getCenter())
-				});
-				var bounce = ol.animation.bounce({
-					duration : duration,
-					resolution : 4 * $map.getView().getResolution()
-				});
+				if(geoModule_template.currentView.center[0]==0 && geoModule_template.currentView.center[1]==0){
+					console.log(layerServ.templateLayer);
+					$map.getView().setCenter(layerServ.templateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0]);
+					if(layerServ.templateLayer.getSource().getFeatures().length>35){
+						$map.getView().setZoom(4);
+					}else{
+						$map.getView().setZoom(5);
+					}
+				}else{
+					$map.getView().setCenter(geoModule_template.currentView.center);
+					$map.getView().setZoom(geoModule_template.currentView.zoom);
 
-				$map.beforeRender(pan, bounce);
-
-				$map.getView().setCenter(geoModule_template.currentView.center);
-				$map.getView().setZoom(geoModule_template.currentView.zoom);
-
+				}
+				
 				// $map.getView().fit(layerServ.templateLayer.getProperties().source.getExtent(),$map.getSize());
 
 				layerServ.addClickEvent();

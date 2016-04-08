@@ -2,8 +2,8 @@
 
 <!-- <link rel="stylesheet" href="http://openlayers.org/en/v3.13.0/css/ol.css" type="text/css"> -->
 <!-- <script src="http://openlayers.org/en/v3.13.0/build/ol.js" type="text/javascript"></script> -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.13.0/ol.js"></script> 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.13.0/ol.css" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.js"></script> 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.css" type="text/css">
 
 
 <script src="${pageContext.request.contextPath}/js/lib/chartjs/Chart.js"></script>
