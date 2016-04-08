@@ -54,6 +54,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="CacheManagement" description="CacheManagement" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="EnginesManagement" description="EnginesManagement"/>
