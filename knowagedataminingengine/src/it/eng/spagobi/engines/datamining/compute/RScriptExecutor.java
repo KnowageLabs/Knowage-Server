@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,6 +23,8 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,6 +33,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -83,7 +87,7 @@ public class RScriptExecutor {
 			// script
 			String ret = createTemporarySourceScript(scriptToExecute);
 			logger.debug("created temporary script");
-			re.parseAndEval("source(\"" + ret + "\")");
+			REXP rexp = re.parseAndEval("source(\"" + ret + "\")");
 			logger.debug("detects action to execute from command --> used to call functions");
 			// detects action to execute from command --> used to call functions
 			String action = command.getAction();
@@ -204,7 +208,18 @@ public class RScriptExecutor {
 
 		DataMiningScript script = getScript(command);
 		if (script != null) {
-			code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
+			List<Variable> variables = new LinkedList<Variable>();
+			if (command.getVariables() != null) {
+				variables.addAll(command.getVariables());
+			}
+			List<Output> outputs = command.getOutputs();
+			for (Output output : outputs) {
+				if (output.getVariables() != null) {
+					variables.addAll(output.getVariables());
+				}
+			}
+			// code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
+			code = DataMiningUtils.replaceVariables(variables, script.getCode());
 		}
 		logger.debug("OUT");
 		return code;
@@ -236,7 +251,7 @@ public class RScriptExecutor {
 		}
 		logger.debug("OUT");
 	}
-	
+
 	private void setRProxy() {
 		String proxyHost = null;
 		String proxyPort = null;
