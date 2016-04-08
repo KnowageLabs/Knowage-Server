@@ -421,3 +421,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							sbiModule_translate.load("sbi.general.No"));
 	
 };
+
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+
+    $mdThemingProvider.theme('knowage')
+
+$mdThemingProvider.setDefaultTheme('knowage');
+}]);
