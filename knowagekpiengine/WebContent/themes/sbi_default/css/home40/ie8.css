@@ -1,0 +1,18 @@
+/* --------------------------------------------------
+Theme Name: 
+file: ie8.css
+author: 
+---------------------------------------------------*/
+
+.list-actions .search-form .field input{height:28px;padding-top:12px}
+.corner-a{background-image:url(../../images/corner-a.png);background-repeat:no-repeat;width:5px;height:5px;display.block;position:absolute}
+.corner-tl{top:-1px;left:-1px;background-position:0 0}
+.corner-tr{top:-1px;right:-1px;background-position:-5px 0}
+.corner-br{bottom:-1px;right:-1px;background-position:-5px -5px}
+.corner-bl{bottom:-1px;left:-1px;background-position:0 -5px}
+.list-actions .btn-add:hover .corner-tr{background-position:-5px -10px}
+.list-actions .btn-add:hover .corner-br{background-position:-5px -15px}
+.language-switcher li a{height:20px}
+.list-actions .btn-add .plus{cursor:pointer}
+.panel-actions li.first{-webkit-border-radius:4px 0 0 0;-moz-border-radius:4px 0 0 0;border-radius:4px 0 0 0;position:relative}
+.panel-actions li.last{-webkit-border-radius:0 0 0 4px;-moz-border-radius:0 0 0 4px;border-radius:0 0 0 4px;position:relative}

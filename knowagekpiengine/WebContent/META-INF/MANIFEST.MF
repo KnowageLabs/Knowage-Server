@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageKpiEngine.war
+Implementation-Title: KnowageKpiEngine
+Implementation-Version: 1.0
+

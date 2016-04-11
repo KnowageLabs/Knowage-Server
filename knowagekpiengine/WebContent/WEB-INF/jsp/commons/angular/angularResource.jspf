@@ -1,0 +1,106 @@
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<!-- this imports are used for language controls  -->
+<%@page import="it.eng.spago.base.*"%>
+<%@page import="it.eng.spago.base.RequestContainer"%>
+<%@page import="it.eng.spago.base.ResponseContainer"%>
+<%@page import="it.eng.spago.base.SessionContainer"%>
+<%@page import="it.eng.spago.security.IEngUserProfile" %>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Locale"%>
+<%@page import="java.util.ArrayList"%>
+
+
+<%
+	RequestContainer aRequestContainer = null;
+	ResponseContainer aResponseContainer = null;
+	SessionContainer aSessionContainer = null;
+	IMessageBuilder msgBuilder = null;
+	//String sbiMode = null;
+		
+	// case of portlet mode
+	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
+		aResponseContainer = ResponseContainer.getResponseContainer();
+		if(aResponseContainer == null){
+			//case of REST
+			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
+		}
+	}
+	
+	/*
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+	*/
+	
+	// create message builder
+	msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	
+	//get the current theme name
+	/*
+	String currTheme = ThemesManager.getCurrentTheme(aRequestContainer);
+	if (currTheme == null)
+		currTheme = ThemesManager.getDefaultTheme();
+	*/
+	
+	// get other spago object
+	/*
+	*/
+	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
+	SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
+	aSessionContainer = aRequestContainer.getSessionContainer();
+	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
+	
+	// If Language is alredy defined keep it
+	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	//Locale locale = Locale.US;
+	
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
+		locale = new Locale(curr_language, curr_country, "");
+	} else {
+		locale = Locale.US;
+	}
+	
+	//load user profile 
+	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
+	String userUniqueIdentifier="";
+	//String userId="";
+	String userName="";
+	String defaultRole="";
+	List userRoles = new ArrayList();
+	
+	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
+	if (userProfile!=null){
+		userId=(String)((UserProfile)userProfile).getUserId();
+		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
+		userName=(String)((UserProfile)userProfile).getUserName();
+		userRoles = (ArrayList)userProfile.getRoles();
+		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
+		
+	}
+	 
+	
+%>
+
+
+<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>

@@ -1,0 +1,372 @@
+
+.absolute{
+	position: absolute;
+}
+
+.wordListBox .angularListTemplate  md-list-item button, .glossaryListBox  .angularListTemplate  md-list-item button{
+	background-color: transparent;
+}
+
+.noPadding{
+	  padding: 0px;
+}
+.textareaInputBox {
+	margin-top: -14px !important;
+}
+
+.glossary_word_box {
+	border: 2px solid black;
+}
+
+.glossary_word_box .search_box {
+	border-bottom: 2px solid black;
+}
+
+
+.smallFont {
+	font-size: small;
+}
+
+.bg-green {
+	background-color: rgb(84, 252, 57) !important;
+}
+
+.box-list-option div.md-item-text {
+position: relative;
+}
+
+
+.box-list-option p{
+	float: left;
+  width: 20%;
+}
+
+.box-list-option md-input-container{
+  width: 73%;
+  padding: 0px;
+  min-height: 20px;
+  bottom: -14px;
+  padding-left: 6px!important;
+  border-left: 2px solid  rgb(175, 182, 186);
+  margin-top: -14px!important;
+  margin-bottom: 16px !important;
+  padding-bottom: 4px;
+}
+
+.box-list-option textarea.attText{
+	  float: left;
+  width: 100% !important;
+  margin: 0px !important;
+    padding: 0px !important;
+      border-bottom-width: 0px;
+}
+
+
+.wordForm md-select md-select-label{
+	width: 95%;
+	}
+.wordForm md-autocomplete label {
+	margin-top: -12px;
+}
+
+.wordForm .attr_Value{
+	margin-top: -6px !important;
+}
+.wordForm .attr_Value.md-input-has-value{
+	margin-top: -2px !important;
+}
+
+
+.wordForm  .linkChips {
+	box-shadow: none !important;
+}
+
+.wordForm .md-input-focused .linkChips {
+	box-shadow: 0 3px rgb(158, 158, 158) !important;
+}
+
+.wordForm .md-input-hasnt-value textarea {
+	height: 43px !important;
+	min-height: 0px !important;
+	margin-bottom: -8px;
+}
+
+.wordForm .md-input-hasnt-value .md-char-counter {
+	bottom: -5px;
+}
+
+ .newLogicalNode  label{
+ line-height: 0px;
+ }
+
+/* nuova classe che simula md-input-has-value-copy */
+md-input-container.md-input-has-value-copy .md-placeholder {
+	-webkit-transition: none;
+	        transition: none;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+md-input-container.md-input-focused label:not (.md-no-float ),md-input-container.md-input-has-value-copy label:not(.md-no-float){
+-webkit-transform: translate3d(0,4px,0)scale(.75);
+-ms-transform: translate3d(0,4px,0)scale(.75);
+    transform:translate3d(0,4px,0)scale(.75);
+}
+
+md-input-container.md-icon-float.md-input-focused, md-input-container.md-icon-float.md-input-has-value-copy
+	{
+	margin-top: 0px;
+}
+
+md-input-container.md-icon-float.md-input-focused label,
+	md-input-container.md-icon-float.md-input-has-value-copy label {
+	-webkit-transform: translate3d(0, 4px, 0) scale(.75);
+	transform: translate3d(0, 4px, 0) scale(.75);
+	-webkit-transition: -webkit-transform cubic-bezier(.25, .8, .25, 1) .5s;
+	        transition: -webkit-transform cubic-bezier(.25, .8, .25, 1) .5s;
+	transition: transform cubic-bezier(.25, .8, .25, 1) .5s;
+}
+
+/* 	fine */
+
+.list-right-word {
+	top: 0;
+	right: 0;
+	margin-right: 0;
+	position: absolute;
+}
+
+md-icon.sm-font-icon {
+	height: 17px;
+}
+
+.leftBox_word {
+	z-index: 2;
+	box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75);
+	height: 100%;
+	overflow: auto;
+}
+
+
+
+.position-fixed{
+	position: fixed !important;
+}
+
+ md-toast {
+	position: fixed !important;
+	  top: 0px !important;
+}
+
+
+
+
+
+
+
+
+
+.chipsTree  .angular-ui-tree-empty {
+	height: 60px;
+	position: absolute;
+	width: 100%;
+	min-height: 0px;
+	background-color: transparent !important;
+	background-image: none;
+	border: none;
+	display:none;
+}
+
+.chipsTree .angular-ui-tree-placeholder{
+	background-color: rgba(232, 244, 250, 0.35) !important;
+	position: absolute;
+	width: 100% !important;
+	height:50px !important;
+/* 	margin-left: 18px; */
+	margin-top:-5px;
+	
+}
+
+.linkChips  .md-contact-chips .md-chips .md-chip .md-contact-avatar,
+	.md-contact-suggestion img {
+	display: none !important;
+}
+
+.md-autocomplete-suggestions li .highlight {
+  color: rgb(49, 5, 255);
+  font-weight: bolder;
+}
+
+.box-list-option {
+	width: 100%  !important;
+	background-color: rgba(0, 0, 0, 0.09);
+	padding: 0px !important;
+	float: left;
+	margin-bottom: 10px;
+	min-height: 0px !important;
+}
+
+
+/* rimuovo il focus da tutto */
+*:focus {
+	outline: none;
+}
+
+.margin5 {
+	margin: 5px !important;
+}
+
+.contenitore {
+	border: 2px solid blue;
+	min-width: 400px;
+	float: left;
+	margin: 20px;
+}
+
+
+ul.listaElementiNodo li {
+	display: block !important;
+}
+
+
+
+.box_edit_element {
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	width: 45px;
+}
+
+table, th, td {
+	border: 1px solid grey;
+	border-collapse: collapse;
+	padding: 5px;
+}
+
+table tr:nth-child(odd) {
+	background-color: #f1f1f1;
+}
+
+table tr:nth-child(even) {
+	background-color: #ffffff;
+}
+
+.transparent_input {
+	border: none;
+	background: transparent;
+	width: 100%;
+}
+
+
+
+
+#wordTree .angular-ui-tree-handle:hover {
+	color: #438eb9;
+	background: #f4f6f7;
+	border-color: #dce2e8;
+
+}
+
+
+
+.group-title {
+	background-color: #687074 !important;
+	color: #FFF !important;
+}
+
+
+.wordListBox {
+	height: 60%;
+	position: relative;
+	background-color: rgb(236, 236, 236);
+}
+
+.wordListBox md-content,.glossaryListBox md-content {
+	background-color: transparent;
+}
+
+.glossaryListBox  {
+/* 	height: 40%; */
+	overflow-y: auto;
+	background-color: rgb(236, 236, 236);
+/* 	-webkit-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+/* 	-moz-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+/* 	box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+
+}
+
+.glossaryListBox md-list-item.bottomBorder button {
+  border-radius: 0;
+}
+
+
+
+
+
+
+md-list-item.md-no-proxy.md-button, md-list-item .md-no-style.md-button
+	{
+	-webkit-box-align: start !important;
+	-webkit-align-items: flex-start !important;
+	    -ms-flex-align: start !important;
+	        align-items: flex-start !important;
+}
+
+
+md-tabs.hideTabs md-tabs-wrapper {
+  display: none;
+}
+
+
+/* /* trick to risolve materia autocomplite bug */ */
+/* .md-scroll-mask{ */
+/* 	 position:static; */
+/*     position: initial; */
+   
+/* } */
+
+.rightBox_GLOSS{
+	position: absolute;
+	 width: 100%; 
+	 height: 100%;
+	 padding: 15px;
+}
+
+/* .rightBox_GLOSS md-content,.rightBox_GLOSS div.ng-scope.ng-isolate-scope ,.rightBox_GLOSS md-tab-content,.rightBox_GLOSS md-tabs-content-wrapper,.rightBox_GLOSS md-tabs{ */
+/* 	height: 100% !important; */
+/* } */
+
+.default_tree .dropdown{
+/* 	margin-left:calc(-25% - 20px); */
+}
+
+.safeModeCheckBox{
+/* 	  left: calc( 100% - 20%);  */
+	     position: absolute;    
+	     width: 200px;   
+	      z-index: 1;
+	      right: 0px;
+}
+
+.wordForm  .linkChips md-chips-wrap{
+	padding-bottom:  1px!important;
+}
+
+.wordForm md-input-container.input-chips-container label{
+    font-size: 18px;
+    top: -25px;
+    }
+.wordForm md-input-container.input-chips-container.md-input-focused label ,.wordForm md-input-container.input-chips-container.md-input-has-value-copy label  {
+	    -webkit-transform: translate3d(0,-25px,0) scale(.55);
+    transform: translate3d(0,-25px,0) scale(0.55);
+    color: #7F7F7F;
+}
+
+.chipsNewWordDiv{
+	margin-top: 7px;
+	}
+	
+.chipsNewWordDiv md-chips.md-knowage-theme .md-chips {
+    box-shadow: 0 1px rgb(59, 103, 140);
+}
+
