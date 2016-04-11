@@ -34,12 +34,14 @@ import it.eng.spagobi.kpi.bo.KpiScheduler;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.bo.Scorecard;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
+import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -304,11 +306,11 @@ public class KpiService {
 			Map<String, List<String>> aliasErrorMap = kpiDao.aliasValidation(rule);
 			if (!aliasErrorMap.isEmpty()) {
 				JSONArray errors = new JSONArray();
+				JSError jsError = new JSError();
 				for (Entry<String, List<String>> error : aliasErrorMap.entrySet()) {
-					errors.put(new JSONObject().put("message",
-							getMessage(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""))));
+					jsError.addErrorKey(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""));
 				}
-				return Response.ok(new JSONObject().put("errors", errors).toString()).build();
+				return Response.ok(jsError.toString()).build();
 			}
 			return Response.ok().build();
 		} catch (Exception e) {
@@ -329,8 +331,7 @@ public class KpiService {
 			// Rule name must be unique
 			Integer otherId = dao.getRuleIdByName(rule.getName());
 			if (otherId != null && (id == null || !id.equals(otherId))) {
-				String errorMsg = getMessage(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
-				return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", errorMsg)))).build();
+				return Response.ok(new JSError().addErrorKey(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName()).toString()).build();
 			}
 			if (id == null) {
 				// Save a new Rule
@@ -398,36 +399,33 @@ public class KpiService {
 			String requestVal = RestUtilities.readBody(req);
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
-			List<String> errors = new ArrayList<>();
-			checkMandatory(req, errors, kpi);
+			JSError jsError = new JSError();
+
+			checkMandatory(req, jsError, kpi);
 
 			if (kpi.getThreshold() == null) {
-				errors.add(getMessage(NEW_KPI_THRESHOLD_MANDATORY));
+				jsError.addErrorKey(NEW_KPI_THRESHOLD_MANDATORY);
 			} else {
-				checkMandatory(errors, kpi.getThreshold());
+				checkMandatory(jsError, kpi.getThreshold());
 			}
 
-			if (errors.isEmpty()) {
+			if (!jsError.hasErrors()) {
 				// kpi name must be unique
 				Integer sameNameKpiId = dao.getKpiIdByName(kpi.getName());
 				if (sameNameKpiId != null && (kpi.getId() == null || !sameNameKpiId.equals(kpi.getId()))) {
-					errors.add(getMessage(NEW_KPI_KPI_NAME_NOT_AVAILABLE, kpi.getName()));
+					jsError.addErrorKey(NEW_KPI_KPI_NAME_NOT_AVAILABLE, kpi.getName());
 				}
 			}
 
 			if (kpi.getCardinality() != null && !kpi.getCardinality().isEmpty()) {
-				checkCardinality(errors, kpi.getCardinality());
+				checkCardinality(jsError, kpi.getCardinality());
 			}
 			if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
 				checkPlaceholder(req, kpi);
 			}
 
-			if (!errors.isEmpty()) {
-				JSONArray errorArray = new JSONArray();
-				for (String error : errors) {
-					errorArray.put(new JSONObject().put("message", error));
-				}
-				return Response.ok(new JSONObject().put("errors", errorArray).toString()).build();
+			if (jsError.hasErrors()) {
+				return Response.ok(jsError.toString()).build();
 			}
 
 			if (kpi.getId() == null) {
@@ -559,9 +557,10 @@ public class KpiService {
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response saveSchedulerKPI(@Context HttpServletRequest req) throws EMFUserError {
 		try {
-			// TODO validate mandatory fields
 			String requestVal = RestUtilities.readBody(req);
 			KpiScheduler scheduler = (KpiScheduler) JsonConverter.jsonToObject(requestVal, KpiScheduler.class);
+			checkMandatory(scheduler);
+			checkValidity(scheduler);
 			IKpiDAO dao = getKpiDAO(req);
 			Integer id = scheduler.getId();
 			if (id == null) {
@@ -569,10 +568,27 @@ public class KpiService {
 			} else {
 				dao.updateScheduler(scheduler);
 			}
-		} catch (Exception e) {
+			return Response.ok().build();
+		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
+			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
 		}
-		return Response.ok().build();
+	}
+
+	private void checkValidity(KpiScheduler scheduler) throws SpagoBIException {
+		String fieldValue = null;
+		String fieldName = null;
+		if (!scheduler.getStartTime().matches("\\d{2}:\\d{2}")) {
+			fieldName = "StartTime";
+			fieldValue = scheduler.getStartTime();
+		}
+		if (scheduler.getEndTime() != null && !scheduler.getEndTime().matches("\\d{2}:\\d{2}")) {
+			fieldName = "EndTime";
+			fieldValue = scheduler.getEndTime();
+		}
+		if (fieldName != null) {
+			throw new SpagoBIException("Field error: " + fieldName + "[" + fieldValue + "]");
+		}
 	}
 
 	@GET
@@ -586,7 +602,7 @@ public class KpiService {
 			JobTrigger triggerInfo = getJobTriggerInfo("" + id, "KPI_SCHEDULER_GROUP", "" + id, "KPI_SCHEDULER_GROUP");
 			t.setStartTime(triggerInfo.getStartTime());
 			t.setEndTime(triggerInfo.getEndTime());
-			t.setChron(triggerInfo.getChrono() != null ? triggerInfo.getChrono().replace("'", "\"") : null);
+			t.setCrono(triggerInfo.getChrono() != null ? triggerInfo.getChrono().replace("'", "\"") : null);
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 		}
@@ -644,12 +660,6 @@ public class KpiService {
 		return Response.ok().build();
 	}
 
-	private void check(Scorecard scorecard) throws SpagoBIException {
-		if (scorecard.getName() == null) {
-			throw new SpagoBIException("Service [/saveScorecard]: Some fields are mandatory");
-		}
-	}
-
 	@DELETE
 	@Path("/{id}/deleteScorecard")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
@@ -662,6 +672,41 @@ public class KpiService {
 	/*
 	 * *** Private methods ***
 	 */
+
+	private void checkMandatory(KpiScheduler scheduler) throws SpagoBIException {
+		String fieldName = null;
+		if (scheduler.getName() == null) {
+			fieldName = "Name";
+		} else if (scheduler.getDelta() == null) {
+			fieldName = "Delta";
+		} else if (scheduler.getStartDate() == null) {
+			fieldName = "StartDate";
+		} else if (scheduler.getCrono() == null) {
+			fieldName = "Crono";
+		} else if (scheduler.getDelta() == null) {
+			fieldName = "Delta";
+		} else if (scheduler.getKpis() == null || scheduler.getKpis().isEmpty()) {
+			fieldName = "Kpi list";
+		} else if (scheduler.getStartTime() == null) {
+			fieldName = "StartTime";
+		}
+		if (scheduler.getFilters() != null && !scheduler.getFilters().isEmpty()) {
+			for (SchedulerFilter filter : scheduler.getFilters()) {
+				if (filter.getPlaceholderName() == null || filter.getValue() == null) {
+					fieldName = "PlaceholderName [" + filter.getPlaceholderName() + "] value [" + filter.getValue() + "]";
+				}
+			}
+		}
+		if (fieldName != null) {
+			throw new SpagoBIException(fieldName + " is mandatory ");
+		}
+	}
+
+	private void check(Scorecard scorecard) throws SpagoBIException {
+		if (scorecard.getName() == null) {
+			throw new SpagoBIException("Service [/saveScorecard]: Some fields are mandatory");
+		}
+	}
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
@@ -710,7 +755,7 @@ public class KpiService {
 		List<String> selectedAttrs = new ArrayList<>();
 	}
 
-	private void checkCardinality(List<String> errors, String cardinality) throws JSONException, EMFUserError {
+	private void checkCardinality(JSError errors, String cardinality) throws JSONException, EMFUserError {
 		JSONArray measureArray = new JSONObject(cardinality).getJSONArray("measureList");
 		List<Measure> measureLst = new ArrayList<>();
 		for (int i = 0; i < measureArray.length(); i++) {
@@ -739,20 +784,20 @@ public class KpiService {
 			Measure prevMeasure = measureLst.get(i - 1);
 			Measure currMeasure = measureLst.get(i);
 			if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
-				errors.add(getMessage(NEW_KPI_CARDINALITY_ERROR));
+				errors.addErrorKey(NEW_KPI_CARDINALITY_ERROR);
 			}
 		}
 	}
 
-	private void checkMandatory(List<String> errors, Threshold threshold) {
+	private void checkMandatory(JSError errors, Threshold threshold) {
 		if (threshold.getName() == null) {
-			errors.add(getMessage(NEW_KPI_THRESHOLD_NAME_MANDATORY));
+			errors.addErrorKey(NEW_KPI_THRESHOLD_NAME_MANDATORY);
 		}
 		if (threshold.getType() == null && threshold.getTypeId() == null) {
-			errors.add(getMessage(NEW_KPI_THRESHOLD_TYPE_MANDATORY));
+			errors.addErrorKey(NEW_KPI_THRESHOLD_TYPE_MANDATORY);
 		}
 		if (threshold.getThresholdValues() == null || threshold.getThresholdValues().size() == 0) {
-			errors.add(getMessage(NEW_KPI_THRESHOLD_VALUES_MANDATORY));
+			errors.addErrorKey(NEW_KPI_THRESHOLD_VALUES_MANDATORY);
 		}
 	}
 
@@ -771,12 +816,12 @@ public class KpiService {
 		return dao;
 	}
 
-	private void checkMandatory(HttpServletRequest req, List<String> errors, Kpi kpi) throws JSONException, EMFUserError {
+	private void checkMandatory(HttpServletRequest req, JSError jsError, Kpi kpi) throws JSONException, EMFUserError {
 		if (kpi.getName() == null) {
-			errors.add(getMessage(NEW_KPI_NAME_MANDATORY));
+			jsError.addErrorKey(NEW_KPI_NAME_MANDATORY);
 		}
 		if (kpi.getDefinition() == null) {
-			errors.add(getMessage(NEW_KPI_DEFINITION_MANDATORY));
+			jsError.addErrorKey(NEW_KPI_DEFINITION_MANDATORY);
 		} else {
 			// validating kpi formula
 			ScriptEngineManager sm = new ScriptEngineManager();
@@ -787,10 +832,10 @@ public class KpiService {
 				try {
 					engine.eval(script);
 				} catch (Throwable e) {
-					errors.add(getMessage(NEW_KPI_DEFINITION_SYNTAXERROR));
+					jsError.addErrorKey(NEW_KPI_DEFINITION_SYNTAXERROR);
 				}
 			} else {
-				errors.add(getMessage(NEW_KPI_DEFINITION_INVALIDCHARACTERS));
+				jsError.addErrorKey(NEW_KPI_DEFINITION_INVALIDCHARACTERS);
 			}
 			// validating kpi formula
 			JSONArray measureArray = new JSONObject(kpi.getDefinition()).getJSONArray("measures");
