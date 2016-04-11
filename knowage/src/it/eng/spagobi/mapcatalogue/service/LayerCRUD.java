@@ -398,8 +398,8 @@ public class LayerCRUD {
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
 				data = layerServices.decode64(data);
 
-				String path = layerServices.getResourcePath(data);
-				aLayer.setPathFile(path);
+				// String path = layerServices.getResourcePath(data);
+				aLayer.setPathFile("");
 				aLayer.setFilebody(data);
 
 				id = dao.insertLayer(aLayer);
