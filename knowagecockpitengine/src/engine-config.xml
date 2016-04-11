@@ -52,5 +52,6 @@
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 	
 	<ChartEngineContextName>knowagechartengine</ChartEngineContextName>
+	<KpiEngineContextName>knowagekpiengine</KpiEngineContextName>
 	
 </ENGINE-CONFIGURATION>
