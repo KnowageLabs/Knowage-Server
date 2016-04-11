@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,9 +45,11 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
@@ -231,8 +233,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
-			layerDef.put("layer_file", aLayer.getPathFile());
 
+			path = getTenant() + File.separator + "Layer" + File.separator + aLayer.getLabel();
+			layerDef.put("layer_file", path);
 			if (aLayer.getLayerURL() != null) {
 				layerDef.put("layer_url", aLayer.getLayerURL());
 			} else {
@@ -344,8 +347,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
 					separator += File.separatorChar;
 				}
+				if (aLayer.getPathFile() == "") {
+					path = getTenant() + File.separator + "Layer" + File.separator;
+				} else {
+					path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
+				}
 
-				path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
 				aLayer.setPathFile(path + aLayer.getLabel());
 
 			} else {
@@ -357,10 +364,16 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			try {
 				if (aLayer.getPathFile() != null) {
-					new File(path).mkdirs();
+					SingletonConfig configSingleton;
+					String path2;
+					String resourcePath;
+					configSingleton = SingletonConfig.getInstance();
+					path2 = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+					resourcePath = SpagoBIUtilities.readJndiResource(path2);
+					new File(resourcePath + File.separator + getTenant() + File.separator + "Layer").mkdirs();
 					OutputStreamWriter out;
 					String name = aLayer.getLabel();
-					out = new FileWriter(path + name);
+					out = new FileWriter(resourcePath + File.separator + getTenant() + File.separator + "Layer" + File.separator + name);
 					String content = new String(aLayer.getFilebody());
 					content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
 					out.write(content);
@@ -763,7 +776,20 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						bilayer.setProperties(prop);
 					}
 					if (!layerDef.getString("layer_file").equals("null")) {
-						bilayer.setPathFile(layerDef.getString("layer_file"));
+
+						SingletonConfig configSingleton;
+						String path;
+						String resourcePath;
+
+						configSingleton = SingletonConfig.getInstance();
+						path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+						resourcePath = SpagoBIUtilities.readJndiResource(path);
+						// TODO delete this after all layer are saved with new path file
+						if (layerDef.getString("layer_file").startsWith(resourcePath)) {
+							bilayer.setPathFile(layerDef.getString("layer_file"));
+						} else {
+							bilayer.setPathFile(resourcePath + layerDef.getString("layer_file"));
+						}
 
 					}
 					if (!layerDef.getString("layer_url").equals("null")) {
