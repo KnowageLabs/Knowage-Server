@@ -120,4 +120,39 @@ public class SbiKpiExecutionFilter extends SbiHibernateModel {
 		this.sbiKpiKpi = sbiKpiKpi;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((sbiKpiExecutionFilterId == null) ? 0 : sbiKpiExecutionFilterId.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiKpiExecutionFilter other = (SbiKpiExecutionFilter) obj;
+		if (sbiKpiExecutionFilterId == null) {
+			if (other.sbiKpiExecutionFilterId != null)
+				return false;
+		} else if (!sbiKpiExecutionFilterId.equals(other.sbiKpiExecutionFilterId))
+			return false;
+		return true;
+	}
+
 }

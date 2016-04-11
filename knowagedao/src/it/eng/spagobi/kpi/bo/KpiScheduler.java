@@ -16,7 +16,9 @@ public class KpiScheduler {
 	private String kpiNames;
 	private String author;
 
-	private String chron;
+	private String crono;
+
+	// TODO remove this field
 	private boolean runImmediately;
 
 	private String startTime;
@@ -142,18 +144,18 @@ public class KpiScheduler {
 	}
 
 	/**
-	 * @return the chron
+	 * @return the crono
 	 */
-	public String getChron() {
-		return chron;
+	public String getCrono() {
+		return crono;
 	}
 
 	/**
-	 * @param chron
-	 *            the chron to set
+	 * @param crono
+	 *            the crono to set
 	 */
-	public void setChron(String chron) {
-		this.chron = chron;
+	public void setCrono(String crono) {
+		this.crono = crono;
 	}
 
 	/**

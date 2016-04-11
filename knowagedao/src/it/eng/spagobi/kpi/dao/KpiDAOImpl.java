@@ -52,6 +52,7 @@ import it.eng.spagobi.kpi.job.ProcessKpiJob;
 import it.eng.spagobi.kpi.metadata.SbiKpiAlias;
 import it.eng.spagobi.kpi.metadata.SbiKpiExecution;
 import it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter;
+import it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilterId;
 import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
 import it.eng.spagobi.kpi.metadata.SbiKpiKpiId;
 import it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder;
@@ -1653,45 +1654,74 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			String name = "" + id;
-			Job job = new Job();
+			Job job = createOrUpdateJob(name, scheduler);
+			Trigger trigger = createOrUpdateTrigger(job, scheduler);
+			schedulerDAO.saveTrigger(trigger);
+		} catch (EMFUserError e) {
+			throw new SpagoBIDOAException(e);
+		}
+		return id;
+	}
+
+	private Trigger createOrUpdateTrigger(Job job, KpiScheduler scheduler) {
+		Calendar startTime = Calendar.getInstance();
+		startTime.setTimeInMillis(scheduler.getStartDate());
+
+		String[] sp = scheduler.getStartTime().split(":");
+		String startHour = sp[0];
+		String startMinute = sp[1];
+		startTime.set(Calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
+		startTime.set(Calendar.MINUTE, new Integer(startMinute).intValue());
+
+		Trigger trigger = new Trigger();
+
+		trigger.setGroupName(KPI_SCHEDULER_GROUP);
+		trigger.setStartTime(startTime.getTime());
+		trigger.setChronType(scheduler.getCrono());
+		trigger.setCronExpression(new CronExpression(scheduler.getCrono()));
+		trigger.setName(job.getName());
+		trigger.setJob(job);
+		return trigger;
+	}
+
+	private Job createOrUpdateJob(String name, KpiScheduler scheduler) throws EMFUserError {
+		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+		Job job = null;
+		boolean exists = schedulerDAO.jobExists(KPI_SCHEDULER_GROUP, name);
+		if (exists) {
+			job = schedulerDAO.loadJob(KPI_SCHEDULER_GROUP, name);
+		} else {
+			job = new Job();
 			job.setName(name);
 			job.setGroupName(KPI_SCHEDULER_GROUP);
 			job.setJobClass(ProcessKpiJob.class);
 			job.setDurable(false);
 			job.setVolatile(false);
 			job.setRequestsRecovery(true);
+			job.addParameter("kpiSchedulerId", name);
+		}
+		if (!exists) {
+			schedulerDAO.insertJob(job);
+		}
+		return job;
+	}
 
-			addKpiToJobParameter(job, scheduler);
-			if (scheduler.getDelta() != null)
-				job.addParameter("delta", scheduler.getDelta().toString());
-
-			if (!schedulerDAO.jobExists(KPI_SCHEDULER_GROUP, name)) {
-				schedulerDAO.insertJob(job);
+	@Override
+	public Integer updateScheduler(final KpiScheduler scheduler) {
+		Integer id = executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				SbiKpiExecution sbiKpiExecution = (SbiKpiExecution) session.load(SbiKpiExecution.class, scheduler.getId());
+				sbiKpiExecution = from(scheduler, sbiKpiExecution, session);
+				return sbiKpiExecution.getId();
 			}
-
-			Calendar startTime = Calendar.getInstance();
-			startTime.setTimeInMillis(scheduler.getStartDate());
-
-			String[] sp = scheduler.getStartTime().split(":");
-			String startHour = sp[0];
-			String startMinute = sp[1];
-			startTime.set(Calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
-			startTime.set(Calendar.MINUTE, new Integer(startMinute).intValue());
-
-			Trigger trigger = new Trigger();
-			trigger.setGroupName(KPI_SCHEDULER_GROUP);// DEFAULT ?
-			trigger.setStartTime(startTime.getTime());
-			trigger.setChronType(scheduler.getChron());
-			if (scheduler.getChron() != null) {
-				trigger.setCronExpression(new CronExpression(scheduler.getChron()));
-			} else {
-				trigger.setCronExpression(new CronExpression());
-			}
-			trigger.setName(name);
-			trigger.setJob(job);
-
+		});
+		try {
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			String name = "" + id;
+			Job job = createOrUpdateJob(name, scheduler);
+			Trigger trigger = createOrUpdateTrigger(job, scheduler);
 			schedulerDAO.saveTrigger(trigger);
-
 		} catch (EMFUserError e) {
 			throw new SpagoBIDOAException(e);
 		}
@@ -1717,14 +1747,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		// Removing old filters / updating existing one
 		Iterator<SbiKpiExecutionFilter> persistentFilters = sbiKpiExecution.getSbiKpiExecutionFilters().iterator();
 		while (persistentFilters.hasNext()) {
+			SchedulerFilter existingFilter = null;
 			SbiKpiExecutionFilter sbiFilter = persistentFilters.next();
-			int i = scheduler.getFilters().indexOf(
-					new SchedulerFilter(sbiFilter.getSbiKpiExecutionFilterId().getExecutionId(), sbiFilter.getSbiKpiPlaceholder().getName(), sbiFilter
-							.getSbiKpiKpi().getSbiKpiKpiId().getId(), sbiFilter.getSbiKpiKpi().getSbiKpiKpiId().getVersion()));
-			if (i == -1) {
+			for (SchedulerFilter filter : scheduler.getFilters()) {
+				if (sbiFilter.getSbiKpiExecutionFilterId().getKpiId().equals(filter.getKpiId())
+						&& sbiFilter.getSbiKpiExecutionFilterId().getKpiVersion().equals(filter.getKpiVersion())
+						&& sbiFilter.getSbiKpiPlaceholder().getName().equals(filter.getPlaceholderName())) {
+					existingFilter = filter;
+					break;
+				}
+			}
+			if (existingFilter == null) {
 				persistentFilters.remove();
 			} else {
-				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(scheduler.getFilters().get(i), sbiFilter, session));
+				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(existingFilter, sbiFilter, session));
 			}
 
 		}
@@ -1740,14 +1776,18 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private SbiKpiExecutionFilter from(SchedulerFilter schedulerFilter, SbiKpiExecutionFilter sbiFilter, Session session) {
+		Integer placeholderId = null;
+		if (schedulerFilter.getPlaceholderId() != null) {
+			placeholderId = schedulerFilter.getPlaceholderId();
+		} else if (schedulerFilter.getPlaceholderName() != null) {
+			placeholderId = (Integer) session.createCriteria(SbiKpiPlaceholder.class).add(Restrictions.eq("name", schedulerFilter.getPlaceholderName()))
+					.setProjection(Property.forName("id")).uniqueResult();
+		}
 		if (sbiFilter == null) {
 			sbiFilter = new SbiKpiExecutionFilter();
-			sbiFilter.getSbiKpiExecutionFilterId().setExecutionId(schedulerFilter.getExecutionId());
-			sbiFilter.getSbiKpiExecutionFilterId().setKpiId(schedulerFilter.getKpiId());
-			sbiFilter.getSbiKpiExecutionFilterId().setKpiVersion(schedulerFilter.getKpiVersion());
-			Integer placeholderId = (Integer) session.createCriteria(SbiKpiPlaceholder.class)
-					.add(Restrictions.eq("name", schedulerFilter.getPlaceholderName())).setProjection(Property.forName("id")).setMaxResults(1).uniqueResult();
-			sbiFilter.getSbiKpiExecutionFilterId().setPlaceholderId(placeholderId);
+			SbiKpiExecutionFilterId id = new SbiKpiExecutionFilterId(placeholderId, schedulerFilter.getExecutionId(), schedulerFilter.getKpiId(),
+					schedulerFilter.getKpiVersion());
+			sbiFilter.setSbiKpiExecutionFilterId(id);
 			updateSbiCommonInfo4Insert(sbiFilter);
 		} else {
 			updateSbiCommonInfo4Update(sbiFilter);
@@ -1782,16 +1822,4 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 	}
 
-	@Override
-	public Integer updateScheduler(final KpiScheduler scheduler) {
-		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
-			@Override
-			public Integer execute(Session session) throws Exception {
-				SbiKpiExecution sbiKpiExecution = (SbiKpiExecution) session.load(SbiKpiExecution.class, scheduler.getId());
-				sbiKpiExecution = from(scheduler, sbiKpiExecution, session);
-				return sbiKpiExecution.getId();
-			}
-		});
-		// TODO update job and trigger
-	}
 }
