@@ -67,7 +67,7 @@ public class ROutputExecutor {
 		// output -->if image and function --> execute function then prepare
 		// output
 		// output -->if script --> execute script then prepare output
-
+		
 		DataMiningResult res = new DataMiningResult();
 		if (re == null) {
 			res.setError("No R instance found");
@@ -87,6 +87,8 @@ public class ROutputExecutor {
 			logger.debug("Replaced variables in output value");
 		}
 
+		String noArgFunctionExecuted="";
+		
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
 			res.setVariablename(outVal);// could be multiple value
@@ -148,6 +150,7 @@ public class ROutputExecutor {
 					rexp = re.parseAndEval("try(" + function + ")");
 				} else {
 					rexp = re.parseAndEval("try(" + function + "(" + outVal + "))");
+					noArgFunctionExecuted=function + "(" + outVal + "))";
 				}
 
 			} else {

@@ -65,22 +65,22 @@ public class PythonDatasetsExecutor {
 				}
 
 				if (ds.getType().equalsIgnoreCase("file")) {
-					if (ds.getReadType().equalsIgnoreCase("csv")) {
-						String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-						PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
-						PyLib.execScript(ds.getName() + " = pandas.read_csv('" + ds.getFileName() + "'," + options + ")\n");
-					}
+					// if (ds.getReadType().equalsIgnoreCase("csv")) {
+					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
+					PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+					PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options + ")\n");
+					// }
 
 				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
 					logger.debug("SpagoBI ds");
 					// spagobi dataset content could change independently from
 					// the engine, so it must be recalculated every time
 
-					if (ds.getReadType().equalsIgnoreCase("csv")) {
-						String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
-						PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvToEval + "')\n");
-						PyLib.execScript(ds.getName() + " = pandas.read_csv('" + ds.getFileName() + "'," + options + ")\n");
-					}
+					// if (ds.getReadType().equalsIgnoreCase("csv")) {
+					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
+					PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvToEval + "')\n");
+					PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options + ")\n");
+					// }
 
 				}
 

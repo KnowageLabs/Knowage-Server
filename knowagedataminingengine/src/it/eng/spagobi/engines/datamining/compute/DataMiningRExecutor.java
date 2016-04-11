@@ -44,7 +44,6 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 
-import commonj.work.WorkException;
 import commonj.work.WorkItem;
 
 public class DataMiningRExecutor implements IDataMiningExecutor {
@@ -147,14 +146,8 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 				rEng = workResult.getrEngine();
 			}
 			work.release();
-		} catch (IllegalArgumentException e) {
-			logger.error("error while workManager scheduling to load R");
-		} catch (WorkException e) {
-			logger.error("error while workManager scheduling to load R");
-		} catch (InterruptedException e) {
-			logger.error("error while workManager scheduling to load R");
-		} catch (NamingException e1) {
-			logger.error("error while workManager scheduling to load R");
+		} catch (Exception e) {
+			logger.error("error while workManager scheduling to load R", e);
 		}
 		return rEng;
 	}
@@ -234,12 +227,12 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 * 
-	 * 
+	 *
+	 *
 	 * protected void loadUserWorkSpace() throws IOException {
-	 * 
+	 *
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 * 
+	 *
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }
