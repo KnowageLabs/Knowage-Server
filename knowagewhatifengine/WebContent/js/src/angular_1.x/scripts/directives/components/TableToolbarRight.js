@@ -13,18 +13,39 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
 	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS"]
-	$scope.lockerClass="";
+	$scope.lockTooltip;
+	whatifToolbarButtonsVisible=[];
+	$scope.lockerClass = "";
+	var result;
+	
+	whatIfBtns = function(status){
+			if(status == 'locked_by_user')
+				$scope.whatifToolbarButtons = whatifToolbarButtonsVisible;
+			else 
+				$scope.whatifToolbarButtons = [];
+	};
+	
+	$scope.lockFunction = function(){
+		if(status == 'unlocked'){
+			lockUnlock('lock', $scope.modelConfig.artifactId);
+		}
+		if(status == 'locked_by_user'){
+			lockUnlock('unlock', $scope.modelConfig.artifactId);
+		}
+		//$scope.$apply();
+	}
 	
 	filterXMLResult = function(res) {
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
+		result = res;
 		
 		console.log(locker+"locked");
 		console.log(status+"status");
 		
 		while (i = regEx.exec(res)){
 			var btn = {};
-			btn.tooltip = messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
+			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
 			
 			if(olapButtonNames.indexOf(btn.img)>-1)
@@ -33,8 +54,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.whatifToolbarButtons.push(btn);
 			else if(tableButtonNames.indexOf(btn.img)>-1)
 				$scope.tableToolbarButtons.push(btn);
-		}
 			
+		}
+		whatifToolbarButtonsVisible = $scope.whatifToolbarButtons;
+		whatIfBtns(status);
 	};
 	
 	filterXMLResult(toolbarVisibleBtns);
@@ -131,16 +154,38 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  
 	  checkLock = function(s){
 		  if(s=="locked_by_user"){
-			  $scope.lockerClass="unlock-icon";  
+			  $scope.lockerClass="unlock-icon"; 
+			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.unlock');
 		  }
 		  if(s=="locked_by_other"){
 			  $scope.lockerClass="lock-other-icon";
+			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock_other');
+			  $scope.lockTooltip += " "+locker;
 		  }
 		  if(s=="unlocked"){
-			  $scope.lockerClass="lock-icon"; 
+			  $scope.lockerClass="lock-icon";
+			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock');
 		  }
-	  }
+	  };
 	  
 	  checkLock(status);
 	  
+	  function lockUnlock(type, id){
+		  $http({
+			  method:'POST',
+			  url: 'http://localhost:8080/knowage/restful-services/1.0/locker/'+id+'/'+type
+		  }).then(function(response){
+			  //$scope.handleResponse(response);
+			  console.log("status "+response.data.status);
+				console.log("locker "+response.data.locker);
+						console.log(result);
+						status = response.data.status;
+						locker = response.data.locker;
+						//filterXMLResult(result);
+						whatIfBtns(response.data.status);
+						checkLock(response.data.status);
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage("An error occured while locking", 'Error'); 
+		  });
+	  };
 };

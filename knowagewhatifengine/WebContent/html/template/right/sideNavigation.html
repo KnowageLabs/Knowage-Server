@@ -10,12 +10,16 @@
 </div> -->
 <!-- Side nav -->
 <md-sidenav
-	style="width:13%"
+	style="width:13%;overflow-x:hidden"
 	md-component-id="right"
     class="md-sidenav-right"
+    
     >
 <md-toolbar class='md-toolbar-tools knowage-blue'>
 	Customization
+	<md-button class="md-icon-button" ng-click="closeSideNav('right')" style="right: 0px;position: absolute;top: 0px;">
+    	<md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
+    </md-button>
 </md-toolbar>
 <div class="right-menu" layout="row"> 
 	<div style="width:33%;" >

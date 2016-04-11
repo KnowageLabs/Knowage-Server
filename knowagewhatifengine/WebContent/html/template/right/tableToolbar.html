@@ -117,9 +117,9 @@
 <md-grid-list
         md-cols="3" md-row-height="50px">
     <md-grid-tile>
-    	<md-button class="right-toolbar-menu {{lockerClass}}" >
+    	<md-button class="right-toolbar-menu {{lockerClass}}"  ng-click="lockFunction()">
     		<md-tooltip md-direction="bottom">
-				Tooltip
+				{{lockTooltip}}
 			</md-tooltip>
     	</md-button>
     </md-grid-tile>
@@ -132,7 +132,8 @@
     </md-grid-tile>
 </md-grid-list>
 
-<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-click="closeSideNav('right')">
+<!--<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-click="closeSideNav('right')">
 		Close
 	</md-button>
+ -->
 </div>
