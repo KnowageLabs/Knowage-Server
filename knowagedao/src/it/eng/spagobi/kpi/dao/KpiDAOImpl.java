@@ -548,7 +548,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -858,7 +858,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1561,66 +1561,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<ScorecardPerspective> listScorecardPerspective() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ScorecardPerspective loadScorecardPerspective(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer insertScorecardPerspective(ScorecardPerspective scorecardPerspective) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateScorecardPerspective(ScorecardPerspective scorecardPerspective) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeScorecardPerspective(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<ScorecardTarget> listScorecardTarget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ScorecardTarget loadScorecardTarget(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer insertScorecardTarget(ScorecardTarget scorecardTarget) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateScorecardTarget(ScorecardTarget scorecardTarget) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeScorecardTarget(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Map<Kpi, List<String>> listPlaceholderByKpiList(final List<Kpi> kpis) {
 		List<Map<String, Object>> measures = executeOnTransaction(new IExecuteOnTransaction<List<Map<String, Object>>>() {
 			@Override
@@ -1818,7 +1758,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Add kpi/placeholders to job parameter map in this form ["kpiId|kpiVersion":[{"placeholderName":"placeholderValue"}]]
-	 * 
+	 *
 	 * @param job
 	 * @param scheduler
 	 */

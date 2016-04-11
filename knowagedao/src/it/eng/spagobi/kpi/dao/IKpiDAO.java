@@ -27,8 +27,6 @@ import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.Scorecard;
-import it.eng.spagobi.kpi.bo.ScorecardPerspective;
-import it.eng.spagobi.kpi.bo.ScorecardTarget;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -225,26 +223,6 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public void updateScorecard(Scorecard scorecard);
 
 	public void removeScorecard(Integer id);
-
-	public List<ScorecardPerspective> listScorecardPerspective();
-
-	public ScorecardPerspective loadScorecardPerspective(Integer id);
-
-	public Integer insertScorecardPerspective(ScorecardPerspective scorecardPerspective);
-
-	public void updateScorecardPerspective(ScorecardPerspective scorecardPerspective);
-
-	public void removeScorecardPerspective(Integer id);
-
-	public List<ScorecardTarget> listScorecardTarget();
-
-	public ScorecardTarget loadScorecardTarget(Integer id);
-
-	public Integer insertScorecardTarget(ScorecardTarget scorecardTarget);
-
-	public void updateScorecardTarget(ScorecardTarget scorecardTarget);
-
-	public void removeScorecardTarget(Integer id);
 
 	public Integer insertScheduler(KpiScheduler scheduler);
 

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,16 +19,21 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -88,6 +93,46 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 					aSession.close();
 			}
 		}
+	}
+
+	@Override
+	public List loadOrganizzationEngines(final String tenant) {
+
+		List orgEngs = list(new ICriterion() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session
+						.createCriteria(SbiEngines.class)
+						.createAlias("sbiProductTypeEngine", "_sbiProductTypeEngine")
+						.createAlias("_sbiProductTypeEngine.sbiProductType", "_sbiProductType")
+						.createAlias("_sbiProductType.sbiOrganizationProductType", "_sbiOrganizationProductType")
+						.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations")
+						.add(Restrictions.eq("_sbiOrganizations.name", tenant))
+						.setProjection(
+								Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("engineLabel"))
+										.add(org.hibernate.criterion.Property.forName("_sbiProductType.label").as("productTypeLabel")))
+						.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+			}
+		});
+		return orgEngs;
+	}
+
+	@Override
+	public List<String> loadOrganizzationProductTypeEngines(final String tenant, final String productTypeLabel) {
+
+		List<String> orgEngs = list(new ICriterion() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiEngines.class).createAlias("sbiProductTypeEngine", "_sbiProductTypeEngine")
+						.createAlias("_sbiProductTypeEngine.sbiProductType", "_sbiProductType")
+						.createAlias("_sbiProductType.sbiOrganizationProductType", "_sbiOrganizationProductType")
+						.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations")
+						.add(Restrictions.eq("_sbiOrganizations.name", tenant)).add(Restrictions.eq("_sbiProductType.label", productTypeLabel))
+						.setProjection(Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("engineLabel")));
+			}
+		});
+		return orgEngs;
+
 	}
 
 }
