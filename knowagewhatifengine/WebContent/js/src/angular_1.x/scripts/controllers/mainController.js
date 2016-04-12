@@ -116,17 +116,22 @@ function olapFunction(
 	
 	$scope.handleResponse = function(response) {
 		source = response.data;
+		$scope.modelConfig = source.modelConfig;
+		console.log($scope.modelConfig);
 		$scope.table = $sce.trustAsHtml(source.table)
 		$scope.columns = source.columns;
 		$scope.rows = source.rows;
 		$scope.columnsAxisOrdinal = source.columnsAxisOrdinal;
 		$scope.filterCardList = source.filters;
 		$scope.hasPendingTransformations = source.hasPendingTransformations;
-		$scope.modelConfig = source.modelConfig;
+		
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
+		
+		
+		
 		
 	}
 	
@@ -141,6 +146,8 @@ function olapFunction(
 					$scope.table = $sce.trustAsHtml(response.data.table);
 					$scope.modelConfig = response.data.modelConfig;
 					$scope.ready = true;
+					$scope.scrollTo($scope.modelConfig.startRow,$scope.modelConfig.startColumn);
+					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage("An error occured while sending model config", 'Error');
 					$scope.ready = true;
