@@ -32,6 +32,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -136,7 +137,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 
 		logger.debug("expression= " + calculateFieldFormula);
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		
+
 		Axis axis;
 		String calculateFieldFormulaParsed = new String();
 		try {
@@ -159,8 +160,32 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		logger.debug("Adding the calculated fields into the model");
 		CalculatedMember cc = new CalculatedMember(calculateFieldName, calculateFieldFormulaParsed, parentMember, axis);
 		ei.getSpagoBIPivotModel().addCalculatedField(cc);
-		
+
 		String table = renderModel(ei.getPivotModel());
+		logger.debug("OUT");
+		return table;
+	}
+
+	/**
+	 * Service to delete the calculated member
+	 *
+	 * @return the rendered pivot table
+	 */
+	@DELETE
+	@Path("/{calculatedFieldName}")
+	@Produces("text/html; charset=UTF-8")
+	public String deleteCalculatedMember(@PathParam("calculatedFieldName") String calculateFieldName) {
+		logger.debug("IN");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = ei.getSpagoBIPivotModel();
+		logger.debug("Deleting of calculated member with name" + calculateFieldName);
+		if (model.removeCalculatedField(calculateFieldName)) {
+			logger.debug("Member" + calculateFieldName + " deleted");
+		} else {
+			logger.debug("There is no member with name" + calculateFieldName);
+		}
+
+		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
 	}
