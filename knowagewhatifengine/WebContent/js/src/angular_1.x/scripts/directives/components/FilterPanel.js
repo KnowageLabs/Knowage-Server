@@ -20,6 +20,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
+		
 	});
 	
 	/**
@@ -88,7 +89,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		 sbiModule_restServices.promisePost
 		 (encoded,"",member)
 			.then(function(response) {
-				$scope.handleResponse(response);			
+				$scope.handleResponse(response);
+				$timeout(function() {
+					$scope.resize();
+			    }, 1);
+				
+				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 				
@@ -602,7 +608,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			initFilterList();
-
+			$scope.resize();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
@@ -614,22 +620,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			return false;
 		else	
 			return true;
-	};
-	
-	$scope.cutName = function(name){
-		var result = name.split(" ");
-		
-		if(name.length < 12)
-			return name;
-		if(result[0].length>13){
-			return result[0].substring(0,13)
-		}
-		else if(result[1]!=undefined){
-			if(result[1].length > 3){
-				var res = result[1].substring(0,3);
-				return result[0]+" "+res+"...";
-			}
-		}
 	};
 		
 };
