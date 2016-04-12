@@ -107,6 +107,7 @@ public class KpiService {
 	private static final String NEW_KPI_NAME_MANDATORY = "newKpi.name.mandatory";
 	private static final String NEW_KPI_CARDINALITY_ERROR = "newKpi.cardinality.error";
 	private static final String NEW_KPI_KPI_NAME_NOT_AVAILABLE = "newKpi.kpiNameNotAvailable";
+	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
 
 	private static Logger logger = Logger.getLogger(KpiService.class);
 
@@ -599,7 +600,7 @@ public class KpiService {
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		// loading trigger
 		try {
-			JobTrigger triggerInfo = getJobTriggerInfo("" + id, "KPI_SCHEDULER_GROUP", "" + id, "KPI_SCHEDULER_GROUP");
+			JobTrigger triggerInfo = getJobTriggerInfo("" + id, KPI_SCHEDULER_GROUP, "" + id, KPI_SCHEDULER_GROUP);
 			t.setStartTime(triggerInfo.getStartTime());
 			t.setEndTime(triggerInfo.getEndTime());
 			t.setCrono(triggerInfo.getChrono() != null ? triggerInfo.getChrono().replace("'", "\"") : null);
