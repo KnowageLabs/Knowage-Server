@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -84,6 +84,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
 	public static final String SBI_EXECUTION_ID = "SBI_EXECUTION_ID";
+	public static final String ENV_DOCUMENT_LABEL = "DOCUMENT_LABEL";
 
 	public static final String COUNTRY = "SBI_COUNTRY";
 	public static final String LANGUAGE = "SBI_LANGUAGE";
@@ -259,6 +260,39 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		}
 
 		return documentId;
+	}
+
+	public String getDocumentLabel() {
+		String documentLabelInSection = null;
+		String documentLabel = null;
+
+		logger.debug("IN");
+
+		try {
+			if (documentLabel == null) {
+				documentLabelInSection = getAttributeFromSessionAsString(ENV_DOCUMENT_LABEL);
+				logger.debug("documentLabel in Session:" + documentLabelInSection);
+
+				if (requestContainsAttribute(ENV_DOCUMENT_LABEL)) {
+					documentLabel = getAttributeAsString(ENV_DOCUMENT_LABEL);
+				} else {
+					documentLabel = documentLabelInSection;
+					logger.debug("documentLabel has been taken from session");
+				}
+			}
+
+			if (documentLabel == null) {
+				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document label");
+				e.setDescription("The engine is unable to retrive the label of the document to execute from request");
+				e.addHint("Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+						+ "uploading a valid template file");
+				throw e;
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return documentLabel;
 	}
 
 	/**
