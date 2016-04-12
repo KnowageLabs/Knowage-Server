@@ -17,9 +17,8 @@
 		<MAP_REST_SERVICE serviceUrl="/analyticalDriver" businessProcess="publicFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/analyticalDriverUse" businessProcess="publicFunctionality" />
 	    
-        <MAP_REST_SERVICE serviceUrl="/locker/lock" businessProcess="publicFunctionality" />
-        <MAP_REST_SERVICE serviceUrl="/locker/unlock" businessProcess="publicFunctionality" />
-        <MAP_REST_SERVICE serviceUrl="/locker/getStatus" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/locker.*" businessProcess="publicFunctionality" />
+
 	    
 		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	

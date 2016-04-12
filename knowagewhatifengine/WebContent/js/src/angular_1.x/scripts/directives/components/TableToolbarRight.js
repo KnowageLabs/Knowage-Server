@@ -13,7 +13,13 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
 	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS"]
+	//var alwaysVisibleBtns = ["BUTTON_EXPORT_OUTPUT"];
+	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
+	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
+	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
+	$scope.outputTypes = [sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.table'),sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.csv')]
 	$scope.lockTooltip;
+	$scope.outputType;
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
 	var result;
@@ -21,8 +27,18 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	whatIfBtns = function(status){
 			if(status == 'locked_by_user')
 				$scope.whatifToolbarButtons = whatifToolbarButtonsVisible;
-			else 
+			else{
+				var btn;
+				for(var i=0; i<$scope.whatifToolbarButtons.length; i++){
+					if($scope.whatifToolbarButtons[i].img == "BUTTON_EXPORT_OUTPUT"){
+						btn = $scope.whatifToolbarButtons[i];
+						break;
+					}
+				}
 				$scope.whatifToolbarButtons = [];
+				$scope.whatifToolbarButtons.push(btn);
+			}
+				
 	};
 	
 	$scope.lockFunction = function(){
@@ -75,6 +91,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			break;
 		case "BUTTON_HIDE_EMPTY":
 			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
+			break;
+		case "BUTTON_EXPORT_OUTPUT":
+			$scope.showExportDialog(null);
 			break;
 		default:
 			console.log("something else clicked");
@@ -187,5 +206,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  },function(response){
 			  sbiModule_messaging.showErrorMessage("An error occured while locking", 'Error'); 
 		  });
+	  };
+	  
+	  $scope.showExportDialog= function(ev){
+		  $scope.showDialog(ev,"/right/exportOutputDialog.html");
 	  };
 };

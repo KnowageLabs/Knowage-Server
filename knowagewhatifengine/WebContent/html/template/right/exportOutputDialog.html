@@ -1,0 +1,30 @@
+<md-dialog style='height:35%; width:30%;' layout="column">
+	
+	<md-toolbar class="knowage-blue" style="min-height:20px">
+		{{outputWizardTitle}}
+    </md-toolbar>
+    
+    <md-dialog-content style="padding:10px;font-size:85%;height:60%">
+		{{outputWizardDescription}}
+		<br/>
+		<md-grid-list
+        	md-cols="2" md-row-height="50px">
+    		<md-grid-tile>
+				{{outputWizardTypeLabel}}
+			</md-grid-tile>
+			
+			<md-grid-tile>
+			<md-radio-group ng-model="outputType">
+				<md-radio-button ng-repeat="t in outputTypes" ng-value="t">
+					{{t}}
+				</md-radio-button>
+			</md-radio-group>
+			</md-grid-tile>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row">
+    	<md-button ng-click="closeDialog(ev)" style="line-height:25px">
+			Cancel
+		</md-button>
+    </md-dialog-actions>
+</md-dialog>
