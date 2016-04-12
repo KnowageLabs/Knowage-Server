@@ -77,8 +77,6 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			model.swapAxisSort(ei.getModelConfig());
 		}
 
-		model.setSubset(0, 0, 10);
-
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
@@ -112,7 +110,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(0, 0, 10);
+		model.setSubset(ei.getModelConfig().getStartRow(), ei.getModelConfig().getStartColumn(), ei.getModelConfig().getRowsSet());
 
 		return renderModel(getPivotModel());
 	}
@@ -148,7 +146,6 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		model.removeSubset();
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(0, 0, 10);
 
 		String table = renderModel(model);
 		return table;
