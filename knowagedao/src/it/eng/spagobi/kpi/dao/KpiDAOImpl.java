@@ -901,6 +901,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				tv.setPosition(sbiValue.getPosition());
 				if (sbiValue.getSeverity() != null) {
 					tv.setSeverityId(sbiValue.getSeverity().getValueId());
+					tv.setSeverityCd(sbiValue.getSeverity().getValueCd());
 				}
 				threshold.getThresholdValues().add(tv);
 			}
