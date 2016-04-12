@@ -138,8 +138,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("No query found");
 		}
 
-		renderModel(model);
-		model.setSubset(0, 0, 10);
+		
 		table = renderModel(model);
 		logger.debug("OUT");
 		return table;
