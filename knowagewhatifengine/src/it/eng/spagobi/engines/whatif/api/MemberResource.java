@@ -18,6 +18,15 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,15 +63,6 @@ import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
 
@@ -85,10 +85,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String time = "Drilldown start " + format.format(new Date());
 		System.out.println(time);
 		init();
-		Integer startRow = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
-		Integer startColumn = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
-		model.removeSubset();
 
+		model.removeSubset();
+		System.out.println(model.getCurrentMdx());
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axisPos);
 
@@ -129,7 +128,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		}
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
-		model.setSubset(startRow, startColumn, 10);
+
 		time = "Drilldown end " + format.format(new Date());
 		System.out.println(time);
 		System.out.println();
@@ -201,11 +200,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		Integer startRow = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
-		Integer startColumn = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
-		model.setSubset(startRow, startColumn, 10);
+
 		time = "Drillup end " + format.format(new Date());
 		System.out.println(time);
 		System.out.println();
@@ -262,14 +259,14 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Level l = m.getLevel();
 		List<Property> properties = np.getProperties(l);
 
-					for (Property property : properties) {
+		for (Property property : properties) {
 			JSONObject obj = new JSONObject();
 			obj.put("name", property.getName());
 			obj.put("value", m.getPropertyFormattedValue(property));
 			propsArray.put(obj);
-					}
+		}
 		return propsArray.toString();
-				}
+	}
 
 	@GET
 	@Path("/drilltrough/{ordinal}")
@@ -284,6 +281,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		try {
 			Cell cell = cellSet.getCell(ordinal);
 			DrillThrough transform = model.getTransform(DrillThrough.class);
+
 			set = transform.drillThrough(cell);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
 			// System.out.println(array);
@@ -338,9 +336,12 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		model.setSorting(true);
 		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
 		model.setSortCriteria(nextSortCriteria);
-		sortModel(axisToSortpos, axis, positionUniqueName);
-
-		return renderModel(model);
+		sortModel(axisToSortpos, axis, positionUniqueName, sortMode);
+		System.out.println(model.getSortCriteria());
+		model.setSorting(true);
+		String table = renderModel(model);
+		System.out.println(model.getSortCriteria() + "memberResource 341");
+		return table;
 	}
 
 	@GET
@@ -351,10 +352,12 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		init();
 		model.setTopBottomCount(topBottomCount);
 		model.setSorting(true);
+
 		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
 		model.setSortCriteria(nextSortCriteria);
-		sortModel(axisToSortpos, axis, positionUniqueName);
 
+		sortModel(axisToSortpos, axis, positionUniqueName, sortMode);
+		model.setSorting(true);
 		return renderModel(model);
 	}
 
@@ -362,9 +365,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/sort/disable")
 	public String sorten() {
 		init();
-
-		Integer startRow = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
-		Integer startColumn = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
 
 		model.removeSubset();
 
@@ -380,8 +380,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		List<Member> a = model.getSortPosMembers1();
 		a.clear();
 
-		model.setSubset(startRow, startColumn, 10);
-
 		return renderModel(model);
 	}
 
@@ -393,16 +391,16 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 	}
 
-	private void sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName) {
-		Integer startRow = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
-		Integer startColumn = model.getSubsetStart(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
+	private void sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName, String sortMode) {
+
 		CellSetAxis axisToSort = null;
 		CellSetAxis axisM = null;
 
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		model.removeSubset();
-
+		model.removeOrder(model.getCellSet().getAxes().get(1));
+		model.removeOrder(model.getCellSet().getAxes().get(0));
 		axisToSort = getAxis(axisToSortpos);
 		axisM = getAxis(axis);
 
@@ -415,26 +413,24 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			axisToSort = axisM;
 
 		}
+		if (!model.isSorting(position)) {
+			while (model.getSortCriteria() != null) {
+				SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
+				model.setSortCriteria(nextSortCriteria);
+			}
+			SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
+			model.setSortCriteria(nextSortCriteria);
+		}
 		if (model.getSortCriteria() != null) {
+
 			model.sort(axisToSort, position);
 			model.getSortPosMembers1();
 
 			if (model.getSortCriteria().equals(SortCriteria.BOTTOMCOUNT) || model.getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
-				model.setSubset(0, 0, 10);
-
-			} else {
-				model.setSubset(startRow, startColumn, 10);
+				modelConfig.setStartRow(0);
+				modelConfig.setStartColumn(0);
 
 			}
-
-		} else {
-			model.removeSubset();
-
-			model.removeOrder(model.getCellSet().getAxes().get(1));
-			model.removeOrder(model.getCellSet().getAxes().get(0));
-			model.setSubset(startRow, startColumn, 10);
-
-			// model.setSubset(axisM, subsetStart0, 10);
 
 		}
 
