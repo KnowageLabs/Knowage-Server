@@ -1688,8 +1688,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		trigger.setGroupName(KPI_SCHEDULER_GROUP);
 		trigger.setStartTime(startTime.getTime());
-		trigger.setChronType(scheduler.getCrono());
-		trigger.setCronExpression(new CronExpression(scheduler.getCrono()));
+		trigger.setChronType(scheduler.getCrono());// TODO da verificare
+		if (scheduler.getCrono() != null) {
+			trigger.setCronExpression(new CronExpression(scheduler.getCrono().replace('"', '\'')));
+		}
 		trigger.setName(job.getName());
 		trigger.setJob(job);
 		return trigger;
