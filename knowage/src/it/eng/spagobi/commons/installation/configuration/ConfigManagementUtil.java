@@ -1,6 +1,5 @@
 package it.eng.spagobi.commons.installation.configuration;
 
-import it.eng.knowage.tools.servermanager.utils.LicenseSingleton;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
@@ -31,11 +30,9 @@ import javax.servlet.ServletContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.license4j.License;
-
 public class ConfigManagementUtil {
 
-	public static void createGeneralConfig(String pathToSave, ServletContext context) {
+	public static void createGeneralConfig(String pathToSave, ServletContext context, Map<String, String> licenses) {
 		JSONObject config = new JSONObject();
 		PrintWriter writer = null;
 
@@ -45,7 +42,7 @@ public class ConfigManagementUtil {
 			config.put("application_server", getAppServerInfo(context));
 			config.put("environment_variables", getEnvironmentVariables());
 			config.put("jndi_variables", getJndiVariables());
-			config.put("license", getLicense());
+			config.put("license", licenses);
 			// config.put("chacksum_jar", getLibrariesChecksum());
 			File generalConfig = new File(pathToSave + File.separator + "config.txt");
 			writer = new PrintWriter(new FileWriter(generalConfig));
@@ -148,30 +145,31 @@ public class ConfigManagementUtil {
 		return variables;
 	}
 
-	public static Map getLicense() {
-		Map<String, String> licenseRet = new HashMap<>();
-		Map<String, License> licenses = LicenseSingleton.getInstance().getLicenses();
-		// return licenses;
-		// Set<String> productTypeNames = licenses.keySet();
-		// for (String productTypeName : productTypeNames) {
-		// License license = licenses.get(productTypeName);
-		// licenseRet.put(productTypeName,
-		// license.getLicenseText().getLicenseValidProductID());
-		//
-		// }
-		for (Map.Entry<String, License> entry : licenses.entrySet()) {
-			licenseRet.put(entry.getKey(), entry.getValue().getLicenseString());
-		}
-		// Iterator it = licenses.keySet().iterator();
-		// while (it.hasNext()) {
-		//
-		// Map.Entry le = (Entry) it.next();
-		// License l = (License) le.getValue();
-		// licenseRet.put(l.getLicenseText().getLicenseProductName().toString(),
-		// l.getLicenseText().getLicenseValidProductID().toString());
-		// }
-		return licenseRet;
-	}
+	// public static Map getLicense() {
+	// Map<String, String> licenseRet = new HashMap<>();
+	// Map<String, License> licenses =
+	// LicenseSingleton.getInstance().getLicenses();
+	// // return licenses;
+	// // Set<String> productTypeNames = licenses.keySet();
+	// // for (String productTypeName : productTypeNames) {
+	// // License license = licenses.get(productTypeName);
+	// // licenseRet.put(productTypeName,
+	// // license.getLicenseText().getLicenseValidProductID());
+	// //
+	// // }
+	// for (Map.Entry<String, License> entry : licenses.entrySet()) {
+	// licenseRet.put(entry.getKey(), entry.getValue().getLicenseString());
+	// }
+	// // Iterator it = licenses.keySet().iterator();
+	// // while (it.hasNext()) {
+	// //
+	// // Map.Entry le = (Entry) it.next();
+	// // License l = (License) le.getValue();
+	// // licenseRet.put(l.getLicenseText().getLicenseProductName().toString(),
+	// // l.getLicenseText().getLicenseValidProductID().toString());
+	// // }
+	// return licenseRet;
+	// }
 
 	// public static Map getLibrariesChecksum() {
 	// Map<String, String> checksum = new HashMap<>();
@@ -185,7 +183,7 @@ public class ConfigManagementUtil {
 	// return checksum;
 	// }
 
-	private static void copyFileUsingStream(File source, File dest) throws IOException {
+	public static void copyFileUsingStream(File source, File dest) throws IOException {
 
 		InputStream is = null;
 		OutputStream os = null;
