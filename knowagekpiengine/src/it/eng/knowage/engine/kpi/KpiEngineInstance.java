@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.engine.kpi;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import it.eng.knowage.engine.util.KpiEngineDataUtil;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -34,14 +44,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 /**
  * @author
  */
@@ -51,11 +53,10 @@ public class KpiEngineInstance extends AbstractEngineInstance {
 	AssociationManager associationManager;
 
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE",
-			"SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", "SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID",
-			"DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION",
-			"SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
+			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
+			"DOCUMENT_VERSION", "KPI_VALUE", "KPI_TARGETS" };
 
 	public KpiEngineInstance(String template, Map env) {
 		super(env);
@@ -64,6 +65,19 @@ public class KpiEngineInstance extends AbstractEngineInstance {
 				template = "";
 			}
 			this.template = new JSONObject(Xml.xml2json(template));
+			String result = new KpiEngineDataUtil().loadJsonData(this.template);
+			JSONArray array = new JSONArray(result);
+			JSONObject object = new JSONObject(array.getJSONObject(0).getString("kpi"));
+
+			object.remove("definition");
+			object.remove("enableVersioning");
+			object.remove("category");
+			object.remove("cardinality");
+			env.put("KPI_VALUE", object);
+			env.put("KPI_TARGETS", array.getJSONObject(0).get("target"));
+			// this.template.getJSONObject("chart").getJSONObject("data").remove("kpi");
+			// this.template.getJSONObject("chart").getJSONObject("data").put("kpiValue", array.getJSONObject(0).get("kpi"));
+			// this.template.getJSONObject("chart").getJSONObject("data").put("target", array.getJSONObject(0).get("target"));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);
 		}
@@ -177,8 +191,7 @@ public class KpiEngineInstance extends AbstractEngineInstance {
 			String parameterName = (String) it.next();
 			Object parameterValue = getEnv().get(parameterName);
 			// test necessary for don't pass complex objects like proxy,...
-			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String")
-					&& isAnalyticalDriver(parameterName)) {
+			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
 

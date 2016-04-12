@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author: 
 --%>
 
+<%@page import="it.eng.spagobi.kpi.config.bo.KpiValue"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -69,7 +70,7 @@ author:
 	String isTechnicalUser;
 	List<String> includes;
 	String datasetLabel;
-	
+	String kpiValue = "";
 	//from cockpit
 	boolean isCockpit = false;
 	String aggregations = "";
@@ -90,7 +91,10 @@ author:
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
-	template = engineInstance.getTemplate().toString(0);	
+	template = engineInstance.getTemplate().toString(0);
+	if(env.get("KPI_VALUE")!=null){
+		kpiValue = env.get("KPI_VALUE").toString();
+	}
 	
 	if(env.get("EXECUTE_COCKPIT") != null){
 		isCockpit = true;
@@ -193,6 +197,7 @@ author:
 			var obj = {
 				template : documentTemplate,
 				docLabel : '<%=docLabel %>',
+				kpiValue : '<%=kpiValue %>',
 			};
 			return obj;
 		});
