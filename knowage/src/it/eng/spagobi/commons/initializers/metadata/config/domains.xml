@@ -474,11 +474,10 @@
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.temporalattribute" />
 		
 	<DOMAIN valueCd="MAJORITY" valueNm="sbidomains.nm.majoritycrit"
-		domainCd="KPI_SCORECARD_CRITE" domainNm="KPI SCORECARD CRITERIA" valueDs="sbidomains.ds.majoritycrit" />
+		domainCd="KPI_SCORECARD_CRITE" domainNm="KPI SCORECARD CRITERIA" valueDs="it.eng.spagobi.kpi.statusCriterion.Majority" />
 	
 	<DOMAIN valueCd="MAJORITY_WITH_PRIORITY" valueNm="sbidomains.nm.majorwpricrit"
-		domainCd="KPI_SCORECARD_CRITE" domainNm="KPI SCORECARD CRITERIA" valueDs="sbidomains.ds.majorwpricrit" />
-		
+		domainCd="KPI_SCORECARD_CRITE" domainNm="KPI SCORECARD CRITERIA" valueDs="it.eng.spagobi.kpi.statusCriterion.MajorityWithPriority" />
 		
 	<DOMAIN valueCd="FIXED_VALUE" valueNm="sbidomains.kpi.fixedvalue"
 		domainCd="KPI_PLACEHOLDER_TYPE" domainNm="KPI placeholder value type" valueDs="sbidomains.kpi.fixedvalue" />
