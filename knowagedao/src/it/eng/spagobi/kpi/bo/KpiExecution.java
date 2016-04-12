@@ -1,6 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS;
+import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
 
 public class KpiExecution extends Kpi {
 

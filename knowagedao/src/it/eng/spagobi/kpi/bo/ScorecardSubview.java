@@ -1,7 +1,8 @@
 package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.kpi.bo.ScorecardSubview.STATUS;
+import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
+import it.eng.spagobi.services.serialization.JsonConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +10,17 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ScorecardSubview {
-	public static enum STATUS {
-		RED, YELLOW, GREEN, GRAY
-	};
 
 	private Integer id;
 	private String name;
 	private Domain criterion;
 	private String options;
 
+	@JsonIgnore
+	private ScorecardOption scorecardOption;
+
 	// TODO status will be rendered as a color (green/yellow/red)
-	private List<STATUS> status = new ArrayList<>();
+	private STATUS status;
 	private final List<CountByStatus> groupedKpis = new ArrayList<>();
 
 	/**
@@ -68,22 +69,6 @@ public class ScorecardSubview {
 	}
 
 	/**
-	 * @return the status
-	 */
-	public List<STATUS> getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	@JsonIgnore
-	public void setStatus(List<STATUS> status) {
-		this.status = status;
-	}
-
-	/**
 	 * @return the groupedKpis
 	 */
 	@JsonIgnore
@@ -104,11 +89,42 @@ public class ScorecardSubview {
 	 */
 	public void setOptions(String options) {
 		this.options = options;
+		this.scorecardOption = (ScorecardOption) JsonConverter.jsonToObject(options, ScorecardOption.class);
+	}
+
+	/**
+	 * @return the status
+	 */
+	public STATUS getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(STATUS status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the scorecardOption
+	 */
+	public ScorecardOption getScorecardOption() {
+		return scorecardOption;
+	}
+
+	/**
+	 * @param scorecardOption
+	 *            the scorecardOption to set
+	 */
+	public void setScorecardOption(ScorecardOption scorecardOption) {
+		this.scorecardOption = scorecardOption;
 	}
 
 }
 
 class CountByStatus {
-	STATUS status;
+	ScorecardStatus.STATUS status;
 	int count;
 }

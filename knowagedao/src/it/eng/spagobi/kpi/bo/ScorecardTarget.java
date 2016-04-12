@@ -5,12 +5,12 @@ import java.util.List;
 
 public class ScorecardTarget extends ScorecardSubview {
 
-	private final List<Kpi> kpis = new ArrayList<>();
+	private final List<KpiExecution> kpis = new ArrayList<>();
 
 	/**
 	 * @return the kpis
 	 */
-	public List<Kpi> getKpis() {
+	public List<KpiExecution> getKpis() {
 		return kpis;
 	}
 

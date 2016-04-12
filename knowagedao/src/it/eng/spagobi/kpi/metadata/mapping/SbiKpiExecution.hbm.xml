@@ -26,7 +26,7 @@
             <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter" />
         </set>
         
-        <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="save-update" lazy="true">
+        <set name="sbiKpiKpis" table="SBI_KPI_EXECUTION_KPI" cascade="delete-orphan" lazy="true">
 			<key >
 				<column name="EXECUTION_ID"/>
 			</key>
