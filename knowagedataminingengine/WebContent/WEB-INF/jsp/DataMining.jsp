@@ -234,8 +234,8 @@ author:...
 													<input type="number" min="0" ng-model="imgHeight">
 												</md-input-container>
 											</div>
-											<div layout="row" layout-align="center center">
-												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="data:image/png;base64,{{results[cmd.name][out.outputName].result}}" />
+											<div layout="row" layout-align="center center" ng-if="results[cmd.name][out.outputName].result != null && results[cmd.name][out.outputName].result.length > 0">
+												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].result}}" />
 												<br>
 											</div>
 											<!-- 

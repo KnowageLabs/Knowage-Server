@@ -26,7 +26,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	/** Initialization          **/
 	/*****************************/
 	$scope.pathRest = {
-			host : datamining_template.urlSettings.sbihost +  datamining_template.urlSettings.contextPath,
+			contextPath : datamining_template.urlSettings.contextPathDatamining,
 			vers: '1.0',
 			command : 'command',
 			output : 'output',
@@ -61,7 +61,6 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 	};
 	
 	var restServices = sbiModule_restServices;
-	restServices.alterContextPath($scope.pathRest.host);
 	
 	/*****************************/
 	/** Promise Functions       **/
@@ -90,7 +89,11 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 				 .success(function(data){
 					 $scope.results[commandName][output.outputName] = data;
 					 if (data.result){
-						 $scope.results[commandName][output.outputName].result = data.result;
+						 if ( $scope.results[commandName][output.outputName].outputType == 'image'){
+							 $scope.results[commandName][output.outputName].result = 'data:image/png;base64,' +data.result;
+						 }else{
+							 $scope.results[commandName][output.outputName].result = data.result;
+						 }
 					 }else if (data.error){
 						 $scope.results[commandName][output.outputName].error = data.error;
 					 }
