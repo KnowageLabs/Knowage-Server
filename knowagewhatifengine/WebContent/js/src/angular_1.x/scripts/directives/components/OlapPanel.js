@@ -25,7 +25,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.drillUp = function(axis, position, member, uniqueName,positionUniqueName) {
-		var encoded = encodeURI('/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		var encoded = encodeURI('/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
 		("1.0",encoded)
 		.then(function(response) {
@@ -164,16 +164,30 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		    document.body.removeChild(link);
 	}
 	
-	$scope.getProps = function() {
-		var encoded = encodeURI('/member/properties/'+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+	$scope.getProps = function(memberUniqueName) {
+	var encoded = encodeURI('/member/properties/'+memberUniqueName+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
 		("1.0",encoded)
 		.then(function(response) {
-			console.log(response);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
+			console.log(response.data);
+			$scope.propertiesArray = response.data;
+			$mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent: angular.element(document.body),
+				controllerAs : 'olapCtrl',
+				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
+				//targetEvent : ev,
+				clickOutsideToClose : false,
+				hasBackdrop:false
+			});
 			
-		});		
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage("An error occured while getting properties for selected member", 'Error');
+			
+		});
 	}
 	
 		$scope.formatColumns = function(array){
@@ -580,8 +594,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     		}
     	}
     }
-    
-    $scope.checkValidityArgs = function(){
+    /*
+    $scope. = function(){
     	
     	if($scope.selectedMDXFunction != null){
     		for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
@@ -596,10 +610,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     		return false;
     	
     }
+    */
       
 	$scope.selectMDXFunction = function(obj) {
 		$scope.selectedMDXFunction = obj;
-		$scope.selectedMDXFunction.label ="";
+		//$scope.selectedMDXFunction.label ="";
 		console.log($scope.selectedMDXFunction);
 	}
 		
@@ -722,7 +737,8 @@ $scope.sendCC = function() {
 						
 						'name':$scope.selectedMDXFunction.label,
 					    'value': $scope.finalFormula,
-					    'type': 'Member'
+					    'type': 'Member',
+					    'formula': 	$scope.selectedMDXFunction
 					}
 				
 				$scope.cookieArray.push(namedMember);
@@ -735,6 +751,7 @@ $scope.sendCC = function() {
 		});
 		
 		
+	//	$scope.addCC();
 			
 		
 	}else{
@@ -744,7 +761,8 @@ $scope.sendCC = function() {
 	
 			'name':$scope.selectedMDXFunction.label,
 		    'value': $scope.finalFormula,
-		    'type': 'Set'
+		    'type': 'Set',
+		    'formula': 	$scope.selectedMDXFunction
 		    
 		}
 		
@@ -769,10 +787,20 @@ $scope.sendCC = function() {
 	}
 	
 	$scope.setIt = function(index,set) {
+		
 		$scope.selectedMDXFunction.argument[0].default_value=set.value;
 		$scope.openArgumentsdialog();
 		
 		}
+	
+	
+	/*function to call pop-up for editing saved members/sets */
+	$scope.edit = function(item){
+		console.log("editing...");
+		//$scope.selectedMDXFunction = item
+		console.log("opening the arguments dialog...");
+		$scope.openArgumentsdialog();
+	}
 	
 	$scope.deleteSet = function(index,set) {
 		
@@ -780,6 +808,7 @@ $scope.sendCC = function() {
 		$scope.cookieArray.splice(index,1);
 		$cookies.putObject('data',$scope.cookieArray);
 		$scope.cookieArray = $cookies.getObject('data');
+		$scope.deleteCC($scope.selectedMDXFunction.label);
 		
 		}
 
@@ -800,6 +829,21 @@ $scope.addCC = function() {
 			
 				});
 		}
+/*
+ * Add calculated field 
+ * */
+
+$scope.deleteCC = function(calculateMemberName) {
+	sbiModule_restServices.promiseDelete
+	("1.0",'/calculatedmembers/'+calculateMemberName+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+	.then(function(response) {
+		console.log(response);
+		$scope.handleResponse(response);
+	    }, function(response) {
+		sbiModule_messaging.showErrorMessage("error", 'Error');
+		
+			});
+	}
 	
 };
 
