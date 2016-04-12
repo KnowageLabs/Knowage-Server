@@ -39,6 +39,7 @@ import org.olap4j.metadata.Property;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.transform.PlaceMembersOnAxes;
 import org.pivot4j.ui.CellTypes;
+import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 import org.pivot4j.ui.command.UICommand;
 import org.pivot4j.ui.html.HtmlRenderCallback;
@@ -116,8 +117,18 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			attributes.put("ordinal", String.valueOf(positionId));
 			attributes.put("cell", null);
 		} else if (context.getCellType() == CellTypes.LABEL) {
+			NonInternalPropertyCollector np = new NonInternalPropertyCollector();
+			List<Property> properties = np.getProperties(context.getMember().getLevel());
+
 			String uniqueName = context.getMember().getUniqueName();
 			String level = context.getMember().getLevel().getUniqueName();
+			String dimensionType = null;
+			try {
+				dimensionType = context.getMember().getDimension().getDimensionType().xmlaName();
+			} catch (OlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			String parentMember = null;
 
 			if (context.getMember().getParentMember() != null) {
@@ -130,6 +141,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			// uniqueName + "','" + axis + "')");
 
 			attributes.put("axisOrdinal", String.valueOf(axisOrdinal));
+			attributes.put("dimensionType", dimensionType);
 			attributes.put("parentMember", parentMember);
 			attributes.put("uniqueName", uniqueName);
 			attributes.put("level", level);
@@ -143,6 +155,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	public void renderCommands(TableRenderContext context, List<UICommand<?>> commands) {
 
 		String drillMode = context.getRenderer().getDrillDownMode();
+
 		if (!isEmptyNonPropertyCell(context)) {
 			if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
 				int ordinal = context.getCell().getOrdinal();
@@ -162,6 +175,18 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
 				Map<String, String> attributes = new TreeMap<String, String>();
+				NonInternalPropertyCollector np = new NonInternalPropertyCollector();
+				List<Property> properties = np.getProperties(context.getMember().getLevel());
+
+				if (properties != null && !properties.isEmpty()) {
+					Map<String, String> attributes1 = new TreeMap<String, String>();
+					attributes1.put("src", "../img/show_props.png");
+					attributes1.put("ng-click", "getProps('" + context.getMember().getUniqueName() + "') ;$event.stopPropagation();");
+					startElement("img", attributes1);
+					endElement("img");
+
+				}
+
 				if (commands != null && !commands.isEmpty()) {
 					for (UICommand<?> command : commands) {
 						String cmd = command.getName();
@@ -494,7 +519,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", "../img/ASC-columns.png");
 					}
 
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+							+ "' ) ;$event.stopPropagation();");
 					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
@@ -507,7 +533,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", "../img/DESC-columns.png");
 					}
 
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+							+ "' ) ;$event.stopPropagation();");
 					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
@@ -520,7 +547,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", "../img/noSortColumns.png");
 				}
 
-				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+						+ "' ); $event.stopPropagation();");
 
 				startElement("img", attributes);
 				endElement("img");
