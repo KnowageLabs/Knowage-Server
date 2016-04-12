@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.serializer.SerializationException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 
 import javax.ws.rs.GET;
@@ -25,14 +33,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.serializer.SerializationException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/modelconfig")
 public class ModelConfigResource extends AbstractWhatIfEngineService {
@@ -78,7 +78,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		} catch (IOException e1) {
 			logger.error(e1.getMessage());
 		}
-		model.setSubset(config.getStartRow(), config.getStartColumn(), config.getRowsSet());
+		
 		String table = renderModel(ei.getPivotModel());
 		logger.debug("OUT");
 		return table;
