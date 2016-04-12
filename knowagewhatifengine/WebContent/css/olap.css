@@ -263,8 +263,8 @@ md-tabs .md-tab.md-active{
 }
 
 table, th , td {
-  border: 1px solid grey;
-  border-collapse: collapse;
+ /* border: 1px solid grey;*/
+  /*border-collapse: collapse;*/
   padding: 5px;
 }
 table tr:nth-child(odd) {
