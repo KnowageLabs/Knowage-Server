@@ -8,9 +8,13 @@
 		<form name="hierForm">
 			<div flex layout-margin>
 				<div ng-repeat='mt in metadata'>
-					<md-input-container ng-if="mt.VISIBLE && (mt.TYPE == 'String' || mt.TYPE == 'Number')" >
+					<md-input-container ng-if="mt.VISIBLE && mt.TYPE == 'String'" >
 						<label> {{mt.NAME}}</label>
 						<input type="text" ng-model="hier[mt.ID]" ng-disabled='!mt.EDITABLE || (mt.FIX_VALUE && mt.FIX_VALUE.length > 0)' ng-required='mt.REQUIRED'></input>
+					</md-input-container>
+					<md-input-container ng-if="mt.VISIBLE &&  mt.TYPE == 'Number'" >
+						<label> {{mt.NAME}}</label>
+						<input type="number" ng-model="hier[mt.ID]" ng-disabled='!mt.EDITABLE || (mt.FIX_VALUE && mt.FIX_VALUE.length > 0)' ng-required='mt.REQUIRED'></input>
 					</md-input-container>
 					<div ng-if="mt.VISIBLE && mt.TYPE == 'Date'">
 						<md-datepicker ng-model="hier[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE || (mt.FIX_VALUE && mt.FIX_VALUE.length > 0)' ng-required='mt.REQUIRED'></md-datepicker> {{mt.NAME}}
