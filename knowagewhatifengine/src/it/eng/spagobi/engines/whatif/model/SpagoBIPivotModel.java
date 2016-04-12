@@ -282,6 +282,17 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.calculatedFields.add(calculatedField);
 	}
 
+	public boolean removeCalculatedField(String calculatedFieldName) {
+
+		for (int i = 0; i < this.calculatedFields.size(); i++) {
+			if (calculatedFieldName.equals(this.calculatedFields.get(i).getCalculateFieldName())) {
+				this.calculatedFields.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public OlapConnection getOlapConnection() {
 		return getConnection();
 	}
