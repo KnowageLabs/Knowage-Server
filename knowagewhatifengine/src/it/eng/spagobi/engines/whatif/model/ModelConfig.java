@@ -140,7 +140,7 @@ public class ModelConfig implements Serializable {
 		rowsSet = 10;
 		rowCount = 1;
 		startColumn = 0;
-		columnSet = 10;
+		columnSet = 11;
 		columnCount = 1;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
