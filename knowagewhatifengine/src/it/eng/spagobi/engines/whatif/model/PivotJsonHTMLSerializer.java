@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
+import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -60,19 +73,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
-import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonHTMLSerializer.class);
@@ -111,6 +111,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) value;
+		model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet());
 
 		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
@@ -127,7 +129,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		callback.setRowHeaderStyleClass(" x-pivot-header ");
 		callback.setColumnHeaderStyleClass(" x-pivot-header-column");
-		callback.setCornerStyleClass(" x-pivot-header");
+		callback.setCornerStyleClass(" x-pivot-header x-pivot-corner");
 		callback.setCellStyleClass(" x-pivot-cell x-pivot-header-column");
 		callback.setTableStyleClass("x-pivot-table");
 		callback.setRowStyleClass(" generic-row-style ");
@@ -206,7 +208,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.render(value, callback);
 		time = "Serilize end " + format.format(new Date());
 		System.out.println(time);
-		System.out.println();
+
 		System.out.println();
 		try {
 			writer.flush();
@@ -361,8 +363,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		System.out.println(name);
 	}
 
-	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model)
-			throws JSONException, JsonGenerationException, IOException {
+	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
+			JsonGenerationException, IOException {
 
 		QueryAdapter qa = new QueryAdapter(model);
 		qa.initialize();
