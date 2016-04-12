@@ -76,7 +76,16 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String HELP = "HELP";
 
 	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION_ANGULAR&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+
+	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+
+	/**
+	 * The URL for the Workspace web page.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	private static final String HREF_DOC_BROWSER_WORKSPACE = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+
 	private static final String HREF_BOOKMARK = "/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_SUBSCRIPTIONS = "/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_PENCIL = "/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYANALYSIS=TRUE";
@@ -200,6 +209,18 @@ public class MenuListJSONSerializer implements Serializer {
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 							}
+
+							/**
+							 * The URL for the Workspace web page.
+							 *
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
+
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
+
+							}
+
 							if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
 								// admins and devs can see ONLY models tab,
 								// while tester can see datasets and models

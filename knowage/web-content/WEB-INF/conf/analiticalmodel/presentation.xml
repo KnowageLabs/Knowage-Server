@@ -29,7 +29,16 @@
 
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_CREATE_DOCUMENT" publisher_name="UserDocumentBrowserCreateDoc"/>
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_ACTION" publisher_name="UserDocumentBrowserPublisher"/>
+
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" publisher_name="UserDocumentBrowserAngularPublisher"/>
+
+<!-- 
+	Define publisher name for the Workspace management web page. Publisher (main JSP web page) is
+	defined inside the 'publishers.xml' file.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ -->
+<MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_WORKSPACE" publisher_name="UserDocumentBrowserWorkspace"/>
+
 <MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_PORTLET_ACTION" publisher_name="UserDocumentBrowserPortletPublisher"/>
 
 <MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ACTION" publisher_name="ExecuteDocumentPublisher"/>

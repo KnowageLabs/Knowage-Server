@@ -555,8 +555,6 @@
    	 	</RENDERING>
   	</PUBLISHER>
   	
-  	
-  	
   	<PUBLISHER name="detailBIObjectSaveLoop">
     	<RENDERING channel="PORTLET" mode="" type="LOOP">
       		<RESOURCES>
@@ -750,6 +748,25 @@
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
+  	
+  	<!-- 
+  		Mapping of the Workspace publisher name and the main JSP management web page. 
+  		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  	 -->
+  	<PUBLISHER name="UserDocumentBrowserWorkspace">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES> 				
+             <ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"/>
+        	<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>         	
+            <ITEM prog="0" resource="/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
   	<PUBLISHER name="UserDocumentBrowserPortletPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
       		<RESOURCES>

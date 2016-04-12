@@ -64,7 +64,20 @@
  	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ 
  <ACTION name="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+ <!-- 
+	Defining the action for the Workspace web page. It is registered inside the 'security.xml' file.
+	
+	TODO: Need to define the service for data providing.
+	
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ -->
+ <ACTION name="DOCUMENT_USER_BROWSER_WORKSPACE" 
  	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>

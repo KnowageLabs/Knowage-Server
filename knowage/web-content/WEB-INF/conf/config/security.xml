@@ -47,7 +47,15 @@
 <ACTION name="GET_LOV_RESULT"/>
 <ACTION name="DOCUMENT_USER_BROWSER_CREATE_DOCUMENT"/>
 <ACTION name="DOCUMENT_USER_BROWSER_START_ACTION"/>
+
 <ACTION name="DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"/>
+
+<!-- 
+	Registering action for the Workspace web page. It is defined inside the 'publishers.xml' file.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ -->
+<ACTION name="DOCUMENT_USER_BROWSER_WORKSPACE"/>
+
 <ACTION name="DOCUMENT_USER_BROWSER_START_PORTLET_ACTION"/>
 <ACTION name="AJAX_SERVICE_EXCEPTION_ACTION"/>
 <ACTION name="EXPORT_PDF"/>
