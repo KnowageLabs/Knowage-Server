@@ -3,7 +3,7 @@
 		<form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
 			<input type="hidden" name="lt" value="${flowExecutionKey}" />
 			<input type="hidden" name="_eventId" value="submit" />
-			<form:errors path="*" cssClass="errors" id="status" element="div" />
+			<form:errors path="*" cssClass="errors" id="status" element="div" htmlEscape="false" />
 			<div id="msgMandatory" style='display:none;color:red;font-size:11pt;'>
 				Login and password fields are mandatory!<br />
 				<br />
