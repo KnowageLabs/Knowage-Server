@@ -55,9 +55,13 @@
 		description="The name of the JNDI variable that contains the RESOURCE PATH"
 		isActive="true" valueCheck="java://comp/env/resource_path"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
-
+   
+	
 	<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI"
 		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/host_url"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SPAGOBI_SERVICE_JNDI" name="SPAGOBI SERVICE JNDI"
+		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/service_url"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL"
 		description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP"

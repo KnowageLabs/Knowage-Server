@@ -6,5 +6,6 @@
 	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String" />
 	<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 	<ResourceLink global="host_url" name="host_url" type="java.lang.String" />
+	<ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
 	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager" />
 </Context>
