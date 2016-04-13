@@ -60,3 +60,9 @@ insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select m
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(OBJ_META_ID)+1 from SBI_OBJ_METADATA),1) ,'SBI_OBJ_METADATA');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(MENU_ID)+1 from SBI_MENU) ,1),'SBI_MENU');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(PROGRESS_THREAD_ID)+1 from SBI_PROGRESS_THREAD) ,1),'SBI_PROGRESS_THREAD');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(SOURCE_ID)+1 from SBI_META_SOURCE) ,1),'SBI_META_SOURCE');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(TABLE_ID)+1 from SBI_META_TABLE) ,1),'SBI_META_TABLE');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(COLUMN_ID)+1 from SBI_META_TABLE_COLUMN) ,1),'SBI_META_TABLE_COLUMN');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(BC_ID)+1 from SBI_META_SOURCE) ,1),'SBI_META_BC');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ATTRIBUTE_ID)+1 from SBI_META_BC_ATTRIBUTE) ,1),'SBI_META_BC_ATTRIBUTE');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(JOB_ID)+1 from SBI_META_JOB) ,1),'SBI_META_JOB');
