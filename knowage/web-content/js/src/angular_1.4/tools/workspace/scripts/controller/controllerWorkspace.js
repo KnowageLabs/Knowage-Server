@@ -4,6 +4,18 @@ angular.module('workspace.controller', ['workspace.directive','workspace.configu
 function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices){
 	
 	$scope.folderDocuments = [];
+	
+	$scope.allOptions = [
+	                     	{"name": "Recent", "icon":"fa fa-clock-o"}, 
+	                     	{"name": "Favorites", "icon":"fa fa-star"}, 
+	                     	{"name": "Documents", "icon":"fa fa-file-text"}, 
+	                     	{"name": "Dataset", "icon":"fa fa-bars"}, 
+	                     	{"name": "Analysis", "icon":"fa fa-calculator"}
+                     	];
+		
+	$scope.showInfo = function(item) {		
+		alert(item.name);		
+	}
 
 	$scope.loadAllDocuments=function(){
 		sbiModule_restServices.promiseGet("2.0/documents", "")
@@ -15,5 +27,4 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 		});
 	}
 	$scope.loadAllDocuments();
-	
 }

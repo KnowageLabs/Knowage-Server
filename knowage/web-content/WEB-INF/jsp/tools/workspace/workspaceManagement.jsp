@@ -38,9 +38,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</md-toolbar>
 	
 	<angular_2_col>
-		<left-col flex=15>
-			
+		
+		<left-col flex=15>	
+			<left-main-menu-workspace></left-main-menu-workspace>
 		</left-col>
+
 		<right-col>
 				<md-content class="md-toolbar-tools">
 					<div  class="md-toolbar-tools" layout="row" layout-align="center center">
