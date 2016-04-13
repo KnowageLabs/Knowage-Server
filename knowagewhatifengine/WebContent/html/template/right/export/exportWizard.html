@@ -1,0 +1,33 @@
+<div>
+{{outputWizardDescription}}
+		<br/>
+		<div style="width:50%">
+		
+		<md-grid-list
+        	md-cols="3" md-row-height="50px" style="margin-top: 5%;">
+    		<md-grid-tile>
+    			<span style="position:absolute; left:0; top:15%">
+    				{{outputWizardTypeLabel}}:
+    			</span>
+			</md-grid-tile>
+				
+			<md-grid-tile >
+				<md-radio-group ng-model="outputType">
+					<md-radio-button ng-repeat="t in outputTypes" ng-value="t">
+						{{t}}
+					</md-radio-button>
+				</md-radio-group>			
+			</md-grid-tile>
+			
+		</md-grid-list>
+		</div>
+		
+		<md-input-container style="min-width:40%">
+        	<label>Version to export:</label>
+        		<md-select ng-model="outputVersion">
+          		<md-option ng-repeat="v in outputVersions" value="{{v}}">
+           			{{v}}
+          		</md-option>
+        	</md-select>
+      	</md-input-container>
+ 	</div>

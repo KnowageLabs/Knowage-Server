@@ -15,6 +15,7 @@ olapMod.controller("olapController", [
                                       '$mdSidenav',
                                       'sbiModule_messaging',
                                       'sbiModule_restServices',
+                                      'sbiModule_translate',
                                       'olapSharedSettings',
                                        olapFunction 
                                       ]);
@@ -30,11 +31,13 @@ function olapFunction(
 		$mdSidenav,
 		sbiModule_messaging,
 		sbiModule_restServices,
+		sbiModule_translate,
 		olapSharedSettings
 ) {
 	
 	//VARIABLES
 	
+	$scope.translate = sbiModule_translate;
 	//selected members
 	$scope.members = [];
 	$scope.selectedMember = {};

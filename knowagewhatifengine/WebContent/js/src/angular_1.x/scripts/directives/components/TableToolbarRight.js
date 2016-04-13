@@ -18,10 +18,16 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
 	$scope.outputTypes = [sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.table'),sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.csv')]
+	$scope.outputVersions = ["v0","v1","v2"]; //TODO
 	$scope.lockTooltip;
-	$scope.outputType;
+	$scope.delimiter;
+	$scope.tableName;
+	$scope.outputType="";
+	$scope.outputVersion;
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
+	$scope.showFile = false;
+	$scope.showTable = false;
 	var result;
 	
 	whatIfBtns = function(status){
@@ -55,10 +61,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
 		result = res;
-		
-		console.log(locker+"locked");
-		console.log(status+"status");
-		
+
 		while (i = regEx.exec(res)){
 			var btn = {};
 			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
@@ -194,13 +197,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  method:'POST',
 			  url: 'http://localhost:8080/knowage/restful-services/1.0/locker/'+id+'/'+type
 		  }).then(function(response){
-			  //$scope.handleResponse(response);
-			  console.log("status "+response.data.status);
-				console.log("locker "+response.data.locker);
-						console.log(result);
 						status = response.data.status;
 						locker = response.data.locker;
-						//filterXMLResult(result);
 						whatIfBtns(response.data.status);
 						checkLock(response.data.status);
 		  },function(response){
@@ -211,4 +209,16 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  $scope.showExportDialog= function(ev){
 		  $scope.showDialog(ev,"/right/exportOutputDialog.html");
 	  };
+	  
+	  $scope.exportDialogNext = function(){
+		  if($scope.outputType == "file")
+			  $scope.showFile = true;
+		  else
+			  $scope.showTable = true;
+	  }
+	  
+	  $scope.exportDialogBack = function(){
+		  $scope.showFile = false;
+		  $scope.showTable = false;
+	  }
 };

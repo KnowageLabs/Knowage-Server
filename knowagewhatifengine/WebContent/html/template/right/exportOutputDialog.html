@@ -1,30 +1,34 @@
-<md-dialog style='height:35%; width:30%;' layout="column">
+<md-dialog style='height:45%; width:35%;' layout="column">
 	
-	<md-toolbar class="knowage-blue" style="min-height:20px">
+	<md-toolbar class="knowage-blue" style="min-height:20px; height:15%; padding:5% 0 0 2%;">
 		{{outputWizardTitle}}
     </md-toolbar>
     
     <md-dialog-content style="padding:10px;font-size:85%;height:60%">
-		{{outputWizardDescription}}
-		<br/>
-		<md-grid-list
-        	md-cols="2" md-row-height="50px">
-    		<md-grid-tile>
-				{{outputWizardTypeLabel}}
-			</md-grid-tile>
-			
-			<md-grid-tile>
-			<md-radio-group ng-model="outputType">
-				<md-radio-button ng-repeat="t in outputTypes" ng-value="t">
-					{{t}}
-				</md-radio-button>
-			</md-radio-group>
-			</md-grid-tile>
+		<export-version-wizard ng-show = "!showFile && !showTable"></export-version-wizard>
+		<export-version-file-wizard ng-show = "showFile"></export-version-file-wizard>
+		<export-version-table-wizard ng-show = "showTable"></export-version-table-wizard>
     </md-dialog-content>
     
     <md-dialog-actions layout="row">
+    	<md-button ng-click="exportDialogBack()" 
+    			   style="line-height:25px" 
+    			   ng-disabled="!showFile && !showTable">
+			{{translate.load("sbi.common.prev")}}
+		</md-button>
+		
+		<md-button ng-click="exportDialogNext()" 
+				   style="line-height:25px"
+				   ng-disabled="showFile || showTable">
+			{{translate.load("sbi.common.next")}}
+		</md-button>
+		<md-button ng-click="closeDialog(ev)" 
+				   style="line-height:25px"
+				   ng-disabled="!showFile && !showTable">
+			{{translate.load("sbi.common.ok")}}
+		</md-button>
     	<md-button ng-click="closeDialog(ev)" style="line-height:25px">
-			Cancel
+			{{translate.load("sbi.common.cancel")}}
 		</md-button>
     </md-dialog-actions>
 </md-dialog>
