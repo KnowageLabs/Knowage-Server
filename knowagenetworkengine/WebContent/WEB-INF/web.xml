@@ -10,8 +10,6 @@
 	<!--  FILTERS								 									   -->
 	<!--  ============================================================================ -->
 	
-	
-	
 	<filter>
         <filter-name>EncodingFilter</filter-name>
         <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -21,23 +19,20 @@
         </init-param>
     </filter>
 	
-	
 	<filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/servlet/AdapterHTTP</url-pattern>
     </filter-mapping>
+	
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
     </filter-mapping>
 	
-	
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
 	</filter>
-	
-	
 	
 <!-- START-CAS 
 	<filter>
@@ -67,11 +62,10 @@
 	  <init-param>
 	    <param-name>proxyReceptorUrl</param-name>
 	    <param-value>/proxyCallback</param-value>
-	  </init-param> 
-	
+	  </init-param>
 	  <init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://spagobitest:48081/SpagoBINetworkEngine/proxyCallback</param-value>
+		<param-value>https://spagobitest:48081/knowagenetworkengine/proxyCallback</param-value>
 	  </init-param>  
 	</filter>
 	

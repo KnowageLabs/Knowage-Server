@@ -34,50 +34,46 @@
         <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
     </filter-mapping>   
 	
-	
-	
 <!-- START-CAS 
-<filter>
-  <filter-name>CAS Authentication Filter</filter-name>
-  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-  <init-param>
-    <param-name>casServerLoginUrl</param-name>
-    <param-value>https://spagobitest:48081/cas/login</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>spagobitest:48081</param-value>
-  </init-param>    
-</filter>
-
-<filter>
-  <filter-name>CAS Validation Filter</filter-name>
-  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-  <init-param>
-    <param-name>casServerUrlPrefix</param-name>
-    <param-value>https://spagobitest:48081/cas</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>https://spagobitest:48081</param-value>
-  </init-param>
-  <init-param>
-    <param-name>proxyReceptorUrl</param-name>
-    <param-value>/proxyCallback</param-value>
-  </init-param> 
-  <init-param>
-		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://spagobitest:48081/SpagoBICommonJEngine/proxyCallback</param-value>
-  </init-param>  
-</filter>
-
-<filter>
-  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-</filter>
+  <filter>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+    <init-param>
+      <param-name>casServerLoginUrl</param-name>
+      <param-value>https://spagobitest:48081/cas/login</param-value>
+    </init-param>
+    <init-param>
+      <param-name>serverName</param-name>
+      <param-value>spagobitest:48081</param-value>
+    </init-param>    
+  </filter>
+  
+  <filter>
+    <filter-name>CAS Validation Filter</filter-name>
+    <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+    <init-param>
+      <param-name>casServerUrlPrefix</param-name>
+      <param-value>https://spagobitest:48081/cas</param-value>
+    </init-param>
+    <init-param>
+      <param-name>serverName</param-name>
+      <param-value>https://spagobitest:48081</param-value>
+    </init-param>
+    <init-param>
+      <param-name>proxyReceptorUrl</param-name>
+      <param-value>/proxyCallback</param-value>
+    </init-param> 
+    <init-param>
+  		<param-name>proxyCallbackUrl</param-name>
+  		<param-value>https://spagobitest:48081/knowagecommonjengine/proxyCallback</param-value>
+    </init-param>  
+  </filter>
+  
+  <filter>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+  </filter>
  END-CAS -->
- 	
-
 	
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
@@ -99,6 +95,10 @@
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/WorkRunServiceTest</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+  </filter-mapping>
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
@@ -115,6 +115,10 @@
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
     <url-pattern>/WorkRunServiceTest</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
 
    <filter-mapping>
@@ -133,6 +137,10 @@
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
     <url-pattern>/WorkRunServiceTest</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+  </filter-mapping>
   
   <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
@@ -145,7 +153,7 @@
 		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
 	</filter>
 	
-		<filter-mapping>
+	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
     	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>

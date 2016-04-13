@@ -49,9 +49,6 @@
         <url-pattern>/JobUploadService/*</url-pattern>
     </filter-mapping>   
 
-
-
-
 <!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
@@ -82,8 +79,8 @@
     <param-value>/proxyCallback</param-value>
   </init-param> 
   <init-param>
-		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://spagobitest:48081/SpagoBITalendEngine/proxyCallback</param-value>
+	<param-name>proxyCallbackUrl</param-name>
+	<param-value>https://spagobitest:48081/knowagetalendengine/proxyCallback</param-value>
   </init-param>  
 </filter>
 
@@ -104,54 +101,54 @@
 <!-- START-CAS 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/JobRunService</url-pattern>
+    <url-pattern>/JobRunService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/EngineInfoService</url-pattern>
+    <url-pattern>/EngineInfoService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/JobUploadService</url-pattern>
-  </filter-mapping> 
+    <url-pattern>/version/*</url-pattern>
+  </filter-mapping>
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/JobRunServiceTest</url-pattern>
+    <url-pattern>/JobUploadService/*</url-pattern>
   </filter-mapping>
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/JobRunService</url-pattern>
+    <url-pattern>/JobRunService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/EngineInfoService</url-pattern>
+    <url-pattern>/EngineInfoService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/JobUploadService</url-pattern>
-  </filter-mapping> 
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/JobRunServiceTest</url-pattern>
+    <url-pattern>/version/*</url-pattern>
   </filter-mapping>
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/JobUploadService/*</url-pattern>
+  </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/JobRunService</url-pattern>
+    <url-pattern>/JobRunService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/EngineInfoService</url-pattern>
+    <url-pattern>/EngineInfoService/*</url-pattern>
   </filter-mapping> 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/JobUploadService</url-pattern>
-  </filter-mapping> 
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/JobRunServiceTest</url-pattern>
+    <url-pattern>/version/*</url-pattern>
   </filter-mapping>
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/JobUploadService/*</url-pattern>
+  </filter-mapping> 
   
   <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
