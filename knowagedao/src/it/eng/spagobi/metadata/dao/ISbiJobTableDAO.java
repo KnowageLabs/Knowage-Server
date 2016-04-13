@@ -15,29 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.tools.dataset.dao;
+package it.eng.spagobi.metadata.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.metadata.metadata.SbiMetaJob;
+import it.eng.spagobi.metadata.metadata.SbiMetaJobTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
 import java.util.List;
 
-public interface ISbiDataSetDAO extends ISpagoBIDao {
+/**
+ * @author Antonella Giachino (antonella.giachino@eng.it)
+ *
+ */
+public interface ISbiJobTableDAO extends ISpagoBIDao {
 
-	public SbiDataSet loadSbiDataSetByLabel(String label);
+	public List<SbiMetaJob> loadJobsByTableId(Integer tableId) throws EMFUserError;
 
-	public List<SbiDataSet> loadSbiDataSets();
+	public List<SbiMetaTable> loadTablesByJobId(Integer jobId) throws EMFUserError;
 
-	public List<SbiDataSet> loadNotDerivedSbiDataSets();
+	public void modifyJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 
-	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
-			String implementation, Boolean showDerivedDatasets);
+	public void insertJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page);
-
-	public Integer countSbiDataSet(String search) throws EMFUserError;
-
-	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz);
+	public void deleteJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 
 }

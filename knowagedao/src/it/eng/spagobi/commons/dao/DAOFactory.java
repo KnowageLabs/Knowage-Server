@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -65,6 +65,19 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
+import it.eng.spagobi.metadata.dao.ISbiDsBcDAO;
+import it.eng.spagobi.metadata.dao.ISbiDsTableDAO;
+import it.eng.spagobi.metadata.dao.ISbiJobSourceDAO;
+import it.eng.spagobi.metadata.dao.ISbiJobTableDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaBCAttributeDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaBCDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaJobDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.dao.ISbiObjDsDAO;
+import it.eng.spagobi.metadata.dao.ISbiObjTableDAO;
+import it.eng.spagobi.metadata.dao.ISbiTableBcDAO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
@@ -103,8 +116,8 @@ public class DAOFactory {
 
 	/**
 	 * Given, for a defined BO, its DAO name, creates the correct DAO instance
-	 * 
-	 * 
+	 *
+	 *
 	 * @param daoName
 	 *            The BO DAO name
 	 * @return An object representing the DAO instance
@@ -126,9 +139,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -138,9 +151,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a Subreport.
-	 * 
+	 *
 	 * @return a DAO instance for the Subreport
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -150,9 +163,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object parameter.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject parameter
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -162,9 +175,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a value constraint.
-	 * 
+	 *
 	 * @return a DAO instance for the value constraint
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -174,9 +187,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a domain.
-	 * 
+	 *
 	 * @return a DAO instance for the domain
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -186,9 +199,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for an engine.
-	 * 
+	 *
 	 * @return a DAO instance for the engine
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -198,9 +211,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a low functionality.
-	 * 
+	 *
 	 * @return a DAO instance for the low functionality
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -210,9 +223,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a predefined LOV.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined LOV
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -222,9 +235,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a parameter.
-	 * 
+	 *
 	 * @return a DAO instance for the parameter
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -234,9 +247,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a parameter use mode.
-	 * 
+	 *
 	 * @return a DAO instance for the parameter use mode
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -246,9 +259,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a role.
-	 * 
+	 *
 	 * @return a DAO instance for the role
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -258,9 +271,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the obj paruse dao.
-	 * 
+	 *
 	 * @return the obj paruse dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -270,9 +283,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the obj parview dao.
-	 * 
+	 *
 	 * @return the obj parview dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -282,9 +295,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a viewpoint.
-	 * 
+	 *
 	 * @return a DAO instance for the viewpoint
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -294,9 +307,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the data source dao.
-	 * 
+	 *
 	 * @return the data source dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -306,9 +319,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the data set dao.
-	 * 
+	 *
 	 * @return the data set dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -318,9 +331,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the sbi data set dao.
-	 * 
+	 *
 	 * @return the sbi data set dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -330,9 +343,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the bin content dao.
-	 * 
+	 *
 	 * @return the bin content dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -342,9 +355,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the obj template dao.
-	 * 
+	 *
 	 * @return the obj template dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -354,9 +367,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the obj note dao.
-	 * 
+	 *
 	 * @return the obj note dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -366,9 +379,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the sub object dao.
-	 * 
+	 *
 	 * @return the sub object dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -378,9 +391,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the snapshot dao.
-	 * 
+	 *
 	 * @return the snapshot dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -390,9 +403,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -402,9 +415,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -414,9 +427,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -426,9 +439,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI object.
-	 * 
+	 *
 	 * @return a DAO instance for the BIObject
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -438,9 +451,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the distribution list dao.
-	 * 
+	 *
 	 * @return the distribution list dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -452,7 +465,7 @@ public class DAOFactory {
 	 * Gets the remember me dao.
 	 *
 	 * @return the remember me dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -462,9 +475,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the menu dao.
-	 * 
+	 *
 	 * @return the menu dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -474,9 +487,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the menu roles dao.
-	 * 
+	 *
 	 * @return the menu roles dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -486,9 +499,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the bI object rating dao.
-	 * 
+	 *
 	 * @return the bI object rating dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -498,9 +511,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the KPI dao.
-	 * 
+	 *
 	 * @return the KPI dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -510,9 +523,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the KPI dao.
-	 * 
+	 *
 	 * @return the KPI dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -522,9 +535,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the KPI Instance dao.
-	 * 
+	 *
 	 * @return the KPI Instance dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -534,9 +547,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the bI object rating dao.
-	 * 
+	 *
 	 * @return the bI object rating dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -546,9 +559,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the bI object rating dao.
-	 * 
+	 *
 	 * @return the bI object rating dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -558,9 +571,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the bI object rating dao.
-	 * 
+	 *
 	 * @return the bI object rating dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -570,9 +583,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the MODEL dao.
-	 * 
+	 *
 	 * @return the MODEL dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -582,9 +595,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the MODELINSTANCE dao.
-	 * 
+	 *
 	 * @return the MODELINSTANCE dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -594,9 +607,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the PERIODICITY dao.
-	 * 
+	 *
 	 * @return the PERIODICITY dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -606,9 +619,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the THRESHOLD dao.
-	 * 
+	 *
 	 * @return the THRESHOLD dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -618,9 +631,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the MODELRESOURCE dao.
-	 * 
+	 *
 	 * @return the MODELRESOURCE dao.
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error.
 	 */
@@ -630,9 +643,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the ThresholdValue dao.
-	 * 
+	 *
 	 * @return the ThresholdValue dao.
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error.
 	 */
@@ -642,9 +655,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a predefined Measure Unit.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined MeasureUnit
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -654,7 +667,7 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for Organizational Unit.
-	 * 
+	 *
 	 * @return a DAO instance for Organizational Unit
 	 */
 	public static IOrganizationalUnitDAO getOrganizationalUnitDAO() {
@@ -663,7 +676,7 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for Organizational Unit.
-	 * 
+	 *
 	 * @return a DAO instance for Organizational Unit
 	 */
 	public static IGoalDAO getGoalDAO() {
@@ -672,9 +685,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a predefined Resource.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined rescource
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -684,9 +697,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a predefined Resource.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined rescource
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -696,9 +709,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object Metadata.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined object metadata
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -708,9 +721,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object Metadata.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined object metadata
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -720,9 +733,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object SbiUser.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined SbiUser
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -732,9 +745,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object SbiAttribute.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined SbiAttribute
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -744,9 +757,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object SbiConfig.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined SbiConfig
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -756,9 +769,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object Udp.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined Udp
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -768,9 +781,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object UdpValue.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined UdpValue
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -780,9 +793,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a object KpiError.
-	 * 
+	 *
 	 * @return a DAO instance for the predefined KpiError
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -792,9 +805,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a BI i18n messages.
-	 * 
+	 *
 	 * @return a DAO instance for the I18nmessage
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -804,9 +817,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a progress Thread.
-	 * 
+	 *
 	 * @return a DAO instance for the progress Thread
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -816,9 +829,9 @@ public class DAOFactory {
 
 	/**
 	 * Creates a DAO instance for a scheduler.
-	 * 
+	 *
 	 * @return a DAO instance for the scheduler
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
@@ -860,9 +873,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the Glossary dao.
-	 * 
+	 *
 	 * @return the Glossary dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -872,7 +885,7 @@ public class DAOFactory {
 
 	/**
 	 * Gets the Images dao.
-	 * 
+	 *
 	 * @return the Images dao
 	 * @throws EMFUserError
 	 */
@@ -890,9 +903,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the Timespan dao.
-	 * 
+	 *
 	 * @return the Timespan dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -902,9 +915,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the IFeaturesProviderFileDAO dao.
-	 * 
+	 *
 	 * @return the IFeaturesProviderFileDAO dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -915,9 +928,9 @@ public class DAOFactory {
 
 	/**
 	 * Gets the IFeaturesProviderWFSDAO dao.
-	 * 
+	 *
 	 * @return the IFeaturesProviderWFSDAO dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -929,7 +942,7 @@ public class DAOFactory {
 	 * Gets the CrossNavigationDAO dao.
 	 *
 	 * @return the CrossNavigationDAO dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -939,13 +952,181 @@ public class DAOFactory {
 
 	/**
 	 * Gets the OutputParameterDAO dao.
-	 * 
+	 *
 	 * @return the OutputParameterDAO dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
 	public static IOutputParameterDAO getOutputParameterDAO() throws EMFUserError {
 		return (IOutputParameterDAO) createDAOInstance("OutputParameterDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaSourceDAO dao.
+	 *
+	 * @return the SbiMetaSourceDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaSourceDAO getSbiMetaSourceDAO() throws EMFUserError {
+		return (ISbiMetaSourceDAO) createDAOInstance("ISbiMetaSourceDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaTableDAO dao.
+	 *
+	 * @return the SbiMetaTableDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaTableDAO getSbiMetaTableDAO() throws EMFUserError {
+		return (ISbiMetaTableDAO) createDAOInstance("ISbiMetaTableDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaTableColumnDAO dao.
+	 *
+	 * @return the SbiMetaTableColumnDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaTableColumnDAO getSbiMetaTableColumnDAO() throws EMFUserError {
+		return (ISbiMetaTableColumnDAO) createDAOInstance("IISbiMetaTableColumnDAOSbiMetaSourceDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaBCDAO dao.
+	 *
+	 * @return the SbiMetaBCDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaBCDAO getSbiMetaBCDAO() throws EMFUserError {
+		return (ISbiMetaBCDAO) createDAOInstance("ISbiMetaBCDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaBCAttributeDAO dao.
+	 *
+	 * @return the SbiMetaBCAttributeDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaBCAttributeDAO getSbiMetaBCAttributeDAO() throws EMFUserError {
+		return (ISbiMetaBCAttributeDAO) createDAOInstance("ISbiMetaBCAttributeDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaJobDAO dao.
+	 *
+	 * @return the SbiMetaJobDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaJobDAO getSbiMetaJobDAO() throws EMFUserError {
+		return (ISbiMetaJobDAO) createDAOInstance("ISbiMetaJobDAO");
+	}
+
+	/**
+	 * Gets the SbiDsBcDAO dao.
+	 *
+	 * @return the SbiDsBcDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiDsBcDAO getSbiDsBcDAO() throws EMFUserError {
+		return (ISbiDsBcDAO) createDAOInstance("ISbiDsBcDAO");
+	}
+
+	/**
+	 * Gets the SbiDsTableDAO dao.
+	 *
+	 * @return the SbiDsTableDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiDsTableDAO getSbiDsTableDAO() throws EMFUserError {
+		return (ISbiDsTableDAO) createDAOInstance("ISbiDsTableDAO");
+	}
+
+	/**
+	 * Gets the SbiJobSourceDAO dao.
+	 *
+	 * @return the SbiJobSourceDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiJobSourceDAO getSbiJobSourceDAO() throws EMFUserError {
+		return (ISbiJobSourceDAO) createDAOInstance("ISbiJobSourceDAO");
+	}
+
+	/**
+	 * Gets the SbiJobTableDAO dao.
+	 *
+	 * @return the SbiJobTableDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiJobTableDAO getSbiJobTableDAO() throws EMFUserError {
+		return (ISbiJobTableDAO) createDAOInstance("ISbiJobTableDAO");
+	}
+
+	/**
+	 * Gets the SbiObjDsDAO dao.
+	 *
+	 * @return the SbiObjDsDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiObjDsDAO getSbiObjDsDAO() throws EMFUserError {
+		return (ISbiObjDsDAO) createDAOInstance("ISbiObjDsDAO");
+	}
+
+	/**
+	 * Gets the SbiObjTableDAO dao.
+	 *
+	 * @return the SbiObjTableDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiObjTableDAO getSbiObjTableDAO() throws EMFUserError {
+		return (ISbiObjTableDAO) createDAOInstance("ISbiObjTableDAO");
+	}
+
+	/**
+	 * Gets the SbiTableBcDAO dao.
+	 *
+	 * @return the SbiTableBcDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiTableBcDAO getSbiTableBCDAO() throws EMFUserError {
+		return (ISbiTableBcDAO) createDAOInstance("ISbiTableBcDAO");
+	}
+
+	/**
+	 * Gets the SbiDsBcDAO dao.
+	 *
+	 * @return the SbiDsBcDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiDsBcDAO getDsBcDAO() throws EMFUserError {
+		return (ISbiDsBcDAO) createDAOInstance("ISbiDsBcDAO");
 	}
 }

@@ -15,29 +15,35 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.tools.dataset.dao;
+package it.eng.spagobi.metadata.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
 import java.util.List;
 
-public interface ISbiDataSetDAO extends ISpagoBIDao {
+/**
+ * @author Antonella Giachino (antonella.giachino@eng.it)
+ *
+ */
+public interface ISbiMetaTableDAO extends ISpagoBIDao {
 
-	public SbiDataSet loadSbiDataSetByLabel(String label);
+	public SbiMetaTable loadTableByID(Integer id) throws EMFUserError;
 
-	public List<SbiDataSet> loadSbiDataSets();
+	public SbiMetaTable loadTableByName(String name) throws EMFUserError;
 
-	public List<SbiDataSet> loadNotDerivedSbiDataSets();
+	public void modifyTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
-	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
-			String implementation, Boolean showDerivedDatasets);
+	public void insertTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page);
+	public void deleteTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
-	public Integer countSbiDataSet(String search) throws EMFUserError;
+	public List<SbiMetaTable> loadAllTables() throws EMFUserError;
 
-	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz);
+	public List<SbiMetaTable> loadTablesFromSource(int sourceId) throws EMFUserError;
 
+	public boolean hasBcAssociated(Integer id) throws EMFUserError;
+
+	public boolean hasJobsAssociated(Integer id) throws EMFUserError;
 }
