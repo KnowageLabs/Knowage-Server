@@ -52,7 +52,7 @@
     <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
     <init-param>
       <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-      <param-value>https://localhost:8443/exo-cas-2/proxy</param-value>
+      <param-value>https://spagobitest:48081/exo-cas-2/proxy</param-value>
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->

@@ -52,17 +52,17 @@
 
 
 
-<!-- START-CAS 	
+<!-- START-CAS -->
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
   <init-param>
     <param-name>casServerLoginUrl</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
+    <param-value>https://spagobitest:48081/cas/login</param-value>
   </init-param>
   <init-param>
     <param-name>serverName</param-name>
-    <param-value>athos.engilab.ewebpd.eng.it:1447</param-value>
+    <param-value>spagobitest:48081</param-value>
   </init-param>    
 </filter>
 
@@ -71,11 +71,11 @@
   <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
   <init-param>
     <param-name>casServerUrlPrefix</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
+    <param-value>https://spagobitest:48081/cas</param-value>
   </init-param>
   <init-param>
     <param-name>serverName</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
+    <param-value>https://spagobitest:48081</param-value>
   </init-param>
   <init-param>
     <param-name>proxyReceptorUrl</param-name>
@@ -83,7 +83,7 @@
   </init-param> 
   <init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBITalendEngine/proxyCallback</param-value>
+		<param-value>https://spagobitest:48081/SpagoBITalendEngine/proxyCallback</param-value>
   </init-param>  
 </filter>
 
@@ -91,7 +91,7 @@
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
-END-CAS -->
+<!-- END-CAS -->
  	
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
@@ -101,7 +101,7 @@ END-CAS -->
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
-<!-- START-CAS 	
+<!-- START-CAS -->
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/JobRunService</url-pattern>
@@ -157,7 +157,7 @@ END-CAS -->
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
   </filter-mapping>
-END-CAS -->
+<!-- END-CAS -->
 	
 	<filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
