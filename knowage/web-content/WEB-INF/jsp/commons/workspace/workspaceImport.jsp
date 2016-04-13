@@ -6,7 +6,7 @@
 
 <!-- DIRECTIVES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/analysisViewWorkspace.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/datasetViewWorkspace.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/datasetsViewWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/customizeViewWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/documentsViewWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/favouritesViewWorkspace.js"></script>
