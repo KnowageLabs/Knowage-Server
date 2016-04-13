@@ -36,6 +36,7 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.bo.Scorecard;
+import it.eng.spagobi.kpi.bo.ScorecardStatus;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -590,6 +591,28 @@ public class KpiService {
 		if (fieldName != null) {
 			throw new SpagoBIException("Field error: " + fieldName + "[" + fieldValue + "]");
 		}
+	}
+
+	/*
+	 * Gets a criterion id and a list of ScorecardStatus and returns a status
+	 */
+	@POST
+	@Path("/{id}/evaluateCriterion")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response evaluateCriterion(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		try {
+			JSONArray requestValues = RestUtilities.readBodyAsJSONArray(req);
+			List<ScorecardStatus> scorecardStatusLst = new ArrayList<>();
+			for (int i = 0; i < requestValues.length(); i++) {
+				scorecardStatusLst.add((ScorecardStatus) JsonConverter.jsonToObject(requestValues.getJSONObject(i).toString(), ScorecardStatus.class));
+			}
+			IKpiDAO dao = getKpiDAO(req);
+			String status = dao.evaluateScorecardStatus(id, scorecardStatusLst);
+			return Response.ok(status).build();
+		} catch (Throwable e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
 	}
 
 	@GET
