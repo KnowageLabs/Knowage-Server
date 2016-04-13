@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-content class="md-toolbar-tools">
 					<div  class="md-toolbar-tools" layout="row" layout-align="center center">
 								<!--  Search button -->
-								<md-button class="md-icon-button" ng-click="toggleSearchView()">
+								<md-button class="md
+								-icon-button" ng-click="toggleSearchView()">
 									  <md-icon md-font-icon="fa fa-search"></md-icon>
 								</md-button>
 								<!-- Search input -->
@@ -62,9 +63,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-button>
 					</div>
 				</md-content>
-				<md-content>
-
-				</md-content>
+				
+				<document-view-workspace></document-view-workspace>
 		</right-col>
 	</angular_2_col>
 	
