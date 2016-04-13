@@ -14,23 +14,5 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	 */
 	$scope.showInfo = function(item) {		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();		
-	}	
-		
-	$scope.loadMyAnalysisDocuments = function() {
-		
-		sbiModule_restServices
-			.promiseGet("documents", "myAnalysisDocsList")
-			.then(
-					function(response) {					
-						angular.copy(response.data,$scope.analysisDocs);
-						console.log($scope.analysisDocs);
-					},
-					
-					function(response) {
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
-					}
-				);
 	}
-
-	$scope.loadMyAnalysisDocuments();
 }

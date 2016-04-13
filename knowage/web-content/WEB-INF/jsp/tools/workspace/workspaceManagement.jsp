@@ -32,8 +32,8 @@
 				<recent-view-workspace 		ng-show="currentOptionMainMenu=='recent'">		</recent-view-workspace>	
 				<favorites-view-workspace 	ng-show="currentOptionMainMenu=='favorites'">	</favorites-view-workspace>	
 				<documents-view-workspace 	ng-show="currentOptionMainMenu=='documents'">	</documents-view-workspace>			
-				<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</dataset-view-workspace>
-				<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>
+				<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</datasets-view-workspace>
+				<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>				
 		</right-col>
 		
 	</angular_2_col>
