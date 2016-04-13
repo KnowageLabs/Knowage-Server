@@ -36,7 +36,7 @@
 	
 	
 	
-<!-- START-CAS -->
+<!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
@@ -75,14 +75,14 @@
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
-<!-- END-CAS -->
+ END-CAS -->
  	
 
 	
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
-<!-- START-CAS -->
+<!-- START-CAS 
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/WorkRunService</url-pattern>
@@ -138,7 +138,7 @@
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
   </filter-mapping>
-<!-- END-CAS -->
+ END-CAS -->
 
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
