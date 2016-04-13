@@ -14,4 +14,12 @@ angular.module('workspace.directive', [])
 	      replace: 'true',
 	      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/leftMainMenuWorkspace.html'
 	  };
+})
+
+.directive('datasetViewWorkspace', function () {
+	 return {
+	      restrict: 'E',
+	      replace: 'true',
+	      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/datasetViewWorkspace.html'
+	  };
 });

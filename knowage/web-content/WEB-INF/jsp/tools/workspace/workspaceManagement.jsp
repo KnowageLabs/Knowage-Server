@@ -67,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-content>
 				
 				<document-view-workspace></document-view-workspace>
+				<dataset-view-workspace></dataset-view-workspace>
 		</right-col>
 	</angular_2_col>
 	
