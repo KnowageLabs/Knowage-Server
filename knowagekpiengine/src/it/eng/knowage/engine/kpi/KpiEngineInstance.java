@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.knowage.engine.util.KpiEngineDataUtil;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -56,7 +54,7 @@ public class KpiEngineInstance extends AbstractEngineInstance {
 	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
 			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", "KPI_VALUE", "KPI_TARGETS" };
+			"DOCUMENT_VERSION" };
 
 	public KpiEngineInstance(String template, Map env) {
 		super(env);
@@ -65,16 +63,7 @@ public class KpiEngineInstance extends AbstractEngineInstance {
 				template = "";
 			}
 			this.template = new JSONObject(Xml.xml2json(template));
-			String result = new KpiEngineDataUtil().loadJsonData(this.template);
-			JSONArray array = new JSONArray(result);
-			JSONObject object = new JSONObject(array.getJSONObject(0).getString("kpi"));
 
-			object.remove("definition");
-			object.remove("enableVersioning");
-			object.remove("category");
-			object.remove("cardinality");
-			env.put("KPI_VALUE", object);
-			env.put("KPI_TARGETS", array.getJSONObject(0).get("target"));
 			// this.template.getJSONObject("chart").getJSONObject("data").remove("kpi");
 			// this.template.getJSONObject("chart").getJSONObject("data").put("kpiValue", array.getJSONObject(0).get("kpi"));
 			// this.template.getJSONObject("chart").getJSONObject("data").put("target", array.getJSONObject(0).get("target"));

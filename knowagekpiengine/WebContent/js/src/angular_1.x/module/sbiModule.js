@@ -55,7 +55,8 @@ sbiM.service('sbiModule_translate', function() {
 	};
 });
 
-sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger,$mdDialog) {
+	
 	var alteredContextPath=null;
 
 	this.alterContextPath=function(cpat){
@@ -63,14 +64,20 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 	}
 
 	function getBaseUrl(endP_path) {
-		var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path+"/"  : alteredContextPath+ "" + endP_path+"/" 
-				alteredContextPath=null;
+		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/restful-services/" + endP_path+"/" 
+		alteredContextPath=null;
 		return burl ;
 	};
 
 	this.get = function(endP_path, req_Path, item, conf) {
-		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
-		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item,conf);
+		(item == undefined || item==null) ? 
+				item = "" : 
+					item = "?" + encodeURIComponent(item)
+							.replace(/'/g,"%27")
+							.replace(/"/g,"%22")
+							.replace(/%3D/g,"=")
+							.replace(/%26/g,"&");
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
 		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf);
 	};
 
@@ -84,16 +91,163 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		sbiModule_logger.trace("POST: "+endP_path+"/"+ req_Path,item,conf);
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
-
+	
+	this.put = function(endP_path, req_Path, item, conf) {
+		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
 	this.delete = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
 		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
 
-	this.put = function(endP_path, req_Path, item, conf) {
-		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
-		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+
+	
+	/*
+	NEW METHODS
+	*/
+	
+	var genericErrorHandling = function(data, status, headers, config, deferred) {
+  		deferred.reject(data, status, headers, config);
+	};
+	
+	var handleResponse = function(data, status, headers, config, deferred) {
+		if(data.data != null){
+			if ( data.data.hasOwnProperty("errors")) {
+				
+				genericErrorHandling(data, status, headers, config, deferred);
+			} else {
+				deferred.resolve(data, status, headers, config);
+			}	
+		}else{
+			if ( data.status == 201) {
+				deferred.resolve(data, status, headers, config);
+				
+			} else {
+				genericErrorHandling(data, status, headers, config, deferred);
+			}	
+			
+		}
+		
 	};
 
-});
+	// SAMPLE METHOD, this will be the implementation
+	this.promiseGet = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		// Required for passing JSON on a GET request
+		if (item == undefined || item==null) {
+			item = "";
+		}else {
+			item = "?" + 
+				encodeURIComponent(item)
+				.replace(/'/g,"%27")
+				.replace(/"/g,"%22")
+				.replace(/%3D/g,"=")
+				.replace(/%26/g,"&");
+		}
+		
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePost = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("POST: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePut = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("PUT: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promiseDelete = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.delete(getBaseUrl(endP_path) + "" + req_Path, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	
+	this.errorHandler=function(text,title){
+		var titleFin=title || "";
+		var textFin=text;
+		if(angular.isObject(text)){
+			if(text.hasOwnProperty("errors")){
+				textFin="";
+				for(var i=0;i<text.errors.length;i++){
+					textFin+=text.errors[i].message+" <br> ";
+				}
+			}else{
+				textFin=JSON.stringify(text)
+			}
+		}
+		
+		var alert = $mdDialog.alert()
+		.title(titleFin)
+		.content(textFin)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(alert); //can use the finally function
+	}
+	
+	
+  });

@@ -66,9 +66,9 @@ public class PageResource extends AbstractFullKpiEngineResource {
 		urls = new HashMap<String, String>();
 
 		try {
-			// pages.put("edit", new JSONObject("{name: 'edit', description: 'the chart edit page', parameters: []}"));
-			// urls.put("edit", "/WEB-INF/jsp/chart_edit.jsp");
-			pages.put("execute", new JSONObject("{name: 'execute', description: 'the chart execution page', parameters: ['template']}"));
+			pages.put("edit", new JSONObject("{name: 'edit', description: 'the kpi edit page', parameters: []}"));
+			urls.put("edit", "/WEB-INF/jsp/kpiEdit.jsp");
+			pages.put("execute", new JSONObject("{name: 'execute', description: 'the kpi execution page', parameters: ['template']}"));
 			urls.put("execute", "/WEB-INF/jsp/kpiVisualization.jsp");
 			// pages.put("test", new JSONObject("{name: 'test', description: 'the chart test page', parameters: ['template']}"));
 			// urls.put("test", "/WEB-INF/jsp/test4.jsp");
@@ -125,28 +125,18 @@ public class PageResource extends AbstractFullKpiEngineResource {
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 
-			// case "edit":
-			//
-			// String templateString = savedTemplate != null ? savedTemplate : buildBaseTemplate().toString();
-			//
-			// // create a new engine instance
-			// engineInstance = FullKpiEngine.createInstance(templateString, getIOManager().getEnv());
-			//
-			// engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
-			// // TODO put this not in session but in context
-			// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-			//
-			// /**
-			// * These two lines are responsible for setting all chart styles that are available on the server (through their XML files) into the session and
-			// * forwarding them to the Designer.js which will take them and put inside of the chart style combo box on the top left of the Designer page.
-			// *
-			// * @author: atomic (ana.tomic@mht.net)
-			// * @commentBy: danristo (danilo.ristovski@mht.net)
-			// */
-			// JSONArray styles = new JSONArray(new StyleResource().getStyles());
-			// getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES, styles);
-			//
-			// break;
+			case "edit":
+
+				String templateString = savedTemplate != null ? savedTemplate : buildBaseTemplate().toString();
+
+				// create a new engine instance
+				engineInstance = KpiEngine.createInstance(templateString, getIOManager().getEnv());
+
+				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
+				// TODO put this not in session but in context
+				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+				break;
 
 			case "test":
 				break;

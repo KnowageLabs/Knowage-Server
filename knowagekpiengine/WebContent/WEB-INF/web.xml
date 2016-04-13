@@ -8,7 +8,7 @@
   </context-param>
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/api</param-value>
+    <param-value>/restful-services</param-value>
   </context-param>
   <filter>
     <filter-name>EncodingFilter</filter-name>
@@ -56,7 +56,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/api/*</url-pattern>
+    <url-pattern>/restful-services/*</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
     <welcome-file>/html/index.html</welcome-file>

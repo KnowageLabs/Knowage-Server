@@ -1,0 +1,252 @@
+ /*=================IMPORT====================*/
+@import 
+  'variables',
+  'mixins',
+  'fonts',
+  'components/navbar',
+  'components/scorecardKpiDefinition',
+  'components/schedulerKpi',
+  'components/angularTable';
+   
+ 
+// Toolbar elements  
+md-toolbar.md-knowage-theme {
+		min-height: 40px;
+		height: 40px;
+		background-color: $headerBackground !important;
+		color: $lightTextColor !important;
+		.md-toolbar-tools {
+			height: 40px;
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+			font-weight: $headerFontWeight;
+		}
+}
+
+md-toolbar.secondaryToolbar.md-knowage-theme {
+	background-color: $secondaryColor !important;
+}
+
+md-toolbar.ternaryToolbar.md-knowage-theme {
+	background-color: $ternaryColor !important;
+}
+
+.md-button.md-knowage-theme.md-fab {
+    &:not([disabled]) {
+            background-color: $fabPrimaryColor !important;
+    }
+    top: $fabTop;
+}
+
+.md-button.md-knowage-theme.md-fab md-icon {
+    font-size: $fabIconSize;
+    padding-top: 4px;
+}
+md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
+        color: $toolbarButtonColor;
+        &:hover {
+            background-color: $secondaryColor;
+            color: $baseColor;
+        }
+}
+​
+md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
+    background-color: $secondaryColor;
+    color: $baseColor;
+}
+
+// Input fields
+
+md-input-container.md-knowage-theme  {
+	.md-input {
+		border-color: $inputLineColor;
+	}
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused {
+
+    .md-input {
+        border-color: $inputLineColor;
+    }
+    
+    md-icon{
+        color: $baseColor;
+    }
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
+    color: $inactiveLabelColor;
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
+    color: $activeLabelColor;
+}
+
+md-input-container.md-knowage-theme ng-messages :not(.md-char-counter), md-input-container.md-knowage-theme [ng-messages] :not(.md-char-counter), md-input-container.md-knowage-theme ng-message :not(.md-char-counter), md-input-container.md-knowage-theme data-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme x-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message-exp] :not(.md-char-counter) {
+    color: $fabPrimaryColor;
+}
+
+md-input-container.md-knowage-theme.md-input-invalid .md-input {
+    border-color: $inputInvalidLineColor;
+}
+
+md-input-container.md-knowage-theme.md-input-invalid.md-input-focused label {
+    color: $invalidLabelColor;
+}    
+
+// Radio Buttons and Checkboxes
+
+md-checkbox.md-knowage-theme.md-checked .md-icon {
+    background-color: $baseColor;
+}
+
+md-checkbox.md-knowage-theme .md-icon {
+    border-color: $baseColor;
+}
+
+md-radio-button.md-knowage-theme .md-on {
+    background-color: $baseColor;
+}
+
+md-radio-button.md-knowage-theme .md-off {
+    border-color: $inactiveLabelColor;
+}
+
+md-radio-button.md-knowage-theme.md-checked .md-off {
+    border-color: $inactiveLabelColor;
+}
+
+// Comboboxes
+md-select.md-knowage-theme .md-select-value {
+    border-bottom-color: $baseColor;
+    .md-select-icon {
+    	color: $baseColor
+    }
+}
+
+md-select.md-knowage-theme:not([disabled]):focus .md-select-value {
+    border-bottom-color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected] {
+    color: $baseColor;
+}
+
+md-select-menu.md-knowage-theme md-option[selected]:focus {
+    color: $baseColor;
+}
+
+// Tabs
+md-tabs.md-knowage-theme .md-tab.md-active, md-tabs.md-knowage-theme .md-tab.md-active md-icon, md-tabs.md-knowage-theme .md-tab.md-focused, md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
+    color: $baseColor;
+    font-weight: $tabFontWeight;
+}
+
+md-tabs.md-knowage-theme md-ink-bar {
+    color: $baseColor;
+    background: $baseColor;
+}	
+
+// Material Cards
+md-card.md-knowage-theme {
+    background-color: $tabBackground;
+    display: block; 
+    padding: $tabPadding;
+}
+
+md-tab-content md-content.md-knowage-theme {
+    background-color: transparent;
+}
+
+// Dialog Buttons
+a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
+    color: $baseColor;
+}
+
+//Raised Button
+.md-button.md-knowage-theme.md-raised {
+    color: $baseColor;
+    background-color: $secondaryColor;
+}
+
+.md-button.md-knowage-theme.md-raised:not([disabled]):hover {
+    background-color: $baseColor;
+    color: white;
+}
+
+// Calendar - Date Picker
+.md-knowage-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator, .md-knowage-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
+    background: $baseColor;
+    color: $lightTextColor;
+    border-color: transparent;
+}
+
+.md-knowage-theme .md-calendar-date-selection-indicator:hover {
+    background: $secondaryColor;
+}
+
+.md-knowage-theme .md-datepicker-input-container {
+    border-bottom-color: $baseColor;
+    
+    &.md-datepicker-focused {
+        border-bottom-color: $baseColor;
+    }
+}
+
+.md-knowage-theme .md-datepicker-input {
+    color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
+    border-top-color: $baseColor;
+}
+
+.md-knowage-theme .md-calendar-day-header {
+    background: $calendarHeaderBackground;
+    color: $calendarHeaderTextColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {
+    border: 1px solid $baseColor;
+}
+
+.md-knowage-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {
+    background: $secondaryColor;
+}
+
+//Info box 
+.kn-info {
+    margin: 10px;
+    border: 1px dashed $baseColor;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.kn-close-Info {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.noMargin{
+	margin:0px;
+}
+
+.noPadding{
+	padding:0px;
+}
+
+.noBorder{
+	border:0px;
+}

@@ -179,7 +179,7 @@ author:
 		
 </head>
 
-<body ng-controller="kpiViewerController">
+<body ng-controller="kpiViewerController" ng-init="init()">
 	<h2>KpiEngine</h2>
 	<h2>document: <%=docLabel %></h2>
 	

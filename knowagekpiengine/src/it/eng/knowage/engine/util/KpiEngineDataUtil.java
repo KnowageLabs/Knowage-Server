@@ -34,7 +34,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 public class KpiEngineDataUtil extends AbstractHibernateDAO {
 	public static transient Logger logger = Logger.getLogger(KpiEngineDataUtil.class);
 
-	public String loadJsonData(JSONObject jsonTemplate) {
+	public static String loadJsonData(JSONObject jsonTemplate) {
 
 		JSONArray result = new JSONArray();
 		try {
@@ -51,8 +51,13 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 				JSONObject tempResult = new JSONObject();
 				Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(chart.getInt("id"), chart.getInt("version"));
 				List<SbiKpiTarget> sbiKpiTargets = DAOFactory.getNewKpiDAO().listTargetbyKpi(kpi);
-				JSONObject obj = new JSONObject();
-				tempResult.put("kpi", JsonConverter.objectToJson(kpi, kpi.getClass()));
+				JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
+				object.remove("definition");
+				object.remove("enableVersioning");
+				object.remove("category");
+				object.remove("cardinality");
+
+				tempResult.put("kpi", object);
 				tempResult.put("target", sbiKpiTargets);
 				result.put(tempResult);
 			} else {
@@ -63,7 +68,12 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 
 					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
 					List<SbiKpiTarget> sbiKpiTargets = DAOFactory.getNewKpiDAO().listTargetbyKpi(kpi);
-					tempResult.put("kpi", kpi);
+					JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
+					object.remove("definition");
+					object.remove("enableVersioning");
+					object.remove("category");
+					object.remove("cardinality");
+					tempResult.put("kpi", object);
 					tempResult.put("target", sbiKpiTargets);
 					result.put(tempResult);
 				}
