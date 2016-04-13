@@ -43,10 +43,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -67,13 +67,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -193,38 +191,30 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response extractETLMetadataInformation(@MultipartForm MultipartFormDataInput input) {
 		logger.debug("IN");
-		byte[] bytes = null;
 
 		try {
 
 			// 1- Retrieve uploaded file data
-			/*
-			 * Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-			 * 
-			 * for (String key : uploadForm.keySet()) { List<InputPart> inputParts = uploadForm.get(key); for (InputPart inputPart : inputParts) {
-			 * MultivaluedMap<String, String> header = inputPart.getHeaders(); if (getFileName(header) != null) { // convert the uploaded file to input stream
-			 * InputStream inputStream = inputPart.getBody(InputStream.class, null);
-			 * 
-			 * bytes = IOUtils.toByteArray(inputStream); } } }
-			 */
+			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			InputStream inputStream = null;
 
-			// TODO: example ETL file loading, to change
-			File etlFile = new File(getResourcePath() + File.separator + "etl" + File.separator + "exampleETL" + ".item");
+			for (String key : uploadForm.keySet()) {
+				List<InputPart> inputParts = uploadForm.get(key);
+				for (InputPart inputPart : inputParts) {
+					MultivaluedMap<String, String> header = inputPart.getHeaders();
+					if (getFileName(header) != null) {
+						inputStream = inputPart.getBody(InputStream.class, null);
+					}
+				}
+			}
 
-			// TODO: 2 - Parse xml file
-			Document xmlDocument = xmlToDocument(etlFile);
+			// TODO: 2 - Parse xml inputStream
+			Document xmlDocument = inputStreamToDocument(inputStream);
 			ETLParser etlParser = new ETLParser(xmlDocument);
-			System.out.println("** ASA_2_AWH_FPL_0.1.item Parsing: **");
 			etlParser.extractAll();
 
-			// TODO: to remove, example file 2
-			System.out.println("** EXT_SIO_GEO_0.1.item Parsing: **");
-			File etlFile2 = new File(getResourcePath() + File.separator + "etl" + File.separator + "EXT_SIO_GEO_0.1" + ".item");
-			Document xmlDocument2 = xmlToDocument(etlFile2);
-			ETLParser etlParser2 = new ETLParser(xmlDocument2);
-			etlParser2.extractAll();
-
 			// TODO: 3 - Write informations on db
+
 			return Response.ok().build();
 
 		} catch (Exception e) {
@@ -255,64 +245,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response updateETLMetadataInformation(@PathParam("etlId") int etlId) {
 		return null;
-	}
-
-	/**
-	 * ------------------------------------------------------------------------------------
-	 *
-	 * ETL XML Parsing
-	 *
-	 * ------------------------------------------------------------------------------------
-	 */
-
-	/*
-	 * Get all the tables used by a specific RDBMS component type
-	 */
-	public Set<String> getRDBMSComponentTables(Document document, String componentType) {
-		return getComponentInformations(document, componentType, "dbtable", "table");
-	}
-
-	public Set<String> getFileComponentLocations(Document document, String componentType) {
-		return getComponentInformations(document, componentType, "file", "filename");
-	}
-
-	/*
-	 * Get all the tables used by a specific component type
-	 */
-	public Set<String> getComponentInformations(Document document, String componentTypeName, String fieldValue, String nameValue) {
-
-		Set<String> tablesNames = new HashSet<String>();
-		NodeList nList = document.getElementsByTagName("node");
-
-		for (int i = 0; i < nList.getLength(); i++) {
-			Node node = nList.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element nodeElement = (Element) node;
-				String currentNodeComponentName = nodeElement.getAttribute("componentName");
-				if (currentNodeComponentName.equals(componentTypeName)) {
-					// found searched component
-					NodeList elementParameters = nodeElement.getElementsByTagName("elementParameter");
-					for (int j = 0; j < elementParameters.getLength(); j++) {
-						Node elementParameterNode = elementParameters.item(j);
-						if (elementParameterNode.getNodeType() == Node.ELEMENT_NODE) {
-							Element elementParameterNodeElement = (Element) elementParameterNode;
-							String elementParameterField = elementParameterNodeElement.getAttribute("field");
-							String elementParameterName = elementParameterNodeElement.getAttribute("name");
-							if (elementParameterField.equalsIgnoreCase(fieldValue) && elementParameterName.equalsIgnoreCase(nameValue)) {
-								// this elementParameter tag contains the name of a table
-								tablesNames.add(elementParameterNodeElement.getAttribute("value"));
-
-							}
-
-						}
-
-					}
-				}
-			}
-		}
-
-		return tablesNames;
-
 	}
 
 	/**
@@ -439,6 +371,27 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			logger.error("SAXException for " + xmlfile.getName());
 		} catch (IOException e) {
 			logger.error("IOException for " + xmlfile.getName());
+		}
+		return doc;
+
+	}
+
+	public static Document inputStreamToDocument(InputStream inputStream) {
+		Document doc = null;
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder;
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(inputStream);
+			// optional, but recommended
+			doc.getDocumentElement().normalize();
+
+		} catch (ParserConfigurationException e) {
+			logger.error("ParserConfigurationException for " + inputStream);
+		} catch (SAXException e) {
+			logger.error("SAXException for " + inputStream);
+		} catch (IOException e) {
+			logger.error("IOException for " + inputStream);
 		}
 		return doc;
 
