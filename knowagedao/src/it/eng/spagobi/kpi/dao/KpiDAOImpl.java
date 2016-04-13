@@ -1319,6 +1319,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
+	public String evaluateScorecardStatus(Integer criterionId, List<ScorecardStatus> scorecardStatusLst) {
+		SbiDomains d = load(SbiDomains.class, criterionId);
+		String clazz = d.getValueDs();
+		try {
+			IScorecardCriterion criterion = (IScorecardCriterion) Class.forName(clazz).newInstance();
+			return criterion.evaluate(scorecardStatusLst).name();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new SpagoBIDOAException("Criterion class error: " + clazz, e);
+		}
+
+	}
+
+	@Override
 	public KpiScheduler loadKpiScheduler(final Integer id) {
 		KpiScheduler scheduler = executeOnTransaction(new IExecuteOnTransaction<KpiScheduler>() {
 			@Override
