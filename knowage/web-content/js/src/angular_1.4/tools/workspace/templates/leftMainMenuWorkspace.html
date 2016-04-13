@@ -1,6 +1,16 @@
-<md-list ng-cloak>
-	 <md-list-item ng-repeat="setting in allOptions" ng-click="showInfo(setting)">
-    	<md-icon md-font-icon="{{setting.icon}}"></md-icon>
-   	 	<p> {{ setting.name }} </p>
-  	</md-list-item>
-</md-list>		
+<div>
+	
+	<!-- 
+		Angular list that holds and displays all options for viewing files (different sets of files and 
+		different perspectives) - Recent documents, Favorite documents, All workspace documents, 
+		Workspace datasets and Analysis files.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 -->
+	<md-list ng-cloak>
+		 <md-list-item ng-repeat="option in leftMainMenu" ng-click="showInfo(option)">
+	    	<md-icon md-font-icon="{{option.icon}}"></md-icon>
+	   	 	<p> {{ option.name }} </p>
+	  	</md-list-item>
+	</md-list>
+	
+</div>
