@@ -246,6 +246,17 @@ md-datepicker > div.md-datepicker-input-container{
 #angularTableTemplate{
 	position: relative !important;
 }
+
+#backupTable{
+	height: inherit;
+	min-height: 70% !important;
+}
+
+#dimTable{
+	height: inherit;
+	min-height: inherit !important;
+}
+
 /*
 .table-object > div > md-content {
 	width: 30rem !important;
