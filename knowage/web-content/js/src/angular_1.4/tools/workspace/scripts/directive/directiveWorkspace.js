@@ -7,5 +7,6 @@ angular
 	                                'analysis_view_workspace',
 	                                'left_main_menu_workspace',
 	                                'customize_view_workspace',
-	                                'main_toolbar_workspace'
+	                                'main_toolbar_workspace',
+	                                'federation_view'
 	                                ]);

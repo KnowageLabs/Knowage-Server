@@ -1,10 +1,14 @@
 angular
 	.module('workspace.controller', ['workspace.directive', 'workspace.configuration'])
-	.controller('workspaceController', ["$scope", "$http", "$mdDialog", "sbiModule_translate", "sbiModule_restServices", workspaceFunction]);
+.controller('workspaceController',["$scope","$http","$mdDialog","sbiModule_translate","sbiModule_restServices",workspaceFunction]);
 
 function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices){
 	
 	$scope.allDocuments = [];
+	$scope.federationDefinitions=[];
+	$scope.businessModels=[];
+	$scope.datasets=[];
+	
 	
 	/**
 	 * Variables for Analysis view of the Workspace (option):	  

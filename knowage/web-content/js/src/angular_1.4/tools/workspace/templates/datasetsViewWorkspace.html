@@ -1,1 +1,28 @@
-<div> DATASETS VIEW </div>
+<md-content>
+  <md-tabs md-dynamic-height="true">
+        <md-tab label="Models" flex>
+	
+ 	      <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
+		show-grid-view="true"
+ 	  ></document-view>	
+ 	 
+ 	</md-tab> 
+    <md-tab label="Datasets" flex>
+
+ 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+		show-grid-view="true"
+ 	  ></document-view>	
+ 	
+ 	</md-tab>  
+	<md-tab label="Federation definitions" flex>
+
+ 	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
+		show-grid-view="true"
+		selected-federation=selectedFederation
+		edit-federation-action="editFederation(fed)"
+ 	  ></federation-view>	
+
+ 	</md-tab>  
+   </md-tabs>
+   
+</md-content>
