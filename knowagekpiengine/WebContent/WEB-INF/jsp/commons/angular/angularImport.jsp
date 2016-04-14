@@ -7,16 +7,14 @@
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+<%--
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+--%>
+
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<%--
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
---%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-animate.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-aria.min.js"></script>

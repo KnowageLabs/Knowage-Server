@@ -41,14 +41,11 @@ public class SingletonConfigCache implements ISingletonConfigCache {
 
 	public SingletonConfigCache() {
 		logger.debug("IN");
-		System.out.println("SingletonConfigCache in ");
 
 		IConfigDAO dao = null;
 		try {
 			dao = DAOFactory.getSbiConfigDAO();
-			System.out.println("SingletonConfigCache dao ");
 			List<Config> allConfig = dao.loadAllConfigParameters();
-			System.out.println("SingletonConfigCache allConfig " + (allConfig!=null ? allConfig.size() : "null"));
 			if (allConfig.size() == 0)
 				logger.error("The table sbi_config is EMPTY");
 			for (Config config : allConfig) {
@@ -60,7 +57,6 @@ public class SingletonConfigCache implements ISingletonConfigCache {
 			e.printStackTrace();
 		} finally {
 			logger.debug("OUT");
-			System.out.println("SingletonConfigCache out ");
 		}
 	}
 

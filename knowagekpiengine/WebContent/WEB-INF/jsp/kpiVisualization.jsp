@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author: 
 --%>
 
-<%@page import="it.eng.spagobi.kpi.config.bo.KpiValue"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -37,11 +36,12 @@ author:
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.kpi.config.bo.KpiValue"%>
+<%@page import="it.eng.knowage.engine.kpi.KpiEngineInstance"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
 
-<%@page import="it.eng.knowage.engine.kpi.KpiEngineInstance"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -55,6 +55,7 @@ author:
 	String executionRole;
 	Locale locale;
 	String template;
+	String docId;
 	String docLabel;
 	String docVersion;
 	String docAuthor;
@@ -70,7 +71,7 @@ author:
 	String isTechnicalUser;
 	List<String> includes;
 	String datasetLabel;
-	String kpiValue = "";
+	//String kpiValue = "";
 	//from cockpit
 	boolean isCockpit = false;
 	String aggregations = "";
@@ -92,9 +93,9 @@ author:
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString(0);
-	if(env.get("KPI_VALUE")!=null){
-		kpiValue = env.get("KPI_VALUE").toString();
-	}
+	// if(env.get("KPI_VALUE")!=null){
+	// 	kpiValue = env.get("KPI_VALUE").toString();
+	// }
 	
 	if(env.get("EXECUTE_COCKPIT") != null){
 		isCockpit = true;
@@ -111,6 +112,7 @@ author:
 	
 	/*
 	*/	
+	docId = (env.get("DOCUMENT_ID") != null? (String)env.get("DOCUMENT_ID") : "");
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
@@ -175,16 +177,36 @@ author:
 	var serverPort = '<%=request.getServerPort()%>';
 	var protocol = '<%=request.getScheme()%>';
 </script>
-
+<%--
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-more.js"></script>
+--%>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/gaugeJs/gauge.js"></script>
+<%--
+--%>
 		
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()">
+<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center">
+	
+	<%--
 	<h2>KpiEngine</h2>
-	<h2>document: <%=docLabel %></h2>
+	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">targetValue: {{documentData.targetValue | json}}</div>
+	--%>
 	
-	<div>{{documentData.template | json}}</div>
-	
+	<div layout-align="center center" layout="row" flex >
+		<div id="kpiViewer_<%=docId%>"></div>
+	</div>
+		
 	<%-- kpi document angular imports --%>
 	<script type="text/javascript">
 	(function() {
@@ -193,16 +215,23 @@ author:
 		
 		kpiViewerModule.factory('documentData', function() {
 			var documentTemplate = JSON.parse('<%=template%>');
+			<%-- var kpiValue = JSON.parse('<%=kpiValue%>'); --%>
 			
 			var obj = {
 				template : documentTemplate,
 				docLabel : '<%=docLabel %>',
-				kpiValue : '<%=kpiValue %>',
+				docId : '<%=docId%>',
+				kpiValue : {},
+				targetValue : {}
 			};
 			return obj;
 		});
 	})();
 	</script>
+	<script type="text/javascript" 
+			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerFactory.js"></script>
+	<script type="text/javascript" 
+			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
 </body>
