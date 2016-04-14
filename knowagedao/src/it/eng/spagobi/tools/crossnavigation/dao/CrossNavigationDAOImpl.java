@@ -80,7 +80,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							sn.setFromDoc(o2.getSbiObject().getLabel());
 							break;
 						case TYPE_FIXED:
-							// Fixed value isn't bind to any document
+							SbiObjects obj = (SbiObjects) session.load(SbiObjects.class, cnp.getFromKeyId());
+							sn.setFromDoc(obj.getLabel());
 							break;
 						}
 					}
@@ -238,7 +239,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 					}
 
-					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), fromDoc.getLabel(), toDoc.getLabel()));
+					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel()));
 
 				}
 				return nd;

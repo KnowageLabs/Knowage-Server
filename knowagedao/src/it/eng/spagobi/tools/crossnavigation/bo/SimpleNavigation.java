@@ -22,17 +22,19 @@ public class SimpleNavigation {
 	private Integer id;
 	private String name;
 	private String fromDoc;
+	private Integer fromDocId;
 	private String toDoc;
 	private String fixedValue;
 
 	public SimpleNavigation() {
 	}
 
-	public SimpleNavigation(Integer id, String name, String fromDoc, String toDoc) {
+	public SimpleNavigation(Integer id, String name, String fromDoc, Integer fromDocId, String toDoc) {
 		this.id = id;
 		this.name = name;
 		this.fromDoc = fromDoc;
 		this.toDoc = toDoc;
+		this.fromDocId = fromDocId;
 	}
 
 	/**
@@ -108,6 +110,21 @@ public class SimpleNavigation {
 	 */
 	public void setFixedValue(String fixedValue) {
 		this.fixedValue = fixedValue;
+	}
+
+	/**
+	 * @return the fromDocId
+	 */
+	public Integer getFromDocId() {
+		return fromDocId;
+	}
+
+	/**
+	 * @param fromDocId
+	 *            the fromDocId to set
+	 */
+	public void setFromDocId(Integer fromDocId) {
+		this.fromDocId = fromDocId;
 	}
 
 }

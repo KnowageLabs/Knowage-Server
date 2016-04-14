@@ -30,6 +30,7 @@ public class SimpleParameter implements Serializable {
 	private Integer id;
 	private String name;
 	private Integer type;
+	private String fixedValue;
 	private List<SimpleParameter> links = new ArrayList<>();
 
 	public SimpleParameter() {
@@ -99,6 +100,21 @@ public class SimpleParameter implements Serializable {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the fixedValue
+	 */
+	public String getFixedValue() {
+		return fixedValue;
+	}
+
+	/**
+	 * @param fixedValue
+	 *            the fixedValue to set
+	 */
+	public void setFixedValue(String fixedValue) {
+		this.fixedValue = fixedValue;
 	}
 
 }

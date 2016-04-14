@@ -1755,6 +1755,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		Trigger trigger = new Trigger();
 
+		if (scheduler.getEndDate() != null) {
+			Calendar endTime = Calendar.getInstance();
+			endTime.setTimeInMillis(scheduler.getEndDate());
+			if (scheduler.getEndTime() != null) {
+				String[] endArr = scheduler.getEndTime().split(":");
+				String endHour = endArr[0];
+				String endMinute = endArr[1];
+				endTime.set(Calendar.HOUR_OF_DAY, new Integer(endHour).intValue());
+				endTime.set(Calendar.MINUTE, new Integer(endMinute).intValue());
+			}
+			trigger.setEndTime(endTime.getTime());
+		}
+
 		trigger.setGroupName(KPI_SCHEDULER_GROUP);
 		trigger.setStartTime(startTime.getTime());
 		trigger.setChronType(scheduler.getCrono());// TODO da verificare
