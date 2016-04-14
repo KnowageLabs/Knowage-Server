@@ -6,6 +6,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -30,9 +31,9 @@ public class SbiMetaBc extends SbiHibernateModel {
 	private String metaVersion;
 	private String organization;
 
-	// private Set sbiMetaDsBcs = new HashSet(0);
-	// private Set sbiMetaTableBcs = new HashSet(0);
-	// private Set sbiMetaBcAttributes = new HashSet(0);
+	private Set sbiMetaDsBcs = new HashSet(0);
+	private Set sbiMetaTableBcs = new HashSet(0);
+	private Set sbiMetaBcAttributes = new HashSet(0);
 
 	public SbiMetaBc() {
 	}
@@ -64,9 +65,9 @@ public class SbiMetaBc extends SbiHibernateModel {
 		this.sbiVersionDe = sbiVersionDe;
 		this.metaVersion = metaVersion;
 		this.organization = organization;
-		// this.sbiMetaDsBcs = sbiMetaDsBcs;
-		// this.sbiMetaTableBcs = sbiMetaTableBcs;
-		// this.sbiMetaBcAttributes = sbiMetaBcAttributes;
+		this.sbiMetaDsBcs = sbiMetaDsBcs;
+		this.sbiMetaTableBcs = sbiMetaTableBcs;
+		this.sbiMetaBcAttributes = sbiMetaBcAttributes;
 	}
 
 	public Integer getBcId() {
@@ -197,28 +198,28 @@ public class SbiMetaBc extends SbiHibernateModel {
 		this.organization = organization;
 	}
 
-	// public Set getSbiMetaDsBcs() {
-	// return this.sbiMetaDsBcs;
-	// }
-	//
-	// public void setSbiMetaDsBcs(Set sbiMetaDsBcs) {
-	// this.sbiMetaDsBcs = sbiMetaDsBcs;
-	// }
-	//
-	// public Set getSbiMetaTableBcs() {
-	// return this.sbiMetaTableBcs;
-	// }
-	//
-	// public void setSbiMetaTableBcs(Set sbiMetaTableBcs) {
-	// this.sbiMetaTableBcs = sbiMetaTableBcs;
-	// }
-	//
-	// public Set getSbiMetaBcAttributes() {
-	// return this.sbiMetaBcAttributes;
-	// }
-	//
-	// public void setSbiMetaBcAttributes(Set sbiMetaBcAttributes) {
-	// this.sbiMetaBcAttributes = sbiMetaBcAttributes;
-	// }
+	public Set getSbiMetaDsBcs() {
+		return this.sbiMetaDsBcs;
+	}
+
+	public void setSbiMetaDsBcs(Set sbiMetaDsBcs) {
+		this.sbiMetaDsBcs = sbiMetaDsBcs;
+	}
+
+	public Set getSbiMetaTableBcs() {
+		return this.sbiMetaTableBcs;
+	}
+
+	public void setSbiMetaTableBcs(Set sbiMetaTableBcs) {
+		this.sbiMetaTableBcs = sbiMetaTableBcs;
+	}
+
+	public Set getSbiMetaBcAttributes() {
+		return this.sbiMetaBcAttributes;
+	}
+
+	public void setSbiMetaBcAttributes(Set sbiMetaBcAttributes) {
+		this.sbiMetaBcAttributes = sbiMetaBcAttributes;
+	}
 
 }

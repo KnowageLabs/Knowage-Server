@@ -16,7 +16,7 @@
             <column name="BC_ID" not-null="true" />
         </many-to-one>
         
-        <component name="commonInfo" insert="true" update="true" 
+        <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo"> 
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />
 	        </property>
@@ -44,9 +44,11 @@
 	        <property name="sbiVersionDe" type="string">
 	            <column name="SBI_VERSION_DE" length="10" />
 	        </property>
+	         <!-- 
 	        <property name="metaVersion" type="string">
 	            <column name="META_VERSION" length="100" />
 	        </property>
+	         -->
 	        <property name="organization" type="string">
 	            <column name="ORGANIZATION" length="20" />
 	        </property>
