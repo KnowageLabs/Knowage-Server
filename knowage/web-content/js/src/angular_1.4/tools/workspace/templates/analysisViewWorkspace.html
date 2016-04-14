@@ -9,6 +9,7 @@
 								
 		<!-- Tab that will give user a preview of all Analysis documents placed in the Workspace. -->
 		<md-tab label='All' md-active=true >
+			
 			<!-- 
 		 	 	class="kn-documentBrowser": needed for applying an appropriate image for particular document
 		 	 	type (cockpit (composite file), ad hoc report (worksheet) or location intelligence (geo, map))
@@ -18,30 +19,45 @@
 		 	 	
 		 	 	NOTE: This goes the same for other document-view directives (components) in following code.
 		 	  -->
-		  	<document-view 	class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="allAnalysisDocs"
-		 				 	show-grid-view="true" >
-			</document-view> 
+		  	<document-view 	class="kn-documentBrowser" flex 
+ 							style='overflow:auto; position:relative;' 
+ 							ng-model=allAnalysisDocs
+ 							show-grid-view=showGridView >
+			</document-view>
+							
 		</md-tab>
 		
 		<!-- Tab that will give user a preview of all Analysis documents of type Cockpit placed in the Workspace. -->
 		<md-tab label='Cockpit' md-active=false >
-			  	<document-view 	class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="cockpitAnalysisDocs"
-			 				 	show-grid-view="true" >
-				</document-view> 
+		
+			  	<document-view 	class="kn-documentBrowser" flex 
+ 								style='overflow:auto; position:relative;' 
+ 								ng-model=cockpitAnalysisDocs
+ 								show-grid-view=showGridView >
+				</document-view>	
+							
 		</md-tab>
 		
 		<!-- Tab that will give user a preview of all Analysis documents of type Ad hoc placed in the Workspace. -->
 		<md-tab label='Ad hoc' md-active=false >
-			  	<document-view 	class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="adhocReportAnalysisDocs"
-			 				 	show-grid-view="true" >
-				</document-view> 
+		
+			  	<document-view 	class="kn-documentBrowser" flex 
+ 								style='overflow:auto; position:relative;' 
+ 								ng-model=adhocReportAnalysisDocs
+ 								show-grid-view=showGridView >
+				</document-view>
+				
 		</md-tab>
 		
 		<!-- Tab that will give user a preview of all Analysis documents of type Geo placed in the Workspace. -->
 		<md-tab label='Geo' md-active=false >
-			  	<document-view 	class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="geoAnalysisDocs"
-			 				 	show-grid-view="true" >
-				</document-view> 
+		
+			  	<document-view 	class="kn-documentBrowser" flex 
+ 								style='overflow:auto; position:relative;' 
+ 								ng-model=geoAnalysisDocs
+ 								show-grid-view=showGridView >
+				</document-view>
+				
 		</md-tab>
 		
 	</md-tabs>

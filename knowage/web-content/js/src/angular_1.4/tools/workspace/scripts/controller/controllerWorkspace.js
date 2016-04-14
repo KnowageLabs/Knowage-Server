@@ -1,5 +1,6 @@
-angular.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-.controller('workspaceController',["$scope","$http","$mdDialog","sbiModule_translate","sbiModule_restServices",workspaceFunction]);
+angular
+	.module('workspace.controller', ['workspace.directive', 'workspace.configuration'])
+	.controller('workspaceController', ["$scope", "$http", "$mdDialog", "sbiModule_translate", "sbiModule_restServices", workspaceFunction]);
 
 function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices){
 	
@@ -20,10 +21,25 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.currentOptionMainMenu = "";
 	
 	/**
+	 * Flag that servers as indicator for toggling between grid and list view of documents.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.showGridView = true;
+	
+	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.showInfo = function(item) {		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();		
 	}
+	
+	/**
+	 * Function for toggling grid/list view by changing the responsible flag (showGridView).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.toogleGridListViewOfDocs = function() {
+		$scope.showGridView = !$scope.showGridView;
+	}
+	
 }
