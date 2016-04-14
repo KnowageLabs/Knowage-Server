@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.metadata.metadata.SbiMetaObjDs" table="sbi_meta_obj_ds">
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaObjDs" table="SBI_META_OBJ_DS">
         <composite-id name="id" class="it.eng.spagobi.metadata.metadata.SbiMetaObjDsId">
             <key-property name="dsId" type="int">
                 <column name="DS_ID" />

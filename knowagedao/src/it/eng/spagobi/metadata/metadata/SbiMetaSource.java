@@ -1,6 +1,6 @@
 package it.eng.spagobi.metadata.metadata;
 
-// Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1
+// Generated 13-apr-2016 14.55.30 by Hibernate Tools 3.4.0.CR1
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
@@ -32,7 +32,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 	private String metaVersion;
 	private String organization;
 	private Set sbiMetaJobSources = new HashSet(0);
-	private SbiMetaTable sbiMetaTable;
+	private Set sbiMetaTables = new HashSet(0);
 
 	public SbiMetaSource() {
 	}
@@ -46,7 +46,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 
 	public SbiMetaSource(String name, String type, String url, String location, String sourceSchema, String sourceCatalogue, String userIn, String userUp,
 			String userDe, Date timeIn, Date timeUp, Date timeDe, String sbiVersionIn, String sbiVersionUp, String sbiVersionDe, String metaVersion,
-			String organization, Set sbiMetaJobSources, SbiMetaTable sbiMetaTable) {
+			String organization, Set sbiMetaJobSources, Set sbiMetaTables) {
 		this.name = name;
 		this.type = type;
 		this.url = url;
@@ -65,7 +65,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 		this.metaVersion = metaVersion;
 		this.organization = organization;
 		this.sbiMetaJobSources = sbiMetaJobSources;
-		this.sbiMetaTable = sbiMetaTable;
+		this.sbiMetaTables = sbiMetaTables;
 	}
 
 	public Integer getSourceId() {
@@ -220,12 +220,12 @@ public class SbiMetaSource extends SbiHibernateModel {
 		this.sbiMetaJobSources = sbiMetaJobSources;
 	}
 
-	public SbiMetaTable getSbiMetaTable() {
-		return this.sbiMetaTable;
+	public Set getSbiMetaTables() {
+		return this.sbiMetaTables;
 	}
 
-	public void setSbiMetaTable(SbiMetaTable sbiMetaTable) {
-		this.sbiMetaTable = sbiMetaTable;
+	public void setSbiMetaTables(Set sbiMetaTables) {
+		this.sbiMetaTables = sbiMetaTables;
 	}
 
 }
