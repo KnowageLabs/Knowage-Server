@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<p>{{ctrl.translate.load("cache.manager.numberOfCachedObjects")}}		{{ ctrl.data.cachedObjectsCount }}</p>
 			
 							<p>{{ctrl.translate.load("cache.manager.availableMemoryPercentage")}}	{{ ctrl.data.availableMemoryPercentage }}%</p>
-			
+							
 						</div>
 			
 						<div flex="50">
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
 						
 				<form layout="row" layout-wrap name=manageForm >
-					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="50" ng-disabled="true"> {{ctrl.translate.load("cache.manager.enabled")}} </md-switch>
+					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="50" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
 										
 					<div flex="50">
 						
@@ -109,7 +109,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val}}</md-option>
 					       		</md-select>
 					    </md-input-container>
+				<!-- New -->		
+						<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
+            				<input ng-model="ctrl.variableLastAccessTtl" type="number">
+          				</md-input-container>
 
+					    <md-input-container>
+					    	<label>{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
+					       	<input ng-model="ctrl.variableCreateAndPersistTimeout" type="number">
+					    </md-input-container>
+						
 		
 					</div>
 		
@@ -131,6 +141,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					         		<md-option ng-repeat="dataSource in ctrl.filteredDataSources" ng-value="dataSource">{{dataSource.label}}</md-option>
 					       		</md-select>
 					    </md-input-container>
+					 
+			<!-- New -->
+						<md-input-container>
+            				<label>{{ctrl.translate.load("cache.manager.timeToLock")}}</label>
+            				<input ng-model="ctrl.variableSqldbCacheTimeout" type="number">
+          				</md-input-container>
+
+					    <md-input-container>
+					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
+					       	<input ng-model="ctrl.variableHazelcastTimeout" type="number">
+					    </md-input-container>		    
+					    
+					    <md-input-container>
+					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
+					       	<input ng-model="ctrl.variableHazelcastLeaseTime" type="number">
+					    </md-input-container>	
+					    
 						
 					</div>
 					
@@ -145,10 +172,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-card flex>
 
 			<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools">{{ctrl.translate.load("cache.manager.addRemoveDataset")}}<div flex></div><md-button ng-click="ctrl.deleteFunction()" ng-disabled="ctrl.itemSelected.length<=0">{{ctrl.translate.load("cache.manager.delete")}}</md-button> <md-button ng-click="ctrl.cleanAllFunction()">{{ctrl.translate.load("cache.manager.cleanAll")}}</md-button></div></md-toolbar>
-			<div layout-align="center center" layout-padding layout-margin flex>	<!-- rimuovibile-->				
+			<div layout-align="center center" layout-padding layout-margin flex>			
 					
-				<div ng-if="!ctrl.isUndefined(ctrl.metadata)">  <!--  METADATA TABLE -->
-												
+					<div ng-if="ctr.metadata != undefined && ctr.metadata.length > 0">  <!-- METADATA TABLE -->
 						
 					<angular-table 	id="manageTable" 	ng-model=ctrl.metadata 
 											columns=ctrl.tableColumns
@@ -161,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					></angular-table>					
 					
 				</div>	
-				<div ng-if="ctrl.isUndefined(ctrl.metadata)">  <!--  METADATA TABLE -->
+				<div ng-if="ctr.metadata == undefined || ctr.metadata.length == 0">  <!--  METADATA TABLE -->
 					{{ctrl.translate.load("cache.manager.metadataUnavailable")}}
 				</div>	
 	
