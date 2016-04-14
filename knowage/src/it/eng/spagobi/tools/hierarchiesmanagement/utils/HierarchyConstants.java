@@ -65,6 +65,7 @@ public class HierarchyConstants {
 	public final static String FIELD_PARENT = "PARENT";
 	public final static String FIELD_TYPE = "TYPE";
 	public final static String FIELD_SINGLE_VALUE = "SINGLE_VALUE";
+	public final static String FIELD_IS_ORDER = "ORDER_FIELD";
 	public final static String FIELD_REQUIRED = "REQUIRED";
 	public final static String FIELD_FIX_VALUE = "FIX_VALUE";
 	public final static String FIELD_UNIQUE_CODE = "UNIQUE_CODE";

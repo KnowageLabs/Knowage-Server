@@ -232,7 +232,7 @@ public class HierarchyService {
 			}
 
 			// 3 - get all paths from the input json tree
-			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName);
+			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName, -1);
 
 			// 4 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -555,6 +555,9 @@ public class HierarchyService {
 						for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
 							Field fld = nodeFields.get(f);
 							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
+							if (fld.isOrderField()) {
+								mapAttrs.put(fld.getId() + i, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+							}
 							mapAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 						}
 						data.setAttributes(mapAttrs);
@@ -1250,7 +1253,7 @@ public class HierarchyService {
 	 * @param dimension
 	 * @return collection with all tree paths
 	 */
-	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension, String uniqueCode, String hierName) {
+	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension, String uniqueCode, String hierName, int position) {
 		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<List<HierarchyTreeNodeData>>();
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -1289,6 +1292,8 @@ public class HierarchyService {
 					generalInfoJSON.put(idFld, node.getString(idFld));
 				}
 			}
+
+			String orderField = null;
 			// add other node attributes if they are valorized
 			ArrayList<Field> nodeFields = hierarchies.getHierarchy(dimension).getMetadataNodeFields();
 			if (!isRoot) {
@@ -1304,6 +1309,10 @@ public class HierarchyService {
 						mapAttrs.put(idFld, hashCode);
 					} else if (!node.isNull(idFld)) {
 						mapAttrs.put(idFld, node.getString(idFld));
+					}
+					if (!isLeaf && position > -1 && fld.isOrderField()) {
+						orderField = idFld + node.getString(HierarchyConstants.LEVEL);
+						mapAttrs.put(orderField, position);
 					}
 				}
 			}
@@ -1372,11 +1381,15 @@ public class HierarchyService {
 				JSONArray childs = node.getJSONArray("children");
 				for (int i = 0; i < childs.length(); i++) {
 					JSONObject child = childs.getJSONObject(i);
+					if (orderField != null) {
+						child.put(orderField, i);
+					}
 					String parentUniqueCode = "";
 					if (!isRoot) {
 						parentUniqueCode = uniqueCodeLocal;
 					}
-					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName);
+					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName, i);
+
 					for (List<HierarchyTreeNodeData> path : childPaths) {
 						// add this node to start of the path
 						path.add(0, nodeData);

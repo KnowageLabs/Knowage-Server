@@ -216,9 +216,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
+					boolean fieldIsOrder = sbField.getAttribute(HierarchyConstants.FIELD_IS_ORDER) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_IS_ORDER)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent, fieldIsUnique);
+							fieldIsParent, fieldIsUnique, fieldIsOrder);
 					metadataDimension.add(field);
 				}
 				toReturn.setMetadataFields(metadataDimension);
@@ -305,9 +307,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
+					boolean fieldIsOrder = sbField.getAttribute(HierarchyConstants.FIELD_IS_ORDER) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_IS_ORDER)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent, fieldIsUnique);
+							fieldIsParent, fieldIsUnique, fieldIsOrder);
 					metadataGeneralHierarchy.add(field);
 				}
 				toReturn.setMetadataGeneralFields(metadataGeneralHierarchy);
@@ -337,9 +341,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
+					boolean fieldIsOrder = sbField.getAttribute(HierarchyConstants.FIELD_IS_ORDER) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_IS_ORDER)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldIsParent, fieldIsUnique);
+							fieldIsParent, fieldIsUnique, fieldIsOrder);
 					metadataNodeHierarchy.add(field);
 				}
 				toReturn.setMetadataNodeFields(metadataNodeHierarchy);
@@ -369,9 +375,11 @@ public class Hierarchies {
 							.getAttribute(HierarchyConstants.FIELD_PARENT)) : false;
 					boolean fieldIsUnique = sbField.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE) != null ? Boolean.parseBoolean((String) sbField
 							.getAttribute(HierarchyConstants.FIELD_UNIQUE_CODE)) : false;
+					boolean fieldIsOrder = sbField.getAttribute(HierarchyConstants.FIELD_IS_ORDER) != null ? Boolean.parseBoolean((String) sbField
+							.getAttribute(HierarchyConstants.FIELD_IS_ORDER)) : false;
 
 					Field field = new Field(fieldId, fieldName, fieldType, fieldFixValue, fieldIsVisible, fieldIsEditable, fieldIsRequired, fieldIsSingleValue,
-							fieldParent, fieldIsUnique);
+							fieldParent, fieldIsUnique, fieldIsOrder);
 					metadataLeafHierarchy.add(field);
 				}
 				toReturn.setMetadataLeafFields(metadataLeafHierarchy);

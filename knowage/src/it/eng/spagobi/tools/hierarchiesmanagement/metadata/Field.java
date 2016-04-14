@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,17 +33,18 @@ public class Field {
 	boolean isSingleValue;
 	boolean isParent;
 	boolean isUniqueCode;
+	boolean isOrderField;
 
 	/**
 	 * @param name
 	 * @param type
 	 */
 	public Field(String id, String name, String alias, String type) {
-		this(id, name, type, null, false, false, false, true, false, false);
+		this(id, name, type, null, false, false, false, true, false, false, false);
 	}
 
 	public Field(String id, String name, String type, String fixValue, boolean isVisible, boolean isEditable, boolean isRequired, boolean isSingleValue,
-			boolean isParent, boolean isUniqueCode) {
+			boolean isParent, boolean isUniqueCode, boolean isOrderField) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -55,6 +56,7 @@ public class Field {
 		this.isSingleValue = isSingleValue;
 		this.isParent = isParent;
 		this.isUniqueCode = isUniqueCode;
+		this.isOrderField = isOrderField;
 	}
 
 	public String getId() {
@@ -135,6 +137,14 @@ public class Field {
 
 	public void setUniqueCode(boolean isUniqueCode) {
 		this.isUniqueCode = isUniqueCode;
+	}
+
+	public boolean isOrderField() {
+		return isOrderField;
+	}
+
+	public void setOrderField(boolean isOrderField) {
+		this.isOrderField = isOrderField;
 	}
 
 }

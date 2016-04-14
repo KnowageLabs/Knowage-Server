@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -110,6 +110,9 @@ public class HierarchyUtils {
 
 			result.put(HierarchyConstants.FIELD_REQUIRED, field.isRequired());
 			logger.debug("Field [" + HierarchyConstants.FIELD_REQUIRED + "] is " + field.isRequired());
+
+			result.put(HierarchyConstants.FIELD_IS_ORDER, field.isOrderField());
+			logger.debug("Field [" + HierarchyConstants.FIELD_IS_ORDER + "] is " + field.isOrderField());
 		}
 
 		logger.debug("END");
@@ -458,7 +461,7 @@ public class HierarchyUtils {
 		// 1 - execute query to get dimension data
 		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
 				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
-
+		queryText = queryText + " LIMIT 100";
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 		return dataStore;
@@ -663,14 +666,14 @@ public class HierarchyUtils {
 		List<Field> result = new ArrayList<Field>();
 
 		// Create fixed fields (code, name, description and timestamp where only name and description are editable)
-		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false, false);
+		Field bkpField = new Field(HierarchyConstants.HIER_CD, "Code", "String", null, true, false, false, true, false, false, false);
 		result.add(bkpField);
-		bkpField = new Field(HierarchyConstants.HIER_NM, "Name", "String", null, true, true, false, true, false, false);
+		bkpField = new Field(HierarchyConstants.HIER_NM, "Name", "String", null, true, true, false, true, false, false, false);
 		result.add(bkpField);
-		bkpField = new Field(HierarchyConstants.HIER_DS, "Description", "String", null, true, true, false, true, false, false);
+		bkpField = new Field(HierarchyConstants.HIER_DS, "Description", "String", null, true, true, false, true, false, false, false);
 		result.add(bkpField);
 		// ...then we build a field for the others backup info
-		bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false, false);
+		bkpField = new Field(HierarchyConstants.BKP_TIMESTAMP_COLUMN, "Date", "Date", null, true, false, false, true, false, false, false);
 		result.add(bkpField);
 
 		logger.debug("END");
@@ -892,6 +895,8 @@ public class HierarchyUtils {
 			String column = AbstractJDBCDataset.encapsulateColumnName(f.getId(), dataSource);
 			selectClauseBuffer.append(column + sep);
 		}
+
+		String orderField = null;
 		// node fields:
 		for (int i = 0, l = nodeMetadataFields.size(); i < l; i++) {
 			Field f = nodeMetadataFields.get(i);
@@ -907,12 +912,21 @@ public class HierarchyUtils {
 					selectClauseBuffer.append(column + sep);
 				}
 			}
+			if (f.isOrderField()) {
+				orderField = f.getId();
+			}
 		}
 		// order clause
 		for (int o = 1, l2 = totalLevels; o <= l2; o++) {
 			String sep = (o == totalLevels) ? "" : ",";
+			String column = null;
 			// String column = AbstractJDBCDataset.encapsulateColumnName(prefix + HierarchyConstants.SUFFIX_CD_LEV + o, dataSource);
-			String column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
+			// String column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
+			if (orderField != null) {
+				column = AbstractJDBCDataset.encapsulateColumnName(orderField + o, dataSource);
+			} else {
+				column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
+			}
 			orderClauseBuffer.append(column + sep);
 		}
 
@@ -979,7 +993,7 @@ public class HierarchyUtils {
 	 * @param databaseConnection
 	 * @param paramsMap
 	 */
-	public static void updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap) {
+	public static String updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap) {
 		logger.debug("START");
 
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
@@ -1069,6 +1083,7 @@ public class HierarchyUtils {
 			logger.debug("Update relations query successfully executed");
 
 		}
+		return newHierName;
 	}
 
 	/**
