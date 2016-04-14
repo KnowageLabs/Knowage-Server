@@ -18,39 +18,41 @@
         <many-to-one name="sbiMetaJob" class="it.eng.spagobi.metadata.metadata.SbiMetaJob" update="false" insert="false" fetch="select">
             <column name="JOB_ID" not-null="true" />
         </many-to-one>
-        <property name="userIn" type="string">
-            <column name="USER_IN" length="100" not-null="true" />
-        </property>
-        <property name="userUp" type="string">
-            <column name="USER_UP" length="100" />
-        </property>
-        <property name="userDe" type="string">
-            <column name="USER_DE" length="100" />
-        </property>
-        <property name="timeIn" type="timestamp">
-            <column name="TIME_IN" length="19" not-null="true" />
-        </property>
-        <property name="timeUp" type="timestamp">
-            <column name="TIME_UP" length="19" />
-        </property>
-        <property name="timeDe" type="timestamp">
-            <column name="TIME_DE" length="19" />
-        </property>
-        <property name="sbiVersionIn" type="string">
-            <column name="SBI_VERSION_IN" length="10" />
-        </property>
-        <property name="sbiVersionUp" type="string">
-            <column name="SBI_VERSION_UP" length="10" />
-        </property>
-        <property name="sbiVersionDe" type="string">
-            <column name="SBI_VERSION_DE" length="10" />
-        </property>
-        <property name="metaVersion" type="string">
-            <column name="META_VERSION" length="100" />
-        </property>
-        <property name="organization" type="string">
-            <column name="ORGANIZATION" length="20" />
-        </property>
+        <component name="commonInfo" insert="true" update="true" 
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property>
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" />
+	        </property>
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" />
+	        </property>
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" length="19" not-null="true" />
+	        </property>
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" length="19" />
+	        </property>
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" length="19" />
+	        </property>
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" />
+	        </property>
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" />
+	        </property>
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" />
+	        </property>
+	        <property name="metaVersion" type="string">
+	            <column name="META_VERSION" length="100" />
+	        </property>
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" />
+	        </property>
+	    </component>
         <filter name="tenantFilter" condition="organization=:tenant"/> 
     </class>
     <filter-def name="tenantFilter">

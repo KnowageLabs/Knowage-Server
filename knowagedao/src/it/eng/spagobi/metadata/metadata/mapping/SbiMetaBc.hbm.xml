@@ -17,62 +17,66 @@
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
         </property>
-        <property name="deleted" type="boolean">
-            <column name="DELETED" not-null="true" />
-        </property>
-        <property name="userIn" type="string">
-            <column name="USER_IN" length="100" not-null="true" />
-        </property>
-        <property name="userUp" type="string">
-            <column name="USER_UP" length="100" />
-        </property>
-        <property name="userDe" type="string">
-            <column name="USER_DE" length="100" />
-        </property>
-        <property name="timeIn" type="timestamp">
-            <column name="TIME_IN" length="19" not-null="true" />
-        </property>
-        <property name="timeUp" type="timestamp">
-            <column name="TIME_UP" length="19" />
-        </property>
-        <property name="timeDe" type="timestamp">
-            <column name="TIME_DE" length="19" />
-        </property>
-        <property name="sbiVersionIn" type="string">
-            <column name="SBI_VERSION_IN" length="10" />
-        </property>
-        <property name="sbiVersionUp" type="string">
-            <column name="SBI_VERSION_UP" length="10" />
-        </property>
-        <property name="sbiVersionDe" type="string">
-            <column name="SBI_VERSION_DE" length="10" />
-        </property>
-        <property name="metaVersion" type="string">
-            <column name="META_VERSION" length="100" />
-        </property>
-        <property name="organization" type="string">
-            <column name="ORGANIZATION" length="20" />
-        </property>
-        <!-- 
+        
+         <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="deleted" type="boolean">
+	            <column name="DELETED" not-null="true" />
+	        </property>
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property>
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" />
+	        </property>
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" />
+	        </property>
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" length="19" not-null="true" />
+	        </property>
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" length="19" />
+	        </property>
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" length="19" />
+	        </property>
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" />
+	        </property>
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" />
+	        </property>
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" />
+	        </property>
+	        <property name="metaVersion" type="string">
+	            <column name="META_VERSION" length="100" />
+	        </property>
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" />
+	        </property>
+	    </component>
+         
         <set name="sbiMetaDsBcs" table="sbi_meta_ds_bc" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.SbiMetaDsBc" />
+            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaDsBc" />
         </set>
         <set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.SbiMetaTableBc" />
+            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableBc" />
         </set>
         <set name="sbiMetaBcAttributes" table="sbi_meta_bc_attribute" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.SbiMetaBcAttribute" />
+            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute" />
         </set>
-         -->
+         
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
     <filter-def name="tenantFilter">
