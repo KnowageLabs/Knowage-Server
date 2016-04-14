@@ -56,16 +56,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="bodyStyle" ng-app="crossDefinition" id="ng-app">
 
 <script type="text/ng-template" id="nodes_renderer1.html">
-<div class="tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
+<md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
     <div>
 		<span class="fa fa-bars"></span>
 	    {{par.name}}
     </div>
 	<span flex class="flex"></span>
     <div >
-        {{(par.type==1?translate.load('sbi.crossnavigation.input'):translate.load('sbi.crossnavigation.output'))}}
+        {{ctrl.getTypeLabel(par.type)}}
     </div>
-</div>
+</md-toolbar>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
   <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
 	<span flex class="flex"></span>
     <div >
-        {{(par.type==1?translate.load('sbi.crossnavigation.input'):translate.load('sbi.crossnavigation.output'))}}
+        {{ctrl.getTypeLabel(par.type)}}
     </div>
   </div>
   <ol ui-tree-nodes="" ng-model="par.links" ng-class="{hidden: collapsed}" ng-if="!par.links.length" >
@@ -91,13 +91,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <span flex class="flex"></span>
     <i class="fa fa-times-circle" ng-click="ctrl.removeLink(par.id)"></i>
   </div>
+	
 </script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
-<md-dialog aria-label="Select document" ng-cloak>
+<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" ng-cloak>
 <form>
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<h1>Select document</h1>
+			<h1>{{translate.load('sbi.crossnavigation.selectDocument')}}</h1>
 			<span flex></span>
 			<md-button ng-click="closeDialog()"> <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon> </md-button>
 		</div>
@@ -154,20 +155,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 				<div layout="row" >
 					<div flex="50" layout="row">
-						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
+						<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fromDoc" readonly>
 						</md-input-container>
-						<md-button ng-click="ctrl.listLeftDocuments()" class="md-fab" > 
+						<md-button ng-click="ctrl.listLeftDocuments()" class="md-fab md-mini" > 
 							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon" >
 							</md-icon> 
 						</md-button>
 					</div>
 				
 					<div flex="50" layout="row">
-						<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
+						<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.toDoc" readonly> </md-input-container>
 						</md-input-container>
-						<md-button ng-click="ctrl.listRightDocuments()" class="md-fab" > 
+						<md-button ng-click="ctrl.listRightDocuments()" class="md-fab md-mini" > 
 							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon">
 							</md-icon> 
 						</md-button>
@@ -176,14 +177,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				<div layout="row">
 					<div layout="column" flex="50" class="parametersList">
+						<md-toolbar class="secondaryToolbar md-knowage-theme" >
+							<div class="md-toolbar-tools ">
+								<h1>{{translate.load("sbi.crossnavigation.leftParameters");}}</h1>
+							</div>
+						</md-toolbar>
 						<h3 ng-model="ctrl.detail.fromDoc"></h3>
 					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" >
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
 					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" ></li>
 					      </ol>
 					    </div>
+					    <div layout="row" flex="100" ng-if="ctrl.detail.fromPars">
+							<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.fixedValue");}}</label>
+								<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fixedValue" > 
+							</md-input-container>
+							<md-button ng-click="ctrl.addFixedParam()" class="md-fab md-mini" > 
+								<md-icon md-font-icon="fa fa-plus" >
+								</md-icon> 
+							</md-button>
+						</div>
 					</div>
 					<div layout="column" flex class="parametersList">
+						<md-toolbar class="secondaryToolbar md-knowage-theme" >
+							<div class="md-toolbar-tools ">
+								<h1>{{translate.load("sbi.crossnavigation.rightParameters");}}</h1>
+							</div>
+						</md-toolbar>
 						<h3 ng-model="ctrl.detail.toDoc"></h3>
 					    <div ui-tree="ctrl.treeOptions2" id="tree2-root" data-empty-placeholder-enabled="false">
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.toPars" >

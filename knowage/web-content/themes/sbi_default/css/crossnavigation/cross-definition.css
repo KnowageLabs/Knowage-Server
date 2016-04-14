@@ -1,5 +1,5 @@
-.crossnavigation-parameter{background-color: #AAC2DE; color: rgba(255,255,255,0.87);font-size:15px;padding:5px 16px 0 16px!important;font-weight:400;min-height:33px!important}
-.crossnavigation-parameter.highlight-selected-parameter {background-color: #3F51B5;}
+.crossnavigation-parameter{background-color: #C4DCF3; color: rgba(255,255,255,0.87);font-size:15px;padding:5px 16px 0 16px!important;font-weight:400;min-height:33px!important}
+.crossnavigation-parameter.highlight-selected-parameter {background-color: #a9c3db;}
 .crossnavigation-parameter.link {color: black; background-color: #E6E6E6;}
 .crossnavigation-parameter .fa-link {color: #3F51B5;}
 .loadingSpinner {text-align:center;vertical-align:middle;width:100%;height:100%;}

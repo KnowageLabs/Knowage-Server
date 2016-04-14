@@ -22,6 +22,13 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.dragging = false;
 			ctr.selectedItem = '';
 			
+			ctr.addFixedParam = function(){
+				if(ctr.detail.simpleNavigation.fixedValue != 'undefined' && ctr.detail.simpleNavigation.fixedValue != ''){
+					if(!ctr.detail.fromPars)ctr.detail.fromPars=[];
+					ctr.detail.fromPars.push({'id':ctr.detail.fromDocId,'name':ctr.detail.simpleNavigation.fixedValue,'type':2});
+				}
+			};
+			
 			ctr.navigationList = {
 				columns : [{"label":s.translate.load("sbi.crossnavigation.lst.name"),"name":"name"}
 						  ,{"label":s.translate.load("sbi.crossnavigation.lst.doc.a"),"name":"fromDoc"}
@@ -111,6 +118,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.listLeftDocuments = function(){
 				ctr.listDocuments(function(item, listId, closeDialog){
 					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
+					ctr.detail.fromDocId = item.DOCUMENT_ID;
 					ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
 					loadInputParameters(item.DOCUMENT_NM,function(data){
 						ctr.detail.fromPars = data;
@@ -141,14 +149,16 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					clickOutsideToClose:false,
 					locals: {
 						clickOnSelectedDoc: clickOnSelectedDocFunction
+						,translate: s.translate
 					}
 				});
 				
-				function DialogController(scope, $mdDialog, clickOnSelectedDoc) {
+				function DialogController(scope, $mdDialog, clickOnSelectedDoc, translate) {
 					scope.closeDialog = function() {
 						$mdDialog.hide();
 					};
 					scope.clickOnSelectedDoc = clickOnSelectedDoc;
+					scope.translate = translate;
 					scope.loading = true;
 					sbiModule_restServices.get('2.0/documents/listDocument/', "", null).success(function(data) {
 						scope.loading = false;
@@ -201,6 +211,16 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				}
 			};
 			
+			ctr.getTypeLabel = function(type){
+				if(type==0){
+					return s.translate.load('sbi.crossnavigation.output');
+				}else if(type==1){
+					return s.translate.load('sbi.crossnavigation.input');
+				}else{
+					return s.translate.load('sbi.crossnavigation.fixed');
+				}
+			};
+
 			$scope.showActionOK = function(msg) {
 				var delay = 3000;
 				var content = '';
@@ -210,7 +230,11 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 							content += ' - ';
 							delay += 1000;
 						}
-						content += sbiModule_translate.load(msg[i]);
+						if(Object.prototype.toString.call(msg[i])==='[object Object]'){
+							content += sbiModule_translate.load(msg[i].message);
+						}else{
+							content += sbiModule_translate.load(msg[i]);
+						}
 					}
 				}else{
 					content = sbiModule_translate.load(msg);
