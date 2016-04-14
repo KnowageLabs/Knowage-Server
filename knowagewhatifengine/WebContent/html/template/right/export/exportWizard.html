@@ -1,25 +1,20 @@
 <div>
 {{outputWizardDescription}}
 		<br/>
-		<div style="width:50%">
-		
-		<md-grid-list
-        	md-cols="3" md-row-height="50px" style="margin-top: 5%;">
-    		<md-grid-tile>
-    			<span style="position:absolute; left:0; top:15%">
+		<div layout="row">
+			<div style=" width:20%; line-height:5">
+				<span >
     				{{outputWizardTypeLabel}}:
     			</span>
-			</md-grid-tile>
-				
-			<md-grid-tile >
-				<md-radio-group ng-model="outputType">
-					<md-radio-button ng-repeat="t in outputTypes" ng-value="t">
-						{{t}}
-					</md-radio-button>
-				</md-radio-group>			
-			</md-grid-tile>
+			</div>		
 			
-		</md-grid-list>
+			<div style="padding-top:10px; width:50%">
+				<md-radio-group ng-model="outputType">
+					<md-radio-button ng-repeat="t in outputTypes" ng-value="t.value">
+						{{t.name}}
+					</md-radio-button>
+				</md-radio-group>
+			</div>	
 		</div>
 		
 		<md-input-container style="min-width:40%">

@@ -17,17 +17,18 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
-	$scope.outputTypes = [sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.table'),sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.csv')]
+	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'file'}]
 	$scope.outputVersions = ["v0","v1","v2"]; //TODO
 	$scope.lockTooltip;
 	$scope.delimiter;
 	$scope.tableName;
-	$scope.outputType="";
+	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
 	$scope.outputVersion;
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
 	$scope.showFile = false;
 	$scope.showTable = false;
+	var exportExists = false;
 	var result;
 	
 	whatIfBtns = function(status){
@@ -35,14 +36,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.whatifToolbarButtons = whatifToolbarButtonsVisible;
 			else{
 				var btn;
-				for(var i=0; i<$scope.whatifToolbarButtons.length; i++){
-					if($scope.whatifToolbarButtons[i].img == "BUTTON_EXPORT_OUTPUT"){
-						btn = $scope.whatifToolbarButtons[i];
-						break;
-					}
-				}
+				//var exists = $scope.whatifToolbarButtons.indexOf("BUTTON_EXPORT_OUTPUT")>-1;
 				$scope.whatifToolbarButtons = [];
-				$scope.whatifToolbarButtons.push(btn);
+				
+				if(exportExists){
+					for(var i=0; i<$scope.whatifToolbarButtons.length; i++){
+						if($scope.whatifToolbarButtons[i].img == "BUTTON_EXPORT_OUTPUT"){
+							btn = $scope.whatifToolbarButtons[i];
+							break;
+						}
+					}
+					$scope.whatifToolbarButtons.push(btn);
+				}			
+				
 			}
 				
 	};
@@ -66,6 +72,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			var btn = {};
 			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
+			
+			if(btn.img == "BUTTON_EXPORT_OUTPUT")
+				exportExists = true;
 			
 			if(olapButtonNames.indexOf(btn.img)>-1)
 				$scope.olapToolbarButtons.push(btn);
@@ -97,7 +106,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			break;
 		case "BUTTON_EXPORT_OUTPUT":
 			$scope.showExportDialog(null);
-			break;
+			break
+		case "BUTTON_FLUSH_CACHE":
+			flushCache();
+			break	
 		default:
 			console.log("something else clicked");
 		}
@@ -221,4 +233,14 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  $scope.showFile = false;
 		  $scope.showTable = false;
 	  }
+	  
+	  flushCache = function(){
+		  sbiModule_restServices.promisePost
+			("1.0",'/cache/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			.then(function(response) {
+						$scope.handleResponse(response);
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+		  });
+	  };
 };

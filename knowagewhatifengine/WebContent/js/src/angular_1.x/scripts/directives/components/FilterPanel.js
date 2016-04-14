@@ -20,7 +20,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
-		
+		checkVersions();
 	});
 	
 	/**
@@ -621,6 +621,17 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		else	
 			return true;
 	};
+	
+	checkVersions = function(){
+		var index;
+		for(var i=0; i< $scope.filterCardList.length;i++){
+			if($scope.filterCardList[i].name == "Version"){
+				index = i;
+				break
+			}
+		}
 		
+		
+	};
 };
 
