@@ -13,9 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.PrivilegedAction;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -100,32 +97,50 @@ public class ConfigManagementUtil {
 		return System.getenv();
 	}
 
-	public static void getLibCongigurationFiles(String pathToSave) throws IOException {
-		URL providerURL = AccessController.doPrivileged(new PrivilegedAction<URL>() {
-			@Override
-			public URL run() {
-				CodeSource cs = ConfigManagementUtil.class.getProtectionDomain().getCodeSource();
-				return cs.getLocation();
-			}
-		});
-		File hibCfgSrc = new File(providerURL.getPath() + File.separator + "hibernate.cfg.xml");
-		File hibCfgDst = new File(pathToSave + File.separator + "hibernate.cfg.xml");
-		copyFileUsingStream(hibCfgSrc, hibCfgDst);
-		File quartzSrc = new File(providerURL.getPath() + File.separator + "quartz.properties");
-		File quartzDst = new File(pathToSave + File.separator + "quartz.properties");
-		copyFileUsingStream(quartzSrc, quartzDst);
-		File hazSrc = new File(providerURL.getPath() + File.separator + "hazelcast.xml");
-		File hazDst = new File(pathToSave + File.separator + "hazelcast.xml");
-		copyFileUsingStream(hazSrc, hazDst);
-		File ehcacheSrc = new File(providerURL.getPath() + File.separator + "ehcache.xml");
-		File ehcacheDst = new File(pathToSave + File.separator + "ehcache.xml");
-		copyFileUsingStream(ehcacheSrc, ehcacheDst);
+	public static void getLibCongigurationFiles(String pathToSave, ServletContext context) throws IOException {
+		// URL providerURL = AccessController.doPrivileged(new
+		// PrivilegedAction<URL>() {
+		// @Override
+		// public URL run() {
+		// CodeSource cs =
+		// ConfigManagementUtil.class.getProtectionDomain().getCodeSource();
+		// return cs.getLocation();
+		// }
+		// });
 
-		File knowageWebSrc = new File(providerURL.getPath() + File.separator + ".." + File.separator + "web.xml");
+		ClassLoader cl = ConfigManagementUtil.class.getClassLoader();
+		URL hibCfgUrl = cl.getResource("hibernate.cfg.xml");
+		if (hibCfgUrl != null) {
+			File hibCfgSrc = new File(hibCfgUrl.getPath());
+			File hibCfgDst = new File(pathToSave + File.separator + "hibernate.cfg.xml");
+			copyFileUsingStream(hibCfgSrc, hibCfgDst);
+		}
+		URL quartzUrl = cl.getResource("quartz.properties");
+		if (quartzUrl != null) {
+			File quartzSrc = new File(quartzUrl.getPath());
+			File quartzDst = new File(pathToSave + File.separator + "quartz.properties");
+			copyFileUsingStream(quartzSrc, quartzDst);
+		}
+		URL hazUrl = cl.getResource("hazelcast.xml");
+		if (hazUrl != null) {
+			File hazSrc = new File(hazUrl.getPath());
+			File hazDst = new File(pathToSave + File.separator + "hazelcast.xml");
+			copyFileUsingStream(hazSrc, hazDst);
+		}
+		URL ehcacheUrl = cl.getResource("ehcache.xml");
+		if (ehcacheUrl != null) {
+			File ehcacheSrc = new File(ehcacheUrl.getPath());
+			File ehcacheDst = new File(pathToSave + File.separator + "ehcache.xml");
+			copyFileUsingStream(ehcacheSrc, ehcacheDst);
+		}
+
+		String knowageWebUrl = context.getRealPath("WEB-INF" + File.separator + "web.xml");
+		File knowageWebSrc = new File(knowageWebUrl);
 		File knowageWebDst = new File(pathToSave + File.separator + "knowage_web.xml");
 		copyFileUsingStream(knowageWebSrc, knowageWebDst);
-		File manifestSrc = new File(providerURL.getPath() + File.separator + ".." + File.separator + ".." + File.separator + "META-INF" + File.separator
-				+ "MANIFEST.MF");
+
+		String manifestUrl = context.getRealPath("META-INF" + File.separator + "MANIFEST.MF");
+		File manifestSrc = new File(manifestUrl);
 		File manifestDst = new File(pathToSave + File.separator + "MANIFEST.MF");
 		copyFileUsingStream(manifestSrc, manifestDst);
 
@@ -173,13 +188,8 @@ public class ConfigManagementUtil {
 
 	// public static Map getLibrariesChecksum() {
 	// Map<String, String> checksum = new HashMap<>();
-	// CodeSource cs =
-	// ConfigManagementUtil.class.getProtectionDomain().getCodeSource();
 	//
-	// checksum.put("knowage.core", cs.getCertificates().toString());
-	// CodeSource cs1 =
-	// AbstractHibernateDAO.class.getProtectionDomain().getCodeSource();
-	// checksum.put("knowage.dao", cs1.getCertificates().toString());
+	//
 	// return checksum;
 	// }
 
