@@ -101,13 +101,4 @@ public class SimpleParameter implements Serializable {
 		this.id = id;
 	}
 
-	@Override
-	public int hashCode() {
-		return id;
-	}
-
-	@Override
-	public boolean equals(Object arg0) {
-		return arg0 instanceof SimpleParameter && ((SimpleParameter) arg0).getId().equals(getId());
-	}
 }

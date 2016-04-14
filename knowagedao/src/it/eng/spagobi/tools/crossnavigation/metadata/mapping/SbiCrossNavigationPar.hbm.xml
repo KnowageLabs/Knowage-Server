@@ -27,6 +27,8 @@
         
         <property name="fromType" column="FROM_TYPE" type="int" />
         
+        <property name="fixedValue" column="FIXED_VALUE" type="string" />
+        
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

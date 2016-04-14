@@ -38,6 +38,8 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	private Integer toKeyId;
 	private Integer fromType;
 
+	private String fixedValue;
+
 	private boolean newRecord;
 
 	/**
@@ -143,6 +145,21 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	 */
 	public void setToKeyId(Integer toKeyId) {
 		this.toKeyId = toKeyId;
+	}
+
+	/**
+	 * @return the fixedValue
+	 */
+	public String getFixedValue() {
+		return fixedValue;
+	}
+
+	/**
+	 * @param fixedValue
+	 *            the fixedValue to set
+	 */
+	public void setFixedValue(String fixedValue) {
+		this.fixedValue = fixedValue;
 	}
 
 }

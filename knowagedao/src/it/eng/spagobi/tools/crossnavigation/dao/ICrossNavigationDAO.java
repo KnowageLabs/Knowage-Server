@@ -35,4 +35,6 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 
 	public void delete(Integer id);
 
+	Object test(Object... objects);
+
 }

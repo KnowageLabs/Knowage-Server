@@ -23,6 +23,7 @@ public class SimpleNavigation {
 	private String name;
 	private String fromDoc;
 	private String toDoc;
+	private String fixedValue;
 
 	public SimpleNavigation() {
 	}
@@ -92,6 +93,21 @@ public class SimpleNavigation {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the fixedValue
+	 */
+	public String getFixedValue() {
+		return fixedValue;
+	}
+
+	/**
+	 * @param fixedValue
+	 *            the fixedValue to set
+	 */
+	public void setFixedValue(String fixedValue) {
+		this.fixedValue = fixedValue;
 	}
 
 }
