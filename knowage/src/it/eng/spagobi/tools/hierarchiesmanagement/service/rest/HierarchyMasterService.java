@@ -42,7 +42,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -106,7 +105,7 @@ public class HierarchyMasterService {
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
 
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-					+ typeColumn + "=\"MASTER\" AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
+					+ typeColumn + "=\'MASTER\' AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
 
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
@@ -298,28 +297,12 @@ public class HierarchyMasterService {
 			String prefix = hierarchies.getPrefix(dimensionLabel);
 
 			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
-			int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
 
 			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
 			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
 			List<Field> nodeFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
-
-			List<String> orderFields = null;
-			for (int i = 0; i < nodeFields.size(); i++) {
-				Field f = nodeFields.get(i);
-				if (f.isOrderField()) {
-					orderFields = new LinkedList<String>();
-					if (f.isSingleValue()) {
-						orderFields.add(f.getId());
-					} else {
-						for (int j = 1; j <= numLevels; j++) {
-							orderFields.add(f.getId() + j);
-						}
-					}
-				}
-			}
 
 			// read original configuration of MASTER table from DB
 			String masterConfig = getHierMasterConfig(dataSource, dbConnection, filterHierarchy);
@@ -356,7 +339,6 @@ public class HierarchyMasterService {
 					break;
 				}
 			}
-
 			if (posCD == -1) {
 				logger.error("Impossible synchronize the hierarchy.");
 				throw new SpagoBIServiceException("Error", "Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD
@@ -373,7 +355,6 @@ public class HierarchyMasterService {
 					dsNewDimensions.appendRecord(hierRecord);
 				}
 			}
-
 			// begin transaction
 			dbConnection.setAutoCommit(false);
 			// 1 - Backup the original hierarchy (always)
@@ -384,7 +365,7 @@ public class HierarchyMasterService {
 			paramsMap.put("hierTargetType", filterHierType);
 			paramsMap.put("doPropagation", true);
 
-			String backupHierName = HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
+			HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
 
 			// 5 - insert the new hierarchy (merged)
 			Iterator iterFromDim = dsNewDimensions.iterator();
@@ -393,11 +374,6 @@ public class HierarchyMasterService {
 				IRecord record = (IRecord) iterFromDim.next();
 				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, nodeFields, metatadaFieldsMap,
 						requestVal, prefix, dimensionName, validityDate, hierConfig);
-			}
-			paramsMap.put("prefix", prefix);
-			paramsMap.put("backupHierName", backupHierName);
-			if (orderFields != null && orderFields.size() > 0) {
-				updateOrderField(dataSource, dbConnection, paramsMap, orderFields);
 			}
 
 			dbConnection.commit();
@@ -414,58 +390,6 @@ public class HierarchyMasterService {
 
 		logger.debug("END");
 		return "{\"response\":\"ok\"}";
-
-	}
-
-	public static void updateOrderField(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap, List<String> listField) {
-		logger.debug("START");
-
-		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
-		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
-		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
-		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
-		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(((String) paramsMap.get("prefix")) + "_" + HierarchyConstants.LEAF_ID, dataSource);
-
-		Date vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
-
-		String srcTable = "(SELECT * FROM " + (String) paramsMap.get("hierarchyTable") + " WHERE " + hierNameColumn + "=?) SRC ";
-
-		String updatePart = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " DST, " + srcTable;
-
-		StringBuffer sb = new StringBuffer();
-
-		for (int i = 0; i < listField.size(); i++) {
-			String sep = i == (listField.size() - 1) ? " " : ", ";
-			String orderField = AbstractJDBCDataset.encapsulateColumnName(listField.get(i), dataSource);
-			sb.append("DST." + orderField + "=SRC." + orderField + sep);
-		}
-
-		String setPart = "SET " + sb.toString();
-
-		String vDateWhereClause = " ? >= DST." + beginDtColumn + " AND ? <= DST." + endDtColumn;
-		String joinClause = " DST." + leafIdColumn + " = SRC." + leafIdColumn;
-		String wherePart = " WHERE DST." + hierNameColumn + "=? AND DST." + hierTypeColumn + "= ? AND " + vDateWhereClause + "AND " + joinClause;
-
-		String updateQuery = updatePart + setPart + wherePart;
-
-		logger.debug("The update query is [" + updateQuery + "]");
-
-		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
-			preparedStatement.setString(1, (String) paramsMap.get("backupHierName"));
-			preparedStatement.setString(2, (String) paramsMap.get("hierTargetName"));
-			preparedStatement.setString(3, (String) paramsMap.get("hierTargetType"));
-			preparedStatement.setDate(4, vDateConverted);
-			preparedStatement.setDate(5, vDateConverted);
-
-			preparedStatement.executeUpdate();
-
-			logger.debug("Update query successfully executed");
-			logger.debug("END");
-
-		} catch (Throwable t) {
-			logger.error("An unexpected error occured while updating hierarchy for order");
-			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for order", t);
-		}
 
 	}
 
@@ -602,8 +526,12 @@ public class HierarchyMasterService {
 			}
 
 			logger.debug("Insert prepared statement correctly set. It's time to execute it");
-
-			insertPs.executeUpdate();
+			try {
+				insertPs.executeUpdate();
+			} catch (SQLException se) {
+				logger.error("Error while executing stmt: [" + insertQuery.toString() + "]");
+				throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", se);
+			}
 
 			logger.debug("Insert correctly executed");
 
