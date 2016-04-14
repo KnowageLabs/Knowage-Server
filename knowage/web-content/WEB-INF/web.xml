@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>knowage</display-name>
-    <description>
+	<description>
         This application is a portlet. It can not be used outside a portal.
 	</description>
 
 
-    <filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-         <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-    </filter>
-    
-        <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-    </filter-mapping>
-    
-<!--     <filter>
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>
+
+	<!--     <filter>
         <filter-name>MultiReadFilter</filter-name>
         <filter-class>it.eng.spagobi.utilities.filters.MultiReadFilter</filter-class>
     </filter>
@@ -39,89 +39,104 @@
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
-	
 
 
-<!-- START-CAS
-<filter>
-  <filter-name>CAS Authentication Filter</filter-name>
-  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-  <init-param>
-    <param-name>casServerLoginUrl</param-name>
-    <param-value>https://spagobitest:48081/cas/login</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>spagobitest:48081</param-value>
-  </init-param>    
-</filter>
 
-<filter>
-  <filter-name>CAS Validation Filter</filter-name>
-  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-  <init-param>
-    <param-name>casServerUrlPrefix</param-name>
-    <param-value>https://spagobitest:48081/cas/</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>https://spagobitest:48081</param-value>
-  </init-param>
-  <init-param>
-    <param-name>proxyReceptorUrl</param-name>
-    <param-value>/proxyCallback</param-value>
-  </init-param>
-</filter>
+	<!-- START-CAS 
+	<filter>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://spagobitest:48081/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>spagobitest:48081</param-value>
+		</init-param>    
+	</filter>
 
-<filter>
-  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-</filter>
- END-CAS -->
- 
- 
- 	<!-- START OAUTH 2
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://spagobitest:48081/cas/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://spagobitest:48081</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyReceptorUrl</param-name>
+			<param-value>/proxyCallback</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	 END-CAS -->
+
+
+	<!-- START OAUTH 2
  	<filter>
 		<filter-name>OAuthFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2Filter</filter-class>
 	</filter>
  	END OAUTH 2 -->
-    
-  	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
- 	<filter>
+
+	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
+	<filter>
 		<filter-name>ProfileFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.ProfileFilter</filter-class>
 	</filter>
-	
+
 	<filter>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
-	
+
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 
-<!-- START-CAS
-  <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>  
+	<!-- START-CAS 
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>  
 
-  <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>   
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping> 
 
-  <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>  
- END-CAS --> 
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>   
 
- 	<!-- START OAUTH 2
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping> 
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</filter-mapping> 
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>  
+	 END-CAS --> 
+
+	<!-- START OAUTH 2
 	<filter-mapping>
 		<filter-name>OAuthFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
@@ -132,12 +147,12 @@
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- If you want to enable HMAC filter:
 		Add the hmac key into server.xml :
 	 		<Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/>
@@ -146,90 +161,90 @@
 			<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 		Enable the filter uncommenting the following lines -->
 	<!-- HMAC filter--> 
-	 <filter>
-        <filter-name>HMACFilter</filter-name>
-        <filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
-        <description>HMAC Filter for authentication. HMAC key is configured in  server.xml and available to all engines thanks to main context.xml</description>
-    </filter>
-    <filter-mapping>
+	<filter>
+		<filter-name>HMACFilter</filter-name>
+		<filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
+		<description>HMAC Filter for authentication. HMAC key is configured in  server.xml and available to all engines thanks to main context.xml</description>
+	</filter>
+	<filter-mapping>
 		<filter-name>HMACFilter</filter-name>
 		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
 	</filter-mapping>
-    <!-- HMAC filter ends -->
- 
-    <!-- START LISTENERS -->
-    <listener>
-        <listener-class>it.eng.spagobi.tools.scheduler.listeners.SchedulerContextListener</listener-class>
-    </listener>
+	<!-- HMAC filter ends -->
 
-<!-- EXO
+	<!-- START LISTENERS -->
+	<listener>
+		<listener-class>it.eng.spagobi.tools.scheduler.listeners.SchedulerContextListener</listener-class>
+	</listener>
+
+	<!-- EXO
 
 <listener>
 <listener-class>org.exoplatform.services.portletcontainer.impl.servlet.PortletApplicationListener</listener-class>
 </listener>
 
  EXO -->
-    
-    <!-- START SERVLET DEFINITIONS -->
- 
-<!-- START-LIFERAY
+
+	<!-- START SERVLET DEFINITIONS -->
+
+	<!-- START-LIFERAY
    <servlet>
         <servlet-name>PortletWrapper</servlet-name>
         <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
   </servlet>  
 END-LIFERAY -->
 
-    <listener>
-        <listener-class>
+	<listener>
+		<listener-class>
             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-    </listener>
-  
-     <!-- servlet for change pwd management -->
-   <servlet>
+		</listener-class>
+	</listener>
+
+	<!-- servlet for change pwd management -->
+	<servlet>
 		<servlet-name>ChangePwdServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.commons.services.ChangePwdServlet
 		</servlet-class>
 	</servlet>
-	   
+
 	<servlet>
 		<servlet-name>ExtendSessionServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.servlet.session.ExtendSessionServlet</servlet-class>
 	</servlet>
-	   
-  <servlet>
-     <servlet-name>QuartzInitializer</servlet-name>
-     <servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class>     
-	     <init-param>
-	        <param-name>shutdown-on-unload</param-name>
-	        <param-value>true</param-value>
-	     </init-param>	
-	     <init-param>
-	       <param-name>start-scheduler-on-load</param-name>
-	       <param-value>false</param-value>
-	     </init-param>
-         <load-on-startup>1</load-on-startup>	     
-   </servlet>
- 
-  	    
-    <servlet>
-        <servlet-name>ConfigServlet</servlet-name>
-        <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-        <init-param>
-            <param-name>AF_CONFIG_FILE</param-name>
-            <param-value>/WEB-INF/conf/master.xml</param-value>
-        </init-param>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet>
-        <servlet-name>AdapterHTTP</servlet-name>
-        <servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
-    </servlet>
-    
-<!-- EXO
+
+	<servlet>
+		<servlet-name>QuartzInitializer</servlet-name>
+		<servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class>     
+		<init-param>
+			<param-name>shutdown-on-unload</param-name>
+			<param-value>true</param-value>
+		</init-param>	
+		<init-param>
+			<param-name>start-scheduler-on-load</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>	     
+	</servlet>
+
+
+	<servlet>
+		<servlet-name>ConfigServlet</servlet-name>
+		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+		<init-param>
+			<param-name>AF_CONFIG_FILE</param-name>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
+	</servlet>
+
+	<!-- EXO
 <servlet>
 <servlet-name>PortletWrapper</servlet-name>
 <servlet-class>org.exoplatform.services.portletcontainer.impl.servlet.ServletWrapper</servlet-class>
@@ -237,128 +252,116 @@ END-LIFERAY -->
 EXO -->
 
 
-    <!-- start axis servlet -->
-    <servlet>
-        <servlet-name>AxisServlet</servlet-name>
-        <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
-        <load-on-startup>100</load-on-startup>
-    </servlet>
-    <!-- end axis servlet -->
-
+	<!-- start axis servlet -->
 	<servlet>
-    	<servlet-name>DocsServlet</servlet-name>
-    	<jsp-file>/WEB-INF/jsp/public/docs.jsp</jsp-file>
+		<servlet-name>AxisServlet</servlet-name>
+		<servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
 	</servlet>
-	
 	<servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
-	
+		<servlet-name>AdminServlet</servlet-name>
+		<servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<!-- end axis servlet -->
+
 	<servlet>
-        <servlet-name>StickyCaptcha</servlet-name>
-        <servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
-        <init-param>
-            <param-name>captcha-width</param-name>
-            <param-value>250</param-value>
-        </init-param>
-        <init-param>
-            <param-name>captcha-height</param-name>
-            <param-value>75</param-value>
-        </init-param>
-        
-    </servlet>
+		<servlet-name>Resteasy</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+	</servlet>
 
-    
-	<servlet-mapping>
-    	<servlet-name>DocsServlet</servlet-name>
-    	<url-pattern>/docs</url-pattern>
-	</servlet-mapping>
+	<servlet>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+		<init-param>
+			<param-name>captcha-width</param-name>
+			<param-value>250</param-value>
+		</init-param>
+		<init-param>
+			<param-name>captcha-height</param-name>
+			<param-value>75</param-value>
+		</init-param>
 
+	</servlet>
 
-    <!-- START SERVLET MAPPINGS -->
+	<!-- START SERVLET MAPPINGS -->
 
-<!-- START-LIFERAY
+	<!-- START-LIFERAY
     <servlet-mapping>
         <servlet-name>PortletWrapper</servlet-name>
         <url-pattern>/PortletWrapper</url-pattern>
     </servlet-mapping>
 END-LIFERAY -->
-   
-  	 <servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>ChangePwdServlet</servlet-name>
 		<url-pattern>/ChangePwdServlet</url-pattern>
 	</servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>ExtendSessionServlet</servlet-name>
-        <url-pattern>/servlet/ExtendSession</url-pattern>
-    </servlet-mapping>  
-    <servlet-mapping>
-        <servlet-name>AdapterHTTP</servlet-name>
-        <url-pattern>/servlet/AdapterHTTP</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/servlet/AxisServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>*.jws</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/services/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/sdk/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminServlet</servlet-name>
-        <url-pattern>/servlet/AdminServlet</url-pattern>
-    </servlet-mapping>
-    <!-- end axis servlet -->
+	<servlet-mapping>
+		<servlet-name>ExtendSessionServlet</servlet-name>
+		<url-pattern>/servlet/ExtendSession</url-pattern>
+	</servlet-mapping>  
+	<servlet-mapping>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/sdk/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AdminServlet</servlet-name>
+		<url-pattern>/servlet/AdminServlet</url-pattern>
+	</servlet-mapping>
+	<!-- end axis servlet -->
 
-    <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/restful-services/*</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resteasy</servlet-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>StickyCaptcha</servlet-name>
-        <url-pattern>/stickyImg</url-pattern>
-    </servlet-mapping>
-    
+	<servlet-mapping>
+		<servlet-name>StickyCaptcha</servlet-name>
+		<url-pattern>/stickyImg</url-pattern>
+	</servlet-mapping>
 
-    <context-param>
-         <param-name>resteasy.scan</param-name>
-        <param-value>true</param-value>    
-    </context-param>
 
-    
-    <context-param>
-        <param-name>resteasy.servlet.mapping.prefix</param-name>
-        <param-value>/restful-services</param-value>
-    </context-param>
-     
+	<context-param>
+		<param-name>resteasy.scan</param-name>
+		<param-value>true</param-value>    
+	</context-param>
+
+
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/restful-services</param-value>
+	</context-param>
+
 	<!-- END SERVLET MAPPINGS --> 
 
 
-    <!-- OTHER CONFIGURATIONS -->
-    <session-config>
-        <session-timeout>30</session-timeout>
-    </session-config>
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.htm</welcome-file>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
-<!--
+	<!-- OTHER CONFIGURATIONS -->
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<!--
 	  <error-page>
 	  	<exception-type>java.lang.Throwable</exception-type>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
@@ -390,7 +393,7 @@ END-LIFERAY -->
 		<env-entry-value>it.eng.spagobi.services.common.TamSsoService</env-entry-value>
 	</env-entry>	
 	  -->
-	  
+
 	<!-- START TOMCAT RES -->
 	<resource-ref id="ResourceRef_1233743772692">
 		<description>
@@ -401,5 +404,5 @@ END-LIFERAY -->
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	<!-- END TOMCAT RES -->
-	
+
 </web-app>

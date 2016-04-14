@@ -23,7 +23,7 @@
     <filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
   </filter>
   
-<!-- START-CAS
+<!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
@@ -62,9 +62,9 @@
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
-END-CAS -->
+ END-CAS -->
 
-<!-- START-CAS  
+<!-- START-CAS 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
@@ -80,11 +80,26 @@ END-CAS -->
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping> 
   
+  <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+    	
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+   	
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+  
 	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
 	</filter-mapping>
-END-CAS -->
+ END-CAS -->
 
   <filter-mapping>
     <filter-name>EncodingFilter</filter-name>
@@ -118,7 +133,7 @@ END-CAS -->
     <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
     <init-param>
       <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-      <param-value>https://localhost:8443/exo-cas-2/proxy</param-value>
+      <param-value>https://spagobitest:48081/exo-cas-2/proxy</param-value>
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->

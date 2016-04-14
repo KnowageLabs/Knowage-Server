@@ -2,7 +2,7 @@
 <web-app id="SpagoBIBirtReportEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 
-    <display-name>Eclipse BIRT Report Viewer</display-name>
+	<display-name>Eclipse BIRT Report Viewer</display-name>
 
 	<!-- Default locale setting.
 	-->
@@ -18,23 +18,23 @@
 	 -->
 	<context-param>
 		<param-name>BIRT_VIEWER_TIMEZONE</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
-	
+
 	<!--
 		Report resources directory for preview. Defaults to ${birt home}
 	-->
 	<context-param>
 		<param-name>BIRT_VIEWER_WORKING_FOLDER</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
-	
+
 	<!--
 		Temporary document files directory. Defaults to ${birt home}/documents
 	-->
 	<context-param>
 		<param-name>BIRT_VIEWER_DOCUMENT_FOLDER</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!--
@@ -67,13 +67,13 @@
 	-->
 	<context-param>
 		<param-name>BIRT_VIEWER_IMAGE_DIR</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!-- Engine log directory. Defaults to ${birt home}/logs -->
 	<context-param>
 		<param-name>BIRT_VIEWER_LOG_DIR</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!-- Report engine log level -->
@@ -88,19 +88,19 @@
 	-->
 	<context-param>
 		<param-name>BIRT_VIEWER_SCRIPTLIB_DIR</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
-	
+
 	<!-- Resource location directory. Defaults to ${birt home} -->
 	<context-param>
 		<param-name>BIRT_RESOURCE_PATH</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!-- Preview report rows limit. An empty value means no limit. -->
 	<context-param>
 		<param-name>BIRT_VIEWER_MAX_ROWS</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!--
@@ -109,25 +109,25 @@
 	-->
 	<context-param>
 		<param-name>BIRT_VIEWER_MAX_CUBE_ROWLEVELS</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 	<context-param>
 		<param-name>BIRT_VIEWER_MAX_CUBE_COLUMNLEVELS</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
 
 	<!-- Memory size in MB for creating a cube. -->
 	<context-param>
 		<param-name>BIRT_VIEWER_CUBE_MEMORY_SIZE</param-name>
-		<param-value></param-value>
+		<param-value/>
 	</context-param>
-	
+
 	<!-- If always overwrite generated document file. For runtime,efalult to true -->
 	<context-param>
 		<param-name>BIRT_OVERWRITE_DOCUMENT</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	
+
 	<!-- Defines the BIRT viewer configuration file -->
 	<context-param>
 		<param-name>BIRT_VIEWER_CONFIG_FILE</param-name>
@@ -158,104 +158,104 @@
 		<param-name>BIRT_FILENAME_GENERATOR_CLASS</param-name>
 		<param-value>org.eclipse.birt.report.utility.filename.DefaultFilenameGenerator</param-value>
 	</context-param>
-	
-    <filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-         <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/BirtReportServlet/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/BirtReportServletBackEnd/*</url-pattern>
-    </filter-mapping>   
-	
-<!-- START-CAS
-<filter>
-  <filter-name>CAS Authentication Filter</filter-name>
-  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-  <init-param>
-    <param-name>casServerLoginUrl</param-name>
-    <param-value>https://spagobitest:48081/cas/login</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>spagobitest:48081</param-value>
-  </init-param>    
-</filter>
 
-<filter>
-  <filter-name>CAS Validation Filter</filter-name>
-  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-  <init-param>
-    <param-name>casServerUrlPrefix</param-name>
-    <param-value>https://spagobitest:48081/cas</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>https://spagobitest:48081</param-value>
-  </init-param>
-  <init-param>
-    <param-name>proxyReceptorUrl</param-name>
-    <param-value>/proxyCallback</param-value>
-  </init-param> 
-  <init-param>
-	<param-name>proxyCallbackUrl</param-name>
-	<param-value>https://spagobitest:48081/knowagebirtreportengine/proxyCallback</param-value>
-  </init-param>  
-</filter>
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
 
-<filter>
-  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-</filter>
-END-CAS -->
-	
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/BirtReportServlet/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/BirtReportServletBackEnd/*</url-pattern>
+	</filter-mapping>   
+
+	<!-- START-CAS 
+	<filter>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://spagobitest:48081/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>spagobitest:48081</param-value>
+		</init-param>    
+	</filter>
+
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://spagobitest:48081/cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://spagobitest:48081</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyReceptorUrl</param-name>
+			<param-value>/proxyCallback</param-value>
+		</init-param> 
+		<init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://spagobitest:48081/knowagebirtreportengine/proxyCallback</param-value>
+		</init-param>  
+	</filter>
+
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	 END-CAS -->
+
 
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
 	</filter>
-	
 
-<!-- START-CAS  
-  <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/BirtReportServlet/*</url-pattern>
-  </filter-mapping> 
-    	
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/BirtReportServlet/*</url-pattern>
-  </filter-mapping> 
-   	
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/BirtReportServlet/*</url-pattern>
-  </filter-mapping> 
-  
+
+	<!-- START-CAS 
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/BirtReportServlet/*</url-pattern>
+	</filter-mapping> 
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/BirtReportServlet/*</url-pattern>
+	</filter-mapping> 
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/BirtReportServlet/*</url-pattern>
+	</filter-mapping> 
+
 	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
 	</filter-mapping>
-END-CAS -->
+	 END-CAS -->
 
 	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/BirtReportServlet/*</url-pattern>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/BirtReportServlet/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/BirtReportServletBackEnd/*</url-pattern>
 	</filter-mapping>	
-	
+
 	<!-- Viewer Servlet Context Listener -->
 	<listener>
 		<listener-class>org.eclipse.birt.report.listener.ViewerServletContextListener</listener-class>
@@ -265,7 +265,7 @@ END-CAS -->
 	<listener>
 		<listener-class>org.eclipse.birt.report.listener.ViewerHttpSessionListener</listener-class>
 	</listener>
-	
+
 	<!-- Viewer Servlet, Support SOAP 
 	<servlet>
 		<servlet-name>ViewerServlet</servlet-name>
@@ -278,56 +278,44 @@ END-CAS -->
 		<servlet-class>org.eclipse.birt.report.servlet.BirtEngineServlet</servlet-class>
 	</servlet>
 	-->
-	
-	<servlet>
-        <servlet-name>BirtReportServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.engines.birt.BirtReportServlet</servlet-class>
-    </servlet>
 
-    <servlet>
-        <servlet-name>BirtImageServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.engines.birt.BirtImageServlet</servlet-class>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>SpagoBIDrillServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.utilities.callbacks.drill.SpagoBIDrillServlet</servlet-class>
-    </servlet>
-    
- 
-    
-    <servlet>
+	<servlet>
+		<servlet-name>BirtReportServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.engines.birt.BirtReportServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>BirtImageServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.engines.birt.BirtImageServlet</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
- 
-    <servlet-mapping>
-        <servlet-name>SpagoBIDrillServlet</servlet-name>
-        <url-pattern>/SpagoBIDrillServlet</url-pattern>
-    </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>BirtImageServlet</servlet-name>
-        <url-pattern>/BirtImageServlet</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BirtImageServlet</servlet-name>
+		<url-pattern>/BirtImageServlet</url-pattern>
+	</servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>BirtReportServlet</servlet-name>
-        <url-pattern>/BirtReportServlet</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
-        <servlet-name>BirtReportServlet</servlet-name>
-        <url-pattern>/BirtReportServletBackEnd</url-pattern>
-    </servlet-mapping>    
-    
-    <servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BirtReportServlet</servlet-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>BirtReportServlet</servlet-name>
+		<url-pattern>/BirtReportServletBackEnd</url-pattern>
+	</servlet-mapping>    
+
+	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/BirtReportServletTest</url-pattern>
 	</servlet-mapping>
-	
+
 	<!--
 	<servlet-mapping>
 		<servlet-name>ViewerServlet</servlet-name>
@@ -369,29 +357,29 @@ END-CAS -->
 		<url-pattern>/extract</url-pattern>
 	</servlet-mapping>
 	-->
-	
-	  <error-page>
-	  	<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/html/error.html</location>
-	  </error-page>
-		 
-	  <error-page>
-	  	<error-code>404</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
-	 
-	  <error-page>
-	  	<error-code>500</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
-	
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
 	<jsp-config>
 		<taglib>
 			<taglib-uri>/birt.tld</taglib-uri>
 			<taglib-location>/WEB-INF/tlds/birt.tld</taglib-location>
 		</taglib>
 	</jsp-config>		
-	
+
 	<!--
 	<resource-ref>
  		<description>Foodmart db</description>
@@ -400,5 +388,5 @@ END-CAS -->
  		<res-auth>Container</res-auth>
     </resource-ref>
 	-->
-	
+
 </web-app>

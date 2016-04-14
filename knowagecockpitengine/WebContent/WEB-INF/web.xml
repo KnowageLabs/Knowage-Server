@@ -19,7 +19,7 @@
 		</filter-class>
   </filter>
   
-<!-- START-CAS
+<!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
   <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
@@ -58,9 +58,14 @@
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 </filter>
-END-CAS -->
+ END-CAS -->
 
-<!-- START-CAS  
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+  </filter-mapping>
+  
+<!-- START-CAS 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
@@ -74,22 +79,35 @@ END-CAS -->
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+    	
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+   	
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping> 
   
-	<filter-mapping>
+  <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
 	</filter-mapping>
-END-CAS -->
+	
+ END-CAS -->
 
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>
   <filter-mapping>
     <filter-name>SpagoBIAccessFilter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
+  
   <listener>
     <listener-class>
             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap

@@ -79,6 +79,21 @@
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping> 
+
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
   
   <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
