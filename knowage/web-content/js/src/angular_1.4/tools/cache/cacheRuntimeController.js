@@ -12,13 +12,14 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 	self.itemSelected=[];
 	self.translate=sbiModule_translate;
 	self.tableColumns=[{label:self.translate.load("cache.manager.name"),name:"name"},{label:self.translate.load("cache.manager.signature"),name:"signature"},{label:self.translate.load("cache.manager.table"),name:"table"},{label:self.translate.load("cache.manager.dimension"),name:"dimension"}];
-
+	//self.noWriteDefaultDataSourceMess="";
+	
 //-------------------------Utility functions definition--------------------------	
 	
 	
 	self.isUndefined = function(thing)
 	{
-	    return (typeof thing === "undefined" || thing.length===0);
+	    return (thing == undefined || thing.length ==0);
 	}
 	
 	self.formatSizeUnits=function (bytes)
@@ -42,9 +43,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 				self.labels = ["Available Memory"," Used Memory"];
 				self.chartData = [self.data.availableMemoryPercentage,100-self.data.availableMemoryPercentage];
 				self.variableEnabled=angular.copy(data.enabled);
-				self.enabled=angular.copy(data.enabled);
-
-				
+				self.enabled=angular.copy(data.enabled);				
 				
 			});
 	}
@@ -99,8 +98,9 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 //------------------------- Controller logic -------------------------------------	
 	
 	//------- Runtime information card ----
-	self.setCacheData();
-	self.setCacheMetadata();
+	 self.setCacheMetadata();
+	 self.setCacheData();
+	
 
 	
 	//------- General Settings Card --------
@@ -172,6 +172,61 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 			self.variableCacheLimitForStore=parseInt(result.valueCheck);
 		});
 	
+	//--
+	configName="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL"
+		sbiModule_restServices.get("2.0/configs","label/"+configName)
+		.success(function(result)
+			{
+				self.lastAccessTtl=parseInt(result.valueCheck);
+				$log.info("Configuration Resource Information obtained",result);
+				$log.info("Interesting info:",self.lastAccessTtl);
+				self.variableLastAccessTtl=parseInt(result.valueCheck);
+
+			});
+	
+	configName="SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"
+		sbiModule_restServices.get("2.0/configs","label/"+configName)
+		.success(function(result)
+			{
+				self.createAndPersistTimeout=parseInt(result.valueCheck);
+				$log.info("Configuration Resource Information obtained",result);
+				$log.info("Interesting info:",self.createAndPersistTimeout);
+				self.variableCreateAndPersistTimeout=parseInt(result.valueCheck);
+
+			});
+	
+	configName="SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"
+		sbiModule_restServices.get("2.0/configs","label/"+configName)
+		.success(function(result)
+			{
+				self.sqldbCacheTimeout=parseInt(result.valueCheck);
+				$log.info("Configuration Resource Information obtained",result);
+				$log.info("Interesting info:",self.sqldbCacheTimeout);
+				self.variableSqldbCacheTimeout=parseInt(result.valueCheck);
+
+			});
+	
+	configName="SPAGOBI.CACHE.HAZELCAST.TIMEOUT"
+		sbiModule_restServices.get("2.0/configs","label/"+configName)
+		.success(function(result)
+			{
+				self.hazelcastTimeout=parseInt(result.valueCheck);
+				$log.info("Configuration Resource Information obtained",result);
+				$log.info("Interesting info:",self.hazelcastTimeout);
+				self.variableHazelcastTimeout=parseInt(result.valueCheck);
+
+			});
+	
+	configName="SPAGOBI.CACHE.HAZELCAST.LEASETIME"
+		sbiModule_restServices.get("2.0/configs","label/"+configName)
+		.success(function(result)
+			{
+				self.hazelcastLeaseTime=parseInt(result.valueCheck);
+				$log.info("Configuration Resource Information obtained",result);
+				$log.info("Interesting info:",self.hazelcastLeaseTime);
+				self.variableHazelcastLeaseTime=parseInt(result.valueCheck);
+
+			});
 	
 	
 	
@@ -181,9 +236,11 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 			$log.infoObtained=result;
 			$log.info("Configuration Resource Information obtained",result);
 			
+			
+			var datasourceWriteDefaultNumber=0;
 			self.filteredDataSources=new Array();
-			self.selectedDataSource=result[0];
-			self.variableSelectedDataSource=result[0];
+			//self.selectedDataSource=result[0];
+			//self.variableSelectedDataSource=result[0];
 			i=0;
 			for(o in result)
 			{
@@ -195,11 +252,27 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 					{
 						self.selectedDataSource=result[o];
 						self.variableSelectedDataSource=result[o];
+						datasourceWriteDefaultNumber++;
 					}	
 				
 				}
 				
-			}	
+				
+			}
+			if(datasourceWriteDefaultNumber==0)
+			{
+				//self.noWriteDefaultDataSourceMess="No write default datasources selected";
+			    $mdDialog.show(
+			  	      $mdDialog.alert()
+			  	       .parent(angular.element(document.querySelector('#popupContainer')))
+			  	       .clickOutsideToClose(true)
+			  	       .title(self.translate.load('No default datasource set, cannot display cache runtime information!'))
+			  	       .ok('OK')
+			  	   );
+				
+			}
+				
+			
 			$log.info("Filtered Data Sources ",self.filteredDataSources);
 
 
@@ -219,6 +292,12 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 		self.cacheLimitForStore=angular.copy(self.variableCacheLimitForStore);
 		self.schedulingFullClean=angular.copy(self.variableSchedulingFullClean);
 		
+		self.lastAccessTtl=angular.copy(self.variableLastAccessTtl);
+		self.createAndPersistTimeout=angular.copy(self.variableCreateAndPersistTimeout);
+		self.sqldbCacheTimeout=angular.copy(self.variableSqldbCacheTimeout);
+		self.hazelcastTimeout=angular.copy(self.variableHazelcastTimeout);
+		self.hazelcastLeaseTime=angular.copy(self.variableHazelcastLeaseTime);
+			
 
 		var sendJsonArrayObject={};
 		var configurations=[];
@@ -247,6 +326,32 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 		obj4.label="SPAGOBI.CACHE.LIMIT_FOR_STORE"
 		obj4.value=angular.copy(self.cacheLimitForStore);
 		configurations.push(obj4);
+		
+//--		
+		var obj5=new Object();
+		obj5.label="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL"
+		obj5.value=angular.copy(self.lastAccessTtl);
+		configurations.push(obj5);
+		
+		var obj6=new Object();
+		obj6.label="SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"
+		obj6.value=angular.copy(self.createAndPersistTimeout);
+		configurations.push(obj6);
+		
+		var obj7=new Object();
+		obj7.label="SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"
+		obj7.value=angular.copy(self.sqldbCacheTimeout);
+		configurations.push(obj7);
+		
+		var obj8=new Object();
+		obj8.label="SPAGOBI.CACHE.HAZELCAST.TIMEOUT"
+		obj8.value=angular.copy(self.hazelcastTimeout);
+		configurations.push(obj8);
+		
+		var obj9=new Object();
+		obj9.label="SPAGOBI.CACHE.HAZELCAST.LEASETIME"
+		obj9.value=angular.copy(self.hazelcastLeaseTime);
+		configurations.push(obj9);
 		
 		sendJsonArrayObject.configurations=configurations;
 		
@@ -304,7 +409,13 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 		self.variableLimitForClean=angular.copy(self.limitForClean);
 		self.variableCacheLimitForStore=angular.copy(self.cacheLimitForStore);
 		self.variableSchedulingFullClean=angular.copy(self.schedulingFullClean);
-		self.variableSelectedDataSource=angular.copy(self.selectedDataSource);
+		self.variableSelectedDataSource=angular.copy(self.selectedDataSource); 
+		
+		self.variableLastAccessTtl=angular.copy(self.lastAccessTtl);
+		self.variableCreateAndPersistTimeout=angular.copy(self.createAndPersistTimeout);
+		self.variableSqldbCacheTimeout=angular.copy(self.sqldbCacheTimeout);
+		self.variableHazelcastTimeout=angular.copy(self.hazelcastTimeout);
+		self.variableHazelcastLeaseTime=angular.copy(self.hazelcastLeaseTime);
 
 	}
 	
@@ -366,6 +477,7 @@ function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate,
 		});
 				
 	}
+	
 	
 }
 
