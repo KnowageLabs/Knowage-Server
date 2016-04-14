@@ -17,9 +17,11 @@
  */
 package it.eng.spagobi.tools.crossnavigation;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -55,6 +57,18 @@ import org.json.JSONObject;
 public class CrossNavigationService {
 
 	static protected Logger logger = Logger.getLogger(CrossNavigationService.class);
+
+	@GET
+	@Path("/test")
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	public Response test(@Context HttpServletRequest req) throws EMFUserError {
+
+		ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		dao.setUserProfile(profile);
+		Object ret = dao.test();
+		return Response.ok().build();
+	}
 
 	@GET
 	@Path("/listNavigation")
@@ -112,7 +126,8 @@ public class CrossNavigationService {
 				}
 			}
 			if (!isAnyLink) {
-				throw new SpagoBIServiceException(req.getPathInfo(), "Create at least one link");
+				return Response.ok(new JSError().addError("Create at least one link").toString()).build();
+				// throw new SpagoBIServiceException(req.getPathInfo(), "Create at least one link");
 			} else {
 				if (nd.isNewRecord()) {
 					dao.insert(nd);

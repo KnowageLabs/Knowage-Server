@@ -570,7 +570,7 @@ public class KpiService {
 			} else {
 				dao.updateScheduler(scheduler);
 			}
-			return Response.ok().build();
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
