@@ -1,8 +1,12 @@
+/**
+ * Controller for Analysis view of the Workspace.
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+
 angular
 	.module('analysis_view_workspace', [])
 	/**
 	 * The HTML content of the Recent view (recent documents).
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	.directive('analysisViewWorkspace', function () {		
 		 return {			 
@@ -15,14 +19,46 @@ angular
 
 function analysisController($scope,sbiModule_restServices,sbiModule_translate){
 	
-	$scope.loadMyAnalysisDocuments = function() {
+	$scope.loadAllMyAnalysisDocuments = function() {
 		
 		sbiModule_restServices
 			.promiseGet("documents", "myAnalysisDocsList")
 			.then(
-					function(response) {					
-						angular.copy(response.data,$scope.analysisDocs);
-						console.log($scope.analysisDocs);
+					function(response) {
+						
+						/**
+						 * Take all Analysis documents (cockpit, geo and ad hoc) and keep them in signle
+						 * array, which serves for displaying all of them.
+						 */
+						angular.copy(response.data.root,$scope.allAnalysisDocs);
+						
+						var tempDocumentType = "";
+						
+						/**
+						 * Additional three arrays for another three criteria (except the one that hold all 
+						 * analysis files - category ALL): COCKPIT, GEO and AD HOC. These are going to hold
+						 * data about all files that belong to each of those three categories.
+						 */
+						for(var i=0; i<$scope.allAnalysisDocs.length; i++) {
+							
+							tempDocumentType = $scope.allAnalysisDocs[i].typeCode;							
+							
+							switch(tempDocumentType.toUpperCase()) {	
+							
+								case "WORKSHEET": 
+									$scope.adhocReportAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									break;
+								case "MAP": 
+									$scope.geoAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									break;
+								case "DOCUMENT_COMPOSITE": 
+									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									break;	
+									
+							}
+							
+						}
+						
 					},
 					
 					function(response) {
@@ -31,6 +67,6 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate){
 				);
 	}
 
-	$scope.loadMyAnalysisDocuments();
+	$scope.loadAllMyAnalysisDocuments();
 	
 }

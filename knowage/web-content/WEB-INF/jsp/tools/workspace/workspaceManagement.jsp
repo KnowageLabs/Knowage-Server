@@ -10,8 +10,9 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/workspace/workspaceImport.jsp"%>
 
-<!-- STYLE -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+<!-- Styles -->
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+
 </head>
 <body ng-controller="workspaceController">
 	

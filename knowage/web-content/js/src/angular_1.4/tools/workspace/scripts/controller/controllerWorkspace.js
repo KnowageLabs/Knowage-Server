@@ -4,7 +4,18 @@ angular.module('workspace.controller', ['workspace.directive','workspace.configu
 function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices){
 	
 	$scope.allDocuments = [];
-	$scope.analysisDocs = [];
+	
+	/**
+	 * Variables for Analysis view of the Workspace (option):	  
+	 * 		allAnalysisDocs - array of all Analysis documents available in user's workspace (Cockpit, Geo and Ad hoc)
+	 * 		cockpitAnalysisDocs - array of all Analysis documents of type Cockpit available in user's workspace
+	 * 		adhocReportAnalysisDocs - array of all Analysis documents of type Ad hoc available in user's workspace
+	 * 		geoAnalysisDocs - array of all Analysis documents of type Geo available in user's workspace
+	 */
+	$scope.allAnalysisDocs = [];
+	$scope.cockpitAnalysisDocs = [];
+	$scope.adhocReportAnalysisDocs = [];
+	$scope.geoAnalysisDocs = [];
 	
 	$scope.currentOptionMainMenu = "";
 	
