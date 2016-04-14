@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -58,6 +47,7 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -69,9 +59,19 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
 public class DataSetFactory {
 
@@ -475,8 +475,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
-							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
+							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -502,6 +502,11 @@ public class DataSetFactory {
 					} else {
 						logger.warn("No data source for write default was found");
 					}
+				}
+
+				if (userProfile != null) {
+					Map<String, Object> profileAttrs = UserProfileUtils.getProfileAttributes(userProfile);
+					ds.setUserProfileAttributes(profileAttrs);
 				}
 
 				if (sbiDataSet.isPersisted()) {
@@ -735,8 +740,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
-							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
+							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -762,6 +767,11 @@ public class DataSetFactory {
 					} else {
 						logger.warn("No data source for write default was found");
 					}
+				}
+
+				if (userProfile != null) {
+					Map<String, Object> profileAttrs = UserProfileUtils.getProfileAttributes(userProfile);
+					ds.setUserProfileAttributes(profileAttrs);
 				}
 
 				if (sbiDataSet.isPersisted()) {
@@ -1055,8 +1065,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
-							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
+							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
