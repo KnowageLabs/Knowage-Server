@@ -995,7 +995,7 @@ public class DAOFactory {
 	 *             the EMF user error
 	 */
 	public static ISbiMetaTableColumnDAO getSbiMetaTableColumnDAO() throws EMFUserError {
-		return (ISbiMetaTableColumnDAO) createDAOInstance("IISbiMetaTableColumnDAOSbiMetaSourceDAO");
+		return (ISbiMetaTableColumnDAO) createDAOInstance("ISbiMetaTableColumnDAOSbiMetaSourceDAO");
 	}
 
 	/**
