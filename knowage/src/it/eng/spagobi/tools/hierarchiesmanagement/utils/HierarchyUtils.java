@@ -461,7 +461,7 @@ public class HierarchyUtils {
 		// 1 - execute query to get dimension data
 		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
 				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
-		queryText = queryText + " LIMIT 100";
+
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 		return dataStore;
