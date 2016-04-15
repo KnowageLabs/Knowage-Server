@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <script>
 var sbiM=angular.module('sbiModule',["toastr"]);
 
