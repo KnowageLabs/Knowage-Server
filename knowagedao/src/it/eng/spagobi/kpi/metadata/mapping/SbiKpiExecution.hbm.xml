@@ -20,6 +20,7 @@
         <property name="name" column="NAME" type="string" length="40" not-null="true"/>
         <property name="startDate" column="START_DATE" type="date" not-null="true"/>
         <property name="endDate" column="END_DATE" type="date" />
+        <property name="delta" column="DELTA" type="char" />
         
          <set name="sbiKpiExecutionFilters" cascade="all,delete-orphan" lazy="true" inverse="true">
             <key column="EXECUTION_ID" />
