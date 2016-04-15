@@ -1426,6 +1426,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		scd.setName(sbi.getName());
 		scd.setAuthor(sbi.getCommonInfo().getUserIn());
 		scd.setStartDate(sbi.getStartDate().getTime());
+		scd.setDelta(sbi.getDelta() != null && sbi.getDelta().charValue() == 'T' ? Boolean.TRUE : Boolean.FALSE);
 		if (sbi.getEndDate() != null)
 			scd.setEndDate(sbi.getEndDate().getTime());
 		scd.setDelta(Character.valueOf('T').equals(sbi.getDelta()));
@@ -1831,6 +1832,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			updateSbiCommonInfo4Update(sbiKpiExecution);
 		}
 		sbiKpiExecution.setName(scheduler.getName());
+		sbiKpiExecution.setDelta(Boolean.TRUE.equals(scheduler.getDelta()) ? 'T' : 'F');
 
 		Calendar startDate = Calendar.getInstance();
 		startDate.setTimeInMillis(scheduler.getStartDate());
