@@ -18,17 +18,17 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
 	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'file'}]
-	$scope.outputVersions = ["v0","v1","v2"]; //TODO
+	$scope.outputVersions = []; //TODO
 	$scope.lockTooltip;
 	$scope.delimiter;
-	$scope.tableName;
+	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
-	$scope.outputVersion;
+	$scope.outputVersion ;
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
 	$scope.showFile = false;
 	$scope.showTable = false;
-	var exportExists = false;
+	var exportBtn = {};
 	var result;
 	
 	whatIfBtns = function(status){
@@ -39,14 +39,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				//var exists = $scope.whatifToolbarButtons.indexOf("BUTTON_EXPORT_OUTPUT")>-1;
 				$scope.whatifToolbarButtons = [];
 				
-				if(exportExists){
-					for(var i=0; i<$scope.whatifToolbarButtons.length; i++){
-						if($scope.whatifToolbarButtons[i].img == "BUTTON_EXPORT_OUTPUT"){
-							btn = $scope.whatifToolbarButtons[i];
-							break;
-						}
-					}
-					$scope.whatifToolbarButtons.push(btn);
+				if(exportBtn.img == "BUTTON_EXPORT_OUTPUT"){
+					$scope.whatifToolbarButtons.push(exportBtn);
 				}			
 				
 			}
@@ -74,7 +68,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
 			
 			if(btn.img == "BUTTON_EXPORT_OUTPUT")
-				exportExists = true;
+				exportBtn = btn;
 			
 			if(olapButtonNames.indexOf(btn.img)>-1)
 				$scope.olapToolbarButtons.push(btn);
@@ -243,4 +237,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
 		  });
 	  };
+	  
+	  $scope.exportOutputVersion = function(){
+		  
+	  };
+
 };

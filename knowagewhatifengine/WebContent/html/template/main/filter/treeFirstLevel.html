@@ -14,7 +14,9 @@
 			</span>
 			<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
 				<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+				<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 					{{item.name}}
+				</span>	
 				</md-checkbox>
 			</span>
 			<filter-tree-deeper-levels></filter-tree-deeper-levels>

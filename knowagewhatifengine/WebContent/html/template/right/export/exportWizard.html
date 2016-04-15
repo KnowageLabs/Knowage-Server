@@ -20,8 +20,8 @@
 		<md-input-container style="min-width:40%">
         	<label>Version to export:</label>
         		<md-select ng-model="outputVersion">
-          		<md-option ng-repeat="v in outputVersions" value="{{v}}">
-           			{{v}}
+          		<md-option ng-repeat="v in outputVersions" value="{{v.id}}">
+           			{{v.name}}
           		</md-option>
         	</md-select>
       	</md-input-container>

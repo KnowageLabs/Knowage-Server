@@ -257,7 +257,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 					String currentNameLower = list.get(i).getName().toString().toLowerCase();
 					if (currentNameLower.contains(nameLower)) {
 						positionList.add(i);
-						fatherNameList.add(list.get(i).getParentMember().getUniqueName());
+						if (list.get(i).getParentMember() != null)
+							fatherNameList.add(list.get(i).getParentMember().getUniqueName());
 						lastDepth = j;
 					}
 				}
