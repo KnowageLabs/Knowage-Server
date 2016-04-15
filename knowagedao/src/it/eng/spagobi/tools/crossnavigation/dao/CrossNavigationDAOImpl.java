@@ -23,8 +23,6 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
@@ -47,12 +45,6 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public static final int TYPE_FIXED = 2;
 	public static final int TYPE_INPUT = 1;
 	public static final int TYPE_OUTPUT = 0;
-
-	IMessageBuilder message;
-
-	public CrossNavigationDAOImpl() {
-		message = MessageBuilderFactory.getMessageBuilder();
-	}
 
 	@Override
 	public List<SimpleNavigation> listNavigation() {
@@ -108,17 +100,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
 						if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
-							SbiCrossNavigationPar cnp = new SbiCrossNavigationPar();
-							Integer fromId = sp.getLinks().get(0).getId();
-							Integer fromType = sp.getLinks().get(0).getType();
-							cnp.setFromKeyId(fromId);
-							cnp.setFromType(fromType);
-							cnp.setToKeyId(sp.getId());
-							if (fromType.equals(TYPE_FIXED)) {
-								cnp.setFixedValue(sp.getName());
-							}
+							SbiCrossNavigationPar cnp = from(sp, cn);
 							updateSbiCommonInfo4Insert(cnp);
-							cnp.setSbiCrossNavigation(cn);
 							cn.getSbiCrossNavigationPars().add(cnp);
 						}
 					}
@@ -127,6 +110,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				session.save(cn);
 				return Boolean.TRUE;
 			}
+
 		});
 	}
 
@@ -148,16 +132,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
 						if (sp.getLinks() != null && !sp.getLinks().isEmpty()) {
-							SbiCrossNavigationPar cnp = new SbiCrossNavigationPar();
-							Integer fromId = sp.getLinks().get(0).getId();
-							Integer fromType = sp.getLinks().get(0).getType();
-							cnp.setFromKeyId(fromId);
-							cnp.setFromType(fromType);
-							cnp.setToKeyId(sp.getId());
-							cnp.setSbiCrossNavigation(cn);
-							if (fromType.equals(TYPE_FIXED)) {
-								cnp.setFixedValue(sp.getName());
-							}
+							SbiCrossNavigationPar cnp = from(sp, cn);
 							updateSbiCommonInfo4Update(cnp);
 							cn.getSbiCrossNavigationPars().add(cnp);
 						}
@@ -205,25 +180,26 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							}
 							break;
 						case TYPE_FIXED:
-							// Fixed value isn't bind to any document
+							fromSp.setFixedValue(cnp.getFixedValue());
 							fromSp.setName(cnp.getFixedValue());
+							if (fromDoc == null) {
+								fromDoc = (SbiObjects) session.get(SbiObjects.class, cnp.getFromKeyId());
+							}
 							break;
 						}
 						SimpleParameter toSp = new SimpleParameter(cnp.getToKey().getObjParId(), cnp.getToKey().getLabel(), TYPE_INPUT);
 						if (toDoc == null) {
 							toDoc = cnp.getToKey().getSbiObject();
 						}
-						if (fromDoc != null) {
-							for (Object o : fromDoc.getSbiObjPars()) {
-								SbiObjPar op = (SbiObjPar) o;
-								nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
-							}
-							List outputParameterList = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", fromDoc.getBiobjId()))
-									.list();
-							for (Object object : outputParameterList) {
-								SbiOutputParameter outPar = (SbiOutputParameter) object;
-								nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
-							}
+						for (Object o : fromDoc.getSbiObjPars()) {
+							SbiObjPar op = (SbiObjPar) o;
+							nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+						}
+						List outputParameterList = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", fromDoc.getBiobjId()))
+								.list();
+						for (Object object : outputParameterList) {
+							SbiOutputParameter outPar = (SbiOutputParameter) object;
+							nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
 						}
 						for (Object o : toDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
@@ -261,5 +237,18 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				return null;
 			}
 		});
+	}
+
+	private SbiCrossNavigationPar from(SimpleParameter sp, SbiCrossNavigation cn) {
+		SbiCrossNavigationPar cnp = new SbiCrossNavigationPar();
+		SimpleParameter linkedParam = sp.getLinks().get(0);
+		cnp.setFromKeyId(linkedParam.getId());
+		cnp.setFromType(linkedParam.getType());
+		cnp.setToKeyId(sp.getId());
+		if (linkedParam.getType().equals(TYPE_FIXED)) {
+			cnp.setFixedValue(linkedParam.getFixedValue());
+		}
+		cnp.setSbiCrossNavigation(cn);
+		return cnp;
 	}
 }

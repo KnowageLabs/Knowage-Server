@@ -12,6 +12,9 @@ public class SchedulerFilter implements Serializable {
 	private String kpiName;
 	private Integer kpiId;
 	private Integer kpiVersion;
+	/**
+	 * domainCd = KPI_PLACEHOLDER_TYPE
+	 */
 	private Domain type;
 	private String value;
 

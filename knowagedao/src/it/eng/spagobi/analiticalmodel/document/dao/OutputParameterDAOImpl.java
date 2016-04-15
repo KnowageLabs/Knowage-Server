@@ -21,19 +21,30 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
 public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOutputParameterDAO {
 
 	@Override
-	public List<OutputParameter> getOutputParametersByObjId(Integer id) {
+	public List<OutputParameter> getOutputParametersByObjId(final Integer id) {
 		List<OutputParameter> ret = new ArrayList<>();
 
-		for (SbiOutputParameter op : list(SbiOutputParameter.class)) {
+		List<SbiOutputParameter> paramList = list(new ICriterion<SbiOutputParameter>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				return session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", id));
+			}
+		});
+		for (SbiOutputParameter op : paramList) {
 			ret.add(new OutputParameter(op.getId(), op.getLabel(), op.getParameterTypeId(), op.getParameterType().getValueNm(), op.getBiobjId()));
 		}
 		return ret;
