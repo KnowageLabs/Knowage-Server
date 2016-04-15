@@ -5,7 +5,7 @@
 		var kpiViewerGaugeService = {
 			gauge : null,
 			
-			createGauge : function(
+			createGaugeConf : function(
 					frameId, 
 					label, 
 					size, 
@@ -60,13 +60,7 @@
 					}
 				}
 				
-				kpiViewerGaugeService.gauge = new Gauge(frameId, config);
-				kpiViewerGaugeService.gauge.render();
-			},
-			
-			updateGauge : function(newValue, newTransitionValue) {
-				newValue = newValue || 0;
-				kpiViewerGaugeService.gauge.redraw(newValue);
+				return config;
 			},
 			
 			/**
@@ -151,7 +145,6 @@
 				};
 			},
 		};
-
 		
 		return kpiViewerGaugeService;
 	});

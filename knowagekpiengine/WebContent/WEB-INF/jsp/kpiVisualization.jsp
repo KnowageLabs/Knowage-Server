@@ -177,6 +177,10 @@ author:
 	var serverPort = '<%=request.getServerPort()%>';
 	var protocol = '<%=request.getScheme()%>';
 </script>
+<!-- Styles -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
+
+<!-- Scripts -->
 <%--
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
@@ -184,13 +188,19 @@ author:
 		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-more.js"></script>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/gaugeJs/gauge.js"></script>
 --%>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/gaugeJs/gauge.js"></script>
 <%--
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.js"></script>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/lib/angular-nvd3/1.0.6/dist/angular-nvd3.js"></script>
 --%>
+<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/gaugeNgDirectiveApp.js"></script>
 		
 </head>
 
@@ -198,20 +208,44 @@ author:
 	
 	<%--
 	<h2>KpiEngine</h2>
-	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
-	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">targetValue: {{documentData.targetValue | json}}</div>
-	--%>
 	
 	<div layout-align="center center" layout="row" flex >
 		<div id="kpiViewer_<%=docId%>"></div>
 	</div>
+	<div style="padding:2em; font-size: 0.5em">kpiValue: {{documentData.kpiValue | json}}</div>
+	<div style="padding:2em; font-size: 0.5em">template: {{documentData.template | json}}</div>
+	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
+	--%>
+	
+	
+	<kpi-gauge ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'false'" 
+		flex layout="column" layout-align="center"
+		
+		gauge-id="documentData.docId"
+		label="documentData.docLabel"
+		size="gaugeSize"
+		size="gaugeSize"
+		min-value="gaugeMinValue"
+		max-value="gaugeMaxValue"
+		value="gaugeValue"
+		threshold-stops="thresholdStops"
+		show-value="documentData.template.chart.options.showvalue"
+		show-thresholds="documentData.template.chart.options.showthreshold"
+		value-precision="documentData.template.chart.options.precision"
+		font-conf="documentData.template.chart.style.font"
+	></kpi-gauge>
+	
+<!-- 	
+	<nvd3 ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'true'" 
+	<nvd3 options="getSpeedoLinearConf()" data="getSpeedoLinearData()" config="getSpeedoLinearConfig()"></nvd3>
+-->
 		
 	<%-- kpi document angular imports --%>
 	<script type="text/javascript">
 	(function() {
 		var kpiViewerModule = angular.module('kpiViewerModule', 
-				['sbiModule', 'ngSanitize', 'ngAnimate']);
+				['sbiModule', 'ngSanitize', 'ngAnimate', 'gaugeNgDirectiveApp', 'nvd3']);
 		
 		kpiViewerModule.factory('documentData', function() {
 			var documentTemplate = JSON.parse('<%=template%>');
@@ -221,7 +255,7 @@ author:
 				template : documentTemplate,
 				docLabel : '<%=docLabel %>',
 				docId : '<%=docId%>',
-				kpiValue : {},
+				kpiValue : {threshold:{thresholdValues:[]}},
 				targetValue : {}
 			};
 			return obj;

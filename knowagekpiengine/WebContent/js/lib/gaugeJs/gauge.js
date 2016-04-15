@@ -1,7 +1,8 @@
-/*
+/**
  * Downloaded from http://bl.ocks.org/tomerd/1499279
  * 
  * extended by benedetto.milazzo@eng.it
+ * @requires d3 chart library
  */
 
 function Gauge(placeholderName, configuration) {
