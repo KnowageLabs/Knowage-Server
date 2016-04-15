@@ -1838,9 +1838,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		startDate.setTimeInMillis(scheduler.getStartDate());
 		sbiKpiExecution.setStartDate(startDate.getTime());
 
-		Calendar endDate = Calendar.getInstance();
-		endDate.setTimeInMillis(scheduler.getEndDate());
-		sbiKpiExecution.setEndDate(endDate.getTime());
+		if (scheduler.getEndDate() != null) {
+			Calendar endDate = Calendar.getInstance();
+			endDate.setTimeInMillis(scheduler.getEndDate());
+			sbiKpiExecution.setEndDate(endDate.getTime());
+		}
 
 		Integer id = (Integer) session.save(sbiKpiExecution);
 		// Removing old filters / updating existing one
