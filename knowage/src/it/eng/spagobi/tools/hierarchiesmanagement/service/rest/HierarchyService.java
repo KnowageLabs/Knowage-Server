@@ -1094,6 +1094,17 @@ public class HierarchyService {
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage() + " - " + errMsg);
 		}
 
+		// TEST : DA CANCELLARE!
+		// String errMsg = "";
+		// Iterator iter = values.keySet().iterator();
+		// while (iter.hasNext()) {
+		// String key = (String) iter.next();
+		// Object value = values.get(key);
+		// errMsg += " key: " + key + " - value: " + value + ((iter.hasNext()) ? "," : "]");
+		// }
+		// System.out.println(errMsg);
+		// FINE TEST
+
 		return toReturn;
 	}
 
@@ -1311,6 +1322,10 @@ public class HierarchyService {
 						mapAttrs.put(idFld, node.getString(idFld));
 					}
 					if (!isLeaf && position > -1 && fld.isOrderField()) {
+						// deletes eventual order field without level specification
+						if (mapAttrs.containsKey(idFld)) {
+							mapAttrs.remove(idFld);
+						}
 						orderField = idFld + node.getString(HierarchyConstants.LEVEL);
 						mapAttrs.put(orderField, position);
 					}
