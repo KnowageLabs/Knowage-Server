@@ -1,9 +1,11 @@
-<md-content>
+<md-content flex layout="column" layout-fill class="rightPanelDocuments">
 
  	<document-view 	class="kn-documentBrowser" flex 
- 					style='overflow: auto; position: relative;' 
+ 					style='overflow: auto;' 
  					ng-model=allDocuments
- 					show-grid-view=showGridView >
+ 					show-grid-view=showGridView
+ 					execute-document-action="executeDocument(doc)"
+ 					 >
 	</document-view>	
 
 </md-content>

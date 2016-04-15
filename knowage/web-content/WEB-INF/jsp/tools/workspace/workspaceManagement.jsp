@@ -14,30 +14,31 @@
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 </head>
-<body ng-controller="workspaceController">
+<body ng-controller="workspaceController" class="workspace"> 
 	
 	<main-toolbar-workspace></main-toolbar-workspace>
 	
-	<angular_2_col>
+	<md-content layout="row">
+	
 	
 		<!-- 
 			Directive that will render the left main menu of the Workspace web page. 
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		-->
-		<left-col flex=15>	
+		<md-content  flex=15 class="leftRightPanelHeight">
 			<left-main-menu-workspace></left-main-menu-workspace>
-		</left-col>
+		</md-content>
 		
-		<right-col>
+		<md-content  flex class="leftRightPanelHeight">
 				<customize-view-workspace>													</customize-view-workspace>						
 				<recent-view-workspace 		ng-show="currentOptionMainMenu=='recent'">		</recent-view-workspace>	
 				<favorites-view-workspace 	ng-show="currentOptionMainMenu=='favorites'">	</favorites-view-workspace>	
 				<documents-view-workspace 	ng-show="currentOptionMainMenu=='documents'">	</documents-view-workspace>			
 				<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</datasets-view-workspace>
 				<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>				
-		</right-col>
+		</md-content>
 		
-	</angular_2_col>
+	</md-content>
 	
 </body>
 </html>
