@@ -44,6 +44,8 @@ author:...
 <%@page import="java.util.ArrayList"%>
 <%@page import= "java.util.Iterator"%>
 <%@page import= "it.eng.spagobi.utilities.engines.rest.ExecutionSession" %>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 
 

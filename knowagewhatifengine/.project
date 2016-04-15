@@ -3,9 +3,10 @@
 	<name>knowagewhatifengine</name>
 	<comment></comment>
 	<projects>
+		<project>jdbccore</project>
+		<project>knowagedao</project>
 		<project>knowageutils</project>
 		<project>knowageutilsjson</project>
-		<project>jdbccore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
