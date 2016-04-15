@@ -12,6 +12,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			var s = $scope;
 			
 			var newRecord = function(){
+				ctr.tmpfixedValue = '';
 				return {'newRecord':true};
 			};
 			
@@ -23,9 +24,10 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.selectedItem = '';
 			
 			ctr.addFixedParam = function(){
-				if(ctr.detail.simpleNavigation.fixedValue != 'undefined' && ctr.detail.simpleNavigation.fixedValue != ''){
+				if(ctr.tmpfixedValue != 'undefined' && ctr.tmpfixedValue != '' && ctr.tmpfixedValue != null){
 					if(!ctr.detail.fromPars)ctr.detail.fromPars=[];
-					ctr.detail.fromPars.push({'id':ctr.detail.fromDocId,'name':ctr.detail.simpleNavigation.fixedValue,'type':2});
+					ctr.detail.fromPars.push({'id':ctr.detail.simpleNavigation.fromDocId,'name':ctr.tmpfixedValue,'type':2,'fixedValue':ctr.tmpfixedValue});
+					ctr.tmpfixedValue = '';
 				}
 			};
 			
@@ -118,7 +120,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.listLeftDocuments = function(){
 				ctr.listDocuments(function(item, listId, closeDialog){
 					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
-					ctr.detail.fromDocId = item.DOCUMENT_ID;
+					ctr.detail.simpleNavigation.fromDocId = item.DOCUMENT_ID;
 					ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
 					loadInputParameters(item.DOCUMENT_NM,function(data){
 						ctr.detail.fromPars = data;

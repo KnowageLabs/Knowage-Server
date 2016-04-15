@@ -68,6 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
+*{{par.links.length}}*
   <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
     <div >
 	  {{par.name}}
@@ -183,14 +184,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</md-toolbar>
 						<h3 ng-model="ctrl.detail.fromDoc"></h3>
-					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" >
+					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" ng-show="ctrl.detail.fromPars.length>0">
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
 					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" ></li>
 					      </ol>
 					    </div>
-					    <div layout="row" flex="100" ng-if="ctrl.detail.fromPars">
+					    <div layout="row" flex="100" ng-if="ctrl.detail.simpleNavigation.fromDoc" >
 							<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.fixedValue");}}</label>
-								<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fixedValue" > 
+								<input maxlength="100" type="text" ng-model="ctrl.tmpfixedValue" > 
 							</md-input-container>
 							<md-button ng-click="ctrl.addFixedParam()" class="md-fab md-mini" > 
 								<md-icon md-font-icon="fa fa-plus" >
@@ -205,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</md-toolbar>
 						<h3 ng-model="ctrl.detail.toDoc"></h3>
-					    <div ui-tree="ctrl.treeOptions2" id="tree2-root" data-empty-placeholder-enabled="false">
+					    <div ui-tree="ctrl.treeOptions2" id="tree2-root" data-empty-placeholder-enabled="false" ng-show="ctrl.detail.toPars.length>0">
 					      <ol ui-tree-nodes="" ng-model="ctrl.detail.toPars" >
 					        <li ng-repeat="par in ctrl.detail.toPars" ui-tree-node ng-include="'nodes_renderer2.html'"  data-nodrag></li>
 					      </ol>
