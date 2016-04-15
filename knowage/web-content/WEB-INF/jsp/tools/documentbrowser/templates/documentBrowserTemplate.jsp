@@ -16,7 +16,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+	
+	
 	<md-content ng-controller="documentBrowserController" layout="column"  ng-cloak layout-fill>
+		<div  layout-fill ng-hide="hideProgressCircular" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
+			      		<md-progress-circular 
+        				md-mode="indeterminate" 
+        				md-diameter="60" 
+        				style="left: 50%;top: 50%;margin-left: -30px;margin-top: -30px;"   
+        				>
+      					</md-progress-circular>
+   		 </div>
+		
 		<!-- Toolbar -->
 		<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
@@ -113,7 +124,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 				 
 			<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
-				 	<document-view flex style='overflow:auto' ng-model="folderDocuments"
+				 	
+				 	
+				 	<document-view flex style='overflow:auto' ng-model="folderDocuments" ng-show="hideProgressCircular"
 						show-grid-view="showDocumentGridView"
 						table-speed-menu-option="documentTableButton"
 						selected-document=selectedDocument

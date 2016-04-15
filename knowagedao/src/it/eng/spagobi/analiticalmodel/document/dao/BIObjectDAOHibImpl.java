@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,6 +49,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -79,7 +80,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -1132,7 +1135,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		BIObject aBIObject = new BIObject();
 		// set type (type code and id)
 		aBIObject.setBiObjectTypeCode(hibBIObject.getObjectTypeCode());
-		aBIObject.setBiObjectTypeID(hibBIObject.getObjectType().getValueId());
+		if (hibBIObject.getObjectType() != null) {
+			aBIObject.setBiObjectTypeID(hibBIObject.getObjectType().getValueId());
+		}
 		// set description
 		String descr = hibBIObject.getDescr();
 		if (descr == null)
@@ -1153,7 +1158,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		// set profiled visibility information
 		aBIObject.setProfiledVisibility(hibBIObject.getProfiledVisibility());
 		// set engine
-		aBIObject.setEngine(new EngineDAOHibImpl().toEngine(hibBIObject.getSbiEngines()));
+		if (hibBIObject.getSbiEngines() != null) {
+			aBIObject.setEngine(new EngineDAOHibImpl().toEngine(hibBIObject.getSbiEngines()));
+		}
 		// set data source
 		if (hibBIObject.getDataSource() != null) {
 			aBIObject.setDataSourceId(new Integer(hibBIObject.getDataSource().getDsId()));
@@ -1167,31 +1174,38 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setId(hibBIObject.getBiobjId());
 		aBIObject.setLabel(hibBIObject.getLabel());
 		aBIObject.setName(hibBIObject.getName());
-		aBIObject.setTenant(hibBIObject.getCommonInfo().getOrganization());
+		if (hibBIObject.getCommonInfo() != null) {
+			aBIObject.setTenant(hibBIObject.getCommonInfo().getOrganization());
+		}
 
 		// set path
 		aBIObject.setPath(hibBIObject.getPath());
 		aBIObject.setUuid(hibBIObject.getUuid());
 		aBIObject.setRelName(hibBIObject.getRelName());
 		aBIObject.setStateCode(hibBIObject.getStateCode());
-		aBIObject.setStateID(hibBIObject.getState().getValueId());
+		if (hibBIObject.getState() != null) {
+			aBIObject.setStateID(hibBIObject.getState().getValueId());
+		}
 
 		List functionlities = new ArrayList();
 		boolean isPublic = false;
-		Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
-		for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
-			SbiObjFunc aSbiObjFunc = (SbiObjFunc) it.next();
-			Integer functionalityId = aSbiObjFunc.getId().getSbiFunctions().getFunctId();
-			functionlities.add(functionalityId);
-			if (!isPublic) { // optimization: this ensure that the following code is executed only once in the for cycle (during the second execution of the
-								// cycle we already know that the document is public)
-				String folderType = aSbiObjFunc.getId().getSbiFunctions().getFunctTypeCd();
-				// if document belongs to another folder or the folder is not a personal folder, that means it is shared
-				if (it.hasNext() || folderType.equalsIgnoreCase("LOW_FUNCT")) {
-					isPublic = true;
+		if (hibBIObject.getSbiObjFuncs() != null) {
+			Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
+			for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
+				SbiObjFunc aSbiObjFunc = (SbiObjFunc) it.next();
+				Integer functionalityId = aSbiObjFunc.getId().getSbiFunctions().getFunctId();
+				functionlities.add(functionalityId);
+				if (!isPublic) { // optimization: this ensure that the following code is executed only once in the for cycle (during the second execution of the
+					// cycle we already know that the document is public)
+					String folderType = aSbiObjFunc.getId().getSbiFunctions().getFunctTypeCd();
+					// if document belongs to another folder or the folder is not a personal folder, that means it is shared
+					if (it.hasNext() || folderType.equalsIgnoreCase("LOW_FUNCT")) {
+						isPublic = true;
+					}
 				}
 			}
 		}
+
 		aBIObject.setFunctionalities(functionlities);
 		aBIObject.setPublicDoc(isPublic);
 
@@ -1312,6 +1326,85 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 		logger.debug("OUT");
 		return realResult;
+	}
+
+	@Override
+	public List loadAllBIObjectsByFolderId(final Integer folderId) throws EMFUserError {
+		// logger.debug("IN");
+		// Session aSession = null;
+		// Transaction tx = null;
+		// List realResult = new ArrayList();
+		// try {
+		// aSession = getSession();
+		// tx = aSession.beginTransaction();
+		//
+		// Query hibQuery = aSession.createQuery("select objects  from SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions "
+		// + "where objects.biobjId = objFuncs.id.sbiObjects.biobjId and objFuncs.id.sbiFunctions.functId = functions.functId "
+		// + "and functions.functId=" + folderId);
+		//
+		// List hibList = hibQuery.list();
+		// Iterator it = hibList.iterator();
+		// while (it.hasNext()) {
+		// realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+		// }
+		// tx.commit();
+		// } catch (HibernateException he) {
+		// logger.error(he);
+		// if (tx != null)
+		// tx.rollback();
+		// throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		// } finally {
+		// if (aSession != null) {
+		// if (aSession.isOpen())
+		// aSession.close();
+		// }
+		// }
+		// logger.debug("OUT");
+		// return realResult;
+
+		List realResult = executeOnTransaction(new IExecuteOnTransaction<List>() {
+
+			@Override
+			public List execute(Session session) throws Exception {
+				List sbiObjects = session
+						.createCriteria(SbiObjects.class)
+						.createAlias("sbiObjFuncs", "_sbiObjFunc")
+						// .createAlias("_sbiObjFunc.id.sbiFunctions", "_sbiFunc")
+						.add(Restrictions.eq("_sbiObjFunc.id.sbiFunctions.functId", folderId))
+						.setProjection(
+								Projections.projectionList().add(org.hibernate.criterion.Property.forName("biobjId").as("biobjId"))
+										.add(org.hibernate.criterion.Property.forName("name").as("name"))
+										.add(org.hibernate.criterion.Property.forName("creationUser").as("creationUser"))
+										.add(org.hibernate.criterion.Property.forName("creationDate").as("creationDate"))
+										.add(org.hibernate.criterion.Property.forName("objectTypeCode").as("objectTypeCode"))
+										.add(org.hibernate.criterion.Property.forName("descr").as("descr"))
+										.add(org.hibernate.criterion.Property.forName("stateCode").as("stateCode"))
+										.add(org.hibernate.criterion.Property.forName("sbiEngines").as("sbiEngines"))
+										.add(org.hibernate.criterion.Property.forName("label").as("label")))
+						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
+
+				Iterator it = sbiObjects.iterator();
+				List<BIObject> realResult = new ArrayList<BIObject>();
+				SbiFunctions functions = (SbiFunctions) session.load(SbiFunctions.class, folderId);
+				Set<SbiObjFunc> sbiObjFuns = new HashSet<SbiObjFunc>();
+				SbiObjFunc sbiObjFun = new SbiObjFunc();
+				SbiObjFuncId funcId = new SbiObjFuncId();
+				funcId.setSbiFunctions(functions);
+				sbiObjFun.setId(funcId);
+				sbiObjFuns.add(sbiObjFun);
+				while (it.hasNext()) {
+					SbiObjects sbiObj = (SbiObjects) it.next();
+					sbiObj.setSbiObjFuncs(sbiObjFuns);
+					realResult.add(toBIObject(sbiObj, session));
+				}
+				return realResult;
+
+			}
+
+		});
+
+		return realResult;
+
 	}
 
 	@Override

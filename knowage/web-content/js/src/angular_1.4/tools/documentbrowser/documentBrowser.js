@@ -14,6 +14,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.selectedOrder = $scope.orderElements[1].name;	
 	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
 	$scope.smallScreen = false;
+	$scope.hideProgressCircular=true;
 	
 	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
 	    $scope.smallScreen = big;
@@ -56,9 +57,11 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	};
  
 	$scope.loadFolderDocuments=function(folderId){
+		$scope.hideProgressCircular=false;
 		sbiModule_restServices.promiseGet("2.0","documents/getDocumentsByFolder?folderId=" +folderId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
+			$scope.hideProgressCircular=true;
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
