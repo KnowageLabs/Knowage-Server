@@ -301,17 +301,17 @@
 	</target>
 	
 	<!-- WHATIF ENGINE -->
-<!--
-	<target name="create.SpagoBIWhatIfEngine.war" depends="create.knowage.utils.jar">
-		<ant dir="../SpagoBIWhatIfEngine/ant" />
+
+	<target name="create.knowagewhatifengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagewhatifengine/ant" />
 	</target>
-	<target name="deploy.SpagoBIWhatIfEngine.war" depends="create.knowage.utils.jar,create.SpagoBIWhatIfEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIWhatIfEngine" />
-		<delete dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
-		<mkdir dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
-		<unzip src="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" dest="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
+	<target name="deploy.knowagewhatifengine.war" depends="create.knowage.utils.jar,create.knowagewhatifengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagewhatifengine" />
+		<delete dir="${tomcat.home}/webapps/knowagewhatifengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagewhatifengine" />
+		<unzip src="../../../knowagewhatifengine/dist/knowagewhatifengine.war" dest="${tomcat.home}/webapps/knowagewhatifengine" />
 	</target>
--->	
+	
 	
 	
 	<!-- SOCIAL ENGINE -->
@@ -404,11 +404,11 @@
 		<antcall target="create.knowagenetworkengine.war" />
 		<copy file="../../../knowagenetworkengine/dist/knowagenetworkengine.war" 
   	        todir="../../../dist" overwrite="true" />
-<!--		
-		<antcall target="create.SpagoBIWhatIfEngine.war" />
-		<copy file="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" 
+	
+		<antcall target="create.knowagewhatifengine.war" />
+		<copy file="../../../knowagewhatifengine/dist/knowagewhatifengine.war" 
         todir="../../../dist" overwrite="true" />
-		
+<!--			
 		<antcall target="create.SpagoBISocialAnalysis.war" />
 		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
         todir="../../../dist" overwrite="true" />
@@ -455,7 +455,7 @@
 		<antcall target="deploy.knowagechartengine.war" />
 		<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
 		<antcall target="deploy.knowagenetworkengine.war" />
-		<!-- antcall target="deploy.SpagoBIWhatIfEngine.war" /-->
+		<antcall target="deploy.knowagenetwhatifengine.war" />
 		<!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
 		<antcall target="deploy.highcharts-export-web.war" />
 	</target>
@@ -544,10 +544,10 @@
 		-->
 		<delete dir="../../../knowagenetworkengine/ant-build"/>
 		<delete dir="../../../knowagenetworkengine/dist"/>
-		<!--
-		<delete dir="../../../SpagoBIWhatIfEngine/ant-build"/>
-		<delete dir="../../../SpagoBIWhatIfEngine/dist"/>
 		
+		<delete dir="../../../knowagewhatifengine/ant-build"/>
+		<delete dir="../../../knowagewhatifengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
 		<delete dir="../../../SpagoBISocialAnalysis/dist"/>
 		-->
@@ -647,9 +647,9 @@
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
 		-->
 		<ant dir="../knowagenetworkengine/ant" target="javadoc"/>
-		<!--
-		<ant dir="../SpagoBIWhatIfEngine/ant" target="javadoc"/>
-		-->
+		
+		<ant dir="../knowagewhatifengine/ant" target="javadoc"/>
+		
 
 	</target>
 
@@ -681,8 +681,9 @@
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		-->
 		<ant dir="../knowagenetworkengine/ant" target="package"/>
+		
+		<ant dir="../knowagewhatifengine/ant" target="package"/>
 		<!--
-		<ant dir="../SpagoBIWhatIfEngine/ant" target="package"/>
 		<ant dir="../SpagoBISocialAnalysis/ant" target="package"/>
 		-->
 		
