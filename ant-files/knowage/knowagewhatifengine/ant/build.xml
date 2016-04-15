@@ -61,11 +61,25 @@
 		<!-- copies the newly created jar file -->
 		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   AGGIORNAMENTO JAR KNOWAGE.DAO							                        -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="knowage.dao.update" description="Updates knowage.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos qbe.core -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/knowage.dao*.jar" />
+		</delete>
+
+		<!-- copies the newly created jar file -->
+		<copy file="${knowage.dao.dir}/dist/knowage.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+	</target>	
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="knowage.utils.update,qbe.core.update" description="compile the source">
+	<target name="compile" depends="knowage.utils.update,qbe.core.update,knowage.dao.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
 			<classpath refid="web.classpath" />
