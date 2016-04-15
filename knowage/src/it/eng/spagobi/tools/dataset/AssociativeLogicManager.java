@@ -124,7 +124,7 @@ public class AssociativeLogicManager {
 				datasetToCachedTable.put(v1, dataSet.getPersistTableName());
 				datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
 			} else {
-				String signature = DAOFactory.getDataSetDAO().loadDataSetByLabel(v1).getSignature();
+				String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
 				CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 				String tableName = cacheItem.getTable();
 				datasetToCachedTable.put(v1, tableName);
