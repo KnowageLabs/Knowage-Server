@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.pivot4j.ui.html;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
@@ -46,13 +53,6 @@ import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
-
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -336,8 +336,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					if (d != 0) {
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
-								+ positionUniqueName + "' )");
+						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
