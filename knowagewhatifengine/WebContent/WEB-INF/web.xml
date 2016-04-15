@@ -13,12 +13,7 @@
       <param-value>UTF-8</param-value>
     </init-param>
   </filter>
-  
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
-  </filter-mapping>
-  
+    
   <filter>
     <filter-name>EngineCheckSessionFilter</filter-name>
     <filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
@@ -30,17 +25,7 @@
 			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
 		</filter-class>
   </filter>
-  
-  <filter-mapping>
-    <filter-name>EngineCheckSessionFilter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
-  </filter-mapping>
-  
-  <filter-mapping>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
-  </filter-mapping>
-
+    
 <!-- START-CAS 
   <filter>
     <filter-name>CAS Authentication Filter</filter-name>
@@ -118,6 +103,19 @@
 		<url-pattern>/proxyCallback</url-pattern>	
   </filter-mapping>
  END-CAS -->
+  
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/restful-services/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>EngineCheckSessionFilter</filter-name>
+    <url-pattern>/restful-services/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <url-pattern>/restful-services/*</url-pattern>
+  </filter-mapping>
   
   <listener>
     <listener-class>
