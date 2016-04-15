@@ -1021,62 +1021,27 @@ public class HierarchyService {
 				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), node.getEndDt());
 				values.put(HierarchyConstants.END_DT, node.getEndDt());
 
-				// get other leaf's attributes (not mandatory)
-				Iterator iter = node.getAttributes().keySet().iterator();
-				while (iter.hasNext()) {
-					String key = (String) iter.next();
-					Object value = node.getAttributes().get(key);
-					if (key != null && value != null) {
-						int attrPos = HierarchyUtils.getPosField(lstFields, key);
-						if (attrPos == -1)
-							attrPos = HierarchyUtils.getPosField(lstFields, key + level);
-						if (attrPos != -1) {
-							preparedStatement.setObject(attrPos, value);
-							values.put(key, value);
-						}
+			}
+			// get other node's attributes (not mandatory ie sign)
+			Iterator iter = node.getAttributes().keySet().iterator();
+			// String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
+			// level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+			// if (level == 0 && !isRoot) {
+			// logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+			// throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
+			// + " and name " + node.getNodeName());
+			// }
+			while (iter.hasNext()) {
+				String key = (String) iter.next();
+				Object value = node.getAttributes().get(key);
+				if (key != null && value != null) {
+					int attrPos = HierarchyUtils.getPosField(lstFields, key);
+					if (attrPos == -1)
+						attrPos = HierarchyUtils.getPosField(lstFields, key + level);
+					if (attrPos != -1) {
+						preparedStatement.setObject(attrPos, value);
+						values.put(key, value);
 					}
-				}
-			} else {
-				// not-leaf node
-				// int level = 0;
-				// get other node's attributes (not mandatory ie sign)
-				Iterator iter = node.getAttributes().keySet().iterator();
-				// String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
-				// level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
-				// if (level == 0 && !isRoot) {
-				// logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
-				// throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
-				// + " and name " + node.getNodeName());
-				// }
-				while (iter.hasNext()) {
-					String key = (String) iter.next();
-					Object value = node.getAttributes().get(key);
-					if (key != null && value != null) {
-						int attrPos = HierarchyUtils.getPosField(lstFields, key);
-						if (attrPos == -1)
-							attrPos = HierarchyUtils.getPosField(lstFields, key + level);
-						if (attrPos != -1) {
-							preparedStatement.setObject(attrPos, value);
-							values.put(key, value);
-						}
-					}
-				}
-				if (level > 0) {
-					// toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV + level),
-					// node.getNodeCode());
-					// values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEV, node.getNodeCode());
-					// toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV + level),
-					// node.getNodeName());
-					// values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEV, node.getNodeName());
-					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD + level),
-					// node.getNodeCode(), node.getNodeCode());
-
-					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + level),
-					// node.getNodeCode());
-					// values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), node.getNodeCode());
-					// toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + level),
-					// node.getNodeName());
-					// values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), node.getNodeName());
 				}
 			}
 		} catch (Throwable t) {
@@ -1093,14 +1058,13 @@ public class HierarchyService {
 			}
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage() + " - " + errMsg);
 		}
-
 		// TEST : DA CANCELLARE!
-		// String errMsg = "";
+		// String errMsg = node.getNodeName() + "\n";
 		// Iterator iter = values.keySet().iterator();
 		// while (iter.hasNext()) {
 		// String key = (String) iter.next();
 		// Object value = values.get(key);
-		// errMsg += " key: " + key + " - value: " + value + ((iter.hasNext()) ? "," : "]");
+		// errMsg += "\t-" + key + ": " + value + ((iter.hasNext()) ? "\n" : "]");
 		// }
 		// System.out.println(errMsg);
 		// FINE TEST
@@ -1321,7 +1285,7 @@ public class HierarchyService {
 					} else if (!node.isNull(idFld)) {
 						mapAttrs.put(idFld, node.getString(idFld));
 					}
-					if (!isLeaf && position > -1 && fld.isOrderField()) {
+					if (position > -1 && fld.isOrderField()) {
 						// deletes eventual order field without level specification
 						if (mapAttrs.containsKey(idFld)) {
 							mapAttrs.remove(idFld);
