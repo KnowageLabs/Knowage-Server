@@ -47,38 +47,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/catalogue/catalogue.css", currTheme)%>">
-
+<%-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request,"/css/catalogue/catalogue.css", currTheme)%>"> --%>
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
 <!-- JavaScript -->	
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/datasource/datasource.js"></script>
 
 </head>
 <body class="bodyStyle" ng-controller="dataSourceController as ctrl">
-	<angular_2_col>
-		<left-col>
-			<div class="leftBox">
-				<md-toolbar class="header">
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.ds.dataSource");}}</div>
-											
-						<md-button
-							id="createNewDataSourceForm" 
-							class="md-fab md-ExtraMini addButtonCatalogue"
-							style="position:absolute; right:11px; top:0px;"
-							ng-click="createNewForm()"> 
-							<md-icon
-								md-font-icon="fa fa-plus" 
-								style=" margin-top: 6px ; color: white;" class="addButtonIcon">
-							</md-icon> 
-						</md-button>
-						
-					</div>
-				</md-toolbar>
-				
-				<md-content flex layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
-					<angular-table 
+	<angular-list-detail  show-detail="showMe">
+	 	<list label='translate.load("sbi.ds.dataSource")' new-function="createNewForm"> 
+		
+			<angular-table 
 						layout-fill
 						id="dataSourceList"
 						ng-model="dataSourceList"
@@ -90,45 +71,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						selected-item="selectedDataSourceItems"
 						speed-menu-option="dsSpeedMenu"					
 					>						
-					</angular-table>
-				</md-content>
-			</div>			
-		</left-col>
-			
-		<right-col>
-			
+			</angular-table>
+             
+		</list> 
+		<detail label='(selectedDataSource.label==undefined)? "" : selectedDataSource.label'  save-function="saveOrUpdateDataSource"
+			cancel-function="closeForm"
+			disable-save-button="!forms.dataSourceForm.$valid"
+			show-save-button="showMe" show-cancel-button="showMe">
+			<div layout-fill class="containerDiv">
 			<form name="forms.dataSourceForm" layout-fill ng-submit="forms.dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody md-whiteframe-z1" ng-disabled="isSuperAdminFunction()">
 				
-			<div ng-show="showme">
+			<div ng-show="showMe">
 			
-				<md-toolbar class="header">
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.ds.dataSource");}}</div>
-						<div style="position: absolute; right: 0px" class="h100">
-						
-							<md-button id="cancel" type="button"
-								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-								style=" margin-top: 2px;"
-								ng-click="closeForm()">
-							{{translate.load("sbi.generic.cancel");}} 
-							</md-button>
-							
-							<md-button type="button"
-								aria-label="test datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-								style=" margin-top: 2px;"
-								ng-click="testDataSource()">
-							{{translate.load("sbi.datasource.testing");}} 
-							</md-button>
-							
-							<md-button type="submit"
-								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-								style=" margin-top: 2px;">
-							{{translate.load("sbi.browser.defaultRole.save");}} 
-							</md-button>
-							
-						</div>
-					</div>
-					</md-toolbar>
+				
 					
 					<md-content flex style="margin-left:20px;" class="md-padding ToolbarBox miniToolbar noBorder">
 						
@@ -277,7 +232,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-content>
 				</div>
 			</form>
-		</right-col>
-	</angular_2_col>	
+			</div>	
+			
+		</detail>
+	</angular-list-detail>
 </body>
 </html>

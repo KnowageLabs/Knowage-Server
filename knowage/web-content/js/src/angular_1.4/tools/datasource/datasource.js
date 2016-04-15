@@ -1,7 +1,7 @@
 /**
  * @author Simović Nikola (nikola.simovic@mht.net)
  */
-var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
+var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col','angular-list-detail']);
 
 app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout","sbiModule_messaging", dataSourceFunction]);
 
@@ -159,7 +159,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.createNewForm = function () {
 		
 		if($scope.isDirty==false) {
-			$scope.showme=true;
+			$scope.showMe=true;
 			$scope.jdbcOrJndi = {type:"JDBC"};
 			$scope.selectedDataSource = {
 					label : "",
@@ -179,7 +179,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else {
 			
 			$mdDialog.show($scope.confirm).then(function() {
-				$scope.showme=true;
+				$scope.showMe=true;
 				$scope.selectedDataSource = {
 						label : "",
 						descr : "",
@@ -207,7 +207,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.loadSelectedDataSource = function(item) {
 		
 		$scope.jdbcOrJndi.type = null;
-		$scope.showme=true;
+		$scope.showMe=true;
 			
 			if($scope.isDirty==false) {
 				
@@ -247,7 +247,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.closeForm = function(){
 		$scope.forms.dataSourceForm.$setPristine();
 		$scope.forms.dataSourceForm.$setUntouched();
-		$scope.showme=false;
+		$scope.showMe=false;
 		$scope.isDirty = false;
 		$scope.selectedDataSource = {};
 	};
