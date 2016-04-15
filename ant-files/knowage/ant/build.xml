@@ -455,7 +455,7 @@
 		<antcall target="deploy.knowagechartengine.war" />
 		<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
 		<antcall target="deploy.knowagenetworkengine.war" />
-		<antcall target="deploy.knowagenetwhatifengine.war" />
+		<antcall target="deploy.knowagewhatifengine.war" />
 		<!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
 		<antcall target="deploy.highcharts-export-web.war" />
 	</target>
