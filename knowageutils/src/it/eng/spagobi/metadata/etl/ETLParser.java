@@ -49,19 +49,21 @@ public class ETLParser {
 	}
 
 	public void extractAll() {
+		Set<String> contextNames = getContextNames();
 		Set<String> dataSources = getRDBMSDataSources();
-		Set<String> rdbmsSourceTables = getRDBMSSourceComponentsTables();
-		Set<String> rdbmsTargetTables = getRDBMSTargetComponentsTables();
+		Set<ETLComponent> rdbmsSourceTables = getRDBMSSourceComponentsTables();
+		Set<ETLComponent> rdbmsTargetTables = getRDBMSTargetComponentsTables();
 		Set<String> fileSourceTables = getFileSourceComponentsLocations();
 		Set<String> fileTargetTables = getFileTargetComponentsLocations();
-		Set<String> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
-		Set<String> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
+		Set<ETLComponent> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
+		Set<ETLComponent> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
 
+		print("Context Names", contextNames);
 		print("Data Sources", dataSources);
-		print("Source Tables", rdbmsSourceTables);
-		print("Target Tables", rdbmsTargetTables);
-		print("Generic Component Source Tables", rdbmsMixedSourceTables);
-		print("Generic Component Target Tables", rdbmsMixedTargetTables);
+		printETLComponent("Source Tables", rdbmsSourceTables);
+		printETLComponent("Target Tables", rdbmsTargetTables);
+		printETLComponent("Generic Component Source Tables", rdbmsMixedSourceTables);
+		printETLComponent("Generic Component Target Tables", rdbmsMixedTargetTables);
 		print("Input Files", fileSourceTables);
 		print("Output Files", fileTargetTables);
 
@@ -81,8 +83,8 @@ public class ETLParser {
 	/**
 	 * Get all tables of Source Components of type RDBMS
 	 */
-	public Set<String> getRDBMSSourceComponentsTables() {
-		Set<String> tables = new HashSet<String>();
+	public Set<ETLComponent> getRDBMSSourceComponentsTables() {
+		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsSourceComponents.length; i++) {
 			tables.addAll(getRDBMSComponentTables(rdbmsSourceComponents[i]));
 		}
@@ -92,8 +94,8 @@ public class ETLParser {
 	/**
 	 * Get all tables of Target Components of type RDBMS
 	 */
-	public Set<String> getRDBMSTargetComponentsTables() {
-		Set<String> tables = new HashSet<String>();
+	public Set<ETLComponent> getRDBMSTargetComponentsTables() {
+		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsTargetComponents.length; i++) {
 			tables.addAll(getRDBMSComponentTables(rdbmsTargetComponents[i]));
 		}
@@ -103,8 +105,8 @@ public class ETLParser {
 	/**
 	 * Get all SOURCE tables of Mixed Components of type RDBMS
 	 */
-	public Set<String> getRDBMSTargetMixedComponentsTables() {
-		Set<String> tables = new HashSet<String>();
+	public Set<ETLComponent> getRDBMSTargetMixedComponentsTables() {
+		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsMixedComponents.length; i++) {
 			tables.addAll(getMixedComponentInformations(rdbmsMixedComponents[i], "dbtable", "table", "target"));
 		}
@@ -114,8 +116,8 @@ public class ETLParser {
 	/**
 	 * Get all TARGET tables of Mixed Components of type RDBMS
 	 */
-	public Set<String> getRDBMSSourceMixedComponentsTables() {
-		Set<String> tables = new HashSet<String>();
+	public Set<ETLComponent> getRDBMSSourceMixedComponentsTables() {
+		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsMixedComponents.length; i++) {
 			tables.addAll(getMixedComponentInformations(rdbmsMixedComponents[i], "dbtable", "table", "source"));
 		}
@@ -154,8 +156,8 @@ public class ETLParser {
 	/**
 	 * Get all the tables used by a specific RDBMS component type
 	 */
-	public Set<String> getRDBMSComponentTables(String componentType) {
-		return getComponentInformations(componentType, "dbtable", "table");
+	public Set<ETLComponent> getRDBMSComponentTables(String componentType) {
+		return getExtendedComponentInformations(componentType, "dbtable", "table");
 	}
 
 	/**
@@ -207,11 +209,11 @@ public class ETLParser {
 	}
 
 	/**
-	 * Get the values used by a specific Mixed component type for a specific field,name and role (target or source)
+	 * Get the values and the connection used by a specific component type for a specific field and name
 	 */
-	public Set<String> getMixedComponentInformations(String componentTypeName, String fieldValue, String nameValue, String role) {
+	public Set<ETLComponent> getExtendedComponentInformations(String componentTypeName, String fieldValue, String nameValue) {
 
-		Set<String> informations = new HashSet<String>();
+		Set<ETLComponent> informations = new HashSet<ETLComponent>();
 		NodeList nList = document.getElementsByTagName("node");
 
 		for (int i = 0; i < nList.getLength(); i++) {
@@ -221,6 +223,56 @@ public class ETLParser {
 				String currentNodeComponentName = nodeElement.getAttribute("componentName");
 				if (currentNodeComponentName.equals(componentTypeName)) {
 					// found searched component
+					ETLComponent etlComponent = new ETLComponent();
+					NodeList elementParameters = nodeElement.getElementsByTagName("elementParameter");
+					for (int j = 0; j < elementParameters.getLength(); j++) {
+						Node elementParameterNode = elementParameters.item(j);
+						if (elementParameterNode.getNodeType() == Node.ELEMENT_NODE) {
+							Element elementParameterNodeElement = (Element) elementParameterNode;
+							String elementParameterField = elementParameterNodeElement.getAttribute("field");
+							String elementParameterName = elementParameterNodeElement.getAttribute("name");
+							if (elementParameterField.equalsIgnoreCase(fieldValue) && elementParameterName.equalsIgnoreCase(nameValue)) {
+								// this elementParameter tag contains the name of a table/file
+								String value = elementParameterNodeElement.getAttribute("value").replaceAll("\"", "");
+								if (!value.isEmpty()) {
+									etlComponent.setValue(value);
+								}
+								informations.add(etlComponent);
+							} else if (elementParameterField.equalsIgnoreCase("COMPONENT_LIST") && elementParameterName.equalsIgnoreCase("CONNECTION")) {
+								String connectionComponentName = elementParameterNodeElement.getAttribute("value").replaceAll("\"", "");
+								if (!connectionComponentName.isEmpty()) {
+									etlComponent.setConnectionComponentName(connectionComponentName);
+								}
+								// informations.add(etlComponent);
+							}
+
+						}
+
+					}
+				}
+			}
+		}
+
+		return informations;
+
+	}
+
+	/**
+	 * Get the values used by a specific Mixed component type for a specific field,name and role (target or source)
+	 */
+	public Set<ETLComponent> getMixedComponentInformations(String componentTypeName, String fieldValue, String nameValue, String role) {
+
+		Set<ETLComponent> informations = new HashSet<ETLComponent>();
+		NodeList nList = document.getElementsByTagName("node");
+
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element nodeElement = (Element) node;
+				String currentNodeComponentName = nodeElement.getAttribute("componentName");
+				if (currentNodeComponentName.equals(componentTypeName)) {
+					// found searched component
+					ETLComponent etlComponent = new ETLComponent();
 					NodeList elementParameters = nodeElement.getElementsByTagName("elementParameter");
 					String information = null;
 					for (int j = 0; j < elementParameters.getLength(); j++) {
@@ -239,28 +291,32 @@ public class ETLParser {
 								// check the content of the query field
 								String queryText = elementParameterNodeElement.getAttribute("value");
 
-								// check if query text contains INSERT, UPDATE or DELETE
+								// check if query text contains INSERT, UPDATE, DELETE or MERGE
 								if (queryText.toLowerCase().contains("insert") || queryText.toLowerCase().contains("update")
-										|| queryText.toLowerCase().contains("delete")) {
+										|| queryText.toLowerCase().contains("delete") || queryText.toLowerCase().contains("merge")) {
 									// It's a TARGET
 									if (role.equalsIgnoreCase("target")) {
 										if (!information.isEmpty()) {
-											informations.add(information);
+											etlComponent.setValue(information);
+											informations.add(etlComponent);
 										}
 									}
-
-								} else if (queryText.toLowerCase().contains("truncate") || queryText.toLowerCase().contains("analyse")) {
-									// Cannot determine
-									// do nothing
 
 								} else if (queryText.toLowerCase().contains("select")) {
 									// if only contains SELECT, it' a SOURCE
 									if (role.equalsIgnoreCase("source")) {
 										if (!information.isEmpty()) {
-											informations.add(information);
+											etlComponent.setValue(information);
+											informations.add(etlComponent);
 										}
 									}
 								}
+							} else if (elementParameterField.equalsIgnoreCase("COMPONENT_LIST") && elementParameterName.equalsIgnoreCase("CONNECTION")) {
+								String connectionComponentName = elementParameterNodeElement.getAttribute("value").replaceAll("\"", "");
+								if (!connectionComponentName.isEmpty()) {
+									etlComponent.setConnectionComponentName(connectionComponentName);
+								}
+								// informations.add(etlComponent);
 							}
 
 						}
@@ -272,6 +328,23 @@ public class ETLParser {
 
 		return informations;
 
+	}
+
+	/**
+	 * Get the names of the contexts in the job
+	 */
+	public Set<String> getContextNames() {
+		Set<String> contextNames = new HashSet<String>();
+		NodeList nList = document.getElementsByTagName("context");
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element nodeElement = (Element) node;
+				String contextName = nodeElement.getAttribute("name");
+				contextNames.add(contextName);
+			}
+		}
+		return contextNames;
 	}
 
 	// -----------------------------------------------------------------
@@ -286,6 +359,19 @@ public class ETLParser {
 		System.out.println("-------------------------");
 		for (String content : contents) {
 			System.out.println(content);
+		}
+		System.out.println("");
+
+	}
+
+	/**
+	 * Print contents of a String Set to console
+	 */
+	public void printETLComponent(String label, Set<ETLComponent> contents) {
+		System.out.println(label + ":");
+		System.out.println("-------------------------");
+		for (ETLComponent content : contents) {
+			System.out.println(content.getValue() + " -> " + content.getConnectionComponentName());
 		}
 		System.out.println("");
 
