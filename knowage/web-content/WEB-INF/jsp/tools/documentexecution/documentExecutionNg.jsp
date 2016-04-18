@@ -196,10 +196,11 @@ try{
 		 										
 	</div>
 	
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="false">
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status">
 							
 		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
-			<div layout="row" layout-align="center center">						
+			<div layout="row" layout-align="center center">	
+			{{showParametersPanel.status}}--					
 				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 						ng-click="clearListParametersForm();">
 					<i class="fa fa-eraser" style="color:white"></i>

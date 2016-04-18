@@ -470,11 +470,14 @@
 		this.toggleParametersPanel = function(open) {
 			$timeout(function(){ 
 				if(open==undefined){
-					$mdSidenav('parametersPanelSideNav').toggle();
+					execProperties.showParametersPanel.status=!execProperties.showParametersPanel.status;
+//					$mdSidenav('parametersPanelSideNav').toggle();
 				}else if(open){
-					$mdSidenav('parametersPanelSideNav').open();
+					execProperties.showParametersPanel.status=true;
+//					$mdSidenav('parametersPanelSideNav').open();
 				}else if(!open){
-					$mdSidenav('parametersPanelSideNav').close();
+					execProperties.showParametersPanel.status=false;
+//					$mdSidenav('parametersPanelSideNav').close();
 				}
 			},0);
 			};
