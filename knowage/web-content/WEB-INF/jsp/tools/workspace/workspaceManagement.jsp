@@ -14,12 +14,11 @@
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 </head>
-<body ng-controller="workspaceController" class="workspace"> 
+<body ng-controller="workspaceController" class="workspace" id="workspaceWebPageBody"> 
 	
 	<main-toolbar-workspace></main-toolbar-workspace>
 	
 	<md-content layout="row">
-	
 	
 		<!-- 
 			Directive that will render the left main menu of the Workspace web page. 

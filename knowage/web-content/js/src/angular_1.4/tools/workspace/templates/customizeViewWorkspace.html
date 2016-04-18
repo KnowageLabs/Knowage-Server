@@ -1,6 +1,6 @@
 <md-content class="md-toolbar-tools">
 	
-	<div  class="md-toolbar-tools" layout="row" layout-align="center center">
+	<div class="md-toolbar-tools" layout="row" layout-align="center center">
 		
 		<!--  Search button -->
 		<md-button class="md-icon-button" ng-click="toggleSearchView()">
@@ -8,9 +8,9 @@
 		</md-button>
 		
 		<!-- Search input -->
-	    <md-input-container class="searchInput">
-			<label></label>
-			<input type="text">
+	    <md-input-container ng-show=true class="searchInput">
+			<label>{{translate.load("sbi.generic.search.title")}}</label>
+			<input type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
 		</md-input-container>
 		
 		<!-- Document view buttons -->		
