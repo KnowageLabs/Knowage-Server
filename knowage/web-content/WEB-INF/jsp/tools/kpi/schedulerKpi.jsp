@@ -60,8 +60,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
-<script type="text/ng-template" id="templatesaveKPI.html">
+<script type="text/ng-template" id="templatesaveKPIScheduler.html">
 <md-dialog aria-label="Select Function"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Save Scheduler</h1>
+        <span flex></span>
+         <md-button class="md-icon-button" ng-click="close()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content >
+     <div class="md-dialog-content">
+		<md-input-container class="small counter" class="small counter">
+			<label>Name</label>
+			<input class="input_class" ng-model="selectedScheduler.name" required maxlength="40" ng-maxlength="40" md-maxlength="40">
+		 </md-input-container>
+		<div class="footer">
+	<md-button class="dialogButton" ng-disabled="(selectedScheduler.name == undefined || (selectedScheduler.name.trim()).length == 0)" ng-click="apply()" ng-disable="selectedScheduler.name.length==0" md-autofocus>Apply <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
+	</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>
+</script>
+
+<script type="text/ng-template" id="templatesaveKPI.html">
+<md-dialog aria-label="Select2 Function"  ng-cloak>
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
@@ -91,8 +118,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-dialog>
 </script>
 
-
-
 </head>
 <body class="kn-schedulerKpi">
 	<angular-list-detail ng-controller="schedulerKpiController" full-screen=true >
@@ -106,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		speed-menu-option=engineMenuOptionList 
 		initial-sorting="'name'"> </angular-table>
 		</list>
-		<detail cancel-function="cancel">
+		<detail save-function="saveSc" cancel-function="cancel">
 		
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >

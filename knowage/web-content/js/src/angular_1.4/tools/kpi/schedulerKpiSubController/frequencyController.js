@@ -2,9 +2,7 @@ var app = angular.module('schedulerKpi');
 app.controller('frequencyController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIControllerFunction ]);
 
 function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
-	$scope.frequency = {type: 'scheduler'};
-	$scope.selectedWeek = [];
-
+	
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	$scope.translate = sbiModule_translate;
 	$scope.intervalsFrequency = {};
@@ -72,17 +70,29 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	};
 
 
-	$scope.toggleWeek = function (item, list) {
-		var index = $scope.indexInList(item, list);
-
-		if(index != -1){
-			$scope.selectedWeek.splice(index,1);
-		}else{
-			$scope.selectedWeek.push(item);
+	$scope.toggleWeek = function(week) {
+		if(week != undefined) {
+			var idx = $scope.selectedWeek.indexOf(week);
+	        if (idx > -1) {
+	        	$scope.selectedWeek.splice(idx, 1);
+	        } else {
+	        	$scope.selectedWeek.push(week);
+	        }
 		}
-
+	
+		$scope.selectedScheduler.crono = {
+    		"type": "week", 
+    		"parameter": {
+//    			"numRepetition": 1, 
+    			"days": []
+    		}
+        };
+        
+        for(var k in $scope.selectedWeek ) {
+        	$scope.selectedScheduler.crono.parameter.days.push($scope.selectedWeek[k]);
+        }
 	};
-
+	
 	$scope.exists = function (item, list) {
 		if(list==undefined)return false;
 		return  $scope.indexInList(item, list)>-1;
@@ -100,4 +110,117 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 		return -1;
 	};
+	
+	$scope.toggleMonthScheduler = function() {
+		$scope.selectedScheduler.crono = {
+			"type": "month", 
+			"parameter": {}
+		};
+		 
+		if($scope.typeMonth == true) {
+			$scope.selectedScheduler.crono.parameter.numRepetition = $scope.frequency.value.month_rep;
+		} else {
+			$scope.selectedScheduler.crono.parameter.months = [];
+			for(var k in $scope.frequency.value.month_repetition) {
+				$scope.selectedScheduler.crono.parameter.months.push($scope.frequency.value.month_repetition[k]);
+			}
+		}
+			
+		if($scope.typeMonthWeek == true) {
+			$scope.selectedScheduler.crono.parameter.dayRepetition = $scope.frequency.value.dayinmonthrep_week;
+		} else {
+			//var mwnr = $scope.frequency.value.month_week_number_repetition;
+			
+//			if($scope.mwnr == undefined) {
+//				$scope.mwnr = 'first';
+//			}
+//			
+			$scope.selectedScheduler.crono.parameter.days = [];
+			
+			$scope.selectedScheduler.crono.parameter.weeks = $scope.frequency.value.month_week_number_repetition;
+			
+			for(var k in $scope.frequency.value.month_week_repetition) {
+				$scope.selectedScheduler.crono.parameter.days.push($scope.frequency.value.month_week_repetition[k]);
+			}
+		}
+	};
+	
+	
+	$scope.changeTypeFrequency = function() {
+		$timeout(function() {
+			var tip = $scope.frequency.selectInterval;
+			
+			switch(tip) {
+				case 'event': 
+					$scope.selectedScheduler.crono = {
+						"type": "event", 
+						"parameter": {
+							"type": event_type
+						}
+					};
+								
+					if(event_type == 'dataset') {
+						$scope.selectedScheduler.crono.parameter.dataset = dataset;
+						$scope.selectedScheduler.crono.parameter.frequency = frequency;
+					}
+					
+					break;
+					
+				case 'single': 
+					$scope.selectedScheduler.crono = {
+						"type": "single"
+					}; 
+					
+					break;
+				case 'minute': 
+					$scope.selectedScheduler.crono = {
+						"type": "minute", 
+						"parameter": {
+							"numRepetition": $scope.frequency.value.minute
+						}
+					}; 
+					break;
+					
+				case 'hour': 
+					$scope.selectedScheduler.crono = {
+						"type": "hour", 
+						"parameter": {
+							"numRepetition": $scope.frequency.value.hour
+							}
+					}; 
+					break;
+					
+				case 'day': 
+					$scope.selectedScheduler.crono = {
+						"type": "day", 
+						"parameter": {
+							"numRepetition": $scope.frequency.value.day
+							}
+					};
+					break;
+					
+				case 'week': 
+					$scope.toggleWeek(); 
+					break;
+				case 'month': 
+					$scope.toggleMonthScheduler();
+					break;
+			}
+		}, 500);
+
+	};
+	
+	$scope.typeMonthEdit = function(){
+		if ($scope.typeMonth==undefined)
+			$scope.typeMonth!=true
+			else $scope.typeMonth=!$scope.typeMonth ;
+	}
+	
+	
+	$scope.typeMonthWeekEdit = function(){
+		if ($scope.typeMonthWeek==undefined)
+			$scope.typeMonthWeek!=true
+			else $scope.typeMonthWeek=!$scope.typeMonthWeek ;
+	}
+
 };

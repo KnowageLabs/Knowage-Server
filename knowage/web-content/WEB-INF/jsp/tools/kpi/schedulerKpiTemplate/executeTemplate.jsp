@@ -6,11 +6,9 @@
 			</div>
 		</md-toolbar>
 		
-			<md-radio-group ng-model="selectedScheduler.delta">
+			<md-radio-group ng-init="selectedScheduler.delta=(selectedScheduler.delta==undefined||selectedScheduler.delta=='') ? false : selectedScheduler.delta"  ng-model="selectedScheduler.delta" >
 				<md-radio-button ng-value="true">{{translate.load("sbi.kpiScheduler.insertAndUpdate")}}</md-radio-button>
 				<md-radio-button ng-value="false">{{translate.load("sbi.kpiScheduler.deleteAndInsert")}}</md-radio-button>
 			</md-radio-group>
-		
-		<div layout="row"><span flex></span><md-button>{{translate.load("sbi.kpiScheduler.execute")}}</md-button></div>
 	</md-whiteframe>
 </div>
