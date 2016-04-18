@@ -1,24 +1,25 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-  
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- 
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
-  
+
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engine.util;
 
 import static it.eng.spagobi.engine.util.ChartEngineUtil.ve;
 import it.eng.qbe.query.Query;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -97,8 +98,8 @@ public class ChartEngineDataUtil {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale)
-			throws Throwable {
+	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale,
+			String documentLabel, IEngUserProfile profile) throws Throwable {
 
 		String result = "";
 
@@ -141,16 +142,13 @@ public class ChartEngineDataUtil {
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**
-			 * We are sending additional information about the web application
-			 * from which we call the VM. This boolean will tell us if we are
-			 * coming from the Highcharts Export web application. The value of
-			 * "exportWebApp" input parameter contains this boolean. This
-			 * information is useful when we have drilldown, i.e. more than one
-			 * category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
+			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
+			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false);
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false, documentLabel, profile);
 
 			velocityContext.put("selectedCategory", selectedCategory);
 			velocityContext.put("drilldownSerie", drilldownSerie);
@@ -205,8 +203,7 @@ public class ChartEngineDataUtil {
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
 
 			/**
-			 * parallel chart needs possibility to work without aggregation
-			 * function
+			 * parallel chart needs possibility to work without aggregation function
 			 */
 			if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
 				serieFunction = "NONE";
@@ -217,17 +214,17 @@ public class ChartEngineDataUtil {
 
 				String orderTypeFinal = (serie.opt("orderType") != null) ? orderTypeFinal = serie.opt("orderType").toString().toUpperCase() : null;
 
-				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, orderTypeFinal, null,null);
+				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, orderTypeFinal, null, null);
 			}
 
 		}
-		
+
 		// Category
 		if (!isDrilldown) {
-			
+
 			JSONArray categories = new JSONArray();
 			JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONObject("CATEGORY");
-			
+
 			if (category != null) {
 				categories.put(category);
 			}
@@ -239,46 +236,44 @@ public class ChartEngineDataUtil {
 			}
 
 			for (int i = 0; i < categories.length(); i++) {
-				JSONObject cat = (JSONObject) categories.get(i);				
-				
+				JSONObject cat = (JSONObject) categories.get(i);
+
 				if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
-					
+
 					/**
-					 * The PARALLEL chart does not handle the feature of ordering the chart X-axis by the specific column (attribute), hence
-					 * we do not take 'orderType' and 'orderColumn' properties into count.
+					 * The PARALLEL chart does not handle the feature of ordering the chart X-axis by the specific column (attribute), hence we do not take
+					 * 'orderType' and 'orderColumn' properties into count.
+					 *
 					 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, "ASC", null, null);
-					
+
 				} else {
-					
+
 					/**
-					 * Taking into count the "order type" and "order by (column)" properties that are set for the first
-					 * category of the chart. 
-					 * 
-					 * NOTE: This possibility of setting the ordering column should be enabled and provided for all 
-					 * layers, not just on the first one.
-					 * 
+					 * Taking into count the "order type" and "order by (column)" properties that are set for the first category of the chart.
+					 *
+					 * NOTE: This possibility of setting the ordering column should be enabled and provided for all layers, not just on the first one.
+					 *
 					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, cat.getString("orderType"), null, cat.getString("orderColumn"));
-					
+					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, cat.getString("orderType"), null,
+							cat.getString("orderColumn"));
+
 				}
 			}
 		} else {
-			
+
 			/**
-			 * The ordering type of the subsequent category (all those that follow the first category) will be
-			 * fixed to ascending (ASC), since the current implementation does not cover ordering column and 
-			 * ordering type also for categories other than the first one.
-			 * 
-			 * NOTE: This possibility of setting the ordering column should be enabled and provided for all 
-			 * layers, not just on the first one.
-			 * 
+			 * The ordering type of the subsequent category (all those that follow the first category) will be fixed to ascending (ASC), since the current
+			 * implementation does not cover ordering column and ordering type also for categories other than the first one.
+			 *
+			 * NOTE: This possibility of setting the ordering column should be enabled and provided for all layers, not just on the first one.
+			 *
 			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "ASC", null,null);
-			
+			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "ASC", null, null);
+
 		}
 
 		// Where clause

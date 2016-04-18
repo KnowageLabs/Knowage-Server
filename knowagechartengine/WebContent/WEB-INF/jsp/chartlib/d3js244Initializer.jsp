@@ -106,6 +106,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function handleCrossNavigationTo(e,chartType){
 		if (!e.seriesOptions) {
 			if(chartType=="SUNBURST"){
+				if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+					var navData={
+	            			chartType:	"SUNBURST",
+	            			documentName:e.crossNavigationDocumentName,
+	            			documentParameters:e.crossNavigationDocumentParams,
+	            			stringParameters:  e.stringParameters
+	            	};     
+					window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+	            }else{
+				
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					    "SUNBURST",
 						e.crossNavigationDocumentName, 
@@ -118,6 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    null,
 					    e.stringParameters
 						);
+	            }
 			}else{
 			
 			var chart = this;
@@ -129,17 +140,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var groupingCategoryName=e.groupingCategoryName;
 			var groupingCategoryValue=e.groupingCategoryValue;
 			
-			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-					"D3CHART",
-					e.crossNavigationDocumentName, 
-					e.crossNavigationDocumentParams,
-					categoryName,
-					categoryValue,
-					serieName,
-					serieValue,
-					groupingCategoryName,
-					groupingCategoryValue
-					);
+			if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+				var navData={
+            			chartType:	"D3CHART",
+            			documentName:e.crossNavigationDocumentName,
+            			documentParameters:e.crossNavigationDocumentParams,
+            			CATEGORY_NAME :categoryName,
+            			CATEGORY_VALUE :categoryValue,
+            			SERIE_NAME :serieName,
+            			SERIE_VALUE :serieValue,
+            			groupingCategoryName:groupingCategoryName,
+            			groupingCategoryValue:groupingCategoryValue,
+            			stringParameters:null
+            	};     
+				window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+            }else{
+			
+				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+						"D3CHART",
+						e.crossNavigationDocumentName, 
+						e.crossNavigationDocumentParams,
+						categoryName,
+						categoryValue,
+						serieName,
+						serieValue,
+						groupingCategoryName,
+						groupingCategoryValue
+						);
+           	 }
 			}
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 			chart.hideLoading();

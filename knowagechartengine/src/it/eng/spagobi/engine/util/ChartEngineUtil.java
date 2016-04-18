@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engine.util;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -73,8 +77,8 @@ public class ChartEngineUtil {
 		ve.init();
 	}
 
-	public static String getLibraryInitializerPath(String jsonTemplateFromXML) {
-		String chartType = extractChartType(jsonTemplateFromXML);
+	public static String getLibraryInitializerPath(String jsonTemplateFromXML, String documentLabel, IEngUserProfile profile) {
+		String chartType = extractChartType(jsonTemplateFromXML, documentLabel, profile);
 		ChartConfig chartConfig = ChartEngineConfig.getChartLibConf().get(chartType);
 		return chartConfig == null ? null : chartConfig.getLibraryInitializerPath();
 	}
@@ -95,8 +99,8 @@ public class ChartEngineUtil {
 		return chartConfig.getVelocityModelPath();
 	}
 
-	private static String extractChartType(String jsonTemplate) {
-		return extractChartType(jsonTemplate, loadVelocityContext(jsonTemplate));
+	private static String extractChartType(String jsonTemplate, String documentLabel, IEngUserProfile profile) {
+		return extractChartType(jsonTemplate, loadVelocityContext(jsonTemplate, documentLabel, profile));
 	}
 
 	public static String extractChartType(String jsonTemplate, VelocityContext velocityContext) {
@@ -109,21 +113,18 @@ public class ChartEngineUtil {
 		return chartTypeString;
 	}
 
-	public static VelocityContext loadVelocityContext(String jsonToConvert) {
-		return loadVelocityContext(jsonToConvert, null, false);
+	public static VelocityContext loadVelocityContext(String jsonToConvert, String documentLabel, IEngUserProfile profile) {
+		return loadVelocityContext(jsonToConvert, null, false, documentLabel, profile);
 	}
 
 	/**
-	 * We are sending additional information about the web application from
-	 * which we call the VM. This boolean will tell us if we are coming from the
-	 * Highcharts Export web application. The value of "exportWebApp" input
-	 * parameter contains this boolean. This information is useful when we have
-	 * drilldown, i.e. more than one category for the Highcharts chart (BAR,
-	 * LINE).
+	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
+	 * than one category for the Highcharts chart (BAR, LINE).
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData, boolean exportWebApp) {
+	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData, boolean exportWebApp, String documentLabel, IEngUserProfile profile) {
 		VelocityContext velocityContext = new VelocityContext();
 
 		Map<String, Object> mapTemplate = null;
@@ -141,19 +142,24 @@ public class ChartEngineUtil {
 				velocityContext.put("data", mapData);
 			}
 
+			ICrossNavigationDAO crossDao = DAOFactory.getCrossNavigationDAO();
+			crossDao.setUserProfile(profile);
+			if (crossDao.documentIsCrossable(documentLabel)) {
+				velocityContext.internalPut("crossNavigation", true);
+			} else {
+				velocityContext.internalPut("crossNavigation", "");
+			}
+
 			/**
-			 * We are sending additional information about the web application
-			 * from which we call the VM. This boolean will tell us if we are
-			 * coming from the Highcharts Export web application. The value of
-			 * "exportWebApp" input parameter contains this boolean. This
-			 * information is useful when we have drilldown, i.e. more than one
-			 * category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
+			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
+			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			velocityContext.put("exportWebApp", exportWebApp);
 
-		} catch (IOException e) {
+		} catch (IOException | EMFUserError e) {
 			logger.error("Error in template to be converted: " + jsonToConvert, e);
 		}
 		return velocityContext;
@@ -355,8 +361,7 @@ public class ChartEngineUtil {
 	}
 
 	/**
-	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal
-	 * digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
+	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
 	 *
 	 * @param colorStr
 	 * @param opacity

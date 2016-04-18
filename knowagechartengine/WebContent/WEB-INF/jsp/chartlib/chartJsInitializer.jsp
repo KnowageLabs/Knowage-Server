@@ -293,12 +293,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				groupingCategoryValue = e.point.group.value;
 			}
 
-			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+			  if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+	            	var navData={
+	            			chartType:	"CHARTJS",
+	            			documentName:e.point.crossNavigationDocumentName,
+	            			documentParameters:e.point.crossNavigationDocumentParams,
+	            			CATEGORY_NAME :categoryName,
+	            			CATEGORY_VALUE :categoryValue,
+	            			SERIE_NAME :serieName,
+	            			SERIE_VALUE :serieValue,
+	            			groupingCategoryName:groupingCategoryName,
+	            			groupingCategoryValue:groupingCategoryValue,
+	            			stringParameters:null
+	            	};
+//	             	window.parent.angular.element(window.frameElement).scope().$parent.crossNavigationHelper.navigateTo(navData); 
+	            	window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+	            }else{
+				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName,
 					e.point.crossNavigationDocumentParams, categoryName,
 					categoryValue, serieName, serieValue, groupingCategoryName,
 					groupingCategoryValue);
-
+	            }
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
 					.getChartWebServiceManager();
 			chart.hideLoading();

@@ -49,7 +49,9 @@ function scorecardListControllerFunction($scope,sbiModule_translate,sbiModule_re
 
 $scope.scorecardColumnsList=[
 	                             {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
-	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"creationDate",transformer:function(data){return $filter('date')(data, "dd/MM/yyyy")}},
+	                             {label:sbiModule_translate.load("sbi.generic.creationdate"),name:"creationDate",transformer:function(data){
+	                            	 return $filter('date')(data, "dd/MM/yyyy")
+	                            	 }},
 	                             {label:sbiModule_translate.load("sbi.generic.author"),name:"author"}];
 	
 	

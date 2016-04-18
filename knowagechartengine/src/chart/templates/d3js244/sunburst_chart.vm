@@ -37,8 +37,8 @@
 #set($serieName = $chart.VALUES.SERIE.name)
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
+## #set($crossNavigation = '')
+## #set($crossNavigation = $chart.DRILL)
 
 {
 	chart: 

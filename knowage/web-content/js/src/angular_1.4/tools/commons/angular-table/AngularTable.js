@@ -134,8 +134,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.name = col[i];
                                                     tmpColData.size = "";
                                                     tmpColData.editable = scope.allowEdit || false;
-                                                    tmpColData.comparatorFunction=col[i].comparatorFunction;
-                                                    tmpColData.transformer=col[i].transformer;
+//                                                    tmpColData.comparatorFunction=col[i].comparatorFunction;
+//                                                    tmpColData.transformer=col[i].transformer;
                                                 }
 
                                                 scope.tableColumns.push(tmpColData);

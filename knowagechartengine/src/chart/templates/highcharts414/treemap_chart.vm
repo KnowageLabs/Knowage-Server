@@ -44,8 +44,8 @@
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction))
 
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)	
+## #set($crossNavigation = '')
+## #set($crossNavigation = $chart.DRILL)	
 
 {
  	chart: 

@@ -107,16 +107,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if
 	 *         the request role is not owned by the requesting user] }
+	 * @throws JSONException
+	 * @throws IOException
 	 * @throws EMFInternalError
 	 */
-	@GET
+	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentExecutionURL(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("modality") String modality,
-			@QueryParam("displayToolbar") String displayToolbar, @QueryParam("parameters") String jsonParameters, @QueryParam("snapshotId") String snapshotId,
-			@QueryParam("subObjectID") String subObjectID, @Context HttpServletRequest req, @QueryParam("SBI_EXECUTION_ID") String sbiExecutionId) {
+	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		logger.debug("IN");
+		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+		String label = requestVal.getString("label");
+		String role = requestVal.getString("role");
+		String modality = requestVal.optString("modality");
+		String displayToolbar = requestVal.optString("displayToolbar");
+		String snapshotId = requestVal.optString("snapshotId");
+		String subObjectID = requestVal.optString("subObjectID");
+		String sbiExecutionId = requestVal.optString("SBI_EXECUTION_ID");
+		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
+
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List errorList = new ArrayList<>();
 		MessageBuilder m = new MessageBuilder();
@@ -143,13 +153,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					executingRole, modality, jsonParameters, locale);
 			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url);
-			resultAsMap.put("errors", errorList);
+			if (!errorList.isEmpty()) {
+				resultAsMap.put("errors", errorList);
+			}
 
 		} catch (DocumentExecutionException e) {
-			errorList.add(e);
-			resultAsMap.put("documentError", errorList);
-			resultAsMap.put("url", "");
-			resultAsMap.put("parameters", "");
+			logger.error("Error while getting the document execution url", e);
+			JSONObject err = new JSONObject();
+			err.put("message", e.getMessage());
+			err.put("type", "missingRole");
+			JSONArray arrerr = new JSONArray();
+			arrerr.put(err);
+			JSONObject toRet = new JSONObject();
+			toRet.put("errors", arrerr);
+			return Response.ok(toRet.toString()).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution url", e);
 			throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
@@ -162,17 +179,22 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
 	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }],
-	 * 
+	 *
 	 *         errors: [ 'role missing', 'operation not allowed' ] }
 	 * @throws EMFUserError
+	 * @throws JSONException
+	 * @throws IOException
 	 */
-	@GET
+	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentExecutionFilters(@QueryParam("label") String label, @QueryParam("role") String role,
-			@QueryParam("parameters") String jsonParameters, @Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError {
+	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
 		logger.debug("IN");
+		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+		String label = requestVal.getString("label");
+		String role = requestVal.getString("role");
+		JSONObject jsonParameters = requestVal.getJSONObject("parameters");
 
 		String toBeReturned = "{}";
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
@@ -209,6 +231,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
+
+			// load, if present, the json parameters
+			if (jsonParameters.has(objParameter.getId())) {
+				parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
+			}
+
 			parametersArrayList.add(parameterAsMap);
 		}
 		if (parameters.size() > 0) {
@@ -217,7 +245,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 		}
 
-		resultAsMap.put("errors", new ArrayList<>());
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
@@ -322,7 +349,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT")
-	 * 
+	 *
 	 * @param id
 	 *            of document
 	 * @param id

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,12 +45,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/crossNavigation")
 @ManageAuthorization
@@ -66,7 +67,7 @@ public class CrossNavigationService {
 		ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		dao.setUserProfile(profile);
-		Object ret = dao.test();
+		// Object ret = dao.test();
 		return Response.ok().build();
 	}
 
@@ -157,4 +158,21 @@ public class CrossNavigationService {
 		}
 		return Response.ok().build();
 	}
+
+	@GET
+	@Path("/{label}/loadCrossNavigationByDocument")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	public Response loadCrossNavigationData(@PathParam("label") String label, @Context HttpServletRequest req) {
+		try {
+			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+			JSONArray nd = dao.loadNavigationByDocument(label);
+			return Response.ok(nd.toString()).build();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
 }

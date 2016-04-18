@@ -115,7 +115,7 @@ function geoMapMenuControllerFunction(
 	}
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
-		var isCrossNavigationInTemplate = (geoModule_template.crossnav !== undefined);
+		var isCrossNavigationInTemplate = (geoModule_template.crossNavigation == true);
 
 		var isCrossRadioButtonOptionDisabled = (isCross && !isCrossNavigationInTemplate);
 

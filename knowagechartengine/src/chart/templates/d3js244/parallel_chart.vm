@@ -123,8 +123,8 @@
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded, $groupingFunction))
 
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
+## #set($crossNavigation = '')
+## #set($crossNavigation = $chart.DRILL)
 
 #set($tooltipColumn='')
 

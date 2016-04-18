@@ -50,8 +50,8 @@
 #set($sizeCriteria = $chart.sizeCriteria)
 #set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction))
 
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
+## #set($crossNavigation = '')
+## #set($crossNavigation = $chart.DRILL)
 
 {
  	chart: 

@@ -322,13 +322,31 @@
 			}
 			
             // fisrt parameter is string chart type 
+             
+            if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+            	var navData={
+            			chartType:	"HIGHCHART",
+            			documentName:e.point.crossNavigationDocumentName,
+            			documentParameters:e.point.crossNavigationDocumentParams,
+            			CATEGORY_NAME :categoryName,
+            			CATEGORY_VALUE :categoryValue,
+            			SERIE_NAME :serieName,
+            			SERIE_VALUE :serieValue,
+            			groupingCategoryName:groupingCategoryName,
+            			groupingCategoryValue:groupingCategoryValue,
+            			stringParameters:null
+            	}; 
+            	window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+            }else{
+            	Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+    					"HIGHCHART",
+    					e.point.crossNavigationDocumentName,
+    					e.point.crossNavigationDocumentParams, categoryName,
+    					categoryValue, serieName, serieValue, groupingCategoryName,
+    					groupingCategoryValue, null);	
+            }
             
-			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-					"HIGHCHART",
-					e.point.crossNavigationDocumentName,
-					e.point.crossNavigationDocumentParams, categoryName,
-					categoryValue, serieName, serieValue, groupingCategoryName,
-					groupingCategoryValue, null);
+			
 
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
 					.getChartWebServiceManager();

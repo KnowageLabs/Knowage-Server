@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
@@ -31,14 +36,20 @@ import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -229,16 +240,110 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	}
 
 	@Override
-	public Object test(Object... objects) {
-		return list(new ICriterion<SbiCrossNavigationPar>() {
-			@Override
-			public Criteria evaluate(Session session) {
+	public JSONArray loadNavigationByDocument(final String label) {
 
-				return null;
+		return executeOnTransaction(new IExecuteOnTransaction<JSONArray>() {
+			@Override
+			public JSONArray execute(Session session) throws JSONException, EMFUserError {
+				JSONArray ret = new JSONArray();
+				// JSONArray inputParametersList = new JSONArray();
+				// JSONArray outputParametersList = new JSONArray();
+
+				Map<Integer, String> documentIOParams = new HashMap<Integer, String>();
+
+				List<Integer> inputId = new ArrayList<>();
+				List<Integer> outputId = new ArrayList<>();
+
+				BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+				if (document == null) {
+					throw new RuntimeException("Impossible to get document [" + label + "] from SpagoBI Server");
+				}
+
+				// load Input Parameter
+				List objParams = document.getBiObjectParameters();
+				for (Iterator iterator = objParams.iterator(); iterator.hasNext();) {
+					JSONObject paramJSON = new JSONObject();
+					BIObjectParameter param = (BIObjectParameter) iterator.next();
+					// paramJSON.put("label", param.getLabel());
+					// paramJSON.put("url", param.getParameterUrlName());
+					// inputParametersList.put(paramJSON);
+					inputId.add(param.getId());
+					documentIOParams.put(param.getId(), param.getLabel());
+				}
+
+				// Load Output Parameter
+
+				List<OutputParameter> lst = document.getOutputParameters();
+				for (OutputParameter upitem : lst) {
+					// inputParametersList.put(JsonConverter.objectToJson(upitem, upitem.getClass()));
+					outputId.add(upitem.getId());
+					documentIOParams.put(upitem.getId(), upitem.getName());
+				}
+
+				// if (!inputId.isEmpty() || !outputId.isEmpty()) {
+				// load cross navigation item
+				Disjunction disj = Restrictions.disjunction();
+				if (!inputId.isEmpty()) {
+					disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 1)).add(Restrictions.in("fromKeyId", inputId)));
+				}
+				if (!outputId.isEmpty()) {
+					disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 0)).add(Restrictions.in("fromKeyId", outputId)));
+				}
+				disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 2)).add(Restrictions.eq("fromKeyId", document.getId())));
+
+				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disj);
+
+				List<SbiCrossNavigationPar> scn = crit.list();
+
+				// from cross navigation item get the document whith input params like cross navigation toKeyId value in imput params
+				Map<Integer, JSONObject> mappa = new HashMap<Integer, JSONObject>();
+				for (SbiCrossNavigationPar cnItem : scn) {
+					SbiObjects obj = cnItem.getToKey().getSbiObject();
+					if (!mappa.containsKey(obj.getBiobjId())) {
+						JSONObject tmpJO = new JSONObject();
+						BIObject bio = DAOFactory.getBIObjectDAO().toBIObject(obj, session);
+						tmpJO.put("document", new JSONObject(JsonConverter.objectToJson(bio, bio.getClass())));
+						tmpJO.put("documentId", obj.getBiobjId());
+						tmpJO.put("navigationParams", new JSONObject());
+
+						mappa.put(obj.getBiobjId(), tmpJO);
+					}
+
+					JSONObject jo = mappa.get(obj.getBiobjId());
+					JSONObject fromItem = new JSONObject();
+
+					if (documentIOParams.get(cnItem.getFromKeyId()) == null) {
+						fromItem.put("value", cnItem.getFixedValue());
+						fromItem.put("fixed", true);
+					} else {
+						fromItem.put("value", documentIOParams.get(cnItem.getFromKeyId()));
+						fromItem.put("fixed", false);
+					}
+
+					jo.getJSONObject("navigationParams").put(cnItem.getToKey().getParurlNm(), fromItem);
+
+				}
+
+				Iterator it = mappa.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+					ret.put(pair.getValue());
+				}
+
+				// }
+				return ret;
 			}
 		});
 	}
+	
 
+	@Override
+	public boolean documentIsCrossable(String docLabel) {
+		JSONArray ja = loadNavigationByDocument(docLabel);
+		return ja.length() > 0;
+
+	}
+	
 	private SbiCrossNavigationPar from(SimpleParameter sp, SbiCrossNavigation cn) {
 		SbiCrossNavigationPar cnp = new SbiCrossNavigationPar();
 		SimpleParameter linkedParam = sp.getLinks().get(0);

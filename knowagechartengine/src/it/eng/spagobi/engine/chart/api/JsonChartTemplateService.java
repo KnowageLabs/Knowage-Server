@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -53,19 +53,15 @@ import org.json.JSONObject;
 public class JsonChartTemplateService extends AbstractChartEngineResource {
 
 	/**
-	 * We are sending additional information about the web application from
-	 * which we call the VM. This boolean will tell us if we are coming from the
-	 * Highcharts Export web application. The value of "exportWebApp" input
-	 * parameter contains this boolean. This information is useful when we have
-	 * drilldown, i.e. more than one category for the Highcharts chart (BAR,
-	 * LINE).
+	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
+	 * than one category for the Highcharts chart (BAR, LINE).
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 *
 	 * @param jsonTemplate
 	 * @param exportWebApp
-	 *            Needed for the VM, since for Export web application we do not
-	 *            need some properties in it (the VM)
+	 *            Needed for the VM, since for Export web application we do not need some properties in it (the VM)
 	 *
 	 * @param driverParams
 	 * @param jsonData
@@ -85,10 +81,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			IDataSet dataSet = engineInstance.getDataSet();
 
 			/*
-			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset
-			 * is null and we have datasetlabel valorized, probabily we are
-			 * calling this REST service from the cockpit. So, we need to get
-			 * the dataset from his label
+			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset is null and we have datasetlabel valorized, probabily we are calling this REST
+			 * service from the cockpit. So, we need to get the dataset from his label
 			 */
 			if (dataSet == null && datasetLabel != null) {
 				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -105,11 +99,13 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 			}
 
-			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp));
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
+					engineInstance.getDocumentLabel(), getEngineInstance().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
+
 			return jsonChartTemplate;
 
 		} catch (Throwable t) {
@@ -143,7 +139,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			IDataSet dataSet = getEngineInstance().getDataSet();
 			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
-			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale());
+			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(), getEngineInstance()
+					.getDocumentLabel(), getEngineInstance().getUserProfile());
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);

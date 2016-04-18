@@ -95,7 +95,7 @@
 				    }
 				}   
 			
-			 return JSON.stringify(prm);
+			 return prm;
 		};
 		
 		

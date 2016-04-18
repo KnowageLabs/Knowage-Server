@@ -70,10 +70,23 @@
 	  	<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl"/>
 	  	
 	  	<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl"/>
+	  	<DAO name="ProductTypeDAO" implementation="it.eng.spagobi.commons.dao.ProductTypeDAOHibImpl" />
+	  	<DAO name="GlossaryDAO" implementation="it.eng.spagobi.tools.glossary.dao.GlossaryDAOImpl"/>
+	  	<DAO name="TimespanDAO" implementation="it.eng.spagobi.tools.timespan.dao.TimespanDAOImpl" />
+	  	
+	  	<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl"/>
+		
+		<DAO name="FederationDefinitionDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl" />
+
+        <DAO name="BIObjDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl" />
+        
 	  	<DAO name="IFeaturesProviderWFSDAO" implementation="it.eng.spagobi.georeport.dao.FeaturesProviderDAOWFSImpl" />
         
         <DAO name="IFeaturesProviderFileDAO" implementation="it.eng.spagobi.georeport.dao.FeaturesProviderDAOFileImpl" />
 
+		<DAO name="CrossNavigationDAO" implementation="it.eng.spagobi.tools.crossnavigation.dao.CrossNavigationDAOImpl" />
+		<DAO name="OutputParameterDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.OutputParameterDAOImpl"/>
+	
 	 </DAO-CONF>     
      
      <!-- ********************* END DAO CONFIGURATION ************************ -->

@@ -18,7 +18,7 @@
 		return obj;
 	});
 
-	documentExecutionApp.factory('$documentNavigationScope', function($window) {
-		  return $window.parent.angular.element($window.frameElement).scope().$parent;
+	documentExecutionApp.factory('$crossNavigationScope', function($window) {
+		   return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
 	});
 })();

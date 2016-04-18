@@ -174,23 +174,17 @@ public class DocumentExecutionUtils {
 	}
 
 	public static String handleNormalExecutionUrl(UserProfile profile, BIObject obj, HttpServletRequest req, String env, String role, String modality,
-			String parametersJson, Locale locale) { // isFromCross,
+			JSONObject parametersJson, Locale locale) { // isFromCross,
 
 		HashMap<String, String> logParam = new HashMap<String, String>();
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
-		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
+		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
 		String url = "";
 		try {
-			JSONObject executionInstanceJSON = null;
-			try {
-				executionInstanceJSON = new JSONObject(parametersJson);
-			} catch (JSONException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			documentUrlManager.refreshParametersValues(executionInstanceJSON, false, obj);
+
+			documentUrlManager.refreshParametersValues(parametersJson, false, obj);
 
 			// URL
 			// there are no errors, we can proceed, so calculate the execution url and send it back to the client
@@ -211,12 +205,12 @@ public class DocumentExecutionUtils {
 	}
 
 	public static List handleNormalExecutionError(UserProfile profile, BIObject obj, HttpServletRequest req, String env, String role, String modality,
-			String parametersJson, Locale locale) { // isFromCross,
+			JSONObject parametersJson, Locale locale) { // isFromCross,
 
 		HashMap<String, String> logParam = new HashMap<String, String>();
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
-		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
+		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		DocumentUrlManager documentUrlManager = new DocumentUrlManager(profile, locale);
 		List errors = null;
 		try {
@@ -333,20 +327,21 @@ public class DocumentExecutionUtils {
 
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
+				if (item.length() > 0) {
+					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+					itemAsMap.put("value", item.get("value"));
+					itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
+					if (item.has("id")) {
+						itemAsMap.put("id", item.get("id"));
+					}
+					if (item.has("leaf")) {
+						itemAsMap.put("leaf", item.get("leaf"));
+					}
+					itemAsMap.put("description", item.get("description"));
+					itemAsMap.put("isEnabled", true);
 
-				HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
-				itemAsMap.put("value", item.get("value"));
-				itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
-				if (item.has("id")) {
-					itemAsMap.put("id", item.get("id"));
+					defaultValues.add(itemAsMap);
 				}
-				if (item.has("leaf")) {
-					itemAsMap.put("leaf", item.get("leaf"));
-				}
-				itemAsMap.put("description", item.get("description"));
-				itemAsMap.put("isEnabled", true);
-
-				defaultValues.add(itemAsMap);
 			}
 
 			return defaultValues;

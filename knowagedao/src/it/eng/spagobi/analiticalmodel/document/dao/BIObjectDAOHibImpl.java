@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
@@ -55,6 +56,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
@@ -312,6 +314,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
+			he.printStackTrace();
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -1220,6 +1223,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aBIObject.setBiObjectParameters(businessObjectParameters);
 		}
 
+		List businessObjectOutputParameters = new ArrayList();
+		Set hibObjOutPars = hibBIObject.getSbiOutputParameters();
+		if (hibObjOutPars != null) {
+			for (Iterator it = hibObjOutPars.iterator(); it.hasNext();) {
+				SbiOutputParameter aSbiOutPar = (SbiOutputParameter) it.next();
+				OutputParameter opar = toOutputParameter(aSbiOutPar);
+				businessObjectOutputParameters.add(opar);
+			}
+			aBIObject.setOutputParameters(businessObjectOutputParameters);
+		}
+
 		aBIObject.setCreationDate(hibBIObject.getCreationDate());
 		aBIObject.setCreationUser(hibBIObject.getCreationUser());
 
@@ -1290,6 +1304,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		parameter.setId(hiObjPar.getSbiParameter().getParId());
 		aBIObjectParameter.setParameter(parameter);
 		return aBIObjectParameter;
+	}
+
+	public OutputParameter toOutputParameter(SbiOutputParameter hiObjPar) {
+		OutputParameter outp = new OutputParameter();
+		outp.setId(hiObjPar.getId());
+		outp.setName(hiObjPar.getLabel());
+		outp.setTypeId(hiObjPar.getParameterTypeId());
+		outp.setTypeLbl(hiObjPar.getParameterType().getValueCd());
+		outp.setBiObjectId(hiObjPar.getBiobjId());
+
+		return outp;
 	}
 
 	/*

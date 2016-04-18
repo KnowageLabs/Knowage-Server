@@ -126,6 +126,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 			+ '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER'
 			+ '&OBJECT_ID=' + document.id
 			+ '&OBJECT_LABEL=' + document.label
+			+ '&IS_SOURCE_DOCUMENT=true'
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + document.name

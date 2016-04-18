@@ -527,7 +527,7 @@ geoM.service(
 					layerServ.overlay.setPosition(undefined); // hides
 					// eventual messages present on the map
 
-					var multiSelect = geoModule_template.crossnav && geoModule_template.crossnav.multiSelect ? geoModule_template.crossnav.multiSelect : null;
+					var multiSelect = geoModule_template.crossNavigation  && geoModule_template.crossNavigationMultiselect ? geoModule_template.crossNavigationMultiselect : null;
 					switch (multiSelect) {
 					case (multiSelect !== undefined && true):
 						/*

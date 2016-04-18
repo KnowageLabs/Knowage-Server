@@ -40,8 +40,8 @@
 	#set($columnsNeeded[$columnCounter] = $value.column)
 	#set($columnCounter = $columnCounter + 1)
 #end
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
+## #set($crossNavigation = '')
+## #set($crossNavigation = $chart.DRILL)
 
 {
 	chart:

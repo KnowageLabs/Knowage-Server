@@ -53,17 +53,30 @@ try{
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
+	
+	<!-- 	breadCrumb -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+	
+	<!-- cross navigation -->
+	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cross-navigation/crossNavigationDirective.js")%>"></script>
+	
+
 </head>
 
-<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row">
+<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
 	<div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
 		<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
                 <span>&nbsp;&nbsp;</span>
-                <h2 class="md-flex">
-                	{{::translate.load("sbi.generic.document")}}: <%= request.getParameter("OBJECT_NAME") %>
+                <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
+                	{{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_LABEL}}
                 </h2>
+                <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
+				<cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
+ 				</cross-navigation>
+	
                 <span flex=""></span>
                 
                 <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
@@ -183,9 +196,8 @@ try{
 		 										
 	</div>
 	
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column"
-			ng-class="{'md-locked-open': showParametersPanel.status}" md-is-locked-open="$mdMedia('gt-md')">
-								
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="false">
+							
 		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
 			<div layout="row" layout-align="center center">						
 				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
@@ -206,7 +218,7 @@ try{
 		<md-content ng-show="showSelectRoles" ng-cloak>
 			<md-input-container class="small counter" flex>
 				<label>{{::translate.load("sbi.users.roles")}}</label>
-				<md-select aria-label="aria-label" ng-model="selectedRole.name" >
+				<md-select aria-label="aria-label" ng-model="selectedRole.name" ng-disabled="::crossNavigationScope.isNavigationInProgress()" >
 					<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
 						{{::role|uppercase}}
 					</md-option>
@@ -232,7 +244,7 @@ try{
 		</md-content>
 		
 		<!-- execute button -->
-		<md-button class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"
+		<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"
 				title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
 				ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
 			{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
@@ -244,26 +256,31 @@ try{
 	(function() {
 		
 		angular.module('documentExecutionModule', 
-				['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list']);
+				['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
-			var obj = {
+			 
+			var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
+			var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
+			
+			 var obj = {
 				roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
 				executionInstance: {
-					'OBJECT_ID' : '<%= request.getParameter("OBJECT_ID") %>', 
+					'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>, 
 					'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
 					'isFromCross' : false, 
 					'isPossibleToComeBackToRolePage' : false,
-					'SBI_EXECUTION_ID' : ''
+					'SBI_EXECUTION_ID' : '',
+					'CROSS_PARAMETER' : crossParams
 				},
 				parametersData: {
 					documentParameters: []
 				},
-				selectedRole : {name : ""},
+				selectedRole : {name : selRole },
  				currentView :  {status : "DOCUMENT"},
  				parameterView : {status : ""},
  				isParameterRolePanelDisabled : {status : false},
- 				showParametersPanel : {status : true}
+ 				showParametersPanel : {status : false}
  				
 			};
 			return obj;

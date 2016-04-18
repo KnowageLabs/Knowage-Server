@@ -142,6 +142,12 @@
    </key>
    <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"/>
   </set>
+  <set name="sbiOutputParameters" lazy="true">
+   <key>
+    <column name="biobj_id" not-null="false"/>
+   </key>
+   <one-to-many class="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter"/>
+  </set>
   <set fetch="join" inverse="true" name="sbiObjFuncs" sort="unsorted">
    <key>
     <column name="biobj_id" not-null="true"/>

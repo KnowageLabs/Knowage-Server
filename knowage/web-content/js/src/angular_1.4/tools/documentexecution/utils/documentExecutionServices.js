@@ -292,7 +292,7 @@
 	
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config
-			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories
+			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q
 			) {
 		
 		var serviceScope = this;	
@@ -302,51 +302,36 @@
 	
 		
 		
-		serviceScope.executionProcesRestV1 = function(role, paramsStr) {			
+		serviceScope.executionProcesRestV1 = function(role, params) {			
+			 params= typeof params === 'undefined' ? {} : params;
 			
-			if(typeof paramsStr === 'undefined') {
-				paramsStr='{}';
-			}
-			var params = 
-				"label=" + execProperties.executionInstance.OBJECT_LABEL
-				+ "&role=" + role
-				+ "&parameters=" + paramsStr
-				+ "&SBI_EXECUTION_ID=" + execProperties.executionInstance.SBI_EXECUTION_ID;				
+			var dataPost = {
+					label: execProperties.executionInstance.OBJECT_LABEL,
+					role:role,
+					SBI_EXECUTION_ID:execProperties.executionInstance.SBI_EXECUTION_ID,
+					parameters: params
+			}; 		
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
-			sbiModule_restServices.get("1.0/documentexecution", 'url',params).success(
-				function(data, status, headers, config) {					
-					if(data['documentError'] && data['documentError'].length > 0 ) {
-						//sbiModule_messaging.showErrorMessage(data['documentError'][0].message, 'Error');
-						var alertDialog = $mdDialog.alert()
-						.title(sbiModule_translate.load("sbi.generic.warning"))
-						.content(data['documentError'][0].message).ok(sbiModule_translate.load("sbi.general.ok"));						
-						$mdDialog.show( alertDialog );
-						serviceScope.frameLoaded = true;
-					}else{
-						if(data['errors'].length > 0 ) {
-							var strErros='';
-							for(var i = 0; i<=data['errors'].length-1;i++) {
-								strErros = strErros + data['errors'][i].description + '. \n';
-							}
-							//sbiModule_messaging.showErrorMessage(strErros, 'Error');
-							var alertDialog = $mdDialog.alert()
-							.title(sbiModule_translate.load("sbi.generic.warning"))
-							.content(strErros).ok(sbiModule_translate.load("sbi.general.ok"));
-							$mdDialog.show( alertDialog );
-							serviceScope.frameLoaded = true;
-						}else{
-							serviceScope.documentUrl = data.url+'&timereloadurl=' + new Date().getTime();
-							
-						}	
-					}	
+			sbiModule_restServices.promisePost("1.0/documentexecution", 'url',dataPost)
+			.then(
+				function(response, status, headers, config) {					
+					 var data=response.data;
+					serviceScope.documentUrl = data.url+'&timereloadurl=' + new Date().getTime();
+					
 					//SETTING URL SBI EXECUTION ID
 					if(data['sbiExecutionId'] && data['sbiExecutionId'].length>0){
-						execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId'];
-						console.log('sbiExecutionId ... ' + data['sbiExecutionId']);
+						execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId']; 
 					}
 					//execProperties.currentView.status = 'DOCUMENT';
-				}).error(function(data, status, headers, config) {
-					console.log("TargetLayer non Ottenuto " + status);
+				},
+				function(response, status, headers, config) {
+					sbiModule_restServices.errorHandler(response.data,"Error while attempt to load filters")
+					.then(function(){
+						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
+							docExecute_paramRolePanelService.toggleParametersPanel(true);
+						}
+					});  
+					serviceScope.frameLoaded = true; 
 				});
 		};
 		
@@ -362,46 +347,48 @@
 			.success(function(data, status, headers, config) {	
 				console.log('data viewpoints '  ,  data.viewpoints);
 				serviceScope.gvpCtrlViewpoints = data.viewpoints;
-				execProperties.showParametersPanel.status = false;
+//				execProperties.showParametersPanel.status = false;
 				if($mdSidenav('parametersPanelSideNav').isOpen()) {
-					$mdSidenav('parametersPanelSideNav').close();
+					docExecute_paramRolePanelService.toggleParametersPanel(false);
 				}
 			})
 			.error(function(data, status, headers, config) {});																	
 		};
 		
 		
-		
-		serviceScope.getParametersForExecution = function(role, buildCorrelation) {		
-			var params = 
-				"label=" + execProperties.executionInstance.OBJECT_LABEL
-				+ "&role=" + role;
-			sbiModule_restServices.get("1.0/documentexecution", "filters", params)
-			.success(function(response, status, headers, config) {
+	
+		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
+		 
+			var params = {
+					label:execProperties.executionInstance.OBJECT_LABEL,
+					role:role,
+					parameters:crossParameters
+				};
+			 
+			sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
+			.then(function(response, status, headers, config) {
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
-				if(response && response.filterStatus && response.filterStatus.length>0) {
+				if( response.data.filterStatus && response.data.filterStatus.length>0) {
 										
-					execProperties.showParametersPanel.status = true;
-					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
-						$mdSidenav('parametersPanelSideNav').open();
-					}
+//					execProperties.showParametersPanel.status = true;
+//					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
+//						$mdSidenav('parametersPanelSideNav').open();
+//					}
 					//build documentParameters
-					angular.copy(response.filterStatus, execProperties.parametersData.documentParameters);
+					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
-					execProperties.showParametersPanel.status = false;
-					if($mdSidenav('parametersPanelSideNav').isOpen()) {
-						$mdSidenav('parametersPanelSideNav').close();
-					}
-				}
+//					execProperties.showParametersPanel.status = false;
+//						$mdSidenav('parametersPanelSideNav').close();
+						docExecute_paramRolePanelService.toggleParametersPanel(false);
 					
-			})
-			.error(function(response, status, headers, config) {
-				console.log('getParametersForExecution response ERROR -> ', response);
-				sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-			});
+				} 
+					
+			},function(response, status, headers, config) {
+				sbiModule_restServices.errorHandler(response.data,"error while attempt to load filters")   
+			}); 
 		};
 		
 		serviceScope.createNewViewpoint = function() {
@@ -453,7 +440,7 @@
 		};
 	});
 	
-	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav) {
+	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav,$timeout) {
 				
 		this.checkParameterRolePanelDisabled = function() {
 			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
@@ -480,14 +467,17 @@
 			return false
 		};
 		
-		this.toggleParametersPanel = function() {
-			if(execProperties.showParametersPanel.status) {
-				$mdSidenav('parametersPanelSideNav').close();
-			} else {
-				$mdSidenav('parametersPanelSideNav').open();
-			}
-			execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
-		};
+		this.toggleParametersPanel = function(open) {
+			$timeout(function(){ 
+				if(open==undefined){
+					$mdSidenav('parametersPanelSideNav').toggle();
+				}else if(open){
+					$mdSidenav('parametersPanelSideNav').open();
+				}else if(!open){
+					$mdSidenav('parametersPanelSideNav').close();
+				}
+			},0);
+			};
 	});
 	
 	//DEPENDENCIES

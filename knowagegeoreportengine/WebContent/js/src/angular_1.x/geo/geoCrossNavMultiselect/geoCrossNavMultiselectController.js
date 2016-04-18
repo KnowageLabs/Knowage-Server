@@ -49,7 +49,7 @@ function geoCrossNavMultiselectControllerFunction(
 	$scope.showPanelFlag = function() {
 		return ($scope.geo_interaction.selectedFeatures.length > 0 
 			&& $scope.geo_interaction.type == 'cross'
-			&& $scope.geoModule_template.crossnav.multiSelect);
+			&& $scope.geoModule_template.crossNavigationMultiselect);
 	};
 	
 	

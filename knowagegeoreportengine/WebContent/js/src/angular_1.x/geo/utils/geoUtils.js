@@ -391,86 +391,102 @@ geoM.factory('geo_intersectFunctions', function() {
 	return toReturn;
 });
 
-geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+//geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+//	this.navigateTo = function(selectedElements){
+//
+//		var crossnav = geoModule_template.crossnav;
+//
+//		var multiSelect = crossnav && crossnav.multiSelect? 
+//				crossnav.multiSelect : null;
+//
+//		if(!crossnav ) {
+//			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
+//			return;
+//
+//		} else {
+//			var parametersAsString = '';
+//
+//			// Cross Navigation Static parameters
+//			if(crossnav.staticParams 
+//					&& (typeof (crossnav.staticParams) == 'object')) {
+//
+//				var staticParams = crossnav.staticParams;
+//				var staticParamsKeys = Object.keys(staticParams);
+//
+//				for(var i = 0; i < staticParamsKeys.length; i++) {
+//					var staticParameterKey = staticParamsKeys[i];
+//					var staticParameterValue = staticParams[staticParameterKey];
+//
+//					parametersAsString += staticParameterKey + '=' + staticParameterValue + '&';
+//				}
+//			}
+//
+//			// Cross Navigation Dynamic parameters
+//			if(crossnav.dynamicParams && Array.isArray(crossnav.dynamicParams)) {
+//
+//				var dynamicParams = crossnav.dynamicParams;
+//				for(var i = 0; i < dynamicParams.length; i++) {
+//					var param = dynamicParams[i];
+//					var type = param.type ? param.type: 'string';
+//					var delimiter = type == 'string' ? "'" : "";
+//
+//					if(param.scope.toLowerCase() == 'feature') {
+//						if(Array.isArray(selectedElements) && multiSelect) {
+//							parametersAsString += param.state + '=';
+//
+//							for(var elementIndex = 0; elementIndex < selectedElements.length; elementIndex++) {
+//								var element = selectedElements[elementIndex];
+//								var elementProperties = element.getProperties();
+//
+//								if (elementIndex > 0) {
+//									parametersAsString += ',';
+//								}
+//								parametersAsString += delimiter + elementProperties[param.state] + delimiter;
+//							}
+//						}
+//						// else selectedElements is a single feature
+//						else{
+//							var selectedElementProperties = selectedElements.getProperties();
+//							parametersAsString += param.state + '=' + selectedElementProperties[param.state];
+//						}
+//
+//						parametersAsString += '&';
+//
+//					} else if(param.scope.toLowerCase() == 'env') {
+//						var paramInputName = param.inputpar;
+//						var paramOutputName = param.outputpar;
+//
+//						//If the "paramInputName" is not set in the parameter mask (on the right side)
+//						if(!geoModule_driverParameters[paramInputName]) {
+//							continue;
+//						} else {
+//							parametersAsString += 
+//								(paramOutputName ? paramOutputName : paramInputName)
+//								+ '=' + geoModule_driverParameters[paramInputName] + '&';
+//						}
+//					}
+//				}
+//			}
+//
+//			var frameName = "iframe_"+geoModule_template.executionContext.DOCUMENT_LABEL;
+//			debugger;
+//			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
+//		}
+//	}
+//});
+
+geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate,$window) {	
 	this.navigateTo = function(selectedElements){
-
-		var crossnav = geoModule_template.crossnav;
-
-		var multiSelect = crossnav && crossnav.multiSelect? 
-				crossnav.multiSelect : null;
-
-		if(!crossnav ) {
-			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
-			return;
-
-		} else {
-			var parametersAsString = '';
-
-			// Cross Navigation Static parameters
-			if(crossnav.staticParams 
-					&& (typeof (crossnav.staticParams) == 'object')) {
-
-				var staticParams = crossnav.staticParams;
-				var staticParamsKeys = Object.keys(staticParams);
-
-				for(var i = 0; i < staticParamsKeys.length; i++) {
-					var staticParameterKey = staticParamsKeys[i];
-					var staticParameterValue = staticParams[staticParameterKey];
-
-					parametersAsString += staticParameterKey + '=' + staticParameterValue + '&';
+		if(geoModule_template.crossNavigation==true){
+			var crossData=[];
+			if(Array.isArray(selectedElements)){
+				for(var key in selectedElements){
+					crossData.push(selectedElements[key].getProperties());
 				}
+			}else{
+				crossData.push(selectedElements.getProperties());
 			}
-
-			// Cross Navigation Dynamic parameters
-			if(crossnav.dynamicParams && Array.isArray(crossnav.dynamicParams)) {
-
-				var dynamicParams = crossnav.dynamicParams;
-				for(var i = 0; i < dynamicParams.length; i++) {
-					var param = dynamicParams[i];
-					var type = param.type ? param.type: 'string';
-					var delimiter = type == 'string' ? "'" : "";
-
-					if(param.scope.toLowerCase() == 'feature') {
-						if(Array.isArray(selectedElements) && multiSelect) {
-							parametersAsString += param.state + '=';
-
-							for(var elementIndex = 0; elementIndex < selectedElements.length; elementIndex++) {
-								var element = selectedElements[elementIndex];
-								var elementProperties = element.getProperties();
-
-								if (elementIndex > 0) {
-									parametersAsString += ',';
-								}
-								parametersAsString += delimiter + elementProperties[param.state] + delimiter;
-							}
-						}
-						// else selectedElements is a single feature
-						else{
-							var selectedElementProperties = selectedElements.getProperties();
-							parametersAsString += param.state + '=' + selectedElementProperties[param.state];
-						}
-
-						parametersAsString += '&';
-
-					} else if(param.scope.toLowerCase() == 'env') {
-						var paramInputName = param.inputpar;
-						var paramOutputName = param.outputpar;
-
-						//If the "paramInputName" is not set in the parameter mask (on the right side)
-						if(!geoModule_driverParameters[paramInputName]) {
-							continue;
-						} else {
-							parametersAsString += 
-								(paramOutputName ? paramOutputName : paramInputName)
-								+ '=' + geoModule_driverParameters[paramInputName] + '&';
-						}
-					}
-				}
-			}
-
-			var frameName = "iframe_"+geoModule_template.executionContext.DOCUMENT_LABEL;
-
-			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
+			$window.parent.angular.element($window.frameElement).scope().crossNavigationScope.crossNavigationHelper.navigateTo(crossData); 
 		}
 	}
 });
