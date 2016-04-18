@@ -17,10 +17,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
-	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'file'}]
+	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'csv'}]
 	$scope.outputVersions = []; //TODO
 	$scope.lockTooltip;
-	$scope.delimiter;
+	$scope.delimiter = "|";
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
 	$scope.outputVersion ;
@@ -100,10 +100,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			break;
 		case "BUTTON_EXPORT_OUTPUT":
 			$scope.showExportDialog(null);
-			break
+			break;
 		case "BUTTON_FLUSH_CACHE":
 			flushCache();
-			break	
+			break;	
 		default:
 			console.log("something else clicked");
 		}
@@ -217,7 +217,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  };
 	  
 	  $scope.exportDialogNext = function(){
-		  if($scope.outputType == "file")
+		  if($scope.outputType == "csv")
 			  $scope.showFile = true;
 		  else
 			  $scope.showTable = true;
@@ -239,7 +239,30 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  };
 	  
 	  $scope.exportOutputVersion = function(){
+		  var value = $scope.outputType == "csv"? $scope.delimiter : $scope.tableName;
+		  
+			  sbiModule_restServices.promiseGet
+				("1.0",'/analysis/'+$scope.outputType+'/'+$scope.outputVersion+'/'+value+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+				.then(function(response) {
+							//$scope.handleResponse(response);
+					console.log(response)
+			  },function(response){
+				  sbiModule_messaging.showErrorMessage("An error occured while exporting version", 'Error'); 
+			  });
+		  
 		  
 	  };
+	  
+	  $scope.isOkBtnDisabled = function(){
+		  if(!$scope.showFile && !$scope.showTable)
+			  return true;
+		  else if($scope.outputType == "table" && $scope.tableName.length < 1)
+			  return true;		  
+		  else if($scope.outputType == "csv" && $scope.delimiter.length < 1)
+			  return true;		  
+		  else
+			  return false;
+		  
+	  }
 
 };

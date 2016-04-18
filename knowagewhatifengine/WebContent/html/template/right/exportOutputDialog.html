@@ -24,7 +24,7 @@
 		</md-button>
 		<md-button ng-click="exportOutputVersion()" 
 				   style="line-height:25px"
-				   ng-disabled="!showFile && !showTable">
+				   ng-disabled="isOkBtnDisabled()">
 			{{translate.load("sbi.common.ok")}}
 		</md-button>
     	<md-button ng-click="closeDialog(ev)" style="line-height:25px">
