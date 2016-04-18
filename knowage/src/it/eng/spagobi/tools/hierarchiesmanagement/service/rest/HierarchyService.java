@@ -232,7 +232,7 @@ public class HierarchyService {
 			}
 
 			// 3 - get all paths from the input json tree
-			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName, -1);
+			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName, 1);
 
 			// 4 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -1285,7 +1285,7 @@ public class HierarchyService {
 					} else if (!node.isNull(idFld)) {
 						mapAttrs.put(idFld, node.getString(idFld));
 					}
-					if (position > -1 && fld.isOrderField()) {
+					if (!isLeaf && position < 1 && fld.isOrderField()) {
 						// deletes eventual order field without level specification
 						if (mapAttrs.containsKey(idFld)) {
 							mapAttrs.remove(idFld);
@@ -1367,7 +1367,9 @@ public class HierarchyService {
 					if (!isRoot) {
 						parentUniqueCode = uniqueCodeLocal;
 					}
-					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName, i);
+					// 0-i is used to store the inverse order nodes, this solution is used to put the leaves (order index = null) to the end of array when is
+					// executed the 'ORDER BY field DESC'. Storing the nodes with negative num and using DESC, the final order will be ascendent [0 -1 -2..NULL]
+					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName, 0 - i);
 
 					for (List<HierarchyTreeNodeData> path : childPaths) {
 						// add this node to start of the path
