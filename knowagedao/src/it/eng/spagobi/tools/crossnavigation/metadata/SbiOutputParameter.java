@@ -31,6 +31,8 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	private Integer biobjId;
 	private Integer parameterTypeId;
 	private String label;
+	private String formatCode;
+	private String formatValue;
 	private SbiObjects sbiObject;
 	private SbiDomains parameterType;
 
@@ -122,6 +124,36 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	 */
 	public void setParameterType(SbiDomains parameterType) {
 		this.parameterType = parameterType;
+	}
+
+	/**
+	 * @return the formatCode
+	 */
+	public String getFormatCode() {
+		return formatCode;
+	}
+
+	/**
+	 * @param formatCode
+	 *            the formatCode to set
+	 */
+	public void setFormatCode(String formatCode) {
+		this.formatCode = formatCode;
+	}
+
+	/**
+	 * @return the formatValue
+	 */
+	public String getFormatValue() {
+		return formatValue;
+	}
+
+	/**
+	 * @param formatValue
+	 *            the formatValue to set
+	 */
+	public void setFormatValue(String formatValue) {
+		this.formatValue = formatValue;
 	}
 
 }

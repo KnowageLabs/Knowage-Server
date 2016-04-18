@@ -17,12 +17,12 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 
 import java.util.ArrayList;
@@ -45,21 +45,45 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 			}
 		});
 		for (SbiOutputParameter op : paramList) {
-			ret.add(new OutputParameter(op.getId(), op.getLabel(), op.getParameterTypeId(), op.getParameterType().getValueNm(), op.getBiobjId()));
+			ret.add(from(op));
 		}
 		return ret;
 	}
 
+	private OutputParameter from(SbiOutputParameter op) {
+		OutputParameter outp = new OutputParameter();
+		outp.setId(op.getId());
+		outp.setName(op.getLabel());
+		outp.setBiObjectId(op.getBiobjId());
+		if (op.getParameterType() != null) {
+			outp.setType(from(op.getParameterType()));
+		}
+		outp.setFormatCode(op.getFormatCode());
+		outp.setFormatValue(op.getFormatValue());
+		return outp;
+	}
+
 	@Override
 	public void saveParameter(OutputParameter outputParameter) {
-		SbiOutputParameter sop = new SbiOutputParameter();
+		SbiOutputParameter sop = null;
+		if (outputParameter.getId() == null) {
+			sop = new SbiOutputParameter();
+		} else {
+			sop = load(SbiOutputParameter.class, outputParameter.getId());
+		}
 		sop.setLabel(outputParameter.getName());
 		sop.setBiobjId(outputParameter.getBiObjectId());
-		sop.setParameterTypeId(outputParameter.getTypeId());
-		if (outputParameter.isNewRecord()) {
+		sop.setParameterTypeId(outputParameter.getType().getValueId());
+		if (outputParameter.getType() != null && outputParameter.getType().getValueCd().equals("DATE")) {
+			sop.setFormatCode(outputParameter.getFormatCode());
+			sop.setFormatValue(outputParameter.getFormatValue());
+		} else {
+			sop.setFormatCode(null);
+			sop.setFormatValue(null);
+		}
+		if (outputParameter.getId() == null) {
 			insert(sop);
 		} else {
-			sop.setId(outputParameter.getId());
 			update(sop);
 		}
 	}
@@ -73,29 +97,22 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	public OutputParameter getOutputParameter(Integer id) {
 		try {
 			SbiOutputParameter sop = load(SbiOutputParameter.class, id);
-			BIObject obj = new BIObject();
-			obj.setId(sop.getBiobjId());
-			Domain dom = new Domain();
-			dom.setValueId(sop.getParameterTypeId());
-			return new OutputParameter(id, sop.getLabel(), dom.getValueId(), dom.getValueName(), obj.getId());
+			return from(sop);
 		} catch (SpagoBIDOAException e) {
 			return null;
 		}
 	}
 
-	/*
-	 * @Override public void saveParameterList(final List<OutputParameter> list, final Integer biobjId) throws EMFUserError { executeOnTransaction(new
-	 * IExecuteOnTransaction<Boolean>() {
-	 *
-	 * @Override public Boolean execute(Session session) throws JSONException { List<Integer> ids = new ArrayList<>(); for (OutputParameter o : list) {
-	 * SbiOutputParameter op = new SbiOutputParameter(); if (o.getId() != null) { ids.add(o.getId());
-	 *
-	 * op.setId(o.getId()); updateSbiCommonInfo4Update(op); } else { updateSbiCommonInfo4Insert(op); } op.setBiobjId(biobjId); op.setLabel(o.getLabel());
-	 * op.setParTypeId(o.getType().getValueId()); session.save(op); }
-	 *
-	 * // deleting orphans String deleteHql = "delete from it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter p where not p.id in (:ids) "; Query
-	 * q = session.createQuery(deleteHql); q.setParameterList("ids", ids); q.executeUpdate();
-	 *
-	 * return Boolean.TRUE; } }); }
-	 */
+	private Domain from(SbiDomains sbiType) {
+		Domain type = new Domain();
+		type.setDomainCode(sbiType.getDomainCd());
+		type.setDomainName(sbiType.getDomainNm());
+		type.setValueCd(sbiType.getValueCd());
+		type.setValueDescription(sbiType.getValueDs());
+		type.setValueName(sbiType.getValueNm());
+		type.setValueId(sbiType.getValueId());
+		return type;
+	}
+
+	
 }

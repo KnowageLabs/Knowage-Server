@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import it.eng.spagobi.commons.bo.Domain;
+
 import java.io.Serializable;
 
 public class OutputParameter implements Serializable {
@@ -27,22 +29,13 @@ public class OutputParameter implements Serializable {
 	 */
 	private Integer id;
 	private String name;
-	private Integer typeId;
-	private String typeLbl;
+	/**
+	 * domainCd = PAR_TYPE
+	 */
+	private Domain type;
 	private Integer biObjectId;
-	private boolean newRecord;
-
-	public OutputParameter() {
-	}
-
-	public OutputParameter(Integer id, String name, Integer typeId, String typeLbl, Integer biObjectId) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.typeId = typeId;
-		this.typeLbl = typeLbl;
-		this.biObjectId = biObjectId;
-	}
+	private String formatCode;
+	private String formatValue;
 
 	/**
 	 * @return the id
@@ -75,36 +68,6 @@ public class OutputParameter implements Serializable {
 	}
 
 	/**
-	 * @return the typeId
-	 */
-	public Integer getTypeId() {
-		return typeId;
-	}
-
-	/**
-	 * @param typeId
-	 *            the typeId to set
-	 */
-	public void setTypeId(Integer typeId) {
-		this.typeId = typeId;
-	}
-
-	/**
-	 * @return the typeLbl
-	 */
-	public String getTypeLbl() {
-		return typeLbl;
-	}
-
-	/**
-	 * @param typeLbl
-	 *            the typeLbl to set
-	 */
-	public void setTypeLbl(String typeLbl) {
-		this.typeLbl = typeLbl;
-	}
-
-	/**
 	 * @return the biObjectId
 	 */
 	public Integer getBiObjectId() {
@@ -120,18 +83,48 @@ public class OutputParameter implements Serializable {
 	}
 
 	/**
-	 * @return the newRecord
+	 * @return the formatCode
 	 */
-	public boolean isNewRecord() {
-		return newRecord;
+	public String getFormatCode() {
+		return formatCode;
 	}
 
 	/**
-	 * @param newRecord
-	 *            the newRecord to set
+	 * @param formatCode
+	 *            the formatCode to set
 	 */
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
+	public void setFormatCode(String formatCode) {
+		this.formatCode = formatCode;
+	}
+
+	/**
+	 * @return the formatValue
+	 */
+	public String getFormatValue() {
+		return formatValue;
+	}
+
+	/**
+	 * @param formatValue
+	 *            the formatValue to set
+	 */
+	public void setFormatValue(String formatValue) {
+		this.formatValue = formatValue;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Domain getType() {
+		return type;
+	}
+
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(Domain type) {
+		this.type = type;
 	}
 
 }

@@ -20,7 +20,9 @@
         <property name="biobjId" column="BIOBJ_ID" />
         <property name="parameterTypeId" column="PAR_TYPE_ID" />
         
-        <property name="label" column="label" />
+        <property name="label" column="label" type="string" />
+        <property name="formatCode" column="format_code" type="string" />
+        <property name="formatValue" column="format_value" type="string" />
         
         <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" insert="false" update="false">
             <column name="biobj_id" not-null="true" />
