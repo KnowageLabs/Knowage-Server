@@ -86,7 +86,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -660,6 +660,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		IOutputParameterDAO parameterDAO = null;
 		try {
 			parameterDAO = DAOFactory.getOutputParameterDAO();
+			parameterDAO.setUserProfile(getUserProfile());
 		} catch (EMFUserError e) {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
@@ -682,6 +683,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		IOutputParameterDAO parameterDAO = null;
 		try {
 			parameterDAO = DAOFactory.getOutputParameterDAO();
+			parameterDAO.setUserProfile(getUserProfile());
 		} catch (EMFUserError e) {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);

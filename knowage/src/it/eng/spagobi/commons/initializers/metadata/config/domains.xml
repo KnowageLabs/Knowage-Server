@@ -505,5 +505,20 @@
 	
 	<DOMAIN valueCd="EXECUTION_YEAR" valueNm="sbidomains.temporalfunction.year"
 		domainCd="KPI_PLACEHOLDER_FUNC" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.year" />
+		
+	<DOMAIN valueCd="DEFAULT" valueNm="sbidomains.nm.defaultValue"
+		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
+		
+	<DOMAIN valueCd="DDMMYYYY" valueNm="DD/MM/YYYY"
+		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
+		
+	<DOMAIN valueCd="MMDDYYYY" valueNm="MM/DD/YYYY"
+		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
+		
+	<DOMAIN valueCd="YYYYMMDD" valueNm="YYYY-MM-DD"
+		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
+		
+	<DOMAIN valueCd="CUSTOM" valueNm="sbidomains.nm.customValue"
+		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 	
 </DOMAINS>

@@ -17,7 +17,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			s.config = {
 				list : {
 					columns : [{"label":s.translate.load("sbi.crossnavigation.parname.lbl"),"name":"name"}
-					          ,{"label":s.translate.load("sbi.crossnavigation.type.lbl"),"name":"typeLbl"}],
+					          ,{"label":s.translate.load("sbi.crossnavigation.type.lbl"),"name":"type.translatedValueName"}],
 		            dsSpeedMenu :  [{
 	                	label : s.translate.load('sbi.crossnavigation.action.delete'),
 	                	icon :'fa fa-trash',
@@ -32,7 +32,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			};
 			
 			var newRecord = function(){
-				ctr.detail = {'newRecord':true, 'biObjectId': objectId};
+				ctr.detail = {'id':null, 'biObjectId': objectId};
 			};
 			
 			var loadParametersList = function(){
@@ -40,40 +40,37 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 				ctr.listloadingSpinner = true;
 				sbiModule_restServices.promiseGet('2.0/documents/'+objectId+'/listOutParams', "", null).then(
 					function(response) {
-						var data = response.data;
-						for(var i=0;i<data.length;i++){
-							ctr.list.push(
-								{'id':data[i].id
-								,'name':data[i].name
-								,'typeLbl':ctr.typeMap[data[i].typeId]
-								,'typeId':data[i].typeId
-								,'biObjectId':data[i].biObjectId});
-						}
+						ctr.list = response.data;
 						ctr.listloadingSpinner = false;
 					},function(response) {
 						
 					});
 			};
 			var loadTypeList = function(){
-				ctr.typeList = []; //[{value:'string',descr:'String'},{value:'number',descr:'Number'}];
-				ctr.typeMap = {};
-				sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=PAR_TYPE").then(
+				ctr.typeList = [];
+				sbiModule_restServices.promiseGet("2.0/domains","listByCode/PAR_TYPE").then(
 					function(response) {
-						var data = response.data;
-						for(var i=0;i<data.length;i++){
-							ctr.typeList.push({'id':data[i].VALUE_ID,'descr':data[i].VALUE_NM});
-							ctr.typeMap[data[i].VALUE_ID] = data[i].VALUE_NM;
-						}
+						ctr.typeList = response.data;
 					},function(response) {
 						console.log(s.translate.load("sbi.glossary.load.error"));
 
 					});
 			};
+			var loadDateTypes = function(){
+				ctr.dateFormats = [];
+				sbiModule_restServices.promiseGet("2.0/domains","listByCode/DATE_FORMAT").then(
+					function(response) {
+						ctr.dateFormats = response.data;
+					},function(response) {
+						console.log(s.translate.load("sbi.glossary.load.error"));
+					});
+			}
 			
 			newRecord();
-			//list of types must be loaded before list of parameters
+			
 			loadTypeList();
 			loadParametersList();
+			loadDateTypes();
 			
 			ctr.newFunc = function(){
 				newRecord();
@@ -84,7 +81,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			};
 			ctr.loadSelected = function(item){
 				ctr.detail = angular.copy(item);
-				ctr.selected = item;
+				ctr.detail.formatObj = {'valueCd':item.formatCode,'valueName':item.formatValue};
 			};
 			ctr.removeItem = function(item, event){
 				sbiModule_restServices.promiseDelete('2.0/documents/'+item.id+'/deleteOutParam', "", null)
@@ -97,6 +94,13 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 				});
 			}
 			ctr.saveFunc = function(){
+				if(ctr.detail.formatObj){
+					ctr.detail.formatCode = ctr.detail.formatObj.valueCd;
+					if(ctr.detail.formatCode!='CUSTOM'){
+						ctr.detail.formatValue = ctr.detail.formatObj.valueName;
+					}
+					delete ctr.detail.formatObj;
+				}
 				sbiModule_restServices.promisePost('2.0/documents/saveOutParam', "", ctr.detail).then(
 					function(response){
 						$scope.showActionOK("sbi.crossnavigation.save.ok");

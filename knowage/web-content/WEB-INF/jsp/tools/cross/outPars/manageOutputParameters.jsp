@@ -103,10 +103,18 @@ var objectId = <%=objectId%>;
 					<md-input-container > <label>{{translate.load("sbi.crossnavigation.parname.lbl");}}</label>
 						<input maxlength="100" type="text" ng-model="ctrl.detail.name" required > 
 					</md-input-container>
-					<md-input-container flex="80"> <label>{{translate.load("sbi.crossnavigation.type.lbl");}}</label> 
-						<md-select ng-model="ctrl.detail.typeId" required>
-				        	<md-option ng-repeat="l in ctrl.typeList" value="{{l.id}}"> {{l.descr}} </md-option>
+					<md-input-container > <label>{{translate.load("sbi.crossnavigation.type.lbl");}}</label> 
+						<md-select ng-model="ctrl.detail.type" ng-model-options="{trackBy: '$value.valueId'}" required>
+				        	<md-option ng-repeat="l in ctrl.typeList" ng-value="l"> {{l.translatedValueName}} </md-option>
 				        </md-select>
+					</md-input-container>
+					<md-input-container ng-if="ctrl.detail.type && ctrl.detail.type.valueCd=='DATE'"> <label>{{translate.load("sbi.outputparameter.format");}}</label> 
+						<md-select ng-model="ctrl.detail.formatObj" ng-model-options="{trackBy: '$value.valueCd'}" required>
+				        	<md-option ng-repeat="l in ctrl.dateFormats" ng-value="l"> {{l.translatedValueName}} </md-option>
+				        </md-select>
+					</md-input-container>
+					<md-input-container ng-if="ctrl.detail.formatObj && ctrl.detail.formatObj.valueCd=='CUSTOM'"> <label>{{::ctrl.detail.formatObj.translatedValueName}}</label> 
+						<input maxlength="20" type="text" ng-model="ctrl.detail.formatValue">
 					</md-input-container>
 				</div>
 			</form>
