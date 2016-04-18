@@ -35,7 +35,7 @@ public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 
 	public void modifySource(SbiMetaSource aMetaSource) throws EMFUserError;
 
-	public void insertSource(SbiMetaSource aMetaSource) throws EMFUserError;
+	public int insertSource(SbiMetaSource aMetaSource) throws EMFUserError;
 
 	public void deleteSource(SbiMetaSource aMetaSource) throws EMFUserError;
 

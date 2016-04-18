@@ -247,11 +247,13 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#insertJob(SbiMetaJob)
 	 */
 	@Override
-	public void insertJob(SbiMetaJob aMetaJob) throws EMFUserError {
+	public int insertJob(SbiMetaJob aMetaJob) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -261,7 +263,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			hibMeta.setDeleted(aMetaJob.isDeleted());
 
 			updateSbiCommonInfo4Insert(hibMeta);
-			tmpSession.save(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -281,7 +283,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		}
 		logger.debug("OUT");
-
+		return idToReturn;
 	}
 
 	/**

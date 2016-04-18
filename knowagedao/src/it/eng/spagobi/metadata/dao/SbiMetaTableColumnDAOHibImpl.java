@@ -257,11 +257,13 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAOHibImpl#insertTableColumn(SbiMetaTableColumn)
 	 */
 	@Override
-	public void insertTableColumn(SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
+	public int insertTableColumn(SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -284,7 +286,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			}
 
 			updateSbiCommonInfo4Insert(hibMeta);
-			tmpSession.save(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -304,7 +306,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 
 		}
 		logger.debug("OUT");
-
+		return idToReturn;
 	}
 
 	/**

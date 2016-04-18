@@ -166,11 +166,13 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 	}
 
 	@Override
-	public void insertDsBc(SbiMetaDsBc aMeta) throws EMFUserError {
+	public int insertDsBc(SbiMetaDsBc aMeta) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -182,7 +184,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			aMeta.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMeta);
-			aSession.save(aMeta);
+			idToReturn = (Integer) aSession.save(aMeta);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -199,6 +201,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			}
 		}
 		logger.debug("OUT");
+		return idToReturn;
 	}
 
 	@Override

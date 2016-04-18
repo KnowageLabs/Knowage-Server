@@ -35,7 +35,7 @@ public interface ISbiMetaBCAttributeDAO extends ISpagoBIDao {
 
 	public void modifyBcAttribute(SbiMetaBcAttribute aMetaBCAttribute) throws EMFUserError;
 
-	public void insertBcAttribute(SbiMetaBcAttribute aMetaBCAttribute) throws EMFUserError;
+	public int insertBcAttribute(SbiMetaBcAttribute aMetaBCAttribute) throws EMFUserError;
 
 	public void deleteBcAttribute(SbiMetaBcAttribute aMetaBCAttribute) throws EMFUserError;
 

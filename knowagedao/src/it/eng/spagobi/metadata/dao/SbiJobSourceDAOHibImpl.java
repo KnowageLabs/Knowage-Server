@@ -166,11 +166,13 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public void insertJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError {
+	public int insertJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -181,7 +183,7 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			aMetaJobSource.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaJobSource);
-			aSession.save(aMetaJobSource);
+			idToReturn = (Integer) aSession.save(aMetaJobSource);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -198,6 +200,7 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 		}
 		logger.debug("OUT");
+		return idToReturn;
 	}
 
 	@Override

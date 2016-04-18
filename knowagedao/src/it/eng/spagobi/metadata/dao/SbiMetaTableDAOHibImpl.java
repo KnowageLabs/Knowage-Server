@@ -298,11 +298,13 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#insertSource(SbiMetaTable)
 	 */
 	@Override
-	public void insertTable(SbiMetaTable aMetaTable) throws EMFUserError {
+	public int insertTable(SbiMetaTable aMetaTable) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -324,7 +326,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			updateSbiCommonInfo4Insert(hibMeta);
-			tmpSession.save(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -344,7 +346,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		}
 		logger.debug("OUT");
-
+		return idToReturn;
 	}
 
 	/**

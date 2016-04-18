@@ -37,7 +37,7 @@ public interface ISbiObjDsDAO extends ISpagoBIDao {
 
 	public void modifyObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 
-	public void insertObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
+	public int insertObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 
 	public void deleteObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 

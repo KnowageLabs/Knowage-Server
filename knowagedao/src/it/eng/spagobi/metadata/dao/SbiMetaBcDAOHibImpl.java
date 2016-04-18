@@ -337,11 +337,13 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(SbiMetaBc)
 	 */
 	@Override
-	public void insertBc(SbiMetaBc aMetaBc) throws EMFUserError {
+	public int insertBc(SbiMetaBc aMetaBc) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
+
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -363,7 +365,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			}
 
 			updateSbiCommonInfo4Insert(hibMeta);
-			tmpSession.save(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -383,7 +385,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		}
 		logger.debug("OUT");
-
+		return idToReturn;
 	}
 
 	/**

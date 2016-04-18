@@ -35,7 +35,7 @@ public interface ISbiMetaTableDAO extends ISpagoBIDao {
 
 	public void modifyTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
-	public void insertTable(SbiMetaTable aMetaTable) throws EMFUserError;
+	public int insertTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
 	public void deleteTable(SbiMetaTable aMetaTable) throws EMFUserError;
 
