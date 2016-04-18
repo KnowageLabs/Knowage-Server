@@ -161,7 +161,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 							<md-input-container> 
 								<md-checkbox ng-change="setDirty()" 
-									ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || isSuperAdminFunction()" aria-label="Write Default">
+									ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" aria-label="Write Default">
 								</md-checkbox> 
 							</md-input-container>
 							
