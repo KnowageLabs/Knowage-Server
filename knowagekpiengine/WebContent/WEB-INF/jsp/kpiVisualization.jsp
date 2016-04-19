@@ -98,7 +98,8 @@ author:
 	JSONObject chartObj = templateObj.getJSONObject("chart");
 	JSONObject optionsObj = chartObj.getJSONObject("options");
 	String type = (String)chartObj.get("type");
-	String vieweas = (String)optionsObj.get("vieweas");
+	// String model = (String)chartObj.get("model");
+	
 	Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
 	// if(env.get("KPI_VALUE")!=null){
 	// 	kpiValue = env.get("KPI_VALUE").toString();
@@ -203,11 +204,11 @@ author:
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
 <%--
+--%>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.js"></script>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/angular-nvd3/1.0.6/dist/angular-nvd3.js"></script>
---%>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/gaugeNgDirectiveApp.js"></script>
 		
@@ -224,13 +225,19 @@ author:
 	</div>
 	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
 	--%>
-	<div style="padding:2em; font-size: 0.5em">template: {{documentData.template | json}}</div>
-	<div style="padding:2em; font-size: 0.5em">kpiValue: {{documentData.kpiValue | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	
 <%
 if(type.equalsIgnoreCase("kpi")) {
-	if(vieweas.equalsIgnoreCase("speedometer")) {
-		if(showlineargauge) {
+	String model = (String)chartObj.get("model");
+	
+	if(model.equalsIgnoreCase("widget")) {
+		String vieweas = (String)optionsObj.get("vieweas");
+		
+		if(vieweas.equalsIgnoreCase("speedometer")) {
+			if(showlineargauge) {
 %>
 	<kpi-linear-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
@@ -247,7 +254,7 @@ if(type.equalsIgnoreCase("kpi")) {
 	></kpi-linear-gauge>
 	
 <%
-		} else { 
+			} else { 
 %>
 	
 	<kpi-gauge flex layout="column" layout-align="center"
@@ -265,6 +272,7 @@ if(type.equalsIgnoreCase("kpi")) {
 	></kpi-gauge>
 
 	<%
+			} 
 		} 
 	}
 } else if(type.equalsIgnoreCase("scorecard")) {
@@ -300,6 +308,7 @@ if(type.equalsIgnoreCase("kpi")) {
 				docLabel : '<%=docLabel %>',
 				docId : '<%=docId%>',
 				kpiValue : {threshold:{thresholdValues:[]}},
+				kpiListValue : [],
 				targetValue : {}
 			};
 			return obj;

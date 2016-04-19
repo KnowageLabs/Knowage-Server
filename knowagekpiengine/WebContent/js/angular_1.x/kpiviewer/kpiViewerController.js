@@ -22,31 +22,41 @@
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate","readKpiTemplate",$scope.documentData.template)
 			.then(function(response){ 
 //				console.log("response.data: ", response.data);
+				var chart = $scope.documentData.template.chart;
 				
-				if(Array.isArray(response.data)) {
-					angular.copy(response.data[0].kpi, $scope.documentData.kpiValue);
-					angular.copy(response.data[0].target, $scope.documentData.targetValue);
-				} else {
-					angular.copy(response.data.kpi, $scope.documentData.kpiValue);
-					angular.copy(response.data.target, $scope.documentData.targetValue);
+				if(chart.type == "kpi") {
+					if(Array.isArray(response.data)) {
+						if(chart.model == 'widget') {
+							angular.copy(response.data[0].kpi, $scope.documentData.kpiValue);
+							angular.copy(response.data[0].target, $scope.documentData.targetValue);
+							
+							var gaugeConf = kpiViewerGaugeService.createGaugeConf(
+									$scope.viewerContainerId, // container id
+									$scope.documentData.kpiValue.name, // label 
+									$scope.gaugeSize, // gauge size
+									$scope.gaugeMinValue, // minimum value
+									$scope.gaugeMaxValue, // maximum value
+									$scope.documentData.kpiValue.threshold, //threshold configuration
+									$scope.documentData.template.chart.options.showvalue, // show/hide kpi value inside the gauge 
+									$scope.documentData.template.chart.options.showthreshold, // show/hide kpi thresholds 
+									$scope.documentData.template.chart.options.precision, // number of value digits 
+									$scope.documentData.template.chart.style.font // font configuration 
+							);
+							
+							$scope.thresholdStops = gaugeConf.stops;
+							
+							$scope.gaugeValue = 120;
+							
+						} else {
+							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];
+							
+							for(var i = 0; i < response.data.length; i++) {
+								$scope.documentData.kpiListValue.push(response.data[i].kpi);
+							}
+						}
+						
+					}
 				}
-
-				var gaugeConf = kpiViewerGaugeService.createGaugeConf(
-					$scope.viewerContainerId, // container id
-					$scope.documentData.kpiValue.name, // label 
-					$scope.gaugeSize, // gauge size
-					$scope.gaugeMinValue, // minimum value
-					$scope.gaugeMaxValue, // maximum value
-					$scope.documentData.kpiValue.threshold, //threshold configuration
-					$scope.documentData.template.chart.options.showvalue, // show/hide kpi value inside the gauge 
-					$scope.documentData.template.chart.options.showthreshold, // show/hide kpi thresholds 
-					$scope.documentData.template.chart.options.precision, // number of value digits 
-					$scope.documentData.template.chart.style.font // font configuration 
-				);
-				
-				$scope.thresholdStops = gaugeConf.stops;
-				
-				$scope.gaugeValue = 120;
 			});
 		};
 		
