@@ -97,6 +97,7 @@ author:
 	JSONObject templateObj = engineInstance.getTemplate();
 	JSONObject chartObj = templateObj.getJSONObject("chart");
 	JSONObject optionsObj = chartObj.getJSONObject("options");
+	String type = (String)chartObj.get("type");
 	String vieweas = (String)optionsObj.get("vieweas");
 	Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
 	// if(env.get("KPI_VALUE")!=null){
@@ -227,13 +228,14 @@ author:
 	<div style="padding:2em; font-size: 0.5em">kpiValue: {{documentData.kpiValue | json}}</div>
 	
 <%
-if(vieweas.equalsIgnoreCase("speedometer")) {
-	if(showlineargauge) {
+if(type.equalsIgnoreCase("kpi")) {
+	if(vieweas.equalsIgnoreCase("speedometer")) {
+		if(showlineargauge) {
 %>
 	<kpi-linear-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
-		size="gaugeSize"
+		size="linearGaugeSize"
 		min-value="gaugeMinValue"
 		max-value="gaugeMaxValue"
 		value="gaugeValue"
@@ -245,7 +247,7 @@ if(vieweas.equalsIgnoreCase("speedometer")) {
 	></kpi-linear-gauge>
 	
 <%
-	} else { 
+		} else { 
 %>
 	
 	<kpi-gauge flex layout="column" layout-align="center"
@@ -263,9 +265,18 @@ if(vieweas.equalsIgnoreCase("speedometer")) {
 	></kpi-gauge>
 
 	<%
-	} 
-} 
+		} 
+	}
+} else if(type.equalsIgnoreCase("scorecard")) {
 %>
+
+<!-- SCORECARD -->
+
+<%
+}
+%>
+
+
 <!-- 	
 	<nvd3 ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'true'" 
 	<nvd3 options="getSpeedoLinearConf()" data="getSpeedoLinearData()" config="getSpeedoLinearConfig()"></nvd3>

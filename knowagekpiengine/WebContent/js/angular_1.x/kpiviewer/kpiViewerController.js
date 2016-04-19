@@ -12,10 +12,10 @@
 		$scope.viewerContainerId = "kpiViewer_" + $scope.documentData.docId;
 		
 		$scope.gaugeSize = 250;
+		$scope.linearGaugeSize = 400;
 		$scope.gaugeMinValue = 0;
 		$scope.gaugeMaxValue = 150;
 		$scope.gaugeValue = 0;
-		$scope.gaugeSvg
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		
 		$scope.init = function(){
@@ -46,7 +46,7 @@
 				
 				$scope.thresholdStops = gaugeConf.stops;
 				
-				$scope.gaugeValue = 87;
+				$scope.gaugeValue = 7;
 //				$scope.gaugeValue = new value;
 			});
 		};

@@ -527,9 +527,9 @@
 		$scope.svgId = 'kpiLinearGauge_' + $scope.gaugeId;
 		
 		$scope.fontColor = $scope.fontConf.color;
-		$scope.labelFontSize = ($scope.fontConf.size * 1.2) + 'em';
-		$scope.maxMinFontSize = ($scope.fontConf.size) + 'em';
-		$scope.intermediateFontSize = ($scope.fontConf.size * 0.7) + 'em';
+		$scope.labelFontSize = ($scope.fontConf.size * 2) + 'em';
+		$scope.maxMinFontSize = ($scope.fontConf.size * 1.3) + 'em';
+		$scope.intermediateFontSize = ($scope.fontConf.size * 1) + 'em';
 		
 //		$scope.maxComponentSize = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
 //		$scope.sizeScaleFactor = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
