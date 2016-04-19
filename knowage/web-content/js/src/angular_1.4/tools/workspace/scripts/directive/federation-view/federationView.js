@@ -19,10 +19,20 @@ angular.module('federation_view', ['ngMaterial'])
 		},
 		
 		link: function (scope, elem, attrs) { 
-			elem.css("position","relative")
+			
+			 elem.css("position","static");
+			 
 			 if(!attrs.tableSpeedMenuOption){
 				 scope.tableSpeedMenuOption=[];
 			 }
+			
+//			if(document.getElementsByTagName("body")[0].id == "workspaceWebPageBody")  {
+//			    elem.css("position","static");
+//			 }
+//			 else {
+//			    elem.css("position","relative")
+//			 }
+			
 		}
 	}
 });

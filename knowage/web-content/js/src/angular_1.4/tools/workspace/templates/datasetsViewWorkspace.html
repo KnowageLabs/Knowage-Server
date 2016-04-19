@@ -3,23 +3,38 @@
         <md-tab label="Models" flex>
 	
  	      <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
-		show-grid-view="true"
+		show-grid-view="showGridView"
  	  ></document-view>	
  	 
  	</md-tab> 
-    <md-tab label="Datasets" flex>
+    <md-tab label="My data set" flex>
 
  	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
-		show-grid-view="true"
+		show-grid-view="showGridView"
+ 	  ></document-view>	
+ 	
+ 	</md-tab>  
+ 	<md-tab label="Enterprise data set" flex>
+
+ 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+		show-grid-view="showGridView"
+ 	  ></document-view>	
+ 	
+ 	</md-tab>  
+ 	<md-tab label="Shared data set" flex>
+
+ 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+		show-grid-view="showGridView"
  	  ></document-view>	
  	
  	</md-tab>  
 	<md-tab label="Federation definitions" flex>
 
  	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
-		show-grid-view="true"
+		show-grid-view="showGridView"
 		selected-federation=selectedFederation
 		edit-federation-action="editFederation(fed)"
+		delete-federation-action="deleteFederation(fed)"
  	  ></federation-view>	
 
  	</md-tab>  

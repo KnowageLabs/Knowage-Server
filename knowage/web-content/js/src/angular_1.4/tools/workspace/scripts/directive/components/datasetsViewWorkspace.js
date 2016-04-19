@@ -14,7 +14,7 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window){
 	
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
@@ -56,6 +56,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 	$scope.editFederation=function(federation){
 		console.log(federation);
+		var id = federation.federation_id;
+		var label = federation.label;
+		//$window.location.href=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
+
     	 $mdDialog.show({
 		      controller: DialogEditFederationController,
 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
@@ -67,10 +71,32 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		
 	}
 	
+	$scope.deleteFederation=function(federation){
+		console.log("in delete");
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.browser.document.delete.ask.title"))
+		.content(sbiModule_translate.load("sbi.browser.document.delete.ask"))
+		.ariaLabel('delete Document') 
+		.ok(sbiModule_translate.load("sbi.general.yes"))
+		.cancel(sbiModule_translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+			
+			sbiModule_restServices.promiseDelete("2.0/federateddataset",federation.federation_id)
+			.then(function(response) {
+			
+				$scope.loadFederations();
+				
+			},function(response) {
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+			});
+		});
+	}
+	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
-//		$scope.closeDialogFromExt=function(){
-//			 $mdDialog.cancel();
-//		}
+		$scope.closeDialogFromExt=function(){
+			 $mdDialog.cancel();	 
+			 //$scope.loadFederations();
+		}
 		var id = federation.federation_id;
 		var label = federation.label;
 		$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;

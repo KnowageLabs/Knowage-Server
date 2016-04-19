@@ -1,8 +1,8 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:absolute"
+ 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " flex layout-fill style="position:relative"
 							id='federationListTable' ng-model=ngModel
-							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
+							columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
 							columnsSearch='["name"]' 
-							show-search-bar=false
+							show-search-bar=true
 							speed-menu-option=tableSpeedMenuOption
 							highlights-selected-item="true"
 							selected-item=selectedFederation
