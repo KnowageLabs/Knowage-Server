@@ -113,11 +113,5 @@
             </key>
             <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState" />
         </set>
-        <set name="sbiKpiDocumentses" inverse="true">
-            <key>
-                <column name="BIOBJ_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument" />
-        </set>
     </class>
 </hibernate-mapping>

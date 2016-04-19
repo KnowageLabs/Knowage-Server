@@ -7,9 +7,11 @@
         <id name="id" type="integer">
             <column name="ID" />
         </id>
+        <!-- 
         <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" fetch="select">
             <column name="KPI_MODEL_INST_NODE_ID" not-null="true" />
         </many-to-one>
+         -->
         <many-to-one name="sbiOrgUnitHierarchies" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies" fetch="select">
             <column name="HIERARCHY_ID" not-null="true" />
         </many-to-one>
