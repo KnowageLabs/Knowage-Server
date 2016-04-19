@@ -93,6 +93,12 @@ author:
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString(0);
+	
+	JSONObject templateObj = engineInstance.getTemplate();
+	JSONObject chartObj = templateObj.getJSONObject("chart");
+	JSONObject optionsObj = chartObj.getJSONObject("options");
+	String vieweas = (String)optionsObj.get("vieweas");
+	Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
 	// if(env.get("KPI_VALUE")!=null){
 	// 	kpiValue = env.get("KPI_VALUE").toString();
 	// }
@@ -178,7 +184,9 @@ author:
 	var protocol = '<%=request.getScheme()%>';
 </script>
 <!-- Styles -->
+<%--
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
+--%>
 
 <!-- Scripts -->
 <%--
@@ -213,18 +221,36 @@ author:
 	<div layout-align="center center" layout="row" flex >
 		<div id="kpiViewer_<%=docId%>"></div>
 	</div>
-	<div style="padding:2em; font-size: 0.5em">kpiValue: {{documentData.kpiValue | json}}</div>
-	<div style="padding:2em; font-size: 0.5em">template: {{documentData.template | json}}</div>
 	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
 	--%>
+	<div style="padding:2em; font-size: 0.5em">template: {{documentData.template | json}}</div>
+	<div style="padding:2em; font-size: 0.5em">kpiValue: {{documentData.kpiValue | json}}</div>
 	
-	
-	<kpi-gauge ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'false'" 
-		flex layout="column" layout-align="center"
-		
+<%
+if(vieweas.equalsIgnoreCase("speedometer")) {
+	if(showlineargauge) {
+%>
+	<kpi-linear-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
 		size="gaugeSize"
+		min-value="gaugeMinValue"
+		max-value="gaugeMaxValue"
+		value="gaugeValue"
+		threshold-stops="thresholdStops"
+		show-value="documentData.template.chart.options.showvalue"
+		show-thresholds="documentData.template.chart.options.showthreshold"
+		value-precision="documentData.template.chart.options.precision"
+		font-conf="documentData.template.chart.style.font"
+	></kpi-linear-gauge>
+	
+<%
+	} else { 
+%>
+	
+	<kpi-gauge flex layout="column" layout-align="center"
+		gauge-id="documentData.docId"
+		label="documentData.docLabel"
 		size="gaugeSize"
 		min-value="gaugeMinValue"
 		max-value="gaugeMaxValue"
@@ -235,7 +261,11 @@ author:
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"
 	></kpi-gauge>
-	
+
+	<%
+	} 
+} 
+%>
 <!-- 	
 	<nvd3 ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'true'" 
 	<nvd3 options="getSpeedoLinearConf()" data="getSpeedoLinearData()" config="getSpeedoLinearConfig()"></nvd3>
@@ -245,7 +275,10 @@ author:
 	<script type="text/javascript">
 	(function() {
 		var kpiViewerModule = angular.module('kpiViewerModule', 
-				['sbiModule', 'ngSanitize', 'ngAnimate', 'gaugeNgDirectiveApp', 'nvd3']);
+				['sbiModule', 'ngSanitize', 'ngAnimate'
+				 , 'gaugeNgDirectiveApp'
+				 //, 'nvd3'
+				 ]);
 		
 		kpiViewerModule.factory('documentData', function() {
 			var documentTemplate = JSON.parse('<%=template%>');

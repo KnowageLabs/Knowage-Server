@@ -303,7 +303,9 @@
 		};
 
 		// initialization
-		this.configure(configuration);
+		if(configuration) {
+			this.configure(configuration);
+		}
 	};
 	/**
 	 * End of Gauge Element snippet
@@ -346,18 +348,6 @@
 	}]);
 	
 	function kpiGaugeCtrl($scope){
-//		console.log("$scope.gaugeId -> ", $scope.gaugeId);
-//		console.log("$scope.label -> ", $scope.label);
-//		console.log("$scope.size -> ", $scope.size);
-//		console.log("$scope.minValue -> ", $scope.minValue);
-//		console.log("$scope.maxValue -> ", $scope.maxValue);
-//		console.log("$scope.value -> ", $scope.value);
-//		console.log("$scope.thresholdStops -> ", $scope.thresholdStops);
-//		console.log("$scope.showValue -> ", $scope.showValue);
-//		console.log("$scope.showThresholds -> ", $scope.showThresholds);
-//		console.log("$scope.valuePrecision -> ", $scope.valuePrecision);
-//		console.log("$scope.fontConf -> ", $scope.fontConf);
-		
 		$scope.containerFrameId = "kpiGaugeFrame_" + $scope.gaugeId;
 		
 		$scope.gaugeSvg = null;
@@ -435,5 +425,114 @@
 				$scope.showThresholds,
 				$scope.valuePrecision,
 				$scope.fontConf);
+	};
+	
+	angular.forEach(['x', 'y', 'width', 'height', 'style', 'transform'], function(name) {
+		var svgName = 'svg' + name[0].toUpperCase() + name.slice(1);
+		
+		gaugeNgDirectiveApp.directive(svgName, function() {
+			return function(scope, element, attrs) {
+				attrs.$observe(svgName, function(value) {
+					attrs.$set(name, value); 
+				})
+			};
+		});
+	});
+	
+	gaugeNgDirectiveApp.directive("kpiLinearGauge", ['$compile', '$timeout' , function($compile, $timeout){
+		return {
+			restrict: 'E',
+			template: 
+				'<div id="{{svgId}}" layout-align="center center" layout="row">'
+				+ '<svg class="kpiLinearGauge" svg-width="{{size*1.2}}" height="100" ' 
+						+ 'style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">'
+						
+					+ '<g transform="translate(120,10)">' 
+						+ '<text fill="{{fontColor}}" class="title" style="font-size:0.6em"' 
+							+ 'style="font-size:{{labelFontSize}}"'
+						+ '>{{value.toFixed(valuePrecision)}}</text>' 
+					+ '</g>'
+					
+					+ '<g transform="translate(120,20)">'
+						+ '<rect ng-repeat="stop in thresholdStops" class="range" svg-transform="translate({{stop.from || 0}},0)" '
+							+ 'svg-style="fill: {{stop.color}}" svg-width="{{stop.to - stop.from}}" height="40" x="0"/>'
+						
+						+ '<rect class="measure" svg-width="{{value}}" height="13.333" x="0" y="13.333"/>'
+						
+						+ '<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">'
+							
+							+ '<g transform="translate(-6,12.5)" style="text-anchor: end;">'
+								+ '<text fill="{{fontColor}}" class="title"' 
+										+ 'style="font-size:{{labelFontSize}}"'
+								+ '>{{label}}</text>'
+							+ '</g>'
+						
+							+ '<g class="tick" transform="translate(0,0)" style="opacity: 1;">'
+								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
+									+ 'style="font-size:{{maxMinFontSize}}"'
+								+ '>{{minValue}}</text>'
+							+ '</g>'
+							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue) / 4) || 0}},0)" '
+									+ 'style="opacity: 1;">'
+								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" ' 
+									+ 'style="font-size:{{intermediateFontSize}}"'
+								+ '>{{minValue + (maxValue - minValue) / 4}}</text>'
+							+ '</g>'
+							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue) / 2) || 0}},0)" '
+									+' style="opacity: 1;">'
+								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" '
+									+ 'style="font-size:{{intermediateFontSize}}"'
+								+ '>{{minValue + (maxValue - minValue) / 2}}</text>'
+							+ '</g>'
+							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue)* 3 / 4) || 0}},0)" ' 
+									+ ' style="opacity: 1;">'
+								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
+									+ 'style="font-size:{{intermediateFontSize}}"'
+								+ '>{{minValue + (maxValue - minValue)* 3 / 4}}</text>'
+							+ '</g>'
+							+ '<g class="tick" svg-transform="translate({{maxValue || 0}},0)" ' 
+									+ 'style="opacity: 1;">'
+								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"'
+									+ 'style="font-size:{{maxMinFontSize}}"'
+								+'>{{maxValue}}</text>'
+							+ '</g>'
+						+ '</g>'
+					+ '</g>'
+				+ '</svg>'
+				+ '</div>'
+				,
+				
+			controller: kpiLinearGaugeCtrl,
+			scope: {
+				gaugeId: '=',
+				label: '=',
+				size: '=',
+				minValue: '=',
+				maxValue: '=',
+				value: '=',
+				thresholdStops: '=?',
+				showValue: '=?',
+				showThresholds: '=?',
+				valuePrecision: '=?',
+				fontConf: '=?',
+			},
+			link : function(scope, element, attributes){
+				$timeout(function(){}, 0);
+//				$compile(element.contents())(scope);
+			}
+		};
+	}]);
+	
+	function kpiLinearGaugeCtrl($scope){
+		$scope.svgId = 'kpiLinearGauge_' + $scope.gaugeId;
+		
+		$scope.fontColor = $scope.fontConf.color;
+		$scope.labelFontSize = ($scope.fontConf.size * 1.2) + 'em';
+		$scope.maxMinFontSize = ($scope.fontConf.size) + 'em';
+		$scope.intermediateFontSize = ($scope.fontConf.size * 0.7) + 'em';
+		
+//		$scope.maxComponentSize = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
+//		$scope.sizeScaleFactor = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
+		
 	};
 })();
