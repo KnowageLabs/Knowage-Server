@@ -153,7 +153,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
 			// resultAsMap.put("parameters", parameters);
-			resultAsMap.put("url", url);
+			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
 			if (!errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
