@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,26 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api;
-
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +51,21 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -227,8 +227,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
-					+ "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label + "]");
 
 		ResponseBuilder rb;
 		ObjTemplate template = document.getActiveTemplate();
@@ -257,8 +257,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
-					+ label + "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + label + "]");
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> inputParts = uploadForm.get("file");
@@ -348,7 +348,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/saveChartTemplate")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
 			@Context HttpServletResponse servletResponse) {
