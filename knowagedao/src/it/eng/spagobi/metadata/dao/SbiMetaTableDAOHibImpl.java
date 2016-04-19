@@ -315,7 +315,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiMetaSource metaSource = null;
 			if (aMetaTable.getSbiMetaSource() != null) {
-				Criterion aCriterion = Expression.eq("valueId", aMetaTable.getSbiMetaSource().getSourceId());
+				Criterion aCriterion = Expression.eq("sourceId", aMetaTable.getSbiMetaSource().getSourceId());
 				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();

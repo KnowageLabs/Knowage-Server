@@ -274,9 +274,9 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			hibMeta.setDeleted(aMetaTableColumn.isDeleted());
 
 			SbiMetaTable metaTable = null;
-			if (aMetaTableColumn.getSbiMetaTable().getTableId() < 0) {
-				Criterion aCriterion = Expression.eq("valueId", aMetaTableColumn.getSbiMetaTable().getTableId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
+			if (aMetaTableColumn.getSbiMetaTable() != null) {
+				Criterion aCriterion = Expression.eq("tableId", aMetaTableColumn.getSbiMetaTable().getTableId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
 				criteria.add(aCriterion);
 				metaTable = (SbiMetaTable) criteria.uniqueResult();
 				if (metaTable == null) {
