@@ -25,6 +25,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -202,6 +203,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
+		MessageBuilder m = new MessageBuilder();
+		Locale locale = m.getLocale(req);
+		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
+
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
 		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null);
@@ -222,20 +227,47 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			parameterAsMap
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
-
-			if (objParameter.getValueSelection().equalsIgnoreCase("lov") && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
+			if (jsonParameters.has(objParameter.getId())) {
+				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
+				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+			}
+			if ("lov".equalsIgnoreCase(objParameter.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 				parameterAsMap.put("defaultValues", defaultValues);
+
+				// if parameterValue is not null and is array, check if all element are present in lov
+				Object o = parameterAsMap.get("parameterValue");
+				if (o != null) {
+					if (o instanceof List) {
+						List<String> valList = (ArrayList) o;
+						for (int k = 0; k < valList.size(); k++) {
+							String itemVal = valList.get(k);
+							boolean finded = false;
+							for (HashMap<String, Object> parHashVal : defaultValues) {
+								if (parHashVal.containsKey("value") && parHashVal.get("value").equals(itemVal)) {
+									finded = true;
+									break;
+								}
+							}
+							if (!finded) {
+								valList.remove(k);
+								k--;
+							}
+						}
+					}
+				}
+
 			}
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 
 			// load, if present, the json parameters
-			if (jsonParameters.has(objParameter.getId())) {
-				parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
-			}
+
+			// if (jsonParameters.has(objParameter.getId())) {
+			// parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
+			// }
 
 			parametersArrayList.add(parameterAsMap);
 		}

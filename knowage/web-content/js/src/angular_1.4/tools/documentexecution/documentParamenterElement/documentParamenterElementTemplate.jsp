@@ -112,8 +112,8 @@
 		<section ng-if="parameter.selectionType=='LIST' && parameter.multivalue">
 			<label>{{parameter.label}}</label>
 			<div ng-repeat="defaultParameter in parameter.defaultValues">
-				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-model="defaultParameter.isSelected"
-						ng-change="toggleCheckboxParameter(parameter, defaultParameter)">
+				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
+						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, parameter)" >
 					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>

@@ -649,6 +649,10 @@ public class DocumentUrlManager {
 		logger.debug("OUT");
 	}
 
+	public void refreshParameterForFilters(BIObjectParameter biparam, JSONObject parameter) {
+		refreshParameter(biparam, parameter, false);
+	}
+
 	private void refreshParameter(BIObjectParameter biparam, JSONObject jsonObject, boolean transientMode) {
 		logger.debug("IN");
 		Assert.assertNotNull(biparam, "Parameter in input is null!!");

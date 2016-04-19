@@ -299,6 +299,10 @@
 				$scope.$apply();
 			}
 		};
+		
+		$scope.navigateTo= function(item){
+			$crossNavigationScope.crossNavigationHelper.navigateTo(item);
+		}
 		 
 		console.log("documentExecutionControllerFn OUT ");
 	};

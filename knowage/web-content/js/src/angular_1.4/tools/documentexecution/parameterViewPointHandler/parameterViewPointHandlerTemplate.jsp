@@ -8,7 +8,7 @@
 	 </md-button>
 	</div>
 </md-toolbar>
-<angular-table  style="position: absolute;" layout-fill
+<angular-table    flex
 	id="tableViewpoints" ng-model="urlViewPointService.gvpCtrlViewpoints" 
 	columns='[{"label":"Name","name":"vpName"},{"label":"Description","name":"vpDesc"},{"label":"Visibility","name":"vpScope"}]'
 	columns-search='["vpName","vpDesc", "vpScope"]'

@@ -33,8 +33,9 @@
 		<!-- lov list multiple input -->
 		<section ng-if="paramDialogCtrl.tempParameter.multivalue">
 			<div ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues">
-				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-model="defaultParameter.isSelected"
-						ng-change="paramDialogCtrl.toggleCheckboxParameter(paramDialogCtrl.tempParameter, defaultParameter)">
+				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
+				ng-checked="checkboxParameterExists(defaultParameter.value, paramDialogCtrl.tempParameter)" 
+				ng-click="toggleCheckboxParameter(defaultParameter.value, paramDialogCtrl.tempParameter)" >
 					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>

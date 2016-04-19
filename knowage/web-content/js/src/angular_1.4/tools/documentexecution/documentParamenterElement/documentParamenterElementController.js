@@ -88,15 +88,19 @@
 			}
 		};
 		
-		$scope.toggleCheckboxParameter = function(parameter, defaultParameter) {
-			var tempNewParameterValue = [];
-			for(var i = 0; i < parameter.defaultValues.length; i++) {
-				var defaultValue = parameter.defaultValues[i];
-				if(defaultValue.isSelected == true) {
-					tempNewParameterValue.push(defaultValue.value);
-				}
-			}
-			parameter.parameterValue = tempNewParameterValue;
+		
+		$scope.checkboxParameterExists = function (parVal,parameter) {
+	        return parameter.parameterValue.indexOf(parVal) > -1;
+	      };
+	      
+		$scope.toggleCheckboxParameter = function(parVal,parameter) {
+			var idx = parameter.parameterValue.indexOf(parVal);
+	        if (idx > -1) {
+	        	parameter.parameterValue.splice(idx, 1);
+	        }
+	        else {
+	        	parameter.parameterValue.push(parVal);
+	        } 
 		};
 		
 		$scope.popupLookupParameterDialog = function(parameter) {
@@ -128,15 +132,17 @@
 				locals : {
 					parameter: parameter,
 					toggleCheckboxParameter: $scope.toggleCheckboxParameter,
+					checkboxParameterExists: $scope.checkboxParameterExists,
 					sbiModule_translate: $scope.sbiModule_translate,
 				},
 				
 				controllerAs: "paramDialogCtrl",
 				
-				controller : function($mdDialog, parameter, toggleCheckboxParameter, sbiModule_translate) {
+				controller : function($mdDialog, parameter, toggleCheckboxParameter, checkboxParameterExists,sbiModule_translate) {
 					var paramDialogCtrl = this;
 					
 					paramDialogCtrl.toggleCheckboxParameter = toggleCheckboxParameter;
+					paramDialogCtrl.checkboxParameterExists = checkboxParameterExists;
 					
 					paramDialogCtrl.initialParameterState = parameter;
 					

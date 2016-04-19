@@ -82,7 +82,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 						scope.tableColumns=[];
 						
 						
-						if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
+						if(attrs.multiSelect && (attrs.multiSelect==true || attrs.multiSelect=="true" || scope.multiSelect==true)){
 							scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
 							thead.attr('multi-select',true);
 							tbody.attr('multi-select',true);

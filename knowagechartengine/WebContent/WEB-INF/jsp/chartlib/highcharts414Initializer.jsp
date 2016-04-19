@@ -322,8 +322,8 @@
 			}
 			
             // fisrt parameter is string chart type 
-             
-            if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+//              if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+             if(parent.angular && parent.angular.element(frameElement).scope().navigateTo!=undefined){
             	var navData={
             			chartType:	"HIGHCHART",
             			documentName:e.point.crossNavigationDocumentName,
@@ -336,7 +336,7 @@
             			groupingCategoryValue:groupingCategoryValue,
             			stringParameters:null
             	}; 
-            	window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+            	parent.angular.element(frameElement).scope().navigateTo(navData); 
             }else{
             	Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
     					"HIGHCHART",

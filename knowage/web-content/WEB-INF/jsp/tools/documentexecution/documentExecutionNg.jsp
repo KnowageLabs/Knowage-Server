@@ -187,9 +187,9 @@ try{
 				</iframe>
 			</md-content>
 										
-			<div flex ng-switch-when="PARAMETERS"> 
-				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout="row">
-					<parameter-view-point-handler flex/>
+			<div flex layout ng-switch-when="PARAMETERS"> 
+				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>
+					<parameter-view-point-handler flex layout="column"/>
 				</div>
 			</div>	 
 		</div>	
@@ -200,7 +200,6 @@ try{
 							
 		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
 			<div layout="row" layout-align="center center">	
-			{{showParametersPanel.status}}--					
 				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 						ng-click="clearListParametersForm();">
 					<i class="fa fa-eraser" style="color:white"></i>

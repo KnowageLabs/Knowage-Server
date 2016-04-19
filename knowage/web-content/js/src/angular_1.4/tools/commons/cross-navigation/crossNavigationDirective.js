@@ -106,7 +106,10 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 							if(!respStr.hasOwnProperty(key)){
 								respStr[key]=[];
 							}
-							respStr[key].push(parVal.value);
+							if(respStr[key].indexOf(parVal.value)==-1)
+							{ 
+								respStr[key].push(parVal.value);
+							}
 						}else{
 							if(navData[dataKey].hasOwnProperty(parVal.value) && navData[dataKey][parVal.value]!=undefined && navData[dataKey][parVal.value]!=null){ 
 								if(!respStr.hasOwnProperty(key)){

@@ -103,7 +103,10 @@
 								jsonDatumDesc = jsonDatumValue;
 							}
 						} else {
+							
 							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+							
+							
 							jsonDatumDesc = jsonDatumValue;
 						}
 						jsonDatum[valueKey] = jsonDatumValue;
@@ -113,7 +116,6 @@
 				//console.log('jsonDAtum ' , jsonDatum);
 				return jsonDatum;
 			},
-			
 //			buildStringParametersForSave : function (documentParameters) {
 //				//console.log('buildStringParameters ' , documentParameters);
 //				var jsonDatum =  {};
