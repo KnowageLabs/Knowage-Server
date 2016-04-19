@@ -275,6 +275,11 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			}
 			return rowValues;
 		}
+
+		@Override
+		public void remove() {
+			iterator.remove();
+		}
 	}
 
 	private static class QueryResult {
