@@ -145,7 +145,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">
-						<md-input-container > <label>{{translate.load("sbi.crossnavigation.name");}}</label>
+						<md-input-container > 
+							<label>{{translate.load("sbi.crossnavigation.name");}}</label>
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name" required > 
 							<div ng-messages="tsForm.ctrl.detail.simpleNavigation.name.$error" ng-show="tsForm.ctrl.detail.simpleNavigation.name.$dirty">
 						    	<div ng-message="required">This is required!</div>
@@ -154,25 +155,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				</div>
 	
-				<div layout="row" >
-					<div flex="50" layout="row">
-						<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.doc.a");}}</label> 
+				<div layout="row" layout-wrap>
+					<div flex="50" layout="row" >
+						<md-input-container flex> 
+							<label>{{translate.load("sbi.crossnavigation.doc.a")}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.fromDoc" readonly>
 						</md-input-container>
-						<md-button ng-click="ctrl.listLeftDocuments()" class="md-fab md-mini" > 
-							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon" >
-							</md-icon> 
-						</md-button>
+						<md-button ng-click="ctrl.listLeftDocuments()" class="md-raised md-ExtraMini">{{translate.load("sbi.generic.select")}}</md-button>
 					</div>
 				
 					<div flex="50" layout="row">
 						<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.doc.b");}}</label> 
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.toDoc" readonly> </md-input-container>
 						</md-input-container>
-						<md-button ng-click="ctrl.listRightDocuments()" class="md-fab md-mini" > 
-							<md-icon md-font-icon="fa fa-folder-open-o openDocIcon">
-							</md-icon> 
-						</md-button>
+						<md-button ng-click="ctrl.listRightDocuments()" class="md-raised md-ExtraMini">{{translate.load("sbi.generic.select")}}</md-button>
 					</div>
 				</div>
 			
