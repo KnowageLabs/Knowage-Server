@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -117,6 +118,63 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaTableColumn) criteria.uniqueResult();
+			if (toReturn == null)
+				return null;
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Load table column by name.
+	 *
+	 * @param name
+	 *            the table column name
+	 * @param tableId
+	 *            the table id
+	 * @return the meta table column
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAOHibImpl#loadTableByName(string)
+	 */
+	@Override
+	public SbiMetaTableColumn loadTableColumnByNameAndTable(String name, Integer tableId) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTableColumn toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			String hql = " from SbiMetaTableColumn c where c.name = ? and c.sbiMetaTable.tableId = ? ";
+			Query aQuery = tmpSession.createQuery(hql);
+			aQuery.setString(0, name);
+			aQuery.setInteger(1, tableId);
+			toReturn = (SbiMetaTableColumn) aQuery.uniqueResult();
+
+			// Criterion labelCriterrion = Expression.eq("name", name);
+			// criteria.add(labelCriterrion);
+			// toReturn = (SbiMetaTableColumn) criteria.uniqueResult();
+			// Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
+
 			if (toReturn == null)
 				return null;
 			tx.commit();

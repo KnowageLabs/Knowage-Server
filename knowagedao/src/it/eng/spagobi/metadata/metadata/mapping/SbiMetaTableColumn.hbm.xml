@@ -13,7 +13,7 @@
 				<param name="initial_value">1</param>	
 		    </generator>
         </id>
-        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" fetch="select">
+        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" fetch="join">
             <column name="TABLE_ID" not-null="true" />
         </many-to-one>
         <property name="name" type="string">
