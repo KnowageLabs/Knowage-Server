@@ -6,7 +6,11 @@
     <class name="it.eng.spagobi.metadata.metadata.SbiMetaSource" table="SBI_META_SOURCE">
         <id name="sourceId" type="java.lang.Integer">
             <column name="SOURCE_ID" />
-            <generator class="identity" />
+            <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_META_SOURCE</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
@@ -64,7 +68,7 @@
 	        </property>
 	    </component>
         
-        <set name="sbiMetaJobSources" table="sbi_meta_job_source" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaJobSources" table="sbi_meta_job_source" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="SOURCE_ID" not-null="true" />
             </key>

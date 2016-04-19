@@ -6,11 +6,16 @@
     <class name="it.eng.spagobi.metadata.metadata.SbiMetaTable" table="SBI_META_TABLE">
         <id name="tableId" type="java.lang.Integer">
             <column name="TABLE_ID" />
-            <generator class="foreign">
+           <!--  <generator class="foreign">
                 <param name="property">sbiMetaSource</param>
-            </generator>
+            </generator> -->
+             <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_META_TABLE</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
-        <many-to-one name="sbiMetaSource" class="it.eng.spagobi.metadata.metadata.SbiMetaSource" fetch="select">
+        <many-to-one name="sbiMetaSource" class="it.eng.spagobi.metadata.metadata.SbiMetaSource" lazy="false" fetch="select">
             <column name="SOURCE_ID" not-null="true" />
         </many-to-one>
         <property name="name" type="string">
@@ -57,31 +62,31 @@
 	        </property>
 	    </component>
          
-        <set name="sbiMetaTableColumns" table="sbi_meta_table_column" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaTableColumns" table="sbi_meta_table_column" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" />
         </set>
-        <set name="sbiMetaObjTables" table="sbi_meta_obj_table" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaObjTables" table="sbi_meta_obj_table" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaObjTable" />
         </set>
-        <set name="sbiMetaDsTables" table="sbi_meta_ds_table" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaDsTables" table="sbi_meta_ds_table" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaDsTable" />
         </set>
-        <set name="sbiMetaJobTables" table="sbi_meta_job_table" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaJobTables" table="sbi_meta_job_table" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobTable" />
         </set>
-        <set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>

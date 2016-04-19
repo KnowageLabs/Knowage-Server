@@ -6,12 +6,16 @@
     <class name="it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute" table="SBI_META_BC_ATTRIBUTE">
         <id name="attributeId" type="java.lang.Integer">
             <column name="ATTRIBUTE_ID" />
-            <generator class="identity" />
+           <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_META_BC_ATTRIBUTE</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
-        <many-to-one name="sbiMetaTableColumn" class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" fetch="select">
+        <many-to-one name="sbiMetaTableColumn" class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" lazy="false" fetch="select">
             <column name="COLUMN_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" fetch="select">
+        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" lazy="false" fetch="select">
             <column name="BC_ID" not-null="true" />
         </many-to-one>
         <property name="name" type="string">

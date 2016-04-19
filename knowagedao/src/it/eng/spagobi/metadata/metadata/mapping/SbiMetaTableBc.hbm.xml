@@ -12,10 +12,10 @@
                 <column name="BC_ID" />
             </key-property>
         </composite-id>
-        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" update="false" insert="false" fetch="select">
+        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" update="false" insert="false" fetch="select">
             <column name="TABLE_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" update="false" insert="false" fetch="select">
+        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" lazy="false" update="false" insert="false" fetch="select">
             <column name="BC_ID" not-null="true" />
         </many-to-one>
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

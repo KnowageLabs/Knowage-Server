@@ -6,9 +6,14 @@
     <class name="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" table="SBI_META_TABLE_COLUMN" >
         <id name="columnId" type="java.lang.Integer">
             <column name="COLUMN_ID" />
-            <generator class="identity" />
+           <!--  <generator class="identity" /> -->
+           <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_META_TABLE_COLUMN</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
-        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" fetch="select">
+        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" fetch="select">
             <column name="TABLE_ID" not-null="true" />
         </many-to-one>
         <property name="name" type="string">
@@ -58,7 +63,7 @@
 	        </property>
 	    </component>
         
-        <set name="sbiMetaBcAttributes" table="sbi_meta_bc_attribute" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaBcAttributes" table="sbi_meta_bc_attribute" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="COLUMN_ID" not-null="true" />
             </key>

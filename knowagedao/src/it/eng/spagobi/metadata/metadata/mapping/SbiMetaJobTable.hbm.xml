@@ -12,10 +12,10 @@
                 <column name="TABLE_ID" />
             </key-property>
         </composite-id>
-        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" update="false" insert="false" fetch="select">
+        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" update="false" insert="false" fetch="select">
             <column name="TABLE_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiMetaJob" class="it.eng.spagobi.metadata.metadata.SbiMetaJob" update="false" insert="false" fetch="select">
+        <many-to-one name="sbiMetaJob" class="it.eng.spagobi.metadata.metadata.SbiMetaJob" lazy="false" update="false" insert="false" fetch="select">
             <column name="JOB_ID" not-null="true" />
         </many-to-one>
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

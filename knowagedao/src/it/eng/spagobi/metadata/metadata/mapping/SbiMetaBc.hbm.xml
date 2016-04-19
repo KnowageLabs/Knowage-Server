@@ -6,9 +6,13 @@
     <class name="it.eng.spagobi.metadata.metadata.SbiMetaBc" table="SBI_META_BC">
         <id name="bcId" type="java.lang.Integer">
             <column name="BC_ID" />
-            <generator class="identity" />
+            <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_META_BC</param>	
+				<param name="initial_value">1</param>	
+		    </generator>
         </id>
-        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" fetch="select">
+        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" lazy="false" fetch="select">
             <column name="MODEL_ID" not-null="true" />
         </many-to-one>
         <property name="tableId" type="int">
@@ -61,19 +65,19 @@
 	        </property>
 	    </component>
          
-        <set name="sbiMetaDsBcs" table="sbi_meta_ds_bc" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaDsBcs" table="sbi_meta_ds_bc" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaDsBc" />
         </set>
-        <set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableBc" />
         </set>
-        <set name="sbiMetaBcAttributes" table="sbi_meta_bc_attribute" inverse="true" lazy="true" fetch="select">
+        <set name="sbiMetaBcAttributes" table="sbi_meta_bc_attribute" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="BC_ID" not-null="true" />
             </key>
