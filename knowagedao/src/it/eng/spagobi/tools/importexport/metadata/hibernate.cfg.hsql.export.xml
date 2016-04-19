@@ -54,7 +54,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
-        <!-- old kpi
+        <!-- old kpi 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
@@ -77,7 +77,7 @@
        -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetadata.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetacontents.hbm.xml" />
-        <!-- Kpi Organizational Units
+        <!-- Kpi Organizational Units 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnit.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitHierarchies.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitNodes.hbm.xml" />
@@ -99,9 +99,10 @@
                 <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
-<!-- Kpi Goal -->
+		<!-- Kpi Goal 
         <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
+        -->
     </session-factory>
 </hibernate-configuration>
