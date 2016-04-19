@@ -1,0 +1,30 @@
+{
+    "es3": true,
+    "eqeqeq": true,
+    "esnext": true,
+    "expr": true,
+    "immed": true,
+    "laxbreak": true,
+    "laxcomma": true,
+    "latedef": true,
+    "newcap": true,
+    "nonew": true,
+    "quotmark": "single",
+    "strict": true,
+    "sub": true,
+    "trailing": true,
+    "undef": true,
+    "unused": "vars",
+    "boss": true,
+    "globals": {
+        "angular": false,
+        "nv": false,
+        "d3": false,
+        "navigator": false,
+        "window": false,
+        "clearTimeout": false,
+        "setTimeout": false,
+        "document": false,
+        "process": false
+    }
+}

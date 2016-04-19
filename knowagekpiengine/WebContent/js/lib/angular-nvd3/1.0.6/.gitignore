@@ -1,0 +1,7 @@
+.idea
+.directory
+*.log
+
+coverage
+node_modules
+bower_components
