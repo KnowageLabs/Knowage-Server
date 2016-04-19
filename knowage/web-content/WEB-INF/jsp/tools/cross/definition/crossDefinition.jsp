@@ -68,7 +68,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-*{{par.links.length}}*
   <div layout="row" class="tree-node tree-node-content crossnavigation-parameter {{par.id==ctrl.detail.toPars[ctrl.selectedItem].id?'highlight-selected-parameter':''}}" ng-if="!par.links.length">
     <div >
 	  {{par.name}}
