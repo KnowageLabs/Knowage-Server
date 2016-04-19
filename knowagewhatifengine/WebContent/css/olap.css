@@ -22,12 +22,12 @@
 }
 
 .top-alignment{
-	height:10%;
+	height:8%;
 }
 
 @-moz-document url-prefix() { 
   .top-alignment {
-     height:80%;
+     height:75%;
   }  
 }
 
@@ -168,6 +168,7 @@
   font-weight: normal;
   font-size: 15px !important;
   line-height: 1.5;
+  max-height:28px;
 }
 
 .filter-toolbar-element .name{
@@ -201,17 +202,20 @@
   color:white;
   cursor: pointer;
   background-color:#3b678c;
+
 }
 
 .filter-toolbar-element-left .name{
   height:15%; 
   padding-left:5px; 
   overflow: hidden;
+  min-height:80px;
 }
 
 .filter-toolbar-element-left .action{
   height:5%;
   border-top: 2px solid white;
+  max-height:25px;
 }
 
 .filter-toolbar-element-left .button{
@@ -243,7 +247,7 @@ md-tabs .md-tab.md-active{
 }
 
 .central-panel{
-    height:88%;
+    height:calc(100% - 120px);
     width:100%;
     position:absolute;
     bottom:10px;
@@ -251,7 +255,7 @@ md-tabs .md-tab.md-active{
 
 @-moz-document url-prefix() { 
 	.central-panel{
-	    height:85%;
+	    height:calc(100% - 100px);
 	    width:100%;
 	    position:absolute;
 	    bottom:10px;
@@ -458,13 +462,15 @@ box-shadow:inset 0px 0px 0px 2px #3b678c;
 	}
 }
 
-.sidenav-right{
-	width:10%;
+.md-sidenav-right{
+	width:12%;
+	min-width:180px;
 }
 
 @-moz-document url-prefix() { 
-	.sidenav-right{
+	.md-sidenav-right{
 		width:13%;
+		min-width:180px;
 	}
 }
 
@@ -489,8 +495,14 @@ box-shadow:inset 0px 0px 0px 2px #3b678c;
 	line-height: 1;
 	text-transform: none;
 	min-width:95%;
+	font-size:12px;
 }
 
+@-moz-document url-prefix() { 
+	.drill-buttons{
+		font-size:10px;
+	}
+}
 .drill-buttons .left{
 	border-radious:20% 0px 0px 20% !important	
 }
@@ -505,19 +517,22 @@ box-shadow:inset 0px 0px 0px 2px #3b678c;
 
 /*New filter card*/
 .new-filter-card{
+	min-width:160px;
 	width:12%;
 	border-radius:10px;
 	margin: 5px; 
-	height: 60%;
+	height: 90%;
 	cursor: pointer;
+	min-height:50px;
 }
 
 @-moz-document url-prefix() { 
 	.new-filter-card{
-		width:12%;
+		width:13%;
+		min-width:180px;
 		border-radius:10px;
 		margin: 5px; 
-		height: 80%;
+		height: 85%;
 		cursor: pointer;
 	}
 }
@@ -547,7 +562,7 @@ box-shadow:inset 0px 0px 0px 2px #3b678c;
 }
 
 .new-filter-card .top .name-area{
-	line-height: 2.5;
+	line-height: 2;
 	color:white;
 	text-align: center;
 }
@@ -590,14 +605,14 @@ box-shadow:inset 0px 0px 0px 2px #3b678c;
 .top-axis{
 		position: absolute;
 		width: 100%;
-		bottom: calc(88% + 10px);
+		bottom: calc(100% - 110px);
 	}
 
 @-moz-document url-prefix() { 
 	.top-axis{
 		position: absolute;
 		width: 100%;
-		bottom: calc(85% + 10px);
+		bottom: calc(100% - 90px);
 	}
 }
 md-option[selected], md-select-menu md-option[selected]{

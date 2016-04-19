@@ -10,7 +10,7 @@
 </div> -->
 <!-- Side nav -->
 <md-sidenav
-	style="width:13%;overflow-x:hidden"
+	style="overflow-x:hidden"
 	md-component-id="right"
     class="md-sidenav-right"
     
@@ -21,7 +21,8 @@
     	<md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
     </md-button>
 </md-toolbar>
-<div class="right-menu" layout="row"> 
+<!-- Temporary hidden it will be used in the future -->
+<div class="right-menu" layout="row" ng-hide="true"> 
 	<div style="width:33%;" >
 		<md-button id="sidenav-table-btn" ng-class="tableIcon && !chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('table')">
 			<md-icon class="fa fa-table fa-2x"/>

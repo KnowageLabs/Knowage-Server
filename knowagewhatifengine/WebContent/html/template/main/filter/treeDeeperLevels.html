@@ -12,7 +12,7 @@
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
 			</span>
-			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.name == filterSelected[filterAxisPosition].name"> 
+			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
 			</md-icon>
 		</span>
 		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">

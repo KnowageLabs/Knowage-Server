@@ -25,7 +25,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText = "";
-	$scope.searchSucessText;
+	$scope.searchSucessText="";
 	$scope.showSearchInput = false;
 
 	$scope.rows;

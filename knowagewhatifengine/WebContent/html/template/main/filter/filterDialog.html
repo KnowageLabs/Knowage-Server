@@ -1,4 +1,4 @@
-<md-dialog style='height:75%; width:25%;' layout="column">
+<md-dialog style='height:75%; width:25%; min-width:340px' layout="column">
 	
 	<md-toolbar class="knowage-blue dialog-toolbar" flex=10 layout="column">
 		<p width="50%">{{filterDialogToolbarName}}</p>		
@@ -34,12 +34,12 @@
 				</md-checkbox>
     	</div>
 		
-		<div ui-tree >
+		<div ui-tree>
 			<ul ui-tree-nodes="" ng-model="data" class="tree" >
-				<filter-tree-first-level></filter-tree-first-level>
+				<filter-tree-first-level ng-show="!loadingFilter"></filter-tree-first-level>
 			</ul>
 		</div ui-tree>
-
+		<md-progress-circular md-mode="indeterminate" ng-show="loadingFilter"></md-progress-circular>
 	</md-content>
 
 	<md-dialog-actions layout="row">

@@ -17,15 +17,24 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var m;
 	var oldSelectedFilter="";
 	var hlght = false;
-	
+		$scope.loadingFilter = true;
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
+		console.log("getting screen");
+		console.log(window.innerHeight);
+		console.log(window.innerWidth);
 	});
 	
 	/**
 	 * Dialogs  
 	 **/
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
+		
+		$scope.loadingFilter = true;
+		var x = {name:'Waiting...'};
+		$scope.data = [];
+		$scope.data.push(x);
+		
 		$scope.filterDialogToolbarName = filter.name;
 		$scope.filterAxisPosition = filter.positionInAxis;
 		$scope.activeaxis = filter.axis;
@@ -46,8 +55,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 						}						
 					}
 					if(!existsInTracker)
-						getVisible($scope.data, h);
-				}
+						getVisible($scope.data, h);				}
 			}
 		}
 		if(!exist){
@@ -55,6 +63,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$scope.dataPointers.push(filterFather);
 		}
 		$scope.showDialog(ev,$scope.filterDial);
+		
+		$scope.loadingFilter = false;
 	}
 	
 	/**
@@ -102,6 +112,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.searchFilter = function(){
 		$scope.loadingNodes = true;
+		//searchTextUsed = $scope.searchText;
 		hlght = true;
 		var encoded = encodeURI('/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
@@ -283,9 +294,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.highlight = function(name){
 		if(!hlght)
 			return false;
-		if(name.toLowerCase().indexOf($scope.searchText.toLowerCase()) > -1)		
-			return true;		
-		else		
+		if(name.toLowerCase().indexOf($scope.searchSucessText.toLowerCase()) > -1)
+			return true;
+		else
 			return false		
 	};		
 			
@@ -623,5 +634,20 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			return true;
 	};
 	
+	$scope.cutName = function(name){
+		var result = name.split(" ");
+		
+		if(name.length < 12)
+			return name;
+		if(result[0].length>13){
+			return result[0].substring(0,13)
+		}
+		else if(result[1]!=undefined){
+			if(result[1].length > 3){
+				var res = result[1].substring(0,3);
+				return result[0]+" "+res+"...";
+			}
+		}
+	};
 };
 
