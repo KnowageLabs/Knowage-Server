@@ -26,7 +26,7 @@
 		 	docDatasetName: "<%=docDatasetName%>",
 		 	visibleDataSet: "<%=visibleDataSet%>",
 		 	--%>
-		 	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/"
+		 	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"
 		};
 	});
 

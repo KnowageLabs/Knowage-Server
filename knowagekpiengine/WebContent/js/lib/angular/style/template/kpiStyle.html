@@ -1,0 +1,41 @@
+ <md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-fill layout-margin > 
+ <div layout="column" layout-fill>
+ 	<span  layout="row">
+	   	<h4 flex>{{translate.load("sbi.kpistyle.sizeinem")}}</h4>
+	   	<md-select flex aria-label="aria-label" ng-model="ngModel.size">
+			<md-option ng-repeat="em in measure" value="{{em}}">{{em}}</md-option>
+		</md-select>
+		<span flex></span>
+   	</span>
+   	
+	<span layout="row">
+		<h4 flex>{{translate.load("sbi.kpistyle.fontf")}}</h4>
+		<md-select aria-label="aria-label" flex ng-model="ngModel.fontFamily">
+			<md-option ng-repeat="font in fontFamily" value="{{font}}">{{font}}</md-option>
+		</md-select>
+		<span flex></span>
+	 </span>
+ 	
+ 	<span layout="row">
+		<h4 flex>{{translate.load("sbi.kpistyle.fontw")}}</h4>
+		<md-select flex aria-label="aria-label" ng-model="ngModel.fontWeight">
+			<md-option ng-repeat="fontW in fontWeight" value="{{fontW}}">{{fontW}}</md-option>
+		</md-select>
+		<md-input-container flex class="small counter" ng-if="ngModel.fontWeight=='number'"> 
+		<label>{{translate.load("sbi.kpistyle.fontw")}}</label>
+			<input class="input_class" ng-model="ngModel.fontWeightNumber"
+				required type="number" min="0"> 
+		</md-input-container>
+		<span flex></span>
+	 </span>
+	 
+	 <span  layout="row">
+	   	<h4 flex>{{translate.load("sbi.kpistyle.color")}}</h4>
+		<color-picker flex color-picker-swatch="true" color-picker-format="'rgb'" ng-model="ngModel.color"></color-picker>    
+		<span flex></span>
+	</span>
+ </div>
+   	
+  </md-whiteframe>       
+
+

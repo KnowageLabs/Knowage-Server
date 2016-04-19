@@ -102,7 +102,7 @@
 		<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl" />
 
 		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl" />
-
+		<DAO name="BIObjDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl" />
 
 	</DAO-CONF>
 

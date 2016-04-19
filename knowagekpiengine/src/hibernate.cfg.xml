@@ -53,6 +53,9 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
         -->
         
+         <!-- Document Output Parameters -->
+        <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
+        
         
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiTenant.hbm.xml" />
         <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
@@ -116,6 +119,8 @@
         <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mapping/SbiRememberMe.hbm.xml" />
         
         <mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSet.hbm.xml" />
+         <mapping
+            resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiObjDataSet.hbm.xml" />
         
          <!-- KPI Engine -->
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiAlias.hbm.xml" />

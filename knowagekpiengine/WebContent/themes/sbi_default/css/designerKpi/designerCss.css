@@ -1,0 +1,15 @@
+md-select md-select-value{
+	margin-top : -10px;
+}
+
+expander-box md-toolbar{
+	background-color: #a9c3db !important;
+}
+
+color-picker input{
+	border: none;
+    width: 500px;
+}
+color-picker{
+    margin-top: 20px;	
+}
