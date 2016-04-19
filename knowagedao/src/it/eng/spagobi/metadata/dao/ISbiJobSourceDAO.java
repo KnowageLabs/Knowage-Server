@@ -37,7 +37,7 @@ public interface ISbiJobSourceDAO extends ISpagoBIDao {
 
 	public void modifyJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError;
 
-	public int insertJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError;
+	public void insertJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError;
 
 	public void deleteJobSource(SbiMetaJobSource aMetaJobSource) throws EMFUserError;
 

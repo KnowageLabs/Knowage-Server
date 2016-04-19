@@ -167,12 +167,11 @@ public class SbiObjTableDAOHibImpl extends AbstractHibernateDAO implements ISbiO
 	}
 
 	@Override
-	public int insertObjTable(SbiMetaObjTable aMetaObjTable) throws EMFUserError {
+	public void insertObjTable(SbiMetaObjTable aMetaObjTable) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
 		Transaction tx = null;
-		Integer idToReturn = null;
 
 		try {
 			aSession = getSession();
@@ -185,7 +184,7 @@ public class SbiObjTableDAOHibImpl extends AbstractHibernateDAO implements ISbiO
 			aMetaObjTable.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaObjTable);
-			idToReturn = (Integer) aSession.save(aMetaObjTable);
+			aSession.save(aMetaObjTable);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -202,7 +201,6 @@ public class SbiObjTableDAOHibImpl extends AbstractHibernateDAO implements ISbiO
 			}
 		}
 		logger.debug("OUT");
-		return idToReturn;
 	}
 
 	@Override

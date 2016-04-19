@@ -37,7 +37,7 @@ public interface ISbiTableBcDAO extends ISpagoBIDao {
 
 	public void modifyTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 
-	public int insertTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
+	public void insertTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 
 	public void deleteTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 

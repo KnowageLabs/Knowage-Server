@@ -351,7 +351,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(SbiMetaBc)
 	 */
 	@Override
-	public int insertBcAttribute(SbiMetaBcAttribute aMetaBcAttribute) throws EMFUserError {
+	public Integer insertBcAttribute(SbiMetaBcAttribute aMetaBcAttribute) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;

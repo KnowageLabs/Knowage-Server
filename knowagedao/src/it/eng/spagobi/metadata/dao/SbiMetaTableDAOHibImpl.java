@@ -298,7 +298,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#insertSource(SbiMetaTable)
 	 */
 	@Override
-	public int insertTable(SbiMetaTable aMetaTable) throws EMFUserError {
+	public Integer insertTable(SbiMetaTable aMetaTable) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;

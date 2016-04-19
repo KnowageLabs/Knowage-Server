@@ -315,7 +315,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAOHibImpl#insertTableColumn(SbiMetaTableColumn)
 	 */
 	@Override
-	public int insertTableColumn(SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
+	public Integer insertTableColumn(SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;

@@ -250,12 +250,12 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#insertSource(SbiMetaSource)
 	 */
 	@Override
-	public int insertSource(SbiMetaSource aMetaSource) throws EMFUserError {
+	public Integer insertSource(SbiMetaSource aMetaSource) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
 		Transaction tx = null;
-		Integer idToReturn = null;
+		Integer idToReturn;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();

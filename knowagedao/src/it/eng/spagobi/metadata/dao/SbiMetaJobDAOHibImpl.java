@@ -247,7 +247,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#insertJob(SbiMetaJob)
 	 */
 	@Override
-	public int insertJob(SbiMetaJob aMetaJob) throws EMFUserError {
+	public Integer insertJob(SbiMetaJob aMetaJob) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;

@@ -337,7 +337,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(SbiMetaBc)
 	 */
 	@Override
-	public int insertBc(SbiMetaBc aMetaBc) throws EMFUserError {
+	public Integer insertBc(SbiMetaBc aMetaBc) throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;

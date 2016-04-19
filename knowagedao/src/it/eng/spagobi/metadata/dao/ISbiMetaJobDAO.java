@@ -35,7 +35,7 @@ public interface ISbiMetaJobDAO extends ISpagoBIDao {
 
 	public void modifyJob(SbiMetaJob aMetaJob) throws EMFUserError;
 
-	public int insertJob(SbiMetaJob aMetaJob) throws EMFUserError;
+	public Integer insertJob(SbiMetaJob aMetaJob) throws EMFUserError;
 
 	public void deleteJob(SbiMetaJob aMetaJob) throws EMFUserError;
 
