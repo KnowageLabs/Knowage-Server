@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.quartz.JobExecutionException;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -72,6 +73,7 @@ import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
+import it.eng.spagobi.kpi.job.ProcessKpiJob;
 import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -293,6 +295,13 @@ public class KpiService {
 			logger.error(req.getPathInfo(), e);
 		}
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/devTest")
+	public Response devTest() throws JobExecutionException {
+		// return Response.ok(ProcessKpiJob.computeKpi(4, 0, null, false)).build();
+		return Response.ok(ProcessKpiJob.computeKpis(4)).build();
 	}
 
 	@POST
