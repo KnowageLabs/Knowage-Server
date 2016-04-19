@@ -443,54 +443,45 @@
 		return {
 			restrict: 'E',
 			template: 
-				'<div id="{{svgId}}" layout-align="center center" layout="row">'
-				+ '<svg class="kpiLinearGauge" svg-width="{{size*1.2}}" height="100" ' 
+				'<div id="{{svgId}}" layout-align="center center" layout="column">'
+				+ '<span style="font-size:{{labelFontSize}}; font-family:{{fontConf.fontFamily}};' 
+						+ ' font-weight:{{fontConf.fontWeight}}; color:{{fontConf.color}};" ng-if="showValue">'
+					+ '{{value.toFixed(valuePrecision)}}</span>'
+				+ '<svg class="kpiLinearGauge" svg-width="{{size + 20}}" height="100" ' 
 						+ 'style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">'
 						
-					+ '<g transform="translate(120,10)">' 
-						+ '<text fill="{{fontColor}}" class="title" style="font-size:0.6em"' 
-							+ 'style="font-size:{{labelFontSize}}"'
-						+ '>{{value.toFixed(valuePrecision)}}</text>' 
-					+ '</g>'
-					
-					+ '<g transform="translate(120,20)">'
-						+ '<rect ng-repeat="stop in thresholdStops" class="range" svg-transform="translate({{stop.from || 0}},0)" '
-							+ 'svg-style="fill: {{stop.color}}" svg-width="{{stop.to - stop.from}}" height="40" x="0"/>'
+					+ '<g transform="translate(20,0)">'
+						+ '<rect ng-if="showThresholds" ng-repeat="stop in thresholdStops" class="range" ' 
+							+ 'svg-transform="translate({{(stop.from * sizeScaleFactor) || 0}},0)" '
+							+ 'svg-style="fill: {{stop.color}}" svg-width="{{(stop.to - stop.from) * sizeScaleFactor}}" height="40" x="0"/>'
 						
-						+ '<rect class="measure" svg-width="{{value}}" height="13.333" x="0" y="13.333"/>'
+						+ '<rect class="measure" svg-width="{{value * sizeScaleFactor}}" height="13.333" x="0" y="13.333"/>'
 						
 						+ '<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">'
-							
-							+ '<g transform="translate(-6,12.5)" style="text-anchor: end;">'
-								+ '<text fill="{{fontColor}}" class="title"' 
-										+ 'style="font-size:{{labelFontSize}}"'
-								+ '>{{label}}</text>'
-							+ '</g>'
-						
 							+ '<g class="tick" transform="translate(0,0)" style="opacity: 1;">'
 								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
 									+ 'style="font-size:{{maxMinFontSize}}"'
 								+ '>{{minValue}}</text>'
 							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue) / 4) || 0}},0)" '
+							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference) / 4) * sizeScaleFactor - 20) || 0}},0)" '
 									+ 'style="opacity: 1;">'
 								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" ' 
 									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxValue - minValue) / 4}}</text>'
+								+ '>{{minValue + (maxMinValueDifference) / 4}}</text>'
 							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue) / 2) || 0}},0)" '
+							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor - 20) || 0}},0)" '
 									+' style="opacity: 1;">'
 								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" '
 									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxValue - minValue) / 2}}</text>'
+								+ '>{{minValue + (maxMinValueDifference) / 2}}</text>'
 							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{(minValue + (maxValue - minValue)* 3 / 4) || 0}},0)" ' 
+							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference)* 3 / 4) * sizeScaleFactor - 20) || 0}},0)" ' 
 									+ ' style="opacity: 1;">'
 								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
 									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxValue - minValue)* 3 / 4}}</text>'
+								+ '>{{minValue + (maxMinValueDifference)* 3 / 4}}</text>'
 							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{maxValue || 0}},0)" ' 
+							+ '<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" ' 
 									+ 'style="opacity: 1;">'
 								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"'
 									+ 'style="font-size:{{maxMinFontSize}}"'
@@ -500,6 +491,7 @@
 					+ '</g>'
 				+ '</svg>'
 				+ '</div>'
+				+ '<style>#{{svgId}} .measure:hover {opacity: .7;}</style>'
 				,
 				
 			controller: kpiLinearGaugeCtrl,
@@ -531,8 +523,9 @@
 		$scope.maxMinFontSize = ($scope.fontConf.size * 1.3) + 'em';
 		$scope.intermediateFontSize = ($scope.fontConf.size * 1) + 'em';
 		
-//		$scope.maxComponentSize = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
-//		$scope.sizeScaleFactor = ($scope.size > $scope.maxValue)? $scope.size : $scope.maxValue;
+		$scope.maxMinValueDifference = ($scope.maxValue - $scope.minValue);
+		$scope.sizeScaleFactor = ($scope.size / $scope.maxMinValueDifference) ;
 		
+		$scope.showValue = ($scope.showValue != undefined) ? $scope.showValue : true;
 	};
 })();

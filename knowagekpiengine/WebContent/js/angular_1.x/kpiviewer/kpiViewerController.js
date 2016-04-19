@@ -46,8 +46,7 @@
 				
 				$scope.thresholdStops = gaugeConf.stops;
 				
-				$scope.gaugeValue = 7;
-//				$scope.gaugeValue = new value;
+				$scope.gaugeValue = 120;
 			});
 		};
 		
