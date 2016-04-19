@@ -8,5 +8,6 @@ angular
 	                                'left_main_menu_workspace',
 	                                'customize_view_workspace',
 	                                'main_toolbar_workspace',
-	                                'federation_view'
+	                                'federation_view',
+	                                'workspace_document_view'
 	                                ]);

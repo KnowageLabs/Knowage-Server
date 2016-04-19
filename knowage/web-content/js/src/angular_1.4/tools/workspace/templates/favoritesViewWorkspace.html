@@ -1,1 +1,11 @@
-<md-content>FAVORITES VIEW</md-content>
+<md-content flex layout="column" layout-fill class="rightPanelDocuments">
+
+ 	<workspace-document-view 	class="kn-documentBrowser" flex 
+ 					style='overflow:auto;' 
+ 					ng-model=allDocuments
+ 					show-grid-view=showGridView
+ 					show-add-to-organizer="true"
+ 					execute-document-action="executeDocument(doc)" >
+	</workspace-document-view>	
+
+</md-content>

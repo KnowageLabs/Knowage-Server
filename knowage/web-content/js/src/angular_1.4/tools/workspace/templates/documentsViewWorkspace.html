@@ -1,10 +1,11 @@
 <md-content flex layout="column" layout-fill class="rightPanelDocuments">
 
- 	<document-view 	class="kn-documentBrowser" flex 
+ 	<workspace-document-view 	class="kn-documentBrowser" flex 
  					style='overflow:auto;' 
  					ng-model=allDocuments
  					show-grid-view=showGridView
+ 					show-add-to-organizer="false"
  					execute-document-action="executeDocument(doc)" >
-	</document-view>	
+	</workspace-document-view>	
 
 </md-content>
