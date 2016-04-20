@@ -7,7 +7,7 @@
 	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, kpiViewerGaugeService) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
-
+		
 		// div id for showing the chart produced by highcharts library
 		$scope.viewerContainerId = "kpiViewer_" + $scope.documentData.docId;
 		
@@ -19,6 +19,7 @@
 		$scope.gaugeTargetValue = 0;
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
+		
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate","readKpiTemplate",$scope.documentData.template)
 			.then(function(response){ 
@@ -68,12 +69,24 @@
 							}
 						}
 						
+						$scope.thresholdStops = gaugeConf.stops;
+				
+						$scope.gaugeValue = 120;
+						
 					}
+				} else { //scorecard
+					$scope.documentData.scorecard = response.data[0].scorecard;
+					var gaugeConf = kpiViewerGaugeService.createGaugeConf(
+						$scope.viewerContainerId, // container id
+						$scope.documentData.kpiValue.name, // label 
+						$scope.gaugeSize, // gauge size
+						$scope.gaugeMinValue, // minimum value
+						$scope.gaugeMaxValue, // maximum value
+						$scope.documentData.kpiValue.threshold //threshold configuration
+					);		
 				}
 			});
 		};
-		
-		
 		
 		$scope.getSpeedoLinearConf = function(){
 			return {
@@ -101,8 +114,5 @@
 				deepWatchDataDepth: 0
 			};
 		};
-		
-
-		
 	};
 })();

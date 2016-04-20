@@ -1,55 +1,7 @@
 angular.module('scorecardManager').controller('scorecardTargetDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','sbiModule_config','$filter','$mdDialog','$mdToast','scorecardManager_targetUtility','scorecardManager_semaphoreUtility','$timeout',scorecardTargetDefinitionControllerFunction ]);
 
 
-angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility){
-	this.getTargetStatus=function(target){ 
-		if(angular.equals(target.criterion.valueCd,"MAJORITY")){
-				return loadTargetByMajority(target);
-			}else{
-				//load by priority
-				if(target.options.criterionPriority.length==0){
-					//if no priority kpi are selected return the global value 
-					return loadTargetByMajority(target);
-				}else if(target.options.criterionPriority.length==1){ 
-					// if there is only one kpi selected, and theyr status in different of GRAY return his status, else the global status
-					return (target.options.criterionPriority[0].status=="GRAY" || target.options.criterionPriority[0].status=="GREEN")  ?   loadTargetByMajority(target) : target.options.criterionPriority[0].status;
-				}
-				else{
-					return loadTargetByMajorityWithPriority(target);
-				}
-			}
-	};
-	
-	function loadTargetByMajorityWithPriority(target){
-		 var masterPriorityStatus=target.options.criterionPriority[0].status
-		 for(var i=1;i<target.options.criterionPriority.length;i++){
-			 masterPriorityStatus=scorecardManager_semaphoreUtility.getPriorityStatus(target.options.criterionPriority[i].status,masterPriorityStatus);
-		 }
-		
-		if(angular.equals("GREEN",masterPriorityStatus)){
-			return loadTargetByMajority(target);
-		}else{
-			return masterPriorityStatus
-		}
-		 
-	};
-	
-	function loadTargetByMajority(target){ 
-		var maxTargetCount=target.groupedKpis[0].count;
-		var maxTarget=target.groupedKpis[0].status;
-		for(var i=1;i<target.groupedKpis.length;i++){
-			if(!angular.equals("GRAY",target.groupedKpis[i].status)){
-				if(target.groupedKpis[i].count>maxTargetCount || angular.equals("GRAY",maxTarget)){
-					maxTargetCount=target.groupedKpis[i].count;
-					maxTarget=target.groupedKpis[i].status;
-				}else if(target.groupedKpis[i].count==maxTargetCount){
-					maxTargetCount=target.groupedKpis[i].count;
-					maxTarget=scorecardManager_semaphoreUtility.getPriorityStatus(target.groupedKpis[i].status,maxTarget);
-				}
-			}
-		}  
-		return maxTarget ;
-	}
+angular.module('scorecardManager').service('scorecardManager_targetUtility',function(scorecardManager_semaphoreUtility,$q, sbiModule_restServices ){
 	
 	this.addGroupedKpisItem=function(target,type){
 		for(var i=0;i<target.groupedKpis.length;i++){
@@ -60,8 +12,20 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 		}
 			target.groupedKpis.push({status:type,count:1});
 	}
+	
+	this.loadTargetStatus = function( idCr, arrayData, deferred){
+		sbiModule_restServices.promisePost("1.0/kpi",idCr + "/evaluateCriterion",arrayData)
+		.then(function(response){
+			deferred.resolve(response.data.status);
+		},
+				function(response) {
+			deferred.reject();
+		}
+		);
+	}
 	 
 	this.loadGroupedKpis=function(selTarget){
+		var deferred=$q.defer();
 		if(!selTarget.hasOwnProperty("groupedKpis")){
 			selTarget.groupedKpis = [];
 		}
@@ -69,7 +33,17 @@ angular.module('scorecardManager').service('scorecardManager_targetUtility',func
 		for(var i=0;i<selTarget.kpis.length;i++){
 			this.addGroupedKpisItem(selTarget,selTarget.kpis[i].status);
 		}
-		selTarget.status=this.getTargetStatus(selTarget);
+		//selTarget.status=this.getTargetStatus(selTarget);
+		var statusArray = [];
+		for(i=0; i < selTarget.kpis.length;i++)
+			statusArray.push({status: selTarget.kpis[i].status, priority: false });
+		
+		for(i=0; i <selTarget.options.criterionPriority.length;i++)
+			for(j=0; j < selTarget.kpis.length;j++)
+				if (selTarget.options.criterionPriority[i].id == selTarget.kpis[j].id)
+					statusArray[i].priority = true;
+		this.loadTargetStatus( selTarget.criterion.valueId, statusArray, deferred);
+		return deferred.promise;
 		}
 	
 });
@@ -180,22 +154,39 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 		
 		if ($scope.editProperty.target.index != undefined){
 			$scope.currentTarget.groupedKpis = [];
-			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget);
+			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget)
+			.then(
+					function(response){
+						$scope.currentTarget.status = response;
+						var critPriIndex= $scope.itemNameInList($scope.currentPerspective.options.criterionPriority,$scope.currentPerspective.targets[$scope.editProperty.target.index])
+						if(critPriIndex!=-1){
+							angular.copy($scope.currentTarget,$scope.currentPerspective.options.criterionPriority[critPriIndex]);
+						}
+						
+						angular.copy($scope.currentTarget,$scope.currentPerspective.targets[$scope.editProperty.target.index]);
+					
+						angular.copy($scope.emptyTarget,$scope.currentTarget);
+
+						$scope.steps.stepControl.prevBread();
+						},
+					function(){});
 			//update the perspective option criterionPriority if present
-			var critPriIndex= $scope.itemNameInList($scope.currentPerspective.options.criterionPriority,$scope.currentPerspective.targets[$scope.editProperty.target.index])
-			if(critPriIndex!=-1){
-				angular.copy($scope.currentTarget,$scope.currentPerspective.options.criterionPriority[critPriIndex]);
-			}
 			
-			angular.copy($scope.currentTarget,$scope.currentPerspective.targets[$scope.editProperty.target.index]);
 		}
 		else{
-			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget);
-			$scope.currentPerspective.targets.push(angular.extend({},$scope.currentTarget));	
-		}
-		angular.copy($scope.emptyTarget,$scope.currentTarget);
+			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget)
+			.then(
+					function(response){
+						$scope.currentTarget.status = response;
+						$scope.currentPerspective.targets.push(angular.extend({},$scope.currentTarget));	
+						angular.copy($scope.emptyTarget,$scope.currentTarget);
 
-		$scope.steps.stepControl.prevBread();
+						$scope.steps.stepControl.prevBread();
+					}
+					,
+					function(){});
+		}
+		
  	});
 	
 	$scope.$on('cancelTarget', function(event, args) {

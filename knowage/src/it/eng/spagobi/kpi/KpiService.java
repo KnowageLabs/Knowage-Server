@@ -617,7 +617,9 @@ public class KpiService {
 			}
 			IKpiDAO dao = getKpiDAO(req);
 			String status = dao.evaluateScorecardStatus(criterionId, scorecardStatusLst);
-			return Response.ok(status).build();
+			JSONObject resp = new JSONObject();
+			resp.put("status", status);
+			return Response.ok(resp.toString()).build();
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 		}

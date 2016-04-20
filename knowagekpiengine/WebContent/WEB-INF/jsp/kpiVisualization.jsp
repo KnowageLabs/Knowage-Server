@@ -96,11 +96,11 @@ author:
 	
 	JSONObject templateObj = engineInstance.getTemplate();
 	JSONObject chartObj = templateObj.getJSONObject("chart");
-	JSONObject optionsObj = chartObj.getJSONObject("options");
+	//JSONObject optionsObj = chartObj.getJSONObject("options");
 	String type = (String)chartObj.get("type");
 	// String model = (String)chartObj.get("model");
 	
-	Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
+	// Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
 	// if(env.get("KPI_VALUE")!=null){
 	// 	kpiValue = env.get("KPI_VALUE").toString();
 	// }
@@ -236,9 +236,12 @@ if(type.equalsIgnoreCase("kpi")) {
 	String model = (String)chartObj.get("model");
 	
 	if(model.equalsIgnoreCase("widget")) {
+		JSONObject optionsObj = chartObj.getJSONObject("options");
 		String vieweas = (String)optionsObj.get("vieweas");
 		
 		if(vieweas.equalsIgnoreCase("speedometer")) {
+			Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
+			
 			if(showlineargauge) {
 %>
  <kpi-widget ng-model="documentData"
