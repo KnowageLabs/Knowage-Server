@@ -99,7 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				columns='targetsColumns'
 				columnsSearch='["name"]'
 				show-search-bar="true"
-				initial-sorting="'startValidity'"
 				speed-menu-option="targetsActions"
 				click-function="loadTarget(item);"> </angular-table>
 		</list>

@@ -268,9 +268,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			return;
 		}
 		sbiModule_restServices
-			.post("1.0/kpi", "saveTarget", newTarget)
-			.success(
-				function(data, status, headers, config) {
+			.promisePost("1.0/kpi", "saveTarget", newTarget)
+			.then(
+				function(response) {
+					var data = response.data;
 					this.formatDate = function(dts) {
 						this.convertDateFormat = function(date) {
 							result = "";
@@ -313,11 +314,9 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
 							.action('OK').highlightAction(false).hideDelay(3000));
 					$angularListDetail.goToList();
-				}
-			).error(
-				function(data, status, headers, config) {
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
-							.action('OK').highlightAction(false).hideDelay(5000));
+				},
+				function(response) {
+					sbiModule_restServices.errorHandler(response.data, "Errors occurred while saving Target")
 				}
 			);
 	}

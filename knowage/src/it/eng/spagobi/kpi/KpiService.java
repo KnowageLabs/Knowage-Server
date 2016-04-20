@@ -510,8 +510,11 @@ public class KpiService {
 		try {
 			String requestVal = RestUtilities.readBody(req);
 			Target target = (Target) JsonConverter.jsonToObject(requestVal, Target.class);
-			check(target);
 			IKpiDAO dao = getKpiDAO(req);
+			JSError errors = check(target, dao);
+			if (errors.hasErrors()) {
+				return Response.ok(errors.toString()).build();
+			}
 			Integer id = target.getId();
 			if (id == null) {
 				id = dao.insertTarget(target);
@@ -522,18 +525,7 @@ public class KpiService {
 		} catch (IOException | JSONException | SpagoBIException e) {
 			logger.error(req.getPathInfo(), e);
 		}
-		try {
-			return Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
-		} catch (JSONException e) {
-			logger.error(req.getPathInfo(), e);
-		}
 		return Response.ok().build();
-	}
-
-	private void check(Target target) throws SpagoBIException {
-		if (target.getName() == null || target.getStartValidity() == null || target.getValues() == null || target.getValues().isEmpty()) {
-			throw new SpagoBIException("Service [/saveTarget]: Some fields are mandatory");
-		}
 	}
 
 	@DELETE
@@ -584,6 +576,31 @@ public class KpiService {
 			logger.error(req.getPathInfo(), e);
 			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
 		}
+	}
+
+	private JSError check(Target target, IKpiDAO dao) throws SpagoBIException {
+		JSError e = new JSError();
+		if (target.getName() == null) {
+			e.addError("Name id mandatory");
+		}
+		if (target.getStartValidity() == null) {
+			e.addError("StartValidity is mandatory");
+		}
+		if (target.getEndValidity() == null) {
+			e.addError("EndValidity is mandatory");
+		}
+		if (target.getStartValidity() != null && target.getEndValidity() != null && target.getStartValidity().after(target.getEndValidity())) {
+			e.addErrorKey("newKpi.target.invalidPeriod");
+		}
+		if (target.getValues() == null || target.getValues().isEmpty()) {
+			e.addError("Values are mandatory");
+		}
+		// Targets' start/end validity dates cannot overlap
+		List<Target> ll = dao.listTarget(target.getStartValidity(), target.getEndValidity());
+		if (ll.size() > 1 || ll.size() == 1 && ll.get(0).getId() != target.getId()) {
+			e.addErrorKey("newKpi.target.alreadyExistingPeriod");
+		}
+		return e;
 	}
 
 	private void checkValidity(KpiScheduler scheduler) throws SpagoBIException {
