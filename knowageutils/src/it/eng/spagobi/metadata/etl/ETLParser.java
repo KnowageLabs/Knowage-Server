@@ -54,14 +54,41 @@ public class ETLParser {
 		this.document = document;
 	}
 
+	public ETLMetadata getETLMetadata(String contextName) {
+
+		// Get RDBMS Data Sources
+		Set<ETLRDBMSSource> rdbmsDataSources = getRDBMSDataSourcesObjects(contextName);
+
+		// Get Source Tables
+		Set<ETLComponent> rdbmsSourceTables = getRDBMSSourceComponentsTables();
+		Set<ETLComponent> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
+		rdbmsSourceTables.addAll(rdbmsMixedSourceTables);
+
+		// Get Target Tables
+		Set<ETLComponent> rdbmsTargetTables = getRDBMSTargetComponentsTables();
+		Set<ETLComponent> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
+		rdbmsTargetTables.addAll(rdbmsMixedTargetTables);
+
+		// Get Source Files
+		Set<String> fileSourceTables = getFileSourceComponentsLocations(contextName);
+
+		// Get Target Files
+		Set<String> fileTargetTables = getFileTargetComponentsLocations(contextName);
+
+		ETLMetadata metadata = new ETLMetadata(rdbmsDataSources, rdbmsSourceTables, rdbmsTargetTables, fileSourceTables, fileTargetTables);
+
+		return metadata;
+	}
+
+	// used for debugging purpose
 	public void extractAll() {
 		Set<String> contextNames = getContextNames();
 		// TODO: The context name is not a fixed value and must be selected by the user
 		Set<ETLRDBMSSource> rdbmsDataSources = getRDBMSDataSourcesObjects("Default");
 		Set<ETLComponent> rdbmsSourceTables = getRDBMSSourceComponentsTables();
 		Set<ETLComponent> rdbmsTargetTables = getRDBMSTargetComponentsTables();
-		Set<String> fileSourceTables = getFileSourceComponentsLocations();
-		Set<String> fileTargetTables = getFileTargetComponentsLocations();
+		Set<String> fileSourceTables = getFileSourceComponentsLocations("Default");
+		Set<String> fileTargetTables = getFileTargetComponentsLocations("Default");
 		Set<ETLComponent> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
 		Set<ETLComponent> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
 
@@ -123,10 +150,10 @@ public class ETLParser {
 	/**
 	 * Get all locations of Source Components of type File
 	 */
-	public Set<String> getFileSourceComponentsLocations() {
+	public Set<String> getFileSourceComponentsLocations(String contextName) {
 		Set<String> locations = new HashSet<String>();
 		for (int i = 0; i < fileSourceComponents.length; i++) {
-			locations.addAll(getFileComponentLocations(fileSourceComponents[i]));
+			locations.addAll(getFileComponentLocations(fileSourceComponents[i], contextName));
 		}
 		return locations;
 	}
@@ -134,10 +161,10 @@ public class ETLParser {
 	/**
 	 * Get all locations of Target Components of type File
 	 */
-	public Set<String> getFileTargetComponentsLocations() {
+	public Set<String> getFileTargetComponentsLocations(String contextName) {
 		Set<String> locations = new HashSet<String>();
 		for (int i = 0; i < fileTargetComponents.length; i++) {
-			locations.addAll(getFileComponentLocations(fileTargetComponents[i]));
+			locations.addAll(getFileComponentLocations(fileTargetComponents[i], contextName));
 		}
 		return locations;
 	}
@@ -152,14 +179,14 @@ public class ETLParser {
 	/**
 	 * Get all the tables used by a specific FILE component type
 	 */
-	public Set<String> getFileComponentLocations(String componentType) {
-		return getComponentInformations(componentType, "FILE", "FILENAME");
+	public Set<String> getFileComponentLocations(String componentType, String contextName) {
+		return getComponentInformations(componentType, "FILE", "FILENAME", contextName);
 	}
 
 	/**
 	 * Get the values used by a specific component type for a specific field and name
 	 */
-	public Set<String> getComponentInformations(String componentTypeName, String fieldValue, String nameValue) {
+	public Set<String> getComponentInformations(String componentTypeName, String fieldValue, String nameValue, String contextName) {
 
 		Set<String> informations = new HashSet<String>();
 
@@ -173,7 +200,24 @@ public class ETLParser {
 				Node node = nList.item(i);
 				String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
 				if (!componentValue.isEmpty()) {
-					informations.add(componentValue.replaceAll("\"", ""));
+					componentValue = componentValue.replaceAll("\"", "");
+					if (fieldValue.equalsIgnoreCase("FILE")) {
+						if (componentValue.contains("context")) {
+							// File name contains context references
+							StringBuilder sb = new StringBuilder();
+							String[] tokens = componentValue.split("\\+");
+							for (String token : tokens) {
+								if (token.contains("context")) {
+									token = token.replace("context.", "");
+									token = getContextParameter(contextName, token);
+								}
+								sb.append(token);
+							}
+							componentValue = sb.toString();
+						}
+					}
+
+					informations.add(componentValue);
 				}
 
 			}

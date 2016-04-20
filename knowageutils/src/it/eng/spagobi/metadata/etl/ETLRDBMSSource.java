@@ -23,7 +23,9 @@ package it.eng.spagobi.metadata.etl;
  */
 public class ETLRDBMSSource {
 
+	// the component name in the ETL Job
 	String componentName;
+	// the label of the component in the ETL Job
 	String label;
 	String host;
 	String schema;

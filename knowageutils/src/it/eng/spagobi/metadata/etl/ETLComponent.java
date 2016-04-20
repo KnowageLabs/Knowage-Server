@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.metadata.etl;
 
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
@@ -71,6 +72,14 @@ public class ETLComponent {
 		} else if (!value.equals(other.value))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getValue() + " -> " + getConnectionComponentName());
+		return sb.toString();
+
 	}
 
 }
