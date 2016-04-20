@@ -36,17 +36,29 @@
 			title="#menu.ProfileMenu"
 			groupingMenu="true"
 			iconCls="supervisor_account">
-			<ITEM	title="#menu.Attributes"
+			<ITEM	title="Profile Attributes Management Old"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ATTRIBUTES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
+			<ITEM	title="#menu.Attributes"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
+			<ITEM	title="Roles Management Old"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ROLES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />
 			<ITEM	title="#menu.Roles"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />				
-			<ITEM	title="#menu.Users"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />		
+			<ITEM	title="Users Management Old"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
+			<ITEM	title="#menu.Users"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
 			<ITEM	title="#menu.menuconfiguration"
 					functionality="MenuManagement"
@@ -65,30 +77,50 @@
 			title="#menu.BehaviouralModelMenu"
 			groupingMenu="true"
 			iconCls="group_work">
-			<ITEM	title="#menu.LovMan"
+			<ITEM	title="Lovs Management Old"
 					functionality="LovsView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
-			<ITEM	title="#menu.ParameterMan"
+			<ITEM	title="#menu.LovMan"
+					functionality="LovsView"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
+			<ITEM	title="Analytical drivers management Old"
 					functionality="ParameterView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
-			<ITEM	title="#menu.ConstraintMan"
+			<ITEM	title="#menu.ParameterMan"
+					functionality="ParameterView"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/analyticalDrivers.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
+			<ITEM	title="Constraints Management Old"
 					functionality="ConstraintView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=LISTMODALITIESCHECKSPAGE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
+			<ITEM	title="#menu.ConstraintMan"
+					functionality="ConstraintView"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/modalitiesCheck.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
 		</ITEM>
 		<ITEM	code="catalogs" 
 				title="#menu.Catalogs"
 				groupingMenu="true"
 				iconCls="style">
-			<ITEM   title="#menu.MetaModelsCatalogue"
+			<ITEM   title="Business Models catalog Old"
 	                functionality="MetaModelsCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
-			<ITEM   title="#menu.MondrianCatalogue"
+	        <ITEM   title="#menu.MetaModelsCatalogue"
+	                functionality="MetaModelsCatalogueManagement"
+	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+			<ITEM   title="Mondrian schemas catalog Old"
 	                functionality="ArtifactCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />
+	        <ITEM   title="#menu.MondrianCatalogue"
+	                functionality="ArtifactCatalogueManagement"
+	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/mondrianSchemasCatalogue.jsp;type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />	
 			<ITEM	title="#menu.MapCat"
 					functionality="MapCatalogueManagement"
