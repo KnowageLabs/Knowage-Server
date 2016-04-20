@@ -186,9 +186,9 @@ author:
 	var protocol = '<%=request.getScheme()%>';
 </script>
 <!-- Styles -->
-<%--
+
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
---%>
+
 
 <!-- Scripts -->
 <%--
@@ -239,7 +239,8 @@ if(type.equalsIgnoreCase("kpi")) {
 		if(vieweas.equalsIgnoreCase("speedometer")) {
 			if(showlineargauge) {
 %>
-	<kpi-linear-gauge flex layout="column" layout-align="center"
+<!--  <kpi-widget ng-model ="documentData"></kpi-widget>-->
+<kpi-linear-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
 		size="linearGaugeSize"
@@ -252,13 +253,16 @@ if(type.equalsIgnoreCase("kpi")) {
 		show-thresholds="documentData.template.chart.options.showthreshold"
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"
-	></kpi-linear-gauge>
-	
+	></kpi-linear-gauge> 	
+
 <%
 			} else { 
 %>
-	
-	<kpi-gauge flex layout="column" layout-align="center"
+<!-- <kpi-widget ng-model="documentData"
+gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-value = gaugeValue gauge-target-value = gaugeTargetValue
+threshold-stops =thresholdStops
+></kpi-widget> -->
+<kpi-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
 		size="gaugeSize"
@@ -272,9 +276,9 @@ if(type.equalsIgnoreCase("kpi")) {
 		show-thresholds="documentData.template.chart.options.showthreshold"
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"
-	></kpi-gauge>
+	></kpi-gauge> 	
 
-	<%
+<%
 			} 
 		} 
 	}
@@ -289,7 +293,6 @@ if(type.equalsIgnoreCase("kpi")) {
 
 
 <!-- 	
-	<nvd3 ng-if="kpiOptions.vieweas == 'speedometer' && kpiOptions.showlineargauge == 'true'" 
 	<nvd3 options="getSpeedoLinearConf()" data="getSpeedoLinearData()" config="getSpeedoLinearConfig()"></nvd3>
 -->
 		
@@ -299,7 +302,7 @@ if(type.equalsIgnoreCase("kpi")) {
 		var kpiViewerModule = angular.module('kpiViewerModule', 
 				['sbiModule', 'ngSanitize', 'ngAnimate'
 				 , 'gaugeNgDirectiveApp'
-				 //, 'nvd3'
+				 , 'nvd3','kpi-widget'
 				 ]);
 		
 		kpiViewerModule.factory('documentData', function() {
@@ -312,7 +315,7 @@ if(type.equalsIgnoreCase("kpi")) {
 				docId : '<%=docId%>',
 				kpiValue : {threshold:{thresholdValues:[]}},
 				kpiListValue : [],
-				targetValue : {}
+				targetValue : []
 			};
 			return obj;
 		});
@@ -324,5 +327,9 @@ if(type.equalsIgnoreCase("kpi")) {
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
+	<script type="text/javascript" 
+			src="${pageContext.request.contextPath}/js/lib/angular/kpi-widget/kpiWidgetController.js"></script>
+			
+			
 </body>
 </html>
