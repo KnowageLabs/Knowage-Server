@@ -246,6 +246,7 @@ if(type.equalsIgnoreCase("kpi")) {
 		min-value="gaugeMinValue"
 		max-value="gaugeMaxValue"
 		value="gaugeValue"
+		target-value="gaugeTargetValue"
 		threshold-stops="thresholdStops"
 		show-value="documentData.template.chart.options.showvalue"
 		show-thresholds="documentData.template.chart.options.showthreshold"

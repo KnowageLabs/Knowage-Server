@@ -47,7 +47,7 @@
 							$scope.thresholdStops = gaugeConf.stops;
 							
 							$scope.gaugeValue = 120;
-							$scope.gaugeTargetValue = 150;
+							$scope.gaugeTargetValue = 122;
 							
 						} else {
 							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];

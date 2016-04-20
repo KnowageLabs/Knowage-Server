@@ -469,6 +469,15 @@
 		$scope.showValue = ($scope.showValue != undefined) ? $scope.showValue : true;
 		$scope.showTarget = ($scope.showTarget != undefined) ? $scope.showTarget : true;
 		
+//		$scope.$watch('value', function(newValue, oldValue) {
+//			console.log('value old: ', oldValue);
+//			console.log('value new: ', newValue);
+//		});
+//		
+//		$scope.$watch('targetValue', function(newValue, oldValue) {
+//			console.log('targetValue old: ', oldValue);
+//			console.log('targetValue new: ', newValue);
+//		});
 		
 	};
 })();
