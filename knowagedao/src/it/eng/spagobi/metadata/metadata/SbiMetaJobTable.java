@@ -12,6 +12,7 @@ public class SbiMetaJobTable extends SbiHibernateModel {
 	private SbiMetaJobTableId id;
 	private SbiMetaTable sbiMetaTable;
 	private SbiMetaJob sbiMetaJob;
+	private String role;
 
 	public SbiMetaJobTable() {
 	}
@@ -20,6 +21,13 @@ public class SbiMetaJobTable extends SbiHibernateModel {
 		this.id = id;
 		this.sbiMetaTable = sbiMetaTable;
 		this.sbiMetaJob = sbiMetaJob;
+	}
+
+	public SbiMetaJobTable(SbiMetaJobTableId id, SbiMetaTable sbiMetaTable, SbiMetaJob sbiMetaJob, String role) {
+		this.id = id;
+		this.sbiMetaTable = sbiMetaTable;
+		this.sbiMetaJob = sbiMetaJob;
+		this.role = role;
 	}
 
 	public SbiMetaJobTableId getId() {

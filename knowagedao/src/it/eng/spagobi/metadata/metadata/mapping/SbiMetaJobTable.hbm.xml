@@ -18,6 +18,9 @@
         <many-to-one name="sbiMetaJob" class="it.eng.spagobi.metadata.metadata.SbiMetaJob" lazy="false" update="false" insert="false" fetch="select">
             <column name="JOB_ID" not-null="true" />
         </many-to-one>
+        <property name="role" type="string">
+	            <column name="ROLE" />
+	    </property>
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />
