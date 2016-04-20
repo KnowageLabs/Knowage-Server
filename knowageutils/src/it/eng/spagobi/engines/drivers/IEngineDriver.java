@@ -22,6 +22,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -124,5 +125,7 @@ public interface IEngineDriver {
 	public void applyLocale(Locale locale);
 
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException;
+
+	public List<DefaultOutputParameter> getDefaultOutputParameters();
 
 }
