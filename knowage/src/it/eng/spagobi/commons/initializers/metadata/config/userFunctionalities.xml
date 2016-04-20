@@ -54,7 +54,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="InstallConfig" description="InstallConfig" />
 	
 	<!-- Authorizations for KnowageSI -->
@@ -128,7 +127,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
 	
 			<!-- Authorizations for KnowageER -->
@@ -202,7 +200,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
 	
 		<!-- Authorizations for KnowagePA -->
@@ -276,7 +273,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="InstallConfig" description="InstallConfig" />
 	
 		<!-- Authorizations for KnowageLI -->
@@ -350,7 +346,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="InstallConfig" description="InstallConfig" />
 	
 		<!-- Authorizations for KnowagePM -->
@@ -424,7 +419,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowagePM" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
 	
 		<!-- Authorizations for KnowageEI -->
@@ -498,7 +492,6 @@
 	<USER_FUNCTIONALITY productType="KnowageEI" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageEI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageEI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowageEI" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageEI" name="InstallConfig" description="InstallConfig" />
 	
 		<!-- Authorizations for KnowageOD -->
@@ -572,7 +565,6 @@
 	<USER_FUNCTIONALITY productType="KnowageOD" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageOD" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageOD" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-	<USER_FUNCTIONALITY productType="KnowageOD" name="CacheManagement" description="CacheManagement" />
 	<USER_FUNCTIONALITY productType="KnowageOD" name="InstallConfig" description="InstallConfig" />
 	
 </USER_FUNCTIONALITIES>
