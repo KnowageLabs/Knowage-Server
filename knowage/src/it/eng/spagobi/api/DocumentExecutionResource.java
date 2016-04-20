@@ -27,6 +27,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -201,6 +203,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		MessageBuilder m = new MessageBuilder();
@@ -211,6 +214,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null);
 		for (DocumentParameters objParameter : parameters) {
+			Integer paruseId = objParameter.getParameterUseId();
+			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+
 			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
@@ -218,7 +224,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("type", objParameter.getParType());
 			parameterAsMap.put("typeCode", objParameter.getTypeCode());
 			parameterAsMap.put("selectionType", objParameter.getSelectionType());
-			parameterAsMap.put("valueSelection", objParameter.getValueSelection());
+			parameterAsMap.put("valueSelection", parameterUse.getValueSelection());
 			parameterAsMap.put("selectedLayer", objParameter.getSelectedLayer());
 			parameterAsMap.put("selectedLayerProp", objParameter.getSelectedLayerProp());
 			parameterAsMap.put("visible", ((objParameter.isVisible())));
@@ -231,7 +237,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
 			}
-			if ("lov".equalsIgnoreCase(objParameter.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
+			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 				parameterAsMap.put("defaultValues", defaultValues);
