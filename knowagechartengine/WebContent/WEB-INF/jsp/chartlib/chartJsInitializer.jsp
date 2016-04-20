@@ -293,7 +293,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				groupingCategoryValue = e.point.group.value;
 			}
 
-			  if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+			  if(parent.execExternalCrossNavigation){
 	            	var navData={
 	            			chartType:	"CHARTJS",
 	            			documentName:e.point.crossNavigationDocumentName,
@@ -307,7 +307,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            			stringParameters:null
 	            	};
 //	             	window.parent.angular.element(window.frameElement).scope().$parent.crossNavigationHelper.navigateTo(navData); 
-	            	window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+	            	parent.execExternalCrossNavigation(navData); 
 	            }else{
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName,

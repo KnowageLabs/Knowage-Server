@@ -16,10 +16,19 @@ $scope.executeSourceDocument = function() {
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME;
-		 
-		$timeout(function(){
-			$crossNavigationHelper.crossNavigationSteps.stepControl.insertBread({name:sourceDocumentExecProperties.OBJECT_LABEL,id:sourceDocumentExecProperties.OBJECT_ID,url:url});
-		},0);
+		
+		var laodSourceDocToCross=function(){
+			$timeout(function(){
+				if($crossNavigationHelper.crossNavigationSteps.stepControl){
+					$crossNavigationHelper.crossNavigationSteps.stepControl.insertBread({name:sourceDocumentExecProperties.OBJECT_LABEL,id:sourceDocumentExecProperties.OBJECT_ID,url:url});
+				}else{
+					laodSourceDocToCross();
+				}
+				
+				},500);
+		};
+		laodSourceDocToCross();
+		
 //		$scope.sourceDocumentUrl=url;  
 	};
 	$scope.executeSourceDocument();

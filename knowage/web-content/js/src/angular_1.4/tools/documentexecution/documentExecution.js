@@ -336,3 +336,7 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 	var jsonEncodedParams=JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"').replace(/\s/g,'') + '"}');
 	angular.element(frameElement).scope().$parent.internalNavigateTo(jsonEncodedParams,doclabel);
 }
+
+var execExternalCrossNavigation=function(parameters){ 
+	angular.element(frameElement).scope().$parent.navigateTo(parameters);
+}

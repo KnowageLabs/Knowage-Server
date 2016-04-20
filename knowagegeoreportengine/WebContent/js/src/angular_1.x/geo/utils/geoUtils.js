@@ -486,8 +486,8 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			}else{
 				crossData.push(selectedElements.getProperties());
 			}
-			
-			parent.angular.element(frameElement).scope().navigateTo(crossData)
+			parent.execExternalCrossNavigation(crossData)
+//			parent.angular.element(frameElement).scope().navigateTo(crossData)
 //			$window.parent.angular.element($window.frameElement).scope().crossNavigationScope.crossNavigationHelper.navigateTo(crossData); 
 		}
 	}

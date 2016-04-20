@@ -106,14 +106,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function handleCrossNavigationTo(e,chartType){
 		if (!e.seriesOptions) {
 			if(chartType=="SUNBURST"){
-				if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+				if(parent.execExternalCrossNavigation){
 					var navData={
 	            			chartType:	"SUNBURST",
 	            			documentName:e.crossNavigationDocumentName,
 	            			documentParameters:e.crossNavigationDocumentParams,
 	            			stringParameters:  e.stringParameters
 	            	};     
-					window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+					parent.execExternalCrossNavigation(navData); 
 	            }else{
 				
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var groupingCategoryName=e.groupingCategoryName;
 			var groupingCategoryValue=e.groupingCategoryValue;
 			
-			if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
+			if(parent.execExternalCrossNavigation){
 				var navData={
             			chartType:	"D3CHART",
             			documentName:e.crossNavigationDocumentName,
@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             			groupingCategoryValue:groupingCategoryValue,
             			stringParameters:null
             	};     
-				window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper.navigateTo(navData); 
+				parent.execExternalCrossNavigation(navData); 
             }else{
 			
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
