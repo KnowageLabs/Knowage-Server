@@ -17,9 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <script>
 var sbiM=angular.module('sbiModule',["toastr"]);
+
+sbiM.factory('sbiModule_docInfo',function(){
+	return {
+    	label: '<%= documentLabel %>'
+	};
+});
 
 sbiM.factory('sbiModule_config',function(){
 	return {
@@ -142,6 +147,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	};
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
+		console.log(data);
 		if(data.data != null){
 			if ( data.data.hasOwnProperty("errors")) {
 				
