@@ -35,7 +35,7 @@ public interface IOutputParameterDAO extends ISpagoBIDao {
 
 	public void removeParameter(Integer id);
 
-	public void saveParameter(OutputParameter outputParameter);
+	public Integer saveParameter(OutputParameter outputParameter);
 
 	public OutputParameter getOutputParameter(Integer id);
 

@@ -51,12 +51,16 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -68,9 +72,11 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -117,6 +123,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	public static final String NOT_NULL = "NOT_NULL";
 
 	static private Logger logger = Logger.getLogger(BIObjectDAOHibImpl.class);
+
+	private Map<TYPE, Domain> defaultParameterMap = null;
 
 	/**
 	 * Load bi object for execution by id and role.
@@ -472,6 +480,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObject.getId());
 
+			boolean engineHasChanged = biObject.getEngine() != null && !hibBIObject.getSbiEngines().getEngineId().equals(biObject.getEngine().getId());
+
 			updateSbiCommonInfo4Update(hibBIObject);
 
 			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class, biObject.getEngine().getId());
@@ -538,6 +548,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("Update detail dataset");
 			DAOFactory.getBIObjDataSetDAO().updateObjectDetailDataset(biObject.getId(), biObject.getDataSetId(), aSession);
+
+			if (engineHasChanged) {
+				// If Engine is changed, we have to load its specific output parameters and save them
+				hibBIObject.getSbiOutputParameters().clear();
+				hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
+			}
 
 			tx.commit();
 
@@ -714,9 +730,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			// save biobject
 			Integer id = (Integer) aSession.save(hibBIObject);
+
 			idToReturn = id;
 			// recover the saved hibernate object
 			hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, id);
+
+			// Saving output parameters
+			hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
+
 			// functionalities storing
 			Set hibObjFunc = new HashSet();
 			List functionalities = obj.getFunctionalities();
@@ -2482,6 +2503,45 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 		logger.debug("OUT");
 		return biObject;
+	}
+
+	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject) {
+		List<SbiOutputParameter> ret = new ArrayList<>();
+		if (sbiObject.getSbiEngines() != null) {
+			try {
+				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm()).newInstance();
+				List<DefaultOutputParameter> params = driver.getDefaultOutputParameters();
+				for (DefaultOutputParameter defaultOutputParameter : params) {
+					SbiOutputParameter outputParameter = new SbiOutputParameter();
+					outputParameter.setBiobjId(sbiObject.getBiobjId());
+					outputParameter.setLabel(defaultOutputParameter.getParamName());
+					outputParameter.setParameterTypeId(getDefaultParameterMap().get(defaultOutputParameter.getParamType()).getValueId());
+					updateSbiCommonInfo4Insert(outputParameter);
+					ret.add(outputParameter);
+				}
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				logger.error("Error trying to load default output parameters for engine [" + sbiObject.getSbiEngines().getDriverNm() + "] ", e);
+			}
+		}
+		return ret;
+	}
+
+	private Map<TYPE, Domain> getDefaultParameterMap() {
+		if (defaultParameterMap == null) {
+			defaultParameterMap = new HashMap();
+			{
+				try {
+					IDomainDAO domainDao = DAOFactory.getDomainDAO();
+					defaultParameterMap.put(TYPE.String, domainDao.loadDomainByCodeAndValue("PAR_TYPE", "STRING"));
+					defaultParameterMap.put(TYPE.Number, domainDao.loadDomainByCodeAndValue("PAR_TYPE", "NUM"));
+					defaultParameterMap.put(TYPE.Date, domainDao.loadDomainByCodeAndValue("PAR_TYPE", "DATE"));
+				} catch (EMFUserError e) {
+					logger.error("Unable to load PAR_TYPE domains", e);
+				}
+			}
+			;
+		}
+		return defaultParameterMap;
 	}
 
 	private Domain from(SbiDomains sbiType) {

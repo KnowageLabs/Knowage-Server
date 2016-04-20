@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
@@ -52,6 +53,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
+
+	private static Logger logger = Logger.getLogger(CrossNavigationDAOImpl.class);
 
 	public static final int TYPE_FIXED = 2;
 	public static final int TYPE_INPUT = 1;
@@ -76,14 +79,28 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						switch (cnp.getFromType()) {
 						case TYPE_INPUT:
 							SbiObjPar op = (SbiObjPar) session.get(SbiObjPar.class, cnp.getFromKeyId());
+							if (op == null) {
+								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Input type parameter not found with fromKeyId ["
+										+ cnp.getFromKeyId() + "]");
+								continue;
+							}
 							sn.setFromDoc(op.getSbiObject().getLabel());
 							break;
 						case TYPE_OUTPUT:
 							SbiOutputParameter o2 = (SbiOutputParameter) session.get(SbiOutputParameter.class, cnp.getFromKeyId());
+							if (o2 == null) {
+								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Output type parameter not found with fromKeyId ["
+										+ cnp.getFromKeyId() + "]");
+								continue;
+							}
 							sn.setFromDoc(o2.getSbiObject().getLabel());
 							break;
 						case TYPE_FIXED:
 							SbiObjects obj = (SbiObjects) session.load(SbiObjects.class, cnp.getFromKeyId());
+							if (obj == null) {
+								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Document not found with id [" + cnp.getFromKeyId() + "]");
+								continue;
+							}
 							sn.setFromDoc(obj.getLabel());
 							break;
 						}

@@ -64,9 +64,10 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	}
 
 	@Override
-	public void saveParameter(OutputParameter outputParameter) {
+	public Integer saveParameter(OutputParameter outputParameter) {
 		SbiOutputParameter sop = null;
-		if (outputParameter.getId() == null) {
+		Integer id = outputParameter.getId();
+		if (id == null) {
 			sop = new SbiOutputParameter();
 		} else {
 			sop = load(SbiOutputParameter.class, outputParameter.getId());
@@ -82,10 +83,11 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 			sop.setFormatValue(null);
 		}
 		if (outputParameter.getId() == null) {
-			insert(sop);
+			id = (Integer) insert(sop);
 		} else {
 			update(sop);
 		}
+		return id;
 	}
 
 	@Override
@@ -114,5 +116,4 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		return type;
 	}
 
-	
 }
