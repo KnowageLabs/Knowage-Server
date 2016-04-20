@@ -1,0 +1,58 @@
+<div id="{{svgId}}" layout-align="center center" layout="column">
+	<span style="font-size:{{labelFontSize}}; font-family:{{fontConf.fontFamily}}; font-weight:{{fontConf.fontWeight}}; color:{{fontConf.color}};"
+			ng-if="showValue">{{value.toFixed(valuePrecision)}}</span>
+	<svg class="kpiLinearGauge" svg-width="{{size + 20}}" height="100"
+			style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">
+			
+		<g transform="translate(20,0)">
+			<rect ng-if="showThresholds" ng-repeat="stop in thresholdStops" class="range" 
+				svg-transform="translate({{(stop.from * sizeScaleFactor) || 0}},0)" 
+				svg-style="fill: {{stop.color}}" svg-width="{{(stop.to - stop.from) * sizeScaleFactor}}" height="40" x="0"/>
+			
+			<rect class="measure" svg-width="{{value * sizeScaleFactor}}" height="13.333" x="0" y="13.333"/>
+			
+<!-- 			<line class="target" x1="666.6666666666667" x2="666.6666666666667" y1="10" y2="20"></line> -->
+			<line ng-if="showTarget" class="target" y1="5" y2="35" 
+					svg-x1="{{targetValue * sizeScaleFactor || 0}}" svg-x2="{{targetValue * sizeScaleFactor || 0}}"></line>
+			
+			<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">
+				<g class="tick" transform="translate(0,0)" style="opacity: 1;">
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+						style="font-size:{{maxMinFontSize}}">{{minValue}}</text>
+				</g>
+				<g class="tick" style="opacity: 1;"
+						svg-transform="translate({{((minValue + (maxMinValueDifference) / 4) * sizeScaleFactor - 20) || 0}},0)">
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+						style="font-size:{{intermediateFontSize}}">{{minValue + (maxMinValueDifference) / 4}}</text>
+				</g>
+				<g class="tick"style="opacity: 1;"
+						svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor - 20) || 0}},0)">
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+						style="font-size:{{intermediateFontSize}}">{{minValue + (maxMinValueDifference) / 2}}</text>
+				</g>
+				<g class="tick" style="opacity: 1;"
+						svg-transform="translate({{((minValue + (maxMinValueDifference)* 3 / 4) * sizeScaleFactor - 20) || 0}},0)">
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+							style="font-size:{{intermediateFontSize}}">
+						{{minValue + (maxMinValueDifference)* 3 / 4}}</text>
+				</g>
+				<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" 
+						style="opacity: 1;">
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
+							style="font-size:{{maxMinFontSize}}">{{maxValue}}</text>
+				</g>
+			</g>
+		</g>
+	</svg>
+</div>
+<style>
+#{{svgId}} svg .measure:hover {
+	opacity: .7;
+}
+
+#{{svgId}} svg .target {
+    stroke: {{targetColor}};
+    stroke-width: 2px;
+}
+
+</style>

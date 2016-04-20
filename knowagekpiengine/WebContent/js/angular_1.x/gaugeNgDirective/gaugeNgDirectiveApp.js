@@ -14,8 +14,6 @@
 		this.configure = function (configuration) {
 			this.config = configuration;
 
-//			this.config.size = this.config.size * 0.9;
-
 			this.config.radius = this.config.size * 0.97 / 2;
 			this.config.cx = this.config.size / 2;
 			this.config.cy = this.config.size / 2;
@@ -36,10 +34,6 @@
 
 			this.config.majorTicks = configuration.majorTicks || 5;
 			this.config.minorTicks = configuration.minorTicks || 2;
-
-//			this.config.greenColor = configuration.greenColor || "#109618";
-//			this.config.yellowColor = configuration.yellowColor || "#FF9900";
-//			this.config.redColor = configuration.redColor || "#DC3912";
 
 			this.config.transitionDuration = configuration.transitionDuration || 500;
 		};
@@ -91,7 +85,6 @@
 					.attr("text-anchor", "middle")
 					.text(this.config.label)
 					.style("font-size", fontSize + "px")
-//					.style("fill", "#333")
 					.style("fill", this.config.fontConf.color)
 					.style("font-family", this.config.fontConf.fontFamily)
 					.style("font-weight", this.config.fontConf.fontWeight)
@@ -136,7 +129,6 @@
 						.attr("text-anchor", major == this.config.min ? "start" : "end")
 						.text(major)
 						.style("font-size", fontSize + "px")
-//						.style("fill", "#333")
 						.style("fill", this.config.fontConf.color)
 						.style("font-family", this.config.fontConf.fontFamily)
 						.style("font-weight", this.config.fontConf.fontWeight)
@@ -167,9 +159,7 @@
 				.enter()
 				.append("svg:path")
 				.attr("d", pointerLine)
-//				.style("fill", "#dc3912")
 				.style("fill", "#000")
-//				.style("stroke", "#c63310")
 				.style("stroke", "#000")
 				.style("fill-opacity", 0.7);
 
@@ -178,9 +168,7 @@
 				.attr("cx", this.config.cx)
 				.attr("cy", this.config.cy)
 				.attr("r", 0.12 * this.config.radius)
-//				.style("fill", "#4684EE")
 				.style("fill", "#000")
-//				.style("stroke", "#666")
 				.style("stroke", "#000")
 				.style("opacity", 1);
 
@@ -197,7 +185,6 @@
 				.attr("text-anchor", "middle")
 				.style("font-size", fontSize + "px")
 				.style("visibility", this.config.showValue ? "visible" : "hidden")
-//				.style("fill", "#000")
 				.style("fill", this.config.fontConf.color)
 				.style("font-family", this.config.fontConf.fontFamily)
 				.style("font-weight", this.config.fontConf.fontWeight)
@@ -265,9 +252,6 @@
 			var pointer = pointerContainer.selectAll("path");
 			pointer.transition()
 			.duration(undefined != transitionDuration ? transitionDuration : this.config.transitionDuration)
-			//.delay(0)
-			//.ease("linear")
-			//.attr("transform", function(d)
 			.attrTween("transform", function () {
 				var pointerValue = value;
 				if (value > self.config.max)
@@ -287,7 +271,6 @@
 
 		this.valueToDegrees = function (value) {
 			// thanks @closealert
-			//return value / this.config.range * 270 - 45;
 			return value / this.config.range * 270 - (this.config.min / this.config.range * 270 + 45);
 		};
 
@@ -310,6 +293,10 @@
 	/**
 	 * End of Gauge Element snippet
 	 */
+	
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
 	var gaugeNgDirectiveApp = angular.module('gaugeNgDirectiveApp', ['ngMaterial', 'ngSanitize', 'ngAnimate']);
 	
@@ -369,8 +356,7 @@
 				valuePrecision : undefined != valuePrecision && null != valuePrecision? 
 						valuePrecision : 0,
 				fontConf : undefined != fontConf && null != fontConf? 
-						fontConf : 
-						{
+						fontConf : {
 							size : "1",
 							color : "black",
 							fontFamily : "Times New Roman",
@@ -427,14 +413,14 @@
 				$scope.fontConf);
 	};
 	
-	angular.forEach(['x', 'y', 'width', 'height', 'style', 'transform'], function(name) {
+	angular.forEach(['x', 'x1', 'x2', 'y', 'width', 'height', 'style', 'transform'], function(name) {
 		var svgName = 'svg' + name[0].toUpperCase() + name.slice(1);
 		
 		gaugeNgDirectiveApp.directive(svgName, function() {
 			return function(scope, element, attrs) {
 				attrs.$observe(svgName, function(value) {
 					attrs.$set(name, value); 
-				})
+				});
 			};
 		});
 	});
@@ -442,57 +428,7 @@
 	gaugeNgDirectiveApp.directive("kpiLinearGauge", ['$compile', '$timeout' , function($compile, $timeout){
 		return {
 			restrict: 'E',
-			template: 
-				'<div id="{{svgId}}" layout-align="center center" layout="column">'
-				+ '<span style="font-size:{{labelFontSize}}; font-family:{{fontConf.fontFamily}};' 
-						+ ' font-weight:{{fontConf.fontWeight}}; color:{{fontConf.color}};" ng-if="showValue">'
-					+ '{{value.toFixed(valuePrecision)}}</span>'
-				+ '<svg class="kpiLinearGauge" svg-width="{{size + 20}}" height="100" ' 
-						+ 'style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">'
-						
-					+ '<g transform="translate(20,0)">'
-						+ '<rect ng-if="showThresholds" ng-repeat="stop in thresholdStops" class="range" ' 
-							+ 'svg-transform="translate({{(stop.from * sizeScaleFactor) || 0}},0)" '
-							+ 'svg-style="fill: {{stop.color}}" svg-width="{{(stop.to - stop.from) * sizeScaleFactor}}" height="40" x="0"/>'
-						
-						+ '<rect class="measure" svg-width="{{value * sizeScaleFactor}}" height="13.333" x="0" y="13.333"/>'
-						
-						+ '<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">'
-							+ '<g class="tick" transform="translate(0,0)" style="opacity: 1;">'
-								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
-									+ 'style="font-size:{{maxMinFontSize}}"'
-								+ '>{{minValue}}</text>'
-							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference) / 4) * sizeScaleFactor - 20) || 0}},0)" '
-									+ 'style="opacity: 1;">'
-								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" ' 
-									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxMinValueDifference) / 4}}</text>'
-							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor - 20) || 0}},0)" '
-									+' style="opacity: 1;">'
-								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" '
-									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxMinValueDifference) / 2}}</text>'
-							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{((minValue + (maxMinValueDifference)* 3 / 4) * sizeScaleFactor - 20) || 0}},0)" ' 
-									+ ' style="opacity: 1;">'
-								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"' 
-									+ 'style="font-size:{{intermediateFontSize}}"'
-								+ '>{{minValue + (maxMinValueDifference)* 3 / 4}}</text>'
-							+ '</g>'
-							+ '<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" ' 
-									+ 'style="opacity: 1;">'
-								+ '<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"'
-									+ 'style="font-size:{{maxMinFontSize}}"'
-								+'>{{maxValue}}</text>'
-							+ '</g>'
-						+ '</g>'
-					+ '</g>'
-				+ '</svg>'
-				+ '</div>'
-				+ '<style>#{{svgId}} .measure:hover {opacity: .7;}</style>'
-				,
+			templateUrl: currentScriptPath + 'kpiLinearGaugeTemplate/kpiLinearGaugeTemplate.html', 
 				
 			controller: kpiLinearGaugeCtrl,
 			scope: {
@@ -502,8 +438,10 @@
 				minValue: '=',
 				maxValue: '=',
 				value: '=',
+				targetValue: '=',
 				thresholdStops: '=?',
 				showValue: '=?',
+				showTarget: '=?',
 				showThresholds: '=?',
 				valuePrecision: '=?',
 				fontConf: '=?',
@@ -523,9 +461,14 @@
 		$scope.maxMinFontSize = ($scope.fontConf.size * 1.3) + 'em';
 		$scope.intermediateFontSize = ($scope.fontConf.size * 1) + 'em';
 		
+		$scope.targetColor = '#AC0A08';
+		
 		$scope.maxMinValueDifference = ($scope.maxValue - $scope.minValue);
 		$scope.sizeScaleFactor = ($scope.size / $scope.maxMinValueDifference) ;
 		
 		$scope.showValue = ($scope.showValue != undefined) ? $scope.showValue : true;
+		$scope.showTarget = ($scope.showTarget != undefined) ? $scope.showTarget : true;
+		
+		
 	};
 })();
