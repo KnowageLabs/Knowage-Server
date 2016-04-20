@@ -30,6 +30,10 @@ import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
 import it.eng.spagobi.meta.model.physical.PhysicalColumn;
 import it.eng.spagobi.meta.model.physical.PhysicalModel;
 import it.eng.spagobi.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.metadata.cwm.CWMImplType;
+import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
+import it.eng.spagobi.metadata.cwm.ICWM;
+import it.eng.spagobi.metadata.cwm.ICWMMapper;
 import it.eng.spagobi.metadata.etl.ETLParser;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.services.common.EnginConf;
@@ -47,6 +51,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -183,6 +188,48 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
+	 * POST: get ETL Contexts from the uploaded file
+	 **/
+	@POST
+	@Path("/getETLContexts")
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getETLContexts(@MultipartForm MultipartFormDataInput input) {
+		logger.debug("IN");
+
+		try {
+
+			// 1- Retrieve uploaded file data
+			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			InputStream inputStream = null;
+
+			for (String key : uploadForm.keySet()) {
+				List<InputPart> inputParts = uploadForm.get(key);
+				for (InputPart inputPart : inputParts) {
+					MultivaluedMap<String, String> header = inputPart.getHeaders();
+					if (getFileName(header) != null) {
+						inputStream = inputPart.getBody(InputStream.class, null);
+					}
+				}
+			}
+
+			// 2 - Parse xml inputStream
+			Document xmlDocument = inputStreamToDocument(inputStream);
+			ETLParser etlParser = new ETLParser(xmlDocument);
+			Set<String> contexts = etlParser.getContextNames();
+
+			return Response.ok(contexts).build();
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to extract metadata information from file:", e);
+			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file:", buildLocaleFromSession(), e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/**
 	 * POST: Extract and insert new ETL metadata informations from uploaded file
 	 **/
 	@POST
@@ -211,6 +258,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// TODO: 2 - Parse xml inputStream
 			Document xmlDocument = inputStreamToDocument(inputStream);
 			ETLParser etlParser = new ETLParser(xmlDocument);
+			// etlParser.getETLMetadata(contextName);
 			etlParser.extractAll();
 
 			// TODO: 3 - Write informations on db
@@ -245,6 +293,50 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response updateETLMetadataInformation(@PathParam("etlId") int etlId) {
 		return null;
+	}
+
+	/**
+	 * Export Knowage Metamodel in CWM Format
+	 **/
+	@GET
+	@Path("/{bmId}/exportCWM")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response exportMetamodelToCWM(@PathParam("bmId") int businessModelId) {
+		logger.debug("IN");
+
+		try {
+			// 1 - Retrieve Metamodel file from datamart.jar
+			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
+			if (metamodelTemplateBytes == null) {
+				return Response.serverError().build();
+			}
+
+			// 2 - Read the metamodel and convert to object
+			ByteArrayInputStream bis = new ByteArrayInputStream(metamodelTemplateBytes);
+			Model model = MetaModelLoader.load(bis);
+
+			// 3- Convert from Knowage Metamodel to CWM Metamodel
+			ICWMMapper modelMapper;
+			ICWM cwm;
+
+			// ModelPrinter.print(businessModel);
+			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
+			modelMapper = CWMMapperFactory.getMapper(CWMImplType.JMI);
+			cwm = modelMapper.encodeICWM(physicalModel);
+			cwm.exportToXMI(getResourcePath() + File.separator + "exportCWM.xmi");
+
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to export metamodel with id " + businessModelId + "to CWM", e);
+			throw new SpagoBIRestServiceException("An error occurred while trying to export metamodel with id " + businessModelId + "to CWM",
+					buildLocaleFromSession(), e);
+
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	/**
