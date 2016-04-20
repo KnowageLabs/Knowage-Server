@@ -1,4 +1,4 @@
-angular.module('document_view', ['ngMaterial'])
+angular.module('document_view', ['ngMaterial','sbiModule'])
 .directive('documentView', function() {
 	return {
 		 templateUrl: '/knowage/js/src/angular_1.4/tools/documentbrowser/directive/document-view/document-view.html',
@@ -25,9 +25,9 @@ angular.module('document_view', ['ngMaterial'])
 	}
 });
 
-function documentViewControllerFunction($scope){
+function documentViewControllerFunction($scope,sbiModule_config){
+	$scope.sbiModule_config=sbiModule_config;
 	$scope.clickDocument=function(item){
-		
-		 $scope.selectDocumentAction({doc: item});
+		$scope.selectDocumentAction({doc: item});
 	}
 }

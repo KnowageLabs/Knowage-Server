@@ -56,6 +56,9 @@ function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog){
 		 }else if(type=="right"){
 			 startIndex=$scope.documentNavigationToolbarSelectedIndex;
 			 totalDocumentCount=$scope.runningDocuments.length-$scope.documentNavigationToolbarSelectedIndex;
+		 }else if(type=="current"){			 
+			 totalDocumentCount=1;
+			 
 		 }else{
 			 //other
 			 totalDocumentCount=$scope.runningDocuments.length-1;
@@ -75,7 +78,9 @@ function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog){
 			   if(type=='other'){ 
 				   $scope.runningDocuments.splice(0,$scope.documentNavigationToolbarSelectedIndex-1);
 				   $scope.runningDocuments.splice(1,$scope.runningDocuments.length);
-			   }else{
+			   }else if('current'){
+				   $scope.runningDocuments.splice($scope.documentNavigationToolbarSelectedIndex-1,1);
+			   } else{
 				   $scope.runningDocuments.splice(startIndex,$scope.runningDocuments.length);
 			   }
 		   } );

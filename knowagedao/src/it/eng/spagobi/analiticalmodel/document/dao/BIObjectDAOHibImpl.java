@@ -1189,6 +1189,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setStateCode(hibBIObject.getStateCode());
 		if (hibBIObject.getState() != null) {
 			aBIObject.setStateID(hibBIObject.getState().getValueId());
+			aBIObject.setStateCodeStr(hibBIObject.getState().getValueNm());
 		}
 
 		List functionlities = new ArrayList();
@@ -1239,6 +1240,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setCreationUser(hibBIObject.getCreationUser());
 
 		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());
+
 		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
 
 		String region = hibBIObject.getParametersRegion();
@@ -1321,7 +1323,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1396,7 +1398,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				List sbiObjects = session
 						.createCriteria(SbiObjects.class)
 						.createAlias("sbiObjFuncs", "_sbiObjFunc")
-						// .createAlias("_sbiObjFunc.id.sbiFunctions", "_sbiFunc")
+						.createAlias("state", "_sbiDomain")
 						.add(Restrictions.eq("_sbiObjFunc.id.sbiFunctions.functId", folderId))
 						.setProjection(
 								Projections.projectionList().add(org.hibernate.criterion.Property.forName("biobjId").as("biobjId"))
@@ -1407,7 +1409,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 										.add(org.hibernate.criterion.Property.forName("descr").as("descr"))
 										.add(org.hibernate.criterion.Property.forName("stateCode").as("stateCode"))
 										.add(org.hibernate.criterion.Property.forName("sbiEngines").as("sbiEngines"))
-										.add(org.hibernate.criterion.Property.forName("label").as("label")))
+										.add(org.hibernate.criterion.Property.forName("label").as("label"))
+										.add(org.hibernate.criterion.Property.forName("state").as("state"))
+										.add(org.hibernate.criterion.Property.forName("previewFile").as("previewFile")))
 						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
 
 				Iterator it = sbiObjects.iterator();
@@ -1469,7 +1473,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects(java.lang.String)
 	 */
 	@Override
@@ -1512,7 +1516,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1585,7 +1589,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -1638,7 +1642,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1690,7 +1694,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override

@@ -69,6 +69,11 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.loadFolders=function(){
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
+			if(response.data && response.data.length>0){
+				console.log('vk response ' , response);
+				response.data[0].expanded=true;
+				response.data[0].name='Root';
+			}
 			angular.copy(response.data,$scope.folders);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -280,7 +285,22 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	
 };
 
- 
+app.filter("asDate", function () {
+    return function (input) {
+        return new Date(input);
+    }
+});
+
+
+app.filter("translateLoad", function (sbiModule_translate) {
+    return function (input) {
+    	if(input!=undefined){
+    		return sbiModule_translate.load(input);    		
+    	}else{
+    		return '';
+    	}
+    }
+});
 
 app.directive('focusOn', function() {
 	return function(scope, elem, attr) {

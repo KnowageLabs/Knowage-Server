@@ -1,6 +1,6 @@
  				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:absolute"
 							id='documentListTable' ng-model=ngModel
-							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
+							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Label","name":"label"}]'
 							columnsSearch='["name"]' 
 							show-search-bar=false
 							speed-menu-option=tableSpeedMenuOption
@@ -22,21 +22,31 @@
 				            </md-tooltip>
 				          </md-card-title-text>
 				    </md-card-title>
-			        <div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" ></div>
+			        
+			       
+			        <div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" 
+			         ng-if="document.previewFile==null"></div>
+			        
+			        <img align="center" class="preview-icon" ng-if="document.previewFile!=null"
+					ng-src="{{sbiModule_config.contextName}}/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&amp;SBI_ENVIRONMENT=DOCBROWSER&amp;
+					LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}">
+			        
+			        
+			        
 			        <md-card-actions layout="row" layout-align="space-around end">
-			          <md-button class="md-icon-button" aria-label="edit" ng-click="editDocumentAction({doc:document});">
+			          <md-button title="Edit Document" class="md-icon-button" aria-label="edit" ng-click="editDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa  fa-pencil fa-2x"></md-icon>
 			          </md-button>
 			        	 
-			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});">
+			          <md-button title="Execute Document" class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});">
+			          <md-button title="Clone Document" class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="Share" ng-click="deleteDocumentAction({doc:document});">
+			          <md-button title="Delete Document" class="md-icon-button" aria-label="Share" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
 			          

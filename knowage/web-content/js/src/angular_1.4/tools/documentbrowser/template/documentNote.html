@@ -18,8 +18,8 @@
 					<expander-box id="Info" color="white" background-color="rgb(63,81,181)" expanded="false" title="note.info">
 						<div layout="row" class="headerNote">
 				    		<span flex><h5>Owner:  {{noteLoaded.owner}} </h5></span>
-				    		<span flex><h5>Creation date:  {{noteLoaded.creationDate}}</h5></span>
-				    		<span flex><h5>Last change date:  {{noteLoaded.lastChangeDate}}</h5></span>
+				    		<span flex><h5>Creation date:  {{noteLoaded.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
+				    		<span flex><h5>Last change date:  {{noteLoaded.lastChangeDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
 				    	</div>
 					</expander-box>
 					<div class="wysiwygClass">
@@ -49,8 +49,8 @@
 			   					 <md-toolbar>
 								     <div class="md-toolbar-tools" layout="row" class="headerNote">
 							    		<span flex><h5>Owner:  {{nota.owner}} </h5></span>
-							    		<span flex><h5>Creation date:  {{nota.creationDate}}</h5></span>
-							    		<span flex><h5>Last change date:  {{nota.lastChangeDate}}</h5></span>
+							    		<span flex><h5>Creation date:  {{nota.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
+							    		<span flex><h5>Last change date:  {{nota.lastChangeDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
 							    	</div>
 								   </md-toolbar>
 						           <p ng-bind-html="nota.content"></p>

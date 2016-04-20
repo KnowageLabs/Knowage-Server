@@ -97,6 +97,9 @@
 	      };
 	      
 		$scope.toggleCheckboxParameter = function(parVal,parameter) {
+			if (typeof parameter.parameterValue == 'undefined'){
+				parameter.parameterValue= [];
+			}
 			var idx = parameter.parameterValue.indexOf(parVal);
 	        if (idx > -1) {
 	        	parameter.parameterValue.splice(idx, 1);
@@ -264,7 +267,7 @@
 					
 				clickOutsideToClose: false,
 				
-				controller : function($scope, $mdDialog, sbiModule_translate, $documentNavigationScope) {
+				controller : function($scope, $mdDialog, sbiModule_translate) {
 					$scope.sbiModule_translate = sbiModule_translate;
 					
 					$scope.parameter = parameter;

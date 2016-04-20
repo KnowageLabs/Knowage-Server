@@ -50,8 +50,10 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 					    	
 					    	var subfoldersId = scope.subfoldersId;
 					    	
-					    	scope.iconFolder = 'fa fa-folder';
-					    	scope.iconFolderOpen = 'fa fa-folder-open';	
+					    	scope.iconFolder = 'fa fa-folder-o';
+					    	scope.iconFolderOpen = 'fa fa-folder-open-o';
+					    	scope.multiFolders= 'fa fa-folder';
+					    	scope.multiFoldersOpen= 'fa fa-folder-open';
 					    	
 					    	scope.seeTree = false;
 					    	

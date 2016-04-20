@@ -104,9 +104,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
 				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-sidenav': smallScreen}" >
-					<md-toolbar class=" ternaryToolbar">
-		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3>
-	     			</md-toolbar>
+<!-- 					<md-toolbar class=" ternaryToolbar"> -->
+<!-- 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3> -->
+<!-- 	     			</md-toolbar> -->
 	     			<md-content layout-margin>
 	     				<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder"  click-function="setSelectedFolder(item)"  ></document-tree>
 					</md-content>
@@ -188,7 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
 							            <h3><b>{{translate.load("sbi.generic.state")}}</b></h3>
-							            <p>{{selectedDocument.stateCode}}</p>
+							            <p>{{selectedDocument.stateCodeStr | translateLoad}}</p>
 							          </div>
 							 </md-list-item>
 							 <md-list-item class="md-2-line">
@@ -200,7 +200,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
 							            <h3><b>{{translate.load("sbi.generic.creationdate")}}</b></h3>
-							            <p>{{selectedDocument.creationDate}}</p>
+							            <p>{{selectedDocument.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss' }}</p>
 							          </div>
 							 </md-list-item>
 						</md-list>

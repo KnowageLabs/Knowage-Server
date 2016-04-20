@@ -143,4 +143,11 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 			}
 		});
 	};
+	
 }
+
+app.filter("asDate", function () {
+    return function (input) {
+        return new Date(input);
+    }
+});

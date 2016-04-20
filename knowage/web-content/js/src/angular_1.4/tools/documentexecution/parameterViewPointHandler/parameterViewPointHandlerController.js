@@ -38,6 +38,7 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 $scope.fillParametersPanel(params);
+					 docExecute_urlViewPointService.frameLoaded = false;
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	

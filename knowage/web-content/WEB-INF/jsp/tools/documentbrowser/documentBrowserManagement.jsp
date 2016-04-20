@@ -74,15 +74,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <md-icon md-font-icon="fa fa-folder-open-o"></md-icon>
      	</md-button> 
      	
-     	
-     	
-     	
+
      	<md-menu md-tab-fixed-last-clear-tabs  >
 	      <md-button aria-label="Create new document" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
 	        <md-icon md-menu-origin  md-font-icon="fa fa-trash" class="md-primary"></md-icon>
 	      </md-button>
 	      <md-menu-content width="4"> 
 	       <md-menu-item>
+	           <md-button ng-click="closeTabs('current');">
+	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	             {{translate.load("sbi.browser.close.document.this")}}
+	          </md-button>
+	          </md-menu-item>
+	         <md-menu-item>
 	          <md-button ng-click="closeTabs('other');">
 	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
 	           {{translate.load("sbi.browser.close.document.other")}}

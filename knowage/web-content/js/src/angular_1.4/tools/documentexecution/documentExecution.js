@@ -69,11 +69,10 @@
 				 if(execProperties.roles.length==1 || (execProperties.roles.length>1 && !angular.equals(execProperties.selectedRole.name,'')) ) {
 					execProperties.selectedRole.name = execProperties.roles[0];
 					$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
-					$scope.showSelectRoles = false;
+					$scope.showSelectRoles = false;					
 					//loads parameters if role is selected
-					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation,execProperties.executionInstance.CROSS_PARAMETER);
 					execProperties.isParameterRolePanelDisabled.status = true;
-					
+					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation,execProperties.executionInstance.CROSS_PARAMETER);
 				}else{ 
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}

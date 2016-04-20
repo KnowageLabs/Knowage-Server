@@ -1,7 +1,7 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
-	documentExecutionModule.service('documentExecuteServices', function($mdToast) {
+	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices) {
 		var documentExecuteServicesObj = {
 //			decodeRequestStringToJson: function (str) {
 //				var hash;
@@ -15,6 +15,7 @@
 //				return parametersJson;
 //			},
 			
+				
 			decodeRequestStringToJson: function (str) {
 				var parametersJson = {};
 				
@@ -116,69 +117,7 @@
 				//console.log('jsonDAtum ' , jsonDatum);
 				return jsonDatum;
 			},
-//			buildStringParametersForSave : function (documentParameters) {
-//				//console.log('buildStringParameters ' , documentParameters);
-//				var jsonDatum =  {};
-//				if(documentParameters.length > 0) {
-//					for(var i = 0; i < documentParameters.length; i++ ) {
-//						var parameter = documentParameters[i];
-//						var valueKey = parameter.urlName;
-//						var descriptionKey = parameter.urlName + "_field_visible_description";					
-//						var jsonDatumValue = null;
-//						var jsonDatumDesc = null;
-//						//LOV PARAMETER
-//						if(parameter.valueSelection.toLowerCase() == 'lov') {
-//							if(parameter.selectionType.toLowerCase() == 'tree'){
-//								var paramArrayTree=[];
-//								var paramStrTree ="";
-//								for(var z=0; z<parameter.parameterValue.length; z++){
-//									paramArrayTree[z]=parameter.parameterValue[z].value;
-//									paramStrTree = paramStrTree + parameter.parameterValue[z].value;
-//									if(z<parameter.parameterValue.length-1){
-//										paramStrTree = paramStrTree +";";
-//									}
-//								}
-//								jsonDatumValue = paramStrTree; //Value STR
-//								jsonDatumDesc=paramStrTree;
-//							}else{
-//								parameter.parameterValue = parameter.parameterValue || [];
-//								if(Array.isArray(parameter.parameterValue) && parameter.multivalue) {
-////									parameter.parameterValue = parameter.parameterValue || [];
-////									jsonDatumValue = parameter.parameterValue;
-////									jsonDatumDesc = jsonDatumValue;
-//									var paramArrayLov=[];
-//									var paramStrLov ="";
-//									var paramStrLovDesc ="";
-//									for(var z=0; z<parameter.parameterValue.length; z++){
-//										paramArrayLov[z]=parameter.parameterValue[z];
-//										paramStrLov = paramStrLov + parameter.parameterValue[z];
-//										paramStrLovDesc = paramStrLovDesc + parameter.parameterValue[z];
-//										if(z<parameter.parameterValue.length-1){
-//											paramStrLov = paramStrLov +";";
-//											paramStrLovDesc = paramStrLovDesc + ",";
-//										}
-//									}
-//									jsonDatumValue = paramStrLov;
-//									jsonDatumDesc=paramStrLovDesc;
-//								} else {
-//									//jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : '';
-//									jsonDatumDesc = jsonDatumValue;
-//								}
-//							}
-//						} 
-//						// NO LOV PARAMETER
-//						else {
-//							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-//							jsonDatumDesc = jsonDatumValue;
-//						}
-//						jsonDatum[valueKey] = jsonDatumValue;
-//						jsonDatum[descriptionKey] = jsonDatumDesc;
-//					}
-//				}
-//				///console.log('jsonDatum ' , jsonDatum);
-//				return jsonDatum;
-//			},
+
 					
 			recursiveChildrenChecks : function(parameterValue, childrenArray) {
 				childrenArray = childrenArray || [];
@@ -222,11 +161,10 @@
 					} else {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
-							
-							for(var j = 0; j < parameter.defaultValues.length; j++) {
-								var defaultValue = parameter.defaultValues[j];
-								defaultValue.isSelected = false;
-							}
+//							for(var j = 0; j < parameter.defaultValues.length; j++) {
+//								var defaultValue = parameter.defaultValues[j];
+//								defaultValue.isSelected = false;
+//							}
 						} else {
 							parameter.parameterValue = '';
 						}
@@ -371,8 +309,7 @@
 			.then(function(response, status, headers, config) {
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
-				if( response.data.filterStatus && response.data.filterStatus.length>0) {
-										
+				if(response && response.data.filterStatus && response.data.filterStatus.length>0) {					
 //					execProperties.showParametersPanel.status = true;
 //					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
 //						$mdSidenav('parametersPanelSideNav').open();
@@ -446,7 +383,7 @@
 				
 		this.checkParameterRolePanelDisabled = function() {
 			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
-					&& (execProperties.roles.length==1));
+					&& (execProperties.roles.length==1));		
 		};
 		
 		this.returnToDocument = function() {

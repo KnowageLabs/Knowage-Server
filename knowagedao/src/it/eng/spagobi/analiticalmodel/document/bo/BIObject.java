@@ -148,6 +148,8 @@ public class BIObject implements Serializable, Cloneable {
 
 	private List<OutputParameter> outputParameters = new ArrayList();
 
+	private String stateCodeStr = null;
+
 	/**
 	 * Gets the id.
 	 *
@@ -856,6 +858,16 @@ public class BIObject implements Serializable, Cloneable {
 
 	public void setDatasetsIds(ArrayList<Integer> datasetsIds) {
 		this.datasetsIds = datasetsIds;
+	}
+
+	@JsonGetter
+	public String getStateCodeStr() {
+		return stateCodeStr;
+	}
+
+	@JsonIgnore
+	public void setStateCodeStr(String stateCodeStr) {
+		this.stateCodeStr = stateCodeStr;
 	}
 
 }
