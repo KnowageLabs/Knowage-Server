@@ -324,8 +324,12 @@ td:focus {
 	background-image: url(../img/hide_spans.png);
 }
 .BUTTON_SHOW_PROPERTIES{
-	background-image: url(../img/show_props.png);
+	background-image: url(../img/show_props.png);	
 }
+.BUTTON_SHOW_COMPACT_PROPERTIES{
+	background-image: url(../img/show_compact_props.png);	
+}
+
 .BUTTON_HIDE_EMPTY{
 	background-image: url(../img/empty_rows.png);
 }

@@ -8,7 +8,7 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo) {
 	
 	
 	
@@ -507,7 +507,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		});
 	  };
 	  $scope.closeDialog = function(ev) {
-		  $mdDialog.hide();
+		  $mdDialog.cancel();
 		  $scope.dtAssociatedLevels = [];
 		  $scope.selectedMDXFunction = null;
 		  $scope.selectedCrossNavigation = null;
@@ -734,7 +734,7 @@ $scope.sendCC = function() {
 			  
 			  console.log("NAMED MEMBER");
 				var namedMember = {
-						
+						'docName': sbiModule_docInfo.label,
 						'name':$scope.selectedMDXFunction.label,
 					    'value': $scope.finalFormula,
 					    'type': 'Member',
@@ -758,7 +758,7 @@ $scope.sendCC = function() {
 		console.log("NAMED SET");
 		
 		var namedSet = {
-	
+			'docName': sbiModule_docInfo.label,	
 			'name':$scope.selectedMDXFunction.label,
 		    'value': $scope.finalFormula,
 		    'type': 'Set',
