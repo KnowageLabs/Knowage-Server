@@ -31,12 +31,15 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,14 +62,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the biobject
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -89,7 +92,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param analyticalDocumentSubObject
 	 *            SubObject to execute
 	 * @param profile
@@ -98,7 +101,7 @@ public class ChartDriver extends GenericDriver {
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the object
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -109,14 +112,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the edits the document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -143,14 +146,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the new document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -383,7 +386,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Replaces all messages reading by i18n table.
-	 *
+	 * 
 	 * @param sb
 	 *            the source bean
 	 */
@@ -421,6 +424,18 @@ public class ChartDriver extends GenericDriver {
 		} catch (Exception e) {
 			logger.error("Error while defining json chart template: " + e.getMessage());
 		}
+	}
+
+	@Override
+	public List<DefaultOutputParameter> getDefaultOutputParameters() {
+		List<DefaultOutputParameter> ret = new ArrayList<>();
+		ret.add(new DefaultOutputParameter("CATEGORY_NAME", TYPE.String));
+		ret.add(new DefaultOutputParameter("CATEGORY_VALUE ", TYPE.String));
+		ret.add(new DefaultOutputParameter("SERIE_NAME", TYPE.String));
+		ret.add(new DefaultOutputParameter("SERIE_VALUE", TYPE.String));
+		ret.add(new DefaultOutputParameter("GROUPING_NAME", TYPE.String));
+		ret.add(new DefaultOutputParameter("GROUPING_VALUE", TYPE.String));
+		return ret;
 	}
 
 	public static void main(String[] args) {

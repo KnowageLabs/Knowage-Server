@@ -28,7 +28,9 @@ import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -234,6 +236,10 @@ public class AbstractDriver {
 
 		logger.debug("OUT");
 		return content;
+	}
+
+	public List<DefaultOutputParameter> getDefaultOutputParameters() {
+		return new ArrayList<>();
 	}
 
 }
