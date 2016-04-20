@@ -25,6 +25,7 @@ import it.eng.spagobi.engine.chart.ChartEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,12 +73,18 @@ public class AbstractChartEngineResource extends AbstractRestService {
 	@Override
 	public ChartEngineInstance getEngineInstance() {
 
-		ChartEngineInstance engineInstance = (ChartEngineInstance) getIOManager().getHttpSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
-		return engineInstance;
-		// ExecutionSession es = getExecutionSession();
-		// return (ChartEngineInstance)es.getAttributeFromSession(
-		// EngineConstants.ENGINE_INSTANCE );
-		//
+		/*
+		 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+		 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive the
+		 * engine instance, otherwise concurrency issues are raised.
+		 * 
+		 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+		 */
+		// ChartEngineInstance engineInstance = (ChartEngineInstance) getIOManager().getHttpSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+		// return engineInstance;
+		ExecutionSession es = getExecutionSession();
+		return (ChartEngineInstance) es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+
 	}
 
 	/*

@@ -126,8 +126,16 @@ public class PageResource extends AbstractChartEngineResource {
 
 			case "execute":
 				engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
-				// TODO put this not in session but in context
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+				/*
+				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
+				 * the engine instance, otherwise concurrency issues are raised.
+				 *
+				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+				 */
+				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 
 			case "edit":
@@ -138,8 +146,15 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance = ChartEngine.createInstance(templateString, getIOManager().getEnv());
 
 				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
-				// TODO put this not in session but in context
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				/*
+				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
+				 * the engine instance, otherwise concurrency issues are raised.
+				 *
+				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+				 */
+				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 				/**
 				 * These two lines are responsible for setting all chart styles that are available on the server (through their XML files) into the session and
@@ -267,8 +282,16 @@ public class PageResource extends AbstractChartEngineResource {
 
 				// engineInstance.getEnv().put("IFRAMEID", getIOManager().getRequest().getParameter("iFrameId"));
 				engineInstance.getEnv().put("EXECUTE_COCKPIT", true);
-				// TODO put this not in session but in context
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+				/*
+				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
+				 * the engine instance, otherwise concurrency issues are raised.
+				 * 
+				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+				 */
+				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 
 			case "edit_cockpit":
@@ -277,8 +300,16 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance = ChartEngine.createInstance(chartTemplate, getIOManager().getEnv());
 				engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 				engineInstance.getEnv().put("EDIT_COCKPIT", true);
-				// TODO put this not in session but in context
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+				/*
+				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
+				 * the engine instance, otherwise concurrency issues are raised.
+				 * 
+				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+				 */
+				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 				/**
 				 * These two lines are called when the Cockpit engine is initializing (creating, calling) the Designer (not the Chart engine). They are

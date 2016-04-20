@@ -2,6 +2,10 @@
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
+
+
+
+
 Knowage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -37,6 +41,7 @@ author:
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
@@ -81,8 +86,17 @@ author:
 	String associations = "";
 	String widgetId = "";
 	String metaData = "";
-
-	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+	
+	ExecutionSession es = new ExecutionSession(request, request.getSession());
+	engineInstance = (ChartEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
+	
+	/*The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and 
+	* https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session
+	* is not the place to store and retrive the engine instance, otherwise concurrency issues are raised.
+	* @author: Alessandro Portosa (alessandro.portosa@eng.it)
+	*/
+	//engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+	
 	env = engineInstance.getEnv();
 	profile = engineInstance.getUserProfile();
 	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
