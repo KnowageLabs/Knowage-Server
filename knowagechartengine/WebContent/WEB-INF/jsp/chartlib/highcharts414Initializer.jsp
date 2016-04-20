@@ -332,8 +332,8 @@
             			CATEGORY_VALUE :categoryValue,
             			SERIE_NAME :serieName,
             			SERIE_VALUE :serieValue,
-            			groupingCategoryName:groupingCategoryName,
-            			groupingCategoryValue:groupingCategoryValue,
+            			GROUPING_NAME:groupingCategoryName,
+            			GROUPING_VALUE:groupingCategoryValue,
             			stringParameters:null
             	}; 
             	parent.angular.element(frameElement).scope().navigateTo(navData); 

@@ -1,5 +1,7 @@
 (function() {
 
+	
+
 	var stringStartsWith = function (string, prefix) {
 		return string.toLowerCase().slice(0, prefix.length) == prefix.toLowerCase();
 	};
@@ -325,3 +327,10 @@
 		};
 	}]);
 })();
+
+//from executed document, call this function to exec old cross navigation method
+var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, target){
+	debugger;
+	var jsonEncodedParams=JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"').replace(/\s/g,'') + '"}');
+	angular.element(frameElement).scope().$parent.navigateTo(jsonEncodedParams)
+}

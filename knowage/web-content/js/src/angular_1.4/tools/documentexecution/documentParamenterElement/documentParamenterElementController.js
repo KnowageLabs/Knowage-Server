@@ -90,6 +90,9 @@
 		
 		
 		$scope.checkboxParameterExists = function (parVal,parameter) {
+			if( parameter.parameterValue==undefined ||  parameter.parameterValue==null){
+				return false;
+			}
 	        return parameter.parameterValue.indexOf(parVal) > -1;
 	      };
 	      
