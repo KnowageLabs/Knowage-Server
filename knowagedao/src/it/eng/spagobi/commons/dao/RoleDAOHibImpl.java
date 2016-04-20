@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,40 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.dao;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleDataSetCategory;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiEventRole;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.events.metadata.SbiEventsLog;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -36,27 +59,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiEventRole;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.events.metadata.SbiEventsLog;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a Role.
@@ -598,8 +600,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			List hibListAllRoles = hibQuery.list();
 
 			/*
-			 * String hql = "from SbiParuseDet s " +
-			 * " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
+			 * String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = " + parameterID;
 			 */
 
 			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ?";
@@ -676,9 +677,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			/*
-			 * String hql = "from SbiParuseDet s " +
-			 * " where s.id.sbiParuse.sbiParameters.parId = "+
-			 * sbiParuse.getSbiParameters().getParId() +
+			 * String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = "+ sbiParuse.getSbiParameters().getParId() +
 			 * " and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
 			 */
 
@@ -725,8 +724,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * From the hibernate Role at input, gives the corrispondent
-	 * <code>Role</code> object.
+	 * From the hibernate Role at input, gives the corrispondent <code>Role</code> object.
 	 *
 	 * @param hibRole
 	 *            The hybernate role
@@ -867,11 +865,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql =
-			 * "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +
-			 * " where f.functId = fr.id.function.functId " +
-			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = "
-			 * + roleID;
+			 * String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId " +
+			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId "
@@ -915,11 +910,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql =
-			 * "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +
-			 * " where pu.useId = pud.id.sbiParuse.useId " +
-			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +
-			 * " and r.extRoleId = " + roleID;
+			 * String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId " +
+			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " + " and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId "
@@ -1151,8 +1143,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Associate a Meta Model Category to the role
 	 *
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer,
-	 *      java.lang.Integer)
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public void insertRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1204,8 +1195,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	/**
 	 * Remove the association between the role and the Meta Model Category
 	 *
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer,
-	 *      java.lang.Integer)
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError {
@@ -1276,6 +1266,155 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			// For each category associated to the role
 			for (SbiDomains sbiDomain : sbiDomains) {
 				RoleMetaModelCategory category = new RoleMetaModelCategory();
+				category.setCategoryId(sbiDomain.getValueId());
+				category.setRoleId(extRoleId);
+				categories.add(category);
+			}
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return categories;
+	}
+
+	/**
+	 * Associate a Data Set Category to the role
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleDataSetCategory(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
+
+			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+
+			Set<SbiDomains> dataSetCategories = hibRole.getSbiDataSetCategories();
+			if (dataSetCategories == null) {
+				dataSetCategories = new HashSet<SbiDomains>();
+			}
+			dataSetCategories.add(category);
+			hibRole.setSbiDataSetCategories(dataSetCategories);
+
+			aSession.saveOrUpdate(hibRole);
+			aSession.flush();
+
+			updateSbiCommonInfo4Update(hibRole);
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen()) {
+					aSession.close();
+					logger.debug("The [insertRoleDataSetCategory] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
+				logger.debug("OUT");
+
+			}
+		}
+
+	}
+
+	/**
+	 * Remove the association between the role and the Data Set Category
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleDataSetCategory(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
+
+			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+
+			Set<SbiDomains> dataSetCategories = hibRole.getSbiDataSetCategories();
+			if (dataSetCategories != null) {
+				if (dataSetCategories.contains(category)) {
+					dataSetCategories.remove(category);
+					hibRole.setSbiDataSetCategories(dataSetCategories);
+				} else {
+					logger.error("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+				}
+
+			}
+			aSession.saveOrUpdate(hibRole);
+			aSession.flush();
+			updateSbiCommonInfo4Update(hibRole);
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen()) {
+					aSession.close();
+					logger.debug("The [removeRoleDataSetCategory] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
+				logger.debug("OUT");
+
+			}
+		}
+	}
+
+	/**
+	 * Get the Data Set Categories associated to a role
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getDataSetCategoryForRole(java.lang.Integer)
+	 */
+	@Override
+	public List<RoleDataSetCategory> getDataSetCategoriesForRole(Integer roleId) throws EMFUserError {
+		Session aSession = null;
+		Transaction tx = null;
+		List<RoleDataSetCategory> categories = new ArrayList<RoleDataSetCategory>();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiExtRoles sbiExtRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
+			Integer extRoleId = sbiExtRole.getExtRoleId();
+			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiDataSetCategories();
+
+			// For each category associated to the role
+			for (SbiDomains sbiDomain : sbiDomains) {
+				RoleDataSetCategory category = new RoleDataSetCategory();
 				category.setCategoryId(sbiDomain.getValueId());
 				category.setRoleId(extRoleId);
 				categories.add(category);
@@ -1462,8 +1601,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
-	 * Gets all the authorizationsRoles object (relationn objects) associated to
-	 * the role.
+	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
 	 *
 	 * @param roleID
 	 *            The role id

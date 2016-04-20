@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleBO;
+import it.eng.spagobi.commons.bo.RoleDataSetCategory;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -32,19 +46,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/roles")
 @ManageAuthorization
@@ -94,7 +95,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/categories/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getCategoriesById(@PathParam("id") Integer id) {
+	public Response getMetaModelCategoriesById(@PathParam("id") Integer id) {
 		IRoleDAO rolesDao = null;
 
 		try {
@@ -110,6 +111,26 @@ public class RolesResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@Path("/ds_categories/{id}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getDataSetCategoriesById(@PathParam("id") Integer id) {
+		IRoleDAO rolesDao = null;
+
+		try {
+			Role role = new Role();
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			role = rolesDao.loadByID(id);
+			List<RoleDataSetCategory> ds = rolesDao.getDataSetCategoriesForRole(role.getId());
+			return Response.ok(ds).build();
+		} catch (Exception e) {
+			logger.error("Role with selected id: " + id + " doesn't exists", e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+		}
+	}
+
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
@@ -117,15 +138,21 @@ public class RolesResource extends AbstractSpagoBIResource {
 	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
 		Role role = BOtoRole(body);
-		List<RoleMetaModelCategory> list = body.getRoleMetaModelCategories();
+		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
+		List<RoleDataSetCategory> listDataSetCategories = body.getRoleDataSetCategories();
 
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			Integer id = rolesDao.insertRoleComplete(role);
-			if (list != null) {
-				for (RoleMetaModelCategory roleMetaModelCategory : list) {
+			if (listMetaModelCategories != null) {
+				for (RoleMetaModelCategory roleMetaModelCategory : listMetaModelCategories) {
 					rolesDao.insertRoleMetaModelCategory(id, roleMetaModelCategory.getCategoryId());
+				}
+			}
+			if (listDataSetCategories != null) {
+				for (RoleDataSetCategory roleDataSetCategory : listDataSetCategories) {
+					rolesDao.insertRoleDataSetCategory(id, roleDataSetCategory.getCategoryId());
 				}
 			}
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
@@ -146,7 +173,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 		IDomainDAO domainsDao = null;
 		Role role = BOtoRole(body);
 		role.setId(body.getId());
-		List<RoleMetaModelCategory> list = body.getRoleMetaModelCategories();
+		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
+		List<RoleDataSetCategory> listDataSetCategories = body.getRoleDataSetCategories();
 		List<Domain> listAll;
 
 		try {
@@ -154,15 +182,28 @@ public class RolesResource extends AbstractSpagoBIResource {
 			domainsDao = DAOFactory.getDomainDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			rolesDao.modifyRole(role);
+
+			// update Business Model categories
 			listAll = domainsDao.loadListDomainsByType("BM_CATEGORY");
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			if (list != null) {
-				for (RoleMetaModelCategory roleMetaModelCategory : list) {
+			if (listMetaModelCategories != null) {
+				for (RoleMetaModelCategory roleMetaModelCategory : listMetaModelCategories) {
 					rolesDao.insertRoleMetaModelCategory(role.getId(), roleMetaModelCategory.getCategoryId());
 				}
 			}
+			// update Data Set categories
+			listAll = domainsDao.loadListDomainsByType("CATEGORY_TYPE");
+			for (Domain domain : listAll) {
+				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
+			}
+			if (listDataSetCategories != null) {
+				for (RoleDataSetCategory roleDataSetCategory : listDataSetCategories) {
+					rolesDao.insertRoleDataSetCategory(role.getId(), roleDataSetCategory.getCategoryId());
+				}
+			}
+
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {

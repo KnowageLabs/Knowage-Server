@@ -508,14 +508,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-toolbar>
 				
 				<angular-table
-				layout-fill id="rolesCategories_id" ng-model="roleMetaModelCategories"
+				layout-fill id="rolesMetaModelCategories_id" ng-model="roleMetaModelCategories"
 				columns='[
 							{"label":"NAME","name":"VALUE_NM","size":"50px"}
 							 ]'
 				selected-item="category" highlights-selected-item=true
 				multi-select="true"> </angular-table>
 		    </md-card>		
-			</md-content> </md-tab> </md-tabs> 
+			</md-content> </md-tab>
+			<md-tab
+				label='{{translate.load("sbi.roles.datasets");}}'> 
+				<md-content
+				flex  
+				class="ToolbarBox miniToolbar noBorder mozTable">
+				 <md-card>
+				<md-toolbar class="md-blue minihead md-toolbar-tools" 
+												style="margin-top:15px" >
+										{{translate.load("sbi.roles.datasets.categories");}}
+				</md-toolbar>
+				
+				<angular-table
+				layout-fill id="rolesDatasetCategories_id" ng-model="roleDataSetCategories"
+				columns='[
+							{"label":"NAME","name":"VALUE_NM","size":"50px"}
+							 ]'
+				selected-item="ds_category" highlights-selected-item=true
+				multi-select="true"> </angular-table>
+		    </md-card>		
+			</md-content> </md-tab>
+			</md-tabs> 
 		
 	</form>
 	</div>

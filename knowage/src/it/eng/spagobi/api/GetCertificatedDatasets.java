@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,9 +20,14 @@ package it.eng.spagobi.api;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleDataSetCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -39,6 +44,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -79,6 +86,8 @@ public class GetCertificatedDatasets {
 		JSONArray datasetsJSONArray = new JSONArray();
 		JSONArray ckanJSONArray = new JSONArray();
 		try {
+			List<IDataSet> unfilteredDataSets;
+			List<Integer> categories = getCategories(profile);
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
 
@@ -93,20 +102,21 @@ public class GetCertificatedDatasets {
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
-				dataSets = dataSetDao.loadEnterpriseDataSets();
+				unfilteredDataSets = dataSetDao.loadEnterpriseDataSets();
 			} else {
 				if (allMyDataDS != null && allMyDataDS.equals("true")) {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
-					dataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile).getUserId().toString());
+					unfilteredDataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile).getUserId().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
 					ckanJSONArray = getOnlineCkanDatasets(profile, ckanRepository, ckanFilter, ckanOffset);
-					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
-					synchronizeDatasets(dataSets, ckanJSONArray);
+					unfilteredDataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
+					synchronizeDatasets(unfilteredDataSets, ckanJSONArray);
 				} else {
 					// else it is a custom dataset list --> get all datasets public with owner != user itself
-					dataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString(), true);
+					unfilteredDataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString(), true);
 				}
 			}
+			dataSets = getFilteredDatasets(unfilteredDataSets, categories);
 			logger.debug("Creating JSON...");
 			long start = System.currentTimeMillis();
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
@@ -221,7 +231,7 @@ public class GetCertificatedDatasets {
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
-			if(dsType==null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)){
+			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
 					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
@@ -320,5 +330,49 @@ public class GetCertificatedDatasets {
 			// }
 		}
 		logger.debug("Resources synchronized in " + (System.currentTimeMillis() - start) + "ms.");
+	}
+
+	protected List<Integer> getCategories(IEngUserProfile profile) {
+
+		List<Integer> categories = new ArrayList<Integer>();
+		try {
+			// NO CATEGORY IN THE DOMAINS
+			IDomainDAO domaindao = DAOFactory.getDomainDAO();
+			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			if (dialects == null || dialects.size() == 0) {
+				return null;
+			}
+
+			Collection userRoles = profile.getRoles();
+			Iterator userRolesIter = userRoles.iterator();
+			IRoleDAO roledao = DAOFactory.getRoleDAO();
+			while (userRolesIter.hasNext()) {
+				String roleName = (String) userRolesIter.next();
+				Role role = roledao.loadByName(roleName);
+				List<RoleDataSetCategory> aRoleCategories = roledao.getDataSetCategoriesForRole(role.getId());
+				if (aRoleCategories != null) {
+					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
+						RoleDataSetCategory roleDataSetCategory = (RoleDataSetCategory) iterator.next();
+						categories.add(roleDataSetCategory.getCategoryId());
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error loading the data set categories visible from the roles of the user");
+			throw new SpagoBIRuntimeException("Error loading the data set categories visible from the roles of the user");
+		}
+		return categories;
+	}
+
+	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
+		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		if (categories != null && categories.size() != 0) {
+			for (IDataSet ds : unfilteredDataSets) {
+				if (ds.getCategoryId() == null || categories.contains(ds.getCategoryId())) {
+					dataSets.add(ds);
+				}
+			}
+		}
+		return dataSets;
 	}
 }

@@ -73,6 +73,17 @@ Sbi.profiling.ManageRoles = function(config) {
 				EXT_VERSION: "3"
 			}
 	});
+	
+	// Dataset Categories Services
+	
+	this.configurationObject.getDatasetCategoriesService = Sbi.config.serviceRegistry.getRestServiceUrl({
+		serviceName: 'domains/listValueDescriptionByType'
+		, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+				DOMAIN_TYPE:"CATEGORY_TYPE",
+				EXT_VERSION: "3"
+			}
+	});
 
 	// List Authorizations Service
 	this.configurationObject.getAuthorizationsList = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -186,7 +197,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                        	        hierarchiesManagement: false,
 		                        	        enableDatasetPersistence: false,
 		                        	        enableFederatedDataset: false,
-											bmCategories: []
+											bmCategories: [],
+											dsCategories: []
 										});
 		
 		this.configurationObject.gridColItems = [
@@ -220,7 +232,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		this.initChecksTab();
 		this.enableConfigurableAuthorizations();
 		this.initBusinessModelTab();
-		this.configurationObject.tabItems = [ this.detailTab, this.authorizationTab, this.businessModelsTab];
+		this.initDatasetTab();
+		this.configurationObject.tabItems = [ this.detailTab, this.authorizationTab, this.businessModelsTab, this.datasetsTab];
 	}
 
 	,initDetailtab: function() {
@@ -353,7 +366,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 					restful : true
 				});
 		
-		
 		//create internal panel for checkbox
 		this.businessModelsCheckGroup = {
 		           xtype:'fieldset'
@@ -365,7 +377,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 				   ,border: false
 		 	    };
 
-		
 		//Create the main panel Tab
 		this.businessModelsTab = new Ext.Panel({
 		        title: LN('sbi.roles.businessModels')
@@ -386,7 +397,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 					        id:record.data.VALUE_ID,
 					        boxLabel:record.data.VALUE_NM
 					    });
-
 					});
 					var myCheckboxgroup = new Ext.form.CheckboxGroup({
 				        id:'businessModelsCategoriesCheckGroup',
@@ -400,17 +410,75 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 
 			        thisPanel.businessModelsTab.getComponent('businessModelsCheckGroup').add( myCheckboxgroup);
 		    	}
-
-				
-
-
 		     }
 		 });
-		
+	}
+	//----------------------------------------------------------
 	
-
+	/* ------------------------------------------------
+	 * Dataset Categories Panel Initialization
+	 * ------------------------------------------------
+	 */
+	
+	,initDatasetTab: function() {
+		//Invoke Service to get Ds Categories List
 		
+		this.dsCategoryStore = new Ext.data.JsonStore(
+				{
+					url : this.configurationObject.getDatasetCategoriesService,
+					autoLoad : true,
+					root : 'domains',
+					fields : [ 'VALUE_NM', 'VALUE_ID' ],
+					restful : true
+				});
+		
+		//create internal panel for checkbox
+		this.datasetsCheckGroup = {
+		           xtype:'fieldset'
+		           ,id: 'datasetsCheckGroup'
+		           //,columnWidth: 0.8
+		           ,autoHeight: true
+		           ,autoWidth: true
+		           ,items :[]
+				   ,border: false
+		 	    };
+		
+		//Create the main panel Tab
+		this.datasetsTab = new Ext.Panel({
+		        title: LN('sbi.roles.datasets')
+		        //, width: 430
+		        , autoScroll: true
+		        , items: [this.datasetsCheckGroup]
+		        , itemId: 'datasetsCategoriesTab'
+		        , layout: 'fit'
+		    });
+		
+		var thisPanel = this;
+		var checkBoxConfigs = [];
+		this.dsCategoryStore.load({
+		    callback: function () {
+		    	if (this.getRange().length > 0){
+					this.getRange().forEach(function(record){
+						checkBoxConfigs.push({ //pushing into array
+					        id:record.data.VALUE_ID,
+					        boxLabel:record.data.VALUE_NM
+					    });
 
+					});
+					var myCheckboxgroup = new Ext.form.CheckboxGroup({
+				        id:'datasetsCategoriesCheckGroup',
+				        fieldLabel: LN('sbi.roles.datasets.categories'),
+				        columns:1,
+				        items:checkBoxConfigs,
+				        boxMinWidth  : 150,
+			            boxMinHeight  : 100,
+			            hideLabel  : false
+				    });
+
+			        thisPanel.datasetsTab.getComponent('datasetsCheckGroup').add( myCheckboxgroup);
+		    	}
+		     }
+		 });
 	}
 	//----------------------------------------------------------
 	
@@ -689,6 +757,35 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 
 			});
 		}
+		
+		//fill checks for Dataset Categories
+		var dsCategoriesArray = rec.get('dsCategories');
+
+		var datasetsCheckGroup = Ext.getCmp('datasetsCheckGroup');
+		//Force rendering check boxes if not already rendered
+		datasetsCheckGroup.doLayout();
+
+		var datasetsCategoriesCheckGroup = datasetsCheckGroup.getComponent('datasetsCategoriesCheckGroup');
+		var dsCheckBoxes;
+		if ((datasetsCategoriesCheckGroup != undefined) && (datasetsCategoriesCheckGroup.items != undefined) && (datasetsCategoriesCheckGroup.items.items != undefined)){
+			dsCheckBoxes = datasetsCategoriesCheckGroup.items.items
+		}
+		
+		if ((dsCheckBoxes != null) && (dsCheckBoxes !== undefined)){
+			dsCheckBoxes.forEach(function(item){
+		    	//set default to false
+				item.setValue('false');
+
+				//for each checkbox item
+				for (var i = 0; i < dsCategoriesArray.length; i++) {
+				    if(item.getItemId() == dsCategoriesArray[i]){	  			  
+			      		item.setValue('true');
+			  		}
+
+				}
+
+			});
+		}
         	 
        }
 	
@@ -735,7 +832,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
                     	        hierarchiesManagement: this.isVisible('hierarchiesManagement'),
                     	        enableDatasetPersistence: this.isVisible('enableDatasetPersistence'),
                     	        enableFederatedDataset: this.isVisible('enableFederatedDataset'),
-								bmCategories: []
+								bmCategories: [],
+								dsCategories: []
 							});
 		
 		this.getForm().loadRecord(emptyRecToAdd); 
@@ -948,6 +1046,24 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			}
 			record.set('bmCategories',bmCategoriesArray);
 		}
+		
+		//Find selected datasets categories
+		var dsCategoriesArray = [];
+		var dsItems = Ext.getCmp('datasetsCheckGroup').getComponent('datasetsCategoriesCheckGroup');
+		if (dsItems !== undefined && dsItems !== null &&
+			dsItems.items !== undefined && dsItems.items !== null	){
+			var dsCheckBoxes = dsItems.items.items;
+			if ((dsCheckBoxes != null) && (dsCheckBoxes !== undefined)){
+				dsCheckBoxes.forEach(function(item){
+			    	//if is checked
+					if(item.getValue()){
+						dsCategoriesArray.push(item.getItemId());
+					}
+	
+				});
+			}
+			record.set('dsCategories',dsCategoriesArray);
+		}
         
 		return record;		
 	}
@@ -1020,7 +1136,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			kpiCommentDelete: newRec.data.kpiCommentDelete,
 			enableDatasetPersistence: newRec.data.enableDatasetPersistence,
 			enableFederatedDataset: newRec.data.enableFederatedDataset,
-			bmCategories: newRec.data.bmCategories
+			bmCategories: newRec.data.bmCategories,
+			dsCategories: newRec.data.dsCategories
         };
         if(idRec){
         	params.id = newRec.data.id;

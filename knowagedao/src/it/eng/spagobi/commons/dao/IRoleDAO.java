@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.dao;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleDataSetCategory;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 import java.util.List;
 
 import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a role
@@ -192,6 +193,20 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError;
 
 	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(Integer roleId) throws EMFUserError;
+
+	/*
+	 * Methods for managing Role - DataSetCategory association
+	 */
+
+	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+
+	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
+
+	public List<RoleDataSetCategory> getDataSetCategoriesForRole(Integer roleId) throws EMFUserError;
+
+	/*
+	 * Methods for managing Role - Authorization association
+	 */
 
 	public List<SbiAuthorizations> loadAllAuthorizations() throws EMFUserError;
 

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.bo;
+
+import it.eng.spagobi.services.validation.Xss;
 
 import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-
-import it.eng.spagobi.services.validation.Xss;
 
 /**
  * Defines a <code>Role</code> object.
@@ -101,6 +101,7 @@ public class RoleBO implements Serializable {
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
+	private List<RoleDataSetCategory> roleDataSetCategories;
 
 	/**
 	 * Class constructor.
@@ -501,6 +502,14 @@ public class RoleBO implements Serializable {
 
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
+	}
+
+	public List<RoleDataSetCategory> getRoleDataSetCategories() {
+		return roleDataSetCategories;
+	}
+
+	public void setRoleDataSetCategories(List<RoleDataSetCategory> roleDataSetCategories) {
+		this.roleDataSetCategories = roleDataSetCategories;
 	}
 
 }

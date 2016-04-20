@@ -25,12 +25,15 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleDataSetCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -86,7 +89,9 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -134,6 +139,8 @@ public class SelfServiceDataSetCRUD {
 		JSONObject JSONReturn = new JSONObject();
 		JSONArray datasetsJSONArray = new JSONArray();
 		try {
+			List<IDataSet> unfilteredDataSets;
+			List<Integer> categories = getCategories(profile);
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
 
@@ -145,18 +152,19 @@ public class SelfServiceDataSetCRUD {
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
 					if (showDerivedDatasets) {
-						dataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 					} else {
-						dataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
 					}
 				} else {
 					if (showDerivedDatasets) {
-						dataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
 					} else {
-						dataSets = dataSetDao.loadNotDerivedUserDataSets(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadNotDerivedUserDataSets(((UserProfile) profile).getUserId().toString());
 
 					}
 				}
+				dataSets = getFilteredDatasets(unfilteredDataSets, categories);
 			}
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
@@ -1814,6 +1822,50 @@ public class SelfServiceDataSetCRUD {
 		if (dataSet instanceof FileDataSet) {
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
+	}
+
+	protected List<Integer> getCategories(IEngUserProfile profile) {
+
+		List<Integer> categories = new ArrayList<Integer>();
+		try {
+			// NO CATEGORY IN THE DOMAINS
+			IDomainDAO domaindao = DAOFactory.getDomainDAO();
+			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			if (dialects == null || dialects.size() == 0) {
+				return null;
+			}
+
+			Collection userRoles = profile.getRoles();
+			Iterator userRolesIter = userRoles.iterator();
+			IRoleDAO roledao = DAOFactory.getRoleDAO();
+			while (userRolesIter.hasNext()) {
+				String roleName = (String) userRolesIter.next();
+				Role role = roledao.loadByName(roleName);
+				List<RoleDataSetCategory> aRoleCategories = roledao.getDataSetCategoriesForRole(role.getId());
+				if (aRoleCategories != null) {
+					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
+						RoleDataSetCategory roleDataSetCategory = (RoleDataSetCategory) iterator.next();
+						categories.add(roleDataSetCategory.getCategoryId());
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error loading the data set categories visible from the roles of the user");
+			throw new SpagoBIRuntimeException("Error loading the data set categories visible from the roles of the user");
+		}
+		return categories;
+	}
+
+	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
+		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		if (categories != null && categories.size() != 0) {
+			for (IDataSet ds : unfilteredDataSets) {
+				if (ds.getCategoryId() == null || categories.contains(ds.getCategoryId())) {
+					dataSets.add(ds);
+				}
+			}
+		}
+		return dataSets;
 	}
 
 }
