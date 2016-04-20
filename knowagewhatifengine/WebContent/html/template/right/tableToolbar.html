@@ -54,8 +54,8 @@
 		</md-button>
     </md-grid-tile>
     
-     <md-grid-tile>
-    	<md-button ng-show="modelConfig.crossNavigation" ng-click="enableCrossNavigation()" class="right-toolbar-menu BUTTON_CROSS_NAVIGATION">
+     <md-grid-tile ng-if="modelConfig.crossNavigation">
+    	<md-button  ng-click="enableCrossNavigation()" class="right-toolbar-menu BUTTON_CROSS_NAVIGATION">
 			<md-tooltip md-direction="bottom">
 				{{crossNavigationEnabled?'Disable cross navigation' : 'Enable crossnavigation'}}
 			</md-tooltip>
