@@ -1,5 +1,6 @@
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
+ * v1.0.0
  * 
  */
 var scripts = document.getElementsByTagName("script");
@@ -189,16 +190,15 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
                                     //add search tab
                                     if (!attrs.showSearchBar || attrs.showSearchBar == false || attrs.showSearchBar == "false") {
-                                        angular.element(template[0].querySelector(".tableSearchBar")).css("display", "none");
+//                                        angular.element(template[0].querySelector(".tableSearchBar")).css("display", "none");
+                                    	  angular.element(template[0].querySelector("angular-table-actions")).css("display", "none");
                                     }
 
-                                    var showAngularTableActions = false;
-                                    if (attrs.showSearchBar && (attrs.showSearchBar == true || attrs.showSearchBar == "true")) {
-                                        showAngularTableActions = true;
-                                        if (!attrs.searchFunction) {
-                                            scope.localSearch = true;
-                                        }
+                                    
+                                    if (!attrs.searchFunction) {
+                                        scope.localSearch = true;
                                     }
+                                   
 
                                     if (attrs.multiSelect) {
                                         if (!attrs.selectedItem) {
@@ -206,9 +206,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                         }
                                     }
 
-                                    if (!showAngularTableActions) {
-                                        angular.element(template[0].querySelector("angular-table-actions")).css("display", "none");
-                                    }
+                                    
 
                                     if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
                                     	  scope.$watch(function () {
