@@ -14,11 +14,6 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	$scope.translate = sbiModule_translate;
 	$scope.showme = true;
 	$scope.sourceList = [];
-	
-			 
-	Manage output parameters
-
-		
 	 
 	//FUNCTIONS	
 		 

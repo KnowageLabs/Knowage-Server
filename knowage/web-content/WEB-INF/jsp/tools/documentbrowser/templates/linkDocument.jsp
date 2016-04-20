@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-toolbar class="miniheadfederation" >
 				<div class="md-toolbar-tools">
 				
-				<h2 class="md-flex" >Dataset Link for with id: <%= documentID %> </h2>
+				<h2 class="md-flex" >Document Link for with id: <%= documentID %> </h2>
 				
 				</div>
 
