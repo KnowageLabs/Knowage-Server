@@ -1052,6 +1052,15 @@ Ext
 							scope : this
 						});
 						tbButtonsArray.push(this.tbFieldsMetadataButton);
+						
+						this.tbDatasetLinkButton = new Ext.Toolbar.Button({
+							text : 'Link Dataset',
+							iconCls : 'icon-metadata',
+							handler : this.linkDataset,
+							width : 30,
+							scope : this
+						});
+						tbButtonsArray.push(this.tbDatasetLinkButton);
 
 						this.tbProfAttrsButton = new Ext.Toolbar.Button({
 							text : LN('sbi.ds.pars'),
@@ -4143,7 +4152,7 @@ Ext
 
 					,
 					fieldsMetadata : function() {
-
+console.log(this.manageDatasetFieldMetadataGrid);
 						if (!this.win_info_metadata) {
 							this.win_info_metadata = new Ext.Window(
 									{
@@ -4158,6 +4167,7 @@ Ext
 										buttons : [ {
 											text : LN('sbi.general.ok'),
 											handler : function() {
+												console.log(this.win_info_metadata);
 												this.manageDatasetFieldMetadataGrid
 														.updateRecord();
 												this.win_info_metadata.hide();
@@ -4176,6 +4186,17 @@ Ext
 
 					}
 
+					,
+					
+					linkDataset : function() {
+						
+						var id = this.manageDatasetFieldMetadataGrid.record.json.id;
+						var label = this.manageDatasetFieldMetadataGrid.record.json.label;
+						document.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
+						
+						
+						
+					}
 					,
 					profileAttrs : function() {
 						var win_info_3;
