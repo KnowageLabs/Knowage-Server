@@ -18,14 +18,14 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.name+"/loadCrossNavigationByDocument")
 			.then(function(response){
-				 var parameterStr="";
+				 
 				var navObj=response.data;
 				var targetUrl="";
 				if(navObj.length==0){
 					alert("non ci sono documenti di destinazione");
 					return;
 				}else if(navObj.length==1){
-					execCross(navObj[0],navData); 
+					execCross(navObj[0],navData,true); 
 				}
 				else if(navObj.length>=1){
 				 
@@ -60,7 +60,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					    	  translate:sbiModule_translate}
 					    })
 					    .then(function(doc) {
-					    	execCross(doc,navData);
+					    	execCross(doc,navData,true);
 					    }, function() {
 					     return;
 					    });
@@ -78,8 +78,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			 
 		};
 		
-		function execCross(doc,navData){
-			parameterStr=cns.responseToStringParameter(doc,navData);
+		function execCross(doc,navData,externalCross){
+			var parameterStr="";
+			if(externalCross){
+				parameterStr=cns.responseToStringParameter(doc,navData);
+			}else{
+				parameterStr=jsonToURI(navData);
+			}
 			targetUrl= sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + doc.document.id
@@ -97,9 +102,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			
 			if(angular.isArray(navData)){
 				respStr={};
-				for(var dataKey in navData){
-//					var tmpObj={};
-					
+				for(var dataKey in navData){  
 					for(var key in navObj.navigationParams){
 						var parVal=navObj.navigationParams[key];
 						if(parVal.fixed){
@@ -120,9 +123,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 							}
 						}
 						
-					}
-					
-//					respStr.push(tmpObj);
+					} 
 				}
 				
 				
@@ -130,7 +131,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				for(var key in navObj.navigationParams){
 					var parVal=navObj.navigationParams[key];
 					if(parVal.fixed){
-						respStr[key]=parVal.value
+						respStr[key]=parVal.value;
 					}else{
 						if(navData.hasOwnProperty(parVal.value) && navData[parVal.value]!=undefined && navData[parVal.value]!=null){ 
 							respStr[key]=navData[parVal.value];
@@ -139,13 +140,26 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				}
 			}
 			
-			respStr =  encodeURIComponent(JSON.stringify(respStr))
+			respStr = jsonToURI(respStr); 
+			
+			return respStr;
+		};
+		
+		function jsonToURI(jsonObj){
+			return encodeURIComponent(JSON.stringify(jsonObj))
 			.replace(/'/g,"%27")
 			.replace(/"/g,"%22")
 			.replace(/%3D/g,"=")
 			.replace(/%26/g,"&");
-			
-			return respStr;
+		}
+		
+		this.internalNavigateTo=function(params,targetDocLabel){
+			 sbiModule_restServices.promiseGet("1.0/documents",targetDocLabel)
+			.then(function(response){ 
+				execCross({document:response.data},params,false); 
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,"Cross navigation error")
+			});
 		}
 })
 

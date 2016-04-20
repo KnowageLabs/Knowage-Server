@@ -304,6 +304,10 @@
 		$scope.navigateTo= function(item){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(item);
 		}
+		
+		$scope.internalNavigateTo= function(params,targetDocLabel){
+			$crossNavigationScope.crossNavigationHelper.internalNavigateTo(params,targetDocLabel);
+		}
 		 
 		console.log("documentExecutionControllerFn OUT ");
 	};
@@ -329,7 +333,6 @@
 
 //from executed document, call this function to exec old cross navigation method
 var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, target){
-	debugger;
 	var jsonEncodedParams=JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"').replace(/\s/g,'') + '"}');
-	angular.element(frameElement).scope().$parent.navigateTo(jsonEncodedParams)
+	angular.element(frameElement).scope().$parent.internalNavigateTo(jsonEncodedParams,doclabel);
 }
