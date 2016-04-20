@@ -188,6 +188,8 @@ author:
 <!-- Styles -->
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css
+">
 
 
 <!-- Scripts -->
@@ -214,7 +216,7 @@ author:
 		
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center">
+<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center" class="kn-schedulerKpi">
 	
 	<%--
 	<h2>KpiEngine</h2>
@@ -224,11 +226,11 @@ author:
 		<div id="kpiViewer_<%=docId%>"></div>
 	</div>
 	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
-	--%>
+	
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
-	
+	--%>
 <%
 if(type.equalsIgnoreCase("kpi")) {
 	String model = (String)chartObj.get("model");
@@ -239,8 +241,11 @@ if(type.equalsIgnoreCase("kpi")) {
 		if(vieweas.equalsIgnoreCase("speedometer")) {
 			if(showlineargauge) {
 %>
-<!--  <kpi-widget ng-model ="documentData"></kpi-widget>-->
-<kpi-linear-gauge flex layout="column" layout-align="center"
+ <kpi-widget ng-model="documentData"
+gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-max-value=gaugeMaxValue gauge-value = gaugeValue gauge-target-value = gaugeTargetValue
+threshold-stops =thresholdStops percentage=percentage
+></kpi-widget> 
+<!--<kpi-linear-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
 		size="linearGaugeSize"
@@ -253,16 +258,16 @@ if(type.equalsIgnoreCase("kpi")) {
 		show-thresholds="documentData.template.chart.options.showthreshold"
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"
-	></kpi-linear-gauge> 	
+	></kpi-linear-gauge> 	-->
 
 <%
 			} else { 
 %>
-<!-- <kpi-widget ng-model="documentData"
+ <kpi-widget ng-model="documentData"
 gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-value = gaugeValue gauge-target-value = gaugeTargetValue
-threshold-stops =thresholdStops
-></kpi-widget> -->
-<kpi-gauge flex layout="column" layout-align="center"
+threshold-stops =thresholdStops percentage=percentage
+></kpi-widget> 
+<!--<kpi-gauge flex layout="column" layout-align="center"
 		gauge-id="documentData.docId"
 		label="documentData.docLabel"
 		size="gaugeSize"
@@ -276,7 +281,7 @@ threshold-stops =thresholdStops
 		show-thresholds="documentData.template.chart.options.showthreshold"
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"
-	></kpi-gauge> 	
+	></kpi-gauge> 	-->
 
 <%
 			} 
@@ -304,7 +309,11 @@ threshold-stops =thresholdStops
 				 , 'gaugeNgDirectiveApp'
 				 , 'nvd3','kpi-widget'
 				 ]);
-		
+		kpiViewerModule.config(['$mdThemingProvider', function($mdThemingProvider) {
+			$mdThemingProvider.theme('knowage')
+			$mdThemingProvider.setDefaultTheme('knowage');
+		}]);
+
 		kpiViewerModule.factory('documentData', function() {
 			var documentTemplate = JSON.parse('<%=template%>');
 			<%-- var kpiValue = JSON.parse('<%=kpiValue%>'); --%>

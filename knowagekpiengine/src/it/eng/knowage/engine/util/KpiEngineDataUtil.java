@@ -58,7 +58,13 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 				object.remove("cardinality");
 
 				tempResult.put("kpi", object);
-				tempResult.put("target", sbiKpiTargets);
+				JSONArray arrayTargets = new JSONArray();
+				for (int j = 0; j < sbiKpiTargets.size(); j++) {
+					sbiKpiTargets.get(j).setSbiKpiTargetValues(null);
+					JSONObject target = new JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass()));
+					arrayTargets.put(target);
+				}
+				tempResult.put("target", arrayTargets);
 				result.put(tempResult);
 			} else {
 				// model="list"
@@ -74,7 +80,12 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					object.remove("category");
 					object.remove("cardinality");
 					tempResult.put("kpi", object);
-					tempResult.put("target", sbiKpiTargets);
+					JSONArray arrayTargets = new JSONArray();
+					for (int j = 0; j < sbiKpiTargets.size(); j++) {
+						JSONObject target = new JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass()));
+						arrayTargets.put(target);
+					}
+					tempResult.put("target", arrayTargets);
 					result.put(tempResult);
 				}
 			}
