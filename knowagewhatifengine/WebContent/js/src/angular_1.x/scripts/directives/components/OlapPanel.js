@@ -508,6 +508,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	  };
 	  $scope.closeDialog = function(ev) {
 		  $mdDialog.cancel();
+		  $scope.dtData = [];
 		  $scope.dtAssociatedLevels = [];
 		  $scope.selectedMDXFunction = null;
 		  $scope.selectedCrossNavigation = null;
@@ -741,6 +742,13 @@ $scope.sendCC = function() {
 					    'formula': 	$scope.selectedMDXFunction
 					}
 				
+				
+				for (var i = 0; i < $scope.cookieArray.length; i++) {
+					if(namedMember.name === $scope.cookieArray[i].name){
+						console.log("same one")
+						$scope.cookieArray.splice($scope.cookieArray[i],1);
+					}
+				}
 				$scope.cookieArray.push(namedMember);
 				$cookies.putObject('data',$scope.cookieArray);
 				sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
@@ -797,6 +805,7 @@ $scope.sendCC = function() {
 	/*function to call pop-up for editing saved members/sets */
 	$scope.edit = function(item){
 		console.log("editing...");
+		
 		//$scope.selectedMDXFunction = item
 		console.log("opening the arguments dialog...");
 		$scope.openArgumentsdialog();
