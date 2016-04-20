@@ -3,9 +3,11 @@
 		<div>
 			<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
 			</md-icon>
-			<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" ng-click="expandTreeAsync(item)"> 
+			<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" 
+					ng-click="expandTreeAsync(item)" style="padding-left: 3%;padding-right: 3%;"> 
 			</md-icon>
-			<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" ng-click="hideAsyncTree(item)"> 
+			<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" 
+					ng-click="hideAsyncTree(item)" style="padding-left:3%; padding-right:3%;"> 
 			</md-icon>  
 			<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
 				{{item.name}}

@@ -17,6 +17,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var m;
 	var oldSelectedFilter="";
 	var hlght = false;
+	var selectedFlag = false;
 		$scope.loadingFilter = true;
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
@@ -147,7 +148,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promiseGet
 		("1.0",encoded)
 		.then(function(response) {
-
+				//$scope.handleResponse(response)
 			  if(node!=null){
 				  var shouldSearchVisible = true;
 				  expandAsyncTree($scope.data,response.data, id);
@@ -203,21 +204,29 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.selectFilter = function(item){
-		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition].name;
+		selectedFlag = true;
+		console.log("In old selected[select]:"+oldSelectedFilter)
+		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
 		$scope.filterSelected[$scope.filterAxisPosition].name = item.name;
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
-		
+		console.log("End old selected[select]:"+oldSelectedFilter)
 	};
 	
 	$scope.closeFiltersDialog = function() {
-		if(oldSelectedFilter != "...")
-			$scope.filterSelected[$scope.filterAxisPosition].name = oldSelectedFilter;
-		else	
-			$scope.filterSelected[$scope.filterAxisPosition].name = "...";
-		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
-		
+		console.log("In old selected[close]:"+oldSelectedFilter)
+		if(selectedFlag){
+			if(oldSelectedFilter.name != "..."){
+				$scope.filterSelected[$scope.filterAxisPosition].name = oldSelectedFilter.name;
+				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = oldSelectedFilter.uniqueName;
+			}				
+			else	
+				$scope.filterSelected[$scope.filterAxisPosition].name = "...";
+				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
+			
+			selectedFlag = false;
+		}
 		$scope.searchText = "";
 		hlght = false;
 		$mdDialog.hide();		
@@ -229,6 +238,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		else
 			filterPlaceMemberOnAxis();
 		
+		selectedFlag = false;
 		$mdDialog.hide();
 	}
 	
@@ -406,6 +416,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				fixAxisPosition("left");
 				fixAxisPosition("filter");
 				fixFilterSelectedList(fromAxis, pa );
+				$scope.clearLoadedData(data.uniqueName);
 			}
 		}				
 	};
@@ -453,8 +464,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				checkShift();
 				fixAxisPosition("top");
 				fixAxisPosition("filter");
+				
 			}
-		}		
+		}
+		$scope.clearLoadedData(data.uniqueName);
 	}
 
 	$scope.dropFilter = function(data, ev) {
@@ -649,5 +662,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 		}
 	};
+	
+	$scope.clearLoadedData = function(name){
+		for(var i=0; i< $scope.dataPointers.length; i++){
+			if(name == $scope.dataPointers){
+				$scope.dataPointers.splice(i,1);
+				$scope.loadedData.splice(i,1)
+				break;
+			}
+		}
+	}
 };
 
