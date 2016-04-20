@@ -35,6 +35,7 @@ import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -197,6 +198,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return a list of placeholder name
 	 */
 	public Map<Kpi, List<String>> listPlaceholderByKpiList(List<Kpi> kpis);
+
+	public List<Target> listTarget(Date startDate, Date endDate);
 
 	public List<Target> listTarget();
 
