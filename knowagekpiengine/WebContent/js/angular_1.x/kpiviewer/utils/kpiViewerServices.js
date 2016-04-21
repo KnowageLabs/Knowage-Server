@@ -13,6 +13,7 @@
 					max, 
 					threshold, 
 					showValue,
+					showTarget,
 					showThresholds,
 					valuePrecision,
 					fontConf) {
@@ -24,6 +25,8 @@
 					max : undefined != max ? max : 100,
 					showValue : undefined != showValue && null != showValue ? 
 							showValue : true,
+					showTarget : undefined != showTarget && null != showTarget ? 
+							showTarget : true,
 					showThresholds : undefined != showThresholds && null != showThresholds ? 
 							showThresholds : true,
 					valuePrecision : undefined != valuePrecision && null != valuePrecision? 

@@ -23,6 +23,7 @@
 			this.config.range = this.config.max - this.config.min;
 			
 			this.config.showValue = configuration.showValue != undefined ? configuration.showValue : true;
+			this.config.showTarget = configuration.showTarget != undefined ? configuration.showTarget : true;
 			this.config.valuePrecision = configuration.valuePrecision != undefined ? configuration.valuePrecision : 0;
 			this.config.fontConf = configuration.fontConf != undefined && configuration.fontConf != null ? 
 					configuration.fontConf : {
@@ -135,7 +136,22 @@
 						.style("stroke-width", "0px");
 				}
 			}
-
+			
+			var targetPoint1 = this.valueToPoint(0, 0);
+			var targetPoint2 = this.valueToPoint(0, 0.85);
+			
+			// line.target
+			this.body.append("svg:line")
+				.attr("class", 'target')
+				.style("visibility", this.config.showTarget ? "visible" : "hidden")
+				.attr("x1", targetPoint1.x)
+				.attr("y1", targetPoint1.y)
+				.attr("x2", targetPoint2.x)
+				.attr("y2", targetPoint2.y)
+				.style("stroke", "#AC0A08")
+				.style("stroke-width", "3px");
+			
+				
 			var pointerContainer = 
 				this.body.append("svg:g").attr("class", "pointerContainer");
 
@@ -268,6 +284,16 @@
 				};
 			});
 		};
+		
+		this.redrawTarget = function (value, transitionDuration){
+			var targetPoint2 = this.valueToPoint(value, 0.85);
+			
+			var targetPointer = this.body.selectAll("line.target");
+			targetPointer
+				.attr("x2", targetPoint2.x)
+				.attr("y2", targetPoint2.y);
+			
+		};
 
 		this.valueToDegrees = function (value) {
 			// thanks @closealert
@@ -315,6 +341,7 @@
 				minValue: '=',
 				maxValue: '=',
 				value: '=',
+				targetValue: '=',
 				thresholdStops: '=?',
 				showValue: '=?',
 				showThresholds: '=?',
@@ -339,9 +366,11 @@
 		
 		$scope.gaugeSvg = null;
 		
+		$scope.showTarget = $scope.showTarget != undefined? $scope.showTarget : true ;
+		
 		$scope.createGauge = function(
 				frameId, label, size, min, max, thresholdStops, 
-				showValue, showThresholds, valuePrecision, fontConf) {
+				showValue, showTarget, showThresholds, valuePrecision, fontConf) {
 			
 			var initialConfig = {
 				size : undefined != size ? size: 100,
@@ -350,6 +379,8 @@
 				max : undefined != max ? max : 100,
 				showValue : undefined != showValue && null != showValue ? 
 						showValue : true,
+				showTarget : undefined != showTarget && null != showTarget ? 
+						showTarget : true,
 				showThresholds : undefined != showThresholds && null != showThresholds ? 
 						showThresholds : true,
 				stops: undefined != thresholdStops && thresholdStops != null ? thresholdStops : [],
@@ -378,6 +409,13 @@
 			}
 		};
 		
+		$scope.updateGaugeTarget = function(newValue, newTransitionValue) {
+			newValue = newValue || 0;
+			if($scope.gaugeSvg && $scope.gaugeSvg != null) {
+				$scope.gaugeSvg.redrawTarget(newValue, newTransitionValue);
+			}
+		};
+		
 		$scope.$watch('thresholdStops', function(newValue, oldValue) {
 			console.log('thresholdStops old: ', oldValue);
 			console.log('thresholdStops new: ', newValue);
@@ -397,7 +435,14 @@
 			console.log('value old: ', oldValue);
 			console.log('value new: ', newValue);
 			
-			$scope.updateGauge(newValue, 500);
+			$scope.updateGauge(newValue, 1000);
+		});
+		
+		$scope.$watch('targetValue', function(newValue, oldValue) {
+			console.log('targetValue old: ', oldValue);
+			console.log('targetValue new: ', newValue);
+			
+			$scope.updateGaugeTarget(newValue, 500);
 		});
 		
 		$scope.createGauge(
@@ -408,6 +453,7 @@
 				$scope.maxValue,
 				$scope.thresholdStops,
 				$scope.showValue,
+				$scope.showTarget,
 				$scope.showThresholds,
 				$scope.valuePrecision,
 				$scope.fontConf);

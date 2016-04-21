@@ -258,6 +258,7 @@ threshold-stops =thresholdStops percentage=percentage
 		target-value="gaugeTargetValue"
 		threshold-stops="thresholdStops"
 		show-value="documentData.template.chart.options.showvalue"
+		show-target="documentData.template.chart.options.showtarget"
 		show-thresholds="documentData.template.chart.options.showthreshold"
 		value-precision="documentData.template.chart.options.precision"
 		font-conf="documentData.template.chart.style.font"

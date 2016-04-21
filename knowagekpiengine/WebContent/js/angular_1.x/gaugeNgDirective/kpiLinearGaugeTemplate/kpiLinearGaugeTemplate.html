@@ -17,42 +17,69 @@
 			
 			<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">
 				<g class="tick" transform="translate(0,0)" style="opacity: 1;">
-					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+<!-- 					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
 						style="font-size:{{maxMinFontSize}}">{{minValue}}</text>
+-->
+					<text text-anchor="middle" dy="1em" y="30">{{minValue}}</text>
 				</g>
+<!-- 				
 				<g class="tick" style="opacity: 1;"
 						svg-transform="translate({{((minValue + (maxMinValueDifference) / 4) * sizeScaleFactor - 20) || 0}},0)">
-					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
 						style="font-size:{{intermediateFontSize}}">{{minValue + (maxMinValueDifference) / 4}}</text>
+					<text text-anchor="middle" dy="1em" y="30" 
+						style="font-size:{{maxMinFontSize}}">{{minValue + (maxMinValueDifference) / 4}}</text>
 				</g>
+-->
 				<g class="tick"style="opacity: 1;"
 						svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor - 20) || 0}},0)">
-					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+<!-- 					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
 						style="font-size:{{intermediateFontSize}}">{{minValue + (maxMinValueDifference) / 2}}</text>
+-->
+					<text text-anchor="middle" dy="1em" y="30">50%</text>
 				</g>
+<!-- 				
 				<g class="tick" style="opacity: 1;"
 						svg-transform="translate({{((minValue + (maxMinValueDifference)* 3 / 4) * sizeScaleFactor - 20) || 0}},0)">
-					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30" 
+					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
 							style="font-size:{{intermediateFontSize}}">
+					<text text-anchor="middle" dy="1em" y="30" 
+							style="font-size:{{maxMinFontSize}}">
 						{{minValue + (maxMinValueDifference)* 3 / 4}}</text>
 				</g>
-				<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" 
-						style="opacity: 1;">
+					-->
+				<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" >
+<!-- 					
 					<text fill="{{fontColor}}" text-anchor="middle" dy="1em" y="30"
 							style="font-size:{{maxMinFontSize}}">{{maxValue}}</text>
+					-->
+					<text text-anchor="middle" dy="1em" y="30">100%</text>
 				</g>
 			</g>
 		</g>
 	</svg>
 </div>
 <style>
+#{{svgId}} svg .measure {
+	fill: #00F;
+	opacity: 0.4;
+}
+
+#{{svgId}} svg .range {
+	opacity: 0.4;
+}
+#{{svgId}} svg .tick {
+	fill: #c4dcf3;
+	font-size:{{intermediateFontSize}};
+}
+
 #{{svgId}} svg .measure:hover {
-	opacity: .7;
+	opacity: 1;
 }
 
 #{{svgId}} svg .target {
-    stroke: {{targetColor}};
     stroke-width: 2px;
+    stroke: {{targetColor}};
 }
 
 </style>

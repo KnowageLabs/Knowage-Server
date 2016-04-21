@@ -40,6 +40,7 @@
 									$scope.gaugeMaxValue, // maximum value
 									$scope.documentData.kpiValue.threshold, //threshold configuration
 									$scope.documentData.template.chart.options.showvalue, // show/hide kpi value inside the gauge 
+									$scope.documentData.template.chart.options.showtarget, // show/hide target value inside the gauge 
 									$scope.documentData.template.chart.options.showthreshold, // show/hide kpi thresholds 
 									$scope.documentData.template.chart.options.precision, // number of value digits 
 									$scope.documentData.template.chart.style.font // font configuration 
@@ -86,33 +87,6 @@
 					);		
 				}
 			});
-		};
-		
-		$scope.getSpeedoLinearConf = function(){
-			return {
-				chart: {
-					type: 'bulletChart',
-					transitionDuration: 500,
-					height: 50
-				}
-			};
-		};
-		
-		$scope.getSpeedoLinearData = function(){
-			return {
-				"title": "Revenue",
-				"subtitle": "US$, in thousands",
-				"ranges": [150,225,300],
-				"measures": [220],
-//				"markers": [250]
-			};
-		};
-		
-		$scope.getSpeedoLinearConfig = function(){
-			return {
-				refreshDataOnly: true,
-				deepWatchDataDepth: 0
-			};
 		};
 	};
 })();
