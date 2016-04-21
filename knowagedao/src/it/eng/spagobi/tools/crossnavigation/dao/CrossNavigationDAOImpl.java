@@ -352,15 +352,17 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 			}
 		});
 	}
-	
 
 	@Override
 	public boolean documentIsCrossable(String docLabel) {
-		JSONArray ja = loadNavigationByDocument(docLabel);
-		return ja.length() > 0;
-
+		if (docLabel == null || docLabel.equals("")) {
+			return false;
+		} else {
+			JSONArray ja = loadNavigationByDocument(docLabel);
+			return ja.length() > 0;
+		}
 	}
-	
+
 	private SbiCrossNavigationPar from(SimpleParameter sp, SbiCrossNavigation cn) {
 		SbiCrossNavigationPar cnp = new SbiCrossNavigationPar();
 		SimpleParameter linkedParam = sp.getLinks().get(0);
