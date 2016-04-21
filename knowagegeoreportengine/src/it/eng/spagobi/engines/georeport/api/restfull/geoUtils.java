@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -110,7 +110,7 @@ public class geoUtils {
 					// TODO check if geolayer is not null
 
 					JSONObject layerDef = new JSONObject(new String(geoLayer.getLayerDef()));
-					String source = geoLayer.getType().equals("File") ? layerDef.getString("layer_file") : layerDef.getString("layer_url");
+					String source = geoLayer.getType().equals("File") ? geoLayer.getPathFile() : layerDef.getString("layer_url");
 
 					if (geoLayer.getType().equals("File")) {
 						outputFeatureCollection = DAOFactory.getFeaturesProviderFileDAO().getAllFeatures(source);
