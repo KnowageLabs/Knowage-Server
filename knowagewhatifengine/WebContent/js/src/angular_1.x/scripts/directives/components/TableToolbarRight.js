@@ -8,7 +8,7 @@ angular.module('sbi_table_toolbar',[])
 	}
 });
 
-function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
+function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config) {
 
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
@@ -199,17 +199,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  checkLock(status);
 	  
 	  function lockUnlock(type, id){
-		  $http({
-			  method:'POST',
-			  url: 'http://localhost:8080/knowage/restful-services/1.0/locker/'+id+'/'+type
-		  }).then(function(response){
-						status = response.data.status;
-						locker = response.data.locker;
-						whatIfBtns(response.data.status);
-						checkLock(response.data.status);
+		  sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath );
+		  
+		  sbiModule_restServices.promisePost
+			("1.0",'/locker/'+ id+"/"+type)
+			.then(function(response) {
+				status = response.data.status;
+				locker = response.data.locker;
+				whatIfBtns(response.data.status);
+				checkLock(response.data.status);
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occured while locking", 'Error'); 
+			  sbiModule_messaging.showErrorMessage("An error occurred while locking", 'Error'); 
 		  });
+		 
 	  };
 	  
 	  $scope.showExportDialog= function(ev){
