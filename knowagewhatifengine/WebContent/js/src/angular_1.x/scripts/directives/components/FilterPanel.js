@@ -671,6 +671,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				break;
 			}
 		}
+		visibleSelected = [];
+		visibleSelectedTracker = [];
 	}
 };
 
