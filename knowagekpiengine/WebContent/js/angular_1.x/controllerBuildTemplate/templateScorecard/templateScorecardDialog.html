@@ -1,0 +1,27 @@
+<md-dialog aria-label="Select Function"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Scorecard List</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-click="apply()">
+          	Save
+        </md-button>
+		<md-button class="md-primary" ng-click="close()">
+			Close    
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content layout="column" style ="height: 80%;">
+     <div class="md-dialog-content" layout="column" flex>
+		<angular-table flex style ="height: 80%;"
+		id='dinamicListTable' ng-model="allScorecard"
+		columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
+		columns-search='["name"]' show-search-bar=true selected-item="selectedItem" 
+		highlights-selected-item="true" 
+		></angular-table>
+		</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>

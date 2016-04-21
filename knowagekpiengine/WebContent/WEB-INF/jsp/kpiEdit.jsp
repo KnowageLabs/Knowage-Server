@@ -49,17 +49,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- <md-button class="md-primary" >{{translate.load("sbi.general.close")}}</md-button> -->
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
-	<md-radio-group layout="row" ng-model="typeDocument">
+	<md-radio-group layout="row" ng-model="typeChart">
+	     		<md-radio-button  value='kpi' >Kpi</md-radio-button>
+	     		<md-radio-button  value='scorecard'> Scorecard </md-radio-button>
+   	</md-radio-group>
+   	<md-toolbar  class="miniheadimportexport" layout="row" ng-if="typeChart=='kpi'">
+	<div class="md-toolbar-tools" flex>
+		<h2 class="md-flex" >Type of Document</h2>
+	</div>
+	</md-toolbar>
+	<md-radio-group layout="row" ng-model="typeDocument" ng-if="typeChart=='kpi'">
 	     		<md-radio-button  value='list' >List</md-radio-button>
 	     		<md-radio-button  value='widget'> Widget </md-radio-button>
    	</md-radio-group>
-	<expander-box id="Info" color="white" ng-if="typeDocument=='list'" expanded="true" title="'KpiList'">
+	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="'Scorecard List'">
+	<md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin style ="height: 80%;" > 
+
+ 		<angular-table flex style ="height: 80%;"
+		id='dinamicListTable' ng-model="scorecardSelected"
+		columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
+		columns-search='["name"]' show-search-bar=true
+		scope-functions=tableFunction  speed-menu-option=measureMenuOption 
+		>
+		<queue-table>
+			<div layout="row"> 
+				<span flex></span>
+				<md-button ng-click="scopeFunctions.loadListScorecard()">Add Scorecard Association</md-button>
+			</div>
+		</queue-table> 
+		</angular-table>	
+   </md-whiteframe>       
+	</expander-box>
+	<expander-box id="Info" color="white" ng-if="typeDocument=='list'" expanded="true" title="'Kpi List'">
 		<dinamic-list ng-model="selectedKpis" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="Info" color="white" ng-if="typeDocument=='widget'" expanded="true" title="'KpiList'">
+	<expander-box id="Info" color="white" ng-if="typeDocument=='widget' && typeChart=='kpi'" expanded="true" title="'KpiList'">
 		<dinamic-list ng-model="selectedKpi" multi-select=false selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="Info" color="white" expanded="false" title="'Options'">
+	<expander-box id="Info" color="white" expanded="false" title="'Options'" ng-if="typeChart=='kpi'">
 		 <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout layout-fill layout-margin  >
 		 
 		 <div layout="row">

@@ -225,10 +225,10 @@ author:
 	</div>
 	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
 	
-	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	--%>
+	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
 
 <%
 if(type.equalsIgnoreCase("kpi")) {
