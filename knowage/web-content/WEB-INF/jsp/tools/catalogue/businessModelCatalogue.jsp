@@ -304,7 +304,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      					</div> -->
      					 
      					<div style="height:50%; padding-top:20px;">     						
-     						<md-content flex style="background-color: rgb(236, 236, 236);overflow:hidden;"
+     						<md-content flex style="background-color: rgb(236, 236, 236);height:100%;overflow:hidden;"
      						class="ToolbarBox miniToolbar noBorder leftListbox"  >
 			
      							<md-toolbar class="header md-toolbar-tools">
@@ -338,10 +338,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									id="bmVersions_id"
 									ng-model="bmVersions"
 									columns='[
-										{"label":"ACTIVE","name":"ACTION"},
-										{"label":"FILE NAME","name":"fileName"},
-										{"label":"CREATOR","name":"creationUser"},
-										{"label":"CREATION DATE","name":"creationDate"}
+										{"label":"ACTIVE","name":"ACTION","size":"60px"},
+										{"label":"FILE NAME","name":"fileName","size":"200px"},
+										{"label":"CREATOR","name":"creationUser","size":"150px"},
+										{"label":"CREATION DATE","name":"creationDate","size":"200px"}
 										]'
 									columns-search='["creationUser","creationDate"]'
 									show-search-bar=false
