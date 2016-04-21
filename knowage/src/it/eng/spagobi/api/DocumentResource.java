@@ -348,7 +348,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/saveChartTemplate")
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
 			@Context HttpServletResponse servletResponse) {
