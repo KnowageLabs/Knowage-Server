@@ -9,7 +9,7 @@
       		<md-radio-button ng-repeat="d in sortingModes" ng-value="d.value" aria-label="{{d.label}}">
          		{{d.label}}
   			</md-radio-button>
-  			<input type="number" name="count" ng-model="sortingCount" min="2" required>
+  			<input type="number" name="count" ng-model="sortingCount" min="2" required ng-show="selectedSortingMode == 'count'">
     	</md-radio-group>
     	
 		<md-dialog-actions layout="row">
