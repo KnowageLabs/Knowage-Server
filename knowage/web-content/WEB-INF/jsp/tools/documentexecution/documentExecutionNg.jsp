@@ -60,8 +60,11 @@ try{
 	
 	<!-- cross navigation -->
 	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cross-navigation/crossNavigationDirective.js")%>"></script>
-	
-
+	<!--  -->
+	<style type="text/css">
+		.requiredField {color: red!important; font-weight: bold;}
+		.norequiredField {}
+	</style>
 </head>
 
 <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >

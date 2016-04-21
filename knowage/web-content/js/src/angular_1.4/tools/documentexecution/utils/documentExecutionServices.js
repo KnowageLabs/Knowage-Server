@@ -265,12 +265,15 @@
 					//execProperties.currentView.status = 'DOCUMENT';
 				},
 				function(response, status, headers, config) {
-					sbiModule_restServices.errorHandler(response.data,"Error while attempt to load filters")
-					.then(function(){
-						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
-							docExecute_paramRolePanelService.toggleParametersPanel(true);
-						}
-					});  
+//					sbiModule_restServices.errorHandler(response.data,"Error while attempt to load filters")
+//					.then(function(){
+//						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
+//							docExecute_paramRolePanelService.toggleParametersPanel(true);
+//						}
+//					}); 
+					if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
+						docExecute_paramRolePanelService.toggleParametersPanel(true);
+					}
 					serviceScope.frameLoaded = true; 
 				});
 		};

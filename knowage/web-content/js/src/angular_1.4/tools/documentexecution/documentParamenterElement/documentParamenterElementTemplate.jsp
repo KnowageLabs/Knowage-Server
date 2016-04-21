@@ -4,13 +4,18 @@
 </md-button>
 <div flex layout-align="start">
 	<md-input-container>
+	
+		<%--
+		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
+		<md-content style="font-size:8px;" ng-cloak>{{parameter|json}}</md-content>
+		--%>
 		
 		<!-- Map input -->
 		<section ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
 			<div layout="row" layout-align="start">
 				<md-button ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
-					<label>{{parameter.label}}</label>
+					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
 	<!-- 			<i class="fa fa-globe"></i> -->
 					<i class="fa fa-external-link"></i>
 				</md-button>
@@ -34,7 +39,7 @@
 			<div layout="row" layout-align="start">
 				<md-button class="" id="{{::parameter.urlName}}"
 						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
-					<label>{{parameter.label}}</label>
+					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
 					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
@@ -57,7 +62,7 @@
 			<div layout="row" layout-align="start">
 				<md-button ng-click="getTreeParameterValue()" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
-					<label>{{parameter.label}}</label>
+					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
 <!-- 				<i class="fa fa-sitemap"></i> -->
 					<i class="fa fa-external-link"></i>
 				</md-button>
@@ -84,15 +89,19 @@
 			-->
 		</section>
 				
+	
 		<!-- manual number input -->
-		<label ng-if="parameter.type=='NUM' && parameter.selectionType==''" >
-			{{parameter.label}}</label>
+		<label ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
+			ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
+			{{parameter.label}}
+			</label>
 		<input class="input_class" ng-model="parameter.parameterValue" 
 				ng-required="::parameter.mandatory" type="number"
-				ng-if="parameter.type=='NUM' && parameter.selectionType==''" >	
+				ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >	
 		
 		<!-- manual text input -->
-		<label ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >
+		<label ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
+			ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
 			{{parameter.label}}</label>
 		<input class="input_class" ng-model="parameter.parameterValue" 
 				ng-required="::parameter.mandatory"
@@ -100,7 +109,7 @@
 		
 		<!-- lov list single input -->
 		<section ng-if="parameter.selectionType=='LIST' && !parameter.multivalue">
-			<label>{{parameter.label}}</label>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
 			<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
 				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}">
 					{{::defaultParameter.label}}
@@ -110,7 +119,7 @@
 		
 		<!-- lov list multiple input -->
 		<section ng-if="parameter.selectionType=='LIST' && parameter.multivalue">
-			<label>{{parameter.label}}</label>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">{{parameter.label}}</label>
 			<div ng-repeat="defaultParameter in parameter.defaultValues">
 				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
 						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, parameter)" >
@@ -120,7 +129,7 @@
 		</section>
 		
 		<!-- lov combobox single and multiple input -->
-		<label ng-if="parameter.selectionType=='COMBOBOX'">
+		<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
 			{{parameter.label}}</label>
 		<!-- multiple -->
 		<md-select ng-model="parameter.parameterValue" multiple
@@ -138,16 +147,12 @@
 			</md-option>
 		</md-select>
 		
-		<%--
-		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
-		<md-content style="font-size:8px;" ng-cloak>{{parameter|json}}</md-content>
-		--%>
 		
 	</md-input-container>
 	
 	<!-- "required" message -->
-	<div ng-if="showRequiredFieldMessage(parameter)">
-	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.parameterRequired")}}</div>
-	</div>
+<!-- 	<div ng-if="showRequiredFieldMessage(parameter)"> -->
+<!-- 	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.parameterRequired")}}</div> -->
+<!-- 	</div> -->
 </div>
 <md-divider></md-divider>
