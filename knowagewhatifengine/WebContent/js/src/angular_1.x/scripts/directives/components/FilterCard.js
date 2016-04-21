@@ -13,8 +13,8 @@ function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.selecetedMultiHierUN;
 	
 	$scope.showMultiHierDialog = function(ev,f){
-		$scope.selecetedMultiHierUN="";
 		$scope.member = f;
+		$scope.selecetedMultiHierUN = $scope.member.hierarchies[$scope.member.selectedHierarchyPosition].uniqueName;
 		$scope.showDialog(ev,"/main/filter/multiHierarchyDialog.html");
 		console.log($scope.member);
 	};

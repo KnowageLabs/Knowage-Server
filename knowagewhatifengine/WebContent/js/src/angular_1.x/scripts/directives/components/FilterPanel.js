@@ -30,7 +30,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 * Dialogs  
 	 **/
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
-		
+		$scope.searchText = "";
 		$scope.loadingFilter = true;
 		var x = {name:'Waiting...'};
 		$scope.data = [];
