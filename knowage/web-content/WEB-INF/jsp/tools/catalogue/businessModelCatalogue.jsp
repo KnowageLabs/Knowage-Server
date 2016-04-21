@@ -304,7 +304,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      					</div> -->
      					 
      					<div style="height:50%; padding-top:20px;">     						
-     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%;overflow:hidden;"
+     						<md-content flex style="background-color: rgb(236, 236, 236);overflow:hidden;"
      						class="ToolbarBox miniToolbar noBorder leftListbox"  >
 			
      							<md-toolbar class="header md-toolbar-tools">
@@ -331,7 +331,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       							</div>
      							<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
      							<angular-table
-     							    flex
+     							    layout-fill
      								ng-show="!versionLoadingShow"
 	     							
 									
@@ -354,7 +354,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</angular-table>
 								</md-radio-group>								
      						</md-content>
-     						<a id="test" style="visibility:hidden"></a>
      					</div>
      					
 					</md-content>
