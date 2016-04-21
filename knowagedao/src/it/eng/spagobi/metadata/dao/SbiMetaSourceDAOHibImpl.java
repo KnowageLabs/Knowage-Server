@@ -20,12 +20,16 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -68,6 +72,14 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			SbiMetaSource hibSource = (SbiMetaSource) tmpSession.load(SbiMetaSource.class, id);
+			toReturn = new SbiMetaSource();
+			toReturn.setSourceId(hibSource.getSourceId());
+			toReturn.setName(hibSource.getName());
+			toReturn.setType(hibSource.getType());
+			toReturn.setUrl(hibSource.getUrl());
+			toReturn.setSourceSchema(hibSource.getSourceSchema());
+			toReturn.setSourceCatalogue(hibSource.getSourceCatalogue());
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -271,6 +283,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			updateSbiCommonInfo4Insert(hibMeta);
 			idToReturn = (Integer) tmpSession.save(hibMeta);
 			tx.commit();
+
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -284,6 +297,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			if (tmpSession != null) {
 				if (tmpSession.isOpen())
 					tmpSession.close();
+
 			}
 
 		}
@@ -334,6 +348,69 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		}
 		logger.debug("OUT");
+	}
+
+	@Override
+	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError {
+
+		LogMF.debug(logger, "IN: id = [{0}]", sourceId);
+
+		List<SbiMetaTable> toReturn = new ArrayList<SbiMetaTable>();
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			if (sourceId == null) {
+				throw new IllegalArgumentException("Input parameter [sourceId] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+
+			Query query = session.createQuery(" from SbiMetaTable smt where smt.sbiMetaSource.sourceId = ? ");
+			query.setInteger(0, sourceId);
+			List<SbiMetaTable> list = query.list();
+			Iterator<SbiMetaTable> it = list.iterator();
+			while (it.hasNext()) {
+				toReturn.add(toMetaTable(it.next()));
+			}
+			logger.debug("Contents loaded");
+
+			transaction.rollback();
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
+	}
+
+	private SbiMetaTable toMetaTable(SbiMetaTable hibMetaTable) {
+		logger.debug("IN");
+		SbiMetaTable toReturn = null;
+		if (hibMetaTable != null) {
+			toReturn = new SbiMetaTable();
+			toReturn.setTableId(hibMetaTable.getTableId());
+			toReturn.setName(hibMetaTable.getName());
+			toReturn.setDeleted(hibMetaTable.isDeleted());
+
+		}
+		logger.debug("OUT");
+		return toReturn;
 	}
 
 }
