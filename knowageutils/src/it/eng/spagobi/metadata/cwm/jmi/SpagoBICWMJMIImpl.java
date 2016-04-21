@@ -22,13 +22,17 @@ import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.MetaPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.behavioral.BehavioralPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.businessinformation.BusinessInformationPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CorePackage;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.datatypes.DataTypesPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.instance.InstancePackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.keysindexes.KeysIndexesPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.multidimensional.MultidimensionalPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.olap.OlapPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmCatalog;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmColumn;
-import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmSqlstructuredType;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmForeignKey;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmPrimaryKey;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmSchema;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmSqlsimpleType;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmTable;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.RelationalPackage;
 import it.eng.spagobi.metadata.cwm.CWMImplType;
@@ -76,6 +80,7 @@ public class SpagoBICWMJMIImpl implements ICWM {
 	private InstancePackage instancePackage;
 	private BehavioralPackage behavioralPackage;
 	private OlapPackage olapPackage;
+	private DataTypesPackage dataTypesPackage;
 
 	public static final String CWM = "CWM-Model-M3"; //$NON-NLS-1$
 
@@ -122,6 +127,7 @@ public class SpagoBICWMJMIImpl implements ICWM {
 			instancePackage = metaPackage.getInstance();
 			behavioralPackage = metaPackage.getBehavioral();
 			olapPackage = metaPackage.getOlap();
+			dataTypesPackage = metaPackage.getDataTypes();
 
 		} catch (Throwable e) {
 			throw new RuntimeException("Cannot initialize repository", e);
@@ -158,10 +164,16 @@ public class SpagoBICWMJMIImpl implements ICWM {
 		return catalog;
 	}
 
+	public CwmSchema createSchema(String name) {
+		CwmSchema schema = relationalPackage.getCwmSchema().createCwmSchema();
+		schema.setName(name);
+
+		return schema;
+	}
+
 	public CwmTable createTable(String name) {
 		CwmTable table = relationalPackage.getCwmTable().createCwmTable();
 		table.setName(name);
-
 		return table;
 	}
 
@@ -171,17 +183,38 @@ public class SpagoBICWMJMIImpl implements ICWM {
 		return column;
 	}
 
-	public CwmSqlstructuredType createDataType(String name) {
-		CwmSqlstructuredType sqlDataType = relationalPackage.getCwmSqlstructuredType().createCwmSqlstructuredType();
-		sqlDataType.setName(name);
+	public CwmSqlsimpleType createSQLSimpleType(String name) {
+		CwmSqlsimpleType sqlSimpleType = relationalPackage.getCwmSqlsimpleType().createCwmSqlsimpleType();
+		sqlSimpleType.setName(name);
+		return sqlSimpleType;
+	}
 
-		return sqlDataType;
+	public CwmPrimaryKey createPrimaryKey(String name) {
+		CwmPrimaryKey primaryKey = relationalPackage.getCwmPrimaryKey().createCwmPrimaryKey();
+		primaryKey.setName(name);
+		return primaryKey;
+	}
+
+	public CwmForeignKey createForeignKey(String name) {
+		CwmForeignKey foreignKey = relationalPackage.getCwmForeignKey().createCwmForeignKey();
+		foreignKey.setName(name);
+		return foreignKey;
 	}
 
 	public CwmCatalog getCatalog() {
 		Collection<CwmCatalog> catalogs = relationalPackage.getCwmCatalog().refAllOfClass();
 		CwmCatalog[] c = catalogs.toArray(new CwmCatalog[catalogs.size()]);
 		return (c.length > 0 ? c[0] : null);
+	}
+
+	public Collection<CwmForeignKey> getForeignKeys() {
+		Collection<CwmForeignKey> foreignKeys = relationalPackage.getCwmForeignKey().refAllOfClass();
+		return foreignKeys;
+	}
+
+	public Collection<CwmPrimaryKey> getPrimaryKeys() {
+		Collection<CwmPrimaryKey> primaryKeys = relationalPackage.getCwmPrimaryKey().refAllOfClass();
+		return primaryKeys;
 	}
 
 	private MofPackage getModelPackage(String packageName) {
