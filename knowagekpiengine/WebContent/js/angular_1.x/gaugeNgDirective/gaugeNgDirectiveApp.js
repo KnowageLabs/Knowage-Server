@@ -137,11 +137,11 @@
 				}
 			}
 			
-			var targetPoint1 = this.valueToPoint(0, 0);
+			var targetPoint1 = this.valueToPoint(0, 0.55);
 			var targetPoint2 = this.valueToPoint(0, 0.85);
 			
 			// line.target
-			this.body.append("svg:line")
+			this.targetLine = this.body.append("svg:line")
 				.attr("class", 'target')
 				.style("visibility", this.config.showTarget ? "visible" : "hidden")
 				.attr("x1", targetPoint1.x)
@@ -286,13 +286,16 @@
 		};
 		
 		this.redrawTarget = function (value, transitionDuration){
+			var targetPoint1 = this.valueToPoint(value, 0.55);
 			var targetPoint2 = this.valueToPoint(value, 0.85);
 			
-			var targetPointer = this.body.selectAll("line.target");
+			var targetPointer = this.targetLine;
+			
 			targetPointer
+				.attr("x1", targetPoint1.x)
+				.attr("y1", targetPoint1.y)
 				.attr("x2", targetPoint2.x)
 				.attr("y2", targetPoint2.y);
-			
 		};
 
 		this.valueToDegrees = function (value) {
@@ -355,6 +358,10 @@
 					
 					if(scope.value) {
 						scope.gaugeSvg.redraw(scope.value);
+					}
+					
+					if(scope.targetValue) {
+						scope.gaugeSvg.redrawTarget(scope.targetValue);
 					}
 				}, 0);
 			}
@@ -429,6 +436,10 @@
 			if($scope.value) {
 				$scope.gaugeSvg.redraw($scope.value);
 			}
+			
+			if($scope.targetValue) {
+				$scope.gaugeSvg.redrawTarget($scope.targetValue);
+			}
 		});
 		
 		$scope.$watch('value', function(newValue, oldValue) {
@@ -441,8 +452,10 @@
 		$scope.$watch('targetValue', function(newValue, oldValue) {
 			console.log('targetValue old: ', oldValue);
 			console.log('targetValue new: ', newValue);
-			
-			$scope.updateGaugeTarget(newValue, 500);
+
+			if(newValue != oldValue) {
+				$scope.updateGaugeTarget(newValue, 500);
+			}
 		});
 		
 		$scope.createGauge(
@@ -514,16 +527,6 @@
 		
 		$scope.showValue = ($scope.showValue != undefined) ? $scope.showValue : true;
 		$scope.showTarget = ($scope.showTarget != undefined) ? $scope.showTarget : true;
-		
-//		$scope.$watch('value', function(newValue, oldValue) {
-//			console.log('value old: ', oldValue);
-//			console.log('value new: ', newValue);
-//		});
-//		
-//		$scope.$watch('targetValue', function(newValue, oldValue) {
-//			console.log('targetValue old: ', oldValue);
-//			console.log('targetValue new: ', newValue);
-//		});
 		
 	};
 })();
