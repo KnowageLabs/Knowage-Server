@@ -520,13 +520,16 @@
 		$scope.maxMinFontSize = ($scope.fontConf.size * 1.3) + 'em';
 		$scope.intermediateFontSize = ($scope.fontConf.size * 1) + 'em';
 		
-		$scope.targetColor = '#AC0A08';
-		
 		$scope.maxMinValueDifference = ($scope.maxValue - $scope.minValue);
 		$scope.sizeScaleFactor = ($scope.size / $scope.maxMinValueDifference) ;
 		
 		$scope.showValue = ($scope.showValue != undefined) ? $scope.showValue : true;
 		$scope.showTarget = ($scope.showTarget != undefined) ? $scope.showTarget : true;
 		
+		$scope.getThresholdWidth = function(stop) {
+			var stopWidth = (stop.to - stop.from) * $scope.sizeScaleFactor ;
+			
+			return stopWidth;
+		};
 	};
 })();

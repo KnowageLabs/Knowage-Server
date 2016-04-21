@@ -12,6 +12,7 @@
 					min, 
 					max, 
 					threshold, 
+					vieweas, 
 					showValue,
 					showTarget,
 					showThresholds,
@@ -51,7 +52,7 @@
 						max: config.max
 					};
 					
-					var stopsConf = kpiViewerGaugeService.generateStopsConf(threshold, limits);
+					var stopsConf = kpiViewerGaugeService.generateStopsConf(threshold, limits, vieweas);
 					
 					config.stops = stopsConf.stops;
 					
@@ -76,7 +77,8 @@
 			 *  	max: Number
 			 *  }
 			 */
-			generateStopsConf : function(threshold, limits) {
+			generateStopsConf : function(threshold, limits, vieweas) {
+				vieweas = (vieweas || 'speedometer').toLowerCase();
 				var thresholdsQuantity = threshold.thresholdValues.length;
 				
 				var thresholds = {};
@@ -122,7 +124,8 @@
 					// last threshold
 					else if (i == thresholdsQuantity - 1) {
 						if(threshold.maxValue == null || threshold.maxValue > highestLimit) {
-							stopConf.to = highestLimit;
+//							stopConf.to = highestLimit;
+							stopConf.to = (vieweas == 'speedometer') ? highestLimit : highestLimit * 1.5;
 						} else {
 							stopConf.to = threshold.maxValue;
 						}

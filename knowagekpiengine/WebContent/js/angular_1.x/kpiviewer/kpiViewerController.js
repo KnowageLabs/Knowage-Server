@@ -39,6 +39,7 @@
 									$scope.gaugeMinValue, // minimum value
 									$scope.gaugeMaxValue, // maximum value
 									$scope.documentData.kpiValue.threshold, //threshold configuration
+									$scope.documentData.template.chart.options.vieweas, // speedometer / kpicard / semaphore
 									$scope.documentData.template.chart.options.showvalue, // show/hide kpi value inside the gauge 
 									$scope.documentData.template.chart.options.showtarget, // show/hide target value inside the gauge 
 									$scope.documentData.template.chart.options.showthreshold, // show/hide kpi thresholds 
@@ -54,7 +55,7 @@
 							 if($scope.gaugeTargetValue!=0){
 									$scope.percentage = (($scope.gaugeValue / $scope.gaugeTargetValue)*100);
 								}else{
-									$scope.percentage =0;
+									$scope.percentage = 0;
 								}
 								if($scope.documentData.template.chart.options!=undefined){
 									if($scope.documentData.template.chart.options.history!=undefined){
@@ -87,7 +88,8 @@
 						$scope.gaugeSize, // gauge size
 						$scope.gaugeMinValue, // minimum value
 						$scope.gaugeMaxValue, // maximum value
-						$scope.documentData.kpiValue.threshold //threshold configuration
+						$scope.documentData.kpiValue.threshold, //threshold configuration
+						$scope.documentData.template.chart.options.vieweas // speedometer / kpicard / semaphore
 					);		
 				}
 			});

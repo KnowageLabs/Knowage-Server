@@ -4,30 +4,30 @@
 	<svg class="kpiLinearGauge" svg-width="{{size + 20}}" height="100"
 			style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">
 			
-		<g transform="translate(20,0)">
+ 		<g transform="translate(10,0)">
 			<rect ng-if="showThresholds" ng-repeat="stop in thresholdStops" class="range" 
 				svg-transform="translate({{(stop.from * sizeScaleFactor) || 0}},0)" 
-				svg-style="fill: {{stop.color}}" svg-width="{{(stop.to - stop.from) * sizeScaleFactor}}" height="40" x="0"/>
+				svg-style="fill: {{stop.color}}" svg-width="{{getThresholdWidth(stop)}}" height="40" x="0"/>
 			
 			<rect class="measure" svg-width="{{value * sizeScaleFactor}}" height="13.333" x="0" y="13.333"/>
 			
 			<line ng-if="showTarget" class="target" y1="5" y2="35" 
 					svg-x1="{{targetValue * sizeScaleFactor || 0}}" svg-x2="{{targetValue * sizeScaleFactor || 0}}"></line>
 			
-			<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">
-				<g class="tick" transform="translate(0,0)" style="opacity: 1;">
-					<text text-anchor="middle" dy="1em" y="30">{{minValue}}</text>
-				</g>
-				<g class="tick"style="opacity: 1;"
-						svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor - 20) || 0}},0)">
-					<text text-anchor="middle" dy="1em" y="30">50%</text>
-				</g>
-				<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor - 20) || 0}},0)" >
-					<text text-anchor="middle" dy="1em" y="30">100%</text>
-				</g>
-				<g class="tick" svg-transform="translate({{(maxValue * (3/2) * sizeScaleFactor - 20) || 0}},0)" >
-					<text text-anchor="middle" dy="1em" y="30">150%</text>
-				</g>
+		</g>
+		<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">
+			<g class="tick" transform="translate(10,0)" style="opacity: 1;">
+				<text text-anchor="middle" dy="1em" y="30">{{minValue}}</text>
+			</g>
+			<g class="tick"style="opacity: 1;"
+					svg-transform="translate({{((minValue + (maxMinValueDifference) / 2) * sizeScaleFactor + 10) || 0}},0)">
+				<text text-anchor="middle" dy="1em" y="30">50%</text>
+			</g>
+			<g class="tick" svg-transform="translate({{(maxValue * sizeScaleFactor) + 10 || 0}},0)" >
+				<text text-anchor="middle" dy="1em" y="30">100%</text>
+			</g>
+			<g class="tick" svg-transform="translate({{(maxValue * (3/2) * sizeScaleFactor) + 10 || 0}},0)" >
+				<text text-anchor="middle" dy="1em" y="30">150%</text>
 			</g>
 		</g>
 	</svg>
@@ -52,7 +52,7 @@
 
 #{{svgId}} svg .target {
     stroke-width: 2px;
-    stroke: {{targetColor}};
+    stroke: #AC0A08;
 }
 
 </style>
