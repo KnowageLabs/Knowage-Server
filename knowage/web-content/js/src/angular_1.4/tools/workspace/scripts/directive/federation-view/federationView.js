@@ -38,7 +38,7 @@ angular.module('federation_view', ['ngMaterial'])
 });
 
 function federationViewControllerFunction($scope){
-	$scope.clickDocument=function(item){
+	$scope.clickFederation=function(item){
 		
 		 $scope.selectFederationAction({federation: item});
 	}

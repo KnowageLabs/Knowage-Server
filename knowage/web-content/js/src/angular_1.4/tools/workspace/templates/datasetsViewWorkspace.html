@@ -1,31 +1,54 @@
-<md-content>
+<md-content layout="row" flex>
+ <md-content>
   <md-tabs md-dynamic-height="true">
         <md-tab label="Models" flex>
 	
- 	      <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
+ 	  <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
 		show-grid-view="showGridView"
  	  ></document-view>	
  	 
  	</md-tab> 
     <md-tab label="My data set" flex>
 
- 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="myDatasets"
 		show-grid-view="showGridView"
- 	  ></document-view>	
+		show-qbe-enabled="true"
+		show-detail-dataset-enabled="true"
+		share-dataset-enabled="true"
+ 	  ></dataset-view>	
  	
  	</md-tab>  
  	<md-tab label="Enterprise data set" flex>
 
- 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
- 	  ></document-view>	
+		show-qbe-enabled="true"
+		show-detail-dataset-enabled="true"
+		share-dataset-enabled="true"
+ 	  ></dataset-view>		
  	
  	</md-tab>  
  	<md-tab label="Shared data set" flex>
 
- 	       <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="datasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
- 	  ></document-view>	
+		show-qbe-enabled="true"
+		show-detail-dataset-enabled="true"
+		share-dataset-enabled="true"
+ 	  ></dataset-view>	
+ 	
+ 	</md-tab>  
+ 	
+ 	<md-tab label="All data set" flex>
+
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: absolute;' ng-model="datasets"
+		show-grid-view="showGridView"
+		show-qbe-enabled="true"
+		show-detail-dataset-enabled="true"
+		share-dataset-enabled="true"
+		selected-dataset=selectedDataset
+		select-dataset-action="selectDataset(ds);"
+ 	  ></dataset-view>	
  	
  	</md-tab>  
 	<md-tab label="Federation definitions" flex>
@@ -39,5 +62,68 @@
 
  	</md-tab>  
    </md-tabs>
+   </md-content>
+       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
+					<md-toolbar class="ternaryToolbar">
+						<div layout="row" layout-align="space-around center">
+							<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDataset();toggleDatasetDetail();">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+							
+							<md-button title="Share Dataset" aria-label="Share Dataset" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-share-alt" ></md-icon>
+							</md-button>
+							
+							<md-button title="Preview Dataset" aria-label="Preview Dataset" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-eye"></md-icon>
+							</md-button>
+							
+							<md-button title="Export Dataset" aria-label="Export Dataset" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
+							</md-button>
+							
+							<md-button title="Help Online" aria-label="Help Online" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
+							</md-button>
+		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-search"></md-icon>
+							</md-button>
+							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="">
+									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
+							</md-button>
+							
+						</div>
+					</md-toolbar>
+					<md-content layout-margin>
+						<md-list>
+							 <md-list-item class="md-2-line">
+							          <div class="md-list-item-text">
+							            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+							            <p>{{selectedDataset.description}}</p>
+							          </div>
+							 </md-list-item>
+							 <md-list-item class="md-2-line">
+							          <div class="md-list-item-text">
+							            <h3><b>Name</b></h3>
+							            <p>{{selectedDataset.name}}</p>
+							          </div>
+							 </md-list-item>
+							 <md-list-item class="md-2-line">
+							          <div class="md-list-item-text">
+							            <h3><b>Label</b></h3>
+							            <p>{{selectedDataset.label}}</p>
+							          </div>
+							 </md-list-item>
+							 <md-list-item class="md-2-line">
+							          <div class="md-list-item-text">
+							            <h3><b>Author</b></h3>
+							            <p>{{selectedDataset.owner}}</p>
+							          </div>
+							 </md-list-item>
+						</md-list>
+					</md-content>
+				</md-sidenav>
+   
+   
    
 </md-content>

@@ -7,7 +7,15 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
 	$scope.businessModels=[];
-	$scope.datasets=[];
+	
+	/**
+	 * variables for data management
+	 */
+	$scope.datasets=[];  //all
+	$scope.myDatasets= [];
+	$scope.enterpriseDatasets=[];
+	$scope.sharedDatasets=[];
+	$scope.notDerivedDatasets=[];
 	
 	$scope.searchInput = "";
 	

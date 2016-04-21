@@ -14,8 +14,12 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav){
+	$scope.selectedDataset = undefined;
+	//$scope.lastDocumentSelected = null;
+	$scope.showDatasettInfo = false;
 	
+    //TODO move federations to separate controller
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
@@ -28,6 +32,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 	$scope.loadFederations();
 	
+	/**
+	 * load all datasets
+	 */
 	$scope.loadDatasets= function(){
 		sbiModule_restServices.promiseGet("2.0/datasets", "")
 		.then(function(response) {
@@ -39,6 +46,93 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	}
 	$scope.loadDatasets();
 	
+	$scope.loadMyDatasets= function(){
+		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
+		.then(function(response) {
+			angular.copy(response.data.root,$scope.myDatasets);
+			console.log($scope.myDatasets);
+			
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+	$scope.loadMyDatasets();
+	
+	$scope.loadEnterpriseDatasets= function(){
+		sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
+		.then(function(response) {
+			angular.copy(response.data.root,$scope.enterpriseDatasets);
+			console.log("enterprise");
+			console.log($scope.enterpriseDatasets);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+	$scope.loadEnterpriseDatasets();
+	
+	$scope.loadSharedDatasets= function(){
+		sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
+		.then(function(response) {
+			angular.copy(response.data.root,$scope.sharedDatasets);
+			
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+	$scope.loadSharedDatasets();
+	
+	$scope.loadNotDerivedDatasets= function(){
+		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
+		.then(function(response) {
+			angular.copy(response.data,$scope.notDerivedDatasets);
+			console.log("not derivated");
+			console.log($scope.notDerivedDatasets);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+	$scope.loadNotDerivedDatasets();
+	
+	
+	$scope.showDatasetDetails = function() {
+		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
+	};
+	
+	
+	$scope.isSelectedDatasetValid = function() {
+		return $scope.selectedDataset !== undefined;
+	};
+	
+	$scope.setDetailOpen = function(isOpen) {
+		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
+			$scope.toggleDatasetDetail();
+		}
+
+		$scope.showDatasetInfo = isOpen;
+	};
+	
+	$scope.toggleDatasetDetail = function() {
+		$mdSidenav('right').toggle();
+	};
+	
+	$scope.selectDataset= function ( dataset ) { 
+		if (dataset !== undefined) {
+			$scope.lastDatasetSelected = dataset;
+		}
+		var alreadySelected = (dataset !== undefined && $scope.selectedDataset === dataset);
+		$scope.selectedDataset = dataset;
+		if (alreadySelected) {
+			$scope.selectedDataset=undefined;
+			$scope.setDetailOpen(!$scope.showDatasetDetail);
+		} else {
+			$scope.setDetailOpen(dataset !== undefined);
+		}
+	};
+	
+	
+	
+
+	//TODO move business models to separate controller
     $scope.loadBusinessModels= function(){
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
