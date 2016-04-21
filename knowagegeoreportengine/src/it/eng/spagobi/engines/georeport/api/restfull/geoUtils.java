@@ -18,18 +18,16 @@
 package it.eng.spagobi.engines.georeport.api.restfull;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
-import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -91,7 +89,6 @@ public class geoUtils {
 		return toReturn;
 	}
 
-
 	public static String targetLayerAction(JSONObject req) throws JSONException {
 		String layerName = req.getString(LAYER_NAME);
 		String layerCol = req.getString(LAYER_JOIN_COLUMNS);
@@ -108,6 +105,7 @@ public class geoUtils {
 					Monitor.start("GetTargetLayerAction.getFeature");
 					// load layer from catalogue
 					ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
+					geoLayersDAO.setUserProfile(UserProfileManager.getProfile());
 					GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(layerName);
 					// TODO check if geolayer is not null
 
