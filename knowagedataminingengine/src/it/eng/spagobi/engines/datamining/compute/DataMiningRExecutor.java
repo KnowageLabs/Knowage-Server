@@ -179,7 +179,8 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * @return DataMiningResult
 	 * @throws Exception
 	 */
-	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun) throws Exception {
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun, String documentLabel)
+			throws Exception {
 		logger.debug("IN");
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		DataMiningResult result = null;
@@ -227,12 +228,12 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 *
-	 *
+	 * 
+	 * 
 	 * protected void loadUserWorkSpace() throws IOException {
-	 *
+	 * 
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 *
+	 * 
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

@@ -9,10 +9,13 @@ sbiM.factory('datamining_template',function(){
     config.urlSettings = urlSettings;
      
     var params = {
-    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %> ,
+    	DOC_LABEL: '<%= (String)es.getAttributeFromSession(EngineConstants.ENV_DOCUMENT_LABEL )%>'
     };
 	
+   
     config.ajaxBaseParams = params;
+    
 	
 	return config;
 });

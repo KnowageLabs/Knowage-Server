@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
@@ -70,19 +71,14 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 
 	private void setupEnvonmentForExternal() throws IOException, REngineException, REXPMismatchException, NamingException {
 		logger.debug("IN");
-		/*
-		 * // new R-engine re = createREngineInstanceWithWork(); if (re == null) { logger.error("Cannot load R"); return; }
-		 */
-		// re.parseAndEval("setwd(\"" + DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH + "\")");
 
 		String str = "" + DataMiningUtils.UPLOADED_FILE_PATH + DataMiningConstants.DATA_MINING_EXTERNAL_CODE_PATH;
-		System.out.println(str);
 		if (!PyLib.isPythonRunning()) {
 			PyLib.startPython();
 		}
 		PyLib.execScript("import os\n" + "os.chdir(r'" + str + "')\n");
-		System.out
-				.println("executed Python code:" + "import os\n" + "os.chdir(r'" + str + "')\n" + "from DataMiningPythonExecutor.setupEnvironmentForExternal");
+		// System.out
+		// .println("executed Python code:" + "import os\n" + "os.chdir(r'" + str + "')\n" + "from DataMiningPythonExecutor.setupEnvironmentForExternal");
 
 		logger.debug("Set working directory");
 		logger.debug("OUT");
@@ -102,7 +98,8 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		}
 	}
 
-	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun) throws Exception {
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun, String documentLabel)
+			throws Exception {
 		logger.debug("IN");
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		DataMiningResult result = null;
@@ -125,7 +122,8 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		scriptExecutor.evalScript(command, rerun);
 		logger.debug("Evaluated script");
 		// create output
-		result = outputExecutor.evalOutput(output, scriptExecutor);
+		UserProfile profile = (UserProfile) userProfile;
+		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
 		// save result of script computation objects and datasets to
 		// user workspace
@@ -170,8 +168,7 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		// create user workspace data
 		logger.debug("IN");
 		// re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() + ".RData')");
-		System.out.println("TODO loadUserWorkSpace() in DataMiningPythonExecutor");
-		logger.debug("Save all object in " + profile.getUserUniqueIdentifier() + ".RData");
+		// logger.debug("Save all object in " + profile.getUserUniqueIdentifier() + ".RData");
 		// re.(parseAndEval"load(file= '" + profile.getUserUniqueIdentifier() + ".RData')");
 		logger.debug("Loaded " + profile.getUserUniqueIdentifier() + ".RData");
 		logger.debug("OUT");

@@ -38,6 +38,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 
@@ -54,7 +55,8 @@ public class ResultResource extends AbstractDataMiningEngineService {
 	@GET
 	@Path("/{command}/{output}/{rerun}")
 	@Produces("text/html; charset=UTF-8")
-	public String getResult(@PathParam("command") String commandName, @PathParam("output") String outputName, @PathParam("rerun") Boolean rerun) {
+	public String getResult(@PathParam("command") String commandName, @PathParam("output") String outputName, @PathParam("rerun") Boolean rerun,
+			@QueryParam("DOC_LABEL") String docLabel) {
 		logger.debug("IN");
 
 		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
@@ -90,7 +92,8 @@ public class ResultResource extends AbstractDataMiningEngineService {
 								try {
 									HashMap params = (HashMap) dataMiningEngineInstance.getAnalyticalDrivers();
 
-									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile(), rerun);
+									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile(), rerun, docLabel);
+
 									outputOfExecution = serialize(result);
 								} catch (SerializationException e) {
 									logger.error("Error serializing the result", e);
@@ -117,7 +120,6 @@ public class ResultResource extends AbstractDataMiningEngineService {
 		}
 
 		logger.debug("OUT");
-		// System.out.println("OUTPUTOFEXECUTION=" + outputOfExecution);
 		return outputOfExecution;
 
 	}

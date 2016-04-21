@@ -28,30 +28,21 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.jpy.PyLib;
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REngine;
-import org.rosuda.REngine.REngineException;
 
 public class PythonDatasetsExecutor {
 
 	static private Logger logger = Logger.getLogger(PythonDatasetsExecutor.class);
 
-	private REngine re;
-
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
+	int resPythonExecution = 1;
 
 	public PythonDatasetsExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}
 
-	/*
-	 * public REngine getRe() { return re; }
-	 *
-	 * public void setRe(REngine re) { this.re = re; }
-	 */
-	protected String evalDatasetsNeeded(HashMap paramsFilled) throws IOException, REngineException, REXPMismatchException {
+	protected String evalDatasetsNeeded(HashMap paramsFilled) throws IOException, Exception {
 
 		logger.debug("IN");
 		if (PyLib.isPythonRunning() && dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
@@ -67,8 +58,15 @@ public class PythonDatasetsExecutor {
 				if (ds.getType().equalsIgnoreCase("file")) {
 					// if (ds.getReadType().equalsIgnoreCase("csv")) {
 					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-					PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
-					PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options + ")\n");
+					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
+					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options
+							+ ")\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
 					// }
 
 				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
@@ -78,8 +76,17 @@ public class PythonDatasetsExecutor {
 
 					// if (ds.getReadType().equalsIgnoreCase("csv")) {
 					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
-					PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvToEval + "')\n");
-					PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options + ")\n");
+					File file = new File(csvToEval);
+					String csvPath = file.getParent();
+					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath/* csvToEval */+ "')\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
+					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + "csv"/* ds.getReadType() */+ "('" + ds.getName() + ".csv',"
+							+ "sep=','" + ")\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
 					// }
 
 				}
@@ -90,7 +97,7 @@ public class PythonDatasetsExecutor {
 		return "";
 	}
 
-	protected boolean getAndEvalDefaultDataset(DataMiningDataset ds) throws IOException { // never used
+	protected boolean getAndEvalDefaultDataset(DataMiningDataset ds) throws IOException, Exception { // never used
 		logger.debug("IN");
 		// checks relative path
 		String relPathToDefDS = ds.getDefaultDS();
@@ -113,8 +120,14 @@ public class PythonDatasetsExecutor {
 		if (ds.getType().equalsIgnoreCase("file")) {
 			if (ds.getReadType().equalsIgnoreCase("csv")) {
 				String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-				PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
-				PyLib.execScript(ds.getName() + " = pandas.read_csv('" + defDSRelPath + "'," + ds.getOptions() + ")\n");
+				resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+				if (resPythonExecution < 0) {
+					throw new Exception("Python script execution error");
+				}
+				resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_csv('" + defDSRelPath + "'," + ds.getOptions() + ")\n");
+				if (resPythonExecution < 0) {
+					throw new Exception("Python script execution error");
+				}
 			}
 		}
 		logger.debug("OUT");
@@ -122,7 +135,7 @@ public class PythonDatasetsExecutor {
 
 	}
 
-	protected void updateDataset(DataMiningDataset ds) throws IOException, REngineException, REXPMismatchException { // never used
+	protected void updateDataset(DataMiningDataset ds) throws IOException, Exception { // never used
 		logger.debug("IN");
 		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
@@ -136,8 +149,14 @@ public class PythonDatasetsExecutor {
 			if (ds.getType().equalsIgnoreCase("file")) {
 				if (ds.getReadType().equalsIgnoreCase("csv")) {
 					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-					PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
-					PyLib.execScript(ds.getName() + " = pandas.read_csv('" + fileDSPath + "'," + ds.getOptions() + ")\n");
+					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
+					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_csv('" + fileDSPath + "'," + ds.getOptions() + ")\n");
+					if (resPythonExecution < 0) {
+						throw new Exception("Python script execution error");
+					}
 				}
 			}
 		}

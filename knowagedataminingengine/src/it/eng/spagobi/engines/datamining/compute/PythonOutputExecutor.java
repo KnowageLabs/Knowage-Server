@@ -58,11 +58,12 @@ public class PythonOutputExecutor {
 		this.profile = profile;
 	}
 
-	protected DataMiningResult evalOutput(Output out, PythonScriptExecutor scriptExecutor) throws Exception {
+	protected DataMiningResult evalOutput(Output out, PythonScriptExecutor scriptExecutor, String documentLabel, String userId) throws Exception {
 		logger.debug("IN");
 		// output -->if image and function --> execute function then prepare
 		// output
 		// output -->if script --> execute script then prepare output
+		int resPythonExecution = 1;
 
 		DataMiningResult res = new DataMiningResult();
 		if (!PyLib.isPythonRunning()) {
@@ -90,7 +91,12 @@ public class PythonOutputExecutor {
 			String plotName = out.getOutputName();
 			// re.parseAndEval(getPlotFilePath(plotName));
 			String strDir = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX;
-			PyLib.execScript("import os\n" + "os.chdir(r'" + strDir + "')\n");
+			resPythonExecution = PyLib.execScript("import os\n" + "os.chdir(r'" + strDir + "')\n");
+
+			if (resPythonExecution < 0) {
+				res.setError("Python error");
+				return res;
+			}
 
 			logger.debug("Plot file name " + plotName);
 
@@ -98,13 +104,20 @@ public class PythonOutputExecutor {
 			// to produce an image result
 
 			if (outVal == null || outVal.equals("")) {
-				// rexp = re.parseAndEval("try(" + function + ")");
 				PyLib.execScript("temporaryPlotVariableToPrintOnFile=" + function + "\n");
-				PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+				resPythonExecution = PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+				if (resPythonExecution < 0) {
+					res.setError("Python error");
+					return res;
+				}
 			} else {
 				PyLib.execScript("temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + ")\n");
-				PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
-				// rexp = re.parseAndEval("try(" + function + "(" + outVal + "))");
+				resPythonExecution = PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+				if (resPythonExecution < 0) {
+					res.setError("Python error");
+					return res;
+				}
+
 			}
 
 			logger.debug("Evaluated dev.off()");
@@ -114,7 +127,7 @@ public class PythonOutputExecutor {
 			if (resImg != null && !resImg.equals("")) {
 				res.setResult(resImg);
 				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
-						+ plotName + "." + "OUTPUT_PLOT_EXTENSION");
+						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 				logger.debug("Deleted temp image");
 			}
 			/*
@@ -130,7 +143,12 @@ public class PythonOutputExecutor {
 					res.setVariablename(outVal);// could be multiple value
 
 					PyLib.execScript(outVal + "=" + function);
-					PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					if (resPythonExecution < 0) {
+						res.setError("Python error");
+						return res;
+					}
+
 					String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 					res.setOutputType(out.getOutputType());
 					res.setResult("" + pythonResult);
@@ -140,7 +158,12 @@ public class PythonOutputExecutor {
 					res.setVariablename(noArgFunctionExecuted);
 
 					PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
-					PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					if (resPythonExecution < 0) {
+						res.setError("Python error");
+						return res;
+					}
+
 					String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 					res.setOutputType(out.getOutputType());
 					res.setResult("" + pythonResult);
@@ -149,7 +172,11 @@ public class PythonOutputExecutor {
 
 			} else { // function="" or no function (simple case)
 				res.setVariablename(outVal);// could be multiple value
-				PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+				resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+				if (resPythonExecution < 0) {
+					res.setError("Python error");
+					return res;
+				}
 				String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				res.setOutputType(out.getOutputType());
 				res.setResult("" + pythonResult);
@@ -159,21 +186,36 @@ public class PythonOutputExecutor {
 
 			logger.debug("Evaluated result");
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS_OUTPUT) && outVal != null && out.getOutputName() != null) {
-			logger.debug("Text output");
+			logger.debug("SpagoBI output");
 			String pythonResult = null;
 
 			if (function != null && function.length() > 0) {
 				if (outVal == null || outVal.equals("")) {
 					outVal = out.getOuputLabel();
 					res.setVariablename(outVal);// could be multiple value
-					createAndPersistDatasetProductByFunction(profile, outVal, out, function);
-					PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+					resPythonExecution = createAndPersistDatasetProductByFunction(profile, outVal, out, function, userId, documentLabel);
+					if (resPythonExecution < 0) {
+						res.setError("Python error");
+						return res;
+					}
+
+					resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+					if (resPythonExecution < 0) {
+						res.setError("Python error");
+						return res;
+					}
+
 					pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				} else {
 					// res.setVariablename(outVal);// could be multiple value
 					String noArgFunctionExecuted = function + "(" + outVal + ")";
 					res.setVariablename(noArgFunctionExecuted);
-					createAndPersistDatasetProductByFunction(profile, outVal, out, noArgFunctionExecuted);
+					resPythonExecution = createAndPersistDatasetProductByFunction(profile, outVal, out, noArgFunctionExecuted, userId, documentLabel);
+
+					if (resPythonExecution < 0) {
+						res.setError("Python error");
+						return res;
+					}
 
 					// PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
 					// PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
@@ -182,41 +224,25 @@ public class PythonOutputExecutor {
 
 			} else { // function="" or no function (simple case)
 				res.setVariablename(outVal);// could be multiple value
-				createAndPersistDataset(profile, outVal, out);
-				PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+				resPythonExecution = createAndPersistDataset(profile, outVal, out, userId, documentLabel);
+				if (resPythonExecution < 0) {
+					res.setError("Python error");
+					return res;
+				}
+				resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+				if (resPythonExecution < 0) {
+					res.setError("Python error");
+					return res;
+				}
+
 				pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 			}
 
-			res.setOutputType(out.getOutputType());
-			res.setResult("" + pythonResult);
-
+			res.setOutputType("text");
+			// res.setResult("" + pythonResult); //return Json
+			res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser");
 			logger.debug("Evaluated result");
 
-		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.HTML_OUTPUT)) {
-			logger.debug("Html output");
-			/*
-			 * REXP rexp = null; re.parseAndEval("library(R2HTML)"); re.parseAndEval("library(RCurl)");
-			 * 
-			 * re.parseAndEval("HTMLStart(outdir = \"" + DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/") + "\", , filename = \"" +
-			 * profile.getUserUniqueIdentifier() + "\")");
-			 * 
-			 * if (function != null) { if (outVal == null || outVal.equals("")) { outVal = out.getOuputLabel(); rexp = re.parseAndEval("try(HTML(" + function +
-			 * ", append = FALSE))"); } else { rexp = re.parseAndEval("try(HTML(" + function + "(" + outVal + ")" + ", append = FALSE))"); }
-			 * 
-			 * } else { rexp = re.parseAndEval("HTML(" + outVal + ", append = FALSE)"); } if (rexp.inherits("try-error")) {
-			 * logger.debug("Script contains error(s)"); res.setError(rexp.asString()); } else { REXP htmlFile = re.parseAndEval("HTMLGetFile()"); if
-			 * (htmlFile.inherits("try-error")) { logger.debug("Script contains error(s)"); res.setError(htmlFile.asString()); } else if (!htmlFile.isNull()) {
-			 * logger.debug("Html result being created"); re.parseAndEval("u<-HTMLGetFile()"); logger.debug("got html output file");
-			 * re.parseAndEval("HTMLStop()"); rexp = re.parseAndEval("u"); rexp = re.parseAndEval("s<-paste(\"file:///\",u, sep=\"\")"); rexp =
-			 * re.parseAndEval("c<-getURL(s)"); rexp = re.parseAndEval("c"); logger.debug("got html"); // delete temp file: boolean success = (new
-			 * File(htmlFile.asString())).delete(); res.setResult(rexp.asString()); // comma separated
-			 * 
-			 * } else { res.setResult("No result"); } }
-			 */
-			res.setOutputType(out.getOutputType());
-			res.setVariablename(outVal);// could be multiple value
-
-			logger.debug("Evaluated result");
 		}
 		logger.debug("OUT");
 		return res;
@@ -277,123 +303,125 @@ public class PythonOutputExecutor {
 		return imageString;
 	}
 
-	private static FileDataSet createAndPersistDataset(IEngUserProfile profile, String outVal, Output out) throws Exception {
+	private static int createAndPersistDataset(IEngUserProfile profile, String outVal, Output out, String userId, String documentLabel) throws Exception {
 		logger.debug("IN");
+
+		int resPythonExecution = 1;
+		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 
 		FileDataSet dataSet = new FileDataSet();
 		String path = getDatasetsDirectoryPath();
 		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
-		System.out.println("PATH=" + path);
-		// //??
 
 		JSONObject configurationObj = new JSONObject();
 		configurationObj.put("fileType", "CSV");
 		configurationObj.put("csvDelimiter", ",");
 		configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		configurationObj.put("fileName", outVal + ".csv");
+		configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// configurationObj.put("fileName", outVal + ".csv");
 		configurationObj.put("encoding", "UTF-8");
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
 		PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n");
 		PyLib.execScript(outVal + "=" + "pandas.DataFrame(" + outVal + ")\n");
-		PyLib.execScript(outVal + ".to_csv('" + outVal + ".csv'" + ",index=False)\n");
+		resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n");
+		if (resPythonExecution < 0) {
+			return resPythonExecution;
+		}
 
-		dataSet.setFileName(outVal + ".csv");
+		// dataSet.setFileName(outVal + ".csv");
+		dataSet.setFileName(spagoBiDatasetname + ".csv");
 		dataSet.setFileType("CSV");
 		dataSet.setDsType(DataSetConstants.DS_FILE);
 
-		String label = out.getOuputLabel();
-		dataSet.setLabel(label);
-		dataSet.setName(label);
-		dataSet.setDescription(label);
+		dataSet.setLabel(spagoBiDatasetname);
+		dataSet.setName(spagoBiDatasetname);
+		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
 		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
-
-		/*
-		 * String cml; try { cml = writeXMLMetadata(jsonObject); dataSet.setDsMetadata(cml); } catch (SourceBeanException e) {
-		 * logger.error("Error in retrieving fields metadata in correct format from metadata json"); }
-		 */
 
 		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 		dataSetDAO.setUserProfile(profile);
 
-		logger.debug("check if dataset with label " + label + " is already present");
+		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
 
 		// check label is already present; insert or modify dependengly
-		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(label);
+		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
 		// loadActiveDataSetByLabel(label);
 		if (iDataSet != null) {
-			logger.debug("a dataset with label " + label + " is already present: modify it");
+			logger.debug("a dataset with label " + spagoBiDatasetname + " is already present: modify it");
 			dataSet.setId(iDataSet.getId());
 			dataSetDAO.modifyDataSet(dataSet);
 		} else {
-			logger.debug("No dataset with label " + label + " is already present: insert it");
+			logger.debug("No dataset with label " + spagoBiDatasetname + " is already present: insert it");
 			dataSetDAO.insertDataSet(dataSet);
 
 		}
 
-		return dataSet;
+		return resPythonExecution;
 
 	}
 
-	private static FileDataSet createAndPersistDatasetProductByFunction(IEngUserProfile profile, String outVal, Output out, String function) throws Exception {
+	private static int createAndPersistDatasetProductByFunction(IEngUserProfile profile, String outVal, Output out, String function, String userId,
+			String documentLabel) throws Exception {
 		logger.debug("IN");
+		int resPythonExecution = 1;
+		DataMiningResult res = new DataMiningResult();
 
 		FileDataSet dataSet = new FileDataSet();
 		String path = getDatasetsDirectoryPath();
 		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
-		System.out.println("PATH=" + path);
-		// //??
+
+		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 
 		JSONObject configurationObj = new JSONObject();
 		configurationObj.put("fileType", "CSV");
 		configurationObj.put("csvDelimiter", ",");
 		configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		configurationObj.put("fileName", outVal + ".csv");
+		configurationObj.put("fileName", spagoBiDatasetname + ".csv");
 		configurationObj.put("encoding", "UTF-8");
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
 		PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n");
 		PyLib.execScript(outVal + "=" + "pandas.DataFrame(" + function + ")\n");
-		PyLib.execScript(outVal + ".to_csv('" + outVal + ".csv'" + ",index=False)\n");
+		resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n");
 
-		dataSet.setFileName(outVal + ".csv");
+		if (resPythonExecution < 0) {
+			return resPythonExecution;
+		}
+
+		dataSet.setFileName(spagoBiDatasetname + ".csv");
 		dataSet.setFileType("CSV");
 		dataSet.setDsType(DataSetConstants.DS_FILE);
 
 		String label = out.getOuputLabel();
-		dataSet.setLabel(label);
-		dataSet.setName(label);
-		dataSet.setDescription(label);
+		dataSet.setLabel(spagoBiDatasetname);
+		dataSet.setName(spagoBiDatasetname);
+		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
 		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
-
-		/*
-		 * String cml; try { cml = writeXMLMetadata(jsonObject); dataSet.setDsMetadata(cml); } catch (SourceBeanException e) {
-		 * logger.error("Error in retrieving fields metadata in correct format from metadata json"); }
-		 */
 
 		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 		dataSetDAO.setUserProfile(profile);
 
-		logger.debug("check if dataset with label " + label + " is already present");
+		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
 
 		// check label is already present; insert or modify dependengly
-		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(label);
+		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
 		// loadActiveDataSetByLabel(label);
 		if (iDataSet != null) {
-			logger.debug("a dataset with label " + label + " is already present: modify it");
+			logger.debug("a dataset with label " + spagoBiDatasetname + " is already present: modify it");
 			dataSet.setId(iDataSet.getId());
 			dataSetDAO.modifyDataSet(dataSet);
 		} else {
-			logger.debug("No dataset with label " + label + " is already present: insert it");
+			logger.debug("No dataset with label " + spagoBiDatasetname + " is already present: insert it");
 			dataSetDAO.insertDataSet(dataSet);
 
 		}
 
-		return dataSet;
+		return resPythonExecution;
 
 	}
 

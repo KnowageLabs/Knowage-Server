@@ -28,7 +28,6 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 
 public class PythonCommandsExecutor {
-	// private REngine re;
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
 	static private Logger logger = Logger.getLogger(PythonCommandsExecutor.class);
@@ -37,12 +36,6 @@ public class PythonCommandsExecutor {
 		this.dataminingInstance = dataminingInstance;
 		this.profile = profile;
 	}
-
-	/*
-	 * public REngine getRe() { return re; }
-	 * 
-	 * public void setRe(REngine re) { this.re = re; }
-	 */
 
 	/**
 	 * Method called to evaluate all the command prepare the result based on the script each command needs, for the output with mode = auto. Both command and

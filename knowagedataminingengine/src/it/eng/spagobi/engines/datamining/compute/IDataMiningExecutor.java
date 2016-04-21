@@ -8,5 +8,6 @@ import it.eng.spagobi.engines.datamining.model.Output;
 import java.util.HashMap;
 
 public interface IDataMiningExecutor {
-	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun) throws Exception;
+	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun, String documentLabel)
+			throws Exception;
 }
