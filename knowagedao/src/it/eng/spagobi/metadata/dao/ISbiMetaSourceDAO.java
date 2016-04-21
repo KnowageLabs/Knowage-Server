@@ -20,6 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
 import java.util.List;
 
@@ -40,4 +41,6 @@ public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 	public void deleteSource(SbiMetaSource aMetaSource) throws EMFUserError;
 
 	public List<SbiMetaSource> loadAllSources() throws EMFUserError;
+
+	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError;
 }
