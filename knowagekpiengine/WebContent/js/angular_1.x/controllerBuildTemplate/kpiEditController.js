@@ -12,9 +12,9 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.addKpis = [];
 	$scope.typeDocument = "widget";
 	$scope.style = {};
-	$scope.options = {"showvalue": 'true', "showtarget":'true', "showtargetpercentage":'false',"showlineargauge":'true', "showthreshold":'true'};
+	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
-	$scope.typeOfWiew = ['speedometer','semaphore'];
+	$scope.typeOfWiew = ['Speedometer','Semaphore','Kpi Card'];
 	$scope.style.color = "rgb(14, 13, 13)";
 	
 	$scope.selectedKpis = [];
@@ -102,9 +102,39 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 						if(template.chart.style!=undefined){
 							$scope.style = template.chart.style.font;
 						}
-						$scope.options = template.chart.options;
+						if(template.chart.options!=undefined){
+							if(template.chart.options.showlineargauge=="true"){
+								$scope.options.showlineargauge=true;
+							}else{
+								$scope.options.showlineargauge=false;
+							}
+							if(template.chart.options.showtarget=="true"){
+								$scope.options.showtarget=true;
+							}else{
+								$scope.options.showtarget=false;
+							}
+							if(template.chart.options.showtargetpercentage=="true"){
+								$scope.options.showtargetpercentage=true;
+							}else{
+								$scope.options.showtargetpercentage=false;
+							}
+							if(template.chart.options.showthreshold=="true"){
+								$scope.options.showthreshold=true;
+							}else{
+								$scope.options.showthreshold=false;
+							}
+							if(template.chart.options.showvalue=="true"){
+								$scope.options.showvalue=true;
+							}else{
+								$scope.options.showvalue=false;
+							}		
+					
+							$scope.options.vieweas = template.chart.options.vieweas
+						}
+						
 						if($scope.options.history!=undefined){
 							$scope.options.history.size = parseInt($scope.options.history.size);
+							$scope.options.history.units = $scope.options.history.units;
 						}
 						$scope.completeInfoKPI();
 				}

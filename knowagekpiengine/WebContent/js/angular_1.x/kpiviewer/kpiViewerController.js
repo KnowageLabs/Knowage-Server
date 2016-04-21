@@ -57,10 +57,14 @@
 									$scope.percentage =0;
 								}
 								if($scope.documentData.template.chart.options!=undefined){
+									if($scope.documentData.template.chart.options.history!=undefined){
 										if($scope.documentData.template.chart.options.history.size!=undefined){
 											$scope.percentage =$scope.percentage.toFixed($scope.documentData.template.chart.options.history.size);
 										}
+									}else{
+										$scope.percentage =$scope.percentage.toFixed(3);
 									}
+								}
 							
 						} else {
 							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];

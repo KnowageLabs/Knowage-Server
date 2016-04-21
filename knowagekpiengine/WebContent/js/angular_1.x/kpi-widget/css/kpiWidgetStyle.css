@@ -1,0 +1,20 @@
+.nv-axis,  .nv-legendWrap, .nv-controlsWrap{
+	display:none !important;
+}
+
+.grey {
+	color:#cfcfcf;
+}
+
+
+body{
+	background: #cecece;
+	
+}
+
+md-whiteframe{
+	background:#FFFFFF;
+	min-width: 400px;
+}
+
+

@@ -31,12 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/kpi-dinamic-list/KpiDinamicList.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/KpiDinamicList.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/kpiEditController.js"></script>
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css"> 
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/designerKpi/designerCss.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/style/kpiStyleController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/style/kpiStyleController.js"></script>
 
 </head>
 <body ng-controller="templateBuildController">
@@ -64,38 +64,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 
 		 <div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showvalue")}}:</h4></span>
-		  	<md-radio-group layout="row" ng-model="options.showvalue">
+		  	  <md-checkbox ng-model="options.showvalue" aria-label="show value">
+          </md-checkbox>
+		  	<!--  <md-radio-group layout="row" ng-model="options.showvalue">
 	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
 	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>
+   			 </md-radio-group>-->
 		 </div>
 		<div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showtarget")}}:</h4></span>
    		 	<md-radio-group layout="row" ng-model="options.showtarget">
-	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
-	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>
+	    	<md-checkbox ng-model="options.showtarget" aria-label="show target">
    		</div>
    		<div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showpercentage")}}:</h4></span>
-   			 <md-radio-group layout="row" ng-model="options.showtargetpercentage">
-	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
-	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>
+   			 
+	     		<md-checkbox ng-model="options.showtargetpercentage" aria-label="show percentage">
    			 </div>
    			 <div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showgauge")}}:</h4></span>
    			 <md-radio-group layout="row" ng-model="options.showlineargauge">
-	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
-	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>
+	     		<md-checkbox ng-model="options.showlineargauge" aria-label="show linear gauge">
    			 </div>
    			 <div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showthreshold")}}:</h4></span>
-   			<md-radio-group layout="row" ng-model="options.showthreshold">
-	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
-	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>
+   			
+	     		<md-checkbox ng-model="options.showthreshold" aria-label="show threshold">
    			 </div>
    			 
    			<span layout="row">

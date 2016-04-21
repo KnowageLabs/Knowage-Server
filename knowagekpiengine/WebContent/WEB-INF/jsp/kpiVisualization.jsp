@@ -188,10 +188,8 @@ author:
 <!-- Styles -->
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css
-">
-
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/css/kpiWidgetStyle.css">
 <!-- Scripts -->
 <%--
 <script type="text/javascript" 
@@ -216,7 +214,7 @@ author:
 		
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center" class="kn-schedulerKpi">
+<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center center" class="kn-schedulerKpi">
 	
 	<%--
 	<h2>KpiEngine</h2>
@@ -244,25 +242,33 @@ if(type.equalsIgnoreCase("kpi")) {
 			
 			if(showlineargauge) {
 %>
- <kpi-widget ng-model="documentData"
-gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-max-value=gaugeMaxValue gauge-value = gaugeValue gauge-target-value = gaugeTargetValue
-threshold-stops =thresholdStops percentage=percentage
-></kpi-widget> 
-<!--<kpi-linear-gauge flex layout="column" layout-align="center"
-		gauge-id="documentData.docId"
-		label="documentData.docLabel"
-		size="linearGaugeSize"
-		min-value="gaugeMinValue"
-		max-value="gaugeMaxValue"
-		value="gaugeValue"
-		target-value="gaugeTargetValue"
-		threshold-stops="thresholdStops"
-		show-value="documentData.template.chart.options.showvalue"
-		show-target="documentData.template.chart.options.showtarget"
-		show-thresholds="documentData.template.chart.options.showthreshold"
-		value-precision="documentData.template.chart.options.precision"
-		font-conf="documentData.template.chart.style.font"
-	></kpi-linear-gauge> 	-->
+ <kpi-widget flex
+ 	ng-model="documentData"
+	gauge-size=gaugeSize 
+	gauge-min-value=gaugeMinValue 
+	gauge-max-value=gaugeMaxValue 
+	gauge-value = gaugeValue 
+	gauge-target-value = gaugeTargetValue
+	threshold-stops =thresholdStops 
+	percentage=percentage
+></kpi-widget>
+
+<!--
+<kpi-linear-gauge flex layout="column" layout-align="center"
+	gauge-id="documentData.docId"
+	label="documentData.docLabel"
+	size="linearGaugeSize"
+	min-value="gaugeMinValue"
+	max-value="gaugeMaxValue"
+	value="gaugeValue"
+	target-value="gaugeTargetValue"
+	threshold-stops="thresholdStops"
+	show-value="documentData.template.chart.options.showvalue"
+	show-thresholds="documentData.template.chart.options.showthreshold"
+	value-precision="documentData.template.chart.options.precision"
+	font-conf="documentData.template.chart.style.font"
+></kpi-linear-gauge>
+-->
 
 <%
 			} else { 
@@ -335,13 +341,14 @@ threshold-stops =thresholdStops percentage=percentage
 	})();
 	</script>
 	<script type="text/javascript" 
+			src="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/kpiWidgetController.js"></script>
+	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerFactory.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/lib/angular/kpi-widget/kpiWidgetController.js"></script>
+
 			
 			
 </body>
