@@ -109,7 +109,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 	$scope.downloadFile = function(item,ev){
 
-					window.location = "http://localhost:8080/knowage/restful-services/2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/file";
+					var link = "/restful-services/2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/file";
+					sbiModule_download.getLink(link);
 
 	}
 	

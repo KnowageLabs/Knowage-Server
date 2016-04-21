@@ -452,8 +452,10 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 		}
 	}
 	/* download file from direct link */
-	this.getLink = function (directLink){
-		$window.open(directLink,'_blank');
+	this.getLink = function (endPath){
+		var link = sbiModule_config.contextName + endPath;
+		console.log(link)
+		$window.location = link;
 	}
 });
 

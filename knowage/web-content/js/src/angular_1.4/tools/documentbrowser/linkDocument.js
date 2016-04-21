@@ -29,7 +29,7 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 		sbiModule_restServices.promiseGet("2.0/datasources", "")
 		.then(function(response) {
 			console.log(response.data);
-			$scope.dataSourceList = response.data;
+			$scope.sourceList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
