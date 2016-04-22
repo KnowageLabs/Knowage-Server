@@ -196,7 +196,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 		initialize: function(sbiExecutionId, 
 				userId, 
-				hostName, 
+				hostName,
+				protocol, 
 				serverPort, 
 				docLabel, 
 				jsonTemplate, 
@@ -430,9 +431,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.mainContextName = mainContextName;
 			this.chartEngineContextName = thisContextName;
 			
-			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, thisContextName, sbiExecutionId, userId);
-			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, mainContextName, sbiExecutionId, userId);
-			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager('http', hostName, serverPort, exporterContextName, sbiExecutionId, userId);
+			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, thisContextName, sbiExecutionId, userId);
+			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager(protocol, hostName, serverPort, mainContextName, sbiExecutionId, userId);
+			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, serverPort, exporterContextName, sbiExecutionId, userId);
 						
 			this.hostName = hostName; 
 			this.serverPort = serverPort;
