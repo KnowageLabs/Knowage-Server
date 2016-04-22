@@ -78,7 +78,7 @@ function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog){
 			   if(type=='other'){ 
 				   $scope.runningDocuments.splice(0,$scope.documentNavigationToolbarSelectedIndex-1);
 				   $scope.runningDocuments.splice(1,$scope.runningDocuments.length);
-			   }else if('current'){
+			   }else if(type=='current'){
 				   $scope.runningDocuments.splice($scope.documentNavigationToolbarSelectedIndex-1,1);
 			   } else{
 				   $scope.runningDocuments.splice(startIndex,$scope.runningDocuments.length);
