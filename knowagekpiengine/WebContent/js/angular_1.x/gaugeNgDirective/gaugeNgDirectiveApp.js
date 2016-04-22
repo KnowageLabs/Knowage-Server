@@ -504,15 +504,18 @@
 				showThresholds: '=?',
 				valuePrecision: '=?',
 				fontConf: '=?',
+				mini: '=?'
 			},
-			link : function(scope, element, attributes){
-				$timeout(function(){}, 0);
-//				$compile(element.contents())(scope);
-			}
 		};
 	}]);
 	
 	function kpiLinearGaugeCtrl($scope){
+		$scope.mini = 
+			($scope.mini != undefined 
+			&& ($scope.mini == true 
+				|| $scope.mini.trim() == "" 
+				|| $scope.mini.toLowerCase() != 'false'));
+		
 		$scope.svgId = 'kpiLinearGauge_' + $scope.gaugeId;
 		
 		$scope.fontColor = $scope.fontConf.color;

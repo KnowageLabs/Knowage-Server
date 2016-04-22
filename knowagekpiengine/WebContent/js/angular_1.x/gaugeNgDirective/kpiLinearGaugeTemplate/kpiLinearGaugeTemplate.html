@@ -1,7 +1,7 @@
 <div id="{{svgId}}" layout-align="center center" layout="column">
 	<span style="font-size:{{labelFontSize}}; font-family:{{fontConf.fontFamily}}; font-weight:{{fontConf.fontWeight}}; color:{{fontConf.color}};"
 			ng-if="showValue">{{value.toFixed(valuePrecision)}}</span>
-	<svg class="kpiLinearGauge" svg-width="{{size + 20}}" height="100"
+	<svg class="kpiLinearGauge" svg-width="{{size + 20}}"
 			style="font-family: {{fontConf.fontFamily}}; font-weight: {{fontConf.fontWeight}}">
 			
  		<g transform="translate(10,0)">
@@ -15,7 +15,7 @@
 					svg-x1="{{targetValue * sizeScaleFactor || 0}}" svg-x2="{{targetValue * sizeScaleFactor || 0}}"></line>
 			
 		</g>
-		<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};">
+		<g transform="translate(0,10)" svg-style="color: {{fontConf.color}};" ng-if="mini==false")>
 			<g class="tick" transform="translate(10,0)" style="opacity: 1;">
 				<text text-anchor="middle" dy="1em" y="30">{{minValue}}</text>
 			</g>
@@ -33,6 +33,10 @@
 	</svg>
 </div>
 <style>
+#{{svgId}} svg.kpiLinearGauge {
+	height: 60px;
+}
+
 #{{svgId}} svg .measure {
 	fill: #00F;
 	opacity: 0.4;
