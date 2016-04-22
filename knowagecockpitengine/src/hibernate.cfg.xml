@@ -95,6 +95,8 @@
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationDatasource.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationProductType.hbm.xml" />
         
+        <!-- Document Output Parameters -->
+        <mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
         
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiBinContents.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjTemplates.hbm.xml" />
