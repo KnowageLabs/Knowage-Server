@@ -1,4 +1,4 @@
-angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','$mdDialog','$mdToast','scorecardManager_perspectiveUtility','scorecardManager_semaphoreUtility',scorecardPerspectiveDefinitionControllerFunction ]);
+angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','$mdDialog','$mdToast','scorecardManager_perspectiveUtility','scorecardManager_semaphoreUtility','scorecardManager_targetUtility',scorecardPerspectiveDefinitionControllerFunction ]);
 
 
 angular.module('scorecardManager').service('scorecardManager_perspectiveUtility',function(scorecardManager_semaphoreUtility, $q, sbiModule_restServices){
@@ -72,7 +72,7 @@ angular.module('scorecardManager').service('scorecardManager_perspectiveUtility'
 
 
 
-function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility){
+function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility,scorecardManager_targetUtility){
 	 
 	$scope.$on('savePerspective', function(event, args) {
 		 if($scope.currentPerspective.name.trim()==""){
