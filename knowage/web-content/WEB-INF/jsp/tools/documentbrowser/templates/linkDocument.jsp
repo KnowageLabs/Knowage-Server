@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-content layout-padding class="mainContainer" >
 			
 			<md-select placeholder="Select Source" ng-model="source">
-      		<md-option ng-value="source" ng-repeat="source in sourceList">{{source.label}}</md-option>
+      		<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
     		</md-select>
 			
 				<div ng-show="showme == true" layout="row" >
@@ -99,11 +99,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<angular-list
 							layout-fill 
 							id="availableTables_id" 
-							ng-model="ctrl.list" 
+							ng-model="tablesList" 
 							item-name="name"
 							show-search-bar=true
-							speed-menu-option=ctrl.showDatasetInfo
-							click-function="ctrl.moveToListNew(item)"
+							click-function="moveToSelected(item)"
 							style="overflow:hidden"	
 							>					
 							</angular-list>
@@ -125,9 +124,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-content layout-padding >
 							<angular-list layout-fill 
 							id="selectedTables_id" 
-							ng-model="ctrl.listaNew" 
+							ng-model="selectedTables" 
 							item-name="name" 
-							speed-menu-option=ctrl.removeDatasetFromListaNew
+							speed-menu-option=removeFromSelected
 							>					
 							</angular-list>
 						</md-content>

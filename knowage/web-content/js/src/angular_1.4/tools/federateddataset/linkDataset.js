@@ -14,6 +14,21 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	$scope.translate = sbiModule_translate;
 	$scope.showme = true;
 	$scope.sourceList = [];
+	$scope.tablesList = [];
+	$scope.selectedTables = [];
+	
+	
+	$scope.removeFromSelected = [ 			 		               	
+	 		 		               	{
+	 		 		               		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
+	 		 		               		icon:"fa fa-trash-o",
+	 		 		               		backgroundColor:'red',
+	 		 		               		action : function(item) {
+	 		 		               				$scope.remove(item);
+	 		 		               			}
+	 		 		               	}
+	 		 		             ];
+	
 	 
 	//FUNCTIONS	
 		 
@@ -24,7 +39,7 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 
 	
 	$scope.getSources = function(){ // service that gets predefined list GET		
-		sbiModule_restServices.promiseGet("2.0/datasources", "")
+		sbiModule_restServices.promiseGet("2.0/metaSourceResource", "")
 		.then(function(response) {
 			console.log(response.data);
 			$scope.sourceList = response.data;
@@ -34,6 +49,34 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 		});	
 	}
 	
+	$scope.getTablesBySourceID = function(id){	
+		sbiModule_restServices.promiseGet("2.0/metaSourceResource/"+id+"/metatables", "")
+		.then(function(response) {
+			console.log(response.data);
+			$scope.tablesList = response.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
+	}
+	
+	$scope.moveToSelected = function(item){	
+		
+		var index = $scope.tablesList.indexOf(item);
+		if($scope.selectedTables.indexOf(item)===-1){
+			$scope.selectedTables.push(item);
+			
+		}
+	}
+	
+$scope.remove = function(item){	
+		
+	var index = $scope.selectedTables.indexOf(item);
+		if($scope.selectedTables.indexOf(item)>-1){
+			$scope.selectedTables.splice(index,1);
+			
+		} 
+	}
 
 };
 
