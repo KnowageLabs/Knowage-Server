@@ -17,4 +17,14 @@ public class ScorecardPerspective extends ScorecardSubview {
 		return targets;
 	}
 
+	public void addTarget(ScorecardTarget scorecardTarget) {
+		targets.add(scorecardTarget);
+		Integer count = getStatusSummary().get(scorecardTarget.getStatus());
+		if (count == null) {
+			getStatusSummary().put(scorecardTarget.getStatus(), 1);
+		} else {
+			count++;
+			getStatusSummary().put(scorecardTarget.getStatus(), count);
+		}
+	}
 }

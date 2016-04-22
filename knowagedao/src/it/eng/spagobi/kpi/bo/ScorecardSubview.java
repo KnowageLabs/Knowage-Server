@@ -4,8 +4,8 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
 import it.eng.spagobi.services.serialization.JsonConverter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +21,7 @@ public class ScorecardSubview {
 
 	// TODO status will be rendered as a color (green/yellow/red)
 	private STATUS status;
-	private final List<CountByStatus> groupedKpis = new ArrayList<>();
+	private final Map<STATUS, Integer> statusSummary = new HashMap<>();
 
 	/**
 	 * @return the id
@@ -69,11 +69,10 @@ public class ScorecardSubview {
 	}
 
 	/**
-	 * @return the groupedKpis
+	 * @return the statusSummary
 	 */
-	@JsonIgnore
-	public List<CountByStatus> getGroupedKpis() {
-		return groupedKpis;
+	public Map<STATUS, Integer> getStatusSummary() {
+		return statusSummary;
 	}
 
 	/**
@@ -122,9 +121,4 @@ public class ScorecardSubview {
 		this.scorecardOption = scorecardOption;
 	}
 
-}
-
-class CountByStatus {
-	ScorecardStatus.STATUS status;
-	int count;
 }

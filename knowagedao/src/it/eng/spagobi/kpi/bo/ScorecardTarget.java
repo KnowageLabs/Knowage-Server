@@ -14,4 +14,15 @@ public class ScorecardTarget extends ScorecardSubview {
 		return kpis;
 	}
 
+	public void addKpi(KpiExecution kpi) {
+		kpis.add(kpi);
+		Integer count = getStatusSummary().get(kpi.getStatus());
+		if (count == null) {
+			getStatusSummary().put(kpi.getStatus(), 1);
+		} else {
+			count++;
+			getStatusSummary().put(kpi.getStatus(), count);
+		}
+	}
+
 }

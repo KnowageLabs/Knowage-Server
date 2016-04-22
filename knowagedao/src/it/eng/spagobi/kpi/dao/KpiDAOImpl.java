@@ -1399,12 +1399,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (SbiKpiScorecard sbiTarget : sbiPerspective.getSubviews()) {
 					ScorecardTarget target = new ScorecardTarget();
 					target = (ScorecardTarget) from(target, sbiTarget);
-					perspective.getTargets().add(target);
 					List<ScorecardStatus> ssForTarget = new ArrayList<>();
 					for (SbiKpiKpi sbiKpi : sbiTarget.getSbiKpiKpis()) {
 						KpiExecution kpi = from(new KpiExecution(), sbiKpi, null, false);
 						kpi.setStatus(statusValues.get(kpi.getId() % SIZE));
-						target.getKpis().add(kpi);
 						ScorecardStatus scorecardStatus = new ScorecardStatus();
 						scorecardStatus.setStatus(kpi.getStatus());
 						ssForTarget.add(scorecardStatus);
@@ -1414,7 +1412,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 								break;
 							}
 						}
-
+						target.addKpi(kpi);
 					}
 
 					String criterionClassName = target.getCriterion().getValueDescription();
@@ -1433,6 +1431,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 							break;
 						}
 					}
+					perspective.addTarget(target);
 				}
 				String criterionClassName = perspective.getCriterion().getValueDescription();
 				try {
