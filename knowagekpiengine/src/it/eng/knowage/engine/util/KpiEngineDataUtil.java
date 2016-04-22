@@ -49,23 +49,24 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 				tempResult.put("scorecard", object);
 				result.put(tempResult);
 			} else {
-				// widget case
-				if (chart.getString("model").equals("list")) {
+
+				if (chart.getJSONObject("data").get("kpi") instanceof JSONArray) {
 					array = chart.getJSONObject("data").getJSONArray("kpi");
 				} else {
-					chart = chart.getJSONObject("data").getJSONObject("kpi");
+					array.put(chart.getJSONObject("data").getJSONArray("kpi"));
 				}
-				if (array.length() == 0) {
-					// model="widget"
+
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject temp = array.getJSONObject(i);
 					JSONObject tempResult = new JSONObject();
-					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(chart.getInt("id"), chart.getInt("version"));
+
+					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
 					List<SbiKpiTarget> sbiKpiTargets = DAOFactory.getNewKpiDAO().listTargetbyKpi(kpi);
 					JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
 					object.remove("definition");
 					object.remove("enableVersioning");
 					object.remove("category");
 					object.remove("cardinality");
-
 					tempResult.put("kpi", object);
 					JSONArray arrayTargets = new JSONArray();
 					for (int j = 0; j < sbiKpiTargets.size(); j++) {
@@ -75,30 +76,9 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					}
 					tempResult.put("target", arrayTargets);
 					result.put(tempResult);
-				} else {
-					// model="list"
-					for (int i = 0; i < array.length(); i++) {
-						JSONObject temp = array.getJSONObject(i);
-						JSONObject tempResult = new JSONObject();
-
-						Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
-						List<SbiKpiTarget> sbiKpiTargets = DAOFactory.getNewKpiDAO().listTargetbyKpi(kpi);
-						JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
-						object.remove("definition");
-						object.remove("enableVersioning");
-						object.remove("category");
-						object.remove("cardinality");
-						tempResult.put("kpi", object);
-						JSONArray arrayTargets = new JSONArray();
-						for (int j = 0; j < sbiKpiTargets.size(); j++) {
-							JSONObject target = new JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass()));
-							arrayTargets.put(target);
-						}
-						tempResult.put("target", arrayTargets);
-						result.put(tempResult);
-					}
 				}
 			}
+
 			return result.toString();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
