@@ -30,7 +30,8 @@
 		
 		<md-content  flex class="leftRightPanelHeight">
 				<customize-view-workspace>													</customize-view-workspace>						
-				<recent-view-workspace 		ng-show="currentOptionMainMenu=='recent'">		</recent-view-workspace>	
+				<recent-view-workspace 		ng-show="currentOptionMainMenu.length==0 
+				|| currentOptionMainMenu=='recent'">										</recent-view-workspace>	
 				<favorites-view-workspace 	ng-show="currentOptionMainMenu=='favorites'">	</favorites-view-workspace>	
 				<documents-view-workspace 	ng-show="currentOptionMainMenu=='documents'">	</documents-view-workspace>			
 				<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</datasets-view-workspace>

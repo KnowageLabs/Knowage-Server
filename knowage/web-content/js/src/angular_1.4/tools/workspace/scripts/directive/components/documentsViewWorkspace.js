@@ -10,7 +10,10 @@ angular
 		  };	  
 	})
 
-function documentsController($scope,sbiModule_restServices,sbiModule_translate){
+function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav){
+	
+	$scope.selectedDocument = undefined;
+	$scope.showDocumentInfo = false;
 	
 	$scope.loadAllDocuments=function(){
 		sbiModule_restServices.promiseGet("2.0/documents", "")
@@ -22,5 +25,40 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate){
 	}
 	
 	$scope.loadAllDocuments();
+	
+	$scope.showDocumentDetails = function() {
+		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
+	};
+	
+	
+	$scope.isSelectedDocumentValid = function() {
+		return $scope.selectedDocument !== undefined;
+	};
+	
+	$scope.setDetailOpen = function(isOpen) {
+		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
+			$scope.toggleDocumentDetail();
+		}
+
+		$scope.showDocumentInfo = isOpen;
+	};
+	
+	$scope.toggleDocumentDetail = function() {
+		$mdSidenav('right').toggle();
+	};
+	
+	$scope.selectDocument= function ( document ) { 
+		if (document !== undefined) {
+			$scope.lastDocumentSelected = document;
+		}
+		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
+		$scope.selectedDocument = document;
+		if (alreadySelected) {
+			$scope.selectedDocument=undefined;
+			$scope.setDetailOpen(!$scope.showDocumentDetail);
+		} else {
+			$scope.setDetailOpen(document !== undefined);
+		}
+	};
 
 }

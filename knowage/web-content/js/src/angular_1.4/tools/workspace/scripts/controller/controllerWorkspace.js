@@ -32,6 +32,7 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.geoAnalysisDocs = [];
 	
 	$scope.currentOptionMainMenu = "";
+	$scope.isDocumentFavorite = false;
 	
 	/**
 	 * Flag that servers as indicator for toggling between grid and list view of documents.
@@ -81,6 +82,19 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 				}
 			}
 		}, 400);
+	}
+	
+	$scope.addToFavorites= function(doc,index){
+		console.log(index);
+		for (var i = 0; i < $scope.allDocuments.length; i++) {
+			if($scope.allDocuments[i].id==doc.id) {
+				$scope.isDocumentFavorite = !$scope.isDocumentFavorite;
+			}
+		}
+		$scope.selectedRow = index;
+		console.log(doc)
+		console.log(doc.label)
+		console.log(doc.creationUser)
 	}
 	
 }

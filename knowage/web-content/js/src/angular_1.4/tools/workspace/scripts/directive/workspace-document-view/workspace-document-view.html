@@ -33,8 +33,8 @@
 			            <md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="addToFavouritesAction({doc:document});">
-			            <md-icon md-font-icon="fa fa-star fa-2x"></md-icon>
+			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="addToFavoritesAction({doc:document, index:$index});">
+			            <md-icon md-font-icon="fa fa-star fa-2x" ng-class="{'yesFav':$index == selectedRow}"></md-icon>
 			          </md-button>
 			          
 			          <md-button class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">

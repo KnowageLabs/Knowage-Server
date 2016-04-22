@@ -5,7 +5,10 @@
  					ng-model=allDocuments
  					show-grid-view=showGridView
  					show-add-to-organizer="true"
- 					execute-document-action="executeDocument(doc)" >
+ 					is-doc-favorite=isDocumentFavorite
+ 					selected-row=selectedRow
+ 					execute-document-action="executeDocument(doc)"
+ 					add-to-favorites-action="addToFavorites(doc,index)" >
 	</workspace-document-view>	
 
 </md-content>

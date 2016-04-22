@@ -1,1 +1,14 @@
-<md-content> RECENT DOCUMENTS </md-content>
+<md-content flex layout="column" layout-fill class="rightPanelDocuments">
+
+	<workspace-document-view 	class="kn-documentBrowser" flex 
+ 					style='overflow:auto;' 
+ 					ng-model=allDocuments
+ 					show-grid-view=showGridView
+ 					show-add-to-organizer="true"
+ 					is-doc-favorite=isDocumentFavorite
+ 					selected-row=selectedRow
+ 					execute-document-action="executeDocument(doc)"
+ 					add-to-favorites-action="addToFavorites(doc,index)" >
+	</workspace-document-view>	
+	
+</md-content>
