@@ -34,6 +34,14 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					
 				});
 			},
+			checkValue: function(item){
+				console.log(item);
+				if(isNaN(item.rangeMinValue) || isNaN(item.rangeMaxValue)){
+					return true;
+				}else{
+					return item.rangeMinValue>=item.rangeMaxValue;
+				}
+			},
 			vieweAs: [{"label":"speedometer","value":"Speedometer"},{"label":"semaphore","value":"Semaphore"},{"label":"kpicard","value":"Kpi Card"}]
 
 
@@ -65,12 +73,16 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 			s.tableKpisColumn=[
 				                     {"label":"Name","name":"name"},
 				                     {"label":"Category","name":"valueCd"},
+				                     {"label":"Range Min Value","name":"rangeMinValueHTML"},
+				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
 				                  ];
 		}else{
 			s.tableKpisColumn=[
 				                     {"label":"Name","name":"name"},
 				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"Viewe As","name":"vieweAsList"}
+				                     {"label":"Viewe As","name":"vieweAsList"},
+				                     {"label":"Range Min Value","name":"rangeMinValueHTML"},
+				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
 				                  ];
 		}
 		
@@ -134,6 +146,16 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					+' </md-option>'
 					+'</md-select>';
 				obj["vieweAs"]="";
+				obj["rangeMinValueHTML"]= '<md-input-container class="md-block">'
+					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}">Range Min Value</label>'
+					+'<input required type="number" name="min" ng-model="row.rangeMinValue" />'
+					+'</md-input-container>';
+				obj["rangeMaxValueHTML"]='<md-input-container class="md-block">'
+					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}" >Range Max Value</label>'
+					+'<input required type="number" name="max" ng-model="row.rangeMaxValue" />'
+					+'</md-input-container>';
+				obj["rangeMinValue"]= "";
+				obj["rangeMaxValue"]= "";
 				s.kpiAllList.push(obj);
 
 			}
