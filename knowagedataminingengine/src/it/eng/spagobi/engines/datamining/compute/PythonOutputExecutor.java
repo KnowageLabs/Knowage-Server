@@ -86,6 +86,10 @@ public class PythonOutputExecutor {
 
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
+
+			// In case the system where Datamining engine is running isn't a X server (doesn't have $DISPLAY variable initialized)
+			PyLib.execScript("import matplotlib\n" + "matplotlib.add('Agg')\n");
+
 			res.setVariablename(outVal);// could be multiple value
 										// comma separated
 			String plotName = out.getOutputName();
