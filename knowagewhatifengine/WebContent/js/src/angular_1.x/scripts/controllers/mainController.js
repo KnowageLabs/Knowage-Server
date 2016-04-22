@@ -192,4 +192,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 							'Error');
 				});
 	};
+	
+	
 }

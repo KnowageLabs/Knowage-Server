@@ -9,10 +9,9 @@ angular.module('filter_card',[])
 	});
 
 function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
-	$scope.member;
-	$scope.selecetedMultiHierUN;
-	
 	$scope.showMultiHierDialog = function(ev,f){
+		if($scope.member != undefined)
+			$scope.member.hierarchies = [];
 		$scope.member = f;
 		$scope.selecetedMultiHierUN = $scope.member.hierarchies[$scope.member.selectedHierarchyPosition].uniqueName;
 		$scope.showDialog(ev,"/main/filter/multiHierarchyDialog.html");
@@ -44,5 +43,4 @@ function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			sbiModule_messaging.showErrorMessage("Error", 'An error occured has occured while updateing hierachie.');
 		});
 	};
-	
 };
