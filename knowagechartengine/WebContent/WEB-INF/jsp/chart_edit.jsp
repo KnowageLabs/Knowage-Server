@@ -203,7 +203,6 @@ author:
   			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
  			var userId = '<%=userId%>';
  			var hostName = '<%=request.getServerName()%>';
- 			var protocol = '<%=request.getProtocol().toUpperCase().startsWith("HTTPS")?"https":"http"%>';
  			var serverPort = '<%=request.getServerPort()%>';
  			var docLabel = '<%= docLabel %>';
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
@@ -223,7 +222,6 @@ author:
  					sbiExecutionId, 
  					userId, 
  					hostName,
- 					protocol, 
  					serverPort, 
  					docLabel, 
  					jsonTemplate, 

@@ -197,7 +197,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		initialize: function(sbiExecutionId, 
 				userId, 
 				hostName,
-				protocol, 
 				serverPort, 
 				docLabel, 
 				jsonTemplate, 
@@ -430,6 +429,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			this.mainContextName = mainContextName;
 			this.chartEngineContextName = thisContextName;
+			
+			var protocol = window.location.protocol;
 			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, thisContextName, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager(protocol, hostName, serverPort, mainContextName, sbiExecutionId, userId);

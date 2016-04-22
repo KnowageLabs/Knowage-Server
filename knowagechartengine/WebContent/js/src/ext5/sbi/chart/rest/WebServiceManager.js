@@ -3,7 +3,7 @@ Ext.define('Sbi.chart.rest.WebServiceManager', {
     requires: 'Sbi.chart.rest.WebService',
     config: {
         serviceConfig: {
-            protocol: 'http',
+            protocol: 'http:',
             hostName: 'localhost',
             tcpPort: '8080',
             

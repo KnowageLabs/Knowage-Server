@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.rest.WebService', {
     extend: 'Ext.util.Observable',
     config: {
-        protocol: 'http',
+        protocol: 'http:',
         hostName: 'localhost',
         tcpPort: '8080',      
         
@@ -22,7 +22,7 @@ Ext.define('Sbi.chart.rest.WebService', {
     
     ,
     getUrl: function() {
-        return this.getProtocol() + '://' + this.getHostName() + ':' + this.getTcpPort() + this.getContext() + this.getWsPrefix() + this.getService();
+        return this.getProtocol() + '//' + this.getHostName() + ':' + this.getTcpPort() + this.getContext() + this.getWsPrefix() + this.getService();
     }
 
     ,
