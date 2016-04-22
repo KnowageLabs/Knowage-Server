@@ -1397,8 +1397,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				scorecard.getPerspectives().add(perspective);
 				List<ScorecardStatus> ssForPerspective = new ArrayList<>();
 				for (SbiKpiScorecard sbiTarget : sbiPerspective.getSubviews()) {
-					ScorecardTarget target = new ScorecardTarget();
-					target = (ScorecardTarget) from(target, sbiTarget);
+					ScorecardTarget goal = new ScorecardTarget();
+					goal = (ScorecardTarget) from(goal, sbiTarget);
 					List<ScorecardStatus> ssForTarget = new ArrayList<>();
 					for (SbiKpiKpi sbiKpi : sbiTarget.getSbiKpiKpis()) {
 						KpiExecution kpi = from(new KpiExecution(), sbiKpi, null, false);
@@ -1406,32 +1406,34 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						ScorecardStatus scorecardStatus = new ScorecardStatus();
 						scorecardStatus.setStatus(kpi.getStatus());
 						ssForTarget.add(scorecardStatus);
-						for (String kpiName : target.getScorecardOption().getCriterionPriority()) {
+						for (String kpiName : goal.getScorecardOption().getCriterionPriority()) {
 							if (kpi.getName().equals(kpiName)) {
 								scorecardStatus.setPriority(true);
 								break;
 							}
 						}
-						target.addKpi(kpi);
+						goal.getKpis().add(kpi);
+						goal.countKpi(kpi);
 					}
 
-					String criterionClassName = target.getCriterion().getValueDescription();
+					String criterionClassName = goal.getCriterion().getValueDescription();
 					try {
 						IScorecardCriterion criterion = (IScorecardCriterion) Class.forName(criterionClassName).newInstance();
-						target.setStatus(criterion.evaluate(ssForTarget));
+						goal.setStatus(criterion.evaluate(ssForTarget));
 					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 						logger.error("Criterion class not found: " + criterionClassName, e);
 					}
 					for (String targetName : perspective.getScorecardOption().getCriterionPriority()) {
 						ScorecardStatus scorecardStatus = new ScorecardStatus();
-						scorecardStatus.setStatus(target.getStatus());
+						scorecardStatus.setStatus(goal.getStatus());
 						ssForPerspective.add(scorecardStatus);
-						if (target.getName().equals(targetName)) {
+						if (goal.getName().equals(targetName)) {
 							scorecardStatus.setPriority(true);
 							break;
 						}
 					}
-					perspective.addTarget(target);
+					perspective.getTargets().add(goal);
+					perspective.countKpiByGoal(goal);
 				}
 				String criterionClassName = perspective.getCriterion().getValueDescription();
 				try {

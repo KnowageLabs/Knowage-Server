@@ -4,6 +4,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
 import it.eng.spagobi.services.serialization.JsonConverter;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +20,8 @@ public class ScorecardSubview {
 	@JsonIgnore
 	private ScorecardOption scorecardOption;
 
-	// TODO status will be rendered as a color (green/yellow/red)
 	private STATUS status;
-	private final Map<STATUS, Integer> statusSummary = new HashMap<>();
+	private final Map<STATUS, CountByStatus> groupedKpiMap = new HashMap<>();
 
 	/**
 	 * @return the id
@@ -69,10 +69,10 @@ public class ScorecardSubview {
 	}
 
 	/**
-	 * @return the statusSummary
+	 * @return the groupedKpis
 	 */
-	public Map<STATUS, Integer> getStatusSummary() {
-		return statusSummary;
+	public Collection<CountByStatus> getGroupedKpis() {
+		return groupedKpiMap.values();
 	}
 
 	/**
@@ -119,6 +119,47 @@ public class ScorecardSubview {
 	 */
 	public void setScorecardOption(ScorecardOption scorecardOption) {
 		this.scorecardOption = scorecardOption;
+	}
+
+	/**
+	 * @return the groupedKpiMap
+	 */
+	@JsonIgnore
+	protected Map<STATUS, CountByStatus> getGroupedKpiMap() {
+		return groupedKpiMap;
+	}
+
+}
+
+class CountByStatus {
+	private final ScorecardStatus.STATUS status;
+	private int count;
+
+	public CountByStatus(ScorecardStatus.STATUS status) {
+		this.status = status;
+		this.count = 1;
+	}
+
+	public void add() {
+		this.count++;
+	}
+
+	public void sum(int c) {
+		this.count += c;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public ScorecardStatus.STATUS getStatus() {
+		return status;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public int getCount() {
+		return count;
 	}
 
 }
