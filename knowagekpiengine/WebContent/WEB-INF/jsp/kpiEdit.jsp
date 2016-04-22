@@ -58,10 +58,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<h2 class="md-flex" >Type of Document</h2>
 	</div>
 	</md-toolbar>
-	<md-radio-group layout="row" ng-model="typeDocument" ng-if="typeChart=='kpi'">
+	<md-radio-group layout="row" ng-model="typeDocument" ng-show="typeChart=='kpi'">
 	     		<md-radio-button  value='list' >List</md-radio-button>
 	     		<md-radio-button  value='widget'> Widget </md-radio-button>
    	</md-radio-group>
+
 	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="'Scorecard List'">
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin style ="height: 80%;" > 
 
@@ -80,8 +81,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</angular-table>	
    </md-whiteframe>       
 	</expander-box>
-	<expander-box id="Info" color="white" ng-if="typeChart=='kpi'" expanded="true" title="'Kpi List'">
-		<dinamic-list ng-model="selectedKpis" multi-select=true selected-item ="addKpis"></dinamic-list>  
+	<expander-box id="Info" color="white" ng-show="typeChart=='kpi'" expanded="true" title="'Kpi List'">
+		<dinamic-list ng-model="selectedKpis" type-chart="typeDocument" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
 	<expander-box id="Info" color="white" expanded="false" title="'Options'" ng-if="typeChart=='kpi'">
 		 <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout layout-fill layout-margin  >
@@ -90,10 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showvalue")}}:</h4></span>
 		  	  <md-checkbox ng-model="options.showvalue" aria-label="show value">
           </md-checkbox>
-		  	<!--  <md-radio-group layout="row" ng-model="options.showvalue">
-	     		<md-radio-button  value='true' >{{translate.load("sbi.general.true")}}</md-radio-button>
-	     		<md-radio-button  value='false'> {{translate.load("sbi.general.false")}} </md-radio-button>
-   			 </md-radio-group>-->
+
 		 </div>
 		<div layout="row">
 		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showtarget")}}:</h4></span>

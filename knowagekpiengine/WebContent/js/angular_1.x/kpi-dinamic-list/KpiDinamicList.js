@@ -6,7 +6,8 @@ angular.module('dinamic-list', ['ngMaterial','sbiModule'])
 		scope: {
 			ngModel:'=',
 			selectedItem:'=', 
-			multiSelect: '='
+			multiSelect: '=',
+			typeChart: '='
 		},
 		link: function (scope, elm, attrs) { 
 
@@ -18,6 +19,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	var s=$scope;
 	s.translate=sbiModule_translate;
 	s.kpiAllList = [];
+	s.tableKpisColumn = [];
 	s.tableFunction={
 			loadListKPI: function(item,evt){
 			
@@ -36,7 +38,10 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 
 
 	}
-
+	
+	
+	
+	
 	s.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
@@ -52,8 +57,41 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		}else{
 			s.ngModel = [];
 		}
+
 	}
 	
+	s.$watch('typeChart' , function(newValue,oldValue){
+		if(newValue=='list'){
+			s.tableKpisColumn=[
+				                     {"label":"Name","name":"name"},
+				                     {"label":"Category","name":"valueCd"},
+				                  ];
+		}else{
+			s.tableKpisColumn=[
+				                     {"label":"Name","name":"name"},
+				                     {"label":"Category","name":"valueCd"},
+				                     {"label":"Viewe As","name":"vieweAsList"}
+				                  ];
+		}
+		
+	});
+		
+	
+	s.setColumns = function(){
+		if(s.typeChart=='list'){
+			s.tableKpisColumn=[
+				                     {"label":"Name","name":"name"},
+				                     {"label":"Category","name":"valueCd"},
+				                  ];
+		}else{
+			s.tableKpisColumn=[
+				                     {"label":"Name","name":"name"},
+				                     {"label":"Category","name":"valueCd"},
+				                     {"label":"Viewe As","name":"vieweAsList"}
+				                  ];
+		}
+	}
+	s.setColumns();
 	s.removeKpi = function(item){
 		var confirm = $mdDialog.confirm()
 		.title(s.translate.load("sbi.kpi.measure.delete.title"))

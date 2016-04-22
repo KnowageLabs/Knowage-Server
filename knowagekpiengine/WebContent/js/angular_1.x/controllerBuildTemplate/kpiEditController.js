@@ -10,7 +10,7 @@ app.controller('templateBuildController', ['$scope','sbiModule_translate' ,"$mdD
 function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$timeout,sbiModule_config,$httpParamSerializer,$filter){
 	$scope.translate=sbiModule_translate;
 	$scope.addKpis = [];
-	$scope.typeDocument = "widget";
+	$scope.typeDocument = 'widget';
 	$scope.style = {};
 	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
@@ -21,6 +21,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];
+	
 	$scope.tableFunction={
 
 			loadListScorecard: function(item,evt){
@@ -177,9 +178,9 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 							$scope.loadScorecardTemplate(template);
 						}
 						
-				}
+					}
 				},function(response) {
-					$scope.errorHandler(response.data,"");
+					console.log("No template");
 				});
 	}
 	
