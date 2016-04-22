@@ -39,10 +39,12 @@ import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.ICWM;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -81,10 +83,13 @@ public class SpagoBICWMJMIImpl implements ICWM {
 	private BehavioralPackage behavioralPackage;
 	private OlapPackage olapPackage;
 	private DataTypesPackage dataTypesPackage;
+	Map<String, CwmSqlsimpleType> sqlSimpleTypes;
 
 	public static final String CWM = "CWM-Model-M3"; //$NON-NLS-1$
 
 	public SpagoBICWMJMIImpl(String modelName) {
+
+		sqlSimpleTypes = new HashMap<String, CwmSqlsimpleType>();
 		try {
 			repository = getRepositoryInstance();
 
@@ -184,9 +189,15 @@ public class SpagoBICWMJMIImpl implements ICWM {
 	}
 
 	public CwmSqlsimpleType createSQLSimpleType(String name) {
-		CwmSqlsimpleType sqlSimpleType = relationalPackage.getCwmSqlsimpleType().createCwmSqlsimpleType();
-		sqlSimpleType.setName(name);
-		return sqlSimpleType;
+		CwmSqlsimpleType existingSqlSimpleType = sqlSimpleTypes.get(name);
+		if (existingSqlSimpleType != null) {
+			return existingSqlSimpleType;
+		} else {
+			CwmSqlsimpleType sqlSimpleType = relationalPackage.getCwmSqlsimpleType().createCwmSqlsimpleType();
+			sqlSimpleType.setName(name);
+			sqlSimpleTypes.put(name, sqlSimpleType);
+			return sqlSimpleType;
+		}
 	}
 
 	public CwmPrimaryKey createPrimaryKey(String name) {
@@ -243,6 +254,20 @@ public class SpagoBICWMJMIImpl implements ICWM {
 			writer.write(new FileOutputStream(filename), spagobiPackage, "1.2"); //$NON-NLS-1$
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to export cwm model [" + name + "] to xmi", t);
+		}
+	}
+
+	@Override
+	public ByteArrayOutputStream exportStreamToXMI() {
+		XMIWriterFactory factory = XMIWriterFactory.getDefault();
+		XMIWriter writer = factory.createXMIWriter();
+		writer.getConfiguration().setEncoding("UTF-8");
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			writer.write(baos, spagobiPackage, "1.2"); //$NON-NLS-1$
+			return baos;
+		} catch (Throwable t) {
+			throw new RuntimeException("Impossible to export cwm model [" + name + "] to xmi output stream", t);
 		}
 	}
 

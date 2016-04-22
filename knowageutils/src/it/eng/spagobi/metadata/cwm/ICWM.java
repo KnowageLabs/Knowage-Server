@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.metadata.cwm;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  * @author agioia
@@ -30,6 +32,8 @@ public interface ICWM {
 	public void setName(String name);
 
 	public void exportToXMI(String filename);
+
+	public ByteArrayOutputStream exportStreamToXMI();
 
 	public void importFromXMI(String filename);
 }

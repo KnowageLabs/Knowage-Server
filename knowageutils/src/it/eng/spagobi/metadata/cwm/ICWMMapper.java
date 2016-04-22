@@ -41,7 +41,7 @@ public abstract class ICWMMapper implements IMapper {
 
 	@Override
 	public Object encodeModel(ModelObject modelObject) {
-		// TODO for the moment we are able to encode only a small portion of the entire model
+		// for the moment we are able to encode only a the Physical Model of the entire Metamodel
 		if (modelObject instanceof PhysicalModel) {
 			return encodeICWM((PhysicalModel) modelObject);
 		} else {

@@ -35,7 +35,9 @@ import it.eng.spagobi.metadata.cwm.ICWMMapper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -56,6 +58,8 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 	}
 
 	public PhysicalModel decodeModel(SpagoBICWMJMIImpl cwm) {
+		// TODO: incomplete implementation
+
 		PhysicalModel model = FACTORY.createPhysicalModel();
 		model.setName(cwm.getName());
 
@@ -83,7 +87,10 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 		List<PhysicalTable> tables = model.getTables();
 		CwmTable cwmTable;
 		Collection<CwmTable> ts = schema.getOwnedElement();
-		List<CwmPrimaryKey> addedCwmPrimaryKeys = new ArrayList<CwmPrimaryKey>();
+		// Map used to keep track of pk and fk for each table
+		Map<PhysicalTable, CwmPrimaryKey> addedCwmPrimaryKeys = new HashMap<PhysicalTable, CwmPrimaryKey>();
+		Map<PhysicalTable, List<CwmForeignKey>> addedCwmForeignKeys = new HashMap<PhysicalTable, List<CwmForeignKey>>();
+
 		for (int i = 0; i < tables.size(); i++) {
 			cwmTable = encodeTable(cwm, tables.get(i));
 			ts.add(cwmTable);
@@ -94,7 +101,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 			List<PhysicalColumn> primaryKeyColumns = null;
 			if (physicalPrimaryKey != null) {
 				cwmPrimaryKey = encodePrimaryKey(cwm, physicalPrimaryKey.getName());
-				addedCwmPrimaryKeys.add(cwmPrimaryKey);
+				addedCwmPrimaryKeys.put(tables.get(i), cwmPrimaryKey);
 				primaryKeyColumns = physicalPrimaryKey.getColumns();
 			}
 			// Check and create foreign keys
@@ -106,6 +113,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 				cwmForeignKey.setNamespace(cwmTable);
 				cwmTable.getOwnedElement().add(cwmForeignKey);
 				cwmForeignKeys.add(cwmForeignKey);
+				addedCwmForeignKeys.put(tables.get(i), cwmForeignKeys);
 			}
 
 			// Create columns and attach to table
@@ -142,19 +150,33 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 			}
 		}
 
-		// TODO: Set the the referenced primary keys of the foreign keys
-		Collection<CwmForeignKey> foreignKeys = cwm.getForeignKeys();
-		Collection<CwmPrimaryKey> primaryKeys = cwm.getPrimaryKeys();
-
-		for (CwmForeignKey foreignKey : foreignKeys) {
-			List<PhysicalForeignKey> physicalForeignKeys = model.getForeignKeys();
+		// Set the the referenced primary keys of the foreign keys
+		// scan all the tables
+		for (PhysicalTable physicalTable : tables) {
+			// get foreign keys of specific table
+			List<PhysicalForeignKey> physicalForeignKeys = model.getForeignKeys(physicalTable);
+			// scan all foreign keys
 			for (PhysicalForeignKey physicalForeignKey : physicalForeignKeys) {
-				if (physicalForeignKey.getName().equals(foreignKey.getName())) {
-					List<PhysicalColumn> destinationColumns = physicalForeignKey.getDestinationColumns();
-					for (PhysicalColumn destinationColumn : destinationColumns) {
-						for (CwmPrimaryKey primaryKey : primaryKeys) {
-
+				PhysicalTable destinationPhysicalTable = physicalForeignKey.getDestinationTable();
+				// get corresponding cwmTable
+				for (CwmTable destinationCwmTable : ts) {
+					if (destinationCwmTable.getName().equals(destinationPhysicalTable.getName())) {
+						// retrieve primary key of destination table
+						CwmPrimaryKey destTableCwmPk = addedCwmPrimaryKeys.get(destinationPhysicalTable);
+						if (destTableCwmPk != null) {
+							List<CwmForeignKey> cwmForeignKeys = addedCwmForeignKeys.get(physicalTable);
+							// search specific fk
+							if (cwmForeignKeys != null) {
+								for (CwmForeignKey cwmForeignKey : cwmForeignKeys) {
+									if (cwmForeignKey.getName().equals(physicalForeignKey.getName())) {
+										// this pk will be added to this fk
+										cwmForeignKey.setUniqueKey(destTableCwmPk);
+										destTableCwmPk.getKeyRelationship().add(cwmForeignKey);
+									}
+								}
+							}
 						}
+
 					}
 				}
 			}

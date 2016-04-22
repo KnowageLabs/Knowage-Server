@@ -34,6 +34,7 @@ import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
 import it.eng.spagobi.metadata.cwm.ICWM;
 import it.eng.spagobi.metadata.cwm.ICWMMapper;
+import it.eng.spagobi.metadata.etl.ETLMetadata;
 import it.eng.spagobi.metadata.etl.ETLParser;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.services.common.EnginConf;
@@ -44,10 +45,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +68,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -202,22 +206,36 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// 1- Retrieve uploaded file data
 			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			InputStream inputStream = null;
-
+			String fileName = null;
 			for (String key : uploadForm.keySet()) {
 				List<InputPart> inputParts = uploadForm.get(key);
 				for (InputPart inputPart : inputParts) {
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
 					if (getFileName(header) != null) {
+						fileName = getFileName(header);
 						inputStream = inputPart.getBody(InputStream.class, null);
 					}
 				}
 			}
 
-			// 2 - Parse xml inputStream
-			Document xmlDocument = inputStreamToDocument(inputStream);
+			// save to temporary folder
+			File tmpFile = new File(System.getProperty("java.io.tmpdir"), fileName + ".tmp");
+			OutputStream outStream = new FileOutputStream(tmpFile);
+
+			byte[] buffer = new byte[8 * 1024];
+			int bytesRead;
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				outStream.write(buffer, 0, bytesRead);
+			}
+
+			// 2 - Parse xml file
+			// Document xmlDocument = inputStreamToDocument(inputStream);
+			Document xmlDocument = xmlToDocument(tmpFile);
 			ETLParser etlParser = new ETLParser(xmlDocument);
 			Set<String> contexts = etlParser.getContextNames();
 
+			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(outStream);
 			return Response.ok(contexts).build();
 
 		} catch (Exception e) {
@@ -225,45 +243,49 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file:", buildLocaleFromSession(), e);
 
 		} finally {
+
 			logger.debug("OUT");
 		}
 	}
 
 	/**
-	 * POST: Extract and insert new ETL metadata informations from uploaded file
+	 * GET: Extract and insert new ETL metadata informations from uploaded file
 	 **/
-	@POST
-	@Path("/ETLExtract")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@GET
+	@Path("/{fileName}/{contextName}/ETLExtract")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response extractETLMetadataInformation(@MultipartForm MultipartFormDataInput input) {
+	public Response extractETLMetadataInformation(@PathParam("fileName") String fileName, @PathParam("contextName") String contextName) {
 		logger.debug("IN");
 
 		try {
 
 			// 1- Retrieve uploaded file data
-			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-			InputStream inputStream = null;
-
-			for (String key : uploadForm.keySet()) {
-				List<InputPart> inputParts = uploadForm.get(key);
-				for (InputPart inputPart : inputParts) {
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-						inputStream = inputPart.getBody(InputStream.class, null);
-					}
-				}
-			}
+			// Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			// InputStream inputStream = null;
+			//
+			// for (String key : uploadForm.keySet()) {
+			// List<InputPart> inputParts = uploadForm.get(key);
+			// for (InputPart inputPart : inputParts) {
+			// MultivaluedMap<String, String> header = inputPart.getHeaders();
+			// if (getFileName(header) != null) {
+			// inputStream = inputPart.getBody(InputStream.class, null);
+			// }
+			// }
+			// }
+			File tmpFile = new File(System.getProperty("java.io.tmpdir"), fileName + ".tmp");
 
 			// TODO: 2 - Parse xml inputStream
-			Document xmlDocument = inputStreamToDocument(inputStream);
+			Document xmlDocument = xmlToDocument(tmpFile);
 			ETLParser etlParser = new ETLParser(xmlDocument);
-			// etlParser.getETLMetadata(contextName);
-			etlParser.extractAll();
+			ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
+			// etlParser.extractAll();
 
 			// TODO: 3 - Write informations on db
 
-			return Response.ok().build();
+			// erase temp file
+			tmpFile.delete();
+
+			return Response.ok(etlMetadata).build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to extract metadata information from file:", e);
@@ -296,11 +318,10 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Export Knowage Metamodel in CWM Format
+	 * Export Knowage Metamodel with the specified id in CWM Format
 	 **/
 	@GET
 	@Path("/{bmId}/exportCWM")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response exportMetamodelToCWM(@PathParam("bmId") int businessModelId) {
 		logger.debug("IN");
 
@@ -320,14 +341,17 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// 3- Convert from Knowage Metamodel to CWM Metamodel
 			ICWMMapper modelMapper;
 			ICWM cwm;
-
-			// ModelPrinter.print(businessModel);
 			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
 			modelMapper = CWMMapperFactory.getMapper(CWMImplType.JMI);
 			cwm = modelMapper.encodeICWM(physicalModel);
-			cwm.exportToXMI(getResourcePath() + File.separator + "exportCWM.xmi");
 
-			return Response.ok().build();
+			// 4- Return CWM Metamodel as a downloadable file
+			ByteArrayOutputStream byteOutputStream = cwm.exportStreamToXMI();
+			byte[] b = byteOutputStream.toByteArray();
+
+			ResponseBuilder response = Response.ok(b);
+			response.header("Content-Disposition", "attachment; filename=exportCWM.xmi");
+			return response.build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to export metamodel with id " + businessModelId + "to CWM", e);
