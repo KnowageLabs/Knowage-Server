@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -53,6 +42,17 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -87,7 +87,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			configSingleton = SingletonConfig.getInstance();
 			String path2 = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath = SpagoBIUtilities.readJndiResource(path2);
-			toReturn.setPathFile(resourcePath + File.separator + toReturn.getPathFile());
+			if (toReturn.getPathFile().startsWith(resourcePath)) {
+				// biLayer.setPathFile(biLayer.getPathFile());
+			} else {
+				toReturn.setPathFile(resourcePath + File.separator + toReturn.getPathFile());
+			}
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -144,7 +148,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			configSingleton = SingletonConfig.getInstance();
 			String path2 = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath = SpagoBIUtilities.readJndiResource(path2);
-			biLayer.setPathFile(resourcePath + File.separator + biLayer.getPathFile());
+			if (biLayer.getPathFile().startsWith(resourcePath)) {
+				// biLayer.setPathFile(biLayer.getPathFile());
+			} else {
+				biLayer.setPathFile(resourcePath + File.separator + biLayer.getPathFile());
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
