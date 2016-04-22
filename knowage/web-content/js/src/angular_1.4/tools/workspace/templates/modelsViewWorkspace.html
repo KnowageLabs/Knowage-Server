@@ -1,0 +1,25 @@
+
+ <md-content flex>
+  <md-tabs md-dynamic-height="true">
+    
+        <md-tab label="Business Models" flex>
+	   <md-content>
+ 	  <federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
+		show-grid-view="showGridView"
+ 	  ></federation-view>	
+ 	 </md-content>
+ 	</md-tab> 
+   
+	<md-tab label="Federation definitions" flex>
+        <md-content>
+ 	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
+		show-grid-view="showGridView"
+		selected-federation=selectedFederation
+		edit-federation-action="editFederation(fed)"
+		delete-federation-action="deleteFederation(fed)"
+ 	  ></federation-view>	
+        </md-content>
+ 	</md-tab>  
+   </md-tabs>
+ 
+</md-content>

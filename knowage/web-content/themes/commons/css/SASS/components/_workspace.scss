@@ -16,5 +16,17 @@
 	.yesFav {
 		color:orange;
 	}
-
+    
+    .workspace_image_dataset{
+	    background-image: url('../../sbi_default/img/dataset/img-dataset-1.jpg')!important;
+	}
+	
+	.workspace_image_federation{
+	    background-image: url('../../sbi_default/img/metamodel/federation.png')!important;
+	}
+	
+	.workspace_image_metamodel{
+	    background-image: url('../../sbi_default/img/metamodel/metamodel.png')!important;
+	}
+	
 }

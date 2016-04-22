@@ -35,8 +35,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		return $scope.selectedDocument !== undefined;
 	};
 	
-	$scope.setDetailOpen = function(isOpen) {
-		if (isOpen && !$mdSidenav('right').isLockedOpen() && !$mdSidenav('right').isOpen()) {
+	$scope.setDocumentDetailOpen = function(isOpen) {
+		if (isOpen && !$mdSidenav('rightDoc').isLockedOpen() && !$mdSidenav('rightDoc').isOpen()) {
 			$scope.toggleDocumentDetail();
 		}
 
@@ -44,7 +44,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	};
 	
 	$scope.toggleDocumentDetail = function() {
-		$mdSidenav('right').toggle();
+		$mdSidenav('rightDoc').toggle();
 	};
 	
 	$scope.selectDocument= function ( document ) { 
@@ -55,9 +55,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		$scope.selectedDocument = document;
 		if (alreadySelected) {
 			$scope.selectedDocument=undefined;
-			$scope.setDetailOpen(!$scope.showDocumentDetail);
+			$scope.setDocumentDetailOpen(!$scope.showDocumentDetail);
 		} else {
-			$scope.setDetailOpen(document !== undefined);
+			$scope.setDocumentDetailOpen(document !== undefined);
 		}
 	};
 

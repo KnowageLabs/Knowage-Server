@@ -16,7 +16,7 @@
 		</workspace-document-view>		
 	
 	</md-content>
-	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">
 				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">

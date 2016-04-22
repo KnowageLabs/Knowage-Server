@@ -1,69 +1,62 @@
-<md-content layout="row" flex>
- <md-content>
-  <md-tabs md-dynamic-height="true">
-        <md-tab label="Models" flex>
-	
- 	  <document-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
-		show-grid-view="showGridView"
- 	  ></document-view>	
- 	 
- 	</md-tab> 
-    <md-tab label="My data set" flex>
 
+<md-content layout="row">
+ <md-content  flex>
+  <md-tabs md-dynamic-height="true">
+  
+    <md-tab label="My data set" flex ng-click="switchTab()">
+       <md-content>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="myDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
 		share-dataset-enabled="true"
+		share-dataset-action="shareDataset(ds)"
+		selected-dataset=selectedDataset
+		select-dataset-action="selectDataset(ds);"
  	  ></dataset-view>	
- 	
+ 	 </md-content>
  	</md-tab>  
- 	<md-tab label="Enterprise data set" flex>
-
+ 	<md-tab label="Enterprise data set" flex ng-click="switchTab()">
+      <md-content>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
-		share-dataset-enabled="true"
+		share-dataset-enabled="false"
+	    selected-dataset=selectedDataset
+		select-dataset-action="selectDataset(ds);"
  	  ></dataset-view>		
- 	
+ 	    </md-content>
  	</md-tab>  
- 	<md-tab label="Shared data set" flex>
-
+ 	<md-tab label="Shared data set" flex ng-click="switchTab()">
+      <md-content>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
 		share-dataset-enabled="true"
+	    selected-dataset=selectedDataset
+		select-dataset-action="selectDataset(ds);"
  	  ></dataset-view>	
- 	
+ 	 </md-content>
  	</md-tab>  
  	
- 	<md-tab label="All data set" flex>
-
+ 	<md-tab label="All data set" flex ng-click="switchTab()">
+      <md-content>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: absolute;' ng-model="datasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
-		share-dataset-enabled="true"
+		share-dataset-enabled="false"
 		selected-dataset=selectedDataset
 		select-dataset-action="selectDataset(ds);"
  	  ></dataset-view>	
- 	
- 	</md-tab>  
-	<md-tab label="Federation definitions" flex>
-
- 	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
-		show-grid-view="showGridView"
-		selected-federation=selectedFederation
-		edit-federation-action="editFederation(fed)"
-		delete-federation-action="deleteFederation(fed)"
- 	  ></federation-view>	
-
- 	</md-tab>  
+ 	   </md-content>
+ 	</md-tab>    
    </md-tabs>
    </md-content>
-       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
+
+       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDs" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
 					<md-toolbar class="ternaryToolbar">
 						<div layout="row" layout-align="space-around center">
 							<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDataset();toggleDatasetDetail();">
@@ -125,5 +118,5 @@
 				</md-sidenav>
    
    
-   
+ 
 </md-content>

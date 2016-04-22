@@ -24,11 +24,15 @@ function leftMenuController($scope){
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.leftMainMenu = 	[
-	                      	 	{"name": "Recent", 		"icon": "fa fa-clock-o"}, 
-	                      	 	{"name": "Favorites", 	"icon": "fa fa-star"}, 
-	                      	 	{"name": "Documents", 	"icon": "fa fa-file-text"}, 
-	                      	 	{"name": "Datasets", 	"icon": "fa fa-bars"}, 
-	                      	 	{"name": "Analysis", 	"icon": "fa fa-calculator"}
+	                      	 	{"name": "Recent", 		"icon": "fa fa-clock-o",	"visible":true}, 
+	                      	 	{"name": "Favorites", 	"icon": "fa fa-star",	"visible":true}, 
+	                      	 	{"name": "Documents", 	"icon": "fa fa-file-text", "visible":true}, 
+	                      	 	//{"name": "Data", 	"icon": "fa fa-bars", "visible":true}, 
+	                      	 	{"name": "Datasets", 	"icon": "fa fa-database",	"visible":true},
+	                      	 	{"name": "Models", 	"icon": "fa fa-cubes",	"visible":true},
+	                      	 	{"name": "SmartFilters", 	"icon": "fa fa-filter",	"visible":true}, 
+	                      	 	{"name": "Analysis", 	"icon": "fa fa-calculator","visible":true}
 	                     	];
+
 	
 }

@@ -10,5 +10,6 @@ angular
 	                                'main_toolbar_workspace',
 	                                'federation_view',
 	                                'workspace_document_view',
-	                                'dataset_view'
+	                                'dataset_view',
+	                                'models_view_workspace'
 	                                ]);

@@ -35,6 +35,7 @@
 				<favorites-view-workspace 	ng-show="currentOptionMainMenu=='favorites'">	</favorites-view-workspace>	
 				<documents-view-workspace 	ng-show="currentOptionMainMenu=='documents'">	</documents-view-workspace>			
 				<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</datasets-view-workspace>
+				<models-view-workspace		ng-show="currentOptionMainMenu=='models'">	        </models-view-workspace>
 				<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>				
 		</md-content>
 		
