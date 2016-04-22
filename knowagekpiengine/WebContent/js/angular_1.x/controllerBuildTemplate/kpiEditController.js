@@ -14,11 +14,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.style = {};
 	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
-	$scope.typeOfWiew = ['Speedometer','Semaphore','KpiCard'];
+	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'semaphore','value':'Semaphore'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";
 	$scope.typeChart = 'kpi'
 	$scope.selectedKpis = [];
-	$scope.selectedKpi = [];
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];
@@ -106,7 +105,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 
-		sbiModule_restServices.promisePost("1.0/documents", 'saveChartTemplate', 
+		sbiModule_restServices.promisePost("1.0/documents", 'saveKpiTemplate', 
 				$httpParamSerializer({jsonTemplate:JSON.stringify(obj), docLabel:sbiModule_config.docLabel}), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(
 				function(response) {
 				
@@ -146,9 +145,6 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}
 				obj["author"]=response.data[i].author;
-				//var dateFormat = $scope.parseDate(sbiModule_config.localizedDateFormat);
-				//parse date based on language selected
-				//obj["datacreation"]=$filter('date')(response.data[i].dateCreation, dateFormat);
 				obj["id"]=response.data[i].id;
 				$scope.kpiList.push(obj);
 			}
@@ -202,12 +198,11 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	}
 	$scope.loadKpiTemplate = function(template){
 		$scope.typeDocument = template.chart.model;
-		if($scope.typeDocument=="list"){
-			//mode list
+	
+		if(Array.isArray(template.chart.data.kpi)){
 			$scope.selectedKpis = template.chart.data.kpi;
 		}else{
-			//mode widget
-			$scope.selectedKpi.push(template.chart.data.kpi);
+			$scope.selectedKpis.push(template.chart.data.kpi);
 		}
 		
 		if(template.chart.style!=undefined){
@@ -258,23 +253,15 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		var arr= [];
 		var flagList = false;
 		for(var i=0;i<$scope.selectedKpis.length;i++){
-			flagList = true;
+
 			var index = $scope.indexInList($scope.selectedKpis[i],$scope.kpiList);
 			if(index !=-1){
 				arr.push($scope.kpiList[index]);
 			}
 		}
-		for(var j=0;j<$scope.selectedKpi.length;j++){
-			var index = $scope.indexInList($scope.selectedKpi[j],$scope.kpiList);
-			if(index !=-1){
-				arr.push($scope.kpiList[index]);
-			}
-		}
-		if(flagList){
+
 			angular.copy(arr,$scope.selectedKpis);
-		}else{
-			angular.copy(arr,$scope.selectedKpi);
-		}
+
 	}
 
 	$scope.indexInList=function(item, list) {
@@ -297,13 +284,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		obj.chart["data"]={};
 		if($scope.typeChart=="kpi"){
 			obj.chart["model"]=$scope.typeDocument;
-			if($scope.typeDocument=="widget"){
-				var kpiObject = {};
-				kpiObject["id"] = $scope.selectedKpi[0].id;
-				kpiObject["version"] =  $scope.selectedKpi[0].version;
-				obj.chart.data["kpi"]=kpiObject;
-			}else{
-				var arr=[];
+			var arr=[];
 				for(var i=0;i<$scope.selectedKpis.length;i++){
 					var kpiObject = {};
 					kpiObject["id"] = $scope.selectedKpis[i].id;
@@ -311,7 +292,6 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					arr.push(kpiObject);
 				}
 				obj.chart.data["kpi"]=arr;
-			}
 			
 			obj.chart["options"] = $scope.options;
 		}else{

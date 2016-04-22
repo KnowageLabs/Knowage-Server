@@ -80,12 +80,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</angular-table>	
    </md-whiteframe>       
 	</expander-box>
-	<expander-box id="Info" color="white" ng-if="typeDocument=='list'" expanded="true" title="'Kpi List'">
+	<expander-box id="Info" color="white" ng-if="typeChart=='kpi'" expanded="true" title="'Kpi List'">
 		<dinamic-list ng-model="selectedKpis" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="Info" color="white" ng-if="typeDocument=='widget' && typeChart=='kpi'" expanded="true" title="'KpiList'">
+	<!--<expander-box id="Info" color="white" ng-if="typeDocument=='widget' && typeChart=='kpi'" expanded="true" title="'KpiList'">
 		<dinamic-list ng-model="selectedKpi" multi-select=false selected-item ="addKpis"></dinamic-list>  
-	</expander-box>
+	</expander-box>  -->
 	<expander-box id="Info" color="white" expanded="false" title="'Options'" ng-if="typeChart=='kpi'">
 		 <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout layout-fill layout-margin  >
 		 
@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    			<span layout="row">
 	   			<h4 flex=15>{{translate.load("sbi.kpidocumentdesigner.vieweas")}}</h4>
 	   			<md-select aria-label="aria-label" flex=30 ng-model="options.vieweas">
-					<md-option ng-repeat="view in typeOfWiew" value="{{view}}">{{view}}</md-option>
+					<md-option ng-repeat="view in typeOfWiew" value="{{view.label}}">{{view.value}}</md-option>
 				</md-select>
    			</span>
    			<span layout="row">
