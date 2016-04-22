@@ -369,6 +369,29 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return xml;
 	}
 
+	@POST
+	@Path("/saveKpiTemplate")
+	@Produces(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public String saveKpiTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
+			@Context HttpServletResponse servletResponse) {
+		String xml = null;
+		try {
+			JSONObject json = new JSONObject(jsonTemplate);
+
+			xml = JSONTemplateUtilities.convertJsonToXML(json);
+
+		} catch (Exception e) {
+			logger.error("Error converting JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+
+		}
+
+		saveTemplate(docLabel, xml);
+
+		return xml;
+	}
+
 	public JSONArray writeParameters(List<JSONObject> params) throws Exception {
 		JSONArray paramsJSON = new JSONArray();
 
