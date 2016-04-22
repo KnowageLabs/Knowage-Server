@@ -19,7 +19,6 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	s.translate=sbiModule_translate;
 	s.kpiAllList = [];
 	s.tableFunction={
-
 			loadListKPI: function(item,evt){
 			
 				var promise = s.loadListKPI();
@@ -33,6 +32,9 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					
 				});
 			},
+			vieweAs: [{"label":"speedometer","value":"Speedometer"},{"label":"semaphore","value":"Semaphore"},{"label":"kpicard","value":"Kpi Card"}]
+
+
 	}
 
 	s.measureMenuOption= [{
@@ -69,6 +71,8 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		});
 
 	}
+	s.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'semaphore','value':'Semaphore'},{'label':'kpicard','value':'Kpi Card'}];
+
 	s.getListKPI = function(){
 		var arr_name = [];
 		sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
@@ -85,7 +89,13 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 				obj["author"]=response.data[i].author;
 				obj["datacreation"]=new Date(response.data[i].dateCreation);
 				obj["id"]=response.data[i].id;
-
+				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
+					+'<md-option value=""></md-option>'
+					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
+					+'{{sev.value}}'
+					+' </md-option>'
+					+'</md-select>';
+				obj["vieweAs"]="";
 				s.kpiAllList.push(obj);
 
 			}
@@ -144,6 +154,7 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,m
 			exists: function(item,evt){
 				return s.exists(item);
 			}
+
 	}
 	s.multiSelect = multiSelect;
 	s.kpi=kpi;

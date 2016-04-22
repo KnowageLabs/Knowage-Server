@@ -31,6 +31,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	
 				});
 			},
+			vieweAs: [{'label':'speedometer','value':'Speedometer'},{'label':'semaphore','value':'Semaphore'},{'label':'kpicard','value':'Kpi Card'}]
+
 	}
 	$scope.parseDate = function(date){
 		result = "";
@@ -146,6 +148,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				}
 				obj["author"]=response.data[i].author;
 				obj["id"]=response.data[i].id;
+				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
+					+'<md-option value=""></md-option>'
+					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
+					+'{{sev.value}}'
+					+' </md-option>'
+					+'</md-select>';
+				obj["vieweAs"]="";
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
@@ -235,7 +244,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				$scope.options.showvalue=false;
 			}		
 	
-			$scope.options.vieweas = template.chart.options.vieweas
+			//$scope.options.vieweas = template.chart.options.vieweas
 		}
 		
 		if(template.chart.options.history!=undefined){
@@ -256,7 +265,24 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 			var index = $scope.indexInList($scope.selectedKpis[i],$scope.kpiList);
 			if(index !=-1){
-				arr.push($scope.kpiList[index]);
+				var obj = {};
+				obj["name"]=$scope.kpiList[index].name;
+				obj["version"]=$scope.kpiList[index].version;
+				
+				obj["valueCd"] = $scope.kpiList[index].valueCd;
+				
+				obj["author"]=$scope.kpiList[index].author;
+				obj["id"]=$scope.kpiList[index].id;
+				obj["vieweAs"]= $scope.selectedKpis[i].vieweas;
+				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
+					+'<md-option value=""></md-option>'
+					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
+					+'{{sev.value}}'
+					+' </md-option>'
+					+'</md-select>';
+				
+				
+				arr.push(obj);
 			}
 		}
 
@@ -289,6 +315,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					var kpiObject = {};
 					kpiObject["id"] = $scope.selectedKpis[i].id;
 					kpiObject["version"] =  $scope.selectedKpis[i].version;
+					kpiObject["vieweas"] = $scope.selectedKpis[i].vieweAs;
 					arr.push(kpiObject);
 				}
 				obj.chart.data["kpi"]=arr;
