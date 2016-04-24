@@ -313,7 +313,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.targetsClickable = targetsClickable;
 	}
 
-	public void setSubset(Integer startRow, Integer startColumn, Integer count) {
+	public void setSubset(Integer startRow, Integer startColumn, Integer rowSet, Integer columnSet) {
 
 		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
 		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
@@ -329,7 +329,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 			args.add(setForAx);
 			args.add(Literal.create(startRow));
-			args.add(Literal.create(count));
+			args.add(Literal.create(rowSet));
 			FunCall subset = new FunCall("Subset", Syntax.Function, args);
 			qaRows.setExp(subset);
 
@@ -345,7 +345,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 			args.add(setForAx);
 			args.add(Literal.create(startColumn));
-			args.add(Literal.create(count));
+			args.add(Literal.create(columnSet));
 			FunCall subset = new FunCall("Subset", Syntax.Function, args);
 			qaColumns.setExp(subset);
 
