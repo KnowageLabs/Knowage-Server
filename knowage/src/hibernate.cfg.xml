@@ -246,6 +246,7 @@
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTable.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTableBc.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTableColumn.hbm.xml" />
+         <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDocumentTableRelation.hbm.xml" />
 
          
          
