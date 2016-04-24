@@ -116,6 +116,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
+		$scope.resize();
 
 	}
 
@@ -131,7 +132,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						$scope.ready = true;
 						$scope.scrollTo($scope.modelConfig.startRow,
 								$scope.modelConfig.startColumn);
-
+						
 					},
 					function(response) {
 						sbiModule_messaging.showErrorMessage(
