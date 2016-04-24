@@ -5,6 +5,9 @@ angular.module('scrolly_directive',[])
 	        link: function (scope, element, attrs) {
 	        	var ready = false;
 	            var raw = element[0];
+	            scope.$watch('tableHeight', function() {
+	                console.log("table height is "+scope.tableHeight);
+	            });
 	            console.log('loading directive');
 	            scope.tableHeight = raw.offsetHeight;
 	            console.log(scope.tableHeight);
@@ -16,21 +19,46 @@ angular.module('scrolly_directive',[])
 	        	};
 	        	
 	        	scope.resize = function(){
+	        		
+	        		
 	        		 scope.tableHeight = raw.offsetHeight;
+	        		 scope.tableWeight = raw.offsetWidth;
 	            	 var corner = document.getElementsByClassName("x-pivot-corner")[0];
+	            	 var headers = document.getElementsByClassName("pv-row-hdr");
+	            	 var header = headers[headers.length - 1];
+	            	 console.log(header);
+	            	 var rowSize = 27;
+	            	 var colunmSize = 80;
 	            	console.log(corner+' corner');
-	            	if(corner){
-	            		 scope.modelConfig.rowsSet = Math.round(raw.offsetHeight/43)-Math.round(corner.offsetHeight/43)-1;
-	            		 console.log(corner.offsetHeight/43);
-	            	}else{
-	            		scope.modelConfig.rowsSet =Math.round(raw.offsetHeight/43)-2;
-	            	}
 	            	
-	            	 console.log(scope.modelConfig.rowsSet);
-	            	 if(scope.modelConfig.rowsSet<1){
-	            		 scope.modelConfig.rowsSet = 1;
-	            	 }
-	            	 scope.sendModelConfig(scope.modelConfig);
+	            	
+	            	 
+	            	
+	            		 if(corner){
+		            		 scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-corner.offsetHeight)/rowSize)-1;
+		            		 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
+		            		 console.log(corner.offsetHeight/rowSize);
+		            		 if(header){
+			            		 scope.modelConfig.rowsSet =scope.modelConfig.rowsSet - Math.round(header.offsetHeight/rowSize);
+			            		 console.log("header"+header.offsetHeight/rowSize);
+			            	}
+		            	}else{
+		            		scope.modelConfig.rowsSet =Math.round(raw.offsetHeight/rowSize)-2;
+		            		scope.modelConfig.columnSet =Math.round(raw.offsetWidth/colunmSize)-2;
+		            	}
+		            	
+		            	 console.log(scope.modelConfig.rowsSet);
+		            	 if(scope.modelConfig.columnSet<1){
+		            		
+		            		 scope.modelConfig.columnSet =1;
+		            	 }
+		            	 if(scope.modelConfig.columnSet<1){
+		            		
+		            		 scope.modelConfig.columnSet =1;
+		            	 }
+		            	 scope.sendModelConfig(scope.modelConfig);
+	            	 
+	            	 
 	        	}
 	           
 	        	
@@ -38,6 +66,7 @@ angular.module('scrolly_directive',[])
 	            angular.element($window).bind('resize', function(){
 	                
 	            	scope.resize();
+	            	
 	              });
 	                
 	               

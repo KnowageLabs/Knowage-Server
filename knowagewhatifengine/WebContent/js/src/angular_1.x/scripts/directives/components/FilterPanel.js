@@ -21,6 +21,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.loadingFilter = true;
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
+		
 		console.log("getting screen");
 		console.log(window.innerHeight);
 		console.log(window.innerWidth);
@@ -101,7 +102,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			.then(function(response) {
 				$scope.handleResponse(response);
 				$timeout(function() {
-					$scope.resize();
+					angular.element($window).triggerHandler('resize');
+					
 			    }, 1);
 				
 				
@@ -631,7 +633,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			initFilterList();
-			$scope.resize();
+			
+			$scope.sendModelConfig($scope.modelConfig);
 			if($scope.modelConfig.whatIfScenario)
 				$scope.getVersions();
 		}, function(response) {
@@ -671,8 +674,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				break;
 			}
 		}
-		visibleSelected = [];
-		visibleSelectedTracker = [];
 	}
 };
 
