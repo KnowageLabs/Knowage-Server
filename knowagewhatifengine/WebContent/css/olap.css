@@ -278,6 +278,22 @@ table tr:nth-child(even) {
   background-color: #ffffff;
 }
 
+.pv-row-hdr{
+	border-bottom: 1px solid #3b678c;
+	border-right: 1px solid #3b678c;
+	background-color:white;
+	font-size:12px;
+	padding:5px;
+}
+
+.pv-col-hdr{
+	border-bottom: 1px solid #3b678c;
+	border-right: 1px solid #3b678c;
+	background-color:white;
+	font-size:12px;
+	padding:5px;
+}
+
 /*.tree css*/
 
 .tree,

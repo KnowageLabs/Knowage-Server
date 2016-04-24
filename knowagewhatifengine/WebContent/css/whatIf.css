@@ -27,8 +27,8 @@
 	border-bottom: 1px solid #3b678c;
 	border-right: 1px solid #3b678c;
 	color: rgba(0,0,0,0.54);
-	font-size:18px;
-	padding:10px;
+	font-size:12px;
+	padding:5px;
 	font-family: Verdana;
 	background: #f5f5f5;
 	white-space: nowrap;
@@ -59,8 +59,8 @@ td:focus {
 	border-bottom: 1px solid #3b678c;
 	border-right: 1px solid #3b678c;
 	color: rgba(0,0,0,0.54);
-	font-size:18px;
-	padding:10px;
+	font-size:12px;
+	padding:5px;
 	font-family: Verdana;
 	background: #f5f5f5;
    position: relative !important;
@@ -74,8 +74,8 @@ td:focus {
 	
 	border: 2px solid #ff0080;
 	color: rgba(0,0,0,0.54);
-	font-size:18px;
-	padding:10px;
+	font-size:12px;
+	padding:5px;
 	font-family: Verdana;
 	background: #f5f5f5;
    position: relative !important;
