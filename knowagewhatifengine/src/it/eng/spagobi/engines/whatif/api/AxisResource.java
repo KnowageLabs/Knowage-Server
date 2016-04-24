@@ -110,7 +110,8 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(ei.getModelConfig().getStartRow(), ei.getModelConfig().getStartColumn(), ei.getModelConfig().getRowsSet());
+		model.setSubset(ei.getModelConfig().getStartRow(), ei.getModelConfig().getStartColumn(), ei.getModelConfig().getRowsSet(), ei.getModelConfig()
+				.getColumnSet());
 
 		return renderModel(getPivotModel());
 	}
