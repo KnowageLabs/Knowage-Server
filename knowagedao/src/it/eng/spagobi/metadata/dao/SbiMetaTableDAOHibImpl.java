@@ -69,7 +69,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			toReturn = (SbiMetaTable) tmpSession.load(SbiMetaTable.class, id);
+			SbiMetaTable hibTable = (SbiMetaTable) tmpSession.load(SbiMetaTable.class, id);
+			toReturn = new SbiMetaTable();
+			toReturn.setTableId(hibTable.getTableId());
+			toReturn.setName(hibTable.getName());
+			toReturn.setDeleted(hibTable.isDeleted());
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -370,16 +374,22 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			// // check if table is used by job by querying SBI_META_JOB_TABLE table
-			// List<SbiMetaJobTable>jobsAssociated = DAOFactory.get().loadFederationsUsingDataset(datasetId, session);
+			// // check if table is used by job by querying SBI_META_JOB_TABLE
+			// table
+			// List<SbiMetaJobTable>jobsAssociated =
+			// DAOFactory.get().loadFederationsUsingDataset(datasetId, session);
 			//
 			// if (!federationsAssociated.isEmpty()) {
 			//
-			// // check if its a derived dataset.. In this case delete also the federation..
+			// // check if its a derived dataset.. In this case delete also the
+			// federation..
 			//
-			// for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
-			// FederationDefinition fedDef = (FederationDefinition) iterator.next();
-			// logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
+			// for (Iterator iterator = federationsAssociated.iterator();
+			// iterator.hasNext();) {
+			// FederationDefinition fedDef = (FederationDefinition)
+			// iterator.next();
+			// logger.debug("Dataset with id " + datasetId +
+			// " is used by Federation with label " + fedDef.getLabel());
 			// }
 			//
 			// }

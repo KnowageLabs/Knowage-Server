@@ -33,6 +33,7 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -61,7 +62,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#loadSourceByID(integer)
 	 */
 	@Override
-	public SbiMetaSource loadSourceByID(Integer id) throws EMFUserError {
+	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDOAException {
 		logger.debug("IN");
 
 		SbiMetaSource toReturn = null;
@@ -82,13 +83,21 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 			tx.commit();
 
+		} catch (ObjectNotFoundException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new SpagoBIDOAException("There is no sbiMetaSource with sourceId " + id);
+
 		} catch (HibernateException he) {
 			logException(he);
 
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new SpagoBIDOAException(he.getMessage());
 
 		} finally {
 			if (tmpSession != null) {
@@ -211,7 +220,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#modifySource(SbiMetaSource)
 	 */
 	@Override
-	public void modifySource(SbiMetaSource aMetaSource) throws EMFUserError {
+	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDOAException {
 		logger.debug("IN");
 
 		Session tmpSession = null;
@@ -239,7 +248,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new SpagoBIDOAException(he.getMessage());
 
 		} finally {
 			if (tmpSession != null) {

@@ -19,29 +19,24 @@ package it.eng.spagobi.metadata.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
 
 import java.util.List;
 
 /**
- * @author Antonella Giachino (antonella.giachino@eng.it)
+ * @author Pirkovic_Dragan (Dragan.Pirkovic@mht.net)
  *
  */
-public interface ISbiMetaSourceDAO extends ISpagoBIDao {
+public interface ISbiMetaDocTabRelDAO extends ISpagoBIDao {
 
-	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDOAException;
+	public SbiMetaDocTabRel loadDocRelationByID(Integer id) throws EMFUserError;
 
-	public SbiMetaSource loadSourceByName(String name) throws EMFUserError;
+	public void modifyDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
-	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDOAException;
+	public Integer insertDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
-	public Integer insertSource(SbiMetaSource aMetaSource) throws EMFUserError;
+	public void deleteDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
-	public void deleteSource(SbiMetaSource aMetaSource) throws EMFUserError;
+	public List<SbiMetaDocTabRel> loadAllDocRelations() throws EMFUserError;
 
-	public List<SbiMetaSource> loadAllSources() throws EMFUserError;
-
-	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError;
 }
