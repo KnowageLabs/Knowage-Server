@@ -112,7 +112,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) value;
-		model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet());
+		model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
 
 		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
