@@ -71,6 +71,7 @@ import it.eng.spagobi.metadata.dao.ISbiJobSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiJobTableDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaBCAttributeDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaBCDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaJobDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAO;
@@ -104,7 +105,8 @@ import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 import org.apache.log4j.Logger;
 
 /**
- * Contains all the data access object for all the BO objects defined into it.eng.spagobi.bo package.
+ * Contains all the data access object for all the BO objects defined into
+ * it.eng.spagobi.bo package.
  */
 public class DAOFactory {
 
@@ -127,8 +129,11 @@ public class DAOFactory {
 		Object daoObject = null;
 		try {
 			// ConfigSingleton configSingleton=ConfigSingleton.getInstance();
-			// SourceBean daoConfigSourceBean =(SourceBean) configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name", daoName);
-			// String daoClassName = (String)daoConfigSourceBean.getAttribute("implementation");
+			// SourceBean daoConfigSourceBean =(SourceBean)
+			// configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name",
+			// daoName);
+			// String daoClassName =
+			// (String)daoConfigSourceBean.getAttribute("implementation");
 			// daoObject = Class.forName(daoClassName).newInstance();
 			daoObject = Class.forName(getDAOClass(daoName)).newInstance();
 		} catch (Throwable e) {
@@ -1128,5 +1133,17 @@ public class DAOFactory {
 	 */
 	public static ISbiDsBcDAO getDsBcDAO() throws EMFUserError {
 		return (ISbiDsBcDAO) createDAOInstance("ISbiDsBcDAO");
+	}
+
+	/**
+	 * Gets the SbiMetaTableDAO dao.
+	 *
+	 * @return the SbiMetaTableDAO dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiMetaDocTabRelDAO getSbiMetaDocTabRelDAO() throws EMFUserError {
+		return (ISbiMetaDocTabRelDAO) createDAOInstance("ISbiMetaDocTabRelDAO");
 	}
 }
