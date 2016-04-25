@@ -25,15 +25,16 @@ angular.module('scrolly_directive',[])
 	        		 scope.tableWeight = raw.offsetWidth;
 	            	 var corner = document.getElementsByClassName("x-pivot-corner")[0];
 	            	 var headers = document.getElementsByClassName("pv-row-hdr");
+	            	 var thead = document.getElementsByTagName("thead")[0];
 	            	 var header = headers[headers.length - 1];
-	            	 console.log(header);
-	            	 var rowSize = 27;
-	            	 var colunmSize = 80;
+	            	
+	            	 var rowSize = 28;
+	            	 var colunmSize = 90;
 	            	console.log(corner+' corner');
 	            	
 	            	
 	            	 
-	            	
+	            	/*
 	            		 if(corner){
 		            		 scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-corner.offsetHeight)/rowSize)-1;
 		            		 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
@@ -41,7 +42,12 @@ angular.module('scrolly_directive',[])
 		            		 if(header){
 			            		 scope.modelConfig.rowsSet =scope.modelConfig.rowsSet - Math.round(header.offsetHeight/rowSize);
 			            		 console.log("header"+header.offsetHeight/rowSize);
-			            	}
+			            	}*/
+	            		if(thead){
+	            			scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-thead.offsetHeight)/rowSize)-1;
+	            			if(corner){
+	            				 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
+	            			}
 		            	}else{
 		            		scope.modelConfig.rowsSet =Math.round(raw.offsetHeight/rowSize)-2;
 		            		scope.modelConfig.columnSet =Math.round(raw.offsetWidth/colunmSize)-2;
@@ -67,7 +73,9 @@ angular.module('scrolly_directive',[])
 	                
 	            	scope.resize();
 	            	
+	            	
 	              });
+	           
 	                
 	               
 	            
