@@ -200,7 +200,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						}
 						int memb = 0;
 						if (context.getPosition() != null) {
-							memb = context.getAxis().axisOrdinal();
+							memb = context.getPosition().getMembers().indexOf(context.getMember());
+							// memb = context.getAxis().axisOrdinal();
 						}
 						int pos = 0;
 						if (context.getAxis() == Axis.COLUMNS) {
@@ -295,8 +296,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					axis = context.getAxis().axisOrdinal();
 				}
 				int memb = 0;
-				if (context.getPosition() != null) {
-					memb = context.getPosition().getOrdinal();
+				/*
+				 * if (context.getPosition() != null) { memb = rowIdx;//
+				 * context.getPosition().getOrdinal(); }
+				 */
+				if (context.getAxis() == Axis.COLUMNS) {
+					memb = rowIdx / 2;
+				} else {
+					memb = colIdx;
 				}
 				int pos = 0;
 				if (context.getAxis() == Axis.COLUMNS) {
@@ -335,8 +342,10 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					}
 
 					if (d != 0) {
+						context.getMember();
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName + "' )");
+						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+								+ context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
