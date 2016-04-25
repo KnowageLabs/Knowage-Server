@@ -116,7 +116,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
-		$scope.resize();
+		$timeout(function() {
+		       $scope.resize();
+		    }, 500);
 
 	}
 
