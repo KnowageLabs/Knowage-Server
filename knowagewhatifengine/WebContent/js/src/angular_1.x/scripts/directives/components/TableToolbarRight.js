@@ -66,6 +66,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			var btn = {};
 			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
+			btn.name =i[0];
 			
 			if(btn.img == "BUTTON_EXPORT_OUTPUT")
 				exportBtn = btn;
@@ -88,15 +89,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		switch(name){
 		case "BUTTON_FATHER_MEMBERS":
 			$scope.modelConfig.showParentMembers = !$scope.modelConfig.showParentMembers;
+			changeIcon(name);
 			break;
 		case "BUTTON_HIDE_SPANS":
 			$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
+			changeIcon(name);
 			break;
 		case "BUTTON_SHOW_PROPERTIES":
 			$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
+			changeIcon(name);
 			break;
 		case "BUTTON_HIDE_EMPTY":
 			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
+			changeIcon(name);
 			break;
 		case "BUTTON_EXPORT_OUTPUT":
 			$scope.showExportDialog(null);
@@ -126,7 +131,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	
 	$scope.changeDrillType = function(type){
+		console.log(type+"----->type")
 		$scope.modelConfig.drillType = type;
+		console.log($scope.modelConfig.drillType+"---------->$scope.modelConfig.drillType")
 		$scope.sendModelConfig($scope.modelConfig);
 		$timeout(function() {
 	       $scope.resize();
@@ -268,6 +275,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  else
 			  return false;
 		  
+	  }
+	  
+	  changeIcon = function(name){
+		  for(var i=0; i < $scope.tableToolbarButtons.length;i++){
+			  if($scope.tableToolbarButtons[i].name == name){
+				  if($scope.tableToolbarButtons[i].img == name){
+					  $scope.tableToolbarButtons[i].img = name+"_CLICKED"
+				  }
+				  else{
+					  $scope.tableToolbarButtons[i].img = name;
+				  }
+			  }
+		  }
 	  }
 
 };

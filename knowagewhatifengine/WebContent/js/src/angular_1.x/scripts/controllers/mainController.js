@@ -22,7 +22,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
-
+	
 	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText = "";
 	$scope.searchSucessText="";
@@ -117,7 +117,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
 		$timeout(function() {
-		       $scope.resize();
+				$scope.resize();
 		    }, 500);
 
 	}
@@ -134,7 +134,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						$scope.ready = true;
 						$scope.scrollTo($scope.modelConfig.startRow,
 								$scope.modelConfig.startColumn);
-						
+								
 					},
 					function(response) {
 						sbiModule_messaging.showErrorMessage(

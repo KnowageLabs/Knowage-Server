@@ -350,12 +350,12 @@ table tr:nth-child(even) {
 }
 
 .sorting-d-btn{
-	background-image: url(../img/sorting-disabled.png);
+	background-image: url(../img/sorting-enabled.png);
 	background-size:23px 23px; 
 }
 
 .sorting-e-btn{
-	background-image: url(../img/sorting-enabled.png);
+	background-image: url(../img/node-closed.png);
 		background-size:23px 23px; 
 }
 .cc-w-btn{
@@ -645,4 +645,23 @@ md-option[selected], md-select-menu md-option[selected]{
 		height:32px;
 		margin-top:20%;
 	}
+
+.BUTTON_HIDE_SPANS_CLICKED{
+	background-image: url(../img/hide_spans_clicked.png);
+}
+
+.BUTTON_SHOW_PROPERTIES_CLICKED{
+	background-image: url(../img/show_props_clicked.png);	
+}
+.BUTTON_SHOW_COMPACT_PROPERTIES_CLICKED{
+	background-image: url(../img/show_compact_props_clicked.png);	
+}
+
+.BUTTON_FATHER_MEMBERS_CLICKED{
+	background-image: url(../img/show_parent_members_clicked.png);
+}
+
+.BUTTON_HIDE_EMPTY{
+	background-image: url(../img/empty_rows_clicked.png);
+}
 }

@@ -68,7 +68,7 @@
 <md-grid-list
         md-cols="3" md-row-height="50px">
     <md-grid-tile ng-repeat="tbtn in tableToolbarButtons">
-    	<md-button class="right-toolbar-menu {{tbtn.img}}" ng-click="btnFunctions(tbtn.img)">
+    	<md-button class="right-toolbar-menu {{tbtn.img}}" ng-click="btnFunctions(tbtn.name)">
     		<md-tooltip md-direction="bottom">
 				{{tbtn.tooltip}}
 			</md-tooltip>
@@ -83,7 +83,7 @@
 <!--     </md-grid-tile>  -->
     <md-grid-tile>
     	<md-button 
-    		class="right-toolbar-menu sorting-e-btn"
+    		ng-class="sortingEnabled?'right-toolbar-menu sorting-e-btn':'right-toolbar-menu sorting-d-btn'"
     		ng-click="enableDisableSorting()"
     		id="ena-dis-sorting-btn" >
 			<md-tooltip md-direction="bottom">
