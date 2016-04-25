@@ -97,7 +97,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Position p = CubeUtilities.getPosition(positions, positionUniqueName);
 
 		List<Member> m = p.getMembers();
-		Member m2;// = m.get(memberPos);
+		Member m2 = m.get(memberPos);
 
 		try {
 			m2 = CubeUtilities.getMember(model.getCube(), memberUniqueName);
@@ -151,6 +151,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		System.out.println(time);
 		List<Member> m = null;
 		Member m2 = null;
+		Hierarchy hierarchy = null;
 
 		model.removeSubset();
 
@@ -169,17 +170,25 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			try {
 				m2 = CubeUtilities.getMember(model.getCube(), memberUniqueName);
+				hierarchy = m2.getHierarchy();
 			} catch (OlapException e) {
 				logger.error(e);
 				throw new SpagoBIRestServiceException(getLocale(), e);
 			}
 		} else {
-			p = positions.get(positionPos);
-			m = p.getMembers();
-			m2 = m.get(memberPos);
+			/*
+			 * p = positions.get(positionPos); m = p.getMembers(); m2 =
+			 * m.get(memberPos);
+			 */
+			try {
+				hierarchy = CubeUtilities.getHierarchy(model.getCube(), positionUniqueName);
+			} catch (OlapException e) {
+				logger.error(e);
+				throw new SpagoBIRestServiceException(getLocale(), e);
+			}
 		}
 
-		Hierarchy hierarchy = m2.getHierarchy();
+		// hierarchy = m2.getHierarchy();
 
 		String drillType = modelConfig.getDrillType();
 
