@@ -1,4 +1,4 @@
-package it.eng.spagobi.kpi.alert;
+package it.eng.spagobi.tools.alert.listener;
 
 
 public class QuartzListener implements IAlertListener {

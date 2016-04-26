@@ -1,16 +1,31 @@
-package it.eng.spagobi.kpi.bo;
+package it.eng.spagobi.tools.alert.bo;
 
-public class AlertListener {
+public class AlertAction {
 
 	private Integer id;
 	private String name;
 	private String className;
 	private String template;
 
-	public AlertListener() {
+	public AlertAction() {
 	}
 
-	public AlertListener(Integer id) {
+	public AlertAction(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -27,21 +42,6 @@ public class AlertListener {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class AlertListener {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AlertListener other = (AlertListener) obj;
+		AlertAction other = (AlertAction) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
