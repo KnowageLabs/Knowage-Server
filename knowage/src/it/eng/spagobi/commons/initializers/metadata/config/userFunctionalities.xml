@@ -55,6 +55,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="EnginesManagement" description="EnginesManagement"/>
@@ -128,6 +129,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 			<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="EnginesManagement" description="EnginesManagement"/>
@@ -201,6 +203,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 		<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="EnginesManagement" description="EnginesManagement"/>
@@ -274,6 +277,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 		<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="EnginesManagement" description="EnginesManagement"/>
@@ -347,6 +351,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 		<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="EnginesManagement" description="EnginesManagement"/>
@@ -420,6 +425,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 		<!-- Authorizations for KnowageEI -->
 	<USER_FUNCTIONALITY productType="KnowageEI" name="EnginesManagement" description="EnginesManagement"/>
@@ -493,6 +499,7 @@
 	<USER_FUNCTIONALITY productType="KnowageEI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageEI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageEI" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 	
 		<!-- Authorizations for KnowageOD -->
 	<USER_FUNCTIONALITY productType="KnowageOD" name="EnginesManagement" description="EnginesManagement"/>
@@ -567,4 +574,5 @@
 	<USER_FUNCTIONALITY productType="KnowageOD" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageOD" name="InstallConfig" description="InstallConfig" />
 	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AlertManagement" description="AlertManagement" />
 </USER_FUNCTIONALITIES>

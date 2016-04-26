@@ -328,7 +328,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="MODEL_ADMIN" />
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CacheManagement" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AlertManagement" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="InstallConfig" roleType="ADMIN" />
 	
