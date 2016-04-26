@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +34,6 @@ import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 public class ModelConfig implements Serializable {
 
@@ -137,10 +137,10 @@ public class ModelConfig implements Serializable {
 		showCompactProperties = false;
 		sortingEnabled = false;
 		startRow = 0;
-		rowsSet = 10;
+		rowsSet = 50;
 		rowCount = 1;
 		startColumn = 0;
-		columnSet = 11;
+		columnSet = 50;
 		columnCount = 1;
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
