@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,6 +31,7 @@ public class Hierarchy {
 	String fkName;
 	String nodeStructure;
 	String leafStructure;
+	String primaryKey;
 	int numLevels;
 	boolean allowDuplicate;
 
@@ -42,11 +43,12 @@ public class Hierarchy {
 	 * @param name
 	 */
 	public Hierarchy(String name) {
-		this(name, "", "", "", "", "", 0, false, new ArrayList<Field>(), new ArrayList<Field>(), new ArrayList<Field>());
+		this(name, "", "", "", "", "", "", 0, false, new ArrayList<Field>(), new ArrayList<Field>(), new ArrayList<Field>());
 	}
 
-	public Hierarchy(String name, String datasource, String dimensionTable, String fkName, String nodeStructure, String leafStructure, int numLevels,
-			boolean allowDuplicate, ArrayList<Field> metadataGeneralFields, ArrayList<Field> metadataNodeFields, ArrayList<Field> metadataLeafFields) {
+	public Hierarchy(String name, String datasource, String dimensionTable, String fkName, String nodeStructure, String leafStructure, String primaryKey,
+			int numLevels, boolean allowDuplicate, ArrayList<Field> metadataGeneralFields, ArrayList<Field> metadataNodeFields,
+			ArrayList<Field> metadataLeafFields) {
 		super();
 		this.name = name;
 		this.datasource = datasource;
@@ -54,6 +56,7 @@ public class Hierarchy {
 		this.fkName = fkName;
 		this.nodeStructure = nodeStructure;
 		this.leafStructure = leafStructure;
+		this.primaryKey = primaryKey;
 		this.numLevels = numLevels;
 		this.allowDuplicate = allowDuplicate;
 		this.metadataGeneralFields = metadataGeneralFields;
@@ -149,6 +152,21 @@ public class Hierarchy {
 	 */
 	public void setLeafStructure(String leafStructure) {
 		this.leafStructure = leafStructure;
+	}
+
+	/**
+	 * @return the primaryKey
+	 */
+	public String getPrimaryKey() {
+		return primaryKey;
+	}
+
+	/**
+	 * @param primaryKey
+	 *            the primaryKey to set
+	 */
+	public void setPrimaryKey(String primaryKey) {
+		this.primaryKey = primaryKey;
 	}
 
 	/**

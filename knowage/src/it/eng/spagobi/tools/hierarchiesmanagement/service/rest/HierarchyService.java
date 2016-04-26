@@ -42,6 +42,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -212,6 +213,7 @@ public class HierarchyService {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
 			paramsMap.put("hierarchyTable", hierarchyTable);
+
 			String hierarchyPrefix = hierarchies.getPrefix(dimension);
 			paramsMap.put("hierarchyPrefix", hierarchyPrefix);
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
@@ -245,6 +247,13 @@ public class HierarchyService {
 			// get one ONLY connection for all statements (transactional logic)
 			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
+
+			String primaryKey = hierarchies.getTablePrimaryKey(dimension);
+			if (primaryKey != null) {
+				paramsMap.put("primaryKey", primaryKey);
+				int countId = HierarchyUtils.getCountId(primaryKey, hierarchyTable, connection, dataSource);
+				paramsMap.put("primaryKeyCount", countId);
+			}
 
 			if (!isInsert && doBackup) {
 				HierarchyUtils.updateHierarchyForBackup(dataSource, connection, paramsMap);
@@ -437,9 +446,9 @@ public class HierarchyService {
 		String hierBackupColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
 		StringBuffer query = new StringBuffer("SELECT DISTINCT " + selectClause + " FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE "
-				+ hierDimensionColumn + " = \"" + paramsMap.get(HierarchyConstants.DIMENSION) + "\" AND " + hierNameMColumn + " = \""
-				+ paramsMap.get(HierarchyConstants.HIER_NM_M) + "\" AND " + hierNodeCdMColumn + " = \"" + paramsMap.get(HierarchyConstants.NODE_CD_M)
-				+ "\" AND " + hierBackupColumn + " = 0 ");
+				+ hierDimensionColumn + " = '" + paramsMap.get(HierarchyConstants.DIMENSION) + "' AND " + hierNameMColumn + " = '"
+				+ paramsMap.get(HierarchyConstants.HIER_NM_M) + "' AND " + hierNodeCdMColumn + " = '" + paramsMap.get(HierarchyConstants.NODE_CD_M) + "' AND ("
+				+ hierBackupColumn + " = 0 OR " + hierBackupColumn + " IS NULL )");
 
 		logger.debug("Query for get hierarchies relations: " + query);
 		return query.toString();
@@ -486,6 +495,9 @@ public class HierarchyService {
 			} else if (maxDepthField.getValue() instanceof Long) {
 				Long maxDepthValue = (Long) maxDepthField.getValue();
 				maxDepth = (int) (long) maxDepthValue;
+			} else if (maxDepthField.getValue() instanceof java.math.BigDecimal) {
+				BigDecimal maxDepthValue = (BigDecimal) maxDepthField.getValue();
+				maxDepth = maxDepthValue.intValue();
 			}
 
 			int currentLevel = 0;
@@ -747,6 +759,7 @@ public class HierarchyService {
 
 		try {
 			Hierarchy hierarchyFields = (Hierarchy) paramsMap.get("hierarchyFields");
+			String primaryKey = paramsMap.containsKey("primaryKey") ? (String) paramsMap.get("primaryKey") : null;
 			List<HierarchyTreeNodeData> path = (List<HierarchyTreeNodeData>) paramsMap.get("path");
 
 			// 1 - get fields structure
@@ -763,11 +776,22 @@ public class HierarchyService {
 
 			totalColumns = totalGeneralFields + totalLeafFields + totalNodeFields;
 			int numLevels = totalLevels;
-
 			// 3 - Insert prepared statement construction
 			// ------------------------------------------
 			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
 			String columns = getHierarchyColumns(dataSource, generalMetadataFields, nodeMetadataFields, leafMetadataFields, numLevels, lstFields);
+			// get the primary key counter if is present a primary key column
+			int countId = -1;
+			if (primaryKey != null) {
+				countId = paramsMap.containsKey("primaryKeyCount") ? (int) paramsMap.get("primaryKeyCount") : -1;
+				countId++;
+				if (!lstFields.containsKey(primaryKey)) {
+					columns = columns + "," + AbstractJDBCDataset.encapsulateColumnName(primaryKey, dataSource);
+					totalColumns++;
+				}
+				lstFields.put(primaryKey, String.valueOf(countId));
+				paramsMap.put("primaryKeyCount", countId);
+			}
 
 			String insertQuery = "insert into " + (String) paramsMap.get("hierarchyTable") + "(" + columns + ") values (";
 			for (int c = 0, lc = totalColumns; c < lc; c++) {
@@ -810,11 +834,17 @@ public class HierarchyService {
 				}
 				lstRelMTInserted.add(lstMTFieldsValue.get(HierarchyConstants.PATH_CD_T));
 			}
+			// force to set the primary key in statement
+			if (primaryKey != null && lstFields.containsKey(primaryKey)) {
+				int attrPos = HierarchyUtils.getPosField(lstFields, primaryKey);
+				hierPreparedStatement.setObject(attrPos, lstFields.get(primaryKey));
+			}
 
 			// 6 - Execution of insert prepared statement
 			// -----------------------------------------------
-			hierPreparedStatement.executeUpdate();
-			hierPreparedStatement.close();
+			hierPreparedStatement.execute();
+			hierPreparedStatement.getUpdateCount();
+			hierPreparedStatement.closeOnCompletion();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage());
 		}
@@ -988,6 +1018,28 @@ public class HierarchyService {
 				throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode() + " and name "
 						+ node.getNodeName());
 			}
+			// get other node's attributes (not mandatory ie sign)
+			Iterator iter = node.getAttributes().keySet().iterator();
+			// String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
+			// level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+			// if (level == 0 && !isRoot) {
+			// logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+			// throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
+			// + " and name " + node.getNodeName());
+			// }
+			while (iter.hasNext()) {
+				String key = (String) iter.next();
+				Object value = node.getAttributes().get(key);
+				if (key != null && value != null) {
+					int attrPos = HierarchyUtils.getPosField(lstFields, key);
+					if (attrPos == -1)
+						attrPos = HierarchyUtils.getPosField(lstFields, key + level);
+					if (attrPos != -1 && !values.containsKey(key)) {
+						preparedStatement.setObject(attrPos, value);
+						values.put(key, value);
+					}
+				}
+			}
 			if (isLeaf) {
 				// it's a leaf
 				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF), node.getNodeCode());
@@ -1016,34 +1068,13 @@ public class HierarchyService {
 				values.put(HierarchyConstants.LEAF_PARENT_NM, node.getLeafParentName());
 				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.MAX_DEPTH), node.getDepth());
 				values.put(HierarchyConstants.MAX_DEPTH, node.getDepth());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT), node.getBeginDt());
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT), node.getBeginDt(), java.sql.Types.DATE);
 				values.put(HierarchyConstants.BEGIN_DT, node.getBeginDt());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), node.getEndDt());
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), node.getEndDt(), java.sql.Types.DATE);
 				values.put(HierarchyConstants.END_DT, node.getEndDt());
 
 			}
-			// get other node's attributes (not mandatory ie sign)
-			Iterator iter = node.getAttributes().keySet().iterator();
-			// String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
-			// level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
-			// if (level == 0 && !isRoot) {
-			// logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
-			// throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode()
-			// + " and name " + node.getNodeName());
-			// }
-			while (iter.hasNext()) {
-				String key = (String) iter.next();
-				Object value = node.getAttributes().get(key);
-				if (key != null && value != null) {
-					int attrPos = HierarchyUtils.getPosField(lstFields, key);
-					if (attrPos == -1)
-						attrPos = HierarchyUtils.getPosField(lstFields, key + level);
-					if (attrPos != -1) {
-						preparedStatement.setObject(attrPos, value);
-						values.put(key, value);
-					}
-				}
-			}
+
 		} catch (Throwable t) {
 			String errMsg = "Error while inserting element with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
 			if (values.size() > 0) {
@@ -1340,9 +1371,15 @@ public class HierarchyService {
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF))
 					nodeData.setNodeName(node.getString(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF));
 				if (!node.isNull(HierarchyConstants.BEGIN_DT)) {
+					// String beginDate = node.getString(HierarchyConstants.BEGIN_DT);
+					// SimpleDateFormat formatter = new SimpleDateFormat();
+					// nodeData.setBeginDt(new Date(formatter.parse(beginDate).getTime()));
 					nodeData.setBeginDt(Date.valueOf(node.getString(HierarchyConstants.BEGIN_DT)));
 				}
 				if (!node.isNull(HierarchyConstants.END_DT)) {
+					// String endDate = node.getString(HierarchyConstants.END_DT);
+					// SimpleDateFormat formatter = new SimpleDateFormat();
+					// nodeData.setEndDt(new Date(formatter.parse(endDate).getTime()));
 					nodeData.setEndDt(Date.valueOf(node.getString(HierarchyConstants.END_DT)));
 				}
 				// set parent informations

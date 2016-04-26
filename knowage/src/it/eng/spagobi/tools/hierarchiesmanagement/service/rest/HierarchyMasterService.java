@@ -106,7 +106,7 @@ public class HierarchyMasterService {
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
 
 			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-					+ typeColumn + "=\'MASTER\' AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
+					+ typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn, null, null);
 
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();
@@ -171,6 +171,7 @@ public class HierarchyMasterService {
 			Assert.assertNotNull(hierarchies, "Impossible to find a valid hierarchies object");
 
 			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
+
 			boolean forceNameAsLevel = Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.FORCE_NAME_AS_LEVEL));
 
 			if (forceNameAsLevel) {
@@ -198,7 +199,6 @@ public class HierarchyMasterService {
 
 			dbConnection = dataSource.getConnection();
 			dbConnection.setAutoCommit(false);
-
 			Dimension dimension = hierarchies.getDimension(dimensionLabel);
 			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
 
@@ -208,6 +208,12 @@ public class HierarchyMasterService {
 			String dimensionName = dimension.getName();
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
 			String prefix = hierarchies.getPrefix(dimensionLabel);
+			String primaryKey = hierarchies.getTablePrimaryKey(dimensionLabel);
+
+			int primaryKeyCount = -1;
+			if (primaryKey != null) {
+				primaryKeyCount = HierarchyUtils.getCountId(primaryKey, hierTableName, dbConnection, dataSource);
+			}
 
 			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
@@ -219,13 +225,12 @@ public class HierarchyMasterService {
 					filterHierarchy, filterHierType, hierTableName, prefix, exludeHierLeaf);
 
 			Iterator iterator = dataStore.iterator();
-
 			while (iterator.hasNext()) {
 				// dataStore.
 				IRecord record = (IRecord) iterator.next();
+				primaryKeyCount++;
 				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, nodeFields, metatadaFieldsMap, requestVal,
-						prefix, dimensionName, validityDate, hierConfig);
-
+						prefix, dimensionName, validityDate, hierConfig, primaryKey, primaryKeyCount);
 			}
 
 			saveHierarchyMasterConfiguration(dbConnection, dataSource, requestVal);
@@ -296,6 +301,11 @@ public class HierarchyMasterService {
 			String dimensionName = dimension.getName();
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
 			String prefix = hierarchies.getPrefix(dimensionLabel);
+			String primaryKey = hierarchies.getTablePrimaryKey(dimensionLabel);
+			int primaryKeyCount = -1;
+			if (primaryKey != null) {
+				primaryKeyCount = HierarchyUtils.getCountId(primaryKey, hierTableName, dbConnection, dataSource);
+			}
 
 			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
 			int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
@@ -372,6 +382,7 @@ public class HierarchyMasterService {
 					dsNewDimensions.appendRecord(hierRecord);
 				}
 			}
+
 			// begin transaction
 			dbConnection.setAutoCommit(false);
 			// 1 - Backup the original hierarchy (always)
@@ -389,8 +400,9 @@ public class HierarchyMasterService {
 			while (iterFromDim.hasNext()) {
 				// iterate on dimension records
 				IRecord record = (IRecord) iterFromDim.next();
+				primaryKeyCount++;
 				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, nodeFields, metatadaFieldsMap,
-						requestVal, prefix, dimensionName, validityDate, hierConfig);
+						requestVal, prefix, dimensionName, validityDate, hierConfig, primaryKey, primaryKeyCount);
 			}
 
 			if (orderFields != null && orderFields.size() > 0) {
@@ -473,10 +485,13 @@ public class HierarchyMasterService {
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
 		String hierNmColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG, dataSource);
+		String idColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG_ID, dataSource);
+		int countId = HierarchyUtils.getCountId(HierarchyConstants.HIER_MASTERS_CONFIG_ID, HierarchyConstants.HIER_MASTERS_CONFIG_TABLE, dbConnection,
+				dataSource);
 
-		String insertClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
+		String insertClause = idColumn + "," + hierCdColumn + "," + hierNmColumn + "," + confColumn;
 
-		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause + ") VALUES (?,?,?)";
+		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause + ") VALUES (?,?,?,?)";
 
 		logger.debug("Insert query is [" + saveConfQuery + "]");
 
@@ -485,23 +500,27 @@ public class HierarchyMasterService {
 		String configuration = requestVal.toString();
 
 		PreparedStatement ps = dbConnection.prepareStatement(saveConfQuery);
-		ps.setString(1, hierCd);
-		ps.setString(2, hierNm);
-		ps.setString(3, configuration);
-
-		ps.executeUpdate();
-
+		ps.setInt(1, countId + 1);
+		ps.setString(2, hierCd);
+		ps.setString(3, hierNm);
+		ps.setString(4, configuration);
+		try {
+			ps.executeUpdate();
+		} catch (SQLException se) {
+			logger.error("Error while executing stmt: [" + saveConfQuery.toString() + "]");
+			throw new SpagoBIServiceException("Error while executing stmt: ", se);
+		}
 		logger.debug("Hierarchy Master Configuration correctly saved!");
 
 	}
 
 	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
 			List<Field> generalFields, List<Field> nodeFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix,
-			String dimensionName, String validityDate, HashMap hierConfig) {
+			String dimensionName, String validityDate, HashMap hierConfig, String primaryKey, int primaryKeyCount) {
 
 		logger.debug("START");
 
-		try (Statement stmt = dbConnection.createStatement()) {
+		try {
 
 			// Create two clauses, one for columns and another for values
 			// INSERT INTO name_table [columnsClause] values [valuesClause]
@@ -512,6 +531,9 @@ public class HierarchyMasterService {
 
 			// fieldsMap is necessary to keep track of the position for values we need to use later when replace the prep. stat.
 			Map<Integer, Object> fieldsMap = new HashMap<Integer, Object>();
+
+			// typeMap is necessary to keep track of the position for types we need to use later when replace the prep. stat.
+			Map<Integer, String> typeMap = new HashMap<Integer, String>();
 
 			// levelsMap is necessary to keep track of values for levels
 			Map<Integer, Object[]> levelsMap = new HashMap<Integer, Object[]>();
@@ -528,11 +550,18 @@ public class HierarchyMasterService {
 			// configuration for the filling logic
 			FillConfiguration fillConfiguration = new FillConfiguration(hierConfig);
 
+			if (primaryKey != null && primaryKeyCount >= 0) {
+				String column = AbstractJDBCDataset.encapsulateColumnName(primaryKey, dataSource);
+				columnsClause.append(column + sep);
+				valuesClause.append("?" + sep);
+				fieldsMap.put(0, primaryKeyCount);
+			}
+
 			/**********************************************************************************************************
 			 * in this section we add columns and values related to hierarchy general fields specified in request JSON*
 			 **********************************************************************************************************/
 
-			manageGeneralFieldsSection(dataSource, generalFields, fieldsMap, requestVal, columnsClause, valuesClause, sep);
+			manageGeneralFieldsSection(dataSource, generalFields, fieldsMap, typeMap, requestVal, columnsClause, valuesClause, sep);
 
 			/****************************************************************************************
 			 * in this section we add columns and values related to levels specified in request JSON*
@@ -593,19 +622,26 @@ public class HierarchyMasterService {
 			for (int i = 0; i < fieldsMap.size(); i++) {
 
 				Object fieldValue = fieldsMap.get(i);
+				String type = typeMap.containsKey(i) ? typeMap.get(i) : null;
 
 				logger.debug("Set the insert prepared statement with a field value [" + fieldValue + "]");
-
-				insertPs.setObject(i + 1, fieldValue);
-
+				if (type != null && type.equals("date")) {
+					insertPs.setObject(i + 1, fieldValue, java.sql.Types.DATE);
+				} else {
+					insertPs.setObject(i + 1, fieldValue);
+				}
 			}
 
 			logger.debug("Insert prepared statement correctly set. It's time to execute it");
 			try {
 				insertPs.executeUpdate();
 			} catch (SQLException se) {
-				logger.error("Error while executing stmt: [" + insertQuery.toString() + "]");
+				logger.error("Error while executing stmt: [" + insertQuery.toString() + "]\n with values: " + fieldsMap.values().toString());
 				throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", se);
+			} finally {
+				if (!insertPs.isClosed()) {
+					insertPs.close();
+				}
 			}
 
 			logger.debug("Insert correctly executed");
@@ -618,8 +654,8 @@ public class HierarchyMasterService {
 		logger.debug("END");
 	}
 
-	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, Map<Integer, Object> fieldsMap, JSONObject requestVal,
-			StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException, ParseException {
+	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap,
+			JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException, ParseException {
 
 		int index = fieldsMap.size();
 
@@ -645,6 +681,7 @@ public class HierarchyMasterService {
 
 			// updating values and types maps
 			fieldsMap.put(index, value);
+			typesMap.put(index, tmpField.getType());
 
 			index++;
 
@@ -658,10 +695,11 @@ public class HierarchyMasterService {
 			// updating sql clauses for columns and values
 			columnsClause.append(beginDtColumn + sep);
 			valuesClause.append("?" + sep);
-
+			String beginDtValueServerFormat = HierarchyUtils.getConvertedDate(beginDtValue, dataSource);
 			// updating values and types maps
+			// fieldsMap.put(index, beginDtValueServerFormat);
 			fieldsMap.put(index, beginDtValue);
-
+			typesMap.put(index, "date");
 			index++;
 
 		}
@@ -674,9 +712,11 @@ public class HierarchyMasterService {
 			// updating sql clauses for columns and values
 			columnsClause.append(endDtColumn + sep);
 			valuesClause.append("?" + sep);
-
+			String endDtValueServerFormat = HierarchyUtils.getConvertedDate(endDtValue, dataSource);
 			// updating values and types maps
+			// fieldsMap.put(index, endDtValueServerFormat);
 			fieldsMap.put(index, endDtValue);
+			typesMap.put(index, "date");
 
 		}
 

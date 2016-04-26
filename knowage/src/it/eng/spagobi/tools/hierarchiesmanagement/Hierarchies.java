@@ -124,6 +124,32 @@ public class Hierarchies {
 	}
 
 	/**
+	 * Get the hierarchy table name of the passed dimension
+	 *
+	 * @param dimension
+	 *            the dimension name
+	 * @return the name of the table that contains hierarchies
+	 */
+	public String getTablePrimaryKey(String dimension) {
+		SourceBean sb = getTemplate();
+		SourceBean dimensions = (SourceBean) sb.getAttribute(HierarchyConstants.DIMENSIONS);
+
+		List lst = dimensions.getAttributeAsList(HierarchyConstants.DIMENSION);
+		for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+			SourceBean sbRow = (SourceBean) iterator.next();
+			// String dimensionName = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
+			String dimensionLabel = sbRow.getAttribute(HierarchyConstants.LABEL) != null ? sbRow.getAttribute(HierarchyConstants.LABEL).toString() : null;
+			if (dimensionLabel.equalsIgnoreCase(dimension)) {
+				SourceBean sbHierarchy = (SourceBean) sbRow.getAttribute(HierarchyConstants.HIERARCHY_TABLE);
+				String primaryKeyName = sbHierarchy.getAttribute(HierarchyConstants.PRIMARY_KEY) != null ? sbHierarchy.getAttribute(
+						HierarchyConstants.PRIMARY_KEY).toString() : null;
+				return primaryKeyName;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get the prefix for the passed dimension
 	 *
 	 * @param dimension

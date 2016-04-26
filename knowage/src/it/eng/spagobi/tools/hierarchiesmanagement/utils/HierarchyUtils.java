@@ -36,11 +36,15 @@ import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -229,7 +233,7 @@ public class HierarchyUtils {
 		while (iter.hasNext()) {
 			String key = (String) iter.next();
 			Object value = values.get(key);
-			if (key != null && value != null)
+			if (key != null && value != null && !result.has(key))
 				result.put(key, value);
 			logger.debug("Field [" + key + "] is " + value);
 		}
@@ -261,6 +265,35 @@ public class HierarchyUtils {
 			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy datasource informations", t);
 		}
 
+	}
+
+	/**
+	 * This method find the max int value of the table primary key
+	 *
+	 * @param primaryKey
+	 *            of the table, name of the table, connection to the db
+	 * @return -1 if it finds a result, >= 0 otherwise
+	 * @throws SQLException
+	 */
+	public static int getCountId(String primaryKey, String hierTableName, Connection dbConnection, IDataSource dataSource) {
+		if (primaryKey == null || hierTableName == null) {
+			return -1;
+		}
+		Integer countId = null;
+		String primaryKeyColum = AbstractJDBCDataset.encapsulateColumnName(primaryKey, dataSource);
+		String query = "SELECT MAX(" + primaryKeyColum + ") as COUNT_ID FROM " + hierTableName;
+		try {
+			PreparedStatement stm = dbConnection.prepareStatement(query);
+			ResultSet resultSet = stm.executeQuery();
+			if (resultSet.next()) {
+				countId = resultSet.getInt("COUNT_ID");
+			}
+		} catch (SQLException se) {
+			logger.error("Error while retrieve id with stmt: [" + query.toString() + "]");
+			return -1;
+		}
+
+		return countId == null ? -1 : countId.intValue();
 	}
 
 	/**
@@ -414,8 +447,7 @@ public class HierarchyUtils {
 			vFilterDateWhereClause = "";
 
 		query.append(" AND " + dimFilterFieldCol + clauseIn + " (SELECT " + selectFilterField + " FROM " + hierarchyTable);
-		query.append(" WHERE " + hierNameCol + " = \"" + hierarchyName + "\" AND " + hierTypeCol + " = \"" + hierarchyType + "\" " + vFilterDateWhereClause
-				+ " )");
+		query.append(" WHERE " + hierNameCol + " = '" + hierarchyName + "' AND " + hierTypeCol + " = '" + hierarchyType + "' " + vFilterDateWhereClause + " )");
 
 		return query.toString();
 	}
@@ -693,7 +725,7 @@ public class HierarchyUtils {
 			// 2 - create query text
 			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String tableName = hierarchies.getHierarchyTableName(dimension);
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "=\"" + hierarchyName + "\" ";
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "='" + hierarchyName + "' ";
 
 			logger.debug("The delete query is [" + queryText + "]");
 
@@ -779,16 +811,34 @@ public class HierarchyUtils {
 		data.setLeafParentName(leafParentNameString);
 
 		IField beginDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.BEGIN_DT));
-		Date beginDtDate = (Date) beginDtField.getValue();
+		Date beginDtDate = null;
+		if (beginDtField.getValue() instanceof Timestamp) {
+			Timestamp timestamp = (Timestamp) beginDtField.getValue();
+			beginDtDate = new Date(timestamp.getTime());
+		} else {
+			beginDtDate = (Date) beginDtField.getValue();
+		}
 		data.setBeginDt(beginDtDate);
 
 		IField endDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.END_DT));
-		Date endDtDate = (Date) endDtField.getValue();
+		Date endDtDate = null;
+		if (endDtField.getValue() instanceof Timestamp) {
+			Timestamp timestamp = (Timestamp) endDtField.getValue();
+			endDtDate = new Date(timestamp.getTime());
+		} else {
+			endDtDate = (Date) beginDtField.getValue();
+		}
 		data.setEndDt(endDtDate);
 
 		HashMap mapAttrs = new HashMap();
 		int numLevels = Integer.valueOf((String) hierarchies.getConfig(dimension).get(HierarchyConstants.NUM_LEVELS));
-		Integer maxDepth = (Integer) (record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.MAX_DEPTH)).getValue());
+		Integer maxDepth = null;
+		IField field = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.MAX_DEPTH));
+		if (field.getValue() instanceof BigDecimal) {
+			maxDepth = ((BigDecimal) field.getValue()).intValue();
+		} else {
+			maxDepth = (Integer) field.getValue();
+		}
 
 		// add leaf field attributes for automatic edit field GUI
 		ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
@@ -924,11 +974,12 @@ public class HierarchyUtils {
 			// String column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
 			if (orderField != null) {
 				column = AbstractJDBCDataset.encapsulateColumnName(orderField + o, dataSource);
+				// DESC is used to order the row placing the NULL fields at the end. Is used in combination with negative order fields to reach ascending sort
+				orderClauseBuffer.append(column + " DESC" + sep);
 			} else {
 				column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
+				orderClauseBuffer.append(column + sep);
 			}
-			// DESC is used to order the row placing the NULL fields at the end. Is used in combination with negative order fields to reach ascending sort
-			orderClauseBuffer.append(column + " DESC" + sep);
 		}
 
 		// leaf fields:
@@ -948,8 +999,8 @@ public class HierarchyUtils {
 		String vDateConverted = HierarchyUtils.getConvertedDate(hierarchyDate, dataSource);
 		String vDateWhereClause = vDateConverted + " >= " + hierDateBeginColumn + " AND " + vDateConverted + " <= " + hierDateEndColumn;
 
-		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = \"" + hierarchyName
-				+ "\" AND " + hierTypeColumn + " = \"" + hierarchyType + "\" AND " + vDateWhereClause);
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierarchyTable + " WHERE " + hierNameColumn + " = '" + hierarchyName
+				+ "' AND " + hierTypeColumn + " = '" + hierarchyType + "' AND " + vDateWhereClause);
 
 		if (filterDimension != null) {
 			logger.debug("Filter dimension is [" + filterDimension + "]");
@@ -1018,7 +1069,7 @@ public class HierarchyUtils {
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
-		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
+		try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 			preparedStatement.setString(1, newHierName);
 			preparedStatement.setBoolean(2, true);
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
@@ -1041,22 +1092,25 @@ public class HierarchyUtils {
 			String hierNameTargetColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 
 			String updateRelQuery = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNameTargetColumn + "= ?, " + bkpColumn + " = ?, "
-					+ bkpTimestampColumn + "= ? WHERE " + hierNameTargetColumn + "= ? AND " + bkpColumn + "= ?";
+					+ bkpTimestampColumn + "= ? WHERE " + hierNameTargetColumn + "= ? AND (" + bkpColumn + "= ? OR " + bkpColumn + " IS NULL)";
 
 			logger.debug("The relations update query is [" + updateRelQuery + "]");
 
 			String relColumns = getRelationalColumns(dataSource);
 			HashMap fixedValuesMap = new HashMap();
 			fixedValuesMap.put(HierarchyConstants.HIER_NM_T, paramsMap.get("hierTargetName"));
+			String primaryKeyColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
+
 			String relValuesColumns = getRelationalValuesColumns(dataSource, fixedValuesMap);
-			String insertOrigRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns + ") select  " + relValuesColumns
-					+ " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where " + hierNameTargetColumn + "= ? and " + bkpColumn + "= ?";
+			// if a primary key is present replace the column name with the a counter of the column [E.g. "MT_ID" becomes ? and is set to {countId} ]
+			// relValuesColumns = relValuesColumns.replace(primaryKeyColumn, "MAX(" + primaryKeyColumn + ") + 1"); // MAX(REL_MASTER_TECH_TABLE_NAME_ID)
 
-			logger.debug("The relations insert original query is [" + insertOrigRelQuery + "]");
+			String selectRelQuery = "select  " + relValuesColumns + " from  " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where "
+					+ hierNameTargetColumn + "= ? and " + bkpColumn + "= ?";
+			logger.debug("The relations insert original query is [" + selectRelQuery + "]");
 
-			try (Statement stmtRel = databaseConnection.createStatement();
-					PreparedStatement preparedRelStatement = databaseConnection.prepareStatement(updateRelQuery);
-					PreparedStatement preparedInsRelStatement = databaseConnection.prepareStatement(insertOrigRelQuery)) {
+			try (PreparedStatement preparedRelStatement = databaseConnection.prepareStatement(updateRelQuery);
+					PreparedStatement preparedSelRelStatement = databaseConnection.prepareStatement(selectRelQuery)) {
 
 				preparedRelStatement.setString(1, newHierName);
 				preparedRelStatement.setBoolean(2, true);
@@ -1065,12 +1119,30 @@ public class HierarchyUtils {
 				preparedRelStatement.setBoolean(5, false);
 
 				preparedRelStatement.executeUpdate();
-
+				preparedRelStatement.closeOnCompletion();
 				// duplicate original record for don't loose relations in the new version (insert from select)
-				preparedInsRelStatement.setString(1, (String) paramsMap.get("hierTargetName") + "_" + timestamp);
-				preparedInsRelStatement.setBoolean(2, true);
+				preparedSelRelStatement.setString(1, newHierName);
+				preparedSelRelStatement.setBoolean(2, true);
 
-				preparedInsRelStatement.executeUpdate();
+				ResultSet rs = preparedSelRelStatement.executeQuery();
+				preparedSelRelStatement.closeOnCompletion();
+				int countId = HierarchyUtils.getCountId(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME,
+						databaseConnection, dataSource);
+				while (rs.next()) {
+					countId++;
+					ResultSetMetaData mt = rs.getMetaData();
+					String relInsValuesColumns = "";
+					for (int i = 1; i <= mt.getColumnCount(); i++) {
+						String sep = i < mt.getColumnCount() ? "," : "";
+						relInsValuesColumns = relInsValuesColumns + "?" + sep;
+					}
+					String insertOrigRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns + ") VALUES ("
+							+ relInsValuesColumns + ")";
+					PreparedStatement preparedInsRelStatement = databaseConnection.prepareStatement(insertOrigRelQuery);
+					setParameterPropagationInsertQuery(preparedInsRelStatement, rs, countId);
+					preparedInsRelStatement.executeUpdate();
+					preparedInsRelStatement.closeOnCompletion();
+				}
 
 				logger.debug("Insert original relations query successfully executed");
 
@@ -1088,6 +1160,85 @@ public class HierarchyUtils {
 	}
 
 	/**
+	 * The function set the PreparedStatement parameters for the insert query in table {HierarchyConstants.REL_MASTER_TECH_TABLE_NAME}. The parameters are taken
+	 * from a resultSet of a previous query.
+	 *
+	 * @param PreparedStatement
+	 *            , resultSet, countPrimaryKey
+	 * 
+	 * @return void
+	 */
+	private static void setParameterPropagationInsertQuery(PreparedStatement ps, ResultSet rs, int countPrimaryKey) {
+		try {
+			ResultSetMetaData mt = rs.getMetaData();
+
+			if (rs.getObject(HierarchyConstants.DIMENSION) != null) {
+				int idx = rs.findColumn(HierarchyConstants.DIMENSION);
+				ps.setString(idx, rs.getString(HierarchyConstants.DIMENSION));
+			}
+			if (rs.getObject(HierarchyConstants.HIER_CD_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.HIER_CD_T);
+				ps.setString(idx, rs.getString(HierarchyConstants.HIER_CD_T));
+			}
+			if (rs.getObject(HierarchyConstants.HIER_NM_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.HIER_NM_T);
+				ps.setString(idx, rs.getString(HierarchyConstants.HIER_NM_T));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_CD_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_CD_T);
+				ps.setString(idx, rs.getString(HierarchyConstants.NODE_CD_T));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_NM_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_NM_T);
+				ps.setString(idx, rs.getString(HierarchyConstants.NODE_NM_T));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_LEV_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_LEV_T);
+				ps.setFloat(idx, rs.getFloat(HierarchyConstants.NODE_LEV_T));
+			}
+			if (rs.getObject(HierarchyConstants.PATH_CD_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.PATH_CD_T);
+				ps.setClob(idx, rs.getClob(HierarchyConstants.PATH_CD_T));
+			}
+			if (rs.getObject(HierarchyConstants.PATH_NM_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.PATH_NM_T);
+				ps.setClob(idx, rs.getClob(HierarchyConstants.PATH_NM_T));
+			}
+			if (rs.getObject(HierarchyConstants.HIER_CD_M) != null) {
+				int idx = rs.findColumn(HierarchyConstants.HIER_CD_M);
+				ps.setString(idx, rs.getString(HierarchyConstants.HIER_CD_M));
+			}
+			if (rs.getObject(HierarchyConstants.HIER_NM_M) != null) {
+				int idx = rs.findColumn(HierarchyConstants.HIER_NM_M);
+				ps.setString(idx, rs.getString(HierarchyConstants.HIER_NM_M));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_CD_M) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_CD_M);
+				ps.setString(idx, rs.getString(HierarchyConstants.NODE_CD_M));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_NM_M) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_NM_M);
+				ps.setString(idx, rs.getString(HierarchyConstants.NODE_NM_M));
+			}
+			if (rs.getObject(HierarchyConstants.NODE_LEV_M) != null) {
+				int idx = rs.findColumn(HierarchyConstants.NODE_LEV_M);
+				ps.setFloat(idx, rs.getFloat(HierarchyConstants.NODE_LEV_M));
+			}
+			if (rs.getObject(HierarchyConstants.GENERAL_INFO_T) != null) {
+				int idx = rs.findColumn(HierarchyConstants.GENERAL_INFO_T);
+				ps.setClob(idx, rs.getClob(HierarchyConstants.GENERAL_INFO_T));
+			}
+			// set the primary key HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID
+			int idx = rs.findColumn(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID);
+			ps.setInt(idx, countPrimaryKey);
+		} catch (SQLException e) {
+			logger.error("Error during propagation backup. Impossible to set element in insert query");
+			throw new SpagoBIServiceException("Error during propagation backup. Impossible to set element in insert query", e);
+		}
+
+	}
+
+	/**
 	 * Persist informations about relation between the master node and the technical node
 	 *
 	 * @param connection
@@ -1100,10 +1251,13 @@ public class HierarchyUtils {
 			// prepare stmt ONLY for original MASTER (with '_M' suffix) nodes
 			if (values.get(HierarchyConstants.HIER_NM_M) != null) {
 				String relColumns = getRelationalColumns(dataSource);
+				int idCount = HierarchyUtils.getCountId(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME,
+						connection, dataSource);
+				values.put(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, idCount + 1);
 				String insertRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " (" + relColumns
-						+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+						+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 				try (PreparedStatement relPreparedStatement = connection.prepareStatement(insertRelQuery);) {
-					for (int k = 1; k <= 14; k++) {
+					for (int k = 1; k <= 15; k++) {
 						relPreparedStatement.setObject(k, null);
 					}
 					valorizeRelPlaceholders(relPreparedStatement, values);
@@ -1160,6 +1314,8 @@ public class HierarchyUtils {
 		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource);
 		sbColumns.append(column + ",");
 		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.GENERAL_INFO_T, dataSource);
+		sbColumns.append(column + ",");
+		column = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
 		sbColumns.append(column);
 
 		toReturn = sbColumns.toString();
@@ -1182,46 +1338,64 @@ public class HierarchyUtils {
 
 		column = (fixedFields.get(HierarchyConstants.DIMENSION) != null) ? "'" + fixedFields.get(HierarchyConstants.DIMENSION) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.HIER_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.HIER_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_CD_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_NM_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_LEV_T) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.PATH_CD_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_CD_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_CD_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.PATH_NM_T) != null) ? "'" + fixedFields.get(HierarchyConstants.PATH_NM_T) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.PATH_NM_T, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.HIER_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_CD_M) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_M, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.HIER_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.HIER_NM_M) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_CD_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_CD_M) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_NM_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_NM_M) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_NM_M, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_NM_M, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.NODE_LEV_M) != null) ? "'" + fixedFields.get(HierarchyConstants.NODE_LEV_M) + "'" : AbstractJDBCDataset
 				.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource);
-		sbColumns.append(column + ",");
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_LEV_M, dataSource) + ",");
+
 		column = (fixedFields.get(HierarchyConstants.GENERAL_INFO_T) != null) ? "'" + fixedFields.get(HierarchyConstants.GENERAL_INFO_T) + "'"
 				: AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.GENERAL_INFO_T, dataSource);
-		sbColumns.append(column);
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.GENERAL_INFO_T, dataSource) + ",");
+
+		column = (fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) != null) ? "'"
+				+ fixedFields.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID) + "'" : AbstractJDBCDataset.encapsulateColumnName(
+				HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
+		sbColumns.append(column + " AS " + AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource));
 
 		toReturn = sbColumns.toString();
 		return toReturn;
@@ -1255,7 +1429,7 @@ public class HierarchyUtils {
 			toReturn.setObject(12, values.get(HierarchyConstants.NODE_NM_M));
 			toReturn.setObject(13, values.get(HierarchyConstants.NODE_LEV_M));
 			toReturn.setObject(14, values.get(HierarchyConstants.GENERAL_INFO_T));
-
+			toReturn.setObject(15, values.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID));
 		} catch (Throwable t) {
 			String errMsg = "Error while inserting relation of element with code: [" + values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
 					+ values.get(HierarchyConstants.NODE_NM_T) + "]";

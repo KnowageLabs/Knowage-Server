@@ -82,7 +82,7 @@ public class HierarchyTechnicalService {
 
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
 			String queryText = "SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE " + typeColumn
-					+ "=\'TECHNICAL\' AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn;
+					+ "=\'TECHNICAL\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn;
 			// IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
 			// + typeColumn + "=\"TECHNICAL\" AND " + bkpColumn + "= 0 ORDER BY " + hierarchyCodeColumn, 0, 0);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);

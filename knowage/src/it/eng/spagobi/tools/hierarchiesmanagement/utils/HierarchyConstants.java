@@ -31,6 +31,7 @@ public class HierarchyConstants {
 	public final static String HIERARCHY_TABLE = "HIERARCHY_TABLE";
 	public final static String HIERARCHY_FK = "HIERARCHY_FK";
 	public final static String DATASOURCE = "DATASOURCE";
+	public final static String PRIMARY_KEY = "PRIMARY_KEY";
 
 	// CONFIGS SECTION
 	public final static String CONFIGS = "CONFIGS";
@@ -144,6 +145,7 @@ public class HierarchyConstants {
 	public final static String HIER_TP_TECHNICAL = "TECHNICAL";
 
 	public final static String HIER_MASTERS_CONFIG_TABLE = "HIER_MASTERS_CONFIG";
+	public final static String HIER_MASTERS_CONFIG_ID = "HIER_MASTER_ID";
 	public final static String HIER_MASTERS_CONFIG = "CONFIGURATION";
 
 	public final static int CD_VALUE_POSITION = 0;
@@ -157,6 +159,7 @@ public class HierarchyConstants {
 
 	// PROPAGATION FIELDS
 	public final static String REL_MASTER_TECH_TABLE_NAME = "HIER_MASTER_TECHNICAL";
+	public final static String REL_MASTER_TECH_TABLE_NAME_ID = "MT_ID";
 	public final static String HIER_CD_T = "HIER_CD_T";
 	public final static String HIER_NM_T = "HIER_NM_T";
 	public final static String NODE_CD_T = "NODE_CD_T";

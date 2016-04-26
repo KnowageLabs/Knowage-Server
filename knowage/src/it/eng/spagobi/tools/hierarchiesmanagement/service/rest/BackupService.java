@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -305,15 +305,17 @@ public class BackupService {
 		String hierCDTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
 		String hierNMTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 
-		String selectQuery = "SELECT DISTINCT(" + hierNameColumn + ") FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND " + bkpColumn + " = ?";
+		String selectQuery = "SELECT DISTINCT(" + hierNameColumn + ") FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND (" + bkpColumn + " = ? OR "
+				+ bkpColumn + " IS NULL)";
 		String selectQueryRel = "SELECT DISTINCT(" + hierCDTColumn + ") FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn
-				+ "= ? AND " + bkpColumn + " = ?";
+				+ "= ? AND (" + bkpColumn + " = ? OR " + bkpColumn + " IS NULL)";
 
 		logger.debug("The select query is [" + selectQuery + "]");
 		logger.debug("The select query for relations TM is [" + selectQueryRel + "]");
 
-		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND " + bkpColumn + " = ?";
-		String deleteQueryRel = "DELETE FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn + "= ? AND " + bkpColumn + " = ?";
+		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND (" + bkpColumn + " = ? OR " + bkpColumn + " IS NULL)";
+		String deleteQueryRel = "DELETE FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn + "= ? AND (" + bkpColumn
+				+ " = ? OR " + bkpColumn + " IS NULL)";
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
 		logger.debug("The delete query for relations TM is [" + deleteQueryRel + "]");
@@ -428,18 +430,18 @@ public class BackupService {
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + hierTableName + " WHERE " + bkpColumn + " = 1 ");
 
 		if (hierarchyCode != null) {
-			query.append(" AND " + hierCdColumn + "= \"" + hierarchyCode + "\"");
+			query.append(" AND " + hierCdColumn + "= '" + hierarchyCode + "'");
 		}
 		//
 		// if (hierarchyName != null) {
-		// query.append(" AND " + hierNameColumn + "= \"" + hierarchyName + "\"");
+		// query.append(" AND " + hierNameColumn + "= '" + hierarchyName + "'");
 		// }
 
 		if (hierarchyType != null) {
-			query.append(" AND " + hierTypeColumn + "= \"" + hierarchyType + "\"");
+			query.append(" AND " + hierTypeColumn + "= '" + hierarchyType + "'");
 		}
 
-		query.append(" GROUP BY " + hierNameColumn);
+		query.append(" GROUP BY " + selectClause);
 
 		logger.debug("Query for hier backups data is: " + query);
 		logger.debug("END");
