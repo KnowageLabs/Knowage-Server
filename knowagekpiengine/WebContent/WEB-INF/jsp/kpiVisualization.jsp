@@ -214,22 +214,19 @@ author:
 		
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" layout="column" layout-align="center center" class="kn-schedulerKpi">
+<body ng-controller="kpiViewerController" ng-init="init()" 
+	layout="row" layout-align="center center"
+	layout-wrap
+	class="kn-schedulerKpi">
 	
 	<%--
-	<h2>KpiEngine</h2>
-	<div style="padding:2em; font-size: 0.7em">targetValue: {{documentData.targetValue | json}}</div>
-	
-	<div layout-align="center center" layout="row" flex >
-		<div id="kpiViewer_<%=docId%>"></div>
-	</div>
-	<div style="padding:2em; font-size: 1.2em">kpiOptions.showlineargauge: {{kpiOptions.showlineargauge | json}}</div>
-	
-	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
-	--%>
+	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
+	--%>
 
+<%-- 
 <%
 if(type.equalsIgnoreCase("kpi")) {
 	String model = (String)chartObj.get("model");
@@ -246,9 +243,9 @@ if(type.equalsIgnoreCase("kpi")) {
 	gauge-size=gaugeSize 
 	gauge-min-value=gaugeMinValue 
 	gauge-max-value=gaugeMaxValue 
-	gauge-value = gaugeValue 
-	gauge-target-value = gaugeTargetValue
-	threshold-stops =thresholdStops 
+	gauge-value=gaugeValue 
+	gauge-target-value=gaugeTargetValue
+	threshold-stops=thresholdStops 
 	percentage=percentage
 ></kpi-widget>
 
@@ -257,14 +254,14 @@ if(type.equalsIgnoreCase("kpi")) {
 %>
 <!--
  <kpi-widget ng-model="documentData"
-gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-value = gaugeValue gauge-target-value = gaugeTargetValue
-threshold-stops =thresholdStops percentage=percentage
+gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-value=gaugeValue gauge-target-value=gaugeTargetValue
+threshold-stops=thresholdStops percentage=percentage
 ></kpi-widget> 
 	-->
 <kpi-gauge flex layout="column" layout-align="center"
 	gauge-id="documentData.docId"
 	label="documentData.docLabel"
-	size="gaugeSize"
+	size="GAUGE_DEFAULT_SIZE"
 	min-value="gaugeMinValue"
 	max-value="gaugeMaxValue"
 	value="gaugeValue"
@@ -275,10 +272,64 @@ threshold-stops =thresholdStops percentage=percentage
 	show-thresholds="documentData.template.chart.options.showthreshold"
 	value-precision="documentData.template.chart.options.precision"
 	font-conf="documentData.template.chart.style.font"
-></kpi-gauge>
+></kpi-gauge> 
+--%>
+<%
+if(type.equalsIgnoreCase("kpi")) {
+	String model = (String)chartObj.get("model");
+	
+	if(model.equalsIgnoreCase("widget")) {
+%>
+			
+	<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
+		<%--
+		<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
+		--%>
+		
+		<kpi-gauge 
+			ng-if="kpiItem.viewAs=='speedometer'"
+			layout="column"
+			
+			gauge-id="kpiItem.id"
+			label="kpiItem.name"
+			size="kpiItem.size"
+			min-value="kpiItem.minValue"
+			max-value="kpiItem.maxValue"
+			value="kpiItem.value"
+			target-value="kpiItem.targetValue"
+			threshold-stops="kpiItem.thresholdStops"
+			show-value="kpiItem.showValue"
+			show-target="kpiItem.showTarget"
+			show-thresholds="kpiItem.showThreshold"
+			value-precision="kpiItem.precision"
+			font-conf="kpiItem.fontConf"
+		></kpi-gauge>
+			
+		<kpi-widget 
+			ng-if="kpiItem.viewAs=='kpicard'"
+			
+			widget-id="kpiItem.id"
+			label="kpiItem.name"
+			font-conf="kpiItem.fontConf"
+			show-target-percentage="kpiItem.showTargetPercentage"
+			show-thresholds="kpiItem.showThreshold"
+			min-value="kpiItem.minValue"
+			max-value="kpiItem.maxValue"
+			value="kpiItem.value" 
+			target-value="kpiItem.targetValue"
+			precision="kpiItem.precision"
+			gauge-size="kpiItem.size"
+			threshold-stops="kpiItem.thresholdStops"
+		></kpi-widget>
+	</div>
 
 <%
-		} 
+	} else if(model.equalsIgnoreCase("list")) {
+%>
+	<kpi-list-document
+	
+	></kpi-list-document>
+<%
 	}
 } else if(type.equalsIgnoreCase("scorecard")) {
 %>
@@ -310,9 +361,8 @@ threshold-stops =thresholdStops percentage=percentage
 				template : documentTemplate,
 				docLabel : '<%=docLabel %>',
 				docId : '<%=docId%>',
-				kpiValue : {threshold:{thresholdValues:[]}},
+				kpiValue : [],
 				kpiListValue : [],
-				targetValue : []
 			};
 			return obj;
 		});
