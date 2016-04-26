@@ -20,6 +20,8 @@
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
 		
+
+		
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate","readKpiTemplate",$scope.documentData.template)
 			.then(function(response){ 

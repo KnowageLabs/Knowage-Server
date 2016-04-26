@@ -17,8 +17,6 @@
  */
 package it.eng.knowage.engine.util;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +27,6 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Scorecard;
-import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
 import it.eng.spagobi.services.serialization.JsonConverter;
 
 public class KpiEngineDataUtil extends AbstractHibernateDAO {
@@ -61,7 +58,7 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					JSONObject tempResult = new JSONObject();
 
 					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
-					List<SbiKpiTarget> sbiKpiTargets = DAOFactory.getNewKpiDAO().listTargetbyKpi(kpi);
+					Double valueTarget = new Double(DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi));
 					JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
 					object.remove("definition");
 					object.remove("enableVersioning");
@@ -69,12 +66,11 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					object.remove("cardinality");
 					tempResult.put("kpi", object);
 					JSONArray arrayTargets = new JSONArray();
-					for (int j = 0; j < sbiKpiTargets.size(); j++) {
-						sbiKpiTargets.get(j).setSbiKpiTargetValues(null);
-						JSONObject target = new JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass()));
-						arrayTargets.put(target);
-					}
-					tempResult.put("target", arrayTargets);
+					/*
+					 * for (int j = 0; j < sbiKpiTargets.size(); j++) { sbiKpiTargets.get(j).setSbiKpiTargetValues(null); JSONObject target = new
+					 * JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass())); arrayTargets.put(target); }
+					 */
+					tempResult.put("target", valueTarget);
 					result.put(tempResult);
 				}
 			}
