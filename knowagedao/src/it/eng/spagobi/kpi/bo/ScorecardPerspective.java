@@ -19,11 +19,11 @@ public class ScorecardPerspective extends ScorecardSubview {
 
 	public void countKpiByGoal(ScorecardTarget goal) {
 		for (CountByStatus goalCount : goal.getGroupedKpis()) {
-			CountByStatus count = getGroupedKpiMap().get(goalCount.getStatus());
+			Integer count = getGroupedKpiMap().get(goalCount.getStatus());
 			if (count == null) {
-				getGroupedKpiMap().put(goalCount.getStatus(), goalCount);
+				getGroupedKpiMap().put(goalCount.getStatus(), goalCount.getCount());
 			} else {
-				count.sum(goalCount.getCount());
+				getGroupedKpiMap().put(goalCount.getStatus(), count + goalCount.getCount());
 			}
 		}
 	}

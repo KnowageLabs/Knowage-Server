@@ -15,11 +15,12 @@ public class ScorecardTarget extends ScorecardSubview {
 	}
 
 	public void countKpi(KpiExecution kpi) {
-		CountByStatus count = getGroupedKpiMap().get(kpi.getStatus());
+		System.out.println("name: " + this.getName());
+		Integer count = getGroupedKpiMap().get(kpi.getStatus());
 		if (count == null) {
-			getGroupedKpiMap().put(kpi.getStatus(), new CountByStatus(kpi.getStatus()));
+			getGroupedKpiMap().put(kpi.getStatus(), 1);
 		} else {
-			count.add();
+			getGroupedKpiMap().put(kpi.getStatus(), count + 1);
 		}
 
 	}

@@ -4,9 +4,11 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
 import it.eng.spagobi.services.serialization.JsonConverter;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +23,8 @@ public class ScorecardSubview {
 	private ScorecardOption scorecardOption;
 
 	private STATUS status;
-	private final Map<STATUS, CountByStatus> groupedKpiMap = new HashMap<>();
+	@JsonIgnore
+	private final Map<STATUS, Integer> groupedKpiMap = new HashMap<>();
 
 	/**
 	 * @return the id
@@ -71,8 +74,12 @@ public class ScorecardSubview {
 	/**
 	 * @return the groupedKpis
 	 */
-	public Collection<CountByStatus> getGroupedKpis() {
-		return groupedKpiMap.values();
+	public List<CountByStatus> getGroupedKpis() {
+		List<CountByStatus> ret = new ArrayList<>();
+		for (Entry<STATUS, Integer> countByStatus : groupedKpiMap.entrySet()) {
+			ret.add(new CountByStatus(countByStatus.getKey(), countByStatus.getValue()));
+		}
+		return ret;
 	}
 
 	/**
@@ -88,7 +95,7 @@ public class ScorecardSubview {
 	 */
 	public void setOptions(String options) {
 		this.options = options;
-		this.scorecardOption = (ScorecardOption) JsonConverter.jsonToObject(options, ScorecardOption.class);
+		this.scorecardOption = options != null ? (ScorecardOption) JsonConverter.jsonToObject(options, ScorecardOption.class) : null;
 	}
 
 	/**
@@ -124,8 +131,7 @@ public class ScorecardSubview {
 	/**
 	 * @return the groupedKpiMap
 	 */
-	@JsonIgnore
-	protected Map<STATUS, CountByStatus> getGroupedKpiMap() {
+	protected Map<STATUS, Integer> getGroupedKpiMap() {
 		return groupedKpiMap;
 	}
 
@@ -133,19 +139,11 @@ public class ScorecardSubview {
 
 class CountByStatus {
 	private final ScorecardStatus.STATUS status;
-	private int count;
+	private final Integer count;
 
-	public CountByStatus(ScorecardStatus.STATUS status) {
+	public CountByStatus(ScorecardStatus.STATUS status, Integer count) {
 		this.status = status;
-		this.count = 1;
-	}
-
-	public void add() {
-		this.count++;
-	}
-
-	public void sum(int c) {
-		this.count += c;
+		this.count = count;
 	}
 
 	/**
@@ -158,7 +156,7 @@ class CountByStatus {
 	/**
 	 * @return the count
 	 */
-	public int getCount() {
+	public Integer getCount() {
 		return count;
 	}
 
