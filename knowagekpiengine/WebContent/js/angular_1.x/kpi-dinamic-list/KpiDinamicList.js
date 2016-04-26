@@ -42,14 +42,11 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					return item.rangeMinValue>=item.rangeMaxValue;
 				}
 			},
-			vieweAs: [{"label":"speedometer","value":"Speedometer"},{"label":"semaphore","value":"Semaphore"},{"label":"kpicard","value":"Kpi Card"}]
+			vieweAs: [{"label":"speedometer","value":"Speedometer"},{"label":"kpicard","value":"Kpi Card"}]
 
 
 	}
-	
-	
-	
-	
+
 	s.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
@@ -80,7 +77,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 			s.tableKpisColumn=[
 				                     {"label":"Name","name":"name"},
 				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"Viewe As","name":"vieweAsList"},
+				                     {"label":"View As","name":"vieweAsList"},
 				                     {"label":"Range Min Value","name":"rangeMinValueHTML"},
 				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
 				                  ];
@@ -99,7 +96,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 			s.tableKpisColumn=[
 				                     {"label":"Name","name":"name"},
 				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"Viewe As","name":"vieweAsList"}
+				                     {"label":"View As","name":"vieweAsList"}
 				                  ];
 		}
 	}
