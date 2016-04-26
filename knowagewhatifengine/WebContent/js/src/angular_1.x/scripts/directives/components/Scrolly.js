@@ -1,14 +1,15 @@
 angular.module('scrolly_directive',[])
-	.directive('scrolly',['$window', function ($window) {
+	.directive('scrolly',['$window','$interval', function ($window,$interval) {
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
 	        	var ready = false;
+	        	
 	            var raw = element[0];
 	            scope.$watch('tableHeight', function() {
 	                console.log("table height is "+scope.tableHeight);
 	            });
-	            console.log('loading directive');
+	            console.log('visina'+raw.parentElement.offsetHeight);
 	            scope.tableHeight = raw.offsetHeight;
 	            console.log(scope.tableHeight);
 	            scope.scrollTo = function(posX,posY) {
@@ -18,7 +19,10 @@ angular.module('scrolly_directive',[])
 	        	 
 	        	};
 	        	
+	        	
 	        	scope.resize = function(){
+	        		
+	        		
 	        		
 	        		
 	        		 scope.tableHeight = raw.offsetHeight;
@@ -28,14 +32,74 @@ angular.module('scrolly_directive',[])
 	            	 var thead = document.getElementsByTagName("thead")[0];
 	            	 var header = headers[headers.length - 1];
 	            	
-	            	 var rowSize = 28;
-	            	 var colunmSize = 90;
-	            	console.log(corner+' corner');
-	            	
-	            	
+	            	 var newRowSet=scope.modelConfig.rowsSet;
+	            	 var newColumnSet=scope.modelConfig.columnSet;
 	            	 
-	            	/*
-	            		 if(corner){
+	            	 var bodyRows = document.getElementsByTagName("tbody")[0].children;
+	            	 var bodyColumns = document.getElementsByTagName("tbody")[0].children[0].children;
+	            	 var rowSize = document.getElementsByTagName("tbody")[0].children[0].offsetHeight;//28;
+	            	 
+	            	 var colunmSize = 90;
+	            	
+	            	
+	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetHeight>raw.parentElement.offsetHeight-35){
+	            		
+	            		newRowSet = 0;
+	            		var ajSize = thead.offsetHeight;
+	            		while((ajSize+bodyRows[newRowSet].offsetHeight)<(raw.parentElement.offsetHeight-35)){
+	            			ajSize = ajSize+bodyRows[newRowSet].offsetHeight;
+	            			newRowSet++;
+	            			
+	            		}
+	            	}	
+	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetHeight<raw.parentElement.offsetHeight-70&&
+	            			scope.modelConfig.rowCount>newRowSet){
+	            		
+	            			newRowSet++;
+	            			
+	            		
+	            	}	
+	            	
+	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetWidth<raw.parentElement.offsetWidth-70&&
+	            			scope.modelConfig.columnCount>newColumnSet){
+	            		
+	            		newColumnSet++;
+	            			
+	            		
+	            	}	
+	            	
+	            		if(document.getElementsByClassName("x-pivot-table")[0].offsetWidth>raw.parentElement.offsetWidth-70){
+	            			 var bodyColumns = document.getElementsByTagName("tbody")[0].children[0].children;
+	            			newColumnSet = 0;
+		            		var ajSize = 0;
+		            		while((ajSize+bodyColumns[newColumnSet].offsetWidth)<(raw.parentElement.offsetWidth-70)){
+		            			ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
+		            			newColumnSet++;
+		            			
+		            		}
+	            		
+	        		}else{
+	        			/*
+	        				if(thead){
+		            			newRowSet = Math.round((raw.offsetHeight-thead.offsetHeight-35)/rowSize)-1;
+		            		
+		            			if(corner){
+		            				newColumnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
+		            			}
+			            	}else{
+			            		newRowSet =Math.round(raw.offsetHeight/rowSize)-2;
+			            		newColumnSet =Math.round(raw.offsetWidth/colunmSize)-2;
+			            	}
+	        				
+	        			*/
+	        			
+	        			
+	        			
+	        			
+	        		}
+	            	 
+	            	
+	            /*		 if(corner){
 		            		 scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-corner.offsetHeight)/rowSize)-1;
 		            		 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
 		            		 console.log(corner.offsetHeight/rowSize);
@@ -43,42 +107,40 @@ angular.module('scrolly_directive',[])
 			            		 scope.modelConfig.rowsSet =scope.modelConfig.rowsSet - Math.round(header.offsetHeight/rowSize);
 			            		 console.log("header"+header.offsetHeight/rowSize);
 			            	}*/
-	            		if(thead){
-	            			scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-thead.offsetHeight)/rowSize)-1;
-	            			if(corner){
-	            				 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
-	            			}
-		            	}else{
-		            		scope.modelConfig.rowsSet =Math.round(raw.offsetHeight/rowSize)-2;
-		            		scope.modelConfig.columnSet =Math.round(raw.offsetWidth/colunmSize)-2;
-		            	}
+	            		
 		            	
-		            	 console.log(scope.modelConfig.rowsSet);
-		            	 if(scope.modelConfig.columnSet<1){
+		            	
+		            	 if(newRowSet<1){
 		            		
-		            		 scope.modelConfig.columnSet =1;
+		            		 newRowSet =1;
 		            	 }
-		            	 if(scope.modelConfig.columnSet<1){
+		            	 if(newColumnSet<1){
 		            		
-		            		 scope.modelConfig.columnSet =1;
+		            		 newColumnSet =1;
 		            	 }
-		            	 scope.sendModelConfig(scope.modelConfig);
+		            	 
+		            	 if(scope.modelConfig.rowsSet!=newRowSet||scope.modelConfig.columnSet!=newColumnSet){
+		            		 if(scope.ready){
+		            			 scope.modelConfig.rowsSet=newRowSet;
+			            		 scope.modelConfig.columnSet=newColumnSet;
+			            		 scope.sendModelConfig(scope.modelConfig);
+		            		 }
+		            		 
+		            	 }
+		            	 
 	            	 
 	            	 
 	        	}
 	           
-	        	
+	        	scope.interval = $interval(
+	        			function(){
+	        				
+	        				scope.resize();
+	        				
+	        				
+	        			
+	        			},10);
 	               
-	            angular.element($window).bind('resize', function(){
-	                
-	            	scope.resize();
-	            	
-	            	
-	              });
-	           
-	                
-	               
-	            
 	                
 	            element.bind('scroll', function () {
 	                
