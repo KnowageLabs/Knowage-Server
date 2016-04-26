@@ -29,7 +29,7 @@
             <key>
                 <column name="RESOURCE_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiValue" />
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata._SbiKpiValue" />
         </set>
         <set name="sbiKpiModelResourceses" inverse="true">
             <key>

@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -48,6 +50,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinFragment;
 import org.hibernate.transform.Transformers;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,6 +74,7 @@ import it.eng.spagobi.kpi.bo.IScorecardCriterion;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
@@ -101,6 +105,7 @@ import it.eng.spagobi.kpi.metadata.SbiKpiTargetValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiTargetValueId;
 import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
@@ -1725,6 +1730,125 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	public List<KpiExecution> listKpiWithResult() {
 		// TODO load last status of each kpi
 		return mockListKpiWithResult();
+	}
+
+	// TODO: test and debug
+	@Override
+	public List<KpiValue> findKpiValues(final Integer kpiId, final Integer kpiVersion, final Date computedAfter, final Date computedBefore,
+			Map<String, String> attributesValues) {
+		// Ensure attributesValues keys to be case-insensitive
+		TreeMap<String, String> cioAttributesValues = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+		cioAttributesValues.putAll(attributesValues);
+		attributesValues = cioAttributesValues;
+
+		// Retrieve the KPI
+		Kpi kpi = loadKpi(kpiId, kpiVersion);
+
+		// Find the main measure rule and attributes
+		Integer mainMeasureRuleId = null;
+		Integer mainMeasureRuleVersion = null;
+		TreeSet<String> mainMeasureAttributes = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		try {
+			JSONObject cardinality = new JSONObject(kpi.getCardinality());
+			JSONArray measureList = cardinality.getJSONArray("measureList");
+			for (int m = 0; m < measureList.length(); m++) {
+				JSONObject unparsedMeasure = measureList.getJSONObject(m);
+				TreeSet<String> attributes = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+				Iterator<String> ait = unparsedMeasure.getJSONObject("attributes").keys();
+				while (ait.hasNext()) {
+					String attributeName = ait.next();
+					if (unparsedMeasure.getJSONObject("attributes").getBoolean(attributeName)) {
+						attributes.add(attributeName);
+					}
+				}
+				if (attributes.size() > mainMeasureAttributes.size()) {
+					mainMeasureRuleId = unparsedMeasure.getInt("ruleId");
+					mainMeasureRuleVersion = unparsedMeasure.getInt("ruleVersion");
+					mainMeasureAttributes = attributes;
+				}
+			}
+		} catch (JSONException e) {
+			throw new SpagoBIDOAException(e);
+		}
+
+		// Find temporal attributes
+		Rule rule = loadRule(mainMeasureRuleId, mainMeasureRuleVersion);
+		Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+		for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
+			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
+				String attributeName = ruleOutput.getAlias();
+				String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
+				attributesTemporalTypes.put(attributeName, attributeTemporalType);
+			}
+		}
+
+		// Build logical key and find temporal attributes values
+		StringBuffer logicalKeyTmp = new StringBuffer();
+		final Map<String, String> temporalValues = new HashMap<String, String>();
+		for (String attributeName : mainMeasureAttributes) {
+			String attributeValue = attributesValues.get(attributeName);
+			if (attributeValue == null)
+				continue;
+			String temporalType = attributesTemporalTypes.get(attributeName);
+			if (temporalType != null) {
+				temporalValues.put(attributeName, attributeValue.replaceAll("'", "''"));
+				if (ProcessKpiJob.EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY)
+					continue;
+			}
+			if (logicalKeyTmp.length() > 0)
+				logicalKeyTmp.append(",");
+			logicalKeyTmp.append(attributeName.toUpperCase()).append("=").append(attributeValue);
+		}
+		final String logicalKey = logicalKeyTmp.toString();
+
+		// Execute query
+		List<SbiKpiValue> sbiKpiValues = list(new ICriterion<SbiKpiValue>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria criteria = session.createCriteria(SbiKpiValue.class);
+				if (kpiId != null)
+					criteria.add(Restrictions.eq("kpiId", kpiId));
+				if (kpiVersion != null)
+					criteria.add(Restrictions.eq("kpiVersion", kpiVersion));
+				if (computedAfter != null)
+					criteria.add(Restrictions.ge("timeRun", computedAfter));
+				if (computedBefore != null)
+					criteria.add(Restrictions.le("timeRun", computedBefore));
+				if (!logicalKey.isEmpty())
+					criteria.add(Restrictions.eq("logicalKey", logicalKey));
+				criteria.add(Restrictions.eq("valueDay", ifNull(temporalValues.get("DAY"), "ALL")));
+				criteria.add(Restrictions.eq("valueWeek", ifNull(temporalValues.get("WEEK"), "ALL")));
+				criteria.add(Restrictions.eq("valueMonth", ifNull(temporalValues.get("MONTH"), "ALL")));
+				criteria.add(Restrictions.eq("valueQ", ifNull(temporalValues.get("QUARTER"), "ALL")));
+				criteria.add(Restrictions.eq("valueYear", ifNull(temporalValues.get("YEAR"), "ALL")));
+				criteria.addOrder(Order.asc("timeRun")).addOrder(Order.asc("kpiId")).addOrder(Order.asc("kpiVersion"));
+				return criteria;
+			}
+		});
+
+		// Convert data
+		List<KpiValue> kpiValues = new ArrayList<>();
+		for (SbiKpiValue sbiKpiValue : sbiKpiValues) {
+			KpiValue kpiValue = new KpiValue();
+			kpiValue.setId(sbiKpiValue.getId());
+			kpiValue.setKpiId(sbiKpiValue.getKpiId());
+			kpiValue.setKpiVersion(sbiKpiValue.getKpiVersion());
+			kpiValue.setLogicalKey(sbiKpiValue.getLogicalKey());
+			kpiValue.setTimeRun(sbiKpiValue.getTimeRun());
+			kpiValue.setValue(sbiKpiValue.getValue());
+			kpiValue.setValueDay(sbiKpiValue.getValueDay());
+			kpiValue.setValueMonth(sbiKpiValue.getValueMonth());
+			kpiValue.setValueQ(sbiKpiValue.getValueQ());
+			kpiValue.setValueWeek(sbiKpiValue.getValueWeek());
+			kpiValue.setValueYear(sbiKpiValue.getValueYear());
+			kpiValues.add(kpiValue);
+		}
+
+		return kpiValues;
+	}
+
+	private static Object ifNull(Object a, Object b) {
+		return a == null ? b : a;
 	}
 
 	private static final List<it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS> statusValues = Collections

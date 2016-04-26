@@ -66,7 +66,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModel.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPeriodicity.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRole.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/_SbiKpiValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMeasureUnit.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRel.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarm.hbm.xml" />
@@ -75,6 +75,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThresholdValue.hbm.xml" />
        -->
+        <!--mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetadata.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetacontents.hbm.xml" />
         <!-- Kpi Organizational Units 

@@ -113,7 +113,7 @@
 		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModelResources.hbm.xml" />
 		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiPeriodicity.hbm.xml" />
 		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRole.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiValue.hbm.xml" />
+		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/_SbiKpiValue.hbm.xml" />
 		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiMeasureUnit.hbm.xml" />
 		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiResources.hbm.xml" />
 		<mapping resource="it/eng/spagobi/kpi/threshold/metadata/mapping/SbiThreshold.hbm.xml" />
@@ -231,6 +231,7 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiScorecard.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecution.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecutionFilter.hbm.xml" />
+        <!--mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
          
          <!-- METADATA -->
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaBc.hbm.xml" />

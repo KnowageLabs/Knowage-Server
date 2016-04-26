@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.kpi.config.bo;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
-import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -32,49 +25,57 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class KpiValue implements Cloneable{
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
-	private static transient Logger logger=Logger.getLogger(KpiValue.class);
-	
+// TODO: remove from the project. Use the new it.eng.spagobi.kpi.bo.KpiValue instead.
+public class KpiValue implements Cloneable {
+
+	private static transient Logger logger = Logger.getLogger(KpiValue.class);
+
 	Integer kpiInstanceId = null;
 	Integer kpiValueId = null;
-	String value = null;	
+	String value = null;
 	String valueDescr = null;
 	String valueXml = null;
 	List thresholdValues = null;
 	Double weight = null;
 	Double target = null;
 	Date beginDate = null;
-	Date endDate = null;//null beginDate + num_validity_days
+	Date endDate = null;// null beginDate + num_validity_days
 	String scaleCode = null;
 	String scaleName = null;
-	Resource r = null;//Resource (project/process) to which refers the value
+	Resource r = null;// Resource (project/process) to which refers the value
 	String chartType = null;
 	OrganizationalUnitGrantNode grantNodeOU = null;
 
 	/**
 	 * This function returns the value of the attribute required, if existent in the xml field
-	 * 
-	 * @param String attribute for which the value is requested
+	 *
+	 * @param String
+	 *            attribute for which the value is requested
 	 * @return The value of the attribute
 	 */
-	public String getValueFromStandardXmlValue(String attribute){
+	public String getValueFromStandardXmlValue(String attribute) {
 		String valToReturn = "";
-		if(valueXml!=null){
+		if (valueXml != null) {
 			try {
 				SourceBean xmlValueSB = SourceBean.fromXMLString(valueXml);
-				valToReturn = (String)xmlValueSB.getAttribute(attribute);
+				valToReturn = (String) xmlValueSB.getAttribute(attribute);
 			} catch (SourceBeanException e) {
-				logger.error("Source Bean Exception",e);
+				logger.error("Source Bean Exception", e);
 				e.printStackTrace();
 			}
 		}
 		return valToReturn;
 	}
-	
+
 	/**
 	 * This function return the ThresholdValue in which the kpiValue falls
-	 * 
+	 *
 	 * @return The Color of the interval in which the value falls
 	 */
 	public ThresholdValue getThresholdOfValue() {
@@ -89,81 +90,81 @@ public class KpiValue implements Cloneable{
 				String type = t.getThresholdType();
 				Double min = t.getMinValue();
 				Double max = t.getMaxValue();
-				Boolean min_closed = t.getMinClosed()!=null?t.getMinClosed():false;
-				Boolean max_closed = t.getMaxClosed()!=null?t.getMaxClosed():false;
+				Boolean min_closed = t.getMinClosed() != null ? t.getMinClosed() : false;
+				Boolean max_closed = t.getMaxClosed() != null ? t.getMaxClosed() : false;
 
 				if (type.equals("RANGE")) {
 					logger.debug("Threshold type RANGE");
-					if(min_closed && max_closed){
-						if (min != null && min.doubleValue()<= val.doubleValue()&& max!=null && val.doubleValue() <= max.doubleValue()) {
+					if (min_closed && max_closed) {
+						if (min != null && min.doubleValue() <= val.doubleValue() && max != null && val.doubleValue() <= max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(min==null && max!=null && val.doubleValue() <= max.doubleValue()){
+						} else if (min == null && max != null && val.doubleValue() <= max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(max == null && min != null && min.doubleValue()<= val.doubleValue()){
+						} else if (max == null && min != null && min.doubleValue() <= val.doubleValue()) {
 							toReturn = t;
 							break;
 						}
-					}else if(min_closed && !max_closed){
-						if (min != null && min.doubleValue()<= val.doubleValue()&& max!=null && val.doubleValue() < max.doubleValue()) {
+					} else if (min_closed && !max_closed) {
+						if (min != null && min.doubleValue() <= val.doubleValue() && max != null && val.doubleValue() < max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(min==null && max!=null && val.doubleValue() < max.doubleValue()){
+						} else if (min == null && max != null && val.doubleValue() < max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(max == null && min != null && min.doubleValue()<= val.doubleValue()){
+						} else if (max == null && min != null && min.doubleValue() <= val.doubleValue()) {
 							toReturn = t;
 							break;
-						}					
-					}else if(!min_closed && max_closed){
-						if (min != null && min.doubleValue()< val.doubleValue()&& max!=null && val.doubleValue() <= max.doubleValue()) {
+						}
+					} else if (!min_closed && max_closed) {
+						if (min != null && min.doubleValue() < val.doubleValue() && max != null && val.doubleValue() <= max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(min==null && max!=null && val.doubleValue() <= max.doubleValue()){
+						} else if (min == null && max != null && val.doubleValue() <= max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(max == null && min != null && min.doubleValue()< val.doubleValue()){
+						} else if (max == null && min != null && min.doubleValue() < val.doubleValue()) {
 							toReturn = t;
 							break;
-						}						
-					}else{
-						if (min != null && min.doubleValue()< val.doubleValue()&& max!=null && val.doubleValue() < max.doubleValue()) {
+						}
+					} else {
+						if (min != null && min.doubleValue() < val.doubleValue() && max != null && val.doubleValue() < max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(min==null && max!=null && val.doubleValue() < max.doubleValue()){
+						} else if (min == null && max != null && val.doubleValue() < max.doubleValue()) {
 							toReturn = t;
 							break;
-						}else if(max == null && min != null && min.doubleValue()< val.doubleValue()){
+						} else if (max == null && min != null && min.doubleValue() < val.doubleValue()) {
 							toReturn = t;
 							break;
-						}	
+						}
 					}
-		
+
 				} else if (type.equals("MINIMUM")) {
 					logger.debug("Threshold type MINIMUM");
-					if(min_closed){
+					if (min_closed) {
 						if (val.doubleValue() <= min.doubleValue()) {
 							toReturn = t;
 							break;
-						}else {
-							t.setColor(Color.WHITE) ;
+						} else {
+							t.setColor(Color.WHITE);
 							toReturn = t;
 							break;
 						}
-					}else{
+					} else {
 						if (val.doubleValue() < min.doubleValue()) {
 							toReturn = t;
 							break;
-						}else {
-							t.setColor(Color.WHITE) ;
+						} else {
+							t.setColor(Color.WHITE);
 							toReturn = t;
 							break;
 						}
 					}
 				} else if (type.equals("MAXIMUM")) {
 					logger.debug("Threshold type MAXIMUM");
-					if(max_closed){
+					if (max_closed) {
 						if (val.doubleValue() >= max.doubleValue()) {
 							toReturn = t;
 						} else {
@@ -171,7 +172,7 @@ public class KpiValue implements Cloneable{
 							toReturn = t;
 							break;
 						}
-					}else{
+					} else {
 						if (val.doubleValue() > max.doubleValue()) {
 							toReturn = t;
 						} else {
@@ -179,7 +180,7 @@ public class KpiValue implements Cloneable{
 							toReturn = t;
 							break;
 						}
-					}				
+					}
 				}
 				logger.debug("New interval added to the Vector");
 			}
@@ -187,8 +188,7 @@ public class KpiValue implements Cloneable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	
+
 	public String getChartType() {
 		return chartType;
 	}
@@ -289,28 +289,27 @@ public class KpiValue implements Cloneable{
 	public void setValueDescr(String valueDescr) {
 		this.valueDescr = valueDescr;
 	}
-	
-	public KpiValue clone(){
-		 KpiValue toReturn = new KpiValue();
-		 toReturn.setBeginDate(beginDate);
-		 toReturn.setChartType(chartType);
-		 toReturn.setEndDate(endDate);
-		 toReturn.setKpiInstanceId(kpiInstanceId);
-		 toReturn.setR(r);
-		 toReturn.setScaleCode(scaleCode);
-		 toReturn.setScaleName(scaleName);
-		 toReturn.setTarget(target);
-		 toReturn.setThresholdValues(thresholdValues);
-		 toReturn.setValue(value);
-		 toReturn.setKpiValueId(kpiValueId);
-		 toReturn.setValueDescr(valueDescr);
-		 toReturn.setValueXml(valueXml);
-		 toReturn.setWeight(weight);
-		 toReturn.setGrantNodeOU(grantNodeOU);
-		 return toReturn;
+
+	@Override
+	public KpiValue clone() {
+		KpiValue toReturn = new KpiValue();
+		toReturn.setBeginDate(beginDate);
+		toReturn.setChartType(chartType);
+		toReturn.setEndDate(endDate);
+		toReturn.setKpiInstanceId(kpiInstanceId);
+		toReturn.setR(r);
+		toReturn.setScaleCode(scaleCode);
+		toReturn.setScaleName(scaleName);
+		toReturn.setTarget(target);
+		toReturn.setThresholdValues(thresholdValues);
+		toReturn.setValue(value);
+		toReturn.setKpiValueId(kpiValueId);
+		toReturn.setValueDescr(valueDescr);
+		toReturn.setValueXml(valueXml);
+		toReturn.setWeight(weight);
+		toReturn.setGrantNodeOU(grantNodeOU);
+		return toReturn;
 	}
-
-
 
 	public OrganizationalUnitGrantNode getGrantNodeOU() {
 		return grantNodeOU;

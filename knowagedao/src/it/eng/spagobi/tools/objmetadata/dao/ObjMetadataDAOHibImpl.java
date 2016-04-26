@@ -22,7 +22,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
+import it.eng.spagobi.kpi.config.metadata._SbiKpiValue;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;

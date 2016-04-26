@@ -27,6 +27,7 @@ import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
@@ -123,6 +124,23 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Kpi> listKpi(STATUS status);
 
 	public List<KpiExecution> listKpiWithResult();
+
+	/**
+	 * Retrieves all the KPI values satisfying the specified criteria
+	 *
+	 * @param kpiId
+	 *            The id of the KPI
+	 * @param kpiVersion
+	 *            The version of the KPI
+	 * @param computedAfter
+	 *            The datetime after which the KPI values must have been computed (optional, it can be null)
+	 * @param computedBefore
+	 *            The datetime before which the KPI values must have been computed (optional, it can be null)
+	 * @param attributesValues
+	 *            The KPI attributes name-value pairs
+	 * @return The list of KPI values
+	 */
+	public List<KpiValue> findKpiValues(Integer kpiId, Integer kpiVersion, Date computedAfter, Date computedBefore, Map<String, String> attributesValues);
 
 	/**
 	 * Insert a new kpi

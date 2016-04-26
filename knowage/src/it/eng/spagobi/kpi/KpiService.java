@@ -18,6 +18,10 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -31,6 +35,7 @@ import it.eng.spagobi.kpi.bo.Cardinality;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiExecution;
 import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.kpi.bo.Placeholder;
 import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
@@ -297,10 +302,23 @@ public class KpiService {
 	}
 
 	@GET
-	@Path("/devTest")
-	public Response devTest() throws JobExecutionException {
-		// return Response.ok(ProcessKpiJob.computeKpi(4, 0, null, false)).build();
-		return Response.ok(ProcessKpiJob.computeKpis(4)).build();
+	@Path("/executeKpiScheduler/{schedulerId}")
+	public Response executeKpiScheduler(@PathParam("schedulerId") String schedulerId) throws JobExecutionException {
+		return Response.ok(ProcessKpiJob.computeKpis(Integer.parseInt(schedulerId))).build();
+	}
+
+	@GET
+	@Path("/findKpiValuesTest")
+	public Response findKpiValuesTest() throws EMFUserError, JsonGenerationException, JsonMappingException, IOException {
+		IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
+		Map<String, String> attributesValues = new HashMap<String, String>();
+		attributesValues.put("CA1", "0");
+		attributesValues.put("CA2", "0");
+		attributesValues.put("SA1", "1");
+		attributesValues.put("SA2", "5");
+		List<KpiValue> kpiValues = kpiDao.findKpiValues(4, 0, null, null, attributesValues);
+		String result = new ObjectMapper().writeValueAsString(kpiValues);
+		return Response.ok(result).build();
 	}
 
 	@POST

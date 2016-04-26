@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiValue" table="SBI_KPI_VALUE" >
+    <class name="it.eng.spagobi.kpi.config.metadata._SbiKpiValue" table="SBI_KPI_VALUE" >
         <id name="idKpiInstanceValue" type="integer">
             <column name="id_kpi_instance_value" />
         </id>

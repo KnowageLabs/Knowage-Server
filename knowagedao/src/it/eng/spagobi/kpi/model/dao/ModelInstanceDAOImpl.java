@@ -30,7 +30,7 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
+import it.eng.spagobi.kpi.config.metadata._SbiKpiValue;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
@@ -1133,12 +1133,12 @@ IModelInstanceDAO {
 	private void deleteKpiValue(Session aSession, Integer kpiInstId) {
 		SbiKpiInstance sbiKpiInst = (SbiKpiInstance) aSession.load(
 				SbiKpiInstance.class, kpiInstId);
-		Criteria critt = aSession.createCriteria(SbiKpiValue.class);
+		Criteria critt = aSession.createCriteria(_SbiKpiValue.class);
 		critt.add(Expression.eq("sbiKpiInstance", sbiKpiInst));
 		List sbiKpiValueList = critt.list();
 
 		for (Iterator iterator = sbiKpiValueList.iterator(); iterator.hasNext();) {
-			SbiKpiValue sbiKpiValue = (SbiKpiValue) iterator.next();
+			_SbiKpiValue sbiKpiValue = (_SbiKpiValue) iterator.next();
 
 			aSession.delete(sbiKpiValue);
 
@@ -1154,13 +1154,13 @@ IModelInstanceDAO {
 			tx = aSession.beginTransaction();
 			SbiKpiInstance sbiKpiInst = (SbiKpiInstance) aSession.load(
 					SbiKpiInstance.class, kpiInstId);
-			Criteria critt = aSession.createCriteria(SbiKpiValue.class);
+			Criteria critt = aSession.createCriteria(_SbiKpiValue.class);
 			critt.add(Expression.eq("sbiKpiInstance", sbiKpiInst));
 			List sbiKpiValueList = critt.list();
 
 			for (Iterator iterator = sbiKpiValueList.iterator(); iterator
 			.hasNext();) {
-				SbiKpiValue sbiKpiValue = (SbiKpiValue) iterator.next();
+				_SbiKpiValue sbiKpiValue = (_SbiKpiValue) iterator.next();
 
 				aSession.delete(sbiKpiValue);
 			}

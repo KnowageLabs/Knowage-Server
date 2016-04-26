@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE_NEW">
+		<!-- 
+			--- TODO: Replace sbi_kpi_value after debug ---
+			CREATE TABLE sbi_kpi_value_new ( 
+			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+			kpi_id INTEGER NOT NULL,
+			kpi_version INTEGER NOT NULL,
+			logical_key VARCHAR(4096) NOT NULL,
+			time_run DATETIME NOT NULL,
+			value FLOAT NOT NULL,
+			value_day VARCHAR(3) NOT NULL,
+			value_week VARCHAR(3) NOT NULL,
+			value_month VARCHAR(3) NOT NULL,
+			value_q VARCHAR(3) NOT NULL,
+			value_year VARCHAR(4) NOT NULL
+			)
+		 -->
+		<id name="id" type="integer">
+			<column name="id" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_KPI_VALUE_NEW</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<property name="kpiId" type="integer">
+			<column name="KPI_ID" not-null="true" />
+		</property>
+		<property name="kpiVersion" type="integer">
+			<column name="KPI_VERSION" not-null="true" />
+		</property>
+		<property name="logicalKey" type="string">
+			<column name="LOGICAL_KEY" length="4096" not-null="true" />
+		</property>
+		<property name="timeRun" type="timestamp">
+			<column name="TIME_RUN" not-null="true" />
+		</property>
+		<property name="value" type="float">
+			<column name="VALUE" length="40" not-null="true" />
+		</property>
+		<property name="valueDay" type="string">
+			<column name="VALUE_DAY" length="4" not-null="true" />
+		</property>
+		<property name="valueWeek" type="string">
+			<column name="VALUE_WEEK" length="4" not-null="true" />
+		</property>
+		<property name="valueMonth" type="string">
+			<column name="VALUE_MONTH" length="4" not-null="true" />
+		</property>
+		<property name="valueQ" type="string">
+			<column name="VALUE_Q" length="4" not-null="true" />
+		</property>
+		<property name="valueYear" type="string">
+			<column name="VALUE_YEAR" length="4" not-null="true" />
+		</property>
+	</class>
+</hibernate-mapping>

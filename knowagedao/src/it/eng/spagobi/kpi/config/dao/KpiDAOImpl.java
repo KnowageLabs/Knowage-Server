@@ -35,7 +35,7 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
+import it.eng.spagobi.kpi.config.metadata._SbiKpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
@@ -90,7 +90,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiKpiValue hibSbiKpiValue = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+			_SbiKpiValue hibSbiKpiValue = (_SbiKpiValue) aSession.load(_SbiKpiValue.class, kpiValueId);
 			xmlToReturn = hibSbiKpiValue.getXmlData();
 
 		} catch (HibernateException he) {
@@ -393,7 +393,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (int k = l.size() - 1; k >= 0; k--) {
 					Object[] tempL =  (Object[])l.get(k);
 					Integer kpiValueId = (Integer) tempL[0];
-					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					_SbiKpiValue temp = (_SbiKpiValue) aSession.load(_SbiKpiValue.class, kpiValueId);
 					SourceBean sb2 = new SourceBean("ROW");
 					if (temp!=null && temp.getValue() != null) {
 						sb2.setAttribute("x", temp.getBeginDt());
@@ -465,7 +465,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (int k = l.size() - 1; k >= 0; k--) {
 					Object[] tempL =  (Object[])l.get(k);
 					Integer kpiValueId = (Integer) tempL[0];
-					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					_SbiKpiValue temp = (_SbiKpiValue) aSession.load(_SbiKpiValue.class, kpiValueId);
 					SourceBean sb2 = new SourceBean("ROW");
 					if (temp !=null && temp.getValue() != null) {
 						sb2.setAttribute("x", temp.getBeginDt());
@@ -532,7 +532,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					JSONObject jsonObj = new JSONObject();
 					
 					Integer kpiValueId = (Integer) tempL[0];
-					SbiKpiValue temp = (SbiKpiValue) aSession.load(SbiKpiValue.class, kpiValueId);
+					_SbiKpiValue temp = (_SbiKpiValue) aSession.load(_SbiKpiValue.class, kpiValueId);
 					if (temp !=null && temp.getValue() != null) {
 						try{
 							numRows++;
@@ -707,7 +707,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			Iterator iVa = kpiValues.iterator();
 			while (iVa.hasNext()) {
-				SbiKpiValue value = (SbiKpiValue) iVa.next();
+				_SbiKpiValue value = (_SbiKpiValue) iVa.next();
 				Date kpiValueBegDt = value.getBeginDt();
 				logger.debug("Kpi value begin date: "
 						+ (kpiValueBegDt != null ? kpiValueBegDt.toString()
@@ -766,7 +766,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiKpiValue hibKpiValue = new SbiKpiValue();
+			_SbiKpiValue hibKpiValue = new _SbiKpiValue();
 			Date beginDt = value.getBeginDate();
 			logger
 			.debug("Kpi value begin date: "
@@ -876,7 +876,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			Criteria finder = aSession.createCriteria(_SbiKpiValue.class);
 			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
 					kpiInstanceId));
 			finder.add(Expression.le("beginDt", d));
@@ -902,7 +902,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				KpiValue tem = null;
 				Iterator it = l.iterator();
 				while (it.hasNext()) {
-					SbiKpiValue temp = (SbiKpiValue) it.next();
+					_SbiKpiValue temp = (_SbiKpiValue) it.next();
 					toReturn = toKpiValue(temp, d);
 				}
 			}
@@ -925,7 +925,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 
-	private KpiValue toKpiValue(SbiKpiValue value, Date d) throws EMFUserError {
+	private KpiValue toKpiValue(_SbiKpiValue value, Date d) throws EMFUserError {
 
 		logger.debug("IN");
 		KpiValue toReturn = new KpiValue();
@@ -1879,7 +1879,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			Criteria finder = aSession.createCriteria(_SbiKpiValue.class);
 			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
 					kpiInstanceId));
 			finder.add(Expression.eq("beginDt", from));
@@ -1905,7 +1905,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				KpiValue tem = null;
 				Iterator it = l.iterator();
 				while (it.hasNext()) {
-					SbiKpiValue temp = (SbiKpiValue) it.next();
+					_SbiKpiValue temp = (_SbiKpiValue) it.next();
 					toReturn = toKpiValue(temp, from, to);
 				}
 			}
@@ -1929,7 +1929,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 	
-	private KpiValue toKpiValue(SbiKpiValue value, Date from, Date to) throws EMFUserError {
+	private KpiValue toKpiValue(_SbiKpiValue value, Date from, Date to) throws EMFUserError {
 
 		logger.debug("IN");
 		KpiValue toReturn = new KpiValue();
@@ -2067,7 +2067,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			Criteria finder = aSession.createCriteria(_SbiKpiValue.class);
 			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
 					kpiInstanceId));
 			finder.add(Expression.eq("beginDt", from));
@@ -2093,7 +2093,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				KpiValue tem = null;
 				Iterator it = l.iterator();
 				while (it.hasNext()) {					
-					SbiKpiValue temp = (SbiKpiValue) it.next();
+					_SbiKpiValue temp = (_SbiKpiValue) it.next();
 					aSession.delete(temp);
 				}
 			}
@@ -2184,7 +2184,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			Criteria finder = aSession.createCriteria(_SbiKpiValue.class);
 			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
 					kpiInstanceId));
 			finder.add(Expression.le("beginDt", d));
@@ -2215,11 +2215,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				KpiValue tem = null;
 				Iterator it = l.iterator();
 				while (it.hasNext()) {
-					SbiKpiValue temp = (SbiKpiValue) it.next();
+					_SbiKpiValue temp = (_SbiKpiValue) it.next();
 					toReturn = toKpiValue(temp, d);
 				}
 			}else{
-				Criteria finder2 = aSession.createCriteria(SbiKpiValue.class);
+				Criteria finder2 = aSession.createCriteria(_SbiKpiValue.class);
 				finder2.add(Expression.eq("sbiKpiInstance.idKpiInstance",
 						kpiInstanceId));
 				finder2.add(Expression.le("beginDt", d));
@@ -2237,7 +2237,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					KpiValue tem = null;
 					Iterator it = l2.iterator();
 					while (it.hasNext()) {
-						SbiKpiValue temp = (SbiKpiValue) it.next();
+						_SbiKpiValue temp = (_SbiKpiValue) it.next();
 						toReturn = toKpiValue(temp, d);
 					}
 				}
