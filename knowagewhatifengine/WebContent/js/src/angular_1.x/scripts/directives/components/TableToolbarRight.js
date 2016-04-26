@@ -135,9 +135,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		$scope.modelConfig.drillType = type;
 		console.log($scope.modelConfig.drillType+"---------->$scope.modelConfig.drillType")
 		$scope.sendModelConfig($scope.modelConfig);
-		$timeout(function() {
-	       $scope.resize();
-	    }, 100);
+		
 	}
 	
 	$scope.isDisabledType = function(name){
