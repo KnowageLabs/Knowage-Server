@@ -14,11 +14,11 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine){
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;
-	
+	$scope.currentTab = "myDataSet";
    
 	
 	/**
@@ -36,7 +36,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.loadDatasets();
 	
 	$scope.loadMyDatasets= function(){
-		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
+		sbiModule_restServices.promiseGet("2.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
 			console.log($scope.myDatasets);
@@ -119,16 +119,71 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	};
 	
     $scope.shareDataset=function(dataset){
-    	console.log("in share");
+    	//console.log("in share");
     	console.log(dataset);
+    	var id=dataset.id;
+    	console.log(id);
+        params={};
+    	params.id=id;
+    	config={};
+    	config.params=params;
     	
+    	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
+		.then(function(response) {
+			          console.log(response);
+			          // binds changed value to object
+			          dataset.isPublic=response.data.isPublic;
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
     	
     }
-    $scope.switchTab=function(){
+    
+    $scope.showQbeDataset= function(dataset){
+		var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+		var label= dataset.label;
+		
+		
+		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+		         +'&ACTION_NAME='+actionName
+		         +'&dataset_label='+label;
+		        // +'&DATASOURCE_FOR_CACHE=knowage';
+		 $window.location.href=url;
+    }
+    
+    $scope.showHelpOnline= function(dataset){
+    	
+    	sbiModule_helpOnLine.show(dataset);
+    }    
+    
+    $scope.isSharingEnabled=function(){
+        return $scope.currentTab==="myDataSet"; 
+    }
+    
+    $scope.exportDataset= function(dataset){
+       var actionName='EXPORT_EXCEL_DATASET_ACTION';
+       
+       var id=dataset.id;
+       if(isNaN(id)){
+    	   id=id.dsId;
+       }
+       
+       var url= sbiModule_config.adapterPath
+               +'?ACTION_NAME='+actionName
+               +'&SBI_EXECUTION_ID=-1'
+               +'&LIGHT_NAVIGATOR_DISABLED=TRUE'
+               +'&id='+id;
+       
+       $window.location.href=url;
+    }
+    
+    
+    $scope.switchTab=function(currentTab){
+    
+    	$scope.currentTab=currentTab;
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
-    		
-    	}
+         }
     	
     }	
 }

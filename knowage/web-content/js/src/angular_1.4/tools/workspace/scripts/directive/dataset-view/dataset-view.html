@@ -25,12 +25,14 @@
 				        <div class="md-card-image workspace_image_dataset"   ng-click="clickDataset(dataset);"></div>
 <!--  			        <img src="/knowage/themes/sbi_default/img/dataset/img-dataset-1.jpg" class="md-card-image" alt="" ng-click="clickDataset(dataset)">  -->
 			        <md-card-actions layout="row" layout-align="space-around end">
-			          <md-button class="md-icon-button" aria-label="shareDataset" ng-style="{color:'red'}"ng-click="shareDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
-			            <md-icon md-font-icon="fa fa-share-alt fa-2x"></md-icon>
-			              <md-tooltip md-delay="1000">
+			          <md-button class="md-icon-button" aria-label="shareDataset"  ng-click="shareDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
+			            <md-icon md-font-icon="fa fa-share-alt fa-2x" ng-class="{'shared': dataset.isPublic==true }"></md-icon>
+			              <md-tooltip md-delay="1000" ng-if="!dataset.isPublic">
 				             share
 				            </md-tooltip>
-			
+			              <md-tooltip md-delay="1000" ng-if="dataset.isPublic" >
+				             unshare
+				            </md-tooltip>
 			          </md-button>
 			          
 			          <md-button class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">

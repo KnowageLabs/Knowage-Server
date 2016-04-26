@@ -15,6 +15,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			previewDatasetAction:"&",
 			//cloneDocumentAction:"&",
 			showQbeDatasetAction:"&",
+			
 			showQbeEnabled:"=?",
 			showDetailDatasetAction:"&",
 			showDetailDatasetEnabled:"=?",
@@ -45,5 +46,8 @@ function datasetViewControllerFunction($scope){
 	$scope.clickDataset=function(item){
 		
 		 $scope.selectDatasetAction({ds: item});
+		 
 	}
+	
+
 }

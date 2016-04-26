@@ -42,7 +42,30 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	$scope.loadBusinessModels();
 	
-	$scope.showQbeFederation= function(){
+	$scope.showQbeFederation= function(federation){
+		console.log(federation);
+		console.log(sbiModule_config.contextName);
+		console.log(sbiModule_config.adapterPath);
+		console.log(sbiModule_config.engineUrls);
+		var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+		var federationId= federation.federation_id;
+		
+		
+		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+		         +'&ACTION_NAME='+actionName
+		         +'&FEDERATION_ID='+federationId;
+		        // +'&DATASOURCE_FOR_CACHE=knowage';
+		 $window.location.href=url;
+		
+//		var federationId = federation.federation_id;
+//		var dataSourceLabel = record.data.data_source_label;
+//		var url = this.qbeFromFederationBaseUrl;
+//	
+//		if(federationId || federationId!=""){
+//			url = url+ 
+//			'&FEDERATION_ID=' + federationId;
+//		}
+//		this.documentexecution.load(url);
 		
 	}
 	
