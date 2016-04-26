@@ -131,9 +131,9 @@
 		
 		<DAO name="ISbiMetaSourceDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaSourceDAOHibImpl"/>
 		<DAO name="ISbiMetaTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaTableDAOHibImpl"/>
-		<DAO name="ISbiMetaTableColumnDAOSbiMetaSourceDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaTableColumnDAOSbiMetaSourceDAOHibImpl"/>
-		<DAO name="ISbiMetaBCDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaBCDAOHibImpl"/>
-		<DAO name="ISbiMetaBCAttributeDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaBCAttributeDAOHinImpl"/>
+		<DAO name="ISbiMetaTableColumnDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaTableColumnDAOHibImpl"/>
+		<DAO name="ISbiMetaBCDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaBcDAOHibImpl"/>
+		<DAO name="ISbiMetaBCAttributeDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaBcAttributeDAOHibImpl"/>
 		<DAO name="ISbiMetaJobDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaJobDAOHibImpl"/>
 		<DAO name="ISbiDsBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsBcDAOHibimpl"/>
 		<DAO name="ISbiDsTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsTableDAOHibImpl"/>

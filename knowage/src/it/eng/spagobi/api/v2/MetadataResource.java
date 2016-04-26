@@ -17,9 +17,12 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelProperty;
@@ -34,13 +37,22 @@ import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
 import it.eng.spagobi.metadata.cwm.ICWM;
 import it.eng.spagobi.metadata.cwm.ICWMMapper;
+import it.eng.spagobi.metadata.dao.ImportMetadata;
 import it.eng.spagobi.metadata.etl.ETLMetadata;
 import it.eng.spagobi.metadata.etl.ETLParser;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -51,7 +63,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +90,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Filter;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -92,6 +110,7 @@ import org.xml.sax.SAXException;
 public class MetadataResource extends AbstractSpagoBIResource {
 	static private Logger logger = Logger.getLogger(MetadataResource.class);
 
+	public static final String TENANT_FILTER_NAME = "tenantFilter";
 	public static final String CONNECTION_URL = "connection.url";
 	public static final String CONNECTION_DATABASENAME = "connection.databasename";
 	public static final String BUSINESS_COLUMN_TYPE = "structural.columntype";
@@ -113,7 +132,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response extractBusinessModelMetadataInformation(@PathParam("bmId") int businessModelId) {
 		logger.debug("IN");
-
+		Session aSession = null;
+		Transaction tx = null;
 		try {
 			// 1 - Retrieve Metamodel file from datamart.jar
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
@@ -128,7 +148,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			Model model = MetaModelLoader.load(bis);
 
 			// 3 - Scan the metamodel
-
 			// Extract information from Physical Model
 			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
 			String physicalModelCatalog = physicalModel.getCatalog();
@@ -137,48 +156,105 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			String databaseName = getProperty(physicalModel, CONNECTION_DATABASENAME);
 			String sourceType = DATABASE_SOURCE_TYPE;
 
+			// Objects Definition
+			SbiMetaSource smSource = new SbiMetaSource();
+			SbiMetaTable smTable = new SbiMetaTable();
+			SbiMetaTableColumn smTableColumn = new SbiMetaTableColumn();
+			SbiMetaBcAttribute smAttribute = new SbiMetaBcAttribute();
+			SbiMetaBc smBC = new SbiMetaBc();
+			List<SbiMetaBc> bcList = new ArrayList<SbiMetaBc>();
+
+			// SBI_META_SOURCE
+			smSource.setSourceSchema(physicalModelSchema);
+			smSource.setSourceCatalogue(physicalModelCatalog);
+			smSource.setUrl(url);
+			smSource.setType(sourceType);
+			smSource.setName(databaseName);
+
 			List<PhysicalTable> physicalTables = physicalModel.getTables();
+			// HashMap<String, SbiMetaTable> newTables = new HashMap<String, SbiMetaTable>();
+			HashMap<String, SbiMetaTableColumn> newTableColumns = new HashMap<String, SbiMetaTableColumn>();
+			Set<SbiMetaTable> sourceTableSet = new HashSet<SbiMetaTable>();
+
 			for (PhysicalTable physicalTable : physicalTables) {
-				// TODO: 4 - Insert the columns into the db, Insert the Physical Table to the db
+				// 4 - Insert the columns into the db, Insert the Physical Table to the db
 				// For the table get Name and Source Name
+				// SBI_META_TABLE
+				Set<SbiMetaTableColumn> tableColumnSet = new HashSet<SbiMetaTableColumn>();
+				smTable = new SbiMetaTable();
 				String physicalTableName = physicalTable.getName();
+				smTable.setSbiMetaSource(smSource);
+				smTable.setName(physicalTableName);
+
 				// For the columns get Name and Type
 				List<PhysicalColumn> physicalColumns = physicalTable.getColumns();
 				for (PhysicalColumn physicalColumn : physicalColumns) {
+					// SBI_META_TABLE_COLUMN
+					smTableColumn = new SbiMetaTableColumn();
 					String physicalColumnName = physicalColumn.getName();
 					String physicalColumnTypeName = physicalColumn.getTypeName();
+					smTableColumn.setName(physicalColumnName);
+					smTableColumn.setType(physicalColumnTypeName);
+					smTableColumn.setSbiMetaTable(smTable);
+					newTableColumns.put(physicalColumnName, smTableColumn);
+					tableColumnSet.add(smTableColumn);
 				}
-
+				smTable.setSbiMetaTableColumns(tableColumnSet);
+				sourceTableSet.add(smTable);
+				// newTables.put(smTable.getName(), smTable);
 			}
+			smSource.setSbiMetaTables(sourceTableSet);
 
 			// Extract information from Business Model
 			BusinessModel businessModel = model.getBusinessModels().get(0);
 			String BusinessModelName = businessModel.getName(); // used to retrieve model in SBI_META_MODELS
+
+			SbiMetaModel smBM = getSbiMetaModel(BusinessModelName);
+
 			List<BusinessTable> businessTables = businessModel.getBusinessTables();
-			// TODO: to remove
-			StringBuilder sb = new StringBuilder();
+
 			for (BusinessTable businessTable : businessTables) {
 				// TODO: 5 - Insert the business columns into the db, Insert the Business Table to the db
 				// For the Business Table get Name, Model and Physical Table
+				// SBI_META_BC
+				smBC = new SbiMetaBc();
+				Set<SbiMetaBcAttribute> bcAttributeSet = new HashSet<SbiMetaBcAttribute>();
+
 				String businessTableName = businessTable.getName();
 				String businessTablePhysicalTable = businessTable.getPhysicalTable().getName();
+
 				// For the business columns get Name and Type (attribute/measure)
 				List<BusinessColumn> businessColumns = businessTable.getColumns();
+
 				for (BusinessColumn businessColumn : businessColumns) {
+					// SBI_META_BC_ATTRIBUTE
+					smAttribute = new SbiMetaBcAttribute();
 					String businessColumnName = businessColumn.getName();
 					String businessColumnType = getProperty(businessColumn, BUSINESS_COLUMN_TYPE);
+					smAttribute.setName(businessColumnName);
+					smAttribute.setType(businessColumnType);
 					if (businessColumn instanceof SimpleBusinessColumn) {
 						SimpleBusinessColumn simpleBusinessColumn = ((SimpleBusinessColumn) businessColumn);
 						String businessColumnPhysicalColumn = simpleBusinessColumn.getPhysicalColumn().getName();
+						SbiMetaTableColumn smTcBc = new SbiMetaTableColumn();
+						smAttribute.setSbiMetaTableColumn(newTableColumns.get(businessColumnPhysicalColumn));
+						bcAttributeSet.add(smAttribute);
+
 					} else {
 						// TODO: what to do if isn't a Simple Business Column ???
 					}
 				}
-				// TODO: to remove
-				sb.append(businessTable.getName() + "\n");
-			}
+				smBC.setName(businessTablePhysicalTable + "|" + businessTableName); // link the logical table name with the phisical table name
+				smBC.setSbiMetaBcAttributes(bcAttributeSet);
+				smBC.setSbiMetaModel(smBM);
 
-			return Response.ok(sb).build();
+				bcList.add(smBC);
+			}
+			// call the import data method
+			ImportMetadata im = new ImportMetadata();
+			im.importBusinessModel(businessModelId, smSource, bcList);
+
+			return Response.ok().build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to extract metadata information from model with id:" + businessModelId, e);
@@ -511,6 +587,57 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		}
 		return doc;
 
+	}
+
+	/**
+	 * Gets tre current session.
+	 *
+	 * @return The current session object.
+	 */
+	private Session getSession() {
+		Session session = HibernateSessionManager.getCurrentSession();
+		String tenantId = null;
+		IEngUserProfile profile = this.getUserProfile();
+
+		if (profile != null) {
+			UserProfile userProfile = (UserProfile) profile;
+			tenantId = userProfile.getOrganization();
+			logger.debug("User profile tenant = [{0}]" + tenantId);
+		}
+
+		if (tenantId != null) {
+			// if tenant is set, enable tenant filter and put filter's value
+			this.enableTenantFilter(session, tenantId);
+		}
+		return session;
+	}
+
+	protected void enableTenantFilter(Session session, String tenantId) {
+		Filter filter = session.enableFilter(TENANT_FILTER_NAME);
+		filter.setParameter("tenant", tenantId);
+	}
+
+	private SbiMetaModel getSbiMetaModel(String BusinessModelName) {
+		SbiMetaModel toReturn = new SbiMetaModel();
+		SbiDataSource smDS = new SbiDataSource();
+
+		MetaModel boBM = DAOFactory.getMetaModelsDAO().loadMetaModelByName(BusinessModelName);
+		// Convert into the sbi obj
+		toReturn.setId(boBM.getId());
+		toReturn.setName(boBM.getName());
+		// TODO check if its necessary to set all infos
+		// toReturn.setCategory(boBM.getCategory());
+		// toReturn.setDescription(boBM.getDescription());
+		// toReturn.setModelLocked(boBM.getModelLocked());
+		// toReturn.setModelLocker(boBM.getModelLocker());
+		//
+		// IDataSource boDS = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(boBM.getDataSourceLabel());
+		// smDS.setDsId(boDS.getDsId());
+		// smDS.setLabel(boDS.getLabel());
+
+		// toReturn.setDataSource(smDS);
+
+		return toReturn;
 	}
 
 }
