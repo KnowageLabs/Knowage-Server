@@ -101,10 +101,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		 (encoded,"",member)
 			.then(function(response) {
 				$scope.handleResponse(response);
-				$timeout(function() {
-					angular.element($window).triggerHandler('resize');
-					
-			    }, 1);
+				
 				
 				
 			}, function(response) {
