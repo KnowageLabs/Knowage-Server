@@ -52,6 +52,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		ModelConfig config = ei.getModelConfig();
 		ModelConfig modelconfig;
+
 		model.removeSubset();
 		String modelConfig;
 
@@ -78,7 +79,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		} catch (IOException e1) {
 			logger.error(e1.getMessage());
 		}
-		
+
 		String table = renderModel(ei.getPivotModel());
 		logger.debug("OUT");
 		return table;
