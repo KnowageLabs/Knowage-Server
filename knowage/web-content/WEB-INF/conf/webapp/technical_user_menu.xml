@@ -168,12 +168,10 @@
 			url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
 			<ITEM title="#menu.CacheManagement" functionality="CacheManagement"
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp" />
-			
-			
-			
-			<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.cross.definition" functionality="ManageCrossNavigation"
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
+			<ITEM	title="#menu.Alert" functionality="AlertManagement" 
+			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/alertDefinition.jsp" />
 		</ITEM>
 		
 		<ITEM	code="server_settings" 
