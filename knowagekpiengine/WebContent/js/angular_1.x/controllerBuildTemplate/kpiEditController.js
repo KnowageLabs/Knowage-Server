@@ -17,7 +17,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";
 	$scope.typeChart = 'kpi'
-		$scope.selectedKpis = [];
+	$scope.selectedKpis = [];
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];

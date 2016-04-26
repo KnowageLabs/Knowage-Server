@@ -2,9 +2,9 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 	
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices', 'kpiViewerGaugeService', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerGaugeService', kpiViewerControllerFn]);
 	
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, kpiViewerGaugeService) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_config, kpiViewerGaugeService) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
 		

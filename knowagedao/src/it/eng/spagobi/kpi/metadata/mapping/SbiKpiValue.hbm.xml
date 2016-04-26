@@ -4,7 +4,7 @@
 <hibernate-mapping>
 	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE_NEW">
 		<!-- 
-			--- TODO: Replace sbi_kpi_value after debug ---
+			 TODO: Replace sbi_kpi_value after debug 
 			CREATE TABLE sbi_kpi_value_new ( 
 			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, 
 			kpi_id INTEGER NOT NULL,

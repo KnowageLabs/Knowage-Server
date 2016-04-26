@@ -18,6 +18,37 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,39 +97,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.JobExecutionException;
-
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -266,7 +267,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -596,6 +597,38 @@ public class KpiService {
 		}
 	}
 
+	@POST
+	@Path("/loadKpiValue")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public Response loadKpiValue(@Context HttpServletRequest req) throws EMFUserError {
+		JSONArray array = new JSONArray();
+
+		try {
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			for (int i = 0; i < requestVal.getJSONArray("kpi").length(); i++) {
+				JSONObject objTemp = requestVal.getJSONArray("kpi").getJSONObject(i);
+				Map<String, String> attributesValues = new HashMap<String, String>();
+				attributesValues.put("department_id", "0");
+				attributesValues.put("employee_id", "0");
+				attributesValues.put("gender", "1");
+				attributesValues.put("management_role", "6");
+				List<KpiValue> kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null,
+						attributesValues);
+				String result = new ObjectMapper().writeValueAsString(kpiValues);
+				JSONObject output = new JSONObject();
+				output.put("id", objTemp.getInt("id"));
+				output.put("version", objTemp.getInt("version"));
+				output.put("value", result);
+				array.put(output);
+			}
+
+			return Response.ok(array).build();
+		} catch (Throwable e) {
+			logger.error(req.getPathInfo(), e);
+			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
+		}
+	}
+
 	private JSError check(Target target, IKpiDAO dao) throws SpagoBIException {
 		JSError e = new JSError();
 		if (target.getName() == null) {
@@ -780,7 +813,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 * 
+	 *
 	 * @param servlet
 	 *            request
 	 * @param placeholder

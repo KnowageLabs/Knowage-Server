@@ -58,19 +58,21 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					JSONObject tempResult = new JSONObject();
 
 					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
-					Double valueTarget = new Double(DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi));
+					if (DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi) != null) {
+						Double valueTarget = new Double(DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi));
+						tempResult.put("target", valueTarget);
+					} else {
+						tempResult.put("target", JSONObject.NULL);
+					}
+
 					JSONObject object = new JSONObject(JsonConverter.objectToJson(kpi, kpi.getClass()));
 					object.remove("definition");
 					object.remove("enableVersioning");
 					object.remove("category");
 					object.remove("cardinality");
+
 					tempResult.put("kpi", object);
-					JSONArray arrayTargets = new JSONArray();
-					/*
-					 * for (int j = 0; j < sbiKpiTargets.size(); j++) { sbiKpiTargets.get(j).setSbiKpiTargetValues(null); JSONObject target = new
-					 * JSONObject(JsonConverter.objectToJson(sbiKpiTargets.get(j), sbiKpiTargets.get(j).getClass())); arrayTargets.put(target); }
-					 */
-					tempResult.put("target", valueTarget);
+
 					result.put(tempResult);
 				}
 			}

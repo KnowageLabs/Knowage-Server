@@ -176,7 +176,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		q.setInteger(1, kpi.getVersion());
 		q.setDate(2, new Date());
 		targets = q.list();
-
+		if (targets.size() == 0) {
+			return null;
+		}
 		return targets.get(0).getValue().toString();
 	};
 
