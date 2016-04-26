@@ -17,20 +17,23 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
 
 /**
  * @author Pirkovic_Dragan (Dragan.Pirkovic@mht.net)
@@ -102,6 +105,45 @@ public class SbiMetaDocTabRelDAOHibImpl extends AbstractHibernateDAO implements 
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	@Override
+	public List<SbiMetaDocTabRel> loadByDocumentId(Integer documentId) throws EMFUserError {
+
+		logger.debug("IN");
+
+		List<SbiMetaDocTabRel> toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criterion labelCriterrion = Expression.eq("documentId", documentId);
+			Criteria criteria = tmpSession.createCriteria(SbiMetaDocTabRel.class);
+			criteria.add(labelCriterrion);
+
+			toReturn = criteria.list();
+			if (toReturn == null)
+				return null;
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+
 	}
 
 }

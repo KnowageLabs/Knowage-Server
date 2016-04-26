@@ -29,18 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  <%
 		 	
 			String documentID = "";
- 			//String documentLabel = "";
+ 			String documentLabel = "";
 			if(request.getParameter("OBJECT_ID")!=null){
 				documentID = request.getParameter("OBJECT_ID");
 			}
-// 			if(request.getParameter("label")!=null){
-// 				documentLabel = request.getParameter("label");
-// 			}
+ 			if(request.getParameter("LABEL")!=null){
+ 				documentLabel = request.getParameter("LABEL");
+			}
 		%>
 		
 		<script>
 			var documentID = '<%= documentID %>';
-			
+			var documentLabel = '<%= documentLabel %>';
 		</script> 
 
 
@@ -60,13 +60,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<body class="federatedDataset" ng-app="linkDocumentModule" id="ng-app">
 		
-		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
 		<div ng-controller="linkDocumentCTRL" layout-fill class="contentdemoBasicUsage">		
 		  <div class ="md-container" >
 			<md-toolbar class="miniheadfederation" >
 				<div class="md-toolbar-tools">
 				
-				<h2 class="md-flex" >Document Link for with id: <%= documentID %> </h2>
+				<h2 class="md-flex" >Table Link for  <%= documentLabel %> </h2>
 				
 				</div>
 

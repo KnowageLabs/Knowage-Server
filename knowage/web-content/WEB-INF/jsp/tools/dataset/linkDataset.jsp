@@ -60,13 +60,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<body class="federatedDataset" ng-app="linkDatasetModule" id="ng-app">
 		
-		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
 		<div ng-controller="linkDatasetCTRL" layout-fill class="contentdemoBasicUsage">		
 		  <div class ="md-container" >
 			<md-toolbar class="miniheadfederation" >
 				<div class="md-toolbar-tools">
 				
-				<h2 class="md-flex" >Dataset Link for <%= datasetLabel  %>  with id: <%= datasetID %> </h2>
+				<h2 class="md-flex" >Table Link for <%= datasetLabel  %> </h2>
 				
 				</div>
 
@@ -136,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			
 				<md-button class="md-raised buttonR" aria-label="btn_save"
-						ng-click="saveRelations()">Save
+						ng-click="saveRelation(<%= datasetID %>)">Save
 				</md-button>
 
 			</md-content>

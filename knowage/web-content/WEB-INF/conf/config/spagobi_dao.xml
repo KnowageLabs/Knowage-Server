@@ -143,7 +143,7 @@
 		<DAO name="ISbiObjTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjTableDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
 		<DAO name="ISbiDsBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsBcDAOImpl"/>
-		
+		<DAO name="ISbiMetaDsTabRel" implementation="it.eng.spagobi.metadata.dao.SbiMetaDsTabRelDAOHibImpl"/>
 		<DAO name="AlertDAO" implementation="it.eng.spagobi.tools.alert.dao.AlertDAOImpl"/>
 	</DAO-CONF>
 

@@ -17,11 +17,11 @@
  */
 package it.eng.spagobi.metadata.dao;
 
+import java.util.List;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
-
-import java.util.List;
 
 /**
  * @author Pirkovic_Dragan (Dragan.Pirkovic@mht.net)
@@ -38,5 +38,7 @@ public interface ISbiMetaDocTabRelDAO extends ISpagoBIDao {
 	public void deleteDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
 	public List<SbiMetaDocTabRel> loadAllDocRelations() throws EMFUserError;
+
+	List<SbiMetaDocTabRel> loadByDocumentId(Integer documentId) throws EMFUserError;
 
 }

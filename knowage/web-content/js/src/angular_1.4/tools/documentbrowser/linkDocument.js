@@ -75,6 +75,16 @@ $scope.remove = function(item){
 		} 
 	}
 	
+$scope.getTablesByDatasetID = function(id){	
+	sbiModule_restServices.promiseGet("2.0/metaDsRelationResource/dataset/"+id, "")
+	.then(function(response) {
+		$scope.selectedTables = response.data;
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
+		
+	});	
+}
+
 
 };
 
