@@ -30,12 +30,13 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 	private int kpiVersion;
 	private String logicalKey;
 	private Date timeRun;
-	private float value;
-	private String valueDay;
-	private String valueWeek;
-	private String valueMonth;
-	private String valueQ;
-	private String valueYear;
+	private double computedValue;
+	private Double manualValue;
+	private String theDay;
+	private String theWeek;
+	private String theMonth;
+	private String theQuarter;
+	private String theYear;
 
 	public int getId() {
 		return id;
@@ -77,52 +78,60 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 		this.timeRun = timeRun;
 	}
 
-	public float getValue() {
-		return value;
+	public double getComputedValue() {
+		return computedValue;
 	}
 
-	public void setValue(float value) {
-		this.value = value;
+	public void setComputedValue(double computedValue) {
+		this.computedValue = computedValue;
 	}
 
-	public String getValueDay() {
-		return valueDay;
+	public Double getManualValue() {
+		return manualValue;
 	}
 
-	public void setValueDay(String valueDay) {
-		this.valueDay = valueDay;
+	public void setManualValue(Double manualValue) {
+		this.manualValue = manualValue;
 	}
 
-	public String getValueWeek() {
-		return valueWeek;
+	public String getTheDay() {
+		return theDay;
 	}
 
-	public void setValueWeek(String valueWeek) {
-		this.valueWeek = valueWeek;
+	public void setTheDay(String theDay) {
+		this.theDay = theDay;
 	}
 
-	public String getValueMonth() {
-		return valueMonth;
+	public String getTheWeek() {
+		return theWeek;
 	}
 
-	public void setValueMonth(String valueMonth) {
-		this.valueMonth = valueMonth;
+	public void setTheWeek(String theWeek) {
+		this.theWeek = theWeek;
 	}
 
-	public String getValueQ() {
-		return valueQ;
+	public String getTheMonth() {
+		return theMonth;
 	}
 
-	public void setValueQ(String valueQ) {
-		this.valueQ = valueQ;
+	public void setTheMonth(String theMonth) {
+		this.theMonth = theMonth;
 	}
 
-	public String getValueYear() {
-		return valueYear;
+	public String getTheQuarter() {
+		return theQuarter;
 	}
 
-	public void setValueYear(String valueYear) {
-		this.valueYear = valueYear;
+	public void setTheQuarter(String theQuarter) {
+		this.theQuarter = theQuarter;
+	}
+
+	public String getTheYear() {
+		return theYear;
+	}
+
+	public void setTheYear(String theYear) {
+		this.theYear = theYear;
 	}
 
 }

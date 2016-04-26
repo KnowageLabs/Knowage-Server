@@ -1818,11 +1818,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					criteria.add(Restrictions.le("timeRun", computedBefore));
 				if (!logicalKey.isEmpty())
 					criteria.add(Restrictions.eq("logicalKey", logicalKey));
-				criteria.add(Restrictions.eq("valueDay", ifNull(temporalValues.get("DAY"), "ALL")));
-				criteria.add(Restrictions.eq("valueWeek", ifNull(temporalValues.get("WEEK"), "ALL")));
-				criteria.add(Restrictions.eq("valueMonth", ifNull(temporalValues.get("MONTH"), "ALL")));
-				criteria.add(Restrictions.eq("valueQ", ifNull(temporalValues.get("QUARTER"), "ALL")));
-				criteria.add(Restrictions.eq("valueYear", ifNull(temporalValues.get("YEAR"), "ALL")));
+				criteria.add(Restrictions.eq("theDay", ifNull(temporalValues.get("DAY"), "ALL")));
+				criteria.add(Restrictions.eq("theWeek", ifNull(temporalValues.get("WEEK"), "ALL")));
+				criteria.add(Restrictions.eq("theMonth", ifNull(temporalValues.get("MONTH"), "ALL")));
+				criteria.add(Restrictions.eq("theQuarter", ifNull(temporalValues.get("QUARTER"), "ALL")));
+				criteria.add(Restrictions.eq("theYear", ifNull(temporalValues.get("YEAR"), "ALL")));
 				criteria.addOrder(Order.asc("timeRun")).addOrder(Order.asc("kpiId")).addOrder(Order.asc("kpiVersion"));
 				return criteria;
 			}
@@ -1837,12 +1837,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiValue.setKpiVersion(sbiKpiValue.getKpiVersion());
 			kpiValue.setLogicalKey(sbiKpiValue.getLogicalKey());
 			kpiValue.setTimeRun(sbiKpiValue.getTimeRun());
-			kpiValue.setValue(sbiKpiValue.getValue());
-			kpiValue.setValueDay(sbiKpiValue.getValueDay());
-			kpiValue.setValueMonth(sbiKpiValue.getValueMonth());
-			kpiValue.setValueQ(sbiKpiValue.getValueQ());
-			kpiValue.setValueWeek(sbiKpiValue.getValueWeek());
-			kpiValue.setValueYear(sbiKpiValue.getValueYear());
+			kpiValue.setComputedValue(sbiKpiValue.getComputedValue());
+			kpiValue.setTheDay(sbiKpiValue.getTheDay());
+			kpiValue.setTheMonth(sbiKpiValue.getTheMonth());
+			kpiValue.setTheQuarter(sbiKpiValue.getTheQuarter());
+			kpiValue.setTheWeek(sbiKpiValue.getTheWeek());
+			kpiValue.setTheYear(sbiKpiValue.getTheYear());
 			kpiValues.add(kpiValue);
 		}
 

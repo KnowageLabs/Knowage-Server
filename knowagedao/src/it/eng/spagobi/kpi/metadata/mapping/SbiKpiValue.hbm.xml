@@ -4,19 +4,20 @@
 <hibernate-mapping>
 	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE_NEW">
 		<!-- 
-			 TODO: Replace sbi_kpi_value after debug 
+			*** TODO: Replace sbi_kpi_value after debug ***
 			CREATE TABLE sbi_kpi_value_new ( 
 			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, 
 			kpi_id INTEGER NOT NULL,
 			kpi_version INTEGER NOT NULL,
 			logical_key VARCHAR(4096) NOT NULL,
 			time_run DATETIME NOT NULL,
-			value FLOAT NOT NULL,
-			value_day VARCHAR(3) NOT NULL,
-			value_week VARCHAR(3) NOT NULL,
-			value_month VARCHAR(3) NOT NULL,
-			value_q VARCHAR(3) NOT NULL,
-			value_year VARCHAR(4) NOT NULL
+			computed_value DOUBLE NOT NULL,
+			manual_value DOUBLE NULL NULL,
+			the_day VARCHAR(3) NOT NULL,
+			the_week VARCHAR(3) NOT NULL,
+			the_month VARCHAR(3) NOT NULL,
+			the_quarter VARCHAR(3) NOT NULL,
+			the_year VARCHAR(4) NOT NULL
 			)
 		 -->
 		<id name="id" type="integer">
@@ -39,23 +40,26 @@
 		<property name="timeRun" type="timestamp">
 			<column name="TIME_RUN" not-null="true" />
 		</property>
-		<property name="value" type="float">
-			<column name="VALUE" length="40" not-null="true" />
+		<property name="computedValue" type="double">
+			<column name="COMPUTED_VALUE" not-null="true" />
 		</property>
-		<property name="valueDay" type="string">
-			<column name="VALUE_DAY" length="4" not-null="true" />
+		<property name="manualValue" type="double">
+			<column name="MANUAL_VALUE" not-null="false" />
 		</property>
-		<property name="valueWeek" type="string">
-			<column name="VALUE_WEEK" length="4" not-null="true" />
+		<property name="theDay" type="string">
+			<column name="THE_DAY" length="4" not-null="true" />
 		</property>
-		<property name="valueMonth" type="string">
-			<column name="VALUE_MONTH" length="4" not-null="true" />
+		<property name="theWeek" type="string">
+			<column name="THE_WEEK" length="4" not-null="true" />
 		</property>
-		<property name="valueQ" type="string">
-			<column name="VALUE_Q" length="4" not-null="true" />
+		<property name="theMonth" type="string">
+			<column name="THE_MONTH" length="4" not-null="true" />
 		</property>
-		<property name="valueYear" type="string">
-			<column name="VALUE_YEAR" length="4" not-null="true" />
+		<property name="theQuarter" type="string">
+			<column name="THE_QUARTER" length="4" not-null="true" />
+		</property>
+		<property name="theYear" type="string">
+			<column name="THE_YEAR" length="4" not-null="true" />
 		</property>
 	</class>
 </hibernate-mapping>

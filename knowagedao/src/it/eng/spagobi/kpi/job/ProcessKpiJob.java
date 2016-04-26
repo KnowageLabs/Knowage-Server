@@ -526,8 +526,9 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 
 			/*
 			 * TODO Replace sbi_kpi_value after debug: CREATE TABLE sbi_kpi_value_new ( id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, kpi_id INTEGER NOT NULL,
-			 * kpi_version INTEGER NOT NULL, logical_key VARCHAR(4096) NOT NULL, time_run DATETIME NOT NULL, value FLOAT NOT NULL, value_day VARCHAR(3) NOT
-			 * NULL, value_week VARCHAR(3) NOT NULL, value_month VARCHAR(3) NOT NULL, value_q VARCHAR(3) NOT NULL, value_year VARCHAR(4) NOT NULL )
+			 * kpi_version INTEGER NOT NULL, logical_key VARCHAR(4096) NOT NULL, time_run DATETIME NOT NULL, computed_value DOUBLE NOT NULL, manual_value DOUBLE
+			 * NULL NULL, the_day VARCHAR(3) NOT NULL, the_week VARCHAR(3) NOT NULL, the_month VARCHAR(3) NOT NULL, the_quarter VARCHAR(3) NOT NULL, the_year
+			 * VARCHAR(4) NOT NULL )
 			 */
 
 			Date now = new Date();
@@ -555,17 +556,17 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 						logicalKey.append(",");
 					logicalKey.append(attributesNames.get(a).toUpperCase()).append("=").append(rowAttributesValues.get(a));
 				}
-				String insertSql = "INSERT INTO sbi_kpi_value_new (kpi_id, kpi_version, logical_key, time_run, value,"
-						+ " value_day, value_week, value_month, value_q, value_year) VALUES (" + parsedKpi.id + "," + parsedKpi.version + ",'"
+				String insertSql = "INSERT INTO sbi_kpi_value_new (kpi_id, kpi_version, logical_key, time_run, computed_value,"
+						+ " the_day, the_week, the_month, the_quarter, the_year) VALUES (" + parsedKpi.id + "," + parsedKpi.version + ",'"
 						+ logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + value + ",'ALL','ALL','ALL','ALL','ALL')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
-						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND value_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
-						+ "' AND value_week = '" + ifNull(temporalValues.get("WEEK"), "ALL") + "'" + " AND value_month = '"
-						+ ifNull(temporalValues.get("MONTH"), "ALL") + "' AND value_q = '" + ifNull(temporalValues.get("QUARTER"), "ALL")
-						+ "' AND value_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
+						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
+						+ "' AND the_week = '" + ifNull(temporalValues.get("WEEK"), "ALL") + "'" + " AND the_month = '"
+						+ ifNull(temporalValues.get("MONTH"), "ALL") + "' AND the_quarter = '" + ifNull(temporalValues.get("QUARTER"), "ALL")
+						+ "' AND the_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
 				String deleteSql = "DELETE sbi_kpi_value_new WHERE " + whereCondition;
-				String updateSql = "UPDATE sbi_kpi_value_new SET value = " + value + ", time_run = '" + isoNow + "' WHERE " + whereCondition; // Currently
-																																				// unused
+				String updateSql = "UPDATE sbi_kpi_value_new SET computed_value = " + value + ", time_run = '" + isoNow + "' WHERE " + whereCondition; // Currently
+				// unused
 				sb.append(insertSql + "|" + deleteSql + "|" + updateSql);
 
 				session.beginTransaction();
