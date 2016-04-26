@@ -21,7 +21,7 @@ angular.module('kpi-widget', ['ngMaterial','sbiModule'])
 
 function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
 	$scope.documentData = $scope.ngModel;
-		
+	
 	$scope.options = {
 	            chart: {
 	                type: 'stackedAreaChart',

@@ -9,11 +9,13 @@
 		<div layout="row">
 			<div flex>
 				<h3 style="font-size: {{documentData.template.chart.style.font.size}}em;" class="grey">KPI Value</h3>
-				<h1 style="color:#3B678C">{{gaugeValue}}K</h1>
+				<h1 ng-show="gaugeValue<1000" style="color:#3B678C">{{gaugeValue}}</h1>
+				<h1 ng-show="gaugeValue>=1000" style="color:#3B678C">{{gaugeValue/1000}}K</h1>
 			</div>
 			<div flex>
 				<h3 style="font-size: {{documentData.template.chart.style.font.size}}em;" class="grey">Target Value</h3>
-				<h1 style="color:#C4DCF3">{{gaugeTargetValue}}K</h1>
+				<h1 ng-show="gaugeTargetValue<1000" style="color:#C4DCF3">{{gaugeTargetValue}}</h1>
+				<h1 ng-show="gaugeTargetValue>=1000" style="color:#C4DCF3">{{gaugeTargetValue/1000}}K</h1>
 			</div>
 			
 		</div>
