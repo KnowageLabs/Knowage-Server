@@ -1,18 +1,30 @@
 package it.eng.spagobi.tools.alert;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
+import it.eng.spagobi.tools.alert.dao.IAlertDAO;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
@@ -22,62 +34,64 @@ import javax.ws.rs.core.Response;
 @ManageAuthorization
 public class AlertService {
 
-	static final List<AlertListener> mockListeners = new ArrayList<>();
-	static final List<AlertAction> mockActions = new ArrayList<>();
-	{
-		mockListeners.clear();
-		AlertListener l = new AlertListener();
-		l.setId(1);
-		l.setName("KPI Listener");
-		l.setClassName("it.eng.spagobi.tools.alert.listener.KpiListener");
-		l.setTemplate("/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/listeners/kpiListener.jsp");
-		mockListeners.add(l);
-
-		mockActions.clear();
-		AlertAction a = new AlertAction();
-		a.setName("Send mail");
-		a.setClassName("it.eng.spagobi.tools.alert.action.SendMail");
-		a.setTemplate("/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/actions/sendMail.jsp");
-		mockActions.add(a);
-	}
+	private static Logger logger = Logger.getLogger(AlertService.class);
 
 	@GET
 	@Path("/listListener")
-	public Response listListener() {
-		// TODO call dao service
-		List<AlertListener> listeners = mockListeners;
+	public Response listListener(@Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		List<AlertListener> listeners = dao.listListener();
 		return Response.ok(JsonConverter.objectToJson(listeners, listeners.getClass())).build();
 	}
 
 	@GET
 	@Path("/listAction")
-	public Response listAction() {
-		// TODO call dao service
-		List<AlertAction> actions = mockActions;
+	public Response listAction(@Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		List<AlertAction> actions = dao.listAction();
 		return Response.ok(JsonConverter.objectToJson(actions, actions.getClass())).build();
 	}
 
 	@GET
 	@Path("/{idListener}/loadListenerTemplate")
-	public Response loadListenerTemplate(@PathParam("idListener") Integer idListener) {
-		// TODO call dao service
-		int i = mockListeners.indexOf(new AlertListener(idListener));
-		return Response.ok(JsonConverter.objectToJson(mockListeners.get(i), AlertListener.class)).build();
+	public Response loadListenerTemplate(@PathParam("idListener") Integer idListener, @Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		AlertListener alertListener = dao.loadListener(idListener);
+		return Response.ok(alertListener.getTemplate()).build();
 	}
 
 	@GET
 	@Path("/{idAction}/loadActionTemplate")
-	public Response loadActionTemplate(@PathParam("idListener") Integer idListener) {
-		// TODO call dao service
-		int i = mockActions.indexOf(new AlertAction(idListener));
-		return Response.ok(JsonConverter.objectToJson(mockListeners.get(i), AlertListener.class)).build();
+	public Response loadActionTemplate(@PathParam("idListener") Integer idListener, @Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		AlertAction alertAction = dao.loadAction(idListener);
+		return Response.ok(alertAction.getTemplate()).build();
 	}
 
 	@POST
 	@Path("/save")
-	public Response save() {
-		// TODO
+	public Response save(@Context HttpServletRequest req) throws EMFUserError {
+		try {
+			String str = RestUtilities.readBody(req);
+			Alert alert = (Alert) JsonConverter.jsonToObject(str, Alert.class);
+			IAlertDAO dao = getDao(req);
+			Integer id = alert.getId();
+			if (id == null) {
+				id = dao.insert(alert);
+			} else {
+				dao.update(alert);
+			}
+			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(req.getPathInfo(), e);
+		}
 		return Response.ok().build();
+	}
+
+	private IAlertDAO getDao(HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = DAOFactory.getAlertDAO();
+		dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		return dao;
 	}
 
 }
