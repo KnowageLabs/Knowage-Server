@@ -19,7 +19,11 @@
 			this.config.cy = this.config.size / 2;
 
 			this.config.min = undefined != configuration.min ? configuration.min : 0;
+			this.config.min = Number(this.config.min);
+			
 			this.config.max = undefined != configuration.max ? configuration.max : 100;
+			this.config.max = Number(this.config.max);
+
 			this.config.range = this.config.max - this.config.min;
 			
 			this.config.showValue = configuration.showValue != undefined ? configuration.showValue : true;
@@ -27,14 +31,17 @@
 			this.config.valuePrecision = configuration.valuePrecision != undefined ? configuration.valuePrecision : 0;
 			this.config.fontConf = configuration.fontConf != undefined && configuration.fontConf != null ? 
 					configuration.fontConf : {
-						size : "1",
+						size : 1,
 						color : "black",
 						fontFamily : "Times New Roman",
 						fontweight : "normal"
 					};
 
 			this.config.majorTicks = configuration.majorTicks || 5;
+			this.config.majorTicks = Number(this.config.majorTicks);
+
 			this.config.minorTicks = configuration.minorTicks || 2;
+			this.config.minorTicks = Number(this.config.minorTicks);
 
 			this.config.transitionDuration = configuration.transitionDuration || 500;
 		};
@@ -336,7 +343,7 @@
 				'<div layout-align="center center" layout="row">'
 				+ '<div id="{{containerFrameId}}"></div></div>',
 			controller: kpiGaugeCtrl,
-			transclude: true,
+//			transclude: true,
 			scope: {
 				gaugeId: '=',
 				label: '=',
@@ -472,7 +479,7 @@
 				$scope.fontConf);
 	};
 	
-	angular.forEach(['x', 'x1', 'x2', 'y', 'width', 'height', 'style', 'transform'], function(name) {
+	angular.forEach(['x', 'x1', 'x2', 'y', 'y1', 'y2', 'width', 'height', 'style', 'transform'], function(name) {
 		var svgName = 'svg' + name[0].toUpperCase() + name.slice(1);
 		
 		gaugeNgDirectiveApp.directive(svgName, function() {
@@ -534,5 +541,23 @@
 			
 			return stopWidth;
 		};
+	};
+	
+
+	gaugeNgDirectiveApp.directive("kpiListDocument", ['$compile', '$timeout' , function($compile, $timeout){
+		return {
+			restrict: 'E',
+			templateUrl: currentScriptPath + 'kpiListDocumentTemplate/kpiListDocumentTemplate.html', 
+				
+			controller: kpiListDocumentCtrl,
+			scope: {
+
+			},
+		};
+	}]);
+	
+	function kpiListDocumentCtrl($scope){
+		
+		
 	};
 })();

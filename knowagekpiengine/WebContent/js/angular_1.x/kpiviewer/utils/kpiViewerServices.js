@@ -3,69 +3,62 @@
 
 	kpiViewerModule.service('kpiViewerGaugeService', function () {
 		var kpiViewerGaugeService = {
+			GAUGE_DEFAULT_SIZE: 250,
+			LINEAR_GAUGE_DEFAULT_SIZE: 400,
+			
 			gauge : null,
 			
-			createGaugeConf : function(
-					frameId, 
-					label, 
-					size, 
-					min, 
-					max, 
-					threshold, 
-					vieweas, 
-					showValue,
-					showTarget,
-					showThresholds,
-					valuePrecision,
-					fontConf) {
+			createWidgetConfiguration : function(templateKpi, kpiValue, templateOptions, templateStyle) {
+
 				
-				var config = {
-					size : undefined != size ? size: 100,
-					label : label,
-					min : undefined != min ? min : 0,
-					max : undefined != max ? max : 100,
-					showValue : undefined != showValue && null != showValue ? 
-							showValue : true,
-					showTarget : undefined != showTarget && null != showTarget ? 
-							showTarget : true,
-					showThresholds : undefined != showThresholds && null != showThresholds ? 
-							showThresholds : true,
-					valuePrecision : undefined != valuePrecision && null != valuePrecision? 
-							valuePrecision : 0,
-					fontConf : undefined != fontConf && null != fontConf? 
-							fontConf : 
-							{
-								size : "1",
-								color : "black",
-								fontFamily : "Times New Roman",
-								fontweight : "normal"
-							},
-							
-					minorTicks : 5
-				};
-
-				var range = config.max - config.min;
-
-				if(threshold && threshold != null) {
+				var conf = {};
+				
+				conf.id = templateKpi.id;
+				conf.name = kpiValue.name;
+				conf.version = templateKpi.version;
+				conf.viewAs = templateKpi.vieweas && templateKpi.vieweas != '' ?
+						templateKpi.vieweas : templateOptions.vieweas;
+				conf.size = kpiViewerGaugeService.GAUGE_DEFAULT_SIZE;
+				conf.minValue = templateKpi.rangeMinValue;
+				conf.maxValue = templateKpi.rangeMaxValue;
+				conf.value = kpiValue.value;
+				conf.targetValue = kpiValue.targetValue;
+				conf.thresholdStops = [];
+				conf.showValue = templateOptions.showvalue;
+				conf.showTarget = templateOptions.showtarget;
+				conf.showTargetPercentage = templateOptions.showtargetpercentage;
+				conf.showThreshold = templateOptions.showthreshold;
+				conf.fontConf = templateStyle.font;
+				conf.precision = templateOptions.history && templateOptions.history.size ?
+						templateOptions.history.size : null;
+				conf.units = templateOptions.history && templateOptions.history.units ?
+						templateOptions.history.units : null;
+				
+				if(kpiValue.threshold && kpiValue.threshold != null) {
 					var limits = {
-						min: config.min,
-						max: config.max
+						min: conf.minValue,
+						max: conf.maxValue
 					};
 					
-					var stopsConf = kpiViewerGaugeService.generateStopsConf(threshold, limits, vieweas);
+					var stopsConf = kpiViewerGaugeService.generateStopsConf(
+							kpiValue.threshold, limits, conf.viewAs);
 					
-					config.stops = stopsConf.stops;
+					conf.thresholdStops = stopsConf.stops;
 					
-					if(stopsConf.newMin < config.min) {
-						config.min = stopsConf.newMin;
+					if(stopsConf.newMin < conf.minValue) {
+						conf.minValue = stopsConf.newMin;
 					}
-					if(stopsConf.newMax > config.max) {
-						config.max = stopsConf.newMax;
+					if(stopsConf.newMax > conf.maxValue) {
+						conf.maxValue = stopsConf.newMax;
+					}
+					
+					if(conf.size < (conf.maxValue - conf.minValue)) {
+						conf.size = (conf.maxValue - conf.minValue)
 					}
 				}
-				
-				return config;
+				return conf;
 			},
+			
 			
 			/**
 			 * generates an object containing the stops data, the minimum and maximum values registered
@@ -85,8 +78,8 @@
 				
 				var MIN_VALUE = -(Number.MAX_VALUE);
 				
-				var lowestLimit = (limits.min < Number.MAX_VALUE)? limits.min : Number.MAX_VALUE ;
-				var highestLimit = (limits.max > MIN_VALUE)? limits.max : MIN_VALUE;
+				var lowestLimit = Number((limits.min < Number.MAX_VALUE)? limits.min : Number.MAX_VALUE) ;
+				var highestLimit = Number((limits.max > MIN_VALUE)? limits.max : MIN_VALUE);
 				
 				for(var i = 0; i < threshold.thresholdValues.length; i++) {
 					var thresholdValue = threshold.thresholdValues[i];
@@ -101,8 +94,13 @@
 					}
 					if(thresholdValue.maxValue != null) {
 						highestLimit = (thresholdValue.maxValue > highestLimit)? thresholdValue.maxValue : highestLimit;
+						
 					}
 				}
+				
+//				if(vieweas == 'kpicard') {
+//					highestLimit = highestLimit * 1.5;
+//				}
 				
 				var stops = [];
 				for(var i = 0; i < thresholdsQuantity; i++) {
@@ -125,7 +123,7 @@
 					else if (i == thresholdsQuantity - 1) {
 						if(threshold.maxValue == null || threshold.maxValue > highestLimit) {
 //							stopConf.to = highestLimit;
-							stopConf.to = (vieweas == 'speedometer') ? highestLimit : highestLimit * 1.5;
+							stopConf.to = (vieweas == 'kpicard') ? highestLimit * 1.5 : highestLimit;
 						} else {
 							stopConf.to = threshold.maxValue;
 						}

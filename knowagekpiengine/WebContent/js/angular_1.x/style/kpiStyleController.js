@@ -9,7 +9,7 @@ angular.module('kpi-style', ['ngMaterial','sbiModule','color.picker'])
 		link: function (scope, elm, attrs) { 
 
 		}
-	}
+	};
 });
 
 function kpiStyleController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
@@ -25,5 +25,4 @@ function kpiStyleController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_rest
 	if($scope.ngModel.fontFamily==undefined){
 		$scope.ngModel.fontFamily ='Times New Roman';
 	}
-
-}
+};
