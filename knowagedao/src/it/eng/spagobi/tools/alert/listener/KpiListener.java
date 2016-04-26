@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.alert.listener;
 
+import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 
@@ -31,15 +32,15 @@ public class KpiListener extends AbstractSpagoBIJob implements Job {
 }
 
 class InputParameter {
-	private Integer kpiId;
+	private Kpi kpi;
 	private List<Action> actions;
 
-	public Integer getKpiId() {
-		return kpiId;
+	public Kpi getKpi() {
+		return kpi;
 	}
 
-	public void setKpiId(Integer kpiId) {
-		this.kpiId = kpiId;
+	public void setKpi(Kpi kpi) {
+		this.kpi = kpi;
 	}
 
 	public List<Action> getActions() {
