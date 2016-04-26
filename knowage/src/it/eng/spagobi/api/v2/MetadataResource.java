@@ -254,7 +254,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			ImportMetadata im = new ImportMetadata();
 			im.importBusinessModel(businessModelId, smSource, bcList);
 
-			return Response.ok().build();
+			return Response.ok("{\"result\":\"ok\"}").build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to extract metadata information from model with id:" + businessModelId, e);

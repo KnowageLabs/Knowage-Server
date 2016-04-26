@@ -17,6 +17,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.showMe = false;				//boolean
 	$scope.versionLoadingShow;
 	$scope.bmLoadingShow;
+	$scope.bmImportingShow;
 	$scope.isNew;
 	
 	$scope.translate = sbiModule_translate;
@@ -477,6 +478,37 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					return false;
 			}
 				return true;
+		}
+		
+		// import the model into the metadata tabels
+		$scope.importMetadata = function(bmId) {		
+			var confirm = $mdDialog
+			.confirm()
+			.title(sbiModule_translate.load("sbi.catalogues.generic.import"))
+			.content(
+					sbiModule_translate
+					.load("sbi.catalogues.generic.import.msg"))
+					.ariaLabel('ImportMetadata').ok(
+							sbiModule_translate.load("sbi.general.continue")).cancel(
+									sbiModule_translate.load("sbi.general.cancel"));
+
+			$mdDialog.show(confirm).then(function() {
+				$scope.bmImportingShow = true;
+				
+				sbiModule_restServices.promisePost("2.0/metadata/"+bmId+"/bmExtract","")
+				.then(function(response) {
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.imported"), 'Success!');
+					$scope.bmImportingShow = false;
+
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					$scope.bmImportingShow = false;					
+				});
+
+			}, function() {
+	
+			});
+
 		}
 		
 		 $scope.confirm = $mdDialog

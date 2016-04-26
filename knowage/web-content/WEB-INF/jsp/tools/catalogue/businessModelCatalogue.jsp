@@ -217,7 +217,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
       						</md-input-container>-->
       						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
+      						<div flex=3 style="line-height: 40px; margin-top:17px" >
+       							<md-button ng-click="importMetadata(selectedBusinessModel.id)" ng-show="!bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
+      						</div>
+      						<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmImportingShow">
+			     				<md-progress-circular 
+			        	 			class=" md-hue-4"
+			        				md-mode="indeterminate" 
+			        				md-diameter="70"       
+			        				style="height:100%;">
+			      				</md-progress-circular>
+			      			</div> 
       					</div>
+      				
      					     				
      					<!--<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
