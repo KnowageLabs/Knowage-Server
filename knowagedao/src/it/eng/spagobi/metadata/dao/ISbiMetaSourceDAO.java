@@ -25,6 +25,8 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -35,6 +37,8 @@ public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 
 	public SbiMetaSource loadSourceByName(String name) throws EMFUserError;
 
+	public SbiMetaSource loadSourceByNameAndType(String name, String type) throws EMFUserError;
+
 	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDOAException;
 
 	public Integer insertSource(SbiMetaSource aMetaSource) throws EMFUserError;
@@ -44,4 +48,12 @@ public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 	public List<SbiMetaSource> loadAllSources() throws EMFUserError;
 
 	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError;
+
+	// TRANSACTIONAL METHODS (the session is an input parameter):
+
+	public SbiMetaSource loadSourceByNameAndType(Session session, String name, String type) throws EMFUserError;
+
+	public void modifySource(Session session, SbiMetaSource aMetaSource) throws EMFUserError;
+
+	public Integer insertSource(Session session, SbiMetaSource aMetaSource) throws EMFUserError;
 }

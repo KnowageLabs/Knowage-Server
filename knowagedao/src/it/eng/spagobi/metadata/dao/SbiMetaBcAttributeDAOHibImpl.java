@@ -71,7 +71,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			toReturn = (SbiMetaBcAttribute) tmpSession.load(SbiMetaBcAttribute.class, id);
+			toReturn = loadBcAttributeByID(tmpSession, id);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -118,7 +118,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Expression.eq("name", name);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
+			Criteria criteria = tmpSession.createCriteria(SbiMetaBcAttribute.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaBcAttribute) criteria.uniqueResult();
 			if (toReturn == null)
@@ -287,38 +287,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaBcAttribute hibMeta = (SbiMetaBcAttribute) tmpSession.load(SbiMetaBcAttribute.class, aMetaBcAttribute.getAttributeId());
+			modifyBcAttribute(tmpSession, aMetaBcAttribute);
 
-			hibMeta.setName(aMetaBcAttribute.getName());
-			hibMeta.setType(aMetaBcAttribute.getType());
-			hibMeta.setDeleted(aMetaBcAttribute.isDeleted());
-
-			SbiMetaBc metaBc = null;
-			if (aMetaBcAttribute.getSbiMetaBc() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaBc", aMetaBcAttribute.getSbiMetaBc().getBcId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
-				criteria.add(aCriterion);
-				metaBc = (SbiMetaBc) criteria.uniqueResult();
-				if (metaBc == null) {
-					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
-				}
-				hibMeta.setSbiMetaBc(metaBc);
-			}
-
-			SbiMetaTableColumn metaTableColumn = null;
-			if (aMetaBcAttribute.getSbiMetaTableColumn() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaTableColumn", aMetaBcAttribute.getSbiMetaTableColumn().getColumnId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
-				criteria.add(aCriterion);
-				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
-				if (metaTableColumn == null) {
-					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
-							+ " does not exist");
-				}
-				hibMeta.setSbiMetaTableColumn(metaTableColumn);
-			}
-
-			updateSbiCommonInfo4Update(hibMeta);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -362,38 +332,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaBcAttribute hibMeta = new SbiMetaBcAttribute();
-			hibMeta.setName(aMetaBcAttribute.getName());
-			hibMeta.setType(aMetaBcAttribute.getType());
-			hibMeta.setDeleted(aMetaBcAttribute.isDeleted());
-
-			SbiMetaBc metaBc = null;
-			if (aMetaBcAttribute.getSbiMetaBc() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaBc", aMetaBcAttribute.getSbiMetaBc().getBcId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
-				criteria.add(aCriterion);
-				metaBc = (SbiMetaBc) criteria.uniqueResult();
-				if (metaBc == null) {
-					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
-				}
-				hibMeta.setSbiMetaBc(metaBc);
-			}
-
-			SbiMetaTableColumn metaTableColumn = null;
-			if (aMetaBcAttribute.getSbiMetaTableColumn() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaTableColumn", aMetaBcAttribute.getSbiMetaTableColumn().getColumnId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
-				criteria.add(aCriterion);
-				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
-				if (metaTableColumn == null) {
-					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
-							+ " does not exist");
-				}
-				hibMeta.setSbiMetaTableColumn(metaTableColumn);
-			}
-
-			updateSbiCommonInfo4Insert(hibMeta);
-			idToReturn = (Integer) tmpSession.save(hibMeta);
+			idToReturn = insertBcAttribute(tmpSession, aMetaBcAttribute);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -474,5 +413,173 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 		}
 		logger.debug("OUT");
 
+	}
+
+	@Override
+	public SbiMetaBcAttribute loadBcAttributeByID(Session session, Integer id) throws HibernateException {
+		logger.debug("IN");
+
+		SbiMetaBcAttribute toReturn = null;
+		Session tmpSession = session;
+
+		try {
+			toReturn = (SbiMetaBcAttribute) tmpSession.load(SbiMetaBcAttribute.class, id);
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public SbiMetaBcAttribute loadBcAttributeByNameAndBc(Session session, String name, Integer bcId) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaBcAttribute toReturn = null;
+
+		try {
+
+			Query hqlQuery = session.createQuery(" from SbiMetaBcAttribute as db where db.name = ? and db.sbiMetaBc.bcId = ? ");
+			hqlQuery.setString(0, name);
+			hqlQuery.setInteger(1, bcId);
+			toReturn = (SbiMetaBcAttribute) hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Modify a metaBCAttribute.
+	 *
+	 * * @param aSession the hibernate session
+	 *
+	 * @param aMetaBC
+	 *            the sbimetaBCAttribute changed
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcAttributeDAOHibImpl#modifyBcAttribute(Session, SbiMetaTable)
+	 */
+	@Override
+	public void modifyBcAttribute(Session session, SbiMetaBcAttribute aMetaBcAttribute) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+
+		try {
+
+			SbiMetaBcAttribute hibMeta = (SbiMetaBcAttribute) tmpSession.load(SbiMetaBcAttribute.class, aMetaBcAttribute.getAttributeId());
+
+			hibMeta.setName(aMetaBcAttribute.getName());
+			hibMeta.setType(aMetaBcAttribute.getType());
+			hibMeta.setDeleted(aMetaBcAttribute.isDeleted());
+
+			SbiMetaBc metaBc = null;
+			if (aMetaBcAttribute.getSbiMetaBc() != null) {
+				Criterion aCriterion = Expression.eq("bcId", aMetaBcAttribute.getSbiMetaBc().getBcId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
+				criteria.add(aCriterion);
+				metaBc = (SbiMetaBc) criteria.uniqueResult();
+				if (metaBc == null) {
+					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
+				}
+				hibMeta.setSbiMetaBc(metaBc);
+			}
+
+			SbiMetaTableColumn metaTableColumn = null;
+			if (aMetaBcAttribute.getSbiMetaTableColumn() != null) {
+				Criterion aCriterion = Expression.eq("columnId", aMetaBcAttribute.getSbiMetaTableColumn().getColumnId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
+				criteria.add(aCriterion);
+				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
+				if (metaTableColumn == null) {
+					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
+							+ " does not exist");
+				}
+				hibMeta.setSbiMetaTableColumn(metaTableColumn);
+			}
+
+			updateSbiCommonInfo4Update(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	/**
+	 * Insert a metaBCAttribute.
+	 *
+	 * * @param aSession the hibernate session
+	 *
+	 * @param aMetaBCAttribute
+	 *            the sbimetaBCAttribute to insert
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcAttributeDAOHibImpl#insertBcAttribute(Session, SbiMetaTable)
+	 */
+	@Override
+	public Integer insertBcAttribute(Session session, SbiMetaBcAttribute aMetaBcAttribute) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+		Integer idToReturn = null;
+
+		try {
+			SbiMetaBcAttribute hibMeta = new SbiMetaBcAttribute();
+			hibMeta.setName(aMetaBcAttribute.getName());
+			hibMeta.setType(aMetaBcAttribute.getType());
+			hibMeta.setDeleted(aMetaBcAttribute.isDeleted());
+
+			SbiMetaBc metaBc = null;
+			if (aMetaBcAttribute.getSbiMetaBc() != null) {
+				Criterion aCriterion = Expression.eq("bcId", aMetaBcAttribute.getSbiMetaBc().getBcId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
+				criteria.add(aCriterion);
+				metaBc = (SbiMetaBc) criteria.uniqueResult();
+				if (metaBc == null) {
+					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
+				}
+				hibMeta.setSbiMetaBc(metaBc);
+			}
+
+			SbiMetaTableColumn metaTableColumn = null;
+			if (aMetaBcAttribute.getSbiMetaTableColumn() != null) {
+				Criterion aCriterion = Expression.eq("columnId", aMetaBcAttribute.getSbiMetaTableColumn().getColumnId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
+				criteria.add(aCriterion);
+				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
+				if (metaTableColumn == null) {
+					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
+							+ " does not exist");
+				}
+				hibMeta.setSbiMetaTableColumn(metaTableColumn);
+			}
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return idToReturn;
 	}
 }

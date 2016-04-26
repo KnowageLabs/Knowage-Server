@@ -15,7 +15,6 @@ public class SbiMetaBc extends SbiHibernateModel {
 
 	private Integer bcId;
 	private SbiMetaModel sbiMetaModel;
-	private int tableId;
 	private String name;
 	private boolean deleted;
 
@@ -26,16 +25,14 @@ public class SbiMetaBc extends SbiHibernateModel {
 	public SbiMetaBc() {
 	}
 
-	public SbiMetaBc(SbiMetaModel sbiMetaModel, int tableId, String name, boolean deleted) {
+	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, boolean deleted) {
 		this.sbiMetaModel = sbiMetaModel;
-		this.tableId = tableId;
 		this.name = name;
 		this.deleted = deleted;
 	}
 
-	public SbiMetaBc(SbiMetaModel sbiMetaModel, int tableId, String name, boolean deleted, Set sbiMetaDsBcs, Set sbiMetaTableBcs, Set sbiMetaBcAttributes) {
+	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, boolean deleted, Set sbiMetaDsBcs, Set sbiMetaTableBcs, Set sbiMetaBcAttributes) {
 		this.sbiMetaModel = sbiMetaModel;
-		this.tableId = tableId;
 		this.name = name;
 		this.deleted = deleted;
 		this.sbiMetaDsBcs = sbiMetaDsBcs;
@@ -57,14 +54,6 @@ public class SbiMetaBc extends SbiHibernateModel {
 
 	public void setSbiMetaModel(SbiMetaModel sbiMetaModel) {
 		this.sbiMetaModel = sbiMetaModel;
-	}
-
-	public int getTableId() {
-		return this.tableId;
-	}
-
-	public void setTableId(int tableId) {
-		this.tableId = tableId;
 	}
 
 	public String getName() {

@@ -23,6 +23,8 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -42,4 +44,18 @@ public interface ISbiMetaTableColumnDAO extends ISpagoBIDao {
 	public void deleteTableColumn(SbiMetaTableColumn aMetaTableColumn) throws EMFUserError;
 
 	public List<SbiMetaTableColumn> loadTableColumnsFromTable(int tableId) throws EMFUserError;
+
+	// TRANSACTIONAL METHODS (the session is an input parameter):
+
+	public SbiMetaTableColumn loadTableColumnByID(Session session, Integer id) throws EMFUserError;
+
+	public SbiMetaTableColumn loadTableColumnByName(Session session, String name) throws EMFUserError;
+
+	public SbiMetaTableColumn loadTableColumnByNameAndTable(Session session, String name, Integer tableId) throws EMFUserError;
+
+	public void modifyTableColumn(Session session, SbiMetaTableColumn aMetaTableColumn) throws EMFUserError;
+
+	public Integer insertTableColumn(Session session, SbiMetaTableColumn aMetaTableColumn) throws EMFUserError;
+
+	public List<SbiMetaTableColumn> loadTableColumnsFromTable(Session session, int tableId) throws EMFUserError;
 }

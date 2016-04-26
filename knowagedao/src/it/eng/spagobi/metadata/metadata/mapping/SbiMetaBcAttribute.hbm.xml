@@ -15,7 +15,7 @@
         <many-to-one name="sbiMetaTableColumn" class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" lazy="false" fetch="join">
             <column name="COLUMN_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" lazy="false" fetch="select">
+        <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" lazy="false" fetch="join">
             <column name="BC_ID" not-null="true" />
         </many-to-one>
         <property name="name" type="string">

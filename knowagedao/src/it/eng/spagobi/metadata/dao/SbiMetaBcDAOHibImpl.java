@@ -117,12 +117,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", name);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
-			criteria.add(labelCriterrion);
-			toReturn = (SbiMetaBc) criteria.uniqueResult();
-			if (toReturn == null)
-				return null;
+			toReturn = loadBcByName(tmpSession, name);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -287,24 +282,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaBc hibMeta = (SbiMetaBc) tmpSession.load(SbiMetaBc.class, aMetaBc.getBcId());
-
-			hibMeta.setName(aMetaBc.getName());
-			hibMeta.setDeleted(aMetaBc.isDeleted());
-
-			SbiMetaModel metaModel = null;
-			if (aMetaBc.getSbiMetaModel() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaModel", aMetaBc.getSbiMetaModel().getId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
-				criteria.add(aCriterion);
-				metaModel = (SbiMetaModel) criteria.uniqueResult();
-				if (metaModel == null) {
-					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
-				}
-				hibMeta.setSbiMetaModel(metaModel);
-			}
-
-			updateSbiCommonInfo4Update(hibMeta);
+			modifyBc(tmpSession, aMetaBc);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -348,24 +326,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaBc hibMeta = new SbiMetaBc();
-			hibMeta.setName(aMetaBc.getName());
-			hibMeta.setDeleted(aMetaBc.isDeleted());
-
-			SbiMetaModel metaModel = null;
-			if (aMetaBc.getSbiMetaModel() != null) {
-				Criterion aCriterion = Expression.eq("sbiMetaModel", aMetaBc.getSbiMetaModel().getId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaBc.class);
-				criteria.add(aCriterion);
-				metaModel = (SbiMetaModel) criteria.uniqueResult();
-				if (metaModel == null) {
-					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
-				}
-				hibMeta.setSbiMetaModel(metaModel);
-			}
-
-			updateSbiCommonInfo4Insert(hibMeta);
-			idToReturn = (Integer) tmpSession.save(hibMeta);
+			idToReturn = insertBc(tmpSession, aMetaBc);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -548,6 +509,136 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 		}
 		return bool;
 
+	}
+
+	/**
+	 * Load source by name.
+	 *
+	 * @param session
+	 *            the session
+	 *
+	 * @param name
+	 *            the source name
+	 *
+	 * @return the meta source
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(session, string)
+	 */
+	@Override
+	public SbiMetaBc loadBcByName(Session session, String name) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaBc toReturn = null;
+
+		try {
+			Criterion labelCriterrion = Expression.eq("name", name);
+			Criteria criteria = session.createCriteria(SbiMetaBc.class);
+			criteria.add(labelCriterrion);
+			toReturn = (SbiMetaBc) criteria.uniqueResult();
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Modify a metaBC.
+	 *
+	 * * @param aSession the hibernate session
+	 *
+	 * @param aMetaBC
+	 *            the sbimetaBC changed
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#modifyBc(Session, SbiMetaTable)
+	 */
+	@Override
+	public void modifyBc(Session aSession, SbiMetaBc aMetaBc) throws EMFUserError {
+		logger.debug("IN");
+
+		try {
+			SbiMetaBc hibMeta = (SbiMetaBc) aSession.load(SbiMetaBc.class, aMetaBc.getBcId());
+
+			hibMeta.setName(aMetaBc.getName());
+			hibMeta.setDeleted(aMetaBc.isDeleted());
+
+			SbiMetaModel metaModel = null;
+			if (aMetaBc.getSbiMetaModel() != null) {
+				Criterion aCriterion = Expression.eq("id", aMetaBc.getSbiMetaModel().getId());
+				Criteria criteria = aSession.createCriteria(SbiMetaModel.class);
+				criteria.add(aCriterion);
+				metaModel = (SbiMetaModel) criteria.uniqueResult();
+				if (metaModel == null) {
+					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
+				}
+				hibMeta.setSbiMetaModel(metaModel);
+			}
+
+			updateSbiCommonInfo4Update(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	/**
+	 * Insert a metaBC.
+	 *
+	 * * @param aSession the hibernate session
+	 *
+	 * @param aMetaBC
+	 *            the sbimetaBC to insert
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#insertBc(Session, SbiMetaTable)
+	 */
+	@Override
+	public Integer insertBc(Session session, SbiMetaBc aMetaBc) throws EMFUserError {
+		logger.debug("IN");
+
+		Integer idToReturn = null;
+
+		try {
+			SbiMetaBc hibMeta = new SbiMetaBc();
+			hibMeta.setName(aMetaBc.getName());
+			hibMeta.setDeleted(aMetaBc.isDeleted());
+
+			SbiMetaModel metaModel = null;
+			if (aMetaBc.getSbiMetaModel() != null) {
+				Criterion aCriterion = Expression.eq("id", aMetaBc.getSbiMetaModel().getId());
+				Criteria criteria = session.createCriteria(SbiMetaModel.class);
+				criteria.add(aCriterion);
+				metaModel = (SbiMetaModel) criteria.uniqueResult();
+				if (metaModel == null) {
+					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
+				}
+				hibMeta.setSbiMetaModel(metaModel);
+			}
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			idToReturn = (Integer) session.save(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return idToReturn;
 	}
 
 }

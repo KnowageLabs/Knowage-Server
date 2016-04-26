@@ -22,8 +22,11 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaTableBcId;
 
 import java.util.List;
+
+import org.hibernate.Session;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -35,10 +38,19 @@ public interface ISbiTableBcDAO extends ISpagoBIDao {
 
 	public List<SbiMetaBc> loadBcByTableId(Integer tableId) throws EMFUserError;
 
+	public SbiMetaTableBc loadTableBcByBcIdAndTableId(SbiMetaTableBcId tableBcId) throws EMFUserError;
+
 	public void modifyTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 
 	public void insertTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 
 	public void deleteTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 
+	// TRANSACTIONAL METHODS (the session is an input parameter):
+
+	public SbiMetaTableBc loadTableBcByBcIdAndTableId(Session session, SbiMetaTableBcId tableBcId) throws EMFUserError;
+
+	public void modifyTableBc(Session session, SbiMetaTableBc aMetaTableBc) throws EMFUserError;
+
+	public void insertTableBc(Session session, SbiMetaTableBc aMetaTableBc) throws EMFUserError;
 }

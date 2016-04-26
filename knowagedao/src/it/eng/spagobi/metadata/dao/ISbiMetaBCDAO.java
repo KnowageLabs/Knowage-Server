@@ -23,6 +23,8 @@ import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -48,4 +50,12 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 	public boolean hasTablesAssociated(Integer id) throws EMFUserError;
 
 	public boolean hasDsAssociated(Integer id) throws EMFUserError;
+
+	// TRANSACTIONAL METHODS (the session is an input parameter):
+
+	public SbiMetaBc loadBcByName(Session session, String name) throws EMFUserError;
+
+	public void modifyBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
+
+	public Integer insertBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
 }

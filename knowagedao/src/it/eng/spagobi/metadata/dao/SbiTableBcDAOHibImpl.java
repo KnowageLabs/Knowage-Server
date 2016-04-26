@@ -133,6 +133,43 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 	}
 
 	@Override
+	public SbiMetaTableBc loadTableBcByBcIdAndTableId(SbiMetaTableBcId tableBcId) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		SbiMetaTableBc toReturn = null;
+		Query hqlQuery = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			hqlQuery = aSession.createQuery(" from SbiMetaTableBc as db where db.id.tableId = ? and db.id.bcId = ? ");
+			hqlQuery.setInteger(0, tableBcId.getTableId());
+			hqlQuery.setInteger(1, tableBcId.getBcId());
+			toReturn = (SbiMetaTableBc) hqlQuery.uniqueResult();
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
 	public void modifyTableBc(SbiMetaTableBc aMetaTableBc) throws EMFUserError {
 		logger.debug("IN");
 
@@ -141,11 +178,9 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
-			hibId.setTableId(aMetaTableBc.getId().getTableId());
-			hibId.setBcId(aMetaTableBc.getId().getBcId());
 
-			updateSbiCommonInfo4Update(hibId);
+			modifyTableBc(aSession, aMetaTableBc);
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -233,6 +268,73 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 			}
 		}
 
+	}
+
+	@Override
+	public SbiMetaTableBc loadTableBcByBcIdAndTableId(Session session, SbiMetaTableBcId tableBcId) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTableBc toReturn = null;
+		Query hqlQuery = null;
+
+		try {
+			hqlQuery = session.createQuery(" from SbiMetaTableBc as db where db.id.tableId = ? and db.id.bcId = ? ");
+			hqlQuery.setInteger(0, tableBcId.getTableId());
+			hqlQuery.setInteger(1, tableBcId.getBcId());
+			toReturn = (SbiMetaTableBc) hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
+	public void modifyTableBc(Session session, SbiMetaTableBc aMetaTableBc) throws EMFUserError {
+		logger.debug("IN");
+
+		try {
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
+			hibId.setTableId(aMetaTableBc.getId().getTableId());
+			hibId.setBcId(aMetaTableBc.getId().getBcId());
+
+			updateSbiCommonInfo4Update(hibId);
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	@Override
+	public void insertTableBc(Session session, SbiMetaTableBc aMetaTableBc) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = session;
+
+		try {
+
+			SbiMetaTableBc hib = new SbiMetaTableBc();
+
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
+			hibId.setTableId(aMetaTableBc.getId().getTableId());
+			hibId.setBcId(aMetaTableBc.getId().getBcId());
+			aMetaTableBc.setId(hibId);
+
+			updateSbiCommonInfo4Insert(aMetaTableBc);
+			aSession.save(aMetaTableBc);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 }

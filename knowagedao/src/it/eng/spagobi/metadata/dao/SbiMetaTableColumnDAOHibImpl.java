@@ -68,7 +68,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			toReturn = (SbiMetaTableColumn) tmpSession.load(SbiMetaTableColumn.class, id);
+			toReturn = loadTableColumnByID(tmpSession, id);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -114,12 +114,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", name);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
-			criteria.add(labelCriterrion);
-			toReturn = (SbiMetaTableColumn) criteria.uniqueResult();
-			if (toReturn == null)
-				return null;
+			toReturn = loadTableColumnByName(tmpSession, name);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -164,19 +159,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			String hql = " from SbiMetaTableColumn c where c.name = ? and c.sbiMetaTable.tableId = ? ";
-			Query aQuery = tmpSession.createQuery(hql);
-			aQuery.setString(0, name);
-			aQuery.setInteger(1, tableId);
-			toReturn = (SbiMetaTableColumn) aQuery.uniqueResult();
-
-			// Criterion labelCriterrion = Expression.eq("name", name);
-			// criteria.add(labelCriterrion);
-			// toReturn = (SbiMetaTableColumn) criteria.uniqueResult();
-			// Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
-
-			if (toReturn == null)
-				return null;
+			toReturn = loadTableColumnByNameAndTable(tmpSession, name, tableId);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -217,13 +200,8 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Criterion labelCriterrion = Expression.eq("tableId", tableId);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
-			criteria.add(labelCriterrion);
+			toReturn = loadTableColumnsFromTable(tmpSession, tableId);
 
-			toReturn = criteria.list();
-			if (toReturn == null)
-				return null;
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -263,26 +241,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-
-			SbiMetaTableColumn hibMeta = (SbiMetaTableColumn) tmpSession.load(SbiMetaTableColumn.class, aMetaTableColumn.getColumnId());
-
-			hibMeta.setName(aMetaTableColumn.getName());
-			hibMeta.setType(aMetaTableColumn.getType());
-			hibMeta.setDeleted(aMetaTableColumn.isDeleted());
-
-			SbiMetaTable metaTable = null;
-			if (aMetaTableColumn.getSbiMetaTable().getTableId() < 0) {
-				Criterion aCriterion = Expression.eq("valueId", aMetaTableColumn.getSbiMetaTable().getTableId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
-				criteria.add(aCriterion);
-				metaTable = (SbiMetaTable) criteria.uniqueResult();
-				if (metaTable == null) {
-					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
-				}
-				hibMeta.setSbiMetaTable(metaTable);
-			}
-
-			updateSbiCommonInfo4Update(hibMeta);
+			modifyTableColumn(tmpSession, aMetaTableColumn);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -326,25 +285,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaTableColumn hibMeta = new SbiMetaTableColumn();
-			hibMeta.setName(aMetaTableColumn.getName());
-			hibMeta.setType(aMetaTableColumn.getType());
-			hibMeta.setDeleted(aMetaTableColumn.isDeleted());
-
-			SbiMetaTable metaTable = null;
-			if (aMetaTableColumn.getSbiMetaTable() != null) {
-				Criterion aCriterion = Expression.eq("tableId", aMetaTableColumn.getSbiMetaTable().getTableId());
-				Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
-				criteria.add(aCriterion);
-				metaTable = (SbiMetaTable) criteria.uniqueResult();
-				if (metaTable == null) {
-					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
-				}
-				hibMeta.setSbiMetaTable(metaTable);
-			}
-
-			updateSbiCommonInfo4Insert(hibMeta);
-			idToReturn = (Integer) tmpSession.save(hibMeta);
+			idToReturn = insertTableColumn(tmpSession, aMetaTableColumn);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -425,6 +366,178 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 		}
 		logger.debug("OUT");
 
+	}
+
+	@Override
+	public SbiMetaTableColumn loadTableColumnByID(Session session, Integer id) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTableColumn toReturn = null;
+		Session tmpSession = session;
+
+		try {
+			toReturn = (SbiMetaTableColumn) tmpSession.load(SbiMetaTableColumn.class, id);
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
+	public SbiMetaTableColumn loadTableColumnByName(Session session, String name) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTableColumn toReturn = null;
+		Session tmpSession = session;
+		try {
+			Criterion labelCriterrion = Expression.eq("name", name);
+			Criteria criteria = tmpSession.createCriteria(SbiMetaTableColumn.class);
+			criteria.add(labelCriterrion);
+			toReturn = (SbiMetaTableColumn) criteria.uniqueResult();
+			if (toReturn == null)
+				return null;
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Load all tablecolumn column linked to a table.
+	 *
+	 * @param session
+	 *            the session
+	 *
+	 * @return List of meta tables
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAOHibImpl#loadTableColumnsFromTable(session, tableId)
+	 */
+	@Override
+	public List<SbiMetaTableColumn> loadTableColumnsFromTable(Session session, int tableId) throws EMFUserError {
+		logger.debug("IN");
+
+		List<SbiMetaTableColumn> toReturn = null;
+
+		try {
+			Criterion labelCriterrion = Expression.eq("tableId", tableId);
+			Criteria criteria = session.createCriteria(SbiMetaTableColumn.class);
+			criteria.add(labelCriterrion);
+
+			toReturn = criteria.list();
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
+	public SbiMetaTableColumn loadTableColumnByNameAndTable(Session session, String name, Integer tableId) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTableColumn toReturn = null;
+		Session tmpSession = session;
+
+		try {
+			String hql = " from SbiMetaTableColumn c where c.name = ? and c.sbiMetaTable.tableId = ? ";
+			Query aQuery = tmpSession.createQuery(hql);
+			aQuery.setString(0, name);
+			aQuery.setInteger(1, tableId);
+			toReturn = (SbiMetaTableColumn) aQuery.uniqueResult();
+
+			if (toReturn == null)
+				return null;
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
+	public void modifyTableColumn(Session session, SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+
+		try {
+			SbiMetaTableColumn hibMeta = (SbiMetaTableColumn) tmpSession.load(SbiMetaTableColumn.class, aMetaTableColumn.getColumnId());
+
+			hibMeta.setName(aMetaTableColumn.getName());
+			hibMeta.setType(aMetaTableColumn.getType());
+			hibMeta.setDeleted(aMetaTableColumn.isDeleted());
+
+			SbiMetaTable metaTable = null;
+			if (aMetaTableColumn.getSbiMetaTable().getTableId() < 0) {
+				Criterion aCriterion = Expression.eq("valueId", aMetaTableColumn.getSbiMetaTable().getTableId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
+				criteria.add(aCriterion);
+				metaTable = (SbiMetaTable) criteria.uniqueResult();
+				if (metaTable == null) {
+					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
+				}
+				hibMeta.setSbiMetaTable(metaTable);
+			}
+
+			updateSbiCommonInfo4Update(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@Override
+	public Integer insertTableColumn(Session session, SbiMetaTableColumn aMetaTableColumn) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+		Integer idToReturn = null;
+
+		try {
+			SbiMetaTableColumn hibMeta = new SbiMetaTableColumn();
+			hibMeta.setName(aMetaTableColumn.getName());
+			hibMeta.setType(aMetaTableColumn.getType());
+			hibMeta.setDeleted(aMetaTableColumn.isDeleted());
+
+			SbiMetaTable metaTable = null;
+			if (aMetaTableColumn.getSbiMetaTable() != null) {
+				Criterion aCriterion = Expression.eq("tableId", aMetaTableColumn.getSbiMetaTable().getTableId());
+				Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
+				criteria.add(aCriterion);
+				metaTable = (SbiMetaTable) criteria.uniqueResult();
+				if (metaTable == null) {
+					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
+				}
+				hibMeta.setSbiMetaTable(metaTable);
+			}
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return idToReturn;
 	}
 
 }

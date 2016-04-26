@@ -158,6 +158,36 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		return toReturn;
 	}
 
+	@Override
+	public SbiMetaSource loadSourceByNameAndType(String name, String type) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaSource toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			toReturn = loadSourceByNameAndType(tmpSession, name, type);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	/**
 	 * Load all sources.
 	 *
@@ -358,7 +388,6 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		}
 		logger.debug("OUT");
 	}
-
 	@Override
 	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError {
 
@@ -420,6 +449,88 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+	
+	@Override
+	public SbiMetaSource loadSourceByNameAndType(Session session, String name, String type) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaSource toReturn = null;
+		Session tmpSession = session;
+
+		try {
+			String hql = " from SbiMetaSource s where s.name = ? and s.type = ? ";
+			Query aQuery = tmpSession.createQuery(hql);
+			aQuery.setString(0, name);
+			aQuery.setString(1, type);
+			toReturn = (SbiMetaSource) aQuery.uniqueResult();
+
+			if (toReturn == null)
+				return null;
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public void modifySource(Session session, SbiMetaSource aMetaSource) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+
+		try {
+			SbiMetaSource hibMeta = (SbiMetaSource) tmpSession.load(SbiMetaSource.class, aMetaSource.getSourceId());
+
+			hibMeta.setName(aMetaSource.getName());
+			hibMeta.setType(aMetaSource.getType());
+			hibMeta.setUrl(aMetaSource.getUrl());
+			hibMeta.setLocation(aMetaSource.getLocation());
+			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
+			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
+
+			updateSbiCommonInfo4Update(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@Override
+	public Integer insertSource(Session session, SbiMetaSource aMetaSource) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+		Integer idToReturn;
+
+		try {
+
+			SbiMetaSource hibMeta = new SbiMetaSource();
+			hibMeta.setName(aMetaSource.getName());
+			hibMeta.setType(aMetaSource.getType());
+			hibMeta.setUrl(aMetaSource.getUrl());
+			hibMeta.setLocation(aMetaSource.getLocation());
+			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
+			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return idToReturn;
 	}
 
 }

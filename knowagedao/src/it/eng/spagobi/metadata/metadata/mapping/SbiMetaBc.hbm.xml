@@ -12,12 +12,9 @@
 				<param name="initial_value">1</param>	
 		    </generator>
         </id>
-        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" lazy="false" fetch="select">
+        <many-to-one name="sbiMetaModel" class="it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel" lazy="false" fetch="join">
             <column name="MODEL_ID" not-null="true" />
         </many-to-one>
-        <property name="tableId" type="int">
-            <column name="TABLE_ID" not-null="true" />
-        </property>
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
         </property>
