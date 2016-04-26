@@ -14,7 +14,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.style = {};
 	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
-	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'semaphore','value':'Semaphore'},{'label':'kpicard','value':'Kpi Card'}];
+	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";
 	$scope.typeChart = 'kpi'
 		$scope.selectedKpis = [];
@@ -32,7 +32,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 				});
 			},
-			vieweAs: [{'label':'speedometer','value':'Speedometer'},{'label':'semaphore','value':'Semaphore'},{'label':'kpicard','value':'Kpi Card'}]
+			vieweAs: [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}]
 
 	}
 	$scope.parseDate = function(date){
