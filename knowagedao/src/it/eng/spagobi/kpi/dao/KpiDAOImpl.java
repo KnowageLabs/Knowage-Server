@@ -1431,10 +1431,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 						logger.error("Criterion class not found: " + criterionClassName, e);
 					}
+					ScorecardStatus scorecardStatus = new ScorecardStatus();
+					scorecardStatus.setStatus(goal.getStatus());
+					ssForPerspective.add(scorecardStatus);
 					for (String targetName : perspective.getScorecardOption().getCriterionPriority()) {
-						ScorecardStatus scorecardStatus = new ScorecardStatus();
-						scorecardStatus.setStatus(goal.getStatus());
-						ssForPerspective.add(scorecardStatus);
 						if (goal.getName().equals(targetName)) {
 							scorecardStatus.setPriority(true);
 							break;
