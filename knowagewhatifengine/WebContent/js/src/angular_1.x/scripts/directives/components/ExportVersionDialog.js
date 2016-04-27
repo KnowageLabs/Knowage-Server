@@ -29,3 +29,13 @@ app.directive('exportVersionTableWizard',
 		};
 	}
 )
+
+app.directive('exportVersionMsg', 
+	function(){
+		return{
+			restrict:'E',
+			replace:true,
+			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardMessage.html'
+		};
+	}
+)

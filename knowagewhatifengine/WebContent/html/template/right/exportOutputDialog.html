@@ -5,9 +5,10 @@
     </md-toolbar>
     
     <md-dialog-content style="padding:10px;font-size:85%;height:60%">
-		<export-version-wizard ng-show = "!showFile && !showTable"></export-version-wizard>
-		<export-version-file-wizard ng-show = "showFile"></export-version-file-wizard>
-		<export-version-table-wizard ng-show = "showTable"></export-version-table-wizard>
+		<export-version-wizard ng-show = "!showFile && !showTable && !showOVDescription"></export-version-wizard>
+		<export-version-file-wizard ng-show = "showFile && !showOVDescription"></export-version-file-wizard>
+		<export-version-table-wizard ng-show = "showTable && !showOVDescription"></export-version-table-wizard>
+		<export-version-msg ng-show = "showOVDescription"></export-version-msg>
     </md-dialog-content>
     
     <md-dialog-actions layout="row">

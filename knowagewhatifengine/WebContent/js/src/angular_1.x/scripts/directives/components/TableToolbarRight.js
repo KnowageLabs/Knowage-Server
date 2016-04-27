@@ -8,7 +8,7 @@ angular.module('sbi_table_toolbar',[])
 	}
 });
 
-function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config) {
+function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download) {
 
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
@@ -28,6 +28,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.lockerClass = "";
 	$scope.showFile = false;
 	$scope.showTable = false;
+	$scope.showOVDescription = false;
 	var exportBtn = {};
 	var result;
 	
@@ -131,9 +132,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	
 	$scope.changeDrillType = function(type){
-		console.log(type+"----->type")
 		$scope.modelConfig.drillType = type;
-		console.log($scope.modelConfig.drillType+"---------->$scope.modelConfig.drillType")
 		$scope.sendModelConfig($scope.modelConfig);
 		
 	}
@@ -249,13 +248,20 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  };
 	  
 	  $scope.exportOutputVersion = function(){
+		  var sucessMsg = sbiModule_translate.load('sbi.olap.toolbar.exportoutput.ok');
+		  $scope.showOVDescription = true;
 		  var value = $scope.outputType == "csv"? $scope.delimiter : $scope.tableName;
 		  
 			  sbiModule_restServices.promiseGet
 				("1.0",'/analysis/'+$scope.outputType+'/'+$scope.outputVersion+'/'+value+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 				.then(function(response) {
-							//$scope.handleResponse(response);
-					console.log(response)
+					var name = documentDownloadName();
+					sbiModule_messaging.showInfoMessage(sucessMsg, 'Info');
+					$scope.closeDialog(null);
+					initDialogs();
+					if($scope.outputType == "csv"){
+						sbiModule_download.getPlain(response.data, name,"text/csv","csv")
+					}
 			  },function(response){
 				  sbiModule_messaging.showErrorMessage("An error occured while exporting version", 'Error'); 
 			  });
@@ -263,8 +269,14 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  
 	  };
 	  
+	  initDialogs = function(){
+		  $scope.showFile = false;
+		  $scope.showTable = false;
+		  $scope.showOVDescription = false;
+	  }
+	  
 	  $scope.isOkBtnDisabled = function(){
-		  if(!$scope.showFile && !$scope.showTable)
+		  if(!$scope.showFile && !$scope.showTable || $scope.showOVDescription)
 			  return true;
 		  else if($scope.outputType == "table" && $scope.tableName.length < 1)
 			  return true;		  
@@ -287,5 +299,13 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  }
 		  }
 	  }
-
+	  
+	  documentDownloadName = function(){
+		  var date = new Date();
+		  var d = date.getDate();
+		  var m = date.getMonth()+1;
+		  var y = date.getFullYear();
+		  
+		  return "KnowageOlapExport-" + d + "." + m + "." + y;
+	  }
 };
