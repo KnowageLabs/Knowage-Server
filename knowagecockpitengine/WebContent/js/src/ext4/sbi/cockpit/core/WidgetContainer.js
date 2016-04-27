@@ -182,6 +182,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , getWidgetsCount: function() {
     	return this.getWidgetManager().getWidgets().length;
     }
+    
+    ,  updateWidgetContainerSize: function(ratioW, ratioH){
+    	if(this.components && this.components.items){
+    		for(var i=0; i<this.components.items.length;i++){
+    			this.components.items[i].updateWidgetSize(ratioW, ratioH);
+    		}
+    	}
+    }
 
 	/**
 	 * @method

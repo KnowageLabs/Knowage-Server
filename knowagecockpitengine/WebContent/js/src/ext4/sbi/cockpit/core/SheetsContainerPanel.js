@@ -223,6 +223,18 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	    
 	}
 	 		
+	
+	/**
+	 * Update the size of internal components after a resize of the page
+	 */
+	, updateSheetsContainerSize: function(ratioW, ratioH){
+		if(this.widgetContainerList){
+			for(var i=0; i<this.widgetContainerList.length;i++){
+				this.widgetContainerList[i].updateWidgetContainerSize(ratioW, ratioH);
+			}
+		}
+	}
+	
 	, manageVisibilityTabsWindows: function(tab){	
 		
 		Sbi.trace("[SheetsContainerPanel.manageVisibilityTabsWindows]: IN");

@@ -67,6 +67,16 @@ Sbi.cockpit.MainPanel = function(config) {
 
 	// constructor
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
+	
+	//resize components dimension after resize
+	this.on("resize",function(thisObject, width, height, oldWidth, oldHeight, eOpts){
+		if(this.afterFirstRendering){
+			this.updateSheetsContainerSize( width/oldWidth, height/oldHeight);
+			
+		}
+		
+		this.afterFirstRendering = true;
+	},this);
 };
 
 Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {

@@ -227,6 +227,17 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	}
 
 	/**
+	 * Update the dimension after resize of windows
+	 */
+	, updateWidgetSize:function(ratioW, ratioH){
+		var box = this.getBox();
+		this.setX(box.x*ratioW);
+		this.setWidth(box.width*ratioW);
+		this.setY(box.y*ratioH);
+		this.setHeight(box.height*ratioH);
+		
+	}
+	/**
 	 * @method
 	 *
 	 * @return {boolean} false if there is a wrapped widget; true otherwise
