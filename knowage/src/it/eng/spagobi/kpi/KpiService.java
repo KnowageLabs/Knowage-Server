@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -604,29 +605,52 @@ public class KpiService {
 		JSONArray array = new JSONArray();
 
 		try {
+
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-			for (int i = 0; i < requestVal.getJSONArray("kpi").length(); i++) {
-				JSONObject objTemp = requestVal.getJSONArray("kpi").getJSONObject(i);
-				Map<String, String> attributesValues = new HashMap<String, String>();
-				attributesValues.put("department_id", "0");
-				attributesValues.put("employee_id", "0");
-				attributesValues.put("gender", "1");
-				attributesValues.put("management_role", "6");
-				List<KpiValue> kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null,
-						attributesValues);
-				String result = new ObjectMapper().writeValueAsString(kpiValues);
-				JSONObject output = new JSONObject();
-				output.put("id", objTemp.getInt("id"));
-				output.put("version", objTemp.getInt("version"));
-				output.put("value", result);
-				array.put(output);
+			Map<String, String> attributesValues = new TreeMap<String, String>();
+			JSONObject objTemp = new JSONObject();
+
+			if (requestVal.get("kpi") instanceof JSONObject) {
+				objTemp = requestVal.getJSONObject("kpi");
+				String s = requestVal.getString("driverMap");
+				String[] couples = s.replace("{", "").replace("}", "").split(",");
+				for (String c : couples) {
+					String[] keyvalue = c.split("=");
+					if (keyvalue.length != 1) {
+						attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
+					}
+
+				}
+			} else {
+				for (int i = 0; i < requestVal.getJSONArray("kpi").length(); i++) {
+					objTemp = requestVal.getJSONArray("kpi").getJSONObject(i);
+
+					String s = requestVal.getString("driverMap");
+					String[] couples = s.replace("{", "").replace("}", "").split(",");
+					for (String c : couples) {
+						String[] keyvalue = c.split("=");
+						if (keyvalue.length != 1) {
+							attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
+						}
+
+					}
+
+				}
 			}
 
-			return Response.ok(array).build();
-		} catch (Throwable e) {
+			List<KpiValue> kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
+			String result = new ObjectMapper().writeValueAsString(kpiValues);
+
+			return Response.ok(result).build();
+		} catch (
+
+		Throwable e)
+
+		{
 			logger.error(req.getPathInfo(), e);
 			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
 		}
+
 	}
 
 	private JSError check(Target target, IKpiDAO dao) throws SpagoBIException {

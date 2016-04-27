@@ -50,7 +50,7 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 				if (chart.getJSONObject("data").get("kpi") instanceof JSONArray) {
 					array = chart.getJSONObject("data").getJSONArray("kpi");
 				} else {
-					array.put(chart.getJSONObject("data").getJSONArray("kpi"));
+					array.put(chart.getJSONObject("data").getJSONObject("kpi"));
 				}
 
 				for (int i = 0; i < array.length(); i++) {

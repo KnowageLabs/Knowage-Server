@@ -223,8 +223,7 @@ author:
 
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()"
-	class="kn-schedulerKpi">
+<body ng-controller="kpiViewerController" ng-init="init()" 	class="kn-schedulerKpi">
 
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
@@ -280,7 +279,7 @@ threshold-stops=thresholdStops percentage=percentage
 	font-conf="documentData.template.chart.style.font"
 ></kpi-gauge> 
 --%>
-	<%
+<%
 		if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");
 		
@@ -292,8 +291,8 @@ threshold-stops=thresholdStops percentage=percentage
 			<%--
 			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
 			--%>
-
-			<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
+		
+		<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 				gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 				min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
 				value="kpiItem.value" target-value="kpiItem.targetValue"
@@ -311,7 +310,6 @@ threshold-stops=thresholdStops percentage=percentage
 				gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops"></kpi-widget>
 		</div>
 	</div>
-
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
@@ -348,6 +346,7 @@ threshold-stops=thresholdStops percentage=percentage
 				template : documentTemplate,
 				docLabel : '<%=docLabel%>',
 				docId : '<%=docId%>',
+				driverMap: '<%=engineInstance.getAnalyticalDrivers()%>',
 				kpiValue : [],
 				kpiListValue : [],
 			};

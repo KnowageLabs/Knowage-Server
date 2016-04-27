@@ -19,6 +19,8 @@ package it.eng.knowage.engine.kpi.api;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +43,15 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/jsonKpiTemplate")
 @ManageAuthorization
 public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
+	private TreeMap parameterMap = new TreeMap<>();
+
+	public TreeMap getParameterMap() {
+		return parameterMap;
+	}
+
+	public void setParameterMap(TreeMap parameterMap) {
+		this.parameterMap = parameterMap;
+	}
 
 	@POST
 	@Path("/readKpiTemplate")
@@ -50,6 +61,15 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			String result = "";
 
 			KpiEngineInstance engineInstance = getEngineInstance();
+
+			@SuppressWarnings("unchecked")
+			Map<String, String> analyticalDrivers = engineInstance.getAnalyticalDrivers();
+			Set<String> keySet = analyticalDrivers.keySet();
+			for (String parName : keySet) {
+				String parValue = analyticalDrivers.get(parName);
+
+				parameterMap.put(parName, parValue);
+			}
 
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			JSONObject jsonTemplate = RestUtilities.readBodyAsJSONObject(req);
