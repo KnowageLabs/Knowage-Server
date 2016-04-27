@@ -11,6 +11,8 @@ sbiM.factory('sbiModule_config',function(){
 	return {
     	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+    	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+    	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>

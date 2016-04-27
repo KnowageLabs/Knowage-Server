@@ -159,6 +159,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (!errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
+			// ADD TYPE CODE
+			// TODO return EXPORT FORMAT MAP
+			resultAsMap.put("typeCode", obj.getBiObjectTypeCode());
+			resultAsMap.put("engineLabel", obj.getEngine().getLabel());
 
 		} catch (DocumentExecutionException e) {
 			logger.error("Error while getting the document execution url", e);

@@ -70,7 +70,6 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
 			if(response.data && response.data.length>0){
-				console.log('vk response ' , response);
 				response.data[0].expanded=true;
 				response.data[0].name='Root';
 			}

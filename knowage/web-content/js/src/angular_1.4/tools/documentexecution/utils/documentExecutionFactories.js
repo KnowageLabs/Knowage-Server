@@ -1,7 +1,7 @@
 (function() {
 	var documentExecutionApp = angular.module('documentExecutionModule');
 	
-	documentExecutionApp.factory('documentExecuteFactories', function($mdToast) {
+	documentExecutionApp.factory('documentExecuteFactories', function($mdToast,sbiModule_translate) {
 		var obj = {
 			EmptyViewpoint : {
 				NAME : "",
@@ -10,9 +10,7 @@
 				OBJECT_LABEL : "",
 				ROLE :"",
 				VIEWPOINT : JSON.parse("{}")
-			},
-			
-			
+			}
 			
 		};
 		return obj;

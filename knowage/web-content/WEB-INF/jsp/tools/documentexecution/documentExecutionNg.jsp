@@ -110,6 +110,16 @@ try{
 				                	{{translate.load("sbi.execution.executionpage.toolbar.print")}}
 				                </md-button>
 				            </md-menu-item>
+				            
+				            
+				            <span class="divider" ng-if="urlViewPointService.exportation.length>0">Export</span>
+						    <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
+			                	<md-icon class="{{exportationFormat.iconClass}}"></md-icon><md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>
+				            </md-menu-item>
+				            
+				           
+				            
+				            
 				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 				            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
 				            <md-menu-item class="md-indent">
@@ -271,10 +281,12 @@ try{
 				executionInstance: {
 					'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>, 
 					'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
+					'OBJECT_TYPE_CODE' : '',
 					'isFromCross' : false, 
 					'isPossibleToComeBackToRolePage' : false,
 					'SBI_EXECUTION_ID' : '',
-					'CROSS_PARAMETER' : crossParams
+					'CROSS_PARAMETER' : crossParams,
+					'ENGINE_LABEL' : ''
 				},
 				parametersData: {
 					documentParameters: []

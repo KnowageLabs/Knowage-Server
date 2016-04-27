@@ -14,15 +14,15 @@
 	}]);
 
 	documentExecutionApp.controller( 'documentExecutionController', 
-			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
+			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices','sbiModule_user', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$crossNavigationScope',
-			 'docExecute_dependencyService','$timeout',documentExecutionControllerFn]);
+			 'docExecute_dependencyService','$timeout','docExecute_exportService',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
-			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
+			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$crossNavigationScope,docExecute_dependencyService,$timeout) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$crossNavigationScope,docExecute_dependencyService,$timeout,docExecute_exportService) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};
@@ -58,6 +58,7 @@
 		$scope.dependenciesService = docExecute_dependencyService;
 		$scope.crossNavigationScope=$crossNavigationScope;
 		$scope.firstExecutionProcessRestV1=true;
+		$scope.download=sbiModule_download;
 		
 		$scope.openInfoMetadata = function() {
 			infoMetadataService.openInfoMetadata();
@@ -289,7 +290,7 @@
 				frame.contentWindow.print();
 			}
 		};
-
+				
 		$scope.closeDocument = function() {
 			$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		};

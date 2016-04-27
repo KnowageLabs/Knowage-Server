@@ -73,7 +73,7 @@
 					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
 			-->
 			<span ng-class="{'layout-padding': parameter.parameterValue && parameter.parameterValue.length > 0}"
-					ng-show="parameter.parameterValue && parameter.parameterValue.length > 0)">
+					ng-show="parameter.parameterValue && parameter.parameterValue.length > 0">
 				<md-chips>
 					<md-chip ng-repeat="paramVal in parameter.parameterValue">
 <!-- 						{{paramVal.value}} -->
