@@ -428,7 +428,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 		List<SbiMetaTableColumn> toReturn = null;
 
 		try {
-			Criterion labelCriterrion = Expression.eq("tableId", tableId);
+			Criterion labelCriterrion = Expression.eq("sbiMetaTable.tableId", tableId);
 			Criteria criteria = session.createCriteria(SbiMetaTableColumn.class);
 			criteria.add(labelCriterrion);
 
