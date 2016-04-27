@@ -27,10 +27,23 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		console.log(window.innerWidth);
 	});
 	
+	$scope.clearLoadedData = function(name){
+		for(var i=0; i< $scope.dataPointers.length; i++){
+			if(name == $scope.dataPointers[i]){
+				$scope.dataPointers.splice(i,1);
+				$scope.loadedData.splice(i,1)
+				break;
+			}
+		}
+		var visibleSelected = [];
+		var visibleSelectedTracker = [];
+	}
+	
 	/**
 	 * Dialogs  
 	 **/
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
+		$scope.clearLoadedData(filter.uniqueName);
 		$scope.searchText = "";
 		$scope.loadingFilter = true;
 		var x = {name:'Waiting...'};
@@ -156,7 +169,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					if(visibleSelectedTracker[j].id == h && visibleSelectedTracker[j].selected.length > 0)
 						shouldSearchVisible= false;
 					}
-				  if(shouldSearchVisible)
+				  //if(shouldSearchVisible)
 						getVisible($scope.data, h);
 			  }				  
 			  else{
@@ -351,6 +364,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	$scope.openFiltersDialog = function(ev, filter, node) {
+		$scope.clearLoadedData(filter.name);
 		var exist = false;
 		var position;
 		$scope.data=[];
@@ -508,7 +522,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				
 				$scope.filterSelected[$scope.filterSelected.length] = {name:"...",uniqueName:"",visible:false};
 			}
-		}	
+		}
+		$scope.clearLoadedData(data.uniqueName);
 	}
 
 	$scope.dragSuccess = function(df, index) {
@@ -663,14 +678,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 	
-	$scope.clearLoadedData = function(name){
-		for(var i=0; i< $scope.dataPointers.length; i++){
-			if(name == $scope.dataPointers){
-				$scope.dataPointers.splice(i,1);
-				$scope.loadedData.splice(i,1)
-				break;
-			}
-		}
-	}
+
 };
 
