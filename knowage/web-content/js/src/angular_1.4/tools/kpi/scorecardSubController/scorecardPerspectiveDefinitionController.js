@@ -1,4 +1,4 @@
-angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','$mdDialog','$mdToast','scorecardManager_perspectiveUtility','scorecardManager_semaphoreUtility','scorecardManager_targetUtility',scorecardPerspectiveDefinitionControllerFunction ]);
+angular.module('scorecardManager').controller('scorecardPerspectiveDefinitionController', [ '$scope','sbiModule_translate' ,'sbiModule_restServices','$mdDialog','$mdToast','scorecardManager_perspectiveUtility','scorecardManager_semaphoreUtility',scorecardPerspectiveDefinitionControllerFunction ]);
 
 
 angular.module('scorecardManager').service('scorecardManager_perspectiveUtility',function(scorecardManager_semaphoreUtility, $q, sbiModule_restServices){
@@ -72,7 +72,7 @@ angular.module('scorecardManager').service('scorecardManager_perspectiveUtility'
 
 
 
-function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility,scorecardManager_targetUtility){
+function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$mdToast,scorecardManager_perspectiveUtility,scorecardManager_semaphoreUtility){
 	 
 	$scope.$on('savePerspective', function(event, args) {
 		 if($scope.currentPerspective.name.trim()==""){
@@ -99,12 +99,12 @@ function scorecardPerspectiveDefinitionControllerFunction($scope,sbiModule_trans
 					function(){});
 		}
 		else{
-			scorecardManager_targetUtility.loadGroupedKpis($scope.currentTarget)
+			scorecardManager_perspectiveUtility.loadGroupedTarget($scope.currentPerspective)
 			.then(
 					function(response){
-						$scope.currentTarget.status = response;
+						$scope.currentPerspective.status = response;
 						$scope.currentScorecard.perspectives.push(angular.extend({},$scope.currentPerspective));	
-						angular.copy($scope.emptyTarget,$scope.currentTarget);
+						angular.copy($scope.emptyPerspective,$scope.currentPerspective);
 
 						$scope.steps.stepControl.prevBread();
 					}

@@ -67,6 +67,19 @@ $scope.scorecardColumnsList=[
 	$scope.scorecardClickEditFunction=function(item, index){
 		sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadScorecard")
 		.then(function(response){ 
+//			$scope.clearGroupedAll(response.data);
+			for (var i=0;i < response.data.perspectives.length; i++)
+			{
+				delete response.data.perspectives[i].groupedKpis;
+				delete response.data.perspectives[i].groupedTargets;
+				delete response.data.perspectives[i].statusSummary;
+				for (var j=0; j < response.data.perspectives[i].targets.length;j++){
+					delete response.data.perspectives[i].targets[j].groupedKpis;
+					delete response.data.perspectives[i].targets[j].groupedTargets;
+					delete response.data.perspectives[i].targets[j].statusSummary;
+				}	
+			}
+			
 			angular.copy($scope.parseScorecardForFrontend(response.data),$scope.currentScorecard); 
 			angular.extend($scope.editProperty.scorecard,{editedItem:angular.extend({},$scope.currentScorecard),index:index});
 			$scope.steps.stepControl.resetBreadCrumb();
@@ -197,7 +210,19 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			 return;
 		}
 		var tmpPreSaveScorecard=$scope.parseScorecardForBackend($scope.currentScorecard);
-		
+		$scope.clearGroupedAll(tmpPreSaveScorecard);
+//		for (var i=0;i < tmpPreSaveScorecard.perspectives.length; i++)
+//			{
+//				delete tmpPreSaveScorecard.perspectives[i].groupedKpis;
+//				delete tmpPreSaveScorecard.perspectives[i].groupedTargets;
+//				delete tmpPreSaveScorecard.perspectives[i].statusSummary;
+//				for (var j=0; j < tmpPreSaveScorecard.perspectives[i].targets.length;j++){
+//					delete tmpPreSaveScorecard.perspectives[i].targets[j].groupedKpis;
+//					delete tmpPreSaveScorecard.perspectives[i].targets[j].groupedTargets;
+//					delete tmpPreSaveScorecard.perspectives[i].targets[j].statusSummary;
+//				}
+//				
+//			}
 
 			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard)
 				.then(function(response) {
@@ -267,5 +292,21 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			}
 		}
 		return -1;
+	};
+	
+	
+	
+	$scope.clearGroupedAll = function(scorecard){
+		for (var i=0;i < scorecard.perspectives.length; i++)
+		{
+			delete scorecard.perspectives[i].groupedKpis;
+			delete scorecard.perspectives[i].groupedTargets;
+			delete scorecard.perspectives[i].statusSummary;
+			for (var j=0; j < scorecard.perspectives[i].targets.length;j++){
+				delete scorecard.perspectives[i].targets[j].groupedKpis;
+				delete scorecard.perspectives[i].targets[j].groupedTargets;
+				delete scorecard.perspectives[i].targets[j].statusSummary;
+			}	
+		}
 	};
 }

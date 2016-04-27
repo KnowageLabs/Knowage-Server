@@ -172,9 +172,8 @@ author:
 -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<%--
-<%@include file="commons/angular/angularResource.jspf"%>
---%>
+
+<%-- <%@include file="commons/angular/angularResource.jspf"%> --%>
 <%@include file="commons/angular/angularImport.jsp"%>
 
 <script>
@@ -203,6 +202,8 @@ author:
 --%>
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
+
+	
 <%--
 --%>
 <script type="text/javascript" 
@@ -215,17 +216,15 @@ author:
 </head>
 
 <body ng-controller="kpiViewerController" ng-init="init()" 
-	layout="row" layout-align="center center"
-	layout-wrap
 	class="kn-schedulerKpi">
-	
+		
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
-	--%>
-
+	
+--%>
 <%-- 
 <%
 if(type.equalsIgnoreCase("kpi")) {
@@ -281,46 +280,48 @@ if(type.equalsIgnoreCase("kpi")) {
 	if(model.equalsIgnoreCase("widget")) {
 %>
 			
-	<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
-		<%--
-		<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
-		--%>
-		
-		<kpi-gauge 
-			ng-if="kpiItem.viewAs=='speedometer'"
-			layout="column"
+	<div layout="row" layout-align="center center" layout-wrap>
+		<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
+			<%--
+			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
+			--%>
 			
-			gauge-id="kpiItem.id"
-			label="kpiItem.name"
-			size="kpiItem.size"
-			min-value="kpiItem.minValue"
-			max-value="kpiItem.maxValue"
-			value="kpiItem.value"
-			target-value="kpiItem.targetValue"
-			threshold-stops="kpiItem.thresholdStops"
-			show-value="kpiItem.showValue"
-			show-target="kpiItem.showTarget"
-			show-thresholds="kpiItem.showThreshold"
-			value-precision="kpiItem.precision"
-			font-conf="kpiItem.fontConf"
-		></kpi-gauge>
-			
-		<kpi-widget 
-			ng-if="kpiItem.viewAs=='kpicard'"
-			
-			widget-id="kpiItem.id"
-			label="kpiItem.name"
-			font-conf="kpiItem.fontConf"
-			show-target-percentage="kpiItem.showTargetPercentage"
-			show-thresholds="kpiItem.showThreshold"
-			min-value="kpiItem.minValue"
-			max-value="kpiItem.maxValue"
-			value="kpiItem.value" 
-			target-value="kpiItem.targetValue"
-			precision="kpiItem.precision"
-			gauge-size="kpiItem.size"
-			threshold-stops="kpiItem.thresholdStops"
-		></kpi-widget>
+			<kpi-gauge 
+				ng-if="kpiItem.viewAs=='speedometer'"
+				layout="column"
+				
+				gauge-id="kpiItem.id"
+				label="kpiItem.name"
+				size="kpiItem.size"
+				min-value="kpiItem.minValue"
+				max-value="kpiItem.maxValue"
+				value="kpiItem.value"
+				target-value="kpiItem.targetValue"
+				threshold-stops="kpiItem.thresholdStops"
+				show-value="kpiItem.showValue"
+				show-target="kpiItem.showTarget"
+				show-thresholds="kpiItem.showThreshold"
+				value-precision="kpiItem.precision"
+				font-conf="kpiItem.fontConf"
+			></kpi-gauge>
+				
+			<kpi-widget 
+				ng-if="kpiItem.viewAs=='kpicard'"
+				
+				widget-id="kpiItem.id"
+				label="kpiItem.name"
+				font-conf="kpiItem.fontConf"
+				show-target-percentage="kpiItem.showTargetPercentage"
+				show-thresholds="kpiItem.showThreshold"
+				min-value="kpiItem.minValue"
+				max-value="kpiItem.maxValue"
+				value="kpiItem.value" 
+				target-value="kpiItem.targetValue"
+				precision="kpiItem.precision"
+				gauge-size="kpiItem.size"
+				threshold-stops="kpiItem.thresholdStops"
+			></kpi-widget>
+		</div>
 	</div>
 
 <%
@@ -333,7 +334,8 @@ if(type.equalsIgnoreCase("kpi")) {
 	}
 } else if(type.equalsIgnoreCase("scorecard")) {
 %>
-
+ <kpi-scorecard scorecard="documentData">
+ </kpi-scorecard>
 <!-- SCORECARD -->
 
 <%
@@ -347,6 +349,7 @@ if(type.equalsIgnoreCase("kpi")) {
 				['sbiModule', 'ngSanitize', 'ngAnimate'
 				 , 'gaugeNgDirectiveApp'
 				 , 'nvd3','kpi-widget'
+				 , 'kpiScorecardModule'
 				 ]);
 		kpiViewerModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 			$mdThemingProvider.theme('knowage')
@@ -369,6 +372,11 @@ if(type.equalsIgnoreCase("kpi")) {
 	})();
 	</script>
 	<script type="text/javascript" 
+			src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
+</script>
+	<script type="text/javascript" 
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>	
+	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/kpiWidgetController.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerFactory.js"></script>
@@ -376,6 +384,6 @@ if(type.equalsIgnoreCase("kpi")) {
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
 	<script type="text/javascript" 
 			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
-			
+
 </body>
 </html>
