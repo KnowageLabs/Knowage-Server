@@ -22,46 +22,52 @@
 		$scope.percentage=0;
 
 		$scope.loadKpiValue = function(){
-			if($scope.documentData.template.chart.data.kpi!=undefined){
+			if($scope.documentData.template.chart.data.kpi != undefined){
 				var object = {
-						"kpi":$scope.documentData.template.chart.data.kpi,
-						"driverMap":$scope.documentData.driverMap,
+						"kpi": $scope.documentData.template.chart.data.kpi,
+						"driverMap": $scope.documentData.driverMap,
 						"startValidity":"",
 						"endValidity":""
-				}
+				};
+				
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-				sbiModule_restServices.promisePost("1.0/kpi", 'loadKpiValue',object).then(
-						function(response) {
-							var array =response.data;
-							for(var i=0;i<array.length;i++){
-								for(var j=0;j<$scope.kpiItems.length;j++){
-									if(array[i].kpiId==$scope.kpiItems[j].id && array[i].kpiVersion==$scope.kpiItems[j].version){
-										$scope.kpiItems[j]["valueInfo"] = array[i];
-										$scope.kpiItems[j].value = array[i].computedValue;
-									}	
-								}
-							}
-
-						},function(response) {
-							console.log("Error get Kpi Value");
-						})
+				
+				sbiModule_restServices
+				.promisePost("1.0/kpi", 'loadKpiValue',object)
+				.then(function(response) {
+					var array =response.data;
+					for(var i=0;i<array.length;i++){
+						for(var j=0;j<$scope.kpiItems.length;j++){
+							if(array[i].kpiId == $scope.kpiItems[j].id 
+									&& array[i].kpiVersion == $scope.kpiItems[j].version){
+								$scope.kpiItems[j]["valueInfo"] = array[i];
+								$scope.kpiItems[j].value = array[i].computedValue;
+							}	
+						}
+					}
+				},function(response) {
+					console.log("Error get Kpi Value");
+				});
 			}
-		}
+		};
 
 		$scope.executeSchedulerTemp = function(){
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-			sbiModule_restServices.promiseGet("1.0/kpi", 'executeKpiScheduler/'+1).then(
-					function(response) {
-						console.log("Scheduler eseguito");
+			
+			for(var i = 0; i < $scope.kpiItems.length; i++) {
+				sbiModule_restServices
+				.promiseGet("1.0/kpi", 'executeKpiScheduler/' + $scope.kpiItems[i].id)
+				.then(function(response) {
+					console.log("Scheduler eseguito");
+					
+				}, function(response) {
+					console.log("Error Scheduler non eseguito");
+				});
+			}
+		};
 
-					},function(response) {
-						console.log("Error Scheduler non eseguito");
-					})
-		}
-
-		//	$scope.executeSchedulerTemp();
 		$scope.init = function(){
-			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate","readKpiTemplate",$scope.documentData.template)
+			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)
 			.then(function(response){ 
 				var chart = $scope.documentData.template.chart;
 
@@ -70,54 +76,49 @@
 				
 				if(chart.type == "kpi") {
 					if(Array.isArray(response.data)) {
-//						if(chart.model == 'widget') {
-							var templateKpi = $scope.documentData.template.chart.data.kpi;
-							if(!Array.isArray(templateKpi)) {
-								var array = [templateKpi];
-								templateKpi = array;
-							}
+						var templateKpi = $scope.documentData.template.chart.data.kpi;
+						if(!Array.isArray(templateKpi)) {
+							var array = [templateKpi];
+							templateKpi = array;
+						}
 
-							var templateOptions = $scope.documentData.template.chart.options;
-							var templateStyle = $scope.documentData.template.chart.style;
+						var templateOptions = $scope.documentData.template.chart.options;
+						var templateStyle = $scope.documentData.template.chart.style;
 
-							for(var i = 0; i < response.data.length; i++) {
-								var responseItem = response.data[i];
+						for(var i = 0; i < response.data.length; i++) {
+							var responseItem = response.data[i];
 
-								var responseItemKpi = responseItem.kpi;
+							var responseItemKpi = responseItem.kpi;
 
-								$scope.documentData.kpiValue.push(responseItemKpi);
+							$scope.documentData.kpiValue.push(responseItemKpi);
 
-								for(var j = 0; j < templateKpi.length; j++) {
-									var templateKpiItem = templateKpi[j];
-									responseItemKpi.targetValue = responseItem.target;
+							for(var j = 0; j < templateKpi.length; j++) {
+								var templateKpiItem = templateKpi[j];
+								responseItemKpi.targetValue = responseItem.target;
 
-									if(templateKpiItem.id == responseItemKpi.id) {
-										var conf = kpiViewerGaugeService.createWidgetConfiguration(
-												templateKpiItem, responseItemKpi, templateOptions, templateStyle);
+								if(templateKpiItem.id == responseItemKpi.id) {
+									var conf = kpiViewerGaugeService.createWidgetConfiguration(
+											templateKpiItem, responseItemKpi, templateOptions, templateStyle);
 
-										/* MOCK */
-										if(!conf.value) {
-											conf.value = $scope.gaugeValue;
-										}
-										if(!conf.targetValue) {
-											conf.targetValue = $scope.gaugeTargetValue;
-										}
-										/* MOCK */
-
-										$scope.kpiItems.push(conf);
-
-										break;
+									/* MOCK */
+									if(!conf.value) {
+										conf.value = $scope.gaugeValue;
 									}
+									if(!conf.targetValue) {
+										conf.targetValue = $scope.gaugeTargetValue;
+									}
+									/* MOCK */
+
+									$scope.kpiItems.push(conf);
+
+									break;
 								}
 							}
-//						} else {
-//							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];
-//
-//							for(var i = 0; i < response.data.length; i++) {
-//								$scope.documentData.kpiListValue.push(response.data[i].kpi);
-//							}
-//						}
+						}
 					}
+					
+//					$scope.executeSchedulerTemp();
+					
 					$scope.loadKpiValue();
 				} else { //scorecard
 					$scope.documentData.scorecard = response.data[0].scorecard;

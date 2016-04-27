@@ -292,15 +292,15 @@ threshold-stops=thresholdStops percentage=percentage
 			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
 			--%>
 		
-		<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
-				gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
-				min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
-				value="kpiItem.value" target-value="kpiItem.targetValue"
-				threshold-stops="kpiItem.thresholdStops"
-				show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
-				show-thresholds="kpiItem.showThreshold"
-				value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
-
+			<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
+					gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
+					min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
+					value="kpiItem.value" target-value="kpiItem.targetValue"
+					threshold-stops="kpiItem.thresholdStops"
+					show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
+					show-thresholds="kpiItem.showThreshold"
+					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
+	
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id"
 				label="kpiItem.name" font-conf="kpiItem.fontConf"
 				show-target-percentage="kpiItem.showTargetPercentage"
@@ -313,7 +313,7 @@ threshold-stops=thresholdStops percentage=percentage
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
-	<kpi-list-document></kpi-list-document>
+	<kpi-list-document kpi-items="kpiItems"> </kpi-list-document>
 	<%
 		}
 	} else if(type.equalsIgnoreCase("scorecard")) {
@@ -330,9 +330,11 @@ threshold-stops=thresholdStops percentage=percentage
 	(function() {
 		var kpiViewerModule = angular.module('kpiViewerModule', 
 				['sbiModule', 'ngSanitize', 'ngAnimate'
+				 , 'angular_table'
 				 , 'gaugeNgDirectiveApp'
-				 , 'nvd3','kpi-widget',
-				 'kpiScorecardModule'
+				 , 'nvd3'
+				 , 'kpi-widget'
+				 , 'kpiScorecardModule'
 				 ]);
 		kpiViewerModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 			$mdThemingProvider.theme('knowage')

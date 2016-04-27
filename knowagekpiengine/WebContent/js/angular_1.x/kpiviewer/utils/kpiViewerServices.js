@@ -56,6 +56,8 @@
 						conf.size = (conf.maxValue - conf.minValue)
 					}
 				}
+				
+				//console.log('createWidgetConfiguration -> ' ,conf);
 				return conf;
 			},
 			

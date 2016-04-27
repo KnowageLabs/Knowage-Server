@@ -546,19 +546,22 @@
 	
 
 	gaugeNgDirectiveApp.directive("kpiListDocument", 
-			['$compile', '$timeout', 'sbiModule_translate', function($compile, $timeout, sbiModule_translate){
+			['$compile', '$timeout', function($compile, $timeout){
 		return {
 			restrict: 'E',
 			templateUrl: currentScriptPath + 'kpiListDocumentTemplate/kpiListDocumentTemplate.html', 
-				
 			controller: kpiListDocumentCtrl,
 			scope: {
-				kpiItems: "=" 
+				kpiItems: "="
 			},
 		};
 	}]);
 	
-	function kpiListDocumentCtrl($scope, sbiModule_translate){
+	function kpiListDocumentCtrl($scope, $compile, sbiModule_translate){
+		$scope.LINEAR_GAUGE_SIZE = 250;
+		
+		$scope.dataToShow = [];
+		
 		$scope.columns = 
 			[{
 				label: sbiModule_translate.load("sbi.generic.name"),
@@ -574,21 +577,53 @@
 				name: "trend"
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.lineargauge"),
-				name: "lineargauge"
+				name: "lineargauge",
+				size: $scope.LINEAR_GAUGE_SIZE
 			}];
-		/*
-		trendline
-		*/
 		
+		$scope.linearGaugeTemplate = function(kpiItem) {
+			var template = 
+				'<kpi-linear-gauge '
+					+ 'gauge-id="' + kpiItem.id + '" '
+					+ 'label="' + kpiItem.name + '" '
+//					+ 'size="' + kpiItem.size + '" '
+					+ 'size="' + $scope.LINEAR_GAUGE_SIZE + '" '
+					+ 'min-value="' + kpiItem.minValue + '" '
+					+ 'max-value="' + kpiItem.maxValue + '" '
+					+ 'value="' + kpiItem.value + '" '
+					+ 'threshold-stops=\'' + JSON.stringify(kpiItem.thresholdStops) + '\' '
+					+ 'show-value="false" '
+					+ 'show-thresholds="true" '
+					+ 'value-precision="' + kpiItem.precision + '" '
+					+ 'font-conf=\'' + JSON.stringify(kpiItem.fontConf) + '\' '
+					+ 'target-value="' + kpiItem.targetValue + '" '
+					+ 'mini="true" '
+				+ '></kpi-linear-gauge>';
+			
+			return template;
+		};
 		
-		$scope.dataToShow = function() {
+		$scope.getDataToShow = function() {
 			var result = [];
 			
 			for(var i = 0; i < $scope.kpiItems.length; i++) {
 				var kpiItem = $scope.kpiItems[i];
+				
+				var obj = {};
+				
+				obj.name = kpiItem.name;
+				obj.value = kpiItem.value;
+				obj.semaphore = "MOCK semaphore";
+				obj.trend = "MOCK trend";
+				obj.lineargauge = $scope.linearGaugeTemplate(kpiItem);
+				
+				result.push(obj)
 			}
-			
 			return result;
 		};
+		
+		$scope.$watch('kpiItems', function(newValue, oldValue) {
+			$scope.dataToShow = $scope.getDataToShow();
+		}, true);
 	};
 })();
