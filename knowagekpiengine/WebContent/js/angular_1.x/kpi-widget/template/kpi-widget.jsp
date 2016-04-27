@@ -8,16 +8,16 @@
 		<div layout="row">
 			<div flex>
 				<h3 style="font-size: {{fontConf.size}}em;" class="grey">KPI Value</h3>
-				<h1 style="color:#3B678C">{{value}}K</h1>
+				<h1 style="color:#3B678C">{{getValueToShow()}}</h1>
 			</div>
 			<div flex>
 				<h3 style="font-size: {{fontConf.size}}em;" class="grey">Target Value</h3>
-				<h1 style="color:#C4DCF3">{{targetValue}}K</h1>
+				<h1 style="color:#C4DCF3">{{getTargetToShow()}}</h1>
 			</div>
 			
 		</div>
 		<div layout="row" layout-align="start center" ng-if="showTargetPercentage" >
-			<h1  style="color:#C4DCF3">{{percentage}}%</h1> 
+			<h1  style="color:#C4DCF3">{{getPercentage()}}%</h1> 
 			<h3 style="font-size: {{fontConf.size}}em;" layout-margin class="grey">of Target</h3>
 			
 		</div>
