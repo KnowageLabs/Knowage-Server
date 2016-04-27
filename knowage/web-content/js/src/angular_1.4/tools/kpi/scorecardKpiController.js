@@ -210,7 +210,9 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			 return;
 		}
 		var tmpPreSaveScorecard=$scope.parseScorecardForBackend($scope.currentScorecard);
-		$scope.clearGroupedAll(tmpPreSaveScorecard);
+		var tmpPreSaveScorecard2= {};
+		angular.copy(tmpPreSaveScorecard,tmpPreSaveScorecard2);
+		$scope.clearGroupedAll(tmpPreSaveScorecard2);
 //		for (var i=0;i < tmpPreSaveScorecard.perspectives.length; i++)
 //			{
 //				delete tmpPreSaveScorecard.perspectives[i].groupedKpis;
@@ -224,7 +226,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 //				
 //			}
 
-			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard)
+			sbiModule_restServices.promisePost("1.0/kpi","saveScorecard",tmpPreSaveScorecard2)
 				.then(function(response) {
 					if ($scope.editProperty.scorecard.index == undefined){
 							$scope.currentScorecard.id = response.data.id;
