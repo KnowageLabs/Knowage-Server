@@ -826,7 +826,7 @@ public class HierarchyUtils {
 			Timestamp timestamp = (Timestamp) endDtField.getValue();
 			endDtDate = new Date(timestamp.getTime());
 		} else {
-			endDtDate = (Date) beginDtField.getValue();
+			endDtDate = (Date) endDtField.getValue();
 		}
 		data.setEndDt(endDtDate);
 
@@ -1165,7 +1165,7 @@ public class HierarchyUtils {
 	 *
 	 * @param PreparedStatement
 	 *            , resultSet, countPrimaryKey
-	 * 
+	 *
 	 * @return void
 	 */
 	private static void setParameterPropagationInsertQuery(PreparedStatement ps, ResultSet rs, int countPrimaryKey) {
