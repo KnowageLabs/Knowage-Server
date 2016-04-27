@@ -331,7 +331,8 @@ threshold-stops=thresholdStops percentage=percentage
 		var kpiViewerModule = angular.module('kpiViewerModule', 
 				['sbiModule', 'ngSanitize', 'ngAnimate'
 				 , 'gaugeNgDirectiveApp'
-				 , 'nvd3','kpi-widget'
+				 , 'nvd3','kpi-widget',
+				 'kpiScorecardModule'
 				 ]);
 		kpiViewerModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 			$mdThemingProvider.theme('knowage')
