@@ -231,7 +231,7 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiScorecard.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecution.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiExecutionFilter.hbm.xml" />
-        <!-- mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
+        <!--mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
          
          <!-- METADATA -->
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaBc.hbm.xml" />

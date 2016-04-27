@@ -1765,7 +1765,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						attributes.add(attributeName);
 					}
 				}
-				if (attributes.size() > mainMeasureAttributes.size()) {
+				if (attributes.size() > mainMeasureAttributes.size() || mainMeasureRuleId == null) {
 					mainMeasureRuleId = unparsedMeasure.getInt("ruleId");
 					mainMeasureRuleVersion = unparsedMeasure.getInt("ruleVersion");
 					mainMeasureAttributes = attributes;

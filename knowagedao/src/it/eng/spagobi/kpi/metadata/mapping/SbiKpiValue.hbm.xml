@@ -10,7 +10,7 @@
 			kpi_id INTEGER NOT NULL,
 			kpi_version INTEGER NOT NULL,
 			logical_key VARCHAR(4096) NOT NULL,
-			time_run DATETIME NOT NULL,
+			time_run TIMESTAMP NOT NULL,
 			computed_value DOUBLE NOT NULL,
 			manual_value DOUBLE NULL NULL,
 			the_day VARCHAR(3) NOT NULL,
