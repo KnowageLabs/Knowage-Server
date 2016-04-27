@@ -348,7 +348,7 @@ public class HierarchyMasterService {
 				hierNameForDim = optionHierarchy;
 			}
 			IDataStore dsNewDimensions = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					hierNameForDim, filterDate, filterHierType, hierTableName, prefix, exludeHierLeaf);
+					filterDate, hierNameForDim, filterHierType, hierTableName, prefix, exludeHierLeaf);
 
 			// 3 - Get the dimension leaves already present into the original Hierarchy
 			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
