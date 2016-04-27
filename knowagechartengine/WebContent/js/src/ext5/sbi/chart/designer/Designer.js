@@ -114,7 +114,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var retTemplate=null;
 
 			for(i=0;i<styles.length;i++){
-				if(styles[i].STYLE.isDefault===true){
+				if(styles[i].STYLE.isDefault==='true'){
 					
 					/**
 				    * TEMPLATE tag is now positioned inside of the main, STYLE tag.
