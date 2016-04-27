@@ -48,24 +48,34 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.enableDisableDrillThrough = function() {
-
+		
+		
+		
 		if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
 			var encoded = encodeURI('/member/drilltrough/'+ $scope.selectedCell.ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promiseGet
 			("1.0",encoded)
 			.then(function(response,ev) {
-				$scope.dt = response.data;
-				console.log($scope.dt);
-				$scope.dtData = response.data;
-				$scope.dtColumns = Object.keys(response.data[0]);
-				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
-				console.log($scope.formateddtColumns);
-				$scope.getCollections();
-				$scope.openDtDialog();
-
-			    }, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				$scope.dtLoadingShow = true;
+				$scope.dtData = [];
+				setTimeout(function(){
+					
+					$scope.dtData = response.data;
+					$scope.dtColumns = Object.keys(response.data[0]);
+					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
+					$scope.getCollections();
+					$scope.openDtDialog();
+					
+					
+					
 				
+					$scope.dtLoadingShow = false;
+					$scope.$apply();
+				},1000)
+				
+			    }, function(response) {
+				sbiModule_messaging.showErrorMessage("Please select cell for DrillThrough", 'Error');
+				$scope.dtLoadingShow = false;
 					});	
 			
 		}else {
@@ -254,7 +264,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 				$scope.dtAssociatedLevels.push(item);
 			}
 		} 
-		console.log($scope.dtAssociatedLevels);
 	};
 	
 	$scope.indexInList=function(item, list) {
@@ -750,6 +759,7 @@ $scope.sendCC = function() {
 					}
 				}
 				$scope.cookieArray.push(namedMember);
+				console.log(namedMember);
 				$cookies.putObject('data',$scope.cookieArray);
 				sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
 				toastr.clear();
@@ -775,6 +785,7 @@ $scope.sendCC = function() {
 		}
 		
 		$scope.cookieArray.push(namedSet);
+		console.log(namedSet);
 		$cookies.putObject('data',$scope.cookieArray);
 		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
 	}
