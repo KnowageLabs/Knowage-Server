@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author: 
 --%>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -45,7 +46,12 @@ author:
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
+
+<%@include file="commons/angular/angularResource.jspf"%>
+<%@include file="commons/angular/angularImport.jsp"%>
+
 <%
+	/*
 	KpiEngineInstance engineInstance;
 	IEngUserProfile profile;
 	String profileJSONStr;
@@ -79,6 +85,7 @@ author:
 	String associations = "";
 	String widgetId = "";
 	String metaData = "";
+	*/
 
 	engineInstance = (KpiEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -115,12 +122,11 @@ author:
 		widgetId = env.get("WIDGETID")!=null?(String)env.get("WIDGETID"):"";
 	} else {
 		datasetLabel = (engineInstance.getDataSet() != null )?
-				engineInstance.getDataSet().getLabel() : "" ;
+		engineInstance.getDataSet().getLabel() : "" ;
 	}
 	
-	/*
-	*/	
-	docId = (env.get("DOCUMENT_ID") != null? (String)env.get("DOCUMENT_ID") : "");
+// 	docId = (env.get("DOCUMENT_ID") != null? (String)env.get("DOCUMENT_ID") : "");
+	String docId = (env.get("DOCUMENT_ID") != null? (String)env.get("DOCUMENT_ID") : "");
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
@@ -133,29 +139,32 @@ author:
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	
-	boolean fromMyAnalysis = false;
+//	boolean fromMyAnalysis = false;
+	fromMyAnalysis = false;
 	if(request.getParameter("MYANALYSIS") != null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE")){
 		fromMyAnalysis = true;
 	}else{
 		if (request.getParameter("SBI_ENVIRONMENT") != null && request.getParameter("SBI_ENVIRONMENT").equalsIgnoreCase("MYANALYSIS")){
-			fromMyAnalysis = true;
+	fromMyAnalysis = true;
 		}
 	}
 	
 	/*
-	*/
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     Map driverParamsMap = new HashMap();
+	*/
 	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
 		if(key instanceof String && !key.equals("widgetData")){
-			String value = request.getParameter((String)key);
-			if(value!=null){
-				driverParamsMap.put(key, value);
-			}
+	String value = request.getParameter((String)key);
+	if(value!=null){
+		driverParamsMap.put(key, value);
+	}
 		}
 	}
+	/*
 	String driverParams = new JSONObject(driverParamsMap).toString(0).replaceAll("'", "\\\\'");
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
+	*/
 %>
 
 
@@ -172,10 +181,6 @@ author:
 -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-
-<%-- <%@include file="commons/angular/angularResource.jspf"%> --%>
-<%@include file="commons/angular/angularImport.jsp"%>
-
 <script>
 	var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
 	<%-- var userId = '<%=userId%>'; --%>
@@ -186,9 +191,12 @@ author:
 </script>
 <!-- Styles -->
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/css/kpiWidgetStyle.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/css/kpiWidgetStyle.css">
 <!-- Scripts -->
 <%--
 <script type="text/javascript" 
@@ -200,32 +208,31 @@ author:
 <script type="text/javascript" 
 		src="${pageContext.request.contextPath}/js/lib/gaugeJs/gauge.js"></script>
 --%>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
 
-	
+
 <%--
 --%>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/angular-nvd3/1.0.6/dist/angular-nvd3.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/gaugeNgDirectiveApp.js"></script>
-		
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/lib/angular-nvd3/1.0.6/dist/angular-nvd3.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/gaugeNgDirectiveApp.js"></script>
+
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" 
+<body ng-controller="kpiViewerController" ng-init="init()"
 	class="kn-schedulerKpi">
-		
+
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
-	
---%>
-<%-- 
+	--%>
+	<%-- 
 <%
 if(type.equalsIgnoreCase("kpi")) {
 	String model = (String)chartObj.get("model");
@@ -273,74 +280,52 @@ threshold-stops=thresholdStops percentage=percentage
 	font-conf="documentData.template.chart.style.font"
 ></kpi-gauge> 
 --%>
-<%
-if(type.equalsIgnoreCase("kpi")) {
-	String model = (String)chartObj.get("model");
-	
-	if(model.equalsIgnoreCase("widget")) {
-%>
-			
+	<%
+		if(type.equalsIgnoreCase("kpi")) {
+		String model = (String)chartObj.get("model");
+		
+		if(model.equalsIgnoreCase("widget")) {
+	%>
+
 	<div layout="row" layout-align="center center" layout-wrap>
 		<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
 			<%--
 			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
 			--%>
-			
-			<kpi-gauge 
-				ng-if="kpiItem.viewAs=='speedometer'"
-				layout="column"
-				
-				gauge-id="kpiItem.id"
-				label="kpiItem.name"
-				size="kpiItem.size"
-				min-value="kpiItem.minValue"
-				max-value="kpiItem.maxValue"
-				value="kpiItem.value"
-				target-value="kpiItem.targetValue"
+
+			<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
+				gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
+				min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
+				value="kpiItem.value" target-value="kpiItem.targetValue"
 				threshold-stops="kpiItem.thresholdStops"
-				show-value="kpiItem.showValue"
-				show-target="kpiItem.showTarget"
+				show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
 				show-thresholds="kpiItem.showThreshold"
-				value-precision="kpiItem.precision"
-				font-conf="kpiItem.fontConf"
-			></kpi-gauge>
-				
-			<kpi-widget 
-				ng-if="kpiItem.viewAs=='kpicard'"
-				
-				widget-id="kpiItem.id"
-				label="kpiItem.name"
-				font-conf="kpiItem.fontConf"
+				value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
+
+			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id"
+				label="kpiItem.name" font-conf="kpiItem.fontConf"
 				show-target-percentage="kpiItem.showTargetPercentage"
-				show-thresholds="kpiItem.showThreshold"
-				min-value="kpiItem.minValue"
-				max-value="kpiItem.maxValue"
-				value="kpiItem.value" 
-				target-value="kpiItem.targetValue"
-				precision="kpiItem.precision"
-				gauge-size="kpiItem.size"
-				threshold-stops="kpiItem.thresholdStops"
-			></kpi-widget>
+				show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
+				max-value="kpiItem.maxValue" value="kpiItem.value"
+				target-value="kpiItem.targetValue" precision="kpiItem.precision"
+				gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops"></kpi-widget>
 		</div>
 	</div>
 
-<%
-	} else if(model.equalsIgnoreCase("list")) {
-%>
-	<kpi-list-document
-	
-	></kpi-list-document>
-<%
-	}
-} else if(type.equalsIgnoreCase("scorecard")) {
-%>
- <kpi-scorecard scorecard="documentData">
- </kpi-scorecard>
-<!-- SCORECARD -->
+	<%
+		} else if(model.equalsIgnoreCase("list")) {
+	%>
+	<kpi-list-document></kpi-list-document>
+	<%
+		}
+	} else if(type.equalsIgnoreCase("scorecard")) {
+	%>
+	<kpi-scorecard scorecard="documentData"> </kpi-scorecard>
+	<!-- SCORECARD -->
 
-<%
-}
-%>
+	<%
+		}
+	%>
 
 	<%-- kpi document angular imports --%>
 	<script type="text/javascript">
@@ -349,7 +334,6 @@ if(type.equalsIgnoreCase("kpi")) {
 				['sbiModule', 'ngSanitize', 'ngAnimate'
 				 , 'gaugeNgDirectiveApp'
 				 , 'nvd3','kpi-widget'
-				 , 'kpiScorecardModule'
 				 ]);
 		kpiViewerModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 			$mdThemingProvider.theme('knowage')
@@ -362,7 +346,7 @@ if(type.equalsIgnoreCase("kpi")) {
 			
 			var obj = {
 				template : documentTemplate,
-				docLabel : '<%=docLabel %>',
+				docLabel : '<%=docLabel%>',
 				docId : '<%=docId%>',
 				kpiValue : [],
 				kpiListValue : [],
@@ -371,19 +355,19 @@ if(type.equalsIgnoreCase("kpi")) {
 		});
 	})();
 	</script>
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
 </script>
-	<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>	
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/kpiWidgetController.js"></script>
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerFactory.js"></script>
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
-	<script type="text/javascript" 
-			src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/kpiWidgetController.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerFactory.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/utils/kpiViewerServices.js"></script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpiviewer/kpiViewerController.js"></script>
 
 </body>
 </html>

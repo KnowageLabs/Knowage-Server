@@ -334,7 +334,8 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
-	var gaugeNgDirectiveApp = angular.module('gaugeNgDirectiveApp', ['ngMaterial', 'ngSanitize', 'ngAnimate']);
+	var gaugeNgDirectiveApp = angular.module('gaugeNgDirectiveApp', 
+			['ngMaterial', 'ngSanitize', 'ngAnimate', 'sbiModule', 'angular_table']);
 	
 	gaugeNgDirectiveApp.directive("kpiGauge", ['$compile', '$timeout' , function($compile, $timeout){
 		return {
@@ -544,20 +545,50 @@
 	};
 	
 
-	gaugeNgDirectiveApp.directive("kpiListDocument", ['$compile', '$timeout' , function($compile, $timeout){
+	gaugeNgDirectiveApp.directive("kpiListDocument", 
+			['$compile', '$timeout', 'sbiModule_translate', function($compile, $timeout, sbiModule_translate){
 		return {
 			restrict: 'E',
 			templateUrl: currentScriptPath + 'kpiListDocumentTemplate/kpiListDocumentTemplate.html', 
 				
 			controller: kpiListDocumentCtrl,
 			scope: {
-
+				kpiItems: "=" 
 			},
 		};
 	}]);
 	
-	function kpiListDocumentCtrl($scope){
+	function kpiListDocumentCtrl($scope, sbiModule_translate){
+		$scope.columns = 
+			[{
+				label: sbiModule_translate.load("sbi.generic.name"),
+				name: "name"
+			},{
+				label: sbiModule_translate.load("sbi.generic.value"),
+				name: "value"
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.semaphore"),
+				name: "semaphore"
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.trend"),
+				name: "trend"
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.lineargauge"),
+				name: "lineargauge"
+			}];
+		/*
+		trendline
+		*/
 		
 		
+		$scope.dataToShow = function() {
+			var result = [];
+			
+			for(var i = 0; i < $scope.kpiItems.length; i++) {
+				var kpiItem = $scope.kpiItems[i];
+			}
+			
+			return result;
+		};
 	};
 })();

@@ -1,4 +1,4 @@
-var app = angular.module('templateBuild', [ 'ngMaterial', 'angular_table' ,'sbiModule', 'expander-box','dinamic-list','kpi-style']);
+var app = angular.module('templateBuild', [ 'ngMaterial', 'angular_table', 'sbiModule', 'expander-box','dinamic-list','kpi-style']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
@@ -16,7 +16,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
 	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";
-	$scope.typeChart = 'kpi'
+	$scope.typeChart = 'kpi';
 	$scope.selectedKpis = [];
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];

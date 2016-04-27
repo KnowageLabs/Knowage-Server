@@ -32,9 +32,7 @@
 				
 				if(chart.type == "kpi") {
 					if(Array.isArray(response.data)) {
-						if(chart.model == 'widget') {
-//							angular.copy(response.data[0].kpi, $scope.documentData.kpiValue);
-//							angular.copy(response.data[0].target, $scope.documentData.targetValue);
+//						if(chart.model == 'widget') {
 							
 							var templateKpi = $scope.documentData.template.chart.data.kpi;
 							if(!Array.isArray(templateKpi)) {
@@ -75,15 +73,13 @@
 									}
 								}
 							}
-						} else {
-							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];
-
-							for(var i = 0; i < response.data.length; i++) {
-								$scope.documentData.kpiListValue.push(response.data[i].kpi);
-							}
-						}
-
-//						$scope.thresholdStops = gaugeConf.stops;
+//						} else {
+//							$scope.documentData.kpiListValue = $scope.documentData.kpiListValue || [];
+//
+//							for(var i = 0; i < response.data.length; i++) {
+//								$scope.documentData.kpiListValue.push(response.data[i].kpi);
+//							}
+//						}
 					}
 				} else { //scorecard
 					$scope.documentData.scorecard = response.data[0].scorecard;
