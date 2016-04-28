@@ -46,11 +46,12 @@ angular.module('scrolly_directive',[])
 	            		
 	            		newRowSet = 0;
 	            		var ajSize = thead.offsetHeight;
-	            		while((ajSize+bodyRows[newRowSet].offsetHeight)<(raw.parentElement.offsetHeight-35)){
+	            		while(bodyRows[newRowSet]!=undefined&&(ajSize+bodyRows[newRowSet].offsetHeight)<(raw.parentElement.offsetHeight-35)){
 	            			ajSize = ajSize+bodyRows[newRowSet].offsetHeight;
 	            			newRowSet++;
 	            			
 	            		}
+	            		
 	            	}	
 	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetHeight<raw.parentElement.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
@@ -61,7 +62,7 @@ angular.module('scrolly_directive',[])
 	            	}	
 	            	
 	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetWidth<raw.parentElement.offsetWidth-70&&
-	            			scope.modelConfig.columnCount>newColumnSet){
+	            			scope.modelConfig.columnCount>newColumnSet-1){
 	            		
 	            		newColumnSet++;
 	            			
@@ -72,12 +73,14 @@ angular.module('scrolly_directive',[])
 	            			 var bodyColumns = document.getElementsByTagName("tbody")[0].children[0].children;
 	            			newColumnSet = 0;
 		            		var ajSize = 0;
+		            		var headerCount = 0;
 		            		while((ajSize+bodyColumns[newColumnSet].offsetWidth)<(raw.parentElement.offsetWidth-70)){
 		            			ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
 		            			newColumnSet++;
-		            			
+		            			if(bodyColumns[newColumnSet].nodeName==='TH')
+		            				headerCount++;
 		            		}
-	            		
+		            		newColumnSet = newColumnSet-headerCount;
 	        		}else{
 	        			/*
 	        				if(thead){
