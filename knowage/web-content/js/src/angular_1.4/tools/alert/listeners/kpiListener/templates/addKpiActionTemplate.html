@@ -1,0 +1,62 @@
+<md-dialog aria-label="addKpiAction" class="addKpiAction"  style=" min-width:95%; min-height:95%; " ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load("Add new Action**");}}</h2>
+        <span flex></span>
+        
+        <md-button ng-click="cancel()"  >
+        {{translate.load("cancel**")}}
+      </md-button>
+      
+      <md-button ng-click="save()"  >
+       {{translate.load("save**")}}
+      </md-button>
+        
+      </div>
+    </md-toolbar>
+    <md-dialog-content flex layout >
+      <div class="md-dialog-content" flex layout="column"> 
+       <md-input-container>
+        <label>{{translate.load("Type**")}}</label>
+        <md-select ng-model="currentAction.type">
+          <md-option ng-repeat="type in actionType" value="{{type.name}}">{{type.label}}</md-option>
+        </md-select>
+      </md-input-container> 
+      
+      <md-content ng-if="currentAction.type=='mail'" layout="column" flex>
+      	<md-input-container>
+	    	<label>{{translate.load("threshold **")}}</label>
+	        <md-select ng-model="currentAction.threshold" multiple>
+	          <md-option ng-repeat="threshVal in kpi.threshold.thresholdValues" ng-value="threshVal">
+		          <div layout="row">
+		          	<div style="width:20px; height:20px; margin-right: 5px;" ng-style="{'background-color':threshVal.color}"></div>
+		          	<span flex>{{threshVal.label}}</span>
+		          </div>
+	          </md-option>
+	        </md-select>
+	    </md-input-container> 
+	      
+	    <div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex ng-init="currentAction.jsonTemplate=currentAction.jsonTemplate==undefined ? {mailTo:[]} : currentAction.jsonTemplate">
+			 <div layout="row"   layout-align="center end"  >
+			      <label >{{translate.load("Mail to**")}}</label>
+			       <md-chips flex ng-model="currentAction.jsonTemplate.mailTo" ></md-chips>
+			 </div>
+			 
+			 
+			<md-input-container  class="md-block" >
+			      <label>{{translate.load("Subobject**")}}</label>
+			      <input ng-model="currentAction.jsonTemplate.subObject">
+			</md-input-container>
+			
+			<div style="position:relative">
+				<wysiwyg-edit style="position:absolute" content="currentAction.jsonTemplate.mailBody"></wysiwyg-edit>
+			</div>
+			
+    		
+  		</div>
+	      
+      </md-content>
+      </div>
+    </md-dialog-content>
+   
+</md-dialog>

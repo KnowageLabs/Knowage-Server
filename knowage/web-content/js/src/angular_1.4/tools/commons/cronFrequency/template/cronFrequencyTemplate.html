@@ -1,0 +1,138 @@
+<md-content layout-margin> 
+					
+		<div layout="column" layout-gt-sm="row">
+			<div layout="row" layout-padding>
+				<div layout="column" layout-align="space-around start">
+					<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
+					<label>{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
+				</div>
+				
+				<div layout="column">
+					<md-datepicker ng-model="ngModel.startDate" name="startDateField"  md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+					 <md-datepicker ng-model="ngModel.endDate" name="endDateField" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
+				</div>
+			</div>
+			
+			<div layout="row" layout-padding >
+				<div layout="column" layout-align="space-around start">
+					<label>{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
+					<label>{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
+				</div>
+				
+				<div layout="column">
+					<angular-time-picker id="myTimePicker1"  ng-model="ngModel.startTime"></angular-time-picker>
+					<angular-time-picker id="myTimePicker2" ng-model="ngModel.endTime"></angular-time-picker>
+				</div>
+			</div>
+		</div>		
+
+		<div layout="column" layout-gt-sm="row">
+			<div layout="row" layout-align="start center" >
+				<span layout-margin>{{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}</span>
+				<md-select layout-margin aria-label="aria-label" ng-model="eventSched.repetitionKind" ng-change="changeTypeFrequency();"> 
+					<md-option ng-repeat="interval in EVENT_INTERVALS " value="{{interval.value}}">{{interval.label}}</md-option> 
+				</md-select>
+			</div>
+
+			<div ng-if="eventSched.repetitionKind == 'minute'" layout="row" layout-align="start center" ng-init="eventSched.minute_repetition_n =eventSched.minute_repetition_n || 1;">
+				<span layout-margin>{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
+				<md-select layout-margin aria-label="aria-label" ng-model="eventSched.minute_repetition_n" ng-change="changeTypeFrequency();" > 
+					<md-option ng-repeat="item in getNitem(60) " value="{{item}}">{{item}}</md-option>
+				</md-select>
+				<span layout-margin>{{translate.load("sbi.kpis.mins")}}</span>
+			</div>
+			
+			<div ng-if="eventSched.repetitionKind == 'hour'" layout="row" layout-align="start center"  ng-init="eventSched.hour_repetition_n = eventSched.hour_repetition_n || 1;">
+				<span layout-margin>{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
+				<md-select  layout-margin aria-label="aria-label" ng-model="eventSched.hour_repetition_n" ng-change="changeTypeFrequency();" class="numberSelect"> 
+					<md-option ng-repeat="item in getNitem(24) " value="{{item}}">{{item}}</md-option>
+				</md-select>
+				<span layout-margin>{{translate.load("sbi.kpis.hours")}}</span>
+			</div>
+
+			<div ng-if="eventSched.repetitionKind == 'day'" layout="row" layout-align="start center"  ng-init="eventSched.day_repetition_n = eventSched.day_repetition_n || 1;">
+				<span layout-margin>{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
+				<md-select layout-margin aria-label="aria-label" ng-model="eventSched.day_repetition_n" ng-change="changeTypeFrequency();" class="numberSelect">
+					<md-option ng-repeat="item in getNitem(31) " value="{{item}}">{{item}}</md-option>
+				</md-select>
+				<span layout-margin>{{translate.load("sbi.kpis.days")}}</span>
+			</div>
+
+			<div ng-if="eventSched.repetitionKind == 'week'" layout="row" layout-align="start center" >
+				<div layout="row" layout-align="start center" ng-repeat="week in WEEKS">
+					<label>{{week.label}}:</label>
+					<md-checkbox aria-label="aria-label" ng-click="toggleWeek(week.value)"
+							ng-checked="weekIsChecked(week.value)">
+					</md-checkbox>
+				</div>
+			</div>
+
+			<div ng-if="eventSched.repetitionKind == 'month'" layout="column" layout-gt-sm="row" layout-align="space-around center" flex-gt-sm>
+				<div layout="column"   layout-align="center center">
+					<div layout="row"  layout-align="center center">
+						<span>{{translate.load("sbi.generic.advanced")}}</span>
+						<md-switch style="margin: 0px 10px" ng-change="toggleMonthScheduler()"
+								aria-label="Switch " ng-model="eventSched.typeMonth"
+								ng-init="eventSched.typeMonth=eventSched.typeMonth!=undefined? eventSched.typeMonth : true ;">
+						</md-switch>
+						<span>{{translate.load("sbi.behavioural.lov.type.simple")}}</span>
+					</div>
+					<div layout="row"  layout-align="center center" ng-if="eventSched.typeMonth==true" ng-init="eventSched.monthrep_n =eventSched.monthrep_n || 1;">
+						<span  layout-margin>{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
+						<md-select aria-label="aria-label"
+								ng-model="eventSched.monthrep_n" class="numberSelect"
+								ng-change="toggleMonthScheduler()">
+							<md-option ng-repeat="item in getNitem(12) " value="{{item}}">{{item}}</md-option> 
+						</md-select>
+						<span layout-margin>{{translate.load("sbi.kpis.months")}}</span>
+					</div>
+
+					<div layout="row" layout-align="center center" class="alignedCheckbox" ng-if="eventSched.typeMonth!=true">
+						<span layout-margin>{{translate.load("scheduler.generic.inMonth","component_scheduler_messages")}}</span>
+						<md-select aria-label="aria-label"
+								ng-model="eventSched.month_repetition"  multiple='true'
+								ng-change="toggleMonthScheduler()">
+							<md-option ng-repeat="month in MONTHS " value="{{month.value}}">{{month.label}}</md-option> 
+						</md-select>
+					</div>
+				</div>
+
+				<div layout="column"   layout-align="center center">
+					<div layout="row" layout-align="center center">
+						<span>{{translate.load("sbi.generic.advanced")}}</span>
+						<md-switch style=" margin: 0px 10px "
+								ng-change="toggleMonthScheduler()"
+								aria-label="Switch " ng-model="eventSched.typeMonthWeek"
+								ng-init="eventSched.typeMonthWeek = eventSched.typeMonthWeek!=undefined? eventSched.typeMonthWeek : true">
+						</md-switch>
+						<span>{{translate.load("sbi.behavioural.lov.type.simple")}}</span>
+					</div>
+
+					<div layout="row" layout-align="center center" class="alignedCheckbox" ng-if="eventSched.typeMonthWeek==true"
+							ng-init="eventSched.dayinmonthrep_week = eventSched.dayinmonthrep_week || 1;">
+						<span  layout-margin>{{translate.load("scheduler.generic.theDay","component_scheduler_messages")}}</span>
+						<md-select aria-label="aria-label" ng-model="eventSched.dayinmonthrep_week"
+								class="numberSelect" ng-change="toggleMonthScheduler()">
+							<md-option ng-repeat="item in getNitem(31) " value="{{item}}">{{item}}</md-option> 
+						</md-select>
+					</div>
+
+					<div layout="row" layout-align="center center" class="alignedCheckbox" ng-if="eventSched.typeMonthWeek != true"
+							ng-init="eventSched.month_week_number_repetition = eventSched.month_week_number_repetition || '1';">
+						<span layout-margin>{{translate.load("scheduler.generic.theWeek","component_scheduler_messages")}}</span>
+						<md-select aria-label="aria-label" ng-model="eventSched.month_week_number_repetition"
+								 ng-change="toggleMonthScheduler()">
+							<md-option ng-repeat="order in WEEKS_ORDER" value="{{order.value}}">{{order.label}}</md-option> 
+						</md-select>
+						
+						<span  layout-margin>{{translate.load("scheduler.generic.inDay","component_scheduler_messages")}}</span>
+						<md-select aria-label="aria-label" ng-model="eventSched.month_week_repetition"
+								 multiple='true'
+								ng-change="toggleMonthScheduler()">
+							<md-option ng-repeat="week in WEEKS " value="{{week.value}}">{{week.label}}</md-option>
+						</md-select>
+					</div>
+				</div>
+			</div>
+		</div>
+	</md-content>

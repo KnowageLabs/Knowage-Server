@@ -31,7 +31,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			}
 			
 			if(!attrs.backgroundColor){
-				scope.backgroundColor="blue"
+				scope.backgroundColor="#3b678c"
 			}
 			
 			if(!attrs.expanded){

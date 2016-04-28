@@ -38,26 +38,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/alertDefinitionController.js"></script>
 
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
+	
+<!-- cronFrequency -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cronFrequency/cronFrequency.js"></script>
+  
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/listeners/kpiListener/alertKpiListenerController.js"></script>
+
+<script type="text/javascript"  src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
 </head>
 
-<body ng-controller="alertDefinitionController as ctrl" layout="row" >
-	<div layout="column"  >
-		
-        
-        <div layout="row" flex="grow" >
-        
-        	<md-select ng-model="alert.selectedListener" placeholder="Select a listener" ng-change="changeListener()">
-				<md-option ng-value="listener" ng-repeat="listener in listeners">{{ listener.name }}</md-option>
-			</md-select>
- 		
-	 		<md-content id="listenerFrameContainer" layout="row" flex="grow" ng-if="alert.templateUrl">  
-				<iframe class="noBorder" id="listenerFrame" ng-src="{{'${pageContext.request.contextPath}'+alert.templateUrl}}" 
-					iframe-set-dimensions-onload flex="grow" >
-				</iframe>
-			</md-content>
-										
-		</div>	
-		 										
-	</div>
+<body ng-controller="alertDefinitionController" layout="row" >
+	<md-content layout="column" layout-fill > 
+		<md-toolbar class="md-hue-2" >
+      		<div class="md-toolbar-tools"> 
+        		<h2> 
+        			<span>{{translate.load("Alarms definition **")}}</span>
+        		</h2>  
+      		</div>
+      	</md-toolbar>
+       	<md-select layout-margin ng-model="alert.selectedListener" placeholder="Select a listener" ng-change="changeListener()" >
+			<md-option ng-value="listener" ng-repeat="listener in listeners">{{ listener.name }}</md-option>
+		</md-select>  
+	 	<md-whiteframe ng-if="alert.selectedListener!=undefined" class="md-whiteframe-1dp"> 
+    		<cron-frequency ng-model=alert.frequency></cron-frequency>
+  		</md-whiteframe>
+  		
+  		<div ng-view ng-if="listenerIsSelected()" flex layout class="md-whiteframe-1dp" layout-margin ></div>
+  		 						  
+	</md-content>
 </body>
+ 
 </html>
