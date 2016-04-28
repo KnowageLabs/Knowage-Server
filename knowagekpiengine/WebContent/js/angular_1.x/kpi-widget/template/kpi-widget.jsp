@@ -21,6 +21,7 @@
 			<h3 style="font-size: {{fontConf.size}}em;" layout-margin class="grey">of Target</h3>
 			
 		</div>
+		
 		<kpi-linear-gauge
 			gauge-id="widgetId"
 			label="label"

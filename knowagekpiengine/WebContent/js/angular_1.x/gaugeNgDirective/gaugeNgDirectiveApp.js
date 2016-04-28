@@ -61,8 +61,8 @@
 				.attr("cx", this.config.cx)
 				.attr("cy", this.config.cy)
 				.attr("r", this.config.radius)
-				.style("fill", "#ccc")
-				.style("stroke", "#000")
+				.style("fill", "rgb(214, 230, 246)")
+				.style("stroke", "rgb(59, 103, 140)")
 				.style("stroke-width", "0.5px");
 
 			// external circle inside the first one
@@ -71,8 +71,8 @@
 				.attr("cy", this.config.cy)
 				.attr("r", 0.9 * this.config.radius)
 				.style("fill", "#fff")
-				.style("stroke", "#e0e0e0")
-				.style("stroke-width", "2px");
+				.style("stroke", "rgb(59, 103, 140)")
+				.style("stroke-width", "0.5px");
 
 			if(this.config.showThresholds) {
 				for (var index in this.config.stops) {
@@ -112,7 +112,7 @@
 						.attr("y1", point1.y)
 						.attr("x2", point2.x)
 						.attr("y2", point2.y)
-						.style("stroke", "#666")
+						.style("stroke", "rgb(59, 103, 140)")
 						.style("stroke-width", "1px");
 				}
 
@@ -124,7 +124,7 @@
 					.attr("y1", point1.y)
 					.attr("x2", point2.x)
 					.attr("y2", point2.y)
-					.style("stroke", "#333")
+					.style("stroke", "rgb(59, 103, 140)")
 					.style("stroke-width", "2px");
 
 				if (major == this.config.min || major == this.config.max) {
@@ -182,8 +182,8 @@
 				.enter()
 				.append("svg:path")
 				.attr("d", pointerLine)
-				.style("fill", "#000")
-				.style("stroke", "#000")
+				.style("fill", "rgb(59, 103, 140)")
+				.style("stroke", "rgb(59, 103, 140)")
 				.style("fill-opacity", 0.7);
 
 			// center of speedometer
@@ -191,8 +191,8 @@
 				.attr("cx", this.config.cx)
 				.attr("cy", this.config.cy)
 				.attr("r", 0.12 * this.config.radius)
-				.style("fill", "#000")
-				.style("stroke", "#000")
+				.style("fill", "rgb(214, 230, 246)")
+				.style("stroke", "rgb(59, 103, 140)")
 				.style("opacity", 1);
 
 			// shown value
@@ -342,7 +342,9 @@
 			restrict: 'E',
 			template: 
 				'<div layout-align="center center" layout="row">'
-				+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px"></div></div>',
+				+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px"></div></div>'
+				+'<style>'
+				+'</style>',
 			controller: kpiGaugeCtrl,
 //			transclude: true,
 			scope: {

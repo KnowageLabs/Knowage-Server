@@ -37,8 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css"> 
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/designerKpi/designerCss.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/style/kpiStyleController.js"></script>
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/css/kpiWidgetStyle.css
-">
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/css/kpiWidgetStyle.css">
 
 </head>
 <body ng-controller="templateBuildController">
