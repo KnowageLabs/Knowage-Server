@@ -31,40 +31,36 @@
 				};
 				
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-				
-				sbiModule_restServices
-				.promisePost("1.0/kpi", 'loadKpiValue',object)
-				.then(function(response) {
-					var array =response.data;
-					for(var i=0;i<array.length;i++){
-						for(var j=0;j<$scope.kpiItems.length;j++){
-							if(array[i].kpiId == $scope.kpiItems[j].id 
-									&& array[i].kpiVersion == $scope.kpiItems[j].version){
-								$scope.kpiItems[j]["valueInfo"] = array[i];
-								$scope.kpiItems[j].value = array[i].computedValue;
-							}	
-						}
-					}
-				},function(response) {
-					console.log("Error get Kpi Value");
-				});
+				sbiModule_restServices.promisePost("1.0/kpi", 'loadKpiValue',object).then(
+						function(response) {
+							var array =response.data;
+							
+								for(var j=0;j<$scope.kpiItems.length;j++){
+									for(var i=0;i<array.length;i++){
+										var kpiArray = JSON.parse(array[i])
+									if(kpiArray[kpiArray.length-1].kpiId==$scope.kpiItems[j].id && kpiArray[kpiArray.length-1].kpiVersion==$scope.kpiItems[j].version){
+										$scope.kpiItems[j]["valueInfo"] = kpiArray[kpiArray.length-1];
+										$scope.kpiItems[j].value = kpiArray[kpiArray.length-1].computedValue;
+									}	
+								}
+							}
+
+						},function(response) {
+							console.log("Error get Kpi Value");
+						})
 			}
 		};
 
 		$scope.executeSchedulerTemp = function(){
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-			
-			for(var i = 0; i < $scope.kpiItems.length; i++) {
-				sbiModule_restServices
-				.promiseGet("1.0/kpi", 'executeKpiScheduler/' + $scope.kpiItems[i].id)
-				.then(function(response) {
-					console.log("Scheduler eseguito");
-					
-				}, function(response) {
-					console.log("Error Scheduler non eseguito");
-				});
-			}
-		};
+			sbiModule_restServices.promiseGet("1.0/kpi", 'executeKpiScheduler/'+2).then(
+					function(response) {
+						console.log("Scheduler eseguito");
+
+					},function(response) {
+						console.log("Error Scheduler non eseguito");
+					})
+		}
 
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)

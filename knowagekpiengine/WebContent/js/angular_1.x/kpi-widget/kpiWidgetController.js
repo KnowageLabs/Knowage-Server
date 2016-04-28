@@ -99,24 +99,24 @@
 		
 		$scope.getValueToShow = function(){
 			if($scope.value>=1000){
-				return ($scope.value/1000).toFixed($scope.precision);+"K";
+				return ((Number($scope.value)/1000).toFixed($scope.precision))+"K";
 				
 			}else{
-				return $scope.value.toFixed($scope.precision);;
+				return Number($scope.value).toFixed($scope.precision);
 			}
 		}
 		$scope.getTargetToShow = function(){
 			if($scope.targetValue>=1000){
-				return ($scope.targetValue/1000).toFixed($scope.precision);+"K";
+				return (Number($scope.targetValue)/1000).toFixed($scope.precision)+"K";
 			
 			}else{
-				return $scope.targetValue.toFixed($scope.precision);;
+				return $scope.targetValue;
 			}
 		}
 		
 		$scope.getPercentage = function(){
 			if($scope.targetValue!=0){
-				return (($scope.value / $scope.targetValue)*100).toFixed($scope.precision);;
+				return (($scope.value / $scope.targetValue)*100).toFixed($scope.precision);
 			}else{
 				return 0;
 			}
