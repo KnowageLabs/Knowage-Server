@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE_NEW">
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE">
 		<!-- 
 			*** TODO: Replace sbi_kpi_value after debug ***
 			CREATE TABLE sbi_kpi_value_new ( 
