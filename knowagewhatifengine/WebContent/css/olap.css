@@ -388,10 +388,10 @@ md-dialog.fullscreen-dialog {
 }
 
 .selected {
-color: white;
--webkit-box-shadow:inset 0px 0px 0px 2px #3b678c;
--moz-box-shadow:inset 0px 0px 0px 2px #3b678c;
-box-shadow:inset 0px 0px 0px 2px #3b678c;
+	color: white;
+	-webkit-box-shadow:inset 0px 0px 0px 2px #3b678c;
+	-moz-box-shadow:inset 0px 0px 0px 2px #3b678c;
+	box-shadow:inset 0px 0px 0px 2px #3b678c;
 }
 
 .filter-search{

@@ -39,11 +39,26 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var visibleSelectedTracker = [];
 	}
 	
+	clearSelectedList = function(){
+		for(var i=0;i< visibleSelected.length;i++){
+			if(visibleSelected[i].id.indexOf(h) == -1){
+				visibleSelected.splice(i,1);
+			}
+		}
+		for(var i=0;i<visibleSelectedTracker.length;i++){
+			if(visibleSelectedTracker[i].id == undefined || visibleSelectedTracker[i].id.indexOf(h) == 1){
+				visibleSelectedTracker.splice(i,1);
+			}
+		}
+	}
+	
 	/**
 	 * Dialogs  
 	 **/
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
 		$scope.clearLoadedData(filter.uniqueName);
+		visibleSelected = [];//check it
+		visibleSelectedTracker = [];//check it
 		$scope.searchText = "";
 		$scope.loadingFilter = true;
 		var x = {name:'Waiting...'};
@@ -270,6 +285,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	filterPlaceMemberOnAxis = function(){
 		removeChildren();
+		clearSelectedList();
 		console.log("from pmona"+visibleSelected);
 		var encoded = encodeURI('/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost
@@ -429,9 +445,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				fixAxisPosition("left");
 				fixAxisPosition("filter");
 				fixFilterSelectedList(fromAxis, pa );
-				$scope.clearLoadedData(data.uniqueName);
 			}
-		}				
+		}
+		if(data!= null)
+			$scope.clearLoadedData(data.uniqueName);
 	};
 
 	function fixFilterSelectedList(fa, pa){
@@ -480,7 +497,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				
 			}
 		}
-		$scope.clearLoadedData(data.uniqueName);
+		if(data!= null)
+			$scope.clearLoadedData(data.uniqueName);
 	}
 
 	$scope.dropFilter = function(data, ev) {
