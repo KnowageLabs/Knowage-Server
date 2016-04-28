@@ -34,13 +34,22 @@
 						function(response) {
 							var array =response.data;
 							
-								for(var j=0;j<$scope.kpiItems.length;j++){
-									for(var i=0;i<array.length;i++){
+								for(var j = 0; j < $scope.kpiItems.length; j++){
+									var kpiItem = $scope.kpiItems[j];
+									
+									for(var i = 0; i < array.length; i++){
 										var kpiArray = JSON.parse(array[i])
-									if(kpiArray[kpiArray.length-1].kpiId==$scope.kpiItems[j].id && kpiArray[kpiArray.length-1].kpiVersion==$scope.kpiItems[j].version){
-										$scope.kpiItems[j]["valueInfo"] = kpiArray;
-										$scope.kpiItems[j].value = kpiArray[kpiArray.length-1].computedValue;
-									}	
+										
+										if(kpiArray[kpiArray.length-1].kpiId == kpiItem.id 
+												&& kpiArray[kpiArray.length-1].kpiVersion == kpiItem.version){
+											
+											kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
+//											kpiItem["valueSeries"] = kpiArray;
+										}
+										
+										for(var k = 0; k < kpiArray.length; k++) {
+											kpiItem.valueSeries.push(kpiArray[k]);
+										}
 								}
 							}
 

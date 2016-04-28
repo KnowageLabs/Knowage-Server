@@ -228,58 +228,11 @@ author:
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
-	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
 	--%>
-	<%-- 
-<%
-if(type.equalsIgnoreCase("kpi")) {
-	String model = (String)chartObj.get("model");
+	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	
-	if(model.equalsIgnoreCase("widget")) {
-		JSONObject optionsObj = chartObj.getJSONObject("options");
-		String vieweas = (String)optionsObj.get("vieweas");
-		
-		if(vieweas.equalsIgnoreCase("kpicard")) {
-			//Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
-%>
-<kpi-widget flex
- 	ng-model="documentData"
-	gauge-size=gaugeSize 
-	gauge-min-value=gaugeMinValue 
-	gauge-max-value=gaugeMaxValue 
-	gauge-value=gaugeValue 
-	gauge-target-value=gaugeTargetValue
-	threshold-stops=thresholdStops 
-	percentage=percentage
-></kpi-widget>
-
-<%
-		} else if(vieweas.equalsIgnoreCase("speedometer")){ 
-%>
-<!--
- <kpi-widget ng-model="documentData"
-gauge-size=gaugeSize gauge-min-value=gaugeMinValue gauge-value=gaugeValue gauge-target-value=gaugeTargetValue
-threshold-stops=thresholdStops percentage=percentage
-></kpi-widget> 
-	-->
-<kpi-gauge flex layout="column" layout-align="center"
-	gauge-id="documentData.docId"
-	label="documentData.docLabel"
-	size="GAUGE_DEFAULT_SIZE"
-	min-value="gaugeMinValue"
-	max-value="gaugeMaxValue"
-	value="gaugeValue"
-	target-value="gaugeTargetValue"
-	threshold-stops="thresholdStops"
-	show-value="documentData.template.chart.options.showvalue"
-	show-target="documentData.template.chart.options.showtarget"
-	show-thresholds="documentData.template.chart.options.showthreshold"
-	value-precision="documentData.template.chart.options.precision"
-	font-conf="documentData.template.chart.style.font"
-></kpi-gauge> 
---%>
-<%
+	<%
 		if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");
 		
@@ -302,12 +255,12 @@ threshold-stops=thresholdStops percentage=percentage
 					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
 	
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id"
-				label="kpiItem.name" font-conf="kpiItem.fontConf"
-				show-target-percentage="kpiItem.showTargetPercentage"
-				show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
-				max-value="kpiItem.maxValue" value="kpiItem.value"
-				target-value="kpiItem.targetValue" precision="kpiItem.precision"
-				gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops"></kpi-widget>
+					label="kpiItem.name" font-conf="kpiItem.fontConf"
+					show-target-percentage="kpiItem.showTargetPercentage"
+					show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
+					max-value="kpiItem.maxValue" value="kpiItem.value"
+					target-value="kpiItem.targetValue" precision="kpiItem.precision"
+					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops"></kpi-widget>
 		</div>
 	</div>
 	<%
@@ -359,7 +312,7 @@ threshold-stops=thresholdStops percentage=percentage
 	</script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
-</script>
+	</script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>
 	<script type="text/javascript"

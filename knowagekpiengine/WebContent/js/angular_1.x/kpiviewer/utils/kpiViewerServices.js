@@ -22,6 +22,7 @@
 				conf.minValue = templateKpi.rangeMinValue;
 				conf.maxValue = templateKpi.rangeMaxValue;
 				conf.value = kpiValue.value;
+				conf.valueSeries = [];
 				conf.targetValue = kpiValue.targetValue;
 				conf.thresholdStops = [];
 				conf.showValue = templateOptions.showvalue;
@@ -52,7 +53,7 @@
 						conf.maxValue = stopsConf.newMax;
 					}
 					
-					if(conf.size < (conf.maxValue - conf.minValue)) {
+					if(conf.viewAs == 'kpicard' && conf.size < (conf.maxValue - conf.minValue)) {
 						conf.size = (conf.maxValue - conf.minValue)
 					}
 				}
