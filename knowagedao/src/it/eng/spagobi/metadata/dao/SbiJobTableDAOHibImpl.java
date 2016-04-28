@@ -133,6 +133,40 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 	}
 
 	@Override
+	public SbiMetaJobTable loadJobTable(Session session, Integer jobId, Integer tableId) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = session;
+		SbiMetaJobTable toReturn = null;
+		Query hqlQuery = null;
+
+		try {
+
+			hqlQuery = aSession.createQuery(" from SbiMetaJobTable as db where db.id.jobId = ? and db.id.tableId = ? ");
+			hqlQuery.setInteger(0, jobId);
+			hqlQuery.setInteger(1, tableId);
+
+			List hibList = hqlQuery.list();
+
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				toReturn = (SbiMetaJobTable) it.next();
+				return toReturn;
+
+			}
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	@Override
 	public void modifyJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError {
 		logger.debug("IN");
 
@@ -171,18 +205,10 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 
 		Session aSession = null;
 		Transaction tx = null;
-
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
-			SbiMetaJobTableId hibId = new SbiMetaJobTableId();
-			hibId.setTableId(aMetaJobTable.getId().getTableId());
-			hibId.setJobId(aMetaJobTable.getId().getJobId());
-			aMetaJobTable.setId(hibId);
-
-			updateSbiCommonInfo4Insert(aMetaJobTable);
-			aSession.save(aMetaJobTable);
+			insertJobTable(aSession, aMetaJobTable);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -199,6 +225,33 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 			}
 		}
 		logger.debug("OUT");
+
+	}
+
+	@Override
+	public void insertJobTable(Session session, SbiMetaJobTable aMetaJobTable) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = session;
+
+		try {
+
+			SbiMetaJobTableId hibId = new SbiMetaJobTableId();
+			hibId.setTableId(aMetaJobTable.getSbiMetaTable().getTableId());
+			hibId.setJobId(aMetaJobTable.getSbiMetaJob().getJobId());
+			aMetaJobTable.setId(hibId);
+
+			updateSbiCommonInfo4Insert(aMetaJobTable);
+			aSession.save(aMetaJobTable);
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			logger.debug("OUT");
+		}
+
 	}
 
 	@Override

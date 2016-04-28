@@ -21,8 +21,14 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.etl.ETLComponent;
+import it.eng.spagobi.metadata.etl.ETLMetadata;
+import it.eng.spagobi.metadata.etl.ETLRDBMSSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
+import it.eng.spagobi.metadata.metadata.SbiMetaJob;
+import it.eng.spagobi.metadata.metadata.SbiMetaJobSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaJobTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableBc;
@@ -45,6 +51,137 @@ import org.hibernate.Transaction;
 public class ImportMetadata extends AbstractHibernateDAO {
 
 	static private Logger logger = Logger.getLogger(ImportMetadata.class);
+	public static final String FILE_SOURCE_TYPE = "file";
+
+	public void importETLMetadata(String jobName, ETLMetadata etlMetadata) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			ISbiMetaSourceDAO msDao = DAOFactory.getSbiMetaSourceDAO();
+
+			// TODO: to remove, just test
+			SbiMetaSource aMetaSource = new SbiMetaSource();
+			aMetaSource.setName("ENAV_AIDA");
+			aMetaSource.setType("database");
+			Integer id = saveSource(aSession, aMetaSource);
+			// ************
+
+			// 1 - Create or update Job (SBI_META_JOB)
+			SbiMetaJob aJob = new SbiMetaJob(jobName, false);
+			Integer jobId = saveJob(aSession, aJob);
+			aJob.setJobId(jobId);
+
+			// 2 - Retrieve rdbms data sources of the job
+			Set<ETLRDBMSSource> sources = etlMetadata.getRdbmsSources();
+			// get corresponding source record from db
+			HashMap<String, SbiMetaSource> sourcesMap = new HashMap<String, SbiMetaSource>();
+			for (ETLRDBMSSource source : sources) {
+				String sourceUniqueName = source.getUniqueName();
+				// get corresponding source name on SBI_META_SOURCE mapped by .properties file
+				String sourceName = etlMetadata.getSourceName(sourceUniqueName);
+				SbiMetaSource sourceMeta = msDao.loadSourceByName(aSession, sourceName);
+
+				if (sourceMeta != null) {
+					// temporary save to map
+					sourcesMap.put(sourceName, sourceMeta);
+
+					// create or update Job-Source association (SBI_META_JOB_SOURCE)
+					SbiMetaJobSource jobSource = new SbiMetaJobSource();
+					jobSource.setSbiMetaJob(aJob);
+					jobSource.setSbiMetaSource(sourceMeta);
+
+					saveJobSource(aSession, jobSource);
+
+				}
+			}
+
+			// 3 - Retrieve source tables
+			Set<ETLComponent> sourceTables = etlMetadata.getSourceTables();
+			for (ETLComponent sourceTable : sourceTables) {
+				// for each table get the corresponding source
+				String sourceComponentName = sourceTable.getConnectionComponentName();
+				ETLRDBMSSource rdbmsSource = etlMetadata.getRDBMSSourceByComponentName(sourceComponentName);
+				// get corresponding unique name (key)
+				String sourceKey = rdbmsSource.getUniqueName();
+				String sourceName = etlMetadata.getSourceName(sourceKey);
+
+				// Check if that source was mapped in the properties file
+				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
+				if (sbiSource != null) {
+					String tableName = sourceTable.getValue();
+					saveJobTable(aSession, sbiSource, tableName, "source", aJob);
+				}
+			}
+
+			// 4 - Retrieve target Tables
+			Set<ETLComponent> targetTables = etlMetadata.getTargetTables();
+			for (ETLComponent targetTable : targetTables) {
+				// for each table get the corresponding source
+				String sourceComponentName = targetTable.getConnectionComponentName();
+				ETLRDBMSSource rdbmsSource = etlMetadata.getRDBMSSourceByComponentName(sourceComponentName);
+				// get corresponding unique name (key)
+				String sourceKey = rdbmsSource.getUniqueName();
+				String sourceName = etlMetadata.getSourceName(sourceKey);
+
+				// Check if that source was mapped in the properties file
+				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
+				if (sbiSource != null) {
+					String tableName = targetTable.getValue();
+					saveJobTable(aSession, sbiSource, tableName, "target", aJob);
+				}
+			}
+			// 5 - Retrieve source files
+			// TODO: add also the role for the source
+			Set<String> sourceFiles = etlMetadata.getSourceFiles();
+			for (String sourceFile : sourceFiles) {
+				SbiMetaSource sbiMetaSource = new SbiMetaSource();
+				sbiMetaSource.setName(sourceFile);
+				sbiMetaSource.setLocation(sourceFile);
+				sbiMetaSource.setType(FILE_SOURCE_TYPE);
+				// save to db SBI_META_SOURCE
+				Integer sourceId = saveSource(aSession, sbiMetaSource);
+				sbiMetaSource.setSourceId(sourceId);
+			}
+
+			// 5 - Retrieve target files
+			// TODO: add also the role for the source
+			Set<String> targetFiles = etlMetadata.getTargetFiles();
+			for (String targetFile : targetFiles) {
+				SbiMetaSource sbiMetaSource = new SbiMetaSource();
+				sbiMetaSource.setName(targetFile);
+				sbiMetaSource.setLocation(targetFile);
+				sbiMetaSource.setType(FILE_SOURCE_TYPE);
+				// save to db SBI_META_SOURCE
+				Integer sourceId = saveSource(aSession, sbiMetaSource);
+				sbiMetaSource.setSourceId(sourceId);
+			}
+
+			// TODO: save files in SBI_META_SOURCE (target and source)
+
+			tx.commit();
+			logger.debug("Import etl metadata ended correctly!");
+
+		} catch (Exception e) {
+			logException(e);
+
+			if (tx != null)
+				tx.rollback();
+
+			logger.error("An error occurred while trying to insert metadata information from job named:" + jobName, e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+
+	}
 
 	public void importBusinessModel(int businessModelId, SbiMetaSource aMetaSource, List<SbiMetaBc> bcList) throws EMFUserError {
 		logger.debug("IN");
@@ -167,6 +304,93 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				if (aSession.isOpen())
 					aSession.close();
 			}
+			logger.debug("OUT");
+		}
+	}
+
+	private Integer saveJob(Session session, SbiMetaJob aMetaJob) throws Exception {
+		logger.debug("IN");
+
+		ISbiMetaJobDAO mjDao = DAOFactory.getSbiMetaJobDAO();
+
+		try {
+			Integer idJob = null;
+			SbiMetaJob sbiJob = mjDao.loadJobByName(session, aMetaJob.getName());
+
+			if (sbiJob == null)
+				// insert the new one...
+				idJob = mjDao.insertJob(session, aMetaJob);
+			else {
+				// update the existing...
+				idJob = sbiJob.getJobId();
+				aMetaJob.setJobId(idJob);
+				mjDao.modifyJob(session, aMetaJob);
+			}
+			return idJob;
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to save metadata information for job [" + aMetaJob.getName() + "]", e);
+			throw new Exception(e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private void saveJobSource(Session session, SbiMetaJobSource aMetaJobSource) throws Exception {
+		logger.debug("IN");
+
+		ISbiJobSourceDAO jsDao = DAOFactory.getSbiJobSourceDAO();
+
+		try {
+			SbiMetaJobSource sbiJobSource = jsDao.loadJobSource(session, aMetaJobSource.getSbiMetaJob().getJobId(), aMetaJobSource.getSbiMetaSource()
+					.getSourceId());
+
+			if (sbiJobSource == null) {
+				// insert the new one...
+				jsDao.insertJobSource(session, aMetaJobSource);
+			}
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to save job-source relation for job id [" + aMetaJobSource.getSbiMetaJob().getJobId()
+					+ "] and source id [" + aMetaJobSource.getSbiMetaSource().getSourceId() + "]", e);
+			throw new Exception(e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private void saveJobTable(Session session, SbiMetaSource aMetaSource, String tableName, String role, SbiMetaJob aJob) throws Exception {
+		logger.debug("IN");
+
+		ISbiMetaSourceDAO sourceDao = DAOFactory.getSbiMetaSourceDAO();
+		ISbiJobTableDAO jobTableDAO = DAOFactory.getSbiJobTableDAO();
+
+		try {
+			List<SbiMetaTable> tables = sourceDao.loadMetaTables(session, aMetaSource.getSourceId());
+			for (SbiMetaTable table : tables) {
+				if (table.getName().equals(tableName)) {
+
+					SbiMetaJobTable jobTable = new SbiMetaJobTable();
+					jobTable.setRole(role);
+					jobTable.setSbiMetaTable(table);
+					jobTable.setSbiMetaJob(aJob);
+
+					SbiMetaJobTable sbiJobTable = jobTableDAO.loadJobTable(session, aJob.getJobId(), table.getTableId());
+					if (sbiJobTable == null) {
+						// insert the new one
+						jobTableDAO.insertJobTable(session, jobTable);
+					}
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to save job-table relation for job id [" + aJob.getJobId() + "] and table id [" + tableName + "]", e);
+			throw new Exception(e);
+
+		} finally {
 			logger.debug("OUT");
 		}
 	}

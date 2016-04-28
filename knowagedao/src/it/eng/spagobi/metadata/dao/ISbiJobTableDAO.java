@@ -25,6 +25,8 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -35,9 +37,13 @@ public interface ISbiJobTableDAO extends ISpagoBIDao {
 
 	public List<SbiMetaTable> loadTablesByJobId(Integer jobId) throws EMFUserError;
 
+	public SbiMetaJobTable loadJobTable(Session session, Integer jobId, Integer tableId) throws EMFUserError;
+
 	public void modifyJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 
 	public void insertJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
+
+	public void insertJobTable(Session session, SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 
 	public void deleteJobTable(SbiMetaJobTable aMetaJobTable) throws EMFUserError;
 

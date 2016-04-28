@@ -17,12 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelProperty;
@@ -46,7 +42,6 @@ import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
-import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -54,7 +49,6 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -90,7 +84,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -325,41 +318,42 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * GET: Extract and insert new ETL metadata informations from uploaded file
+	 * POST: Extract and insert new ETL metadata informations from uploaded file
 	 **/
-	@GET
-	@Path("/{fileName}/{contextName}/ETLExtract")
+	@POST
+	@Path("/{contextName}/ETLExtract")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response extractETLMetadataInformation(@PathParam("fileName") String fileName, @PathParam("contextName") String contextName) {
+	public Response extractETLMetadataInformation(@PathParam("contextName") String contextName, @MultipartForm MultipartFormDataInput input) {
 		logger.debug("IN");
+
+		// TODO: add the support for zip file containing multiple .item files
 
 		try {
 
 			// 1- Retrieve uploaded file data
-			// Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-			// InputStream inputStream = null;
-			//
-			// for (String key : uploadForm.keySet()) {
-			// List<InputPart> inputParts = uploadForm.get(key);
-			// for (InputPart inputPart : inputParts) {
-			// MultivaluedMap<String, String> header = inputPart.getHeaders();
-			// if (getFileName(header) != null) {
-			// inputStream = inputPart.getBody(InputStream.class, null);
-			// }
-			// }
-			// }
-			File tmpFile = new File(System.getProperty("java.io.tmpdir"), fileName + ".tmp");
+			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			InputStream inputStream = null;
+			String fileName = null;
 
-			// TODO: 2 - Parse xml inputStream
-			Document xmlDocument = xmlToDocument(tmpFile);
+			for (String key : uploadForm.keySet()) {
+				List<InputPart> inputParts = uploadForm.get(key);
+				for (InputPart inputPart : inputParts) {
+					MultivaluedMap<String, String> header = inputPart.getHeaders();
+					if (getFileName(header) != null) {
+						fileName = getFileName(header);
+						inputStream = inputPart.getBody(InputStream.class, null);
+					}
+				}
+			}
+			// 2 - Parse xml inputStream
+			Document xmlDocument = inputStreamToDocument(inputStream);
 			ETLParser etlParser = new ETLParser(xmlDocument);
 			ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
 			// etlParser.extractAll();
 
 			// TODO: 3 - Write informations on db
-
-			// erase temp file
-			tmpFile.delete();
+			ImportMetadata im = new ImportMetadata();
+			im.importETLMetadata(fileName, etlMetadata);
 
 			return Response.ok(etlMetadata).build();
 
@@ -506,22 +500,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
-	public String getResourcePath() {
-		String resPath;
-		try {
-			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			resPath = SpagoBIUtilities.readJndiResource(jndiName);
-		} catch (Throwable t) {
-			logger.debug(t);
-			resPath = EnginConf.getInstance().getResourcePath();
-		}
-
-		if (resPath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found!!!");
-		}
-		return resPath;
-	}
-
 	private String getFileName(MultivaluedMap<String, String> header) {
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
 
@@ -587,34 +565,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		}
 		return doc;
 
-	}
-
-	/**
-	 * Gets tre current session.
-	 *
-	 * @return The current session object.
-	 */
-	private Session getSession() {
-		Session session = HibernateSessionManager.getCurrentSession();
-		String tenantId = null;
-		IEngUserProfile profile = this.getUserProfile();
-
-		if (profile != null) {
-			UserProfile userProfile = (UserProfile) profile;
-			tenantId = userProfile.getOrganization();
-			logger.debug("User profile tenant = [{0}]" + tenantId);
-		}
-
-		if (tenantId != null) {
-			// if tenant is set, enable tenant filter and put filter's value
-			this.enableTenantFilter(session, tenantId);
-		}
-		return session;
-	}
-
-	protected void enableTenantFilter(Session session, String tenantId) {
-		Filter filter = session.enableFilter(TENANT_FILTER_NAME);
-		filter.setParameter("tenant", tenantId);
 	}
 
 	private SbiMetaModel getSbiMetaModel(String BusinessModelName) {

@@ -113,12 +113,8 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", name);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaJob.class);
-			criteria.add(labelCriterrion);
-			toReturn = (SbiMetaJob) criteria.uniqueResult();
-			if (toReturn == null)
-				return null;
+
+			toReturn = loadJobByName(tmpSession, name);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -133,7 +129,32 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			}
 		}
 
-		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public SbiMetaJob loadJobByName(Session session, String name) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaJob toReturn = null;
+		Session tmpSession = session;
+
+		try {
+			tmpSession = getSession();
+			Criterion labelCriterrion = Expression.eq("name", name);
+			Criteria criteria = tmpSession.createCriteria(SbiMetaJob.class);
+			criteria.add(labelCriterrion);
+			toReturn = (SbiMetaJob) criteria.uniqueResult();
+			if (toReturn == null)
+				return null;
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+		}
+
 		return toReturn;
 	}
 
@@ -209,12 +230,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaJob hibMeta = (SbiMetaJob) tmpSession.load(SbiMetaJob.class, aMetaJob.getJobId());
-
-			hibMeta.setName(aMetaJob.getName());
-			hibMeta.setDeleted(aMetaJob.isDeleted());
-
-			updateSbiCommonInfo4Update(hibMeta);
+			modifyJob(tmpSession, aMetaJob);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -232,6 +248,32 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			}
 		}
 		logger.debug("OUT");
+
+	}
+
+	@Override
+	public void modifyJob(Session session, SbiMetaJob aMetaJob) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = session;
+
+		try {
+
+			SbiMetaJob hibMeta = (SbiMetaJob) tmpSession.load(SbiMetaJob.class, aMetaJob.getJobId());
+
+			hibMeta.setName(aMetaJob.getName());
+			hibMeta.setDeleted(aMetaJob.isDeleted());
+
+			updateSbiCommonInfo4Update(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			logger.debug("OUT");
+		}
 
 	}
 
@@ -258,12 +300,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaJob hibMeta = new SbiMetaJob();
-			hibMeta.setName(aMetaJob.getName());
-			hibMeta.setDeleted(aMetaJob.isDeleted());
-
-			updateSbiCommonInfo4Insert(hibMeta);
-			idToReturn = (Integer) tmpSession.save(hibMeta);
+			idToReturn = insertJob(tmpSession, aMetaJob);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -283,6 +320,34 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		}
 		logger.debug("OUT");
+		return idToReturn;
+	}
+
+	@Override
+	public Integer insertJob(Session session, SbiMetaJob aMetaJob) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = null;
+
+		Integer idToReturn = null;
+
+		try {
+			tmpSession = session;
+
+			SbiMetaJob hibMeta = new SbiMetaJob();
+			hibMeta.setName(aMetaJob.getName());
+			hibMeta.setDeleted(aMetaJob.isDeleted());
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			idToReturn = (Integer) tmpSession.save(hibMeta);
+
+		} catch (HibernateException he) {
+			logException(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			logger.debug("OUT");
+		}
 		return idToReturn;
 	}
 

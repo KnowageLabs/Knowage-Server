@@ -50,6 +50,9 @@ public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError;
 
 	// TRANSACTIONAL METHODS (the session is an input parameter):
+	public SbiMetaSource loadSourceByName(Session session, String name) throws EMFUserError;
+
+	public List<SbiMetaTable> loadMetaTables(Session aSession, Integer sourceId) throws EMFUserError;
 
 	public SbiMetaSource loadSourceByNameAndType(Session session, String name, String type) throws EMFUserError;
 
