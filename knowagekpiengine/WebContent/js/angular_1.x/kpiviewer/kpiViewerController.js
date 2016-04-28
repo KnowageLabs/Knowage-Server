@@ -10,8 +10,7 @@
 
 		$scope.kpiItems = [];
 
-//		$scope.gaugeSize = 250;
-//		$scope.linearGaugeSize = 400;
+
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
 		$scope.gaugeMinValue = 0;
