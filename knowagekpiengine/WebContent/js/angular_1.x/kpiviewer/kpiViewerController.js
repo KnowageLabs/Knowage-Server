@@ -2,9 +2,9 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerGaugeService', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerServices', kpiViewerControllerFn]);
 
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerGaugeService) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
 
@@ -38,7 +38,7 @@
 									for(var i=0;i<array.length;i++){
 										var kpiArray = JSON.parse(array[i])
 									if(kpiArray[kpiArray.length-1].kpiId==$scope.kpiItems[j].id && kpiArray[kpiArray.length-1].kpiVersion==$scope.kpiItems[j].version){
-										$scope.kpiItems[j]["valueInfo"] = kpiArray[kpiArray.length-1];
+										$scope.kpiItems[j]["valueInfo"] = kpiArray;
 										$scope.kpiItems[j].value = kpiArray[kpiArray.length-1].computedValue;
 									}	
 								}
@@ -92,7 +92,7 @@
 								responseItemKpi.targetValue = responseItem.target;
 
 								if(templateKpiItem.id == responseItemKpi.id) {
-									var conf = kpiViewerGaugeService.createWidgetConfiguration(
+									var conf = kpiViewerServices.createWidgetConfiguration(
 											templateKpiItem, responseItemKpi, templateOptions, templateStyle);
 
 									/* MOCK */

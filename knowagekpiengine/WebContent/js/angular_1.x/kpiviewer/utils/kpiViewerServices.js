@@ -1,8 +1,8 @@
 (function () {
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
-	kpiViewerModule.service('kpiViewerGaugeService', function () {
-		var kpiViewerGaugeService = {
+	kpiViewerModule.service('kpiViewerServices', function () {
+		var kpiViewerServices = {
 			GAUGE_DEFAULT_SIZE: 250,
 			LINEAR_GAUGE_DEFAULT_SIZE: 400,
 			
@@ -18,7 +18,7 @@
 				conf.version = templateKpi.version;
 				conf.viewAs = templateKpi.vieweas && templateKpi.vieweas != '' ?
 						templateKpi.vieweas : templateOptions.vieweas;
-				conf.size = kpiViewerGaugeService.GAUGE_DEFAULT_SIZE;
+				conf.size = kpiViewerServices.GAUGE_DEFAULT_SIZE;
 				conf.minValue = templateKpi.rangeMinValue;
 				conf.maxValue = templateKpi.rangeMaxValue;
 				conf.value = kpiValue.value;
@@ -40,7 +40,7 @@
 						max: conf.maxValue
 					};
 					
-					var stopsConf = kpiViewerGaugeService.generateStopsConf(
+					var stopsConf = kpiViewerServices.generateStopsConf(
 							kpiValue.threshold, limits, conf.viewAs);
 					
 					conf.thresholdStops = stopsConf.stops;
@@ -152,6 +152,6 @@
 			},
 		};
 		
-		return kpiViewerGaugeService;
+		return kpiViewerServices;
 	});
 })();
