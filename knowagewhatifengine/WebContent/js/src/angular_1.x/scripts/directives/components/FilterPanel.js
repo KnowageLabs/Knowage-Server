@@ -523,7 +523,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				$scope.filterSelected[$scope.filterSelected.length] = {name:"...",uniqueName:"",visible:false};
 			}
 		}
-		$scope.clearLoadedData(data.uniqueName);
+		if(data!=null)
+			$scope.clearLoadedData(data.uniqueName);
 	}
 
 	$scope.dragSuccess = function(df, index) {

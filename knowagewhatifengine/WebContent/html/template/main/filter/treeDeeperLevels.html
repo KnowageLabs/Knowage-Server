@@ -17,7 +17,7 @@
 			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
 			</md-icon>
 		</span>
-		<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
+		<span ng-click="" ng-show="activeaxis >= 0" ng-class="item.leaf ? 'tree-item-padding-leaf':'tree-item-padding'">
 			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}

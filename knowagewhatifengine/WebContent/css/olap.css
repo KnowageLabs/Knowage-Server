@@ -664,4 +664,11 @@ md-option[selected], md-select-menu md-option[selected]{
 .BUTTON_HIDE_EMPTY{
 	background-image: url(../img/empty_rows_clicked.png);
 }
+
+.tree-item-padding{
+	padding-left:10px;
+}
+.tree-item-padding-leaf{
+	padding-left:35px;
+}
 }
