@@ -6,11 +6,7 @@ public class Alert {
 	private Integer name;
 	private AlertListener alertListener;
 
-	private String crono;
-	private Long startDate;
-	private Long endDate;
-	private String startTime;
-	private String endTime;
+	private Frequency frequency;
 
 	public Alert() {
 	}
@@ -65,78 +61,18 @@ public class Alert {
 	}
 
 	/**
-	 * @return the crono
+	 * @return the frequency
 	 */
-	public String getCrono() {
-		return crono;
+	public Frequency getFrequency() {
+		return frequency;
 	}
 
 	/**
-	 * @param crono
-	 *            the crono to set
+	 * @param frequency
+	 *            the frequency to set
 	 */
-	public void setCrono(String crono) {
-		this.crono = crono;
-	}
-
-	/**
-	 * @return the startDate
-	 */
-	public Long getStartDate() {
-		return startDate;
-	}
-
-	/**
-	 * @param startDate
-	 *            the startDate to set
-	 */
-	public void setStartDate(Long startDate) {
-		this.startDate = startDate;
-	}
-
-	/**
-	 * @return the endDate
-	 */
-	public Long getEndDate() {
-		return endDate;
-	}
-
-	/**
-	 * @param endDate
-	 *            the endDate to set
-	 */
-	public void setEndDate(Long endDate) {
-		this.endDate = endDate;
-	}
-
-	/**
-	 * @return the endTime
-	 */
-	public String getEndTime() {
-		return endTime;
-	}
-
-	/**
-	 * @param endTime
-	 *            the endTime to set
-	 */
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
-	}
-
-	/**
-	 * @return the startTime
-	 */
-	public String getStartTime() {
-		return startTime;
-	}
-
-	/**
-	 * @param startTime
-	 *            the startTime to set
-	 */
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
+	public void setFrequency(Frequency frequency) {
+		this.frequency = frequency;
 	}
 
 	/*

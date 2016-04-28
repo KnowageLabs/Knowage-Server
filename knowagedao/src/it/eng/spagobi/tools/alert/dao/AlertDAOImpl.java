@@ -4,52 +4,62 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
-	static final List<AlertListener> mockListeners = new ArrayList<>();
-	static final List<AlertAction> mockActions = new ArrayList<>();
 	static final List<Alert> mockAlerts = new ArrayList<>();
-	{
-		mockListeners.clear();
-		AlertListener l = new AlertListener();
-		l.setId(1);
-		l.setName("KPI Listener");
-		l.setClassName("it.eng.spagobi.tools.alert.listener.KpiListener");
-		l.setTemplate("/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/listeners/kpiListener.jsp");
-		mockListeners.add(l);
-
-		mockActions.clear();
-		AlertAction a = new AlertAction();
-		a.setName("Send mail");
-		a.setClassName("it.eng.spagobi.tools.alert.action.SendMail");
-		a.setTemplate("/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/actions/sendMail.jsp");
-		mockActions.add(a);
-	}
 
 	@Override
 	public List<AlertListener> listListener() {
-		return mockListeners;
+		List<SbiAlertListener> lst = list(SbiAlertListener.class);
+		List<AlertListener> ret = new ArrayList<>();
+		for (SbiAlertListener sbiAlertListener : lst) {
+			ret.add(from(sbiAlertListener));
+		}
+		return ret;
+	}
+
+	private AlertListener from(SbiAlertListener sbiAlertListener) {
+		AlertListener alertListener = new AlertListener();
+		alertListener.setId(sbiAlertListener.getId());
+		alertListener.setName(sbiAlertListener.getName());
+		alertListener.setClassName(sbiAlertListener.getClassName());
+		alertListener.setTemplate(sbiAlertListener.getTemplate());
+		return alertListener;
 	}
 
 	@Override
 	public List<AlertAction> listAction() {
-		return mockActions;
+		List<SbiAlertAction> lst = list(SbiAlertAction.class);
+		List<AlertAction> ret = new ArrayList<>();
+		for (SbiAlertAction sbiAlertAction : lst) {
+			ret.add(from(sbiAlertAction));
+		}
+		return ret;
+	}
+
+	private AlertAction from(SbiAlertAction sbiAlertAction) {
+		AlertAction alertAction = new AlertAction();
+		alertAction.setId(sbiAlertAction.getId());
+		alertAction.setName(sbiAlertAction.getName());
+		alertAction.setClassName(sbiAlertAction.getClassName());
+		alertAction.setTemplate(sbiAlertAction.getTemplate());
+		return alertAction;
 	}
 
 	@Override
 	public AlertListener loadListener(Integer idListener) {
-		int i = mockListeners.indexOf(new AlertListener(idListener));
-		return mockListeners.get(i);
+		return from(load(SbiAlertListener.class, idListener));
 	}
 
 	@Override
 	public AlertAction loadAction(Integer idAction) {
-		int i = mockActions.indexOf(new AlertAction(idAction));
-		return mockActions.get(i);
+		return from(load(SbiAlertAction.class, idAction));
 	}
 
 	@Override
