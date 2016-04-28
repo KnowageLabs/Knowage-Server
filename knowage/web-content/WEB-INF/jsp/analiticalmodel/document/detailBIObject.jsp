@@ -1383,7 +1383,8 @@ function saveDocument(goBack) {
                     <select class='portlet-form-input-field' style='width:130px;' name="parametersRegion" id="doc_parameters_region">
     
                         <option value = "north" <%if (region != null && region.equalsIgnoreCase("north")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.north",locale)%> </option>
-                        <option value = "east" <%if (region != null && region.equalsIgnoreCase("east")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.east",locale)%> </option>    
+                        <option value = "east" <%if (region != null && region.equalsIgnoreCase("east")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.east",locale)%> </option>
+                        <option value = "west" <%if (region != null && region.equalsIgnoreCase("west")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.west",locale)%> </option>    
     
                     </select>   
                 </div>
