@@ -7,10 +7,7 @@
 	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
-
 		$scope.kpiItems = [];
-
-
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
 		$scope.gaugeMinValue = 0;
@@ -19,7 +16,7 @@
 		$scope.gaugeTargetValue = 0;
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
-
+		
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
 				var object = {
@@ -34,7 +31,7 @@
 						function(response) {
 							var array =response.data;
 							
-								for(var j = 0; j < $scope.kpiItems.length; j++){
+						for(var j = 0; j < $scope.kpiItems.length; j++){
 									var kpiItem = $scope.kpiItems[j];
 									
 									for(var i = 0; i < array.length; i++){
@@ -45,20 +42,34 @@
 											
 											kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
 //											kpiItem["valueSeries"] = kpiArray;
+											
+											for(var k = 0; k < kpiArray.length; k++) {
+												kpiItem.valueSeries.push(kpiArray[k]);
+											}
 										}
 										
-										for(var k = 0; k < kpiArray.length; k++) {
-											kpiItem.valueSeries.push(kpiArray[k]);
-										}
+										
 								}
 							}
+							
 
 						},function(response) {
 							console.log("Error get Kpi Value");
 						})
 			}
 		};
-
+	/*	$scope.parseValuesSeries = function(arrKpi){
+		//	var array = [];
+			if(arrKpi!=undefined){
+				for(var i=0;i<arrKpi.length;i++){
+					var arrTemp = [];
+					arrTemp.push(arrKpi[i].timeRun,arrKpi[i].computedValue);
+					$scope.dataSeries.push(arrTemp);
+					console.log("Result", $scope.dataSeries);
+				}
+			}
+	
+		}*/
 		$scope.executeSchedulerTemp = function(){
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 			sbiModule_restServices.promiseGet("1.0/kpi", 'executeKpiScheduler/'+2).then(

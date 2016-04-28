@@ -229,9 +229,10 @@ author:
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
-	--%>
-	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	
+	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
+	--%>
 	<%
 		if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");
@@ -260,7 +261,7 @@ author:
 					show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
 					max-value="kpiItem.maxValue" value="kpiItem.value"
 					target-value="kpiItem.targetValue" precision="kpiItem.precision"
-					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops"></kpi-widget>
+					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops" value-series="kpiItem.valueSeries"></kpi-widget>
 		</div>
 	</div>
 	<%

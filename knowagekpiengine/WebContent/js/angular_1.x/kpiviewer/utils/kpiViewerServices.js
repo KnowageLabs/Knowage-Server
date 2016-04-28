@@ -35,6 +35,8 @@
 				conf.units = templateOptions.history && templateOptions.history.units ?
 						templateOptions.history.units : null;
 				
+				conf.dataSeries = [];
+				
 				if(kpiValue.threshold && kpiValue.threshold != null) {
 					var limits = {
 						min: conf.minValue,
@@ -61,6 +63,7 @@
 				//console.log('createWidgetConfiguration -> ' ,conf);
 				return conf;
 			},
+			
 			
 			
 			/**
