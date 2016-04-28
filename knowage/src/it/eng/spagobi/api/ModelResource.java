@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,6 +31,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 
@@ -42,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 @Path("/1.0/modellocker")
+@ManageAuthorization
 public class ModelResource extends AbstractSpagoBIResource {
 
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
@@ -54,6 +57,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/{metaModelId}/lock")
+	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String lockMetaModel(@PathParam("metaModelId") int metaModelId) {
 		logger.debug("IN");
 
@@ -113,6 +117,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/{metaModelId}/unlock")
+	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String unlockMetaModel(@PathParam("metaModelId") int metaModelId) {
 		logger.debug("IN");
 

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -43,7 +43,6 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -79,7 +78,6 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
@@ -119,6 +117,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
+	@Override
 	public SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
 		SDKDocumentParameterValue[] values = new SDKDocumentParameterValue[] {};
 		logger.debug("IN: documentParameterId = [" + documentParameterId + "]; roleName = [" + roleName + "]");
@@ -186,6 +185,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return values;
 	}
 
+	@Override
 	public SDKDocumentParameterValue[] getDefaultValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {
 		SDKDocumentParameterValue[] values = new SDKDocumentParameterValue[] {};
 		logger.debug("IN: documentParameterId = [" + documentParameterId + "]; roleName = [" + roleName + "]");
@@ -252,6 +252,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return values;
 	}
 
+	@Override
 	public String[] getCorrectRolesForExecution(Integer documentId) throws NonExecutableDocumentException {
 		String[] toReturn = null;
 		logger.debug("IN: documentId = [" + documentId + "]");
@@ -283,6 +284,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
 	public SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName) throws NonExecutableDocumentException {
 		SDKDocumentParameter parameters[] = null;
 		logger.debug("IN: documentId = [" + documentId + "]; roleName = [" + roleName + "]");
@@ -332,6 +334,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return parameters;
 	}
 
+	@Override
 	public SDKDocument[] getDocumentsAsList(String type, String state, String folderPath) {
 		SDKDocument documents[] = null;
 		logger.debug("IN");
@@ -368,6 +371,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return documents;
 	}
 
+	@Override
 	public SDKFunctionality getDocumentsAsTree(String initialPath) {
 		logger.debug("IN: initialPath = [" + initialPath + "]");
 		SDKFunctionality toReturn = null;
@@ -436,6 +440,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		logger.debug("OUT");
 	}
 
+	@Override
 	public Integer saveNewDocument(SDKDocument document, SDKTemplate sdkTemplate, Integer functionalityId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		Integer toReturn = null;
@@ -520,6 +525,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
 	public void uploadTemplate(Integer documentId, SDKTemplate sdkTemplate) throws NotAllowedOperationException {
 		logger.debug("IN: documentId = [" + documentId + "]; template file name = [" + sdkTemplate.getFileName() + "]");
 
@@ -555,6 +561,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 	}
 
+	@Override
 	public SDKTemplate downloadTemplate(Integer documentId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		SDKTemplate toReturn = null;
@@ -751,6 +758,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	 * @param: roleName : name of the role
 	 */
 
+	@Override
 	public SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType)
 			throws NonExecutableDocumentException, NotAllowedOperationException, MissingParameterValue, InvalidParameterValue {
 		logger.debug("IN");
@@ -851,6 +859,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
 	public SDKDocument getDocumentById(Integer id) {
 		SDKDocument toReturn = null;
 		logger.debug("IN: document in input = " + id);
@@ -878,6 +887,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
 	public SDKDocument getDocumentByLabel(String label) {
 		SDKDocument toReturn = null;
 		logger.debug("IN: document in input = " + label);
@@ -905,6 +915,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
 	public void uploadDatamartTemplate(SDKTemplate sdkTemplate, SDKTemplate calculatedFields, String dataSourceLabel, String categoryLabel) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "] and optional calculatedFields file [" + calculatedFields + "]");
 
@@ -964,7 +975,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					String uploaderUserId = userProfile.getUserId().toString();
 
 					// Check if the model is locked by another user
-					if (!lockerUserId.equals(uploaderUserId)) {
+					if (lockerUserId != null && !lockerUserId.equals(uploaderUserId)) {
 						// model locked by another user, cannot proceed with the update
 						logger.debug("Cannot update, the metamodel [" + metaModel.getName() + "] is currently locked by user [" + lockerUserId + "]");
 						throw new SpagoBIRuntimeException("The metamodel [" + metaModel.getName() + "] is currently locked by user [" + lockerUserId + "]");
@@ -1081,6 +1092,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 	}
 
+	@Override
 	public void uploadDatamartModel(SDKTemplate sdkTemplate) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
 
@@ -1096,6 +1108,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 	}
 
+	@Override
 	public SDKTemplate downloadDatamartFile(String folderName, String fileName) {
 		LogMF.debug(logger, "IN: folderName = [{0}], fileName = [{1}]", folderName, fileName);
 		SDKTemplate toReturn = null;
@@ -1109,7 +1122,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			IMetaModelsDAO metaModelsDAO = DAOFactory.getMetaModelsDAO();
 			Content content = metaModelsDAO.loadActiveMetaModelContentByName(folderName);
 			if (content == null) {
-				logger.error("MetaModel " + folderName + " no more found on business service catalogue");
+				logger.debug("MetaModel " + folderName + " not found on business service catalogue");
 				return null;
 			}
 
@@ -1212,6 +1225,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	}
 
 	// download a zip file with datamart.jar and modelfile
+	@Override
 	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName, String fileModelName) {
 		logger.debug("IN");
 
@@ -1308,6 +1322,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 	}
 
+	@Override
 	public HashMap<String, String> getAllDatamartModels() {
 		logger.debug("IN");
 
@@ -1332,6 +1347,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			String pathDatatamartsDir = getResourcePath();
 			File datamartsDir = new File(pathDatatamartsDir);
 			File[] dirs = datamartsDir.listFiles(new FileFilter() {
+				@Override
 				public boolean accept(File pathname) {
 					if (pathname.isDirectory()) {
 						return true;
@@ -1345,6 +1361,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			for (int i = 0; i < dirs.length; i++) {
 				File dir = dirs[i];
 				File[] models = dir.listFiles(new FileFilter() {
+					@Override
 					public boolean accept(File file) {
 						if (file.getName().endsWith(".sbimodel")) {
 							return true;
@@ -1376,6 +1393,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	 * @param SDKSchema
 	 *            . The object with all informations
 	 */
+	@Override
 	public void uploadMondrianSchema(SDKSchema schema) throws SDKException, NotAllowedOperationException {
 		logger.debug("IN");
 		this.setTenant();
@@ -1612,22 +1630,14 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	private String getResourcePath() {
 
-		String path = null;
-		SourceBean pathSB;
-		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
-		// path = SpagoBIUtilities.readJndiResource(jndiPath) +
-		// System.getProperty("file.separator") + "qbe" +
-		// System.getProperty("file.separator") + "datamarts" ;
-		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe";
+		String path = SpagoBIUtilities.getResourcePath() + File.separatorChar + "qbe";
 		// checks if the 'qbe' folder exists. If not, it creates it.
 		File datamartFolder = new File(path);
 		if (!datamartFolder.exists()) {
 			datamartFolder.mkdir();
 		}
 		// checks if the 'datamarts' folder exists. If not, it creates it.
-		path += System.getProperty("file.separator") + "datamarts";
+		path += File.separatorChar + "datamarts";
 		datamartFolder = new File(path);
 		if (!datamartFolder.exists()) {
 			datamartFolder.mkdir();

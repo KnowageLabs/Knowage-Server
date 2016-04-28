@@ -118,10 +118,7 @@
 		<MAP_REST_SERVICE serviceUrl="/hierarchiesBackup.*" businessProcess="HierarchiesManagement" />
 				 						 						
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
-		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
-			
-		<MAP_REST_SERVICE serviceUrl="/modellocker/lock" businessProcess="publicFunctionality" />
-        <MAP_REST_SERVICE serviceUrl="/modellocker/unlock" businessProcess="publicFunctionality" />			 						 						
+		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 							 						 						
 				 						 						
 		<MAP_REST_SERVICE serviceUrl="/authorizations" businessProcess="ProfileManagement" />	
 		
