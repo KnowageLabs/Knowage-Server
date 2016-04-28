@@ -1,0 +1,8 @@
+<Context  path="/knowagejasperreportengine" privileged="true" reloadable="false">
+
+        <ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
+        <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
+        <ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
+        <ResourceLink global="sso_class" name="sso_class" type="java.lang.String"/>
+        <ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
+</Context>
