@@ -17,6 +17,8 @@ public class KpiValue implements Cloneable {
 	private String theMonth;
 	private String theQuarter;
 	private String theYear;
+	private char state;
+	private String manualNote;
 
 	public int getId() {
 		return id;
@@ -112,6 +114,22 @@ public class KpiValue implements Cloneable {
 
 	public void setTheYear(String theYear) {
 		this.theYear = theYear;
+	}
+
+	public char getState() {
+		return state;
+	}
+
+	public void setState(char state) {
+		this.state = state;
+	}
+
+	public String getManualNote() {
+		return manualNote;
+	}
+
+	public void setManualNote(String manualNote) {
+		this.manualNote = manualNote;
 	}
 
 }

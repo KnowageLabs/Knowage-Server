@@ -297,14 +297,16 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 		ParsedKpi parsedKpi;
 		List<AggregateMeasureQuery> queries;
 		List<Map<String, String>> queriesAttributesTemporalTypes;
+		List<Set<String>> queriesIgnoredAttributes;
 		int mainMeasure;
 		boolean replaceMode;
 
-		KpiComputationUnit(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, List<Map<String, String>> queriesAttributesTemporalTypes, int mainMeasure,
-				boolean replaceMode) {
+		KpiComputationUnit(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, List<Map<String, String>> queriesAttributesTemporalTypes,
+				List<Set<String>> queriesIgnoredAttributes, int mainMeasure, boolean replaceMode) {
 			this.parsedKpi = parsedKpi;
 			this.queries = queries;
 			this.queriesAttributesTemporalTypes = queriesAttributesTemporalTypes;
+			this.queriesIgnoredAttributes = queriesIgnoredAttributes;
 			this.mainMeasure = mainMeasure;
 			this.replaceMode = replaceMode;
 		}
@@ -315,6 +317,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// =========================
 
 	public static final boolean EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY = true;
+	public static final boolean INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY = true;
 
 	// =======================
 	// ======= METHODS =======
@@ -378,77 +381,103 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				// Parse the KPI
 				ParsedKpi parsedKpi = new ParsedKpi(kpi);
 
-				// Iterate over temporal types
-				int minTemporalTypePriority = 5;
-				while (minTemporalTypePriority >= 1) {
-					// Create a query for each measure and find the main measure
-					// (the highest cardinality, i.e. the one with most attributes in the group-by section)
-					List<AggregateMeasureQuery> queries = new ArrayList<AggregateMeasureQuery>();
-					List<Map<String, String>> queriesAttributesTemporalTypes = new ArrayList<Map<String, String>>();
-					int mainMeasure = 0;
-					int realMinTemporalTypePriority = 0;
-					for (int m = 0; m < parsedKpi.measures.size(); m++) {
-						// Get measure rule
-						ParsedMeasure measure = parsedKpi.measures.get(m);
-						Rule rule = kpiDao.loadRule(measure.ruleId, measure.ruleVersion);
+				// Iterate over non-temporal attibutes combinations
+				List<String> ntAttributesAll = new ArrayList<String>();
+				long ntComb = 0;
+				do {
+					Set<String> ntAttributesToIgnore = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+					for (int a = 0; a < ntAttributesAll.size(); a++) {
+						if ((ntComb & (1 << a)) > 0) {
+							ntAttributesToIgnore.add(ntAttributesAll.get(a));
+						}
+					}
+					// Iterate over temporal types
+					int minTemporalTypePriority = 5;
+					while (minTemporalTypePriority >= 1) {
+						// Create a query for each measure and find the main measure
+						// (the highest cardinality, i.e. the one with most attributes in the group-by section)
+						List<AggregateMeasureQuery> queries = new ArrayList<AggregateMeasureQuery>();
+						List<Map<String, String>> queriesAttributesTemporalTypes = new ArrayList<Map<String, String>>();
+						List<Set<String>> queriesIgnoredAttributes = new ArrayList<Set<String>>();
+						int mainMeasure = 0;
+						int realMinTemporalTypePriority = 0;
+						for (int m = 0; m < parsedKpi.measures.size(); m++) {
+							// Get measure rule
+							ParsedMeasure measure = parsedKpi.measures.get(m);
+							Rule rule = kpiDao.loadRule(measure.ruleId, measure.ruleVersion);
 
-						Set<String> groupByAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-						groupByAttributes.addAll(measure.attributes);
-						// Find temporal attributes (if any)
-						Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-						for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-							if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
-								String attributeName = ruleOutput.getAlias();
-								String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
-								Integer priority = temporalTypesPriorities.get(attributeTemporalType);
-								if (priority != null && priority <= minTemporalTypePriority) {
-									attributesTemporalTypes.put(attributeName, attributeTemporalType);
-									realMinTemporalTypePriority = Math.max(realMinTemporalTypePriority, minTemporalTypePriority);
-								} else {
-									groupByAttributes.remove(attributeName);
+							Set<String> groupByAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+							groupByAttributes.addAll(measure.attributes);
+							groupByAttributes.removeAll(ntAttributesToIgnore);
+							Set<String> ignoredAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+							// ignoredAttributes.addAll(measure.ignoredAttributes);
+							ignoredAttributes.addAll(ntAttributesToIgnore);
+
+							// Find temporal attributes (if any)
+							Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
+								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
+									String attributeName = ruleOutput.getAlias();
+									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
+									Integer priority = temporalTypesPriorities.get(attributeTemporalType);
+									if (priority != null && priority <= minTemporalTypePriority) {
+										attributesTemporalTypes.put(attributeName, attributeTemporalType);
+										realMinTemporalTypePriority = Math.max(realMinTemporalTypePriority, minTemporalTypePriority);
+									} else {
+										groupByAttributes.remove(attributeName);
+										ignoredAttributes.add(attributeName);
+									}
+								}
+							}
+							queriesAttributesTemporalTypes.add(attributesTemporalTypes);
+							queriesIgnoredAttributes.add(ignoredAttributes);
+
+							// Build the measure query
+							String ruleSql = rule.getDefinition();
+							String aggregateMeasureName = parsedKpi.measuresNames.get(m);
+							String aggregateMeasureFunction = parsedKpi.measuresFunctions.get(m);
+							AggregateMeasureQuery query = new AggregateMeasureQuery(rule.getDataSourceId(), ruleSql, aggregateMeasureName,
+									aggregateMeasureFunction, groupByAttributes, placeholdersMap);
+							if (queriesCache.containsKey(query)) {
+								// The query will be used more than once:
+								// reuse the previous instance of the query, discarding the new one
+								// and preload all the tuples
+								query = queriesCache.get(query); // The previous instance cannot be retrieved efficiently via a Set, so we are forced to use a
+																	// Map
+								query.preload(); // This will have no effect after the first call
+							} else {
+								// Add the query instance to the cache
+								queriesCache.put(query, query);
+							}
+							queries.add(query);
+
+							// Update the current main measure
+							if (queries.size() == 0 || query.attributesNames.size() > queries.get(mainMeasure).attributesNames.size()) {
+								mainMeasure = m;
+								if (ntComb == 0) {
+									ntAttributesAll.clear();
+									ntAttributesAll.addAll(groupByAttributes);
 								}
 							}
 						}
-						queriesAttributesTemporalTypes.add(attributesTemporalTypes);
-
-						// Build the measure query
-						String ruleSql = rule.getDefinition();
-						String aggregateMeasureName = parsedKpi.measuresNames.get(m);
-						String aggregateMeasureFunction = parsedKpi.measuresFunctions.get(m);
-						AggregateMeasureQuery query = new AggregateMeasureQuery(rule.getDataSourceId(), ruleSql, aggregateMeasureName, aggregateMeasureFunction,
-								groupByAttributes, placeholdersMap);
-						if (queriesCache.containsKey(query)) {
-							// The query will be used more than once:
-							// reuse the previous instance of the query, discarding the new one
-							// and preload all the tuples
-							query = queriesCache.get(query); // The previous instance cannot be retrieved efficiently via a Set, so we are forced to use a Map
-							query.preload(); // This will have no effect after the first call
-						} else {
-							// Add the query instance to the cache
-							queriesCache.put(query, query);
+						kpiComputationUnits.add(
+								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
+						Integer nextPriority = 0;
+						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
+							Integer priority = temporalTypesPriorities.get(temporalType);
+							if (priority != null && priority < realMinTemporalTypePriority && priority >= nextPriority)
+								nextPriority = priority;
 						}
-						queries.add(query);
-
-						// Update the current main measure
-						if (queries.size() == 0 || query.attributesNames.size() > queries.get(mainMeasure).attributesNames.size()) {
-							mainMeasure = m;
-						}
+						minTemporalTypePriority = nextPriority;
 					}
-					kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, mainMeasure, replaceMode));
-					Integer nextPriority = 0;
-					for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
-						Integer priority = temporalTypesPriorities.get(temporalType);
-						if (priority != null && priority < realMinTemporalTypePriority && priority >= nextPriority)
-							nextPriority = priority;
-					}
-					minTemporalTypePriority = nextPriority;
-				}
+					ntComb++;
+				} while (ntComb < Math.pow(2, ntAttributesAll.size()));
 			}
 
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
 				String result = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes);
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes);
 				sb.append(result).append("@@@");
 			}
 		} catch (Exception e) {
@@ -458,7 +487,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	}
 
 	private static String computeKpi(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, Integer mainMeasure, boolean replaceMode,
-			List<Map<String, String>> queriesAttributesTemporalTypes) throws JobExecutionException {
+			List<Map<String, String>> queriesAttributesTemporalTypes, List<Set<String>> queriesIgnoredAttributes) throws JobExecutionException {
 		StringBuffer sb = new StringBuffer(); // For debug only
 		try {
 			System.out.println(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
@@ -544,28 +573,41 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				StringBuffer logicalKey = new StringBuffer();
 				List<Comparable> rowAttributesValues = rowsAttributesValues.get(r);
 				Map<String, Comparable> temporalValues = new HashMap<String, Comparable>();
+				Map<String, Comparable> logicalKeyPairs = new TreeMap<String, Comparable>();
+				if (INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY) {
+					for (String attributeName : queriesIgnoredAttributes.get(mainMeasure)) {
+						logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+					}
+				}
 				for (int a = 0; a < attributesNames.size(); a++) {
 					String attributeName = attributesNames.get(a);
 					String temporalType = queriesAttributesTemporalTypes.get(mainMeasure).get(attributeName);
 					if (temporalType != null) {
 						temporalValues.put(attributeName, rowAttributesValues.get(a).toString().replaceAll("'", "''"));
-						if (EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY)
+						if (EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY) {
+							logicalKeyPairs.remove(attributesNames.get(a).toUpperCase()); // The "ALL" value is removed if present
 							continue;
+						}
 					}
+					logicalKeyPairs.put(attributesNames.get(a).toUpperCase(), rowAttributesValues.get(a));
+				}
+				for (String attributeName : logicalKeyPairs.keySet()) {
 					if (logicalKey.length() > 0)
 						logicalKey.append(",");
-					logicalKey.append(attributesNames.get(a).toUpperCase()).append("=").append(rowAttributesValues.get(a));
+					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName));
 				}
 				String insertSql = "INSERT INTO sbi_kpi_value_new (kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year) VALUES (" + parsedKpi.id + "," + parsedKpi.version + ",'"
-						+ logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + value + ",'ALL','ALL','ALL','ALL','ALL')";
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + parsedKpi.id + "," + parsedKpi.version + ",'"
+						+ logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (value.toLowerCase().contains("null") ? "0" : value)
+						+ ",'ALL','ALL','ALL','ALL','ALL','" + (value.toLowerCase().contains("null") ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
 						+ "' AND the_week = '" + ifNull(temporalValues.get("WEEK"), "ALL") + "'" + " AND the_month = '"
 						+ ifNull(temporalValues.get("MONTH"), "ALL") + "' AND the_quarter = '" + ifNull(temporalValues.get("QUARTER"), "ALL")
 						+ "' AND the_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
 				String deleteSql = "DELETE sbi_kpi_value_new WHERE " + whereCondition;
-				String updateSql = "UPDATE sbi_kpi_value_new SET computed_value = " + value + ", time_run = '" + isoNow + "' WHERE " + whereCondition; // Currently
+				String updateSql = "UPDATE sbi_kpi_value_new SET computed_value = " + (value.toLowerCase().contains("null") ? "0" : value) + ", time_run = '"
+						+ isoNow + "', state='" + (value.toLowerCase().contains("null") ? '1' : '0') + "' WHERE " + whereCondition; // Currently
 				// unused
 				sb.append(insertSql + "|" + deleteSql + "|" + updateSql);
 

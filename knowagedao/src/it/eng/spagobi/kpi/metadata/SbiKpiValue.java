@@ -37,6 +37,8 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 	private String theMonth;
 	private String theQuarter;
 	private String theYear;
+	private char state;
+	private String manualNote;
 
 	public int getId() {
 		return id;
@@ -132,6 +134,22 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 
 	public void setTheYear(String theYear) {
 		this.theYear = theYear;
+	}
+
+	public char getState() {
+		return state;
+	}
+
+	public void setState(char state) {
+		this.state = state;
+	}
+
+	public String getManualNote() {
+		return manualNote;
+	}
+
+	public void setManualNote(String manualNote) {
+		this.manualNote = manualNote;
 	}
 
 }

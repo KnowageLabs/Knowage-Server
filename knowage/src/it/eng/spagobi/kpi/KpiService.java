@@ -317,7 +317,7 @@ public class KpiService {
 		attributesValues.put("CA1", "0");
 		attributesValues.put("CA2", "0");
 		attributesValues.put("SA1", "1");
-		attributesValues.put("SA2", "5");
+		// attributesValues.put("SA2", "5");
 		List<KpiValue> kpiValues = kpiDao.findKpiValues(4, 0, null, null, attributesValues);
 		String result = new ObjectMapper().writeValueAsString(kpiValues);
 		return Response.ok(result).build();
