@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.whatif.api;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 import java.util.List;
@@ -31,8 +32,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.olap4j.Axis;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+import org.pivot4j.PivotModel;
 import org.pivot4j.transform.SwapAxes;
 
 @Path("/1.0/axis")
@@ -110,8 +113,10 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		model.removeOrder(model.getCellSet().getAxes().get(1));
 		model.removeOrder(model.getCellSet().getAxes().get(0));
-		model.setSubset(ei.getModelConfig().getStartRow(), ei.getModelConfig().getStartColumn(), ei.getModelConfig().getRowsSet(), ei.getModelConfig()
-				.getColumnSet());
+
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		return renderModel(getPivotModel());
 	}
@@ -175,7 +180,10 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		Hierarchy h = getAxisBusiness().updateHierarchyOnAxis(axisPos, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
 
 		getModelConfig().setDimensionHierarchy(h.getDimension().getUniqueName(), newHierarchyUniqueName);
-
+		PivotModel model = getWhatIfEngineInstance().getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		return renderModel(getPivotModel());
 	}
 
@@ -200,7 +208,10 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		if (members.size() > 0) {
 			getAxisBusiness().updateAxisHierarchyMembers(members.get(0).getHierarchy(), members);
 		}
-
+		PivotModel model = getWhatIfEngineInstance().getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		return renderModel(getPivotModel());
 	}
 
