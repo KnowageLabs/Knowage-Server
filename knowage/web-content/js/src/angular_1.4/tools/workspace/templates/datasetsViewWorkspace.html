@@ -4,7 +4,7 @@
   <md-tabs md-dynamic-height="true">
   
     <md-tab label="My data set" flex ng-click="switchTab('myDataSet')">
-       <md-content>
+       <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="myDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
@@ -16,10 +16,10 @@
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
  	  ></dataset-view>	
- 	 </md-content>
+ 	 </md-tab-body>
  	</md-tab>  
  	<md-tab label="Enterprise data set" flex ng-click="switchTab('enterpriseDataSet')">
-      <md-content>
+     <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
@@ -30,10 +30,10 @@
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
  	  ></dataset-view>		
- 	    </md-content>
+ 	    </md-tab-body>
  	</md-tab>  
  	<md-tab label="Shared data set" flex ng-click="switchTab('sharedDataSet')">
-      <md-content>
+      <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
@@ -44,11 +44,11 @@
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
  	  ></dataset-view>	
- 	 </md-content>
+ 	 </md-tab-body>
  	</md-tab>  
  	
  	<md-tab label="All data set" flex ng-click="switchTab('allDataSet')">
-      <md-content>
+      <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: absolute;' ng-model="datasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
@@ -59,7 +59,7 @@
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
  	  ></dataset-view>	
- 	   </md-content>
+ 	  </md-tab-body>
  	</md-tab>    
    </md-tabs>
    </md-content>
