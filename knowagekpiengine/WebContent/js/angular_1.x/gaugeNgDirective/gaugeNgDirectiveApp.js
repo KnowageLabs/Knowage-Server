@@ -342,7 +342,7 @@
 			restrict: 'E',
 			template: 
 				'<div layout-align="center center" layout="row">'
-				+ '<div id="{{containerFrameId}}"></div></div>',
+				+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px"></div></div>',
 			controller: kpiGaugeCtrl,
 //			transclude: true,
 			scope: {
