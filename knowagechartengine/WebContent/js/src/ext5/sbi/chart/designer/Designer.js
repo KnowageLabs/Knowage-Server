@@ -196,7 +196,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 		initialize: function(sbiExecutionId, 
 				userId, 
-				hostName,
+				hostName, 
 				serverPort, 
 				docLabel, 
 				jsonTemplate, 
@@ -430,11 +430,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.mainContextName = mainContextName;
 			this.chartEngineContextName = thisContextName;
 			
-			var protocol = window.location.protocol;
-			
-			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, thisContextName, sbiExecutionId, userId);
-			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager(protocol, hostName, serverPort, mainContextName, sbiExecutionId, userId);
-			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, serverPort, exporterContextName, sbiExecutionId, userId);
+			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, thisContextName, sbiExecutionId, userId);
+			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, mainContextName, sbiExecutionId, userId);
+			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager('http', hostName, serverPort, exporterContextName, sbiExecutionId, userId);
 						
 			this.hostName = hostName; 
 			this.serverPort = serverPort;
@@ -2014,9 +2012,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  							
 	  							heightDimType = sbiJson.CHART.heightDimType;
 	  							widthDimType = sbiJson.CHART.widthDimType;
-	  							  							
+	  							  		  							
 	  							if (heightDimType == "percentage")
-								{  								
+								{  					  								
 	  								if (!heightChartJson || heightChartJson == "")
 	  								{
 	  									sbiJson.CHART.height = window.innerHeight;
@@ -2032,7 +2030,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								}
 	  							
 	  							if (widthDimType == "percentage")
-								{
+								{	  								
 	  								if (!widthChartJson || widthChartJson == "")
 	  								{
 	  									sbiJson.CHART.width = window.innerWidth;
@@ -2045,7 +2043,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  							else
 								{
 	  								sbiJson.CHART.width = (!widthChartJson || widthChartJson=="") ? window.innerWidth : widthChartJson;
-								}  		
+								}  	
 	  							
 	  							var ratioChartJson = sbiJson.CHART.width/sbiJson.CHART.height;
 	  							
@@ -2143,21 +2141,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      									options: chartConf,
 	      									content:'options',
 	      									type:'image/png',
-	      									//height: 298,
 	      									//width: previewPanel.getWidth(),
 	      									scale: undefined,
 	      									constr:'Chart',
 	      									callback: undefined,
 	      									async: 'true'
 	      							};
-//									
+									
 	      							chartExportWebServiceManager.run('exportPng', parameters, [], 
 	  									function (response) {
 		      								var src = '/highcharts-export-web/'+response.responseText;
 		      								
 		      								/**
-		      					  			 * 
-		      					  			 * 
 		      					  			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		      					  			 */
 		      								srcImg = src;
@@ -2165,7 +2160,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		      							},
 		      							
 		      							function (response) {
-		      									      								
+		      								  								
 		      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
 		      										      								
 		      								setPreviewImage(src,previewPanel.getHeight(),widthImg);		      								
@@ -2229,8 +2224,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/** 
 			 * The height of the single category item dropped in the X-axis
 			 * (bottom) panel on the Designer. This number is get by the 
-			 * empirical approach, i.e. inspecting of the element.
-			 * 
+			 * empirical approach, i.e. inspecting of the element.			
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */			
 			var heightOfSingleItem = 20;
@@ -2402,8 +2396,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 	  	  							 * we need to take the 0th element of an array of drag&dropped item(s).	  	  							 
 	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	  	  							 */
-	  	  							var itemsInTheBottomPanel = this.store.data.length;
-	  	  							var typeOfAttribute = data.records[0].data.categoryDataType;	  	  	
+	  	  							var storeData = this.store.data;
+	  	  							var itemsInTheBottomPanel = storeData.length;
+	  	  							var typeOfAttribute = data.records[0].data.categoryDataType;		  	  								
 	  	  							
 	  	  							/**
 	  	  							 * If the bottom X-axis panel is empty, we can drag any kind of attribute 
@@ -2415,14 +2410,50 @@ Ext.define('Sbi.chart.designer.Designer', {
 		  	  							return true;
 		  	  							
 	  	  							}
+		  	  						/**
+	  	  							 * If we already have one category inside the bottom (X-axis) panel
+	  	  							 * check if it is of type DATE (Timestamp). If it is, prevent user 
+	  	  							 * from dragging and dropping some item after that one (because the
+	  	  							 * Timestamp (date) must be the first one in that case.
+	  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  	  							 */
 		  	  						else if (itemsInTheBottomPanel==1) {	  	  	
 		  	  							
 		  	  							/**
-		  	  							 * if the one of the categories is DATE(Timestamp) has to be selected as the first one
-		  	  							 * validation is used
+		  	  							 * Check through all attributes that we have inside the attribute
+		  	  							 * container what is the item that we have inside the bottom panel 
+		  	  							 * and check its type (since there is not other way to check for
+		  	  							 * data type of the panel's items). 
+		  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		  	  							 */
-		  	  							if (dropPosition == "after" && typeOfAttribute == "Timestamp" ||		  	  								
-	  	  									dropPosition == "before" && typeOfAttribute != "Timestamp") {
+		  	  							var allAttributes = data.records[0].joined[0].data.items;	
+		  	  							var dateAlreadyInXPanel = false;
+		  	  							
+		  	  							for (var i=0; i<allAttributes.length; i++) {
+		  	  								
+		  	  								/**
+		  	  								 * Compare the name of the category inside the X-axis panel and
+		  	  								 * all attributes available and if the type of the one is DATE.
+		  	  								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  	  								 */
+		  	  								if (allAttributes[i].data.categoryColumn==storeData.items[0].data.categoryColumn
+		  	  										&& allAttributes[i].data.categoryDataType.toLowerCase()=="timestamp") {
+		  	  									
+		  	  									dateAlreadyInXPanel = true;
+		  	  									
+		  	  								}
+		  	  								
+		  	  							}
+		  	  							
+		  	  							/**
+		  	  							 * We cannot drop DATE item after the one that is already inside
+		  	  							 * the X-axis panel and we cannot drop an attribute of any other 
+		  	  							 * type (not DATE e.g.) before the category in the panel that is
+		  	  							 * DATE.
+		  	  							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		  	  							 */
+		  	  							if (dropPosition == "after" && typeOfAttribute == "Timestamp" ||
+		  	  									dropPosition == "before" && dateAlreadyInXPanel) {
 			  	  							
 		  	  								Ext.Msg.show ({
 		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.title"),	
@@ -2557,8 +2588,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 					/**
 					 * Provide a button that will let user remove all category items from the 
-					 * X-axis panel.					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
+					 * X-axis panel.					 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					Ext.create
 					(
@@ -2663,7 +2694,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    handler: function(event, toolEl, panelHeader) 
 					    {					    	
 					    	var store = globalThis.bottomXAxisesPanel.getStore();
-							
+					    							
 					    	/**
 					    	 * Create the store for the combobox that will contain all possible attributes
 					    	 * (columns) through which user can pick the particular one that he would like
@@ -3046,8 +3077,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
   		            							  		 		            							
-  		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            							  		            							
+  		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);  		            							  		            
+  		            							  		            
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   	  		            									docLabel: docLabel
@@ -3306,20 +3337,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
 			/**
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			/**
 			 * MANAGE MULTIPLE CATEGORIES: if the chart type is on of following.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
 					chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" || 
 						chartType.toUpperCase() == "HEATMAP" || chartType.toUpperCase() == "CHORD") {	
+				
 				if (category.length == undefined || category.length == null) {
+					
 					var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 						axisName: category.name ? category.name: category.column,
 						axisType: 'ATTRIBUTE', 
-						//categoryDataType: 
 						categoryColumn: category.column
 					});
 					
@@ -3327,18 +3356,42 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				else
 				{
-					for (var i=0; i<category.length; i++) {	
-						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-							axisName: category[i].name ? category[i].name: category[i].column,
-							axisType: 'ATTRIBUTE', 
-							
-							categoryColumn: category[i].column
-						});
+					if(chartType.toUpperCase() == "HEATMAP") {
 						
-						categoriesStore.add(mainCategory);
-					}
-				}
+						for (var i=0; i<category.length; i++) {	
 							
+							var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+								axisName: category[i].name ? category[i].name: category[i].column,
+								axisType: 'ATTRIBUTE', 							
+								categoryColumn: category[i].column,
+								categoryGroupby: category[i].groupby,
+								categoryStacked: category[i].stacked,
+								categoryStackedType: category[i].stackedType, 
+								categoryOrderColumn: category[i].orderColumn, 
+								categoryOrderType: category[i].orderType
+							});
+							
+							categoriesStore.add(mainCategory);
+							
+						}
+						
+					}
+					else {
+						
+						for (var i=0; i<category.length; i++) {	
+						
+							var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+								axisName: category[i].name ? category[i].name: category[i].column,
+								axisType: 'ATTRIBUTE', 							
+								categoryColumn: category[i].column
+							});
+							
+							categoriesStore.add(mainCategory);
+							
+						}
+						
+					}						
+				}							
 			}
 			/**
 			 * If the chart type is PIE, BAR, LINE, SCATTER or RADAR.
@@ -3697,7 +3750,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// resulted json from 1st, 2nd and 3rd designer steps (without properties catalogue)
 			var exportedDesignerSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
-									
+												
 			// default properties catalogue by used chart library, depending on selected chart type 
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
     		chartType = chartType.toLowerCase();

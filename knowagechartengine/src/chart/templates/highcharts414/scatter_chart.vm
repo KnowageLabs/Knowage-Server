@@ -28,8 +28,8 @@
 	#end
 #end
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
     chart: {
@@ -726,7 +726,50 @@
 		                   		#set ($precisionValueAsString = ':,.0f')
 							#end
 		                    
-		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}'
+		                    labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',
+		                    
+		                    formatter: function() {
+			                     
+			                    var value=this.y;
+								var newValue = value;
+	                        	
+	                        	if (value >= 1000) {
+	                           		
+	                           		var suffixes = ["", "k" , "M" , "G" , "T" , "P" , "E"];
+	                           		var suffixNum = Math.floor( (""+value).length/3 );
+	                           		var shortValue = '';
+	                           		
+	                           		for (var precision = 2; precision >= 1; precision--) {
+	                           			
+	                           			shortValue = parseFloat( (suffixNum != 0 ? (value / Math.pow(1000,suffixNum) ) : value).toPrecision(2));
+	                           			var dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g,'');
+	                              		
+	                              		if (dotLessShortValue.length <= 2) { 
+	                              			break; 
+                              			}
+	                        		}
+	                        		
+	                      			if (shortValue % 1 != 0) { 
+	                      				shortNum = shortValue.toFixed(1);
+                      				}
+	                          		
+	                          		newValue = shortValue + suffixes[suffixNum];
+	                       		}
+	                       		
+	                       		else {
+	                       		
+	                       			/*
+	                       				Provide precision that user specified for current series item for numbers that
+	                       				are smaller than 1000 (1k).
+	                       				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                       			*/
+	                       			newValue = newValue.toFixed(${relatedSerie.precision});
+	                       		
+	                       		}
+	                       
+	                          	return newValue;
+			            	},
+		                      
 		                },
 						#end
 		                

@@ -331,7 +331,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['CHART'] = CHART;
 
 			// RESULT PRINT
-			//console.log(result); 
+//			console.log(result); 
 
 			return result;
 		},
@@ -454,8 +454,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						MINORGRID['style'] = minorgridStyle;
 						axisAsJson['MINORGRID'] = MINORGRID;
 				
-					
-
 					var TITLE = {};
 					TITLE['text'] = axisData.titleText ? axisData.titleText
 						 : '';
@@ -777,9 +775,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var result = [];
 
 			/**
-			 * Enabling multiply categories for following chart types.
-			 * 
-			 * @author: danristo (danilo.ristovski@mht.net)
+			 * Enabling multiply categories for following chart types. 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST"
 					|| chartType.toUpperCase() == "WORDCLOUD"
@@ -834,7 +831,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				}
 			} else {
 				var mainCategory = categoriesStore.getAt(0);
-
+				
 				if (mainCategory == null) {
 					return null;
 				}

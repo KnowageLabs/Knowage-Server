@@ -1,17 +1,17 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -131,7 +131,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 *
+				 * 
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -150,7 +150,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 *
+				 * 
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -287,7 +287,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -305,7 +305,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -332,6 +332,16 @@ public class PageResource extends AbstractChartEngineResource {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+
+			/**
+			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
+			 * content of the chart template. If this is not set, specific Italian letters, such as ù and à are going to be displayed as black squared question
+			 * marks - they will not be displayed as they are specified by the user.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			response.setContentType("text/html");
+			response.setCharacterEncoding("UTF-8");
 
 			if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 				request.getRequestDispatcher(dispatchUrl).include(request, response);

@@ -160,7 +160,6 @@ author:
 %>
 
 
-
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -179,12 +178,12 @@ author:
 	var userId = '<%=userId%>';
 	var hostName = '<%=request.getServerName()%>';
 	var serverPort = '<%=request.getServerPort()%>';
-	var protocol = window.location.protocol;
+	var protocol = '<%=request.getScheme()%>';
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
 	<jsp:include
-		page="<%=ChartEngineUtil.getLibraryInitializerPath(template, docLabel, profile)%>" >
+		page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
 		<jsp:param name="template" value="<%=template%>" />
 	</jsp:include>
 	
@@ -305,10 +304,16 @@ author:
 				jsonTemplate: JSON.stringify(jsonObj),
 				exportWebApp: true,
 				driverParams: '<%=driverParams%>'
- 			};	
-			
+
+ 			};				
+
 			if (isD3Chart) {
-				exportD3Chart(protocol, hostName,serverPort,exportType);
+				/*
+					Forward the D3 chart's height and width towards the part of the code that calls the 
+					Highcharts service for exporting chart.
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				*/
+				exportD3Chart(protocol, hostName,serverPort,exportType, jsonObj.CHART.height, jsonObj.CHART.width);
 			}else{
 				chartServiceManager.run('jsonChartTemplate', parameters, [], 
 						function (response) {
@@ -386,6 +391,7 @@ author:
 									, name: 'async'
 									, value: ''
 								});
+
 				          	}              	
 					        
 				         	form.elements[0].value = chartConf;
@@ -394,14 +400,13 @@ author:
 				         	form.elements[3].value = '600';
 				         	form.elements[4].value = 'Chart';
 				         	form.elements[5].value = 'false';
-							form.action = protocol + '//'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+							form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
 				         	form.target = '_blank'; // result into a new browser tab
 				         	form.submit();
 				         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
 						}					
 					);
-			}			
-			
+			}		
 		};
 		
 		/*  
@@ -420,11 +425,11 @@ author:
 			
 		};	
 		
-		function exportD3Chart(protocol, hostName,serverPort,exportType){
+		function exportD3Chart(protocol, hostName,serverPort,exportType, chartHeight, chartWidth){
 			var body = Ext.select("body");
 			var html = body.elements[0].innerHTML;
 			var encoded = btoa(html);
-
+			
 			Ext.DomHelper.useDom = true;
 			// need to use dom because otherwise an html string is composed as a string concatenation,
 	        // but, if a value contains a " character, then the html produced is not correct!!!
@@ -439,6 +444,7 @@ author:
 	          		, tag: 'form'
 	          		, method: 'post'
 	          		, cls: 'export-form'
+
 	          	});
 		       // creating the hidden inputs in form:
 	          	dh.append(form, {
@@ -446,36 +452,53 @@ author:
 					, type: 'hidden'
 					, name: 'options'
 					, value: ''
+
 				});
 	          	dh.append(form, {
 					tag: 'input'
 					, type: 'hidden'
 					, name: 'content'
 					, value: ''
+
 				});
 	          	dh.append(form, {
 					tag: 'input'
 					, type: 'hidden'
 					, name: 'type'
 					, value: ''
+
 				});
 	          	dh.append(form, {
 					tag: 'input'
 					, type: 'hidden'
 					, name: 'width'
 					, value: ''
+
 				});
 	          	dh.append(form, {
 					tag: 'input'
 					, type: 'hidden'
 					, name: 'constr'
 					, value: ''
+
 				});
 	          	dh.append(form, {
 					tag: 'input'
 					, type: 'hidden'
 					, name: 'async'
 					, value: ''
+				});
+	        	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'chartHeight'
+					, value: '12'
+				});
+	        	dh.append(form, {
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'chartWidth'
+					, value: '55'
 				});
           	}
          	form.elements[0].value = encoded;
@@ -484,7 +507,9 @@ author:
          	form.elements[3].value = '600';
          	form.elements[4].value = 'Chart';
          	form.elements[5].value = 'false';
-			form.action = protocol + '//'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+         	form.elements[6].value = chartHeight;
+         	form.elements[7].value = chartWidth;
+			form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
          	form.target = '_blank'; // result into a new browser tab
          	form.submit();
 		};
@@ -596,6 +621,7 @@ author:
 					Ext.getBody().unmask();
 				});*/
  				
+
  			}else {
  				parameters = {
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
@@ -604,8 +630,10 @@ author:
  			}
  			
  			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+
  				
  				var chartConf = Ext.JSON.decode(response.responseText, true);	
+
 								
 				var typeChart = chartConf.chart.type.toUpperCase();		 				
 				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
@@ -626,6 +654,7 @@ author:
 				var mainPanelTemp = Ext.getCmp("mainPanel");
 				
 				mainPanelTemp.setStyle("overflow","auto");	
+
 				
 				if (!heightChart)
 				{
@@ -691,8 +720,9 @@ author:
 						
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);
-					
-				} else {
+
+				} 
+				else {
 					
 					chartConfiguration = chartConf;	
 					renderChart(chartConf);

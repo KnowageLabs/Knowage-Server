@@ -979,14 +979,14 @@ public class Query implements IQuery {
 							allCategoriesForOrdering.add(orderColumn + " ASC");
 						else
 							allCategoriesForOrdering.add(orderColumn + " " + orderType);
+
+						/**
+						 * If the order column is an empty string, that means that we do not have anything to which we will append the ordering by the current
+						 * category (there is not ordering column). For that reason, apply the ordering for the current category.
+						 */
+						keepCategoryForOrdering = columnName + " ASC";
 					}
 				}
-
-				/**
-				 * If the order column is an empty string, that means that we do not have anything to which we will append the ordering by the current category
-				 * (there is not ordering column). For that reason, apply the ordering for the current category.
-				 */
-				keepCategoryForOrdering = columnName + " ASC";
 
 				/*------ Previous implementation -------*/
 				// if (orderColumn!= "" && !orderColumn.equals(columnName))

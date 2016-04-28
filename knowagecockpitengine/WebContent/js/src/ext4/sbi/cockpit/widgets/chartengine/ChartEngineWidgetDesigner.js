@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-
 Ext.ns("Sbi.cockpit.widgets.chartengine");
 
 
@@ -131,7 +130,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 				header:		false,
 			    autoScroll: true,
 			    bodyStyle: {
-			        color: '#ffffff'
+			        color: '#ffffff'			        
 			    },
 			    html: 		'<iframe name="' + this.iFrameId + '" src="" width="100%" height="100%"></iframe>',
 			    listeners: {
@@ -221,6 +220,9 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 						category['columnName'] = chartCategory[i].column;
 						category['alias'] = chartCategory[i].name;
 						
+						category['orderColumn'] = chartCategory[i].orderColumn;
+						category['orderType'] = chartCategory[i].orderType;
+						
 						categories.push(category);
 					}
 				} else {
@@ -230,8 +232,16 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 					category['columnName'] = chartCategory.column;
 					category['alias'] = chartCategory.name;
 					
+					/**
+					 * Set the category's ordering column and its ordering type, if they
+					 * are set for the first category of the chart document.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					category['orderColumn'] = chartCategory.orderColumn;
+					category['orderType'] = chartCategory.orderType;
+					
 					categories.push(category);
-				}
+				};
 				
 				this.aggregations['categories'] = categories;
 			}

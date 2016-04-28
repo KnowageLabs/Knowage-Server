@@ -75,9 +75,9 @@
 	 -->
 	<chartConfiguration>
 		<!-- 
-		<chart type="line" 		name="chartJs" 			vmName="line_chart_chartJs.vm"	/>
-		<chart type="pie"		name="chartJs" 			vmName="pie_chart_chartJs.vm"	/>
-		<chart type="bar" 		name="chartJs" 			vmName="bar_chart_chartJs.vm" 	/>
+		<chart type="line" 		name="chartJs" 			vmName="line_chart_chartJs.vm"	enabledInCockpit="true"/>
+		<chart type="pie"		name="chartJs" 			vmName="pie_chart_chartJs.vm"	enabledInCockpit="true"/>
+		<chart type="bar" 		name="chartJs" 			vmName="bar_chart_chartJs.vm" 	enabledInCockpit="true"/>
 		-->
 		
 		<!-- 
