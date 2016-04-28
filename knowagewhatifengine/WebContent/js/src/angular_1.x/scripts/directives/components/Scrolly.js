@@ -74,7 +74,7 @@ angular.module('scrolly_directive',[])
 	            			newColumnSet = 0;
 		            		var ajSize = 0;
 		            		var headerCount = 0;
-		            		while((ajSize+bodyColumns[newColumnSet].offsetWidth)<(raw.parentElement.offsetWidth-70)){
+		            		while(bodyColumns[newColumnSet]!=undefined&&(ajSize+bodyColumns[newColumnSet].offsetWidth)<(raw.parentElement.offsetWidth-70)){
 		            			ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
 		            			newColumnSet++;
 		            			if(bodyColumns[newColumnSet].nodeName==='TH')
