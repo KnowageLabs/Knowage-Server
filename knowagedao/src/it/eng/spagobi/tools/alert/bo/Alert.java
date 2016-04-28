@@ -3,7 +3,8 @@ package it.eng.spagobi.tools.alert.bo;
 public class Alert {
 
 	private Integer id;
-	private Integer name;
+	private String name;
+	private String jsonOptions;
 	private AlertListener alertListener;
 
 	private Frequency frequency;
@@ -33,7 +34,7 @@ public class Alert {
 	/**
 	 * @return the name
 	 */
-	public Integer getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -41,7 +42,7 @@ public class Alert {
 	 * @param name
 	 *            the name to set
 	 */
-	public void setName(Integer name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -73,6 +74,21 @@ public class Alert {
 	 */
 	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
+	}
+
+	/**
+	 * @return the jsonOptions
+	 */
+	public String getJsonOptions() {
+		return jsonOptions;
+	}
+
+	/**
+	 * @param jsonOptions
+	 *            the jsonOptions to set
+	 */
+	public void setJsonOptions(String jsonOptions) {
+		this.jsonOptions = jsonOptions;
 	}
 
 	/*
