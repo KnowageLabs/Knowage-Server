@@ -31,8 +31,9 @@ public class ETLRDBMSSource {
 	String schema;
 	String databaseName;
 	String jdbcUrl;
+	String uniqueName; // key name used in the connection definition (repository)
 
-	public ETLRDBMSSource(String componentName, String label, String host, String schema, String databaseName, String jdbcUrl) {
+	public ETLRDBMSSource(String componentName, String label, String host, String schema, String databaseName, String jdbcUrl, String uniqueName) {
 		super();
 		this.componentName = componentName;
 		this.label = label;
@@ -40,6 +41,7 @@ public class ETLRDBMSSource {
 		this.schema = schema;
 		this.databaseName = databaseName;
 		this.jdbcUrl = jdbcUrl;
+		this.uniqueName = uniqueName;
 	}
 
 	public String getLabel() {
@@ -88,6 +90,14 @@ public class ETLRDBMSSource {
 
 	public void setComponentName(String componentName) {
 		this.componentName = componentName;
+	}
+
+	public String getUniqueName() {
+		return uniqueName;
+	}
+
+	public void setUniqueName(String uniqueName) {
+		this.uniqueName = uniqueName;
 	}
 
 }

@@ -17,13 +17,22 @@
  */
 package it.eng.spagobi.metadata.etl;
 
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
 public class ETLMetadata {
+	static private Logger logger = Logger.getLogger(ETLMetadata.class);
 
 	Set<ETLRDBMSSource> rdbmsSources;
 	Set<ETLComponent> sourceTables;
@@ -103,7 +112,8 @@ public class ETLMetadata {
 		StringBuilder sb = new StringBuilder();
 		for (ETLRDBMSSource content : rdbmsSources) {
 			sb.append("RDBMS Source > Component Name: " + content.getComponentName() + " DB Name: " + content.getDatabaseName() + " Host: " + content.getHost()
-					+ " JDBC Url: " + content.getJdbcUrl() + " Label: " + content.getLabel() + " Schema: " + content.getSchema());
+					+ " JDBC Url: " + content.getJdbcUrl() + " Label: " + content.getLabel() + " Schema: " + content.getSchema() + "Unique Name: "
+					+ content.getUniqueName());
 		}
 
 		sb.append("Source Tables >");
@@ -124,6 +134,29 @@ public class ETLMetadata {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Get the corresponding source name of the passed uniqueName reading the mapping.properties of the etl
+	 *
+	 * @param sourceUniqueName
+	 * @return the corresponding source Name
+	 * @throws IOException
+	 */
+	public String getSourceName(String sourceUniqueName) throws IOException {
+		logger.debug("IN");
+		try {
+			String resourceDir = SpagoBIUtilities.getResourcePath();
+			FileInputStream input = new FileInputStream(resourceDir + File.separator + "etl" + File.separator + "mapping.properties");
+			Properties prop = new Properties();
+			prop.load(input);
+			return prop.getProperty(sourceUniqueName);
+		} catch (IOException e) {
+			logger.error("Error while getting the property [" + sourceUniqueName + "] in the etl's mapping.properties", e);
+			throw e;
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 }

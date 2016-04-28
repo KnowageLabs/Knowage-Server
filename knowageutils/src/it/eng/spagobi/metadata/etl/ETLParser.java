@@ -356,6 +356,7 @@ public class ETLParser {
 				String schemaRef = xpath.evaluate("elementParameter[@name='SCHEMA_DB']/@value", node);
 				String dbNameRef = xpath.evaluate("elementParameter[@name='DBNAME']/@value", node);
 				String jdbcUrl = xpath.evaluate("elementParameter[@name='JDBC_URL']/@value", node);
+				String uniqueName = xpath.evaluate("elementParameter[@name='PROPERTY:REPOSITORY_PROPERTY_TYPE']/@value", node);
 				String host = null, schema = null, dbName = null;
 				if (hostRef != null) {
 					if (hostRef.contains("context")) {
@@ -379,7 +380,7 @@ public class ETLParser {
 					}
 				}
 
-				ETLRDBMSSource source = new ETLRDBMSSource(componentName, label, host, schema, dbName, jdbcUrl);
+				ETLRDBMSSource source = new ETLRDBMSSource(componentName, label, host, schema, dbName, jdbcUrl, uniqueName);
 				sources.add(source);
 			}
 		} catch (XPathExpressionException e) {
