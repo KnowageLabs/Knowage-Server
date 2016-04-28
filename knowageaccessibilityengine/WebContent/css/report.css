@@ -1,0 +1,41 @@
+#report
+{
+font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+width:100%;
+max-width: 1024px;
+border-collapse:collapse;
+margin-left: auto;
+margin-right: auto;
+}
+#report td, #report th 
+{
+font-size:1.2em;
+border:1px solid #e6e6e6;
+padding:3px 7px 2px 7px;
+}
+#report th 
+{
+font-size:1.4em;
+text-align:left;
+padding-top:5px;
+padding-bottom:4px;
+background-color:#efefef;
+color:#000;
+}
+#report tr.alt td 
+{
+color:#000;
+background-color:#efefef;
+}
+
+#pdf
+{
+text-align: center;
+}
+
+caption
+{
+font-size: 2em;
+text-align: left;
+margin-bottom: 5px;
+}
