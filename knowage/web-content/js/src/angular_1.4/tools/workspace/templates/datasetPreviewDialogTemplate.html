@@ -1,0 +1,20 @@
+<md-content flex layout-fill layout="column">
+    	<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>DATASET PREVIEW</h2>
+        <span flex></span>
+        <md-button class="" ng-click="closeDatasetPreviewDialog()">
+         CLOSE
+        </md-button>
+      </div>   
+    </md-toolbar>
+    
+	<angular-table flex ng-model="previewDatasetModel"
+				columns="previewDatasetColumns" 
+				no-pagination="true" 
+				show-search-bar=false
+				full-width
+				>
+	</angular-table>
+				 
+</md-content>

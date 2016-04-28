@@ -14,25 +14,27 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging){
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;
 	$scope.currentTab = "myDataSet";
-   
+    $scope.previewDatasetModel=[];
+    $scope.previewDatasetColumns=[];
 	
 	/**
 	 * load all datasets
 	 */
 	$scope.loadDatasets= function(){
-		sbiModule_restServices.promiseGet("2.0/datasets", "")
+		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
 		.then(function(response) {
-			angular.copy(response.data,$scope.datasets);
+			angular.copy(response.data.root,$scope.datasets);
 			console.log($scope.datasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+
 	$scope.loadDatasets();
 	
 	$scope.loadMyDatasets= function(){
@@ -133,6 +135,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			          console.log(response);
 			          // binds changed value to object
 			          dataset.isPublic=response.data.isPublic;
+			          sbiModule_messaging.showSuccessMessage("dataset is shared successfuly","shared success");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -153,7 +156,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     
     $scope.showHelpOnline= function(dataset){
     	
-    	sbiModule_helpOnLine.show(dataset);
+    	sbiModule_helpOnLine.show(dataset.id);
     }    
     
     $scope.isSharingEnabled=function(){
@@ -177,6 +180,50 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
        $window.location.href=url;
     }
     
+    $scope.previewDataset= function(dataset){
+    	var loaded=false;
+    	sbiModule_restServices.promiseGet("selfservicedataset/export", dataset.label)
+		.then(function(response) {
+			
+		    angular.copy(response.data.rows,$scope.previewDatasetModel);
+			$scope.createColumnsForPreview(response.data.metaData.fields);
+			console.log($scope.previewDatasetModel);
+			console.log($scope.previewDatasetColumns);
+			$mdDialog.show({
+				  scope:$scope,
+				  preserveScope: true,
+			      controller: DatasetPreviewController,
+			      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
+			      clickOutsideToClose:false,
+			      escapeToClose :false,
+			      fullscreen: true,
+			      locals:{
+			    	 // previewDatasetModel:$scope.previewDatasetModel,
+			         // previewDatasetColumns:$scope.previewDatasetColumns 
+			      }
+			    });
+			
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+        
+    	
+    
+    	
+    	
+    }
+    
+    $scope.createColumnsForPreview=function(fields){
+    
+    	for(i=1;i<fields.length;i++){
+    	 var column={};
+    	 column.label=fields[i].header;
+    	 column.name=fields[i].name;
+    	 
+    	 $scope.previewDatasetColumns.push(column);
+    	}
+    	
+    }
     
     $scope.switchTab=function(currentTab){
     
@@ -186,4 +233,15 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
          }
     	
     }	
+    
+	function DatasetPreviewController($scope,$mdDialog){
+		
+		$scope.closeDatasetPreviewDialog=function(){
+			 $scope.previewDatasetModel=[];
+			 $scope.previewDatasetColumns=[];
+			 $mdDialog.cancel();	 
+	    }
+		
+	}
+    
 }
