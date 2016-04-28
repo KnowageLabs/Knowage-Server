@@ -677,15 +677,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 		}
 	};
-	
-	$scope.clearLoadedData = function(name){
-		for(var i=0; i< $scope.dataPointers.length; i++){
-			if(name == $scope.dataPointers){
-				$scope.dataPointers.splice(i,1);
-				$scope.loadedData.splice(i,1)
-				break;
-			}
-		}
-	}
+
 };
 
