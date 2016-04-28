@@ -276,7 +276,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		("1.0",encoded,visibleSelected)
 		.then(function(response) {
 			 visibleSelected = [];			
-			 $scope.table = $sce.trustAsHtml(response.data.table);
+			 $scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 			
@@ -678,6 +678,14 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 	
-
+	$scope.clearLoadedData = function(name){
+		for(var i=0; i< $scope.dataPointers.length; i++){
+			if(name == $scope.dataPointers){
+				$scope.dataPointers.splice(i,1);
+				$scope.loadedData.splice(i,1)
+				break;
+			}
+		}
+	}
 };
 
