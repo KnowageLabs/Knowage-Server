@@ -39,6 +39,7 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	angular.element(document).ready(function () { // on page load function
 				$scope.getTablesByDatasetID(datasetId);
 				$scope.getSources();
+				
 		    });
 	
 
@@ -46,7 +47,6 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	$scope.getSources = function(){ // service that gets predefined list GET		
 		sbiModule_restServices.promiseGet("2.0/metaSourceResource", "")
 		.then(function(response) {
-			console.log(response.data);
 			$scope.sourceList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -57,7 +57,6 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	$scope.getTablesBySourceID = function(id){	
 		sbiModule_restServices.promiseGet("2.0/metaSourceResource/"+id+"/metatables", "")
 		.then(function(response) {
-			console.log(response.data);
 			$scope.tablesList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -101,17 +100,15 @@ $scope.getTablesByDatasetID = function(id){
 	.then(function(response) {
 		
 		$scope.selectedTables = response.data;
-		console.log($scope.selectedTables);
+		$scope.markDeleted(selectedTables_id);
 	}, function(response) {
 		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
 		
 	});	
 }
 
-$scope.deleteRelations = function(dsId){
-	var path = "2.0/metaDsRelationResource/"+dsId;
-	console.log(path);
-	sbiModule_restServices.promiseDelete("2.0/metaDsRelationResource/"+dsId,"",angular.toJson($scope.forDeletion))
+$scope.deleteRelations = function(dsId,item){
+	sbiModule_restServices.promiseDelete("2.0/metaDsRelationResource/"+dsId,item.tableId)
 	.then(function(response) {
 		
 		$scope.getTablesByDatasetID(dsId);
@@ -121,8 +118,8 @@ $scope.deleteRelations = function(dsId){
 	});	
 }
 
-$scope.insertRelations = function(dsId){	
-	sbiModule_restServices.promisePost("2.0/metaDsRelationResource/"+dsId, "",$scope.forDeletion)
+$scope.insertRelations = function(dsId,item){	
+	sbiModule_restServices.promisePost("2.0/metaDsRelationResource/"+dsId, "",angular.toJson(item))
 	.then(function(response) {
 		
 		$scope.getTablesByDatasetID(dsId);
@@ -131,12 +128,37 @@ $scope.insertRelations = function(dsId){
 		
 	});	
 }
+
+
 
 $scope.saveRelation = function(dsId){
-	$scope.deleteRelations(dsId);
+	for (var i = 0; i < $scope.forDeletion.length; i++) {
+		$scope.deleteRelations(dsId,$scope.forDeletion[i]);
+	}
+	for (var i = 0; i < $scope.forAdding.length; i++) {
+		$scope.insertRelations(dsId,$scope.forAdding[i]);
+	}
 	
+}
+
+$scope.goBack = function(){
+	history.go(-1);
 	
-	
+}
+
+$scope.markDeleted = function(listId){
+	console.log(listId);
+	for (var i = 0; i < $scope.selectedTables.length; i++) {
+
+		if($scope.selectedTables[i].deleted){
+			console.log($scope.selectedTables[i]);
+			$timeout(function() {
+				//document.getElementById("listItemTemplate").style.color = "red";
+				
+		    }, 250);
+			
+		}
+	}
 }
 
 };

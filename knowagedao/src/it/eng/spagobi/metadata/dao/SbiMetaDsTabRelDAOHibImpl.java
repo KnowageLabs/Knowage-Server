@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -221,13 +222,12 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Criterion labelCriterrion1 = Expression.eq("datasetId", datasetId);
-			Criterion labelCriterrion2 = Expression.eq("tableId", tableId);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaDsTabRel.class);
-			criteria.add(labelCriterrion1);
-			criteria.add(labelCriterrion2);
-
-			toReturn = (SbiMetaDsTabRel) criteria.uniqueResult();
+			// Criterion labelCriterrion1 = Expression.eq("datasetId",
+			// datasetId);
+			// Criterion labelCriterrion2 = Expression.eq("tableId", tableId);
+			List<SbiMetaDsTabRel> relations = tmpSession.createCriteria(SbiMetaDsTabRel.class).add(Restrictions.eq("datasetId", datasetId))
+					.add(Restrictions.eq("tableId", tableId)).list();
+			toReturn = relations.get(0);
 			if (toReturn == null)
 				return null;
 			tx.commit();

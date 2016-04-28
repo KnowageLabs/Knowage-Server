@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 		</head>
 
-	<body class="federatedDataset" ng-app="linkDatasetModule" id="ng-app">
+	<body class="federatedDataset linkDocument" ng-app="linkDatasetModule" id="ng-app">
 		
 		<div ng-controller="linkDatasetCTRL" layout-fill class="contentdemoBasicUsage">		
 		  <div class ="md-container" >
@@ -68,7 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<h2 class="md-flex" >Table Link for <%= datasetLabel  %> </h2>
 				
 				</div>
-
+				
+				
 			</md-toolbar>
 	
 						
@@ -132,15 +133,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-card>
 				</div>
 				
+				<div>
+				
+				<div>
+				<md-button class="md-raised buttonLeft" aria-label="btn_cancel"
+						ng-click="goBack()">Cancel
+				</md-button> 
 				</div>
-			
-				<md-button class="md-raised buttonR" aria-label="btn_save"
+				<div>
+				<md-button class="md-raised buttonRight" aria-label="btn_save"
 						ng-click="saveRelation(<%= datasetID %>)">Save
 				</md-button>
-
+				</div>
+				</div>
+				
+				
+				
 			</md-content>
-		 <!-- end div container -->
-		 </div>	
+			
+		 </div>		 	
 		</div>
 	
 	</body>

@@ -3,6 +3,7 @@ package it.eng.spagobi.api.v2;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -88,48 +89,32 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 		return tables;
 	}
 
-	@GET
-	@Path("/dataset/{dsId}/{tableId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
-	public SbiMetaDsTabRel getByAllIds(@PathParam("dsId") Integer dsId, @PathParam("tableId") Integer tableId) {
-		init();
-		SbiMetaDsTabRel relation = new SbiMetaDsTabRel();
-		try {
-
-			relation = sbiMetaDsTabRelDAO.loadDsIdandTableId(dsId, tableId);
-
-		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return relation;
-	}
-
 	@POST
 	@Path("/{id}")
-	public void insert(@PathParam("id") Integer id, List<SbiMetaTable> tables) throws EMFUserError {
+	@Consumes(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	public void insert(@PathParam("id") Integer id, SbiMetaTable table) throws EMFUserError {
 
 		sbiMetaDsTabRelDAO = DAOFactory.getDsTableRelDAO();
-		for (SbiMetaTable sbiMetaTable : tables) {
-			SbiMetaDsTabRel relation = sbiMetaDsTabRelDAO.loadDsIdandTableId(id, sbiMetaTable.getTableId());
-			sbiMetaDsTabRelDAO.insertRelation(relation);
-		}
+
+		SbiMetaDsTabRel relation = new SbiMetaDsTabRel();
+		relation.setDatasetId(id);
+		relation.setTableId(table.getTableId());
+		sbiMetaDsTabRelDAO.insertRelation(relation);
+
 	}
 
 	@DELETE
-	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
-	public void delete(@PathParam("id") Integer id, List<SbiMetaTable> tables) {
+	@Path("/{id}/{tableID}")
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	public void delete(@PathParam("id") Integer id, @PathParam("tableID") Integer tableID) {
 
 		init();
 
 		try {
 
-			for (SbiMetaTable sbiMetaTable : tables) {
-				SbiMetaDsTabRel relation = sbiMetaDsTabRelDAO.loadDsIdandTableId(id, sbiMetaTable.getTableId());
-				sbiMetaDsTabRelDAO.deleteRelation(relation);
-			}
+			SbiMetaDsTabRel relation = sbiMetaDsTabRelDAO.loadDsIdandTableId(id, tableID);
+			sbiMetaDsTabRelDAO.deleteRelation(relation);
 
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
