@@ -609,7 +609,7 @@ public class KpiService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			Map<String, String> attributesValues = new TreeMap<String, String>();
 			JSONObject objTemp = new JSONObject();
-
+			List<KpiValue> kpiValues;
 			if (requestVal.get("kpi") instanceof JSONObject) {
 				objTemp = requestVal.getJSONObject("kpi");
 				String s = requestVal.getString("driverMap");
@@ -621,7 +621,11 @@ public class KpiService {
 					}
 
 				}
+				kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
+				String result = new ObjectMapper().writeValueAsString(kpiValues);
+				array.put(result);
 			} else {
+				kpiValues = new ArrayList<>();
 				for (int i = 0; i < requestVal.getJSONArray("kpi").length(); i++) {
 					objTemp = requestVal.getJSONArray("kpi").getJSONObject(i);
 
@@ -634,14 +638,13 @@ public class KpiService {
 						}
 
 					}
-
+					kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
+					String result = new ObjectMapper().writeValueAsString(kpiValues);
+					array.put(result);
 				}
 			}
 
-			List<KpiValue> kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
-			String result = new ObjectMapper().writeValueAsString(kpiValues);
-
-			return Response.ok(result).build();
+			return Response.ok(array.toString()).build();
 		} catch (
 
 		Throwable e)
