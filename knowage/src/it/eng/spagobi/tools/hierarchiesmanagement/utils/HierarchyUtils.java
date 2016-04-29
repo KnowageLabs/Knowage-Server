@@ -1198,11 +1198,11 @@ public class HierarchyUtils {
 			}
 			if (rs.getObject(HierarchyConstants.PATH_CD_T) != null) {
 				int idx = rs.findColumn(HierarchyConstants.PATH_CD_T);
-				ps.setClob(idx, rs.getClob(HierarchyConstants.PATH_CD_T));
+				ps.setString(idx, rs.getString(HierarchyConstants.PATH_CD_T));
 			}
 			if (rs.getObject(HierarchyConstants.PATH_NM_T) != null) {
 				int idx = rs.findColumn(HierarchyConstants.PATH_NM_T);
-				ps.setClob(idx, rs.getClob(HierarchyConstants.PATH_NM_T));
+				ps.setString(idx, rs.getString(HierarchyConstants.PATH_NM_T));
 			}
 			if (rs.getObject(HierarchyConstants.HIER_CD_M) != null) {
 				int idx = rs.findColumn(HierarchyConstants.HIER_CD_M);
@@ -1226,7 +1226,7 @@ public class HierarchyUtils {
 			}
 			if (rs.getObject(HierarchyConstants.GENERAL_INFO_T) != null) {
 				int idx = rs.findColumn(HierarchyConstants.GENERAL_INFO_T);
-				ps.setClob(idx, rs.getClob(HierarchyConstants.GENERAL_INFO_T));
+				ps.setString(idx, rs.getString(HierarchyConstants.GENERAL_INFO_T));
 			}
 			// set the primary key HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID
 			int idx = rs.findColumn(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID);
