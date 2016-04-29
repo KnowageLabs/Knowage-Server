@@ -17,8 +17,12 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelProperty;
@@ -42,6 +46,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -49,6 +54,7 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -84,6 +90,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -165,14 +172,13 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			smSource.setName(databaseName);
 
 			List<PhysicalTable> physicalTables = physicalModel.getTables();
-			// HashMap<String, SbiMetaTable> newTables = new HashMap<String, SbiMetaTable>();
 			HashMap<String, SbiMetaTableColumn> newTableColumns = new HashMap<String, SbiMetaTableColumn>();
 			Set<SbiMetaTable> sourceTableSet = new HashSet<SbiMetaTable>();
 
 			for (PhysicalTable physicalTable : physicalTables) {
-				// 4 - Insert the columns into the db, Insert the Physical Table to the db
+				// 4 - Read informations about columns and Physical Table
 				// For the table get Name and Source Name
-				// SBI_META_TABLE
+				// [SBI_META_TABLE, SBI_META_TABLE_COLUMN]
 				Set<SbiMetaTableColumn> tableColumnSet = new HashSet<SbiMetaTableColumn>();
 				smTable = new SbiMetaTable();
 				String physicalTableName = physicalTable.getName();
@@ -194,7 +200,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				}
 				smTable.setSbiMetaTableColumns(tableColumnSet);
 				sourceTableSet.add(smTable);
-				// newTables.put(smTable.getName(), smTable);
 			}
 			smSource.setSbiMetaTables(sourceTableSet);
 
@@ -207,9 +212,9 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			List<BusinessTable> businessTables = businessModel.getBusinessTables();
 
 			for (BusinessTable businessTable : businessTables) {
-				// TODO: 5 - Insert the business columns into the db, Insert the Business Table to the db
+				// 5 - Read informations about the business columns and the Business Table
 				// For the Business Table get Name, Model and Physical Table
-				// SBI_META_BC
+				// [SBI_META_BC, SBI_META_BC_ATTRIBUTE]
 				smBC = new SbiMetaBc();
 				Set<SbiMetaBcAttribute> bcAttributeSet = new HashSet<SbiMetaBcAttribute>();
 
